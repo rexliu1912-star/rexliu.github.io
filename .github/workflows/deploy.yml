@@ -17,28 +17,23 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 1. 手动安装 pnpm
+      # 👇 修正点：删掉了 version: 9，让它自动读取 package.json 里的设置
       - name: Install pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 9
 
-      # 2. 手动强制设置 Node.js 22 (完美支持 Object.groupBy)
+      # 手动强制设置 Node.js 22 (完美支持 Object.groupBy)
       - name: Setup Node.js 22
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: 'pnpm'
 
-      # 3. 手动安装依赖
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile
 
-      # 4. 手动执行构建
       - name: Build site
         run: pnpm build
 
-      # 5. 上传构建产物 (dist 文件夹)
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
