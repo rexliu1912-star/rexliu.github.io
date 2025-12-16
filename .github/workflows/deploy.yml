@@ -1,0 +1,37 @@
+name: Deploy to GitHub Pages
+
+on:
+  # 每次推送到 main 分支时触发
+  push:
+    branches: [ main ]
+  # 允许你在 Actions 页面手动点击按钮触发
+  workflow_dispatch:
+
+# 赋予修改 GitHub Pages 的权限
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout your repository using git
+        uses: actions/checkout@v4
+      
+      # 使用 Astro 官方的 Action 自动安装依赖、构建
+      - name: Install, build, and upload your site
+        uses: withastro/action@v3
+        # 注意：这里会自动识别你用的是 pnpm
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
