@@ -50,11 +50,9 @@ const meta = {
 								datetime={p.data.publishDate.toISOString()}
 								class="shrink-0 font-mono text-xs text-gray-400"
 							>
-								{p.data.publishDate
-									.toLocaleDateString("zh-CN", {
-										year: "numeric",
-										month: "2-digit",
-										day: "2-digit",
-									})
-									.replace(/\//g, ".")}
+								{p.data.publishDate.toLocaleDateString("zh-CN", {
+									year: "numeric",
+									month: "2-digit",
+									day: "2-digit",
+								}).replace(/\//g, ".")}
 							</time>
