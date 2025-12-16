@@ -4,7 +4,7 @@ on:
   # 每次推送到 main 分支时触发
   push:
     branches: [ main ]
-  # 允许你在 Actions 页面手动点击按钮触发
+  # 允许手动触发
   workflow_dispatch:
 
 # 赋予修改 GitHub Pages 的权限
@@ -20,16 +20,17 @@ jobs:
       - name: Checkout your repository using git
         uses: actions/checkout@v4
 
-      # 👇 关键修复：强制安装 Node.js 22 以支持 Object.groupBy
+      # 👇👇👇 核心修复点：强制使用 Node.js 22 👇👇👇
+      # 这解决了 Object.groupBy 报错的问题
       - name: Setup Node.js 22
         uses: actions/setup-node@v4
         with:
           node-version: 22
 
-      # 使用 Astro 官方的 Action 自动安装依赖、构建
+      # 使用 Astro 官方动作进行安装和构建
+      # 它会自动识别你的 pnpm 设置
       - name: Install, build, and upload your site
         uses: withastro/action@v3
-        # 注意：这里会自动识别你 package.json 里指定的 pnpm
 
   deploy:
     needs: build
