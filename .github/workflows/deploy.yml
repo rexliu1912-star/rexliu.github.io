@@ -19,11 +19,17 @@ jobs:
     steps:
       - name: Checkout your repository using git
         uses: actions/checkout@v4
-      
+
+      # 👇 关键修复：强制安装 Node.js 22 以支持 Object.groupBy
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
       # 使用 Astro 官方的 Action 自动安装依赖、构建
       - name: Install, build, and upload your site
         uses: withastro/action@v3
-        # 注意：这里会自动识别你用的是 pnpm
+        # 注意：这里会自动识别你 package.json 里指定的 pnpm
 
   deploy:
     needs: build
