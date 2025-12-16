@@ -2,10 +2,7 @@
 import { getCollection } from "astro:content";
 import PageLayout from "@/layouts/Base.astro";
 
-// 1. 获取所有文章
 const allPosts = await getCollection("post");
-
-// 2. 排序
 const MAX_POSTS = 10;
 const allPostsByDate = allPosts
 	.sort((a, b) => new Date(b.data.publishDate).valueOf() - new Date(a.data.publishDate).valueOf())
@@ -18,17 +15,14 @@ const meta = {
 ---
 
 <PageLayout meta={meta}>
-	{/* Bio 区域 */}
 	<section class="mb-12">
 		<h1 class="mb-4 font-serif text-3xl font-bold dark:text-white">Rex Liu</h1>
-		{/* 修改点：加上 font-serif，去掉 monospaced 的代码感 */}
 		<p class="max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">
 			Writer and Observer in Crypto, AI, and Life.<br />
 			在加密、人工智能和人生浪潮里，一边折腾一边记录的人。
 		</p>
 	</section>
 
-	{/* 文章列表 */}
 	<section aria-label="Blog post list">
 		<h2 class="mb-8 text-xs font-bold tracking-widest text-gray-400 uppercase dark:text-gray-500">
 			Essays
@@ -50,9 +44,31 @@ const meta = {
 								datetime={p.data.publishDate.toISOString()}
 								class="shrink-0 font-mono text-xs text-gray-400"
 							>
-								{p.data.publishDate.toLocaleDateString("zh-CN", {
-									year: "numeric",
-									month: "2-digit",
-									day: "2-digit",
-								}).replace(/\//g, ".")}
+								{p.data.publishDate
+									.toLocaleDateString("zh-CN", {
+										year: "numeric",
+										month: "2-digit",
+										day: "2-digit",
+									})
+									.replace(/\//g, ".")}
 							</time>
+						</div>
+
+						{p.data.description && (
+							<p class="mb-2 max-w-3xl font-serif text-base leading-relaxed text-gray-600 dark:text-gray-400">
+								{p.data.description}
+							</p>
+						)}
+
+						<a
+							href={`/posts/${p.id}/`}
+							class="text-xs font-medium text-gray-400 transition-colors group-hover:text-black dark:group-hover:text-white"
+						>
+							More
+						</a>
+					</article>
+				))
+			}
+		</div>
+	</section>
+</PageLayout>
