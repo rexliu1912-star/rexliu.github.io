@@ -1,24 +1,28 @@
 ---
-import { render } from "astro:content";
-import type { GetStaticPaths, InferGetStaticPropsType } from "astro";
-import { getAllPosts } from "@/data/post";
-import PostLayout from "@/layouts/BlogPost.astro";
+// 1. 关键修改：从 astro:content 引入 render 函数
+import { type CollectionEntry, getCollection, render } from "astro:content";
+import BlogPost from "@/layouts/BlogPost.astro";
 
-// if you're using an adaptor in SSR mode, getStaticPaths wont work -> https://docs.astro.build/en/guides/routing/#modifying-the-slug-example-for-ssr
-export const getStaticPaths = (async () => {
-	const blogEntries = await getAllPosts();
-	return blogEntries.map((post) => ({
+export async function getStaticPaths() {
+	const posts = await getCollection("post");
+
+	return posts.map((post) => ({
+		// 继续使用 id 作为 slug，因为你的日志显示 slug 是 undefined
 		params: { slug: post.id },
 		props: { post },
 	}));
-}) satisfies GetStaticPaths;
+}
 
-type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+type Props = {
+	post: CollectionEntry<"post">;
+};
 
 const { post } = Astro.props;
+
+// 2. 关键修改：使用新的 render(post) 写法，而不是 post.render()
 const { Content } = await render(post);
 ---
 
-<PostLayout post={post}>
+<BlogPost post={post}>
 	<Content />
-</PostLayout>
+</BlogPost>

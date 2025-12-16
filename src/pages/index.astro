@@ -1,80 +1,83 @@
 ---
-import { type CollectionEntry, getCollection } from "astro:content";
-import PostPreview from "@/components/blog/PostPreview.astro";
-import Note from "@/components/note/Note.astro";
-import SocialList from "@/components/SocialList.astro";
-import { getAllPosts } from "@/data/post";
+import { getCollection } from "astro:content";
 import PageLayout from "@/layouts/Base.astro";
-import { collectionDateSort } from "@/utils/date";
 
-// Posts
+// 1. 获取所有文章
+const allPosts = await getCollection("post");
+
+// 2. 排序
 const MAX_POSTS = 10;
-const allPosts = await getAllPosts();
-const allPostsByDate = allPosts.sort(collectionDateSort) as CollectionEntry<"post">[];
-const latestPosts = allPostsByDate.slice(0, MAX_POSTS);
+const allPostsByDate = allPosts
+	.sort((a, b) => new Date(b.data.publishDate).valueOf() - new Date(a.data.publishDate).valueOf())
+	.slice(0, MAX_POSTS);
 
-// Pinned Posts, set to a max of 3;
-const MAX_PINNED_POSTS = 3;
-const pinnedPosts = allPostsByDate.filter((p) => p.data.pinned).slice(0, MAX_PINNED_POSTS);
-
-// Notes
-const MAX_NOTES = 5;
-const allNotes = await getCollection("note");
-const latestNotes = allNotes
-	.sort(collectionDateSort)
-	.slice(0, MAX_NOTES) as CollectionEntry<"note">[];
+const meta = {
+	description: "Rex Liu's Digital Oasis - Crypto, AI & Life.",
+	title: "Home",
+};
 ---
 
-<PageLayout meta={{ title: "Home" }}>
-	<section>
-		<h1 class="title mb-12">Hello World!</h1>
-		<p class="mb-4">
-			Hi, I’m a theme for Astro, a simple starter that you can use to create your website or blog.
-			If you want to know more about how you can customise me, add more posts, and make it your own,
-			click on the GitHub icon link below and it will take you to my repo.
+<PageLayout meta={meta}>
+	{/* Bio 区域 */}
+	<section class="mb-12">
+		<h1 class="mb-4 font-serif text-3xl font-bold dark:text-white">Rex Liu</h1>
+		{/* 修改点：加上 font-serif，去掉 monospaced 的代码感 */}
+		<p class="max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">
+			Writer and Observer in Crypto, AI, and Life.<br />
+			在加密、人工智能和人生浪潮里，一边折腾一边记录的人。
 		</p>
-		<SocialList />
 	</section>
-	{
-		pinnedPosts.length > 0 && (
-			<section class="mt-16">
-				<h2 class="title mb-6 text-xl">Pinned Posts</h2>
-				<ul class="space-y-4" role="list">
-					{pinnedPosts.map((p) => (
-						<li class="grid gap-1 sm:grid-cols-[auto_1fr]">
-							<PostPreview post={p} />
-						</li>
-					))}
-				</ul>
-			</section>
-		)
-	}
-	<section class="mt-16">
-		<h2 class="title text-accent mb-6 text-xl"><a href="/posts/">Posts</a></h2>
-		<ul class="space-y-4" role="list">
+
+	{/* 文章列表 */}
+	<section aria-label="Blog post list">
+		<h2 class="mb-8 text-xs font-bold tracking-widest text-gray-400 uppercase dark:text-gray-500">
+			Essays
+		</h2>
+
+		<div class="space-y-12">
 			{
-				latestPosts.map((p) => (
-					<li class="grid gap-1 sm:grid-cols-[auto_1fr]">
-						<PostPreview post={p} />
-					</li>
+				allPostsByDate.map((p) => (
+					<article class="group flex flex-col">
+						<div class="mb-3 flex items-baseline justify-between">
+							<a
+								href={`/posts/${p.id}/`}
+								class="font-serif text-xl font-medium text-black decoration-gray-400 hover:underline hover:decoration-2 hover:underline-offset-4 dark:text-white"
+							>
+								{p.data.title}
+							</a>
+
+							<time
+								datetime={p.data.publishDate.toISOString()}
+								{
+								/* 修改点：日期保留 font-mono 很有味道，也可以改成 font-sans */ }
+								class="shrink-0 font-mono text-xs text-gray-400"
+							>
+								{p.data.publishDate
+									.toLocaleDateString("zh-CN", {
+										year: "numeric",
+										month: "2-digit",
+										day: "2-digit",
+									})
+									.replace(/\//g, ".")}
+							</time>
+						</div>
+
+						{/* 修改点：摘要加上 font-serif，让它看起来像文章段落 */}
+						{p.data.description && (
+							<p class="mb-2 max-w-3xl font-serif text-base leading-relaxed text-gray-600 dark:text-gray-400">
+								{p.data.description}
+							</p>
+						)}
+
+						<a
+							href={`/posts/${p.id}/`}
+							class="text-xs font-medium text-gray-400 transition-colors group-hover:text-black dark:group-hover:text-white"
+						>
+							More
+						</a>
+					</article>
 				))
 			}
-		</ul>
+		</div>
 	</section>
-	{
-		latestNotes.length > 0 && (
-			<section class="mt-16">
-				<h2 class="title text-accent mb-6 text-xl">
-					<a href="/notes/">Notes</a>
-				</h2>
-				<ul class="space-y-6" role="list">
-					{latestNotes.map((note) => (
-						<li>
-							<Note note={note} as="h3" isPreview />
-						</li>
-					))}
-				</ul>
-			</section>
-		)
-	}
 </PageLayout>

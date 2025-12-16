@@ -18,7 +18,15 @@ const {
 
 <html class="scroll-smooth" lang={siteConfig.lang}>
 	<head>
+		{/* 1. 基础头部信息 */}
 		<BaseHead articleDate={articleDate} description={description} ogImage={ogImage} title={title} />
+
+		{/* 2. 强制指定你的头像 (Favicon) */}
+		{/* 这里的 href="/avatar.png" 对应 public/avatar.png */}
+		<link rel="icon" href="/avatar.png" type="image/png" />
+		<link rel="apple-touch-icon" href="/avatar.png" />
+
+		{/* 防止旧的 SVG 干扰，这里不写 svg 的引用 */}
 	</head>
 	<body
 		class="bg-global-bg text-global-text mx-auto flex min-h-screen max-w-3xl flex-col px-4 pt-16 font-mono text-sm font-normal antialiased sm:px-8"

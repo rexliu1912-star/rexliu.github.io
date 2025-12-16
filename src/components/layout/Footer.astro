@@ -1,27 +1,24 @@
 ---
-import { menuLinks, siteConfig } from "@/site.config";
-
 const year = new Date().getFullYear();
 ---
 
 <footer
-	class="mt-auto flex w-full flex-col items-center justify-center gap-y-2 pt-20 pb-4 text-center align-top font-semibold text-gray-600 sm:flex-row sm:justify-between sm:text-xs dark:text-gray-400"
+	class="mt-auto flex w-full flex-col items-center justify-center gap-y-2 pt-20 pb-8 text-center align-middle font-serif text-sm text-gray-500 dark:text-gray-400"
 >
-	<div class="me-0 sm:me-4">
-		&copy; {siteConfig.author}
-		{year}.<span class="inline-block">&nbsp;🚀&nbsp;{siteConfig.title}</span>
+	<div class="mb-1">
+		&copy; {year} Rex Liu
 	</div>
-	<nav
-		aria-labelledby="footer_links"
-		class="flex gap-x-2 sm:gap-x-0 sm:divide-x sm:divide-gray-500"
-	>
-		<p id="footer_links" class="sr-only">More on this site</p>
-		{
-			menuLinks.map((link) => (
-				<a class="hover:text-global-text px-4 py-2 hover:underline sm:py-0" href={link.path}>
-					{link.title}
-				</a>
-			))
-		}
-	</nav>
+
+	<div class="flex items-center gap-x-3 text-xs opacity-80">
+		<a
+			href="/"
+			class="transition-colors hover:text-black hover:underline hover:underline-offset-2 dark:hover:text-white"
+		>
+			rexliu.io
+		</a>
+
+		<span class="text-gray-300 dark:text-gray-600">|</span>
+
+		<span>Sovereign Individual</span>
+	</div>
 </footer>

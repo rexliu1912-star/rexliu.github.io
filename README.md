@@ -91,7 +91,7 @@ Replace pnpm with your choice of npm / yarn
 - Update file `astro.config.ts`
   - [astro-webmanifest options](https://github.com/alextim/astro-lib/blob/main/packages/astro-webmanifest/README.md)
 - Replace & update files within the `/public` folder:
-  - icon.svg - used as the source to create favicons & manifest icons
+  - avatar.png - used as the source to create favicons & manifest icons
   - social-card.png - used as the default og:image
 - Modify file `src/styles/global.css` with your own light and dark styles, and customise [Tailwind's theme settings](https://tailwindcss.com/docs/theme#customizing-your-theme).
 - Edit social links in `src/components/SocialList.astro` to add/replace your media profile. Icons can be found @ [icones.js.org](https://icones.js.org/), per [Astro Icon's instructions](https://www.astroicon.dev/guides/customization/#find-an-icon-set).

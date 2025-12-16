@@ -1,10 +1,5 @@
 ---
-import { type CollectionEntry, render } from "astro:content";
-
-import Masthead from "@/components/blog/Masthead.astro";
-import TOC from "@/components/blog/TOC.astro";
-import WebMentions from "@/components/blog/webmentions/index.astro";
-
+import type { CollectionEntry } from "astro:content";
 import BaseLayout from "./Base.astro";
 
 interface Props {
@@ -12,69 +7,79 @@ interface Props {
 }
 
 const { post } = Astro.props;
-const { ogImage, title, description, updatedDate, publishDate } = post.data;
-const socialImage = ogImage ?? `/og-image/${post.id}.png`;
-const articleDate = updatedDate?.toISOString() ?? publishDate.toISOString();
-const { headings, remarkPluginFrontmatter } = await render(post);
-const readingTime: string = remarkPluginFrontmatter.readingTime;
+const {
+	data: { title, description, publishDate },
+} = post;
+
+const articleDate = publishDate.toISOString();
 ---
 
-<BaseLayout
-	meta={{
-		articleDate,
-		description,
-		ogImage: socialImage,
-		title,
-	}}
->
-	<article class="grow break-words" data-pagefind-body>
-		<div id="blog-hero" class="mb-12"><Masthead content={post} readingTime={readingTime} /></div>
-		<div class="flex flex-col gap-10 lg:flex-row lg:items-start lg:justify-between">
-			{!!headings.length && <TOC headings={headings} />}
-			<div
-				class="prose prose-sm prose-headings:font-semibold prose-headings:text-accent-2 prose-headings:before:absolute prose-headings:before:-ms-4 prose-headings:before:text-gray-600 prose-headings:hover:before:text-accent sm:prose-headings:before:content-['#'] sm:prose-th:before:content-none"
+<BaseLayout meta={{ title, description, articleDate }}>
+	<div class="mb-16 sm:mt-8">
+		{/* 1. Back 按钮 */}
+		<div class="mb-8">
+			<button
+				onclick="history.back()"
+				class="group flex items-center gap-1 font-serif text-sm text-gray-500 transition-colors hover:text-black dark:hover:text-white"
 			>
-				<slot />
-				<WebMentions />
-			</div>
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					width="16"
+					height="16"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					class="transition-transform group-hover:-translate-x-1"
+				>
+					<polyline points="15 18 9 12 15 6"></polyline>
+				</svg>
+				Back
+			</button>
 		</div>
-	</article>
-	<button
-		class="hover:border-link fixed end-4 bottom-8 z-90 flex h-10 w-10 translate-y-28 cursor-pointer items-center justify-center rounded-full border-2 border-transparent bg-zinc-200 text-3xl opacity-0 transition-all transition-discrete duration-300 data-[show=true]:translate-y-0 data-[show=true]:opacity-100 sm:end-8 sm:h-12 sm:w-12 dark:bg-zinc-700"
-		data-show="false"
-		id="to-top-btn"
-	>
-		<span class="sr-only">Back to top</span>
-		<svg
-			aria-hidden="true"
-			class="h-6 w-6"
-			fill="none"
-			focusable="false"
-			stroke="currentColor"
-			stroke-width="2"
-			viewBox="0 0 24 24"
-			xmlns="http://www.w3.org/2000/svg"
-		>
-			<path d="M4.5 15.75l7.5-7.5 7.5 7.5" stroke-linecap="round" stroke-linejoin="round"></path>
-		</svg>
-	</button>
+
+		{/* 2. 文章头部区域 */}
+		<article class="flex flex-col gap-4">
+			{/* 标题：强制使用 font-serif */}
+			<h1
+				class="font-serif text-3xl leading-tight font-bold text-black sm:text-4xl dark:text-white"
+			>
+				{title}
+			</h1>
+
+			{/* 摘要 */}
+			{
+				description && (
+					<p class="font-serif text-lg leading-relaxed text-gray-500 dark:text-gray-400">
+						{description}
+					</p>
+				)
+			}
+
+			{/* Meta 信息：日期 */}
+			<div class="mt-2 flex items-center gap-3 font-mono text-sm text-gray-400">
+				<time datetime={articleDate}>
+					{
+						publishDate
+							.toLocaleDateString("zh-CN", {
+								year: "numeric",
+								month: "2-digit",
+								day: "2-digit",
+							})
+							.replace(/\//g, ".")
+					}
+				</time>
+			</div>
+
+			{/* 分割线 */}
+			<hr class="my-8 border-dashed border-gray-200 dark:border-gray-700" />
+
+			{/* 3. 正文区域：加上 prose-serif */}
+			<div class="prose prose-lg prose-serif dark:prose-invert max-w-none font-serif">
+				<slot />
+			</div>
+		</article>
+	</div>
 </BaseLayout>
-
-<script>
-	const scrollBtn = document.getElementById("to-top-btn") as HTMLButtonElement;
-	const targetHeader = document.getElementById("blog-hero") as HTMLDivElement;
-
-	function callback(entries: IntersectionObserverEntry[]) {
-		entries.forEach((entry) => {
-			// only show the scroll to top button when the heading is out of view
-			scrollBtn.dataset.show = (!entry.isIntersecting).toString();
-		});
-	}
-
-	scrollBtn.addEventListener("click", () => {
-		document.documentElement.scrollTo({ behavior: "smooth", top: 0 });
-	});
-
-	const observer = new IntersectionObserver(callback);
-	observer.observe(targetHeader);
-</script>
