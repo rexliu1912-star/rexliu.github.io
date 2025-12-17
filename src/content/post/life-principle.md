@@ -3,6 +3,7 @@ title: "The Principle"
 description: "I'm done watching people bow down to power or money."
 publishDate: "2025-12-15"
 tags: ["Life", "Crypto", ] 
+originalUrl: "https://x.com/rexliu/status/1998653424074678535?s=20"
 ---
 
 I spent years in spaces where nobody could speak the truth without looking over their shoulder. Where every word had to be measured against who might get offended, who might retaliate, who might cut you off. That kind of environment drains you. It makes you forget what your own voice even sounds like.
