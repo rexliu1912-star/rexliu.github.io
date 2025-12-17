@@ -1,12 +1,10 @@
 ---
-title: "The Best Birthday Gift I Ever Gave Myself: Building My Digital Oasis"
+title: "The Best Birthday Gift I Ever Gave Myself"
 description: "What's the most meaningful gift you could give yourself?"
 publishDate: "2025-12-17"
 tags: ["Life", "AI", ] 
 originalUrl: "https://x.com/rexliu/status/2001175043947249676?s=20"
 ---
-
-# The Best Birthday Gift I Ever Gave Myself: Building My Digital Home in 3 Days
 
 ## Introduction
 
