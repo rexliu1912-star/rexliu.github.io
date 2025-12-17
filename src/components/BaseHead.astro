@@ -8,8 +8,9 @@ type Props = SiteMeta;
 
 const { articleDate, description, ogImage, title } = Astro.props;
 
-const titleSeparator = "•";
-const siteTitle = `${title} ${titleSeparator} ${siteConfig.title}`;
+// 修改逻辑：如果是首页（Home），直接显示站点标题；否则显示“页面标题 - 站点标题”
+const siteTitle = title === "Home" ? siteConfig.title : `${title} - ${siteConfig.title}`;
+
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const socialImageURL = new URL(ogImage ? ogImage : "/social-card.png", Astro.url).href;
 ---
