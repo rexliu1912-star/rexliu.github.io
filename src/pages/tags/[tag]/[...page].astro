@@ -13,7 +13,7 @@ export const getStaticPaths = (async ({ paginate }) => {
 	return uniqueTags.flatMap((tag) => {
 		const postsWithTag = sortedPosts.filter((post) => post.data.tags.includes(tag));
 		return paginate(postsWithTag, {
-			pageSize: 99, // 标签页通常不需要分页，一页显示全部
+			pageSize: 99,
 			params: { tag },
 		});
 	});
@@ -32,7 +32,6 @@ const meta = {
 	title: tagMeta?.data.title ?? `Posts about ${tag}`,
 };
 
-// 辅助函数：统一主页和归档页的日期格式
 function formatTagPageDate(date: Date) {
 	return date
 		.toLocaleDateString("en-US", {
@@ -45,30 +44,33 @@ function formatTagPageDate(date: Date) {
 ---
 
 <PageLayout meta={meta}>
-	{/* 1. 顶部导航：改为更简洁的 Back 链接 */}
-	<div class="mb-12 flex items-baseline gap-3">
+	{/* 顶部导航：使用与文章详情页一致的 < Back 样式 */}
+	<div class="mb-12 flex items-center gap-4">
+		<a
+			class="flex items-center gap-1 font-serif text-sm text-gray-500 transition-colors hover:text-black dark:text-gray-400 dark:hover:text-white"
+			href="/posts/"
+		>
+			<span>&lt;</span>
+			<span>Back</span>
+		</a>
+
 		<h1 class="font-serif text-3xl font-bold capitalize dark:text-white">
 			<span class="font-sans text-gray-400">#</span>{tagMeta?.data.title ?? tag}
 		</h1>
-		<a
-			class="text-xs font-medium text-gray-400 underline underline-offset-4 transition-colors hover:text-black dark:hover:text-white"
-			href="/posts/"
-		>
-			Back to Archive
-		</a>
 	</div>
 
-	{/* 2. 标签描述介绍（如果有） */}
-	<div
-		class="prose prose-sm dark:prose-invert mb-12 max-w-none font-serif text-gray-600 italic dark:text-gray-300"
-	>
-		{tagMeta?.data.description && <p>{tagMeta.data.description}</p>}
-		{TagContent && <TagContent />}
-	</div>
+	{
+		(tagMeta?.data.description || TagContent) && (
+			<div class="prose prose-sm dark:prose-invert mb-12 max-w-none font-serif text-gray-600 italic dark:text-gray-300">
+				{tagMeta?.data.description && <p>{tagMeta.data.description}</p>}
+				{TagContent && <TagContent />}
+			</div>
+		)
+	}
 
-	{/* 3. 文章列表：采用与归档页一致的左右布局 */}
 	<div class="grid sm:grid-cols-[3fr_1fr] sm:gap-x-12">
 		<div>
+			{/* space-y-6 保持紧凑美观 */}
 			<ul class="space-y-6 text-start">
 				{
 					page.data.map((p) => (
@@ -94,7 +96,6 @@ function formatTagPageDate(date: Date) {
 			</ul>
 		</div>
 
-		{/* 侧边辅助说明 */}
 		<aside class="hidden sm:block">
 			<div
 				class="border-l border-dashed border-gray-200 pl-4 sm:sticky sm:top-24 dark:border-gray-700"
@@ -104,5 +105,5 @@ function formatTagPageDate(date: Date) {
 				</p>
 			</div>
 		</aside>
-	</div>
-</PageLayout>
+	</div></PageLayout
+>

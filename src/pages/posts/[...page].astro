@@ -1,7 +1,7 @@
 ---
 import type { CollectionEntry } from "astro:content";
 import type { GetStaticPaths, Page } from "astro";
-import { getAllPosts, groupPostsByYear } from "@/data/post"; // 删除了 getUniqueTags
+import { getAllPosts, groupPostsByYear } from "@/data/post";
 import PageLayout from "@/layouts/Base.astro";
 import { collectionDateSort } from "@/utils/date";
 
@@ -10,7 +10,6 @@ export const getStaticPaths = (async ({ paginate }) => {
 	const allPosts = await getAllPosts();
 	const allPostsByDate = allPosts.sort(collectionDateSort);
 
-	// 1. 计算每个标签出现的次数
 	const tagCounts = allPosts.reduce<{ [key: string]: number }>((acc, post) => {
 		post.data.tags?.forEach((tag) => {
 			acc[tag] = (acc[tag] || 0) + 1;
@@ -18,10 +17,9 @@ export const getStaticPaths = (async ({ paginate }) => {
 		return acc;
 	}, {});
 
-	// 2. 提取标签并按文章数量降序排列（可选）
 	const uniqueTagsWithCounts = Object.entries(tagCounts)
-		.sort((a, b) => b[1] - a[1]) // 按数量从多到少排序
-		.slice(0, 15); // 只显示前 15 个热门标签
+		.sort((a, b) => b[1] - a[1])
+		.slice(0, 15);
 
 	return paginate(allPostsByDate, {
 		pageSize: MAX_POSTS_PER_PAGE,
@@ -47,29 +45,33 @@ const descYearKeys = Object.keys(groupedByYear).sort((a, b) => +b - +a);
 
 <PageLayout meta={meta}>
 	<div class="mb-12">
-		<h1 class="font-serif text-3xl font-bold dark:text-white">Archive</h1>
+		{/* 标题颜色适配：dark:text-white */}
+		<h1 class="font-serif text-3xl font-bold text-black dark:text-white">Archive</h1>
 	</div>
 
 	<div class="grid sm:grid-cols-[3fr_1fr] sm:gap-x-12 sm:gap-y-16">
 		<div>
-			{/* 文章列表部分保持之前的简洁样式... */}
 			{
 				descYearKeys.map((yearKey) => (
 					<section class="mb-12">
-						<h2 class="mb-6 border-b border-dashed border-gray-200 pb-2 font-mono text-xs font-bold tracking-widest text-gray-400 uppercase">
+						{/* 年份横线适配：dark:border-zinc-700 */}
+						<h2 class="mb-6 border-b border-dashed border-gray-200 pb-2 font-mono text-xs font-bold tracking-widest text-gray-400 uppercase dark:border-zinc-700">
 							{yearKey}
 						</h2>
+
 						<ul class="space-y-6 text-start">
 							{groupedByYear[yearKey]?.map((p) => (
 								<li class="flex flex-col">
 									<div class="flex items-baseline justify-between gap-x-4">
+										{/* 文章链接颜色适配：text-black dark:text-white */}
 										<a
 											href={`/posts/${p.id}/`}
-											class="font-serif text-xl font-medium text-black decoration-gray-400 underline-offset-4 hover:underline"
+											class="font-serif text-xl font-medium text-black decoration-gray-400 underline-offset-4 hover:underline dark:text-white dark:decoration-zinc-500"
 										>
 											{p.data.title}
 										</a>
-										<time class="shrink-0 font-mono text-xs text-gray-400">
+										{/* 日期颜色适配：text-gray-400 dark:text-zinc-500 */}
+										<time class="shrink-0 font-mono text-xs text-gray-400 dark:text-zinc-500">
 											{p.data.publishDate.toLocaleDateString("en-US", {
 												month: "short",
 												day: "numeric",
@@ -84,21 +86,25 @@ const descYearKeys = Object.keys(groupedByYear).sort((a, b) => +b - +a);
 			}
 		</div>
 
-		{/* 右侧 Tags 侧边栏：显示统计数字 */}
 		<aside class="self-start sm:sticky sm:top-24">
-			<h2 class="mb-4 flex items-center gap-2 font-serif text-lg font-bold dark:text-white">
+			<h2
+				class="mb-4 flex items-center gap-2 font-serif text-lg font-bold text-black dark:text-white"
+			>
 				Tags
 			</h2>
 			<ul class="flex flex-wrap gap-x-2 gap-y-3">
 				{
 					uniqueTagsWithCounts.map(([tag, count]) => (
 						<li>
+							{/* 标签背景色适配：dark:bg-zinc-800/50 */}
 							<a
-								class="group flex items-center gap-x-1.5 rounded-md bg-gray-50 px-2 py-1 transition-all hover:bg-black hover:text-white dark:bg-zinc-800/50"
+								class="group flex items-center gap-x-1.5 rounded-md bg-gray-50 px-2 py-1 transition-all hover:bg-black dark:bg-zinc-800/50 dark:hover:bg-white"
 								href={`/tags/${tag}/`}
 							>
-								<span class="font-mono text-xs text-gray-600 group-hover:text-white">#{tag}</span>
-								<span class="rounded-full bg-gray-200 px-1.5 font-mono text-[10px] text-gray-500 group-hover:bg-zinc-800 group-hover:text-gray-300 dark:bg-zinc-700">
+								<span class="font-mono text-xs text-gray-600 group-hover:text-white dark:text-zinc-400 dark:group-hover:text-black">
+									#{tag}
+								</span>
+								<span class="rounded-full bg-gray-200 px-1.5 font-mono text-[10px] text-gray-500 group-hover:bg-zinc-800 group-hover:text-gray-300 dark:bg-zinc-700 dark:text-zinc-500 dark:group-hover:bg-zinc-200 dark:group-hover:text-zinc-800">
 									{count}
 								</span>
 							</a>
