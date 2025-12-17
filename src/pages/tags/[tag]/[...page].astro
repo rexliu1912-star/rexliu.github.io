@@ -1,9 +1,6 @@
 ---
 import { render } from "astro:content";
 import type { GetStaticPaths, InferGetStaticPropsType } from "astro";
-import { Icon } from "astro-icon/components";
-import PostPreview from "@/components/blog/PostPreview.astro";
-import Pagination from "@/components/Paginator.astro";
 import { getAllPosts, getTagMeta, getUniqueTags } from "@/data/post";
 import PageLayout from "@/layouts/Base.astro";
 import { collectionDateSort } from "@/utils/date";
@@ -16,7 +13,7 @@ export const getStaticPaths = (async ({ paginate }) => {
 	return uniqueTags.flatMap((tag) => {
 		const postsWithTag = sortedPosts.filter((post) => post.data.tags.includes(tag));
 		return paginate(postsWithTag, {
-			pageSize: 10,
+			pageSize: 99, // 标签页通常不需要分页，一页显示全部
 			params: { tag },
 		});
 	});
@@ -35,45 +32,77 @@ const meta = {
 	title: tagMeta?.data.title ?? `Posts about ${tag}`,
 };
 
-const paginationProps = {
-	...(page.url.prev && {
-		prevUrl: {
-			text: "← Previous Tags",
-			url: page.url.prev,
-		},
-	}),
-	...(page.url.next && {
-		nextUrl: {
-			text: "Next Tags →",
-			url: page.url.next,
-		},
-	}),
-};
+// 辅助函数：统一主页和归档页的日期格式
+function formatTagPageDate(date: Date) {
+	return date
+		.toLocaleDateString("en-US", {
+			month: "short",
+			day: "numeric",
+			year: "numeric",
+		})
+		.replace(",", "");
+}
 ---
 
 <PageLayout meta={meta}>
-	<nav class="mb-8" aria-label="Breadcrumbs">
-		<ul class="flex items-center">
-			<li class="flex items-center">
-				<a class="text-accent" href="/tags/">Tags</a>
-				<Icon aria-hidden="true" name="mdi:chevron-right" class="mx-1.5" />
-			</li>
-			<li aria-current="page" class=""><span aria-hidden="true">#</span>{tag}</li>
-		</ul>
-	</nav>
-	<h1 class="title capitalize">{tagMeta?.data.title ?? `Posts about ${tag}`}</h1>
-	<div class="prose prose-sm prose-cactus mb-16 max-w-none">
+	{/* 1. 顶部导航：改为更简洁的 Back 链接 */}
+	<div class="mb-12 flex items-baseline gap-3">
+		<h1 class="font-serif text-3xl font-bold capitalize dark:text-white">
+			<span class="font-sans text-gray-400">#</span>{tagMeta?.data.title ?? tag}
+		</h1>
+		<a
+			class="text-xs font-medium text-gray-400 underline underline-offset-4 transition-colors hover:text-black dark:hover:text-white"
+			href="/posts/"
+		>
+			Back to Archive
+		</a>
+	</div>
+
+	{/* 2. 标签描述介绍（如果有） */}
+	<div
+		class="prose prose-sm dark:prose-invert mb-12 max-w-none font-serif text-gray-600 italic dark:text-gray-300"
+	>
 		{tagMeta?.data.description && <p>{tagMeta.data.description}</p>}
 		{TagContent && <TagContent />}
 	</div>
-	<ul class="space-y-4">
-		{
-			page.data.map((p) => (
-				<li class="grid gap-1 sm:grid-cols-[auto_1fr]">
-					<PostPreview as="h2" post={p} />
-				</li>
-			))
-		}
-	</ul>
-	<Pagination {...paginationProps} />
+
+	{/* 3. 文章列表：采用与归档页一致的左右布局 */}
+	<div class="grid sm:grid-cols-[3fr_1fr] sm:gap-x-12">
+		<div>
+			<ul class="space-y-6 text-start">
+				{
+					page.data.map((p) => (
+						<li class="flex flex-col">
+							<div class="flex items-baseline justify-between gap-x-4">
+								<a
+									href={`/posts/${p.id}/`}
+									class="font-serif text-xl font-medium text-black decoration-gray-400 transition-all hover:underline hover:decoration-2 hover:underline-offset-4 dark:text-white"
+								>
+									{p.data.title}
+								</a>
+
+								<time
+									datetime={p.data.publishDate.toISOString()}
+									class="shrink-0 font-mono text-xs text-gray-400"
+								>
+									{formatTagPageDate(p.data.publishDate)}
+								</time>
+							</div>
+						</li>
+					))
+				}
+			</ul>
+		</div>
+
+		{/* 侧边辅助说明 */}
+		<aside class="hidden sm:block">
+			<div
+				class="border-l border-dashed border-gray-200 pl-4 sm:sticky sm:top-24 dark:border-gray-700"
+			>
+				<p class="font-serif text-xs text-gray-400 italic">
+					Currently viewing all entries tagged with "{tag}".
+				</p>
+			</div>
+		</aside>
+	</div>
 </PageLayout>

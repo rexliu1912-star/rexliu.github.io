@@ -12,6 +12,17 @@ const meta = {
 	description: "Rex Liu's Digital Oasis - Crypto, AI & Life.",
 	title: "Home",
 };
+
+// 辅助函数：将日期转换为 Nov 7 2025 格式（无逗号）
+function formatHomeDate(date: Date) {
+	return date
+		.toLocaleDateString("en-US", {
+			month: "short",
+			day: "numeric",
+			year: "numeric",
+		})
+		.replace(",", ""); // 关键修改点：使用 .replace(",", "") 删除第一个逗号
+}
 ---
 
 <PageLayout meta={meta}>
@@ -42,15 +53,9 @@ const meta = {
 
 							<time
 								datetime={p.data.publishDate.toISOString()}
-								class="shrink-0 font-mono text-xs text-gray-400"
+								class="ml-4 shrink-0 font-mono text-xs text-gray-400"
 							>
-								{p.data.publishDate
-									.toLocaleDateString("zh-CN", {
-										year: "numeric",
-										month: "2-digit",
-										day: "2-digit",
-									})
-									.replace(/\//g, ".")}
+								{formatHomeDate(p.data.publishDate)}
 							</time>
 						</div>
 

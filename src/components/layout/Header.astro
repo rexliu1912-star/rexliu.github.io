@@ -1,19 +1,31 @@
 ---
 import ThemeToggle from "../ThemeToggle.astro";
 
+// 获取当前页面的路径
+const { pathname } = Astro.url;
+// 判断是否在首页（考虑到可能的末尾斜杠）
+const isHome = pathname === "/" || pathname === "/index.html";
+
 // 替换为你的 Twitter 链接
 const TWITTER_URL = "https://twitter.com/rexliu";
 ---
 
 <header class="mb-10 flex items-center justify-between pt-6" id="main-header">
-	{/* 左侧：导航链接 */}
+	{/* 左侧：动态导航链接 */}
 	<nav class="flex items-center gap-6 font-serif text-base text-black sm:text-lg dark:text-white">
 		{
-			/* 暂时修改：点击 Archive 直接回首页 (/) 
-            等你以后修好了 Archive 详情页，再把 href 改回 "/posts/" 
-        */
+			isHome ? (
+				/* 如果在首页，显示 Archive 链接到文章页 */
+				<a href="/posts/" class="hover:underline hover:decoration-2 hover:underline-offset-4">
+					Archive
+				</a>
+			) : (
+				/* 如果在其他页面（如 Posts 或文章详情页），显示 Home 链接回首页 */
+				<a href="/" class="hover:underline hover:decoration-2 hover:underline-offset-4">
+					Home
+				</a>
+			)
 		}
-		<a href="/" class="hover:underline hover:decoration-2 hover:underline-offset-4"> Archive </a>
 
 		<a
 			href={TWITTER_URL}
