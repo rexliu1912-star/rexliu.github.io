@@ -11,6 +11,7 @@ const baseSchema = z.object({
     title: titleSchema,
 });
 
+// 1. 定义 Post 集合
 const post = defineCollection({
     loader: glob({ base: "./src/content/post", pattern: "**/*.{md,mdx}" }),
     schema: ({ image }) =>
@@ -24,7 +25,6 @@ const post = defineCollection({
                 .optional(),
             draft: z.boolean().default(false),
             ogImage: z.string().optional(),
-            // 新增字段：用于存储原文链接
             originalUrl: z.string().url().optional(),
             tags: z.array(z.string()).default([]).transform(removeDupsAndLowerCase),
             publishDate: z
@@ -35,21 +35,24 @@ const post = defineCollection({
                 .string()
                 .optional()
                 .transform((str) => (str ? new Date(str) : undefined)),
+            // 确保置顶字段正确定义
             pinned: z.boolean().default(false),
         }),
 });
 
+// 2. 定义 Note 集合（之前报错就是因为这里可能被漏掉了）
 const note = defineCollection({
     loader: glob({ base: "./src/content/note", pattern: "**/*.{md,mdx}" }),
     schema: baseSchema.extend({
         description: z.string().optional(),
         publishDate: z
             .string()
-            .datetime({ offset: true }) // Ensures ISO 8601 format with offsets allowed
+            .datetime({ offset: true }) 
             .transform((val) => new Date(val)),
     }),
 });
 
+// 3. 定义 Tag 集合
 const tag = defineCollection({
     loader: glob({ base: "./src/content/tag", pattern: "**/*.{md,mdx}" }),
     schema: z.object({
@@ -58,4 +61,5 @@ const tag = defineCollection({
     }),
 });
 
+// 4. 统一导出
 export const collections = { post, note, tag };

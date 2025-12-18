@@ -2,18 +2,31 @@
 import { getCollection } from "astro:content";
 import PageLayout from "@/layouts/Base.astro";
 
+// 1. 获取所有文章并按日期排序
 const allPosts = await getCollection("post");
+const sortedPosts = allPosts.sort(
+	(a, b) => new Date(b.data.publishDate).valueOf() - new Date(a.data.publishDate).valueOf(),
+);
+
 const MAX_POSTS = 10;
-const allPostsByDate = allPosts
-	.sort((a, b) => new Date(b.data.publishDate).valueOf() - new Date(a.data.publishDate).valueOf())
-	.slice(0, MAX_POSTS);
+const MAX_PINNED = 5;
+
+// 2. 置顶逻辑：筛选出 pinned 为 true 的文章，最多取 5 篇
+const pinnedPosts = sortedPosts.filter((p) => p.data.pinned === true).slice(0, MAX_PINNED);
+
+// 3. 填充逻辑：从剩余文章中补齐，直到总数达到 10 篇
+const otherPosts = sortedPosts
+	.filter((p) => !pinnedPosts.includes(p))
+	.slice(0, MAX_POSTS - pinnedPosts.length);
+
+// 4. 合并显示列表
+const postsToDisplay = [...pinnedPosts, ...otherPosts];
 
 const meta = {
 	description: "Rex Liu's Digital Oasis - Crypto, AI & Life.",
 	title: "Home",
 };
 
-// 辅助函数：将日期转换为 Nov 7 2025 格式（无逗号）
 function formatHomeDate(date: Date) {
 	return date
 		.toLocaleDateString("en-US", {
@@ -21,7 +34,7 @@ function formatHomeDate(date: Date) {
 			day: "numeric",
 			year: "numeric",
 		})
-		.replace(",", ""); // 关键修改点：使用 .replace(",", "") 删除第一个逗号
+		.replace(",", "");
 }
 ---
 
@@ -41,13 +54,17 @@ function formatHomeDate(date: Date) {
 
 		<div class="space-y-12">
 			{
-				allPostsByDate.map((p) => (
+				postsToDisplay.map((p) => (
 					<article class="group flex flex-col">
 						<div class="mb-3 flex items-baseline justify-between">
 							<a
 								href={`/posts/${p.id}/`}
 								class="font-serif text-xl font-medium text-black decoration-gray-400 hover:underline hover:decoration-2 hover:underline-offset-4 dark:text-white"
 							>
+								{/* 如果是置顶文章，显示置顶标记 */}
+								{p.data.pinned && (
+									<span class="mr-2 text-base font-normal text-gray-400">[Pinned]</span>
+								)}
 								{p.data.title}
 							</a>
 

@@ -4,6 +4,7 @@ description: "暴富故事只存在于报道，成功是因为你每时每刻都
 publishDate: "2025-12-18"
 tags: ["Crypto"] 
 originalUrl: "https://x.com/rexliu/status/2001492111875834106"
+pinned: true
 ---
 最近听到最多的话题就是 Snek 价格。
 

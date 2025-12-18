@@ -3,6 +3,7 @@ title: "My Crypto Jouney"
 description: "The Best Times Are Still Ahead of Us?"
 publishDate: "2025-10-25"
 tags: ["Crypto"] 
+pinned: true
 ---
 
 Just reflecting on my wild crypto journey since 2017.
