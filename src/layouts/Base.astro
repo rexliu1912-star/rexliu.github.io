@@ -14,6 +14,9 @@ interface Props {
 const {
 	meta: { articleDate, description = siteConfig.description, ogImage, title },
 } = Astro.props;
+
+// 🔴 添加 Google Analytics ID
+const GA_ID = "G-1EC76EZ517"; // 替换成你的 GA ID
 ---
 
 <html class="scroll-smooth" lang={siteConfig.lang}>
@@ -22,11 +25,19 @@ const {
 		<BaseHead articleDate={articleDate} description={description} ogImage={ogImage} title={title} />
 
 		{/* 2. 强制指定你的头像 (Favicon) */}
-		{/* 这里的 href="/avatar.png" 对应 public/avatar.png */}
 		<link rel="icon" href="/avatar.png" type="image/png" />
 		<link rel="apple-touch-icon" href="/avatar.png" />
 
-		{/* 防止旧的 SVG 干扰，这里不写 svg 的引用 */}
+		{/* 3. Google Analytics - 🔴 新增这部分 */}
+		<script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}></script>
+		<script is:inline define:vars={{ GA_ID }}>
+			window.dataLayer = window.dataLayer || [];
+			function gtag() {
+				dataLayer.push(arguments);
+			}
+			gtag("js", new Date());
+			gtag("config", GA_ID);
+		</script>
 	</head>
 	<body
 		class="bg-global-bg text-global-text mx-auto flex min-h-screen max-w-3xl flex-col px-4 pt-16 font-mono text-sm font-normal antialiased sm:px-8"
