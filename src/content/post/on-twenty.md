@@ -1,0 +1,20 @@
+---
+title: "On Responsibility"
+description: "The age of 20 marks the beginning of new resolutions."
+publishDate: "2010-12-21"
+tags: ["Life",] 
+---
+
+Responsibility, a word too sublime to define, too delicate to illustrate. However intricate it is, the submerged spirit will eventually throw away its manacles of life's regularities and make a beautiful presence in one's heart. It is with this realization that I hastily chronicle the momentous experiences that have been dwelling on my mind incessantly.
+
+Had better highlight the exhilarating chorus competition from the very start. How fortunately our class, the last one performing on the extraodinary feast, wound up with the third prize, which came as a surprise when we had virtually anticipating the the worst outcome. The stage had once again witnessed our close-knitted solidarity, refreshing enthusiam as well as sweeping victory. In fact, i am much indebted to everyone in the class, a bunch of independent and imaginative minds. For the record, I have to confess that I was not so expectant and kind of discouraged to see a sea of unbounded individuals. Consequently, what I tasted was unceasing bitter and worries. Nonetheless, never in my wildest imagination had I perceived our class as sluggish and fragmented. Gradually, with tightened strength and distinct leadership, we made an excellent comeback in the finale, relieved and frantic. There is no exaggeration to claim that Responsibility lies in the strongest affection for the class. How magificent it is when the age of youth is well padded with a series of unforgettable events shared by a deeply-associated class. I will be much delighted to be lost in our exclusively conducted symphony. Hope everyone be blessed with memories that will evoke your subtle feelings when you are old.**
+
+The epiphany also struck me the day after the triumph, the last precious 24 hours at the age of 19. The consciousness of entering the real manhood of twenties prompted me to contemplate on a myriad of matters concerning life. One word that was ringing continuously was Responsibility. 20 is the time to drop the cover of fragility and sentiment and assume the role of maturity and prudence. Plainly speaking, it is quite embrassing to admit that I have not yet given the slightest thought to what I project myself to be in the future, or at least, what the world has in store for me. Therefore, the prevailing wisdom that I merely need to follow up my own mind should be periodically examined and polished. However, the truth is brutal: now and then laziness and idleness mercilessly sap our energy and in the end, we may astoundingly find ourselves no farther than where we were yesterday. As a result, what we are pursuing is far different from what we had pictured. It is the time when Responsibility works the magic. To reverse the tide, it would be a plausible way to harbour audacious faith in the deep soul and strictly execute the agenda.**
+
+When everything seemed to be mesmerizing, my parent's call roused me from my trance. I felt upset to comfort them by fabricating an excuse for not throwing a birthday party that evening, but I somehow left this feeling behind later. Anyway, whenever loneliness enveloped me, I did sought consolation and encouragements from their assuring voices, which were in good supply. From the conversation, I came to realize the significance of Responsibility, a pillar that would determine and shape what we would be. In real life, it is extremely aching to see that my father's hair became grizzly and his body aging, my mother's hands rough and her face wrinkled. In every possible way, what I am obliged is to assume Responsibility and make my utmost to create a better life for them.**
+
+The age of 20 marks the beginning of new insights and fresh resolutions. A birthday is just a symbol while the future is the genuine gist. All I need is to Stride, Struggle and Succeed.**
+
+Farewell, Good Old Days~
+
+Hello, My Twenty~**

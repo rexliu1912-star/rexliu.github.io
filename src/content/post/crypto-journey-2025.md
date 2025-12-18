@@ -1,5 +1,5 @@
 ---
-title: "My Crypto Jouney Since 2017"
+title: "My Crypto Jouney"
 description: "The Best Times Are Still Ahead of Us?"
 publishDate: "2025-10-25"
 tags: ["Crypto"] 
