@@ -1,9 +1,9 @@
 import { Resvg } from "@resvg/resvg-js";
-import type { InferGetStaticPropsType } from "astro"; // 删除了未使用的 APIContext
 import satori, { type SatoriOptions } from "satori";
 import { html } from "satori-html";
 import { getAllPosts } from "@/data/post";
 import { siteConfig } from "@/site.config";
+// 使用项目内置字体
 import RobotoMonoBold from "@/assets/roboto-mono-700.ttf";
 
 const ogOptions: SatoriOptions = {
@@ -32,7 +32,6 @@ const markup = () =>
 		</div>
 	</div>`;
 
-// 移除 context: APIContext 标注，因为你没有用到它
 export async function GET() {
 	const svg = await satori(markup(), ogOptions);
 	const pngBuffer = new Resvg(svg).render().asPng();
@@ -57,5 +56,3 @@ export async function getStaticPaths() {
 			},
 		}));
 }
-
-// 删除了 type Props，因为在当前的逻辑中没有必要手动导出它
