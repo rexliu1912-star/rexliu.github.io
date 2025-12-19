@@ -20,7 +20,6 @@ export const siteConfig: SiteConfig = {
     // 社交媒体识别的语言区域
     ogLocale: "zh_CN",
     /* 核心修改：
-        - 修正了拼写错误: Soreveign -> Sovereign
         - 这将作为分享时的网页大标题
     */
     title: "Rex Liu",
