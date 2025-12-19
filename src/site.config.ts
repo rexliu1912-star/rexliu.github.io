@@ -23,7 +23,7 @@ export const siteConfig: SiteConfig = {
         - 修正了拼写错误: Soreveign -> Sovereign
         - 这将作为分享时的网页大标题
     */
-    title: "Sovereign Individual - Rex Liu",
+    title: "Rex Liu - Sovereign Individual",
     // 请确保这里的域名是你实际部署的地址，否则 OG 图片路径会生成错误
     url: "https://rexliu.io/",
 };
