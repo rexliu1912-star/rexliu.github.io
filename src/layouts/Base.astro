@@ -4,6 +4,7 @@ import Footer from "@/components/layout/Footer.astro";
 import Header from "@/components/layout/Header.astro";
 import SkipLink from "@/components/SkipLink.astro";
 import ThemeProvider from "@/components/ThemeProvider.astro";
+import { ClientRouter } from "astro:transitions";
 import { siteConfig } from "@/site.config";
 import type { SiteMeta } from "@/types";
 
@@ -15,20 +16,16 @@ const {
 	meta: { articleDate, description = siteConfig.description, ogImage, title },
 } = Astro.props;
 
-// Google Analytics ID
 const GA_ID = "G-1EC76EZ517";
 ---
 
 <html class="scroll-smooth" lang={siteConfig.lang}>
 	<head>
-		{/* 1. 基础头部信息 */}
 		<BaseHead articleDate={articleDate} description={description} ogImage={ogImage} title={title} />
-
-		{/* 2. 强制指定你的头像 (Favicon) */}
 		<link rel="icon" href="/avatar.png" type="image/png" />
 		<link rel="apple-touch-icon" href="/avatar.png" />
+		<ClientRouter />
 
-		{/* 3. Google Analytics - 已添加 is:inline 消除警告 */}
 		<script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}></script>
 		<script is:inline define:vars={{ GA_ID }}>
 			window.dataLayer = window.dataLayer || [];
@@ -49,25 +46,239 @@ const GA_ID = "G-1EC76EZ517";
 			<slot />
 		</main>
 		<Footer />
-		<script is:inline type="speculationrules">
-			{
-				"prefetch": [
-					{
-						"where": {
-							"href_matches": "/*"
-						},
-						"eagerness": "immediate"
-					}
-				],
-				"prerender": [
-					{
-						"where": {
-							"href_matches": "/*"
-						},
-						"eagerness": "moderate"
-					}
-				]
+
+		{/* 🟢 最终版本：响应式位置 + 衬线体 (Serif) */}
+		<div
+			id="minimal-player"
+			transition:persist
+			class="fixed bottom-12 left-6 z-50 flex items-center sm:bottom-8 sm:left-8"
+		>
+			<div
+				id="player-container"
+				class="flex w-10 items-center overflow-hidden rounded-full border border-black/10 bg-white p-1 shadow-md transition-all duration-500 ease-in-out dark:border-white/10 dark:bg-[#1a1a1a]"
+			>
+				{/* 控制按钮 */}
+				<button
+					id="play-button"
+					class="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white transition-transform active:scale-90"
+				>
+					<svg
+						id="music-icon"
+						class="text-[#8953d1] transition-opacity duration-300"
+						xmlns="http://www.w3.org/2000/svg"
+						width="16"
+						height="16"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2.5"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					>
+						<path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle
+							cx="18"
+							cy="16"
+							r="3"></circle>
+					</svg>
+
+					<div
+						id="visualizer"
+						class="absolute inset-0 flex items-center justify-center gap-[2px] opacity-0 transition-opacity duration-300"
+					>
+						<div class="bar h-1 w-[2px] rounded-full bg-[#8953d1]"></div>
+						<div class="bar h-3 w-[2px] rounded-full bg-[#8953d1]"></div>
+						<div class="bar h-2 w-[2px] rounded-full bg-[#8953d1]"></div>
+					</div>
+				</button>
+
+				{/* 展开内容区：应用 font-serif */}
+				<div
+					id="expanded-controls"
+					class="pointer-events-none flex items-center pl-2 opacity-0 transition-opacity duration-300"
+				>
+					<div class="flex w-28 flex-col overflow-hidden whitespace-nowrap">
+						{/* 衬线体字样 */}
+						<span class="font-serif text-[8px] font-bold tracking-wider text-[#8953d1]"
+							>Now Playing</span
+						>
+						<span
+							id="current-song-name"
+							class="truncate font-serif text-[12px] leading-tight font-medium text-gray-600 dark:text-gray-300"
+							>Ready</span
+						>
+					</div>
+
+					<button
+						id="next-button"
+						class="ml-1 p-1 text-gray-400 transition-colors hover:text-[#8953d1]"
+						title="下一首"
+					>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="14"
+							height="14"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19"
+							></line></svg
+						>
+					</button>
+
+					<button
+						id="collapse-button"
+						class="ml-1 p-1 text-gray-400 transition-colors hover:text-red-400"
+						title="收起控制面板"
+					>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="14"
+							height="14"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"></path></svg
+						>
+					</button>
+				</div>
+			</div>
+			<audio id="main-audio"></audio>
+		</div>
+
+		<style is:global>
+			.player-expanded #player-container {
+				width: 230px;
+				padding-right: 10px;
 			}
+			.player-expanded #expanded-controls {
+				opacity: 1;
+				pointer-events: auto;
+			}
+			.is-playing #music-icon {
+				opacity: 0;
+			}
+			.is-playing #visualizer {
+				opacity: 1;
+			}
+
+			@keyframes quiet {
+				25% {
+					height: 4px;
+				}
+				50% {
+					height: 10px;
+				}
+				75% {
+					height: 4px;
+				}
+				100% {
+					height: 10px;
+				}
+			}
+			@keyframes loud {
+				25% {
+					height: 10px;
+				}
+				50% {
+					height: 16px;
+				}
+				75% {
+					height: 12px;
+				}
+				100% {
+					height: 16px;
+				}
+			}
+			.is-playing .bar:nth-child(1) {
+				animation: quiet 0.8s infinite;
+			}
+			.is-playing .bar:nth-child(2) {
+				animation: loud 1.2s infinite;
+			}
+			.is-playing .bar:nth-child(3) {
+				animation: quiet 1s infinite;
+			}
+		</style>
+
+		<script is:inline>
+			(function () {
+				const playlist = [
+					{ name: "I Will Fight For You", url: "/music/i-will-fight-for-you.mp3" },
+					{ name: "Still Moving On", url: "/music/still-moving-on.mp3" },
+					{ name: "一舞倾城", url: "/music/yiwuqingcheng.mp3" },
+					{ name: "捣衣", url: "/music/daoyi.mp3" },
+					{ name: "Sun Is Gonna Rise", url: "/music/suns-gonna-rise.mp3" },
+				];
+
+				let currentIndex = 0;
+				const state = { isPlaying: false, isExpanded: false };
+
+				function updateUI() {
+					const player = document.getElementById("minimal-player");
+					const songName = document.getElementById("current-song-name");
+					if (!player) return;
+
+					state.isPlaying
+						? player.classList.add("is-playing")
+						: player.classList.remove("is-playing");
+					state.isExpanded
+						? player.classList.add("player-expanded")
+						: player.classList.remove("player-expanded");
+
+					if (songName && playlist[currentIndex]) {
+						songName.innerText = playlist[currentIndex].name;
+					}
+				}
+
+				function initPlayer() {
+					const playBtn = document.getElementById("play-button");
+					const nextBtn = document.getElementById("next-button");
+					const collapseBtn = document.getElementById("collapse-button");
+					const audio = document.getElementById("main-audio");
+
+					if (!playBtn || !audio) return;
+
+					playBtn.onclick = () => {
+						if (!state.isExpanded) state.isExpanded = true;
+						if (state.isPlaying) {
+							audio.pause();
+							state.isPlaying = false;
+						} else {
+							if (!audio.src) audio.src = playlist[currentIndex].url;
+							audio.play().catch(() => {});
+							state.isPlaying = true;
+						}
+						updateUI();
+					};
+
+					nextBtn.onclick = (e) => {
+						e.stopPropagation();
+						currentIndex = (currentIndex + 1) % playlist.length;
+						audio.src = playlist[currentIndex].url;
+						audio.play();
+						state.isPlaying = true;
+						updateUI();
+					};
+
+					collapseBtn.onclick = (e) => {
+						e.stopPropagation();
+						state.isExpanded = false;
+						updateUI();
+					};
+
+					audio.onended = () => nextBtn.click();
+					updateUI();
+				}
+
+				initPlayer();
+				document.addEventListener("astro:after-swap", initPlayer);
+				document.addEventListener("astro:page-load", updateUI);
+			})();
 		</script>
 	</body>
 </html>
