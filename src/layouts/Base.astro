@@ -15,8 +15,8 @@ const {
 	meta: { articleDate, description = siteConfig.description, ogImage, title },
 } = Astro.props;
 
-// 🔴 添加 Google Analytics ID
-const GA_ID = "G-1EC76EZ517"; // 替换成你的 GA ID
+// Google Analytics ID
+const GA_ID = "G-1EC76EZ517";
 ---
 
 <html class="scroll-smooth" lang={siteConfig.lang}>
@@ -28,8 +28,8 @@ const GA_ID = "G-1EC76EZ517"; // 替换成你的 GA ID
 		<link rel="icon" href="/avatar.png" type="image/png" />
 		<link rel="apple-touch-icon" href="/avatar.png" />
 
-		{/* 3. Google Analytics - 🔴 新增这部分 */}
-		<script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}></script>
+		{/* 3. Google Analytics - 已添加 is:inline 消除警告 */}
+		<script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}></script>
 		<script is:inline define:vars={{ GA_ID }}>
 			window.dataLayer = window.dataLayer || [];
 			function gtag() {
