@@ -8,8 +8,7 @@ interface Props {
 
 const { post } = Astro.props;
 const {
-	// 关键点：从 post.data 中解构出 originalUrl
-	data: { title, description, publishDate, originalUrl },
+	data: { title, description, publishDate, originalUrl, tags },
 } = post;
 
 const articleDate = publishDate.toISOString();
@@ -43,14 +42,12 @@ const articleDate = publishDate.toISOString();
 
 		{/* 2. 文章头部区域 */}
 		<article class="flex flex-col gap-4">
-			{/* 标题：强制使用 font-serif */}
 			<h1
 				class="font-serif text-3xl leading-tight font-bold text-black sm:text-4xl dark:text-white"
 			>
 				{title}
 			</h1>
 
-			{/* 摘要 */}
 			{
 				description && (
 					<p class="font-serif text-lg leading-relaxed text-gray-500 dark:text-gray-400">
@@ -59,8 +56,8 @@ const articleDate = publishDate.toISOString();
 				)
 			}
 
-			{/* Meta 信息：日期 & 原文链接 */}
-			<div class="mt-2 flex items-center gap-3 font-mono text-sm text-gray-400">
+			{/* Meta 信息：日期 & 原文链接 & Tags */}
+			<div class="mt-2 flex flex-wrap items-center gap-3 font-mono text-sm text-gray-400">
 				<time datetime={articleDate}>
 					{
 						publishDate
@@ -84,7 +81,7 @@ const articleDate = publishDate.toISOString();
 								rel="noopener noreferrer"
 								class="inline-flex items-center gap-1 underline decoration-dotted underline-offset-4 transition-colors hover:text-black dark:hover:text-white"
 							>
-								原文链接
+								Original Link
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
 									width="14"
@@ -104,12 +101,29 @@ const articleDate = publishDate.toISOString();
 						</>
 					)
 				}
+
+				{/* 🔴 核心修改：将 span 替换为 a 标签以实现跳转 */}
+				{
+					tags && tags.length > 0 && (
+						<>
+							<span>·</span>
+							<div class="flex items-center gap-3">
+								{tags.map((tag: string) => (
+									<a
+										href={`/tags/${tag}/`}
+										class="capitalize transition-colors before:content-['#'] hover:text-black hover:underline hover:decoration-dotted hover:underline-offset-4 dark:hover:text-white"
+									>
+										{tag}
+									</a>
+								))}
+							</div>
+						</>
+					)
+				}
 			</div>
 
-			{/* 分割线 */}
 			<hr class="my-8 border-dashed border-gray-200 dark:border-gray-700" />
 
-			{/* 3. 正文区域：加上 prose-serif */}
 			<div class="prose prose-lg prose-serif dark:prose-invert max-w-none font-serif">
 				<slot />
 			</div>

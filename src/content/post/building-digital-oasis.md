@@ -1,9 +1,10 @@
 ---
 title: "The Best Birthday Gift I Ever Gave Myself"
-description: "What's the most meaningful gift you could give yourself?"
+description: "Building this website wasn't just about creating a digital presence—it was about reclaiming ownership of my story. I uploaded my first public article from 2009 and other milestone pieces, creating annotations for my reimagined life. These weren't just old posts; they were chapters of who I've become."
 publishDate: "2025-12-17"
 tags: ["Life", "AI", ] 
 originalUrl: "https://x.com/rexliu/status/2001175043947249676?s=20"
+pinned: true
 ---
 
 ## Introduction

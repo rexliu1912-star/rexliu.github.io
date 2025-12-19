@@ -2,7 +2,6 @@
 import { getCollection } from "astro:content";
 import PageLayout from "@/layouts/Base.astro";
 
-// 1. 获取所有文章并按日期排序
 const allPosts = await getCollection("post");
 const sortedPosts = allPosts.sort(
 	(a, b) => new Date(b.data.publishDate).valueOf() - new Date(a.data.publishDate).valueOf(),
@@ -11,15 +10,11 @@ const sortedPosts = allPosts.sort(
 const MAX_POSTS = 10;
 const MAX_PINNED = 5;
 
-// 2. 置顶逻辑：筛选出 pinned 为 true 的文章，最多取 5 篇
 const pinnedPosts = sortedPosts.filter((p) => p.data.pinned === true).slice(0, MAX_PINNED);
-
-// 3. 填充逻辑：从剩余文章中补齐，直到总数达到 10 篇
 const otherPosts = sortedPosts
 	.filter((p) => !pinnedPosts.includes(p))
 	.slice(0, MAX_POSTS - pinnedPosts.length);
 
-// 4. 合并显示列表
 const postsToDisplay = [...pinnedPosts, ...otherPosts];
 
 const meta = {
@@ -40,7 +35,7 @@ function formatHomeDate(date: Date) {
 
 <PageLayout meta={meta}>
 	<section class="mb-12">
-		<h1 class="mb-4 font-serif text-3xl font-bold dark:text-white">Rex Liu</h1>
+		<h1 class="mb-4 font-serif text-4xl font-bold dark:text-white">Rex Liu</h1>
 		<p class="max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">
 			Writer and Builder in Crypto, AI, and Life.<br />
 			在加密、人工智能和人生浪潮里，一边折腾一边记录的人。
@@ -61,13 +56,11 @@ function formatHomeDate(date: Date) {
 								href={`/posts/${p.id}/`}
 								class="font-serif text-xl font-medium text-black decoration-gray-400 hover:underline hover:decoration-2 hover:underline-offset-4 dark:text-white"
 							>
-								{/* 如果是置顶文章，显示置顶标记 */}
 								{p.data.pinned && (
 									<span class="mr-2 text-base font-normal text-gray-400">[Pinned]</span>
 								)}
 								{p.data.title}
 							</a>
-
 							<time
 								datetime={p.data.publishDate.toISOString()}
 								class="ml-4 shrink-0 font-mono text-xs text-gray-400"
@@ -77,7 +70,7 @@ function formatHomeDate(date: Date) {
 						</div>
 
 						{p.data.description && (
-							<p class="mb-2 max-w-3xl font-serif text-base leading-relaxed text-gray-600 dark:text-gray-400">
+							<p class="mb-2 line-clamp-2 max-w-3xl overflow-hidden font-serif text-base leading-relaxed text-gray-600 dark:text-gray-400">
 								{p.data.description}
 							</p>
 						)}

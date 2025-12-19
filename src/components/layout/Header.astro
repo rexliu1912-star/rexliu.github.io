@@ -1,27 +1,20 @@
 ---
 import ThemeToggle from "../ThemeToggle.astro";
 
-// 获取当前页面的路径
 const { pathname } = Astro.url;
-// 判断是否在首页（考虑到可能的末尾斜杠）
 const isHome = pathname === "/" || pathname === "/index.html";
-
-// 替换为你的 Twitter 链接
 const TWITTER_URL = "https://twitter.com/rexliu";
 ---
 
-<header class="mb-10 flex items-center justify-between pt-6" id="main-header">
-	{/* 左侧：动态导航链接 */}
-	<nav class="flex items-center gap-6 font-serif text-base text-black sm:text-lg dark:text-white">
+<header class="mb-16 flex items-center justify-between pt-2" id="main-header">
+	<nav class="flex items-center gap-6 font-serif text-sm text-black dark:text-white">
 		{
 			isHome ? (
-				/* 如果在首页，显示 Archive 链接到文章页 */
-				<a href="/posts/" class="hover:underline hover:decoration-2 hover:underline-offset-4">
+				<a href="/posts/" class="hover:underline hover:decoration-1 hover:underline-offset-4">
 					Archive
 				</a>
 			) : (
-				/* 如果在其他页面（如 Posts 或文章详情页），显示 Home 链接回首页 */
-				<a href="/" class="hover:underline hover:decoration-2 hover:underline-offset-4">
+				<a href="/" class="hover:underline hover:decoration-1 hover:underline-offset-4">
 					Home
 				</a>
 			)
@@ -31,14 +24,13 @@ const TWITTER_URL = "https://twitter.com/rexliu";
 			href={TWITTER_URL}
 			target="_blank"
 			rel="noopener noreferrer"
-			class="hover:underline hover:decoration-2 hover:underline-offset-4"
+			class="hover:underline hover:decoration-1 hover:underline-offset-4"
 		>
 			Twitter (X)
 		</a>
 	</nav>
 
-	{/* 右侧：主题切换 */}
-	<div class="flex items-center gap-4">
+	<div class="flex origin-right scale-75 items-center gap-4">
 		<ThemeToggle />
 	</div>
 </header>

@@ -1,6 +1,6 @@
 ---
 title: "My Crypto Jouney"
-description: "The Best Times Are Still Ahead of Us?"
+description: "Focus on SNEK and things I love at this point. Just relieved I'm still here after 8 years. The Best Times Are Still Ahead of Us?"
 publishDate: "2025-10-25"
 tags: ["Crypto"] 
 pinned: true

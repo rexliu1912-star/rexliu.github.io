@@ -1,10 +1,12 @@
 ---
 title: "The Principle"
-description: "I'm done watching people bow down to power or money."
+description: "You only get one life. Why spend it performing for people who don't care about you? Live for yourself. Not your boss. Not the algorithm. Not the people who need you silent to feel powerful."
 publishDate: "2025-12-15"
 tags: ["Life", "Crypto", ] 
 originalUrl: "https://x.com/rexliu/status/1998653424074678535?s=20"
 ---
+
+I'm done watching people bow down to power or money.
 
 I spent years in spaces where nobody could speak the truth without looking over their shoulder. Where every word had to be measured against who might get offended, who might retaliate, who might cut you off. That kind of environment drains you. It makes you forget what your own voice even sounds like.
 

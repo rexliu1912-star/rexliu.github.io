@@ -1,6 +1,6 @@
 ---
 title: "A Celebration of Life"
-description: "I'll remember Mamba forever."
+description: "The memorial of Kobe and his mentality reminds us of all the youth and blood and the spirit that we all had along the road."
 publishDate: "2020-03-01"
 tags: ["Life","People",] 
 ---
@@ -37,9 +37,7 @@ In his finale of his career, I still remembered the teeming shouts when he ended
 
 If only God would spare him andoffer him another chance to justify the deeds.
 
-If only Kobe
-
-would shield Gigi and the torch would carry on to the next generation.
+If only Kobe would shield Gigi and the torch would carry on to the next generation.
 
 If only someone would reverse the sandglass.
 
