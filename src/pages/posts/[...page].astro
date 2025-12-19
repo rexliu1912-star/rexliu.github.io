@@ -45,7 +45,6 @@ const descYearKeys = Object.keys(groupedByYear).sort((a, b) => +b - +a);
 
 <PageLayout meta={meta}>
 	<div class="mb-12">
-		{/* 标题颜色适配：dark:text-white */}
 		<h1 class="font-serif text-3xl font-bold text-black dark:text-white">Archive</h1>
 	</div>
 
@@ -54,8 +53,7 @@ const descYearKeys = Object.keys(groupedByYear).sort((a, b) => +b - +a);
 			{
 				descYearKeys.map((yearKey) => (
 					<section class="mb-12">
-						{/* 年份横线适配：dark:border-zinc-700 */}
-						<h2 class="mb-6 border-b border-dashed border-gray-200 pb-2 font-mono text-xs font-bold tracking-widest text-gray-400 uppercase dark:border-zinc-700">
+						<h2 class="mb-6 border-b border-dashed border-gray-200 pb-2 font-serif text-sm font-bold tracking-widest text-gray-400 uppercase dark:border-zinc-700">
 							{yearKey}
 						</h2>
 
@@ -63,14 +61,12 @@ const descYearKeys = Object.keys(groupedByYear).sort((a, b) => +b - +a);
 							{groupedByYear[yearKey]?.map((p) => (
 								<li class="flex flex-col">
 									<div class="flex items-baseline justify-between gap-x-4">
-										{/* 文章链接颜色适配：text-black dark:text-white */}
 										<a
 											href={`/posts/${p.id}/`}
 											class="font-serif text-xl font-medium text-black decoration-gray-400 underline-offset-4 hover:underline dark:text-white dark:decoration-zinc-500"
 										>
 											{p.data.title}
 										</a>
-										{/* 日期颜色适配：text-gray-400 dark:text-zinc-500 */}
 										<time class="shrink-0 font-mono text-xs text-gray-400 dark:text-zinc-500">
 											{p.data.publishDate.toLocaleDateString("en-US", {
 												month: "short",
@@ -96,15 +92,16 @@ const descYearKeys = Object.keys(groupedByYear).sort((a, b) => +b - +a);
 				{
 					uniqueTagsWithCounts.map(([tag, count]) => (
 						<li>
-							{/* 标签背景色适配：dark:bg-zinc-800/50 */}
 							<a
-								class="group flex items-center gap-x-1.5 rounded-md bg-gray-50 px-2 py-1 transition-all hover:bg-black dark:bg-zinc-800/50 dark:hover:bg-white"
+								class="group flex items-center gap-x-1.5 rounded-md bg-[#FFF8EB] px-2 py-1 transition-all hover:bg-[#8953d1] dark:bg-[#1a1a1a]"
 								href={`/tags/${tag}/`}
 							>
-								<span class="font-mono text-xs text-gray-600 group-hover:text-white dark:text-zinc-400 dark:group-hover:text-black">
+								{/* 🔴 首字母大写 + 衬线斜体 + 品牌紫 */}
+								<span class="font-serif text-xs font-medium text-[#8953d1] capitalize italic transition-colors group-hover:text-white">
 									#{tag}
 								</span>
-								<span class="rounded-full bg-gray-200 px-1.5 font-mono text-[10px] text-gray-500 group-hover:bg-zinc-800 group-hover:text-gray-300 dark:bg-zinc-700 dark:text-zinc-500 dark:group-hover:bg-zinc-200 dark:group-hover:text-zinc-800">
+								{/* 计数部分：淡紫色背景，无边框 */}
+								<span class="rounded-full bg-[#8953d1]/10 px-1.5 font-mono text-[10px] text-[#8953d1]/70 transition-colors group-hover:bg-white/20 group-hover:text-white">
 									{count}
 								</span>
 							</a>

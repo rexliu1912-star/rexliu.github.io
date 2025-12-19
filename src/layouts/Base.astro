@@ -47,7 +47,7 @@ const GA_ID = "G-1EC76EZ517";
 		</main>
 		<Footer />
 
-		{/* 🟢 最终版本：响应式位置 + 衬线体 (Serif) */}
+		{/* 播放器组件：保持品牌紫与衬线体优雅感 */}
 		<div
 			id="minimal-player"
 			transition:persist
@@ -55,9 +55,8 @@ const GA_ID = "G-1EC76EZ517";
 		>
 			<div
 				id="player-container"
-				class="flex w-10 items-center overflow-hidden rounded-full border border-black/10 bg-white p-1 shadow-md transition-all duration-500 ease-in-out dark:border-white/10 dark:bg-[#1a1a1a]"
+				class="flex w-10 items-center overflow-hidden rounded-full bg-white p-1 shadow-md transition-all duration-500 ease-in-out dark:bg-[#1a1a1a] dark:shadow-none"
 			>
-				{/* 控制按钮 */}
 				<button
 					id="play-button"
 					class="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white transition-transform active:scale-90"
@@ -80,7 +79,6 @@ const GA_ID = "G-1EC76EZ517";
 							cy="16"
 							r="3"></circle>
 					</svg>
-
 					<div
 						id="visualizer"
 						class="absolute inset-0 flex items-center justify-center gap-[2px] opacity-0 transition-opacity duration-300"
@@ -90,28 +88,28 @@ const GA_ID = "G-1EC76EZ517";
 						<div class="bar h-2 w-[2px] rounded-full bg-[#8953d1]"></div>
 					</div>
 				</button>
-
-				{/* 展开内容区：应用 font-serif */}
 				<div
 					id="expanded-controls"
 					class="pointer-events-none flex items-center pl-2 opacity-0 transition-opacity duration-300"
 				>
 					<div class="flex w-28 flex-col overflow-hidden whitespace-nowrap">
-						{/* 衬线体字样 */}
-						<span class="font-serif text-[8px] font-bold tracking-wider text-[#8953d1]"
+						<span class="font-serif text-[10px] font-bold tracking-wider text-[#8953d1] italic"
 							>Now Playing</span
 						>
-						<span
-							id="current-song-name"
-							class="truncate font-serif text-[12px] leading-tight font-medium text-gray-600 dark:text-gray-300"
-							>Ready</span
-						>
+						<div id="current-song-container">
+							<span
+								id="current-song-name"
+								class="inline-block font-serif text-[12px] leading-tight font-medium text-gray-600 dark:text-gray-300"
+								style="white-space: nowrap;"
+							>
+								Ready
+							</span>
+						</div>
 					</div>
-
 					<button
 						id="next-button"
 						class="ml-1 p-1 text-gray-400 transition-colors hover:text-[#8953d1]"
-						title="下一首"
+						title="Next"
 					>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
@@ -127,11 +125,10 @@ const GA_ID = "G-1EC76EZ517";
 							></line></svg
 						>
 					</button>
-
 					<button
 						id="collapse-button"
 						class="ml-1 p-1 text-gray-400 transition-colors hover:text-red-400"
-						title="收起控制面板"
+						title="Collapse"
 					>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
@@ -151,21 +148,23 @@ const GA_ID = "G-1EC76EZ517";
 		</div>
 
 		<style is:global>
+			/* 1. 播放器逻辑补全 */
 			.player-expanded #player-container {
-				width: 230px;
-				padding-right: 10px;
+				width: 230px !important;
+				padding-right: 10px !important;
 			}
 			.player-expanded #expanded-controls {
-				opacity: 1;
-				pointer-events: auto;
+				opacity: 1 !important;
+				pointer-events: auto !important;
 			}
 			.is-playing #music-icon {
-				opacity: 0;
+				opacity: 0 !important;
 			}
 			.is-playing #visualizer {
-				opacity: 1;
+				opacity: 1 !important;
 			}
 
+			/* 2. 声波动画 */
 			@keyframes quiet {
 				25% {
 					height: 4px;
@@ -203,26 +202,98 @@ const GA_ID = "G-1EC76EZ517";
 			.is-playing .bar:nth-child(3) {
 				animation: quiet 1s infinite;
 			}
+
+			/* 3. 全站 Tags 深度统一：透明 + 自动配色方案 */
+			.cactus-tag,
+			.flex.flex-wrap.gap-2 a,
+			aside ul.flex.flex-wrap a {
+				display: inline-flex !important;
+				align-items: center !important;
+				border-radius: 0.375rem !important;
+				padding: 0.25rem 0.5rem !important;
+				font-size: 0.75rem !important;
+				font-family: font-serif !important;
+				/* 🟢 核心修改：颜色继承正文，背景透明，无边框 */
+				color: inherit !important;
+				background-color: transparent !important;
+				border: none !important;
+				text-decoration: none !important;
+				transition: all 0.2s ease !important;
+				margin-bottom: 0.25rem;
+				opacity: 0.8;
+			}
+
+			/* 悬停效果：保持品牌紫点亮感 */
+			.cactus-tag:hover,
+			.flex.flex-wrap.gap-2 a:hover,
+			aside ul.flex.flex-wrap a:hover {
+				color: #8953d1 !important;
+				background-color: rgba(137, 83, 209, 0.05) !important;
+				transform: translateY(-1px) !important;
+				opacity: 1;
+			}
+
+			/* 标签计数数字适配 */
+			.cactus-tag span,
+			.flex.flex-wrap.gap-2 a span,
+			aside ul.flex.flex-wrap a span:last-child {
+				margin-left: 0.375rem;
+				opacity: 0.4;
+				font-size: 0.7rem;
+				font-family: font-mono !important;
+			}
+			/* 🟢 新增：歌曲名跑马灯滚动动画 */
+			@keyframes marquee {
+				0% {
+					transform: translateX(0);
+				}
+				100% {
+					transform: translateX(-50%);
+				} /* 滚动到一半，因为我们会复制一份文字实现无缝连接 */
+			}
+
+			.animate-marquee {
+				display: inline-block;
+				white-space: nowrap;
+				padding-left: 100%; /* 初始位置在右侧外 */
+				animation: marquee 10s linear infinite;
+			}
+
+			/* 修改歌曲名容器，隐藏溢出部分 */
+			#current-song-container {
+				width: 110px; /* 固定显示宽度 */
+				overflow: hidden;
+				position: relative;
+				mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+			}
 		</style>
 
 		<script is:inline>
 			(function () {
 				const playlist = [
-					{ name: "I Will Fight For You", url: "/music/i-will-fight-for-you.mp3" },
-					{ name: "Still Moving On", url: "/music/still-moving-on.mp3" },
-					{ name: "一舞倾城", url: "/music/yiwuqingcheng.mp3" },
-					{ name: "捣衣", url: "/music/daoyi.mp3" },
-					{ name: "Sun Is Gonna Rise", url: "/music/suns-gonna-rise.mp3" },
+					{ name: "I Will Fight For You - Voyageur", url: "/music/i-will-fight-for-you.mp3" },
+					{ name: "Still Moving On - Luminar", url: "/music/still-moving-on.mp3" },
+					{ name: "一舞倾城 - 魏小涵", url: "/music/yiwuqingcheng.mp3" },
+					{ name: "捣衣 - 古琴龚一", url: "/music/daoyi.mp3" },
+					{ name: "绕月 - 因你而在的梦", url: "/music/raoyue.mp3" },
+					{ name: "穿越时空的思念 - 古琴梅旸", url: "/music/chuanyueshikong.mp3" },
+					{ name: "美人兮 - 古琴赵晓霞", url: "/music/meirenxi.mp3" },
+					{ name: "余情幽梦 - 骆集益", url: "/music/yuqingyoumeng.mp3" },
+					{ name: "Angel - Cathartic Fall", url: "/music/angel.mp3" },
+					{ name: "Head In The Clouds - Hayd", url: "/music/head-in-the-clouds.mp3" },
+					{ name: "夢灯籠 - RADWIMPS", url: "/music/mengdenglong.mp3" },
+					{ name: "三葉のテーマ - RADWIMPS", url: "/music/sanye.mp3" },
 				];
-
-				let currentIndex = 0;
+				let currentIndex = Math.floor(Math.random() * playlist.length);
 				const state = { isPlaying: false, isExpanded: false };
-
 				function updateUI() {
 					const player = document.getElementById("minimal-player");
 					const songName = document.getElementById("current-song-name");
+					const container = document.getElementById("current-song-container");
+
 					if (!player) return;
 
+					// 状态更新
 					state.isPlaying
 						? player.classList.add("is-playing")
 						: player.classList.remove("is-playing");
@@ -231,18 +302,35 @@ const GA_ID = "G-1EC76EZ517";
 						: player.classList.remove("player-expanded");
 
 					if (songName && playlist[currentIndex]) {
-						songName.innerText = playlist[currentIndex].name;
+						const name = playlist[currentIndex].name;
+						songName.innerText = name;
+
+						// 🟢 动画逻辑：判断文字宽度是否超过容器宽度
+						// 延迟一小会儿执行，确保 DOM 已渲染
+						setTimeout(() => {
+							if (songName.offsetWidth > container.offsetWidth) {
+								// 如果太长，复制一份内容实现无缝滚动，并添加动画类
+								songName.innerHTML = `${name} &nbsp;&nbsp;&nbsp;&nbsp; ${name} &nbsp;&nbsp;&nbsp;&nbsp;`;
+								songName.style.animation = "marquee 8s linear infinite";
+							} else {
+								songName.style.animation = "none";
+							}
+						}, 50);
 					}
 				}
-
 				function initPlayer() {
 					const playBtn = document.getElementById("play-button");
 					const nextBtn = document.getElementById("next-button");
 					const collapseBtn = document.getElementById("collapse-button");
 					const audio = document.getElementById("main-audio");
-
 					if (!playBtn || !audio) return;
-
+					const playNext = () => {
+						currentIndex = (currentIndex + 1) % playlist.length;
+						audio.src = playlist[currentIndex].url;
+						audio.play();
+						state.isPlaying = true;
+						updateUI();
+					};
 					playBtn.onclick = () => {
 						if (!state.isExpanded) state.isExpanded = true;
 						if (state.isPlaying) {
@@ -255,26 +343,18 @@ const GA_ID = "G-1EC76EZ517";
 						}
 						updateUI();
 					};
-
 					nextBtn.onclick = (e) => {
 						e.stopPropagation();
-						currentIndex = (currentIndex + 1) % playlist.length;
-						audio.src = playlist[currentIndex].url;
-						audio.play();
-						state.isPlaying = true;
-						updateUI();
+						playNext();
 					};
-
 					collapseBtn.onclick = (e) => {
 						e.stopPropagation();
 						state.isExpanded = false;
 						updateUI();
 					};
-
-					audio.onended = () => nextBtn.click();
+					audio.onended = playNext;
 					updateUI();
 				}
-
 				initPlayer();
 				document.addEventListener("astro:after-swap", initPlayer);
 				document.addEventListener("astro:page-load", updateUI);
