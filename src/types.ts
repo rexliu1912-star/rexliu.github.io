@@ -9,6 +9,7 @@ export interface SiteConfig {
 	ogLocale: string;
 	title: string;
 	url: string;
+	twitterHandle?: string; // 添加这一行，允许配置推特账号
 }
 
 export interface PaginationLink {
