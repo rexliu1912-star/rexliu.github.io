@@ -1,6 +1,7 @@
 ---
 import type { CollectionEntry } from "astro:content";
 import BaseLayout from "./Base.astro";
+import Copyright from "@/components/Copyright.astro"; // 1. 导入版权组件
 
 interface Props {
 	post: CollectionEntry<"post">;
@@ -102,7 +103,7 @@ const articleDate = publishDate.toISOString();
 					)
 				}
 
-				{/* 🔴 核心修改：将 span 替换为 a 标签以实现跳转 */}
+				{/* Tags */}
 				{
 					tags && tags.length > 0 && (
 						<>

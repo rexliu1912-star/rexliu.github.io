@@ -1,24 +1,26 @@
 ---
 const year = new Date().getFullYear();
+const BRAND_PURPLE = "#8953d1";
 ---
 
 <footer
 	class="mt-auto flex w-full flex-col items-center justify-center gap-y-2 pt-20 pb-8 text-center align-middle font-serif text-sm text-gray-500 dark:text-gray-400"
 >
 	<div class="mb-1">
-		&copy; {year} Rex Liu
+		&copy; {year}
+		<span style={`color: ${BRAND_PURPLE}; font-weight: 500;`}>Rex Liu</span>
 	</div>
 
 	<div class="flex items-center gap-x-3 text-xs opacity-80">
 		<a
 			href="/"
-			class="transition-colors hover:text-black hover:underline hover:underline-offset-2 dark:hover:text-white"
+			class="transition-colors hover:text-[#8953d1] hover:underline hover:underline-offset-4"
 		>
 			rexliu.io
 		</a>
 
 		<span class="text-gray-300 dark:text-gray-600">|</span>
 
-		<span>Sovereign Individual</span>
+		<span class="tracking-wider">Sovereign Individual</span>
 	</div>
 </footer>
