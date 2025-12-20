@@ -20,15 +20,15 @@ const ogOptions: SatoriOptions = {
 };
 
 const markup = () =>
-	html`<div tw="flex flex-col w-full h-full bg-[#FFF8EB] text-[#151515] items-center justify-center p-20" style="font-family: 'Roboto Mono';">
+	html`<div tw="flex flex-col w-full h-full bg-[#151515] text-[#FFF8EB] items-center justify-center p-20" style="font-family: 'Roboto Mono';">
 		<div tw="flex flex-col items-center w-full">
 			<h1 tw="text-7xl font-bold tracking-[0.1em] uppercase text-center mb-10">
 				${siteConfig.title}
 			</h1>
 
-			<div tw="flex w-1/3 h-[4px] bg-[#18F2B2] mb-8"></div>
+			<div tw="flex w-1/3 h-[4px] bg-[#8552C9] mb-8"></div>
 
-			<p tw="text-4xl text-[#151515] opacity-90 tracking-wide text-center">
+			<p tw="text-4xl text-[#FFF8EB] opacity-90 tracking-wide text-center">
 				${siteConfig.description}
 			</p>
 		</div>

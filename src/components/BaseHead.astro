@@ -8,10 +8,16 @@ type Props = SiteMeta;
 
 const { articleDate, description, ogImage, title } = Astro.props;
 
+// 品牌色彩配置
+const BRAND_PURPLE = "#8953d1";
+const WARM_BG = "#FFF8EB";
+
 // 修改逻辑：如果是首页（Home），直接显示站点标题；否则显示“页面标题 - 站点标题”
 const siteTitle = title === "Home" ? siteConfig.title : `${title} - ${siteConfig.title}`;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+
+// 强制刷新缓存的小技巧：如果你刚更换了 social-card.png，可以给它加个版本号，如 ?v=20251220
 const socialImageURL = new URL(ogImage ? ogImage : "/social-card.png", Astro.url).href;
 ---
 
@@ -19,15 +25,27 @@ const socialImageURL = new URL(ogImage ? ogImage : "/social-card.png", Astro.url
 <meta content="width=device-width, initial-scale=1.0" name="viewport" />
 <title>{siteTitle}</title>
 
-{/* Icons */}
+{/* 品牌主题色 - 浏览器状态栏、移动端地址栏 */}
+<meta name="theme-color" content={BRAND_PURPLE} />
 
+{/* CSS 变量注入：个人品牌色与暖色背景 */}
+<style define:vars={{ brandPurple: BRAND_PURPLE, warmBg: WARM_BG }}>
+	:root {
+		--theme-accent: var(--brandPurple);
+		--theme-bg: var(--warmBg);
+	}
+	/* 强制设置文档背景，防止加载瞬间闪烁白屏 */
+	html {
+		background-color: var(--warmBg);
+	}
+</style>
+
+{/* Icons */}
 {
 	import.meta.env.PROD && (
 		<>
-			{/* Favicon & Apple Icon */}
 			<link rel="icon" href="/favicon-32x32.png" type="image/png" />
 			<link href="/icons/apple-touch-icon.png" rel="apple-touch-icon" />
-			{/* Manifest */}
 			<link href="/manifest.webmanifest" rel="manifest" />
 		</>
 	)
@@ -43,7 +61,7 @@ const socialImageURL = new URL(ogImage ? ogImage : "/social-card.png", Astro.url
 
 {/* Open Graph / Facebook */}
 <meta content={articleDate ? "article" : "website"} property="og:type" />
-<meta content={title} property="og:title" />
+<meta content={siteTitle} property="og:title" />
 <meta content={description} property="og:description" />
 <meta content={canonicalURL} property="og:url" />
 <meta content={siteConfig.title} property="og:site_name" />
@@ -60,12 +78,16 @@ const socialImageURL = new URL(ogImage ? ogImage : "/social-card.png", Astro.url
 	)
 }
 
-{/* Twitter */}
-<meta content="summary_large_image" property="twitter:card" />
-<meta content={canonicalURL} property="twitter:url" />
-<meta content={title} property="twitter:title" />
-<meta content={description} property="twitter:description" />
-<meta content={socialImageURL} property="twitter:image" />
+{/* Twitter (X) - 使用 name 属性确保最佳抓取效果 */}
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:url" content={canonicalURL} />
+<meta name="twitter:title" content={siteTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={socialImageURL} />
+{/* @ts-ignore - 如果 siteConfig 里没配置这个 key 也不会报错 */}
+{siteConfig.twitterHandle && <meta name="twitter:site" content={siteConfig.twitterHandle} />}
+{/* @ts-ignore */}
+{siteConfig.twitterHandle && <meta name="twitter:creator" content={siteConfig.twitterHandle} />}
 
 {/* Sitemap */}
 <link href="/sitemap-index.xml" rel="sitemap" />

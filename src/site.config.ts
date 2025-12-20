@@ -4,6 +4,8 @@ import type { SiteConfig } from "@/types";
 export const siteConfig: SiteConfig = {
     // 决定了作者元数据标签
     author: "Rex Liu",
+    // 添加这一行 (如果 SiteConfig 类型允许)
+    twitterHandle: "@rexliu",
     // 修正日期配置，确保与中文环境一致
     date: {
         locale: "zh-CN",
@@ -14,7 +16,7 @@ export const siteConfig: SiteConfig = {
         },
     },
     // 核心修改：决定分享时的描述文字
-    description: "Sovereign Individual - Crypto, AI and Life Insights",
+    description: "Crypto, AI and Life Insights",
     // 确保 HTML 语言标记正确
     lang: "zh-CN",
     // 社交媒体识别的语言区域
