@@ -43,27 +43,32 @@ function formatHomeDate(date: Date) {
 	</section>
 
 	<section aria-label="Blog post list">
-		<h2 class="mb-8 text-xs font-bold tracking-widest text-gray-400 uppercase dark:text-gray-500">
+		<h2
+			class="mb-8 font-serif text-xs font-bold tracking-widest text-gray-400 uppercase dark:text-gray-500"
+		>
 			Essays
 		</h2>
 
 		<div class="space-y-12">
 			{
 				postsToDisplay.map((p) => (
-					<article class="group flex flex-col">
+					<article class="flex flex-col">
 						<div class="mb-3 flex items-baseline justify-between">
+							{/* 标题链接：设为 group/title 以便带动 [Pinned] 变色 */}
 							<a
 								href={`/posts/${p.id}/`}
-								class="font-serif text-xl font-medium text-black decoration-gray-400 hover:underline hover:decoration-2 hover:underline-offset-4 dark:text-white"
+								class="group/title font-serif text-xl font-medium text-black transition-colors hover:text-[#8953d1] hover:underline hover:decoration-[#8953d1] hover:decoration-2 hover:underline-offset-4 dark:text-white dark:hover:text-[#a175e8] dark:hover:decoration-[#a175e8]"
 							>
 								{p.data.pinned && (
-									<span class="mr-2 text-base font-normal text-gray-400">[Pinned]</span>
+									<span class="mr-2 text-base font-normal text-gray-400 transition-colors group-hover/title:text-[#8953d1] dark:text-gray-500 dark:group-hover/title:text-[#a175e8]">
+										[Pinned]
+									</span>
 								)}
 								{p.data.title}
 							</a>
 							<time
 								datetime={p.data.publishDate.toISOString()}
-								class="ml-4 shrink-0 font-mono text-xs text-gray-400"
+								class="ml-4 shrink-0 font-serif text-sm text-gray-400/80"
 							>
 								{formatHomeDate(p.data.publishDate)}
 							</time>
@@ -75,9 +80,10 @@ function formatHomeDate(date: Date) {
 							</p>
 						)}
 
+						{/* More 链接：移除了 group-hover，仅在自身 hover 时变色 */}
 						<a
 							href={`/posts/${p.id}/`}
-							class="text-xs font-medium text-gray-400 transition-colors group-hover:text-black dark:group-hover:text-white"
+							class="w-fit font-serif text-xs font-medium text-gray-400 transition-colors hover:text-[#8953d1] dark:hover:text-[#a175e8]"
 						>
 							More
 						</a>

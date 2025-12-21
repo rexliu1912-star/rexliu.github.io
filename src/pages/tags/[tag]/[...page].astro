@@ -44,10 +44,10 @@ function formatTagPageDate(date: Date) {
 ---
 
 <PageLayout meta={meta}>
-	{/* 顶部导航：使用与文章详情页一致的 < Back 样式 */}
+	{/* 顶部导航：使用与文章详情页一致的 Back 样式 */}
 	<div class="mb-12 flex items-center gap-4">
 		<a
-			class="flex items-center gap-1 font-serif text-sm text-gray-500 transition-colors hover:text-black dark:text-gray-400 dark:hover:text-white"
+			class="flex items-center gap-1 font-serif text-sm text-gray-500 transition-colors hover:text-[#8953d1] dark:text-gray-400 dark:hover:text-[#a175e8]"
 			href="/posts/"
 		>
 			<span>&lt;</span>
@@ -55,7 +55,7 @@ function formatTagPageDate(date: Date) {
 		</a>
 
 		<h1 class="font-serif text-3xl font-bold capitalize dark:text-white">
-			<span class="font-sans text-gray-400">#</span>{tagMeta?.data.title ?? tag}
+			<span class="text-gray-400">#</span>{tagMeta?.data.title ?? tag}
 		</h1>
 	</div>
 
@@ -70,7 +70,6 @@ function formatTagPageDate(date: Date) {
 
 	<div class="grid sm:grid-cols-[3fr_1fr] sm:gap-x-12">
 		<div>
-			{/* space-y-6 保持紧凑美观 */}
 			<ul class="space-y-6 text-start">
 				{
 					page.data.map((p) => (
@@ -78,14 +77,14 @@ function formatTagPageDate(date: Date) {
 							<div class="flex items-baseline justify-between gap-x-4">
 								<a
 									href={`/posts/${p.id}/`}
-									class="font-serif text-xl font-medium text-black decoration-gray-400 transition-all hover:underline hover:decoration-2 hover:underline-offset-4 dark:text-white"
+									class="font-serif text-xl font-medium text-black decoration-[#8953d1]/30 underline-offset-4 transition-colors hover:text-[#8953d1] hover:underline hover:decoration-[#8953d1] dark:text-white dark:hover:text-[#a175e8] dark:hover:decoration-[#a175e8]"
 								>
 									{p.data.title}
 								</a>
 
 								<time
 									datetime={p.data.publishDate.toISOString()}
-									class="shrink-0 font-mono text-xs text-gray-400"
+									class="shrink-0 font-serif text-xs text-gray-400"
 								>
 									{formatTagPageDate(p.data.publishDate)}
 								</time>
@@ -105,5 +104,5 @@ function formatTagPageDate(date: Date) {
 				</p>
 			</div>
 		</aside>
-	</div></PageLayout
->
+	</div>
+</PageLayout>

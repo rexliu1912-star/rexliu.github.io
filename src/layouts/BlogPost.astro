@@ -12,6 +12,24 @@ const {
 } = post;
 
 const articleDate = publishDate.toISOString();
+
+// 自定义日期格式化逻辑：生成类似 "Mar 3rd 2025" 的格式
+const formatCustomDate = (date: Date) => {
+	const day = date.getDate();
+	const month = date.toLocaleDateString("en-US", { month: "short" });
+	const year = date.getFullYear();
+
+	// 计算序数词后缀 (st, nd, rd, th)
+	const getOrdinal = (n: number) => {
+		const s = ["th", "st", "nd", "rd"];
+		const v = n % 100;
+		return s[(v - 20) % 10] || s[v] || s[0];
+	};
+
+	return `${month} ${day}${getOrdinal(day)} ${year}`;
+};
+
+const displayDate = formatCustomDate(publishDate);
 ---
 
 <BaseLayout meta={{ title, description, articleDate }}>
@@ -20,7 +38,7 @@ const articleDate = publishDate.toISOString();
 		<div class="mb-8">
 			<button
 				onclick="history.back()"
-				class="group flex items-center gap-1 font-serif text-sm text-gray-500 transition-colors hover:text-black dark:hover:text-white"
+				class="group flex items-center gap-1 font-serif text-sm text-gray-500 transition-colors hover:text-[#8953d1] dark:hover:text-[#a175e8]"
 			>
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
@@ -57,17 +75,9 @@ const articleDate = publishDate.toISOString();
 			}
 
 			{/* Meta 信息：日期 & 原文链接 & Tags */}
-			<div class="mt-2 flex flex-wrap items-center gap-3 font-mono text-sm text-gray-400">
+			<div class="mt-2 flex flex-wrap items-center gap-3 font-serif text-sm text-gray-400">
 				<time datetime={articleDate}>
-					{
-						publishDate
-							.toLocaleDateString("zh-CN", {
-								year: "numeric",
-								month: "2-digit",
-								day: "2-digit",
-							})
-							.replace(/\//g, ".")
-					}
+					{displayDate}
 				</time>
 
 				{/* 只有当 originalUrl 存在时才渲染 */}
@@ -79,7 +89,7 @@ const articleDate = publishDate.toISOString();
 								href={originalUrl}
 								target="_blank"
 								rel="noopener noreferrer"
-								class="inline-flex items-center gap-1 underline decoration-dotted underline-offset-4 transition-colors hover:text-black dark:hover:text-white"
+								class="inline-flex items-center gap-1 font-serif underline decoration-dotted underline-offset-4 transition-colors hover:text-[#8953d1] dark:hover:text-[#a175e8]"
 							>
 								Original Link
 								<svg
@@ -111,7 +121,7 @@ const articleDate = publishDate.toISOString();
 								{tags.map((tag: string) => (
 									<a
 										href={`/tags/${tag}/`}
-										class="capitalize transition-colors before:content-['#'] hover:text-black hover:underline hover:decoration-dotted hover:underline-offset-4 dark:hover:text-white"
+										class="capitalize transition-colors before:content-['#'] hover:text-[#8953d1] hover:underline hover:decoration-dotted hover:underline-offset-4 dark:hover:text-[#a175e8]"
 									>
 										{tag}
 									</a>

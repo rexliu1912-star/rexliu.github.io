@@ -63,11 +63,11 @@ const descYearKeys = Object.keys(groupedByYear).sort((a, b) => +b - +a);
 									<div class="flex items-baseline justify-between gap-x-4">
 										<a
 											href={`/posts/${p.id}/`}
-											class="font-serif text-xl font-medium text-black decoration-gray-400 underline-offset-4 hover:underline dark:text-white dark:decoration-zinc-500"
+											class="font-serif text-xl font-medium text-black decoration-[#8953d1]/30 underline-offset-4 transition-colors hover:text-[#8953d1] hover:underline hover:decoration-[#8953d1] dark:text-white dark:decoration-zinc-500 dark:hover:text-[#a175e8] dark:hover:decoration-[#a175e8]"
 										>
 											{p.data.title}
 										</a>
-										<time class="shrink-0 font-mono text-xs text-gray-400 dark:text-zinc-500">
+										<time class="shrink-0 font-serif text-xs text-gray-400 dark:text-zinc-500">
 											{p.data.publishDate.toLocaleDateString("en-US", {
 												month: "short",
 												day: "numeric",
@@ -93,15 +93,16 @@ const descYearKeys = Object.keys(groupedByYear).sort((a, b) => +b - +a);
 					uniqueTagsWithCounts.map(([tag, count]) => (
 						<li>
 							<a
-								class="group flex items-center gap-x-1.5 rounded-md bg-[#FFF8EB] px-2 py-1 transition-all hover:bg-[#8953d1] dark:bg-[#1a1a1a]"
+								class="group flex items-center gap-x-1.5 rounded-md px-2 py-1 transition-all hover:bg-[#8953d1]/10 dark:hover:bg-[#8953d1]/20"
 								href={`/tags/${tag}/`}
 							>
-								{/* 🔴 首字母大写 + 衬线斜体 + 品牌紫 */}
-								<span class="font-serif text-xs font-medium text-[#8953d1] capitalize italic transition-colors group-hover:text-white">
+								{/* 标签名：初始灰色，Hover 时品牌紫 */}
+								<span class="font-serif text-xs font-medium text-gray-500 capitalize italic transition-colors group-hover:text-[#8953d1] dark:text-gray-400">
 									#{tag}
 								</span>
-								{/* 计数部分：淡紫色背景，无边框 */}
-								<span class="rounded-full bg-[#8953d1]/10 px-1.5 font-mono text-[10px] text-[#8953d1]/70 transition-colors group-hover:bg-white/20 group-hover:text-white">
+
+								{/* 计数部分：初始更浅的灰色，Hover 时半透明白色背景 + 品牌紫文字 */}
+								<span class="rounded-full bg-transparent px-1.5 font-mono text-[10px] text-gray-400 transition-all group-hover:bg-white/80 group-hover:text-[#8953d1] dark:group-hover:bg-white/20">
 									{count}
 								</span>
 							</a>

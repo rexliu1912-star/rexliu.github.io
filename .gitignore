@@ -1,6 +1,12 @@
 # build output
 dist/
 .output/
+# Astro 特有的构建目录
+.vercel/
+.netlify/
+
+# 背景音乐
+.mp3/
 
 # dependencies
 node_modules/
@@ -11,10 +17,10 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-
 # environment variables
 .env
-.env.production
+.env.*
+!.env.example # 建议保留一个模板文件，方便别人参考配置但不包含真实数据
 
 # macOS-specific files
 .DS_Store
@@ -23,3 +29,17 @@ pnpm-debug.log*
 *.pem
 .cache
 .astro
+# 排除 TypeScript 自动生成的缓存
+*.tsbuildinfo
+
+# Playwright / Testing (如果你以后跑自动化测试，这些会产生大量垃圾文件)
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+
+# IDE / Editors
+.vscode/
+.idea/
+*.swp
+*.pdm
