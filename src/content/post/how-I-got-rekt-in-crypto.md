@@ -1,5 +1,5 @@
 ---
-title: "How I Got Rekt in Crypto?"
+title: "How I Lost $150,000 in Crypto (So You Don't Have To)"
 description: "The difference between those who eventually win and those who quit? The winners share their failures, learn from them, and adapt."
 publishDate: "2025-12-02"
 tags: ["Evergreen","Crypto"] 
