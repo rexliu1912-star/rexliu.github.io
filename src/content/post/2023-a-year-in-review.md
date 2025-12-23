@@ -2,7 +2,7 @@
 title: "2023: A Year in Review"
 description: "Putting all my highlights on DEFI, Trading, NFTs & Reflections. Forever grateful to anyone following his dreams and making it. Be your own boss."
 publishDate: "2023-12-27"
-tags: ["Crypto", "Wealth" ] 
+tags: ["Crypto", "Wealth", "Evergreen"] 
 originalUrl: "https://x.com/rexliu/status/1739981998062743846"
 ---
 
