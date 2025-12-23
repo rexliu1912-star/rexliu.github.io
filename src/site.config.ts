@@ -24,7 +24,7 @@ export const siteConfig: SiteConfig = {
     /* 核心修改：
         - 这将作为分享时的网页大标题
     */
-    title: "Rex Liu — Crypto, AI and Life",
+    title: "Rex Liu - Crypto, AI and Life",
     // 请确保这里的域名是你实际部署的地址，否则 OG 图片路径会生成错误
     url: "https://rexliu.io/",
 };
