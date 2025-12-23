@@ -2,7 +2,7 @@
 title: "一位亿万富豪的创业求生"
 description: "成功的确不是偶然。有时间抱怨，不如取长补短，培养商业思维能力，面对一切信息，比别人多想一步。创业不是为了证明什么，只是用对了方法。"
 publishDate: "2020-02-22"
-tags: ["Life","People","Entertainment",] 
+tags: ["People","Entertainment",] 
 ---
 
 忙里偷闲，这些天看完了几位朋友多次推荐《富豪谷底求翻身》这部纪录片。

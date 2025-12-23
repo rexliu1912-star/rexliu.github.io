@@ -2,7 +2,7 @@
 title: "2025 年终复盘：SNEK 静待花开"
 description: "若你是因为除了创始团队外的任何人看好而投资买入，请重新审视一遍自己的逻辑，而且要持续去做这件事，暴富故事只存在于报道，成功是因为你每时每刻都在验证，希望你有本事活得开心。"
 publishDate: "2025-12-18"
-tags: ["Crypto"] 
+tags: ["Crypto","Evergreen"] 
 originalUrl: "https://x.com/rexliu/status/2001492111875834106"
 pinned: true
 ---

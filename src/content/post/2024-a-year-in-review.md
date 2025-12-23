@@ -2,7 +2,7 @@
 title: "2024: A Year in Reviw"
 description: "Putting all my highlights on DEFI, Trading, NFTs & Reflections. Forever grateful to anyone following his dreams and making it. Be your own boss."
 publishDate: "2024-12-24"
-tags: ["Crypto", "Wealth" ] 
+tags: ["Crypto", "Wealth","Evergreen" ] 
 originalUrl: "https://x.com/rexliu/status/1871524935711289438"
 ---
 

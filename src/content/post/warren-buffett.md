@@ -2,7 +2,7 @@
 title: "巴菲特：通往财富自由之路"
 description: "每天早上你从床上跳起来，是因为你很期待这一天。"
 publishDate: "2017-05-07"
-tags: ["Life","Entertainment"] 
+tags: ["Life","Entertainment","People"] 
 ---
 
 说起财富自由，这几乎是每个人穷其一生在追求的，古今中外，莫不如此。

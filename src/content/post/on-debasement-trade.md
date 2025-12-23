@@ -4,7 +4,6 @@ description: "Ray Dalio recommends 10-15% in these assets. Not because everythin
 publishDate: "2025-11-13"
 tags: ["Wealth"] 
 originalUrl: "https://x.com/rexliu/status/1988826947695386677"
-pinned: true
 ---
 
 The world just keeps going up.

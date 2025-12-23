@@ -1,5 +1,5 @@
 ---
-title: "On Responsibility"
+title: "Responsibility"
 description: "The age of 20 marks the beginning of new resolutions."
 publishDate: "2010-12-21"
 tags: ["Life",] 

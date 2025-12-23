@@ -2,7 +2,7 @@
 title: "Where Amazing Happens"
 description: "My basketball dream starts with Yao Ming."
 publishDate: "2017-03-05"
-tags: ["Life", "Skill",] 
+tags: ["Life", "Skill","People"] 
 ---
 
 ## Part One
