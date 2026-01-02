@@ -2,7 +2,7 @@
 title: "A Short Lesson with SNEK"
 description: "It's hard to find a memecoin I clearly understand every bit of the story other than $SNEK. And I can do much more within my power and it's exhilarating to work with all the legends."
 publishDate: "2024-10-09"
-tags: ["Crypto", "Wealth" ] 
+tags: ["Crypto", "Wealth","Evergreen" ] 
 originalUrl: "https://x.com/rexliu/status/1843484363868254487"
 ---
 

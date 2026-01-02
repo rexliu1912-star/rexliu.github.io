@@ -2,7 +2,7 @@
 title: "Pilgrimage"
 description: "Reality is always intimidating, however, life is fantastic all the time."
 publishDate: "2011-05-16"
-tags: ["Life",] 
+tags: ["Life"] 
 ---
 
 Time is always elapsing quietly and ruthlessly. A really long span since I renewed the last self-exposure. Admittedly, hardly can I recollect the mood when it dates back to the previous journal as the revolving routine has been constantly engaged me in the seemingly endless work. Well, I have no clue as to why now is the time to reveal myself. Maybe part of the reason lies in the recent series of incidents which I have gone through, or maybe the reason is as simple as the fact that no one wants to be silent in most cases, even when he considers himself to be a rather introvert person.

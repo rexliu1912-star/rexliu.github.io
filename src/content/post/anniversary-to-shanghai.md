@@ -2,7 +2,7 @@
 title: "Anniversary to Shanghai: Sketches and Chaos"
 description: "Life is much harder to digest in a place like this."
 publishDate: "2014-03-17"
-tags: ["Life"] 
+tags: ["Life","People"] 
 ---
 
 It was early morning, but the clouds would not give their way to the slowly ascending sun. The compartment became more turbulent and less lively after the protracted trip. Staying awake all night, I was all the more thrilled at the thought of landing a veritable metropolis. With a warm glimpse of her lying on my side, I repeatedly told myself: please take good care of her, and be a man who will never shrink. Meanwhile, a message came, and it was from my dad. He had every confidence in our fresh start, “the morning must be terrific, so enjoy every single day.” I just knew that they are always right behind us.

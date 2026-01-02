@@ -2,7 +2,7 @@
 title: "On the Wing"
 description: "Another year concludes with mixed feelings."
 publishDate: "2010-07-07"
-tags: ["Life",] 
+tags: ["Life"] 
 ---
 
 Another ending of a school year.
