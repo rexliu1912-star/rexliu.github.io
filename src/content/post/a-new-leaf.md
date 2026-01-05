@@ -3,6 +3,7 @@ title: "A New Leaf"
 description: "The birth of a product requires all forces, and I am glad to be part of it."
 publishDate: "2018-06-10"
 tags: ["Life","Product"] 
+pinned: true
 ---
 
 Finally, our long-awaited product has come to the fore.
