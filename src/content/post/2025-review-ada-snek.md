@@ -4,7 +4,6 @@ description: "若你是因为除了创始团队外的任何人看好而投资买
 publishDate: "2025-12-18"
 tags: ["Crypto","Evergreen"] 
 originalUrl: "https://x.com/rexliu/status/2001492111875834106"
-pinned: true
 ---
 最近听到最多的话题就是 Snek 价格。
 
