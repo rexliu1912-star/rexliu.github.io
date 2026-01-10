@@ -4,6 +4,7 @@ import ThemeToggle from "../ThemeToggle.astro";
 const { pathname } = Astro.url;
 const isHome = pathname === "/" || pathname === "/index.html";
 const TWITTER_URL = "https://twitter.com/rexliu";
+const GITHUB_URL = "https://github.com/rexliu1912-star";
 ---
 
 <header class="mb-16 flex items-center justify-between pt-2" id="main-header">
@@ -33,6 +34,15 @@ const TWITTER_URL = "https://twitter.com/rexliu";
 			class="transition-colors hover:text-[#8953d1] hover:underline hover:decoration-[#8953d1] hover:decoration-1 hover:underline-offset-4 dark:hover:text-[#a175e8] dark:hover:decoration-[#a175e8]"
 		>
 			Twitter (X)
+		</a>
+
+		<a
+			href={GITHUB_URL}
+			target="_blank"
+			rel="noopener noreferrer"
+			class="transition-colors hover:text-[#8953d1] hover:underline hover:decoration-[#8953d1] hover:decoration-1 hover:underline-offset-4 dark:hover:text-[#a175e8] dark:hover:decoration-[#a175e8]"
+		>
+			Github
 		</a>
 	</nav>
 
