@@ -1,0 +1,290 @@
+---
+import { getCollection } from "astro:content";
+
+// 获取 GitHub 用户名
+const GITHUB_USERNAME = "rexliu1912-star";
+
+// 获取所有文章的发布日期
+const allPosts = await getCollection("post");
+const postDates = allPosts.map((post) => {
+	const date = new Date(post.data.publishDate);
+	return date.toISOString().split("T")[0]; // YYYY-MM-DD
+});
+
+// 统计每天的文章数量
+const postCountByDate: Record<string, number> = {};
+postDates.forEach((date) => {
+	if (date) {
+		postCountByDate[date] = (postCountByDate[date] || 0) + 1;
+	}
+});
+
+// 生成过去一年的日期数组
+function generateYearDates(): string[] {
+	const dates: string[] = [];
+	const today = new Date();
+	const oneYearAgo = new Date(today);
+	oneYearAgo.setFullYear(today.getFullYear() - 1);
+
+	// 调整到周日开始
+	const startDate = new Date(oneYearAgo);
+	startDate.setDate(startDate.getDate() - startDate.getDay());
+
+	const current = new Date(startDate);
+	while (current <= today) {
+		const dateStr = current.toISOString().split("T")[0];
+		if (dateStr) dates.push(dateStr);
+		current.setDate(current.getDate() + 1);
+	}
+	return dates;
+}
+
+// GitHub Contributions 数据接口
+interface ContributionData {
+	date: string;
+	count: number;
+	level: number;
+}
+
+// 使用 GitHub GraphQL API 获取贡献数据
+async function fetchGitHubContributions(): Promise<Record<string, number>> {
+	const token = import.meta.env.GITHUB_TOKEN;
+
+	if (!token) {
+		console.log("GITHUB_TOKEN not found, using fallback");
+		return {};
+	}
+
+	const query = `
+		query($username: String!) {
+			user(login: $username) {
+				contributionsCollection {
+					contributionCalendar {
+						weeks {
+							contributionDays {
+								date
+								contributionCount
+							}
+						}
+					}
+				}
+			}
+		}
+	`;
+
+	try {
+		const response = await fetch("https://api.github.com/graphql", {
+			method: "POST",
+			headers: {
+				Authorization: `Bearer ${token}`,
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				query,
+				variables: { username: GITHUB_USERNAME },
+			}),
+		});
+
+		if (response.ok) {
+			const data = await response.json();
+			const contributions: Record<string, number> = {};
+			const weeks = data?.data?.user?.contributionsCollection?.contributionCalendar?.weeks;
+
+			if (weeks) {
+				for (const week of weeks) {
+					for (const day of week.contributionDays) {
+						contributions[day.date] = day.contributionCount;
+					}
+				}
+			}
+			return contributions;
+		}
+	} catch (e) {
+		console.log("GitHub GraphQL API error:", e);
+	}
+	return {};
+}
+
+const githubContributions = await fetchGitHubContributions();
+const yearDates = generateYearDates();
+
+// 计算活动级别 (0-4)
+function getLevel(count: number): number {
+	if (count === 0) return 0;
+	if (count <= 2) return 1;
+	if (count <= 5) return 2;
+	if (count <= 10) return 3;
+	return 4;
+}
+
+// 组合数据
+const contributionData: ContributionData[] = yearDates.map((date) => {
+	const postCount = postCountByDate[date] || 0;
+	const githubCount = githubContributions[date] || 0;
+	const totalCount = postCount + githubCount;
+	return {
+		date,
+		count: totalCount,
+		level: getLevel(totalCount),
+	};
+});
+
+// 按周分组
+const weeks: ContributionData[][] = [];
+for (let i = 0; i < contributionData.length; i += 7) {
+	weeks.push(contributionData.slice(i, i + 7));
+}
+
+// 统计总数
+const totalPosts = Object.values(postCountByDate).reduce((sum, count) => sum + count, 0);
+const totalGithubCommits = Object.values(githubContributions).reduce((sum, c) => sum + c, 0);
+---
+
+<div class="activity-graph">
+	<div class="graph-scroll">
+		<div class="contribution-grid">
+			{
+				weeks.map((week) => (
+					<div class="week">
+						{week.map((day) => (
+							<div
+								class={`day level-${day.level}`}
+								data-date={day.date}
+								data-count={day.count}
+								title={`${day.count} contribution${day.count !== 1 ? "s" : ""} on ${day.date}`}
+							/>
+						))}
+					</div>
+				))
+			}
+		</div>
+	</div>
+
+	<div class="activity-footer">
+		<div class="stats">
+			<span>Last 365 Days</span>
+			<span><span class="count">{totalGithubCommits}</span> commits</span>
+			<span><span class="count">{totalPosts}</span> posts</span>
+		</div>
+		<div class="legend">
+			<span class="legend-label">Less</span>
+			<div class="day level-0"></div>
+			<div class="day level-1"></div>
+			<div class="day level-2"></div>
+			<div class="day level-3"></div>
+			<div class="day level-4"></div>
+			<span class="legend-label">More</span>
+		</div>
+	</div>
+</div>
+
+<style>
+	@reference "../styles/global.css";
+
+	.activity-graph {
+		@apply mb-12 py-4;
+		background: transparent;
+		border: none;
+	}
+
+	.graph-scroll {
+		@apply overflow-x-auto pb-2;
+	}
+
+	.contribution-grid {
+		display: flex;
+		flex-direction: row;
+		gap: 3px;
+		width: max-content;
+		min-width: 100%;
+	}
+
+	.week {
+		display: flex;
+		flex-direction: column;
+		gap: 3px;
+		flex-shrink: 0;
+	}
+
+	.day {
+		width: 10px;
+		height: 10px;
+		/* 使用像素值确保在不同屏幕下对齐更精准 */
+		border-radius: 2px;
+		transition: transform 0.1s ease;
+	}
+
+	.day:hover {
+		transform: scale(1.2);
+		cursor: pointer;
+	}
+
+	/* 暗色主题颜色 - 紫色系 */
+	.level-0 {
+		background: #1a1a1a;
+	}
+	.level-1 {
+		background: #3d2a5c;
+	}
+	.level-2 {
+		background: #5c3d8a;
+	}
+	.level-3 {
+		background: #8953d1;
+	}
+	.level-4 {
+		background: #a175e8;
+	}
+
+	/* 亮色主题颜色 */
+	:global([data-theme="light"]) .level-0 {
+		background: #ebedf0;
+	}
+	:global([data-theme="light"]) .level-1 {
+		background: #d8c7f0;
+	}
+	:global([data-theme="light"]) .level-2 {
+		background: #b794e8;
+	}
+	:global([data-theme="light"]) .level-3 {
+		background: #8953d1;
+	}
+	:global([data-theme="light"]) .level-4 {
+		background: #6b3fa0;
+	}
+
+	.activity-footer {
+		@apply mt-4 flex flex-col gap-3 text-xs text-gray-500 sm:flex-row sm:items-center sm:justify-between sm:gap-2;
+	}
+
+	.stats {
+		@apply flex flex-wrap items-center gap-x-4 gap-y-1;
+	}
+
+	.stats .count {
+		color: #8953d1;
+		font-weight: 600;
+	}
+
+	:global([data-theme="dark"]) .stats .count {
+		color: #a175e8;
+	}
+
+	.legend {
+		@apply flex items-center gap-1 self-end sm:self-auto;
+	}
+
+	.legend-label {
+		@apply mx-1;
+	}
+
+	.legend .day {
+		width: 10px;
+		height: 10px;
+	}
+
+	.legend .day:hover {
+		transform: none;
+		cursor: default;
+	}
+</style>
