@@ -1,5 +1,7 @@
 ---
 import { getCollection } from "astro:content";
+import fs from "node:fs";
+import path from "node:path";
 
 // 获取 GitHub 用户名
 const GITHUB_USERNAME = "rexliu1912-star";
@@ -18,6 +20,32 @@ postDates.forEach((date) => {
 		postCountByDate[date] = (postCountByDate[date] || 0) + 1;
 	}
 });
+
+// 解析 Flomo HTML 导出文件
+function parseFlomoNotes(): Record<string, number> {
+	const flomoCountByDate: Record<string, number> = {};
+	try {
+		// Flomo 导出文件路径
+		const flomoPath = path.join(process.cwd(), "src/data/flomo-20260111-diary.html");
+		if (fs.existsSync(flomoPath)) {
+			const html = fs.readFileSync(flomoPath, "utf-8");
+			// 匹配所有日期格式: 2026-01-08 22:36:38
+			const dateRegex = /<div class="time">(\d{4}-\d{2}-\d{2})\s+\d{2}:\d{2}:\d{2}<\/div>/g;
+			let match;
+			while ((match = dateRegex.exec(html)) !== null) {
+				const dateStr = match[1];
+				if (dateStr) {
+					flomoCountByDate[dateStr] = (flomoCountByDate[dateStr] || 0) + 1;
+				}
+			}
+		}
+	} catch (e) {
+		console.log("Flomo parse error:", e);
+	}
+	return flomoCountByDate;
+}
+
+const flomoNotes = parseFlomoNotes();
 
 // 生成过去一年的日期数组
 function generateYearDates(): string[] {
@@ -108,12 +136,12 @@ async function fetchGitHubContributions(): Promise<Record<string, number>> {
 const githubContributions = await fetchGitHubContributions();
 const yearDates = generateYearDates();
 
-// 计算活动级别 (0-4)
+// 计算活动级别 (0-4) - 根据实际数据分布调整阈值
 function getLevel(count: number): number {
 	if (count === 0) return 0;
-	if (count <= 2) return 1;
-	if (count <= 5) return 2;
-	if (count <= 10) return 3;
+	if (count === 1) return 1;
+	if (count <= 3) return 2;
+	if (count <= 6) return 3;
 	return 4;
 }
 
@@ -121,7 +149,8 @@ function getLevel(count: number): number {
 const contributionData: ContributionData[] = yearDates.map((date) => {
 	const postCount = postCountByDate[date] || 0;
 	const githubCount = githubContributions[date] || 0;
-	const totalCount = postCount + githubCount;
+	const flomoCount = flomoNotes[date] || 0;
+	const totalCount = postCount + githubCount + flomoCount;
 	return {
 		date,
 		count: totalCount,
@@ -138,6 +167,7 @@ for (let i = 0; i < contributionData.length; i += 7) {
 // 统计总数
 const totalPosts = Object.values(postCountByDate).reduce((sum, count) => sum + count, 0);
 const totalGithubCommits = Object.values(githubContributions).reduce((sum, c) => sum + c, 0);
+const totalFlomoNotes = Object.values(flomoNotes).reduce((sum, c) => sum + c, 0);
 ---
 
 <div class="activity-wrapper">
@@ -166,6 +196,7 @@ const totalGithubCommits = Object.values(githubContributions).reduce((sum, c) =>
 				<span>Last 365 Days</span>
 				<span><span class="count">{totalGithubCommits}</span> commits</span>
 				<span><span class="count">{totalPosts}</span> posts</span>
+				<span><span class="count">{totalFlomoNotes}</span> notes</span>
 			</div>
 			<div class="legend">
 				<span class="legend-label">Less</span>
