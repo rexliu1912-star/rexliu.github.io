@@ -140,40 +140,42 @@ const totalPosts = Object.values(postCountByDate).reduce((sum, count) => sum + c
 const totalGithubCommits = Object.values(githubContributions).reduce((sum, c) => sum + c, 0);
 ---
 
-<div class="activity-graph">
-	<div class="graph-scroll">
-		<div class="contribution-grid">
-			{
-				weeks.map((week) => (
-					<div class="week">
-						{week.map((day) => (
-							<div
-								class={`day level-${day.level}`}
-								data-date={day.date}
-								data-count={day.count}
-								title={`${day.count} contribution${day.count !== 1 ? "s" : ""} on ${day.date}`}
-							/>
-						))}
-					</div>
-				))
-			}
+<div class="activity-wrapper">
+	<div class="activity-graph">
+		<div class="graph-scroll">
+			<div class="contribution-grid">
+				{
+					weeks.map((week) => (
+						<div class="week">
+							{week.map((day) => (
+								<div
+									class={`day level-${day.level}`}
+									data-date={day.date}
+									data-count={day.count}
+									title={`${day.count} contribution${day.count !== 1 ? "s" : ""} on ${day.date}`}
+								/>
+							))}
+						</div>
+					))
+				}
+			</div>
 		</div>
-	</div>
 
-	<div class="activity-footer">
-		<div class="stats">
-			<span>Last 365 Days</span>
-			<span><span class="count">{totalGithubCommits}</span> commits</span>
-			<span><span class="count">{totalPosts}</span> posts</span>
-		</div>
-		<div class="legend">
-			<span class="legend-label">Less</span>
-			<div class="day level-0"></div>
-			<div class="day level-1"></div>
-			<div class="day level-2"></div>
-			<div class="day level-3"></div>
-			<div class="day level-4"></div>
-			<span class="legend-label">More</span>
+		<div class="activity-footer">
+			<div class="stats">
+				<span>Last 365 Days</span>
+				<span><span class="count">{totalGithubCommits}</span> commits</span>
+				<span><span class="count">{totalPosts}</span> posts</span>
+			</div>
+			<div class="legend">
+				<span class="legend-label">Less</span>
+				<div class="day level-0"></div>
+				<div class="day level-1"></div>
+				<div class="day level-2"></div>
+				<div class="day level-3"></div>
+				<div class="day level-4"></div>
+				<span class="legend-label">More</span>
+			</div>
 		</div>
 	</div>
 </div>
@@ -181,10 +183,21 @@ const totalGithubCommits = Object.values(githubContributions).reduce((sum, c) =>
 <style>
 	@reference "../styles/global.css";
 
+	.activity-wrapper {
+		@apply mb-12 flex justify-start;
+	}
+
 	.activity-graph {
-		@apply mb-12 py-4;
-		background: transparent;
-		border: none;
+		@apply rounded-lg p-5;
+		width: fit-content;
+		max-width: 100%;
+		background: #181818;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+	}
+
+	:global([data-theme="light"]) .activity-graph {
+		background: #fffaef;
+		box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
 	}
 
 	.graph-scroll {
@@ -254,7 +267,7 @@ const totalGithubCommits = Object.values(githubContributions).reduce((sum, c) =>
 	}
 
 	.activity-footer {
-		@apply mt-4 flex flex-col gap-3 text-xs text-gray-500 sm:flex-row sm:items-center sm:justify-between sm:gap-2;
+		@apply mt-4 flex flex-col gap-3 font-serif text-xs text-gray-500 sm:flex-row sm:items-center sm:justify-between sm:gap-2;
 	}
 
 	.stats {
