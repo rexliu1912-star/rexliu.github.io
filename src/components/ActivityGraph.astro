@@ -21,31 +21,21 @@ postDates.forEach((date) => {
 	}
 });
 
-// 解析 Flomo HTML 导出文件
-function parseFlomoNotes(): Record<string, number> {
-	const flomoCountByDate: Record<string, number> = {};
+// 读取预处理的 Flomo 统计数据（JSON 只包含日期和数量，不含内容）
+function loadFlomoStats(): Record<string, number> {
 	try {
-		// Flomo 导出文件路径
-		const flomoPath = path.join(process.cwd(), "src/data/flomo-20260111-diary.html");
-		if (fs.existsSync(flomoPath)) {
-			const html = fs.readFileSync(flomoPath, "utf-8");
-			// 匹配所有日期格式: 2026-01-08 22:36:38
-			const dateRegex = /<div class="time">(\d{4}-\d{2}-\d{2})\s+\d{2}:\d{2}:\d{2}<\/div>/g;
-			let match;
-			while ((match = dateRegex.exec(html)) !== null) {
-				const dateStr = match[1];
-				if (dateStr) {
-					flomoCountByDate[dateStr] = (flomoCountByDate[dateStr] || 0) + 1;
-				}
-			}
+		const flomoJsonPath = path.join(process.cwd(), "src/data/flomo-stats.json");
+		if (fs.existsSync(flomoJsonPath)) {
+			const jsonData = JSON.parse(fs.readFileSync(flomoJsonPath, "utf-8"));
+			return jsonData.countByDate || {};
 		}
 	} catch (e) {
-		console.log("Flomo parse error:", e);
+		console.log("Flomo stats load error:", e);
 	}
-	return flomoCountByDate;
+	return {};
 }
 
-const flomoNotes = parseFlomoNotes();
+const flomoNotes = loadFlomoStats();
 
 // 生成过去一年的日期数组
 function generateYearDates(): string[] {
