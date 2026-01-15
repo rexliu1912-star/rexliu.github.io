@@ -39,6 +39,10 @@ This is the personal blog and digital garden of **Rex Liu**, built with **Astro 
 - **Modern Styling**: Styled with Tailwind CSS v4 for a sleek, responsive design.
 - **Content Focused**: Optimized for long-form content (Essays & Notes) using MDX.
 - **Activity Graph**: GitHub-style heatmap displaying GitHub commits, blog posts, and Flomo notes.
+- **Full-Text Search**: Built-in search functionality for quick content discovery.
+- **Tag System**: Organized content with tags for easy navigation.
+- **RSS Feed**: Automatic RSS feed generation for subscribers.
+- **OG Image Generation**: Dynamic Open Graph images for social sharing.
 - **SEO Friendly**: Automatic sitemaps, robots.txt, and semantic HTML.
 - **Dark/Light Mode**: Seamless theme switching for better reading experience.
 
@@ -48,6 +52,10 @@ This is the personal blog and digital garden of **Rex Liu**, built with **Astro 
 - **现代化样式**: 使用 Tailwind CSS v4 设计，界面简洁响应式。
 - **专注内容**: 针对长文（文章与笔记）优化的 MDX 支持。
 - **活动热力图**: GitHub 风格热力图，整合展示 GitHub 提交、博客文章和 Flomo 笔记。
+- **全文搜索**: 内置搜索功能，快速发现内容。
+- **标签系统**: 通过标签组织内容，便于导航浏览。
+- **RSS 订阅**: 自动生成 RSS feed，方便读者订阅。
+- **OG 图片生成**: 动态生成 Open Graph 图片，优化社交分享。
 - **SEO 友好**: 自动生成站点地图、robots.txt 和语义化 HTML。
 - **深色/浅色模式**: 无缝切换主题，提供更好的阅读体验。
 
