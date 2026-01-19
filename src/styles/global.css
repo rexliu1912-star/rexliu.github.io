@@ -82,3 +82,98 @@
 	--tw-prose-quotes: var(--color-quote);
 	--tw-prose-th-borders: #666;
 }
+
+/* Print styles */
+@media print {
+	/* Hide non-essential elements */
+	header,
+	footer,
+	#minimal-player,
+	#back-to-top,
+	#reading-progress,
+	.activity-wrapper,
+	.related-posts {
+		display: none !important;
+	}
+
+	/* Reset background colors and shadows */
+	* {
+		background: white !important;
+		box-shadow: none !important;
+		text-shadow: none !important;
+	}
+
+	/* Use black text for better print quality */
+	body {
+		color: #000 !important;
+		font-size: 12pt;
+		line-height: 1.5;
+	}
+
+	/* Optimize page breaks */
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
+		page-break-after: avoid;
+		page-break-inside: avoid;
+		color: #000 !important;
+	}
+
+	p,
+	blockquote,
+	pre {
+		page-break-inside: avoid;
+	}
+
+	img {
+		page-break-inside: avoid;
+		max-width: 100% !important;
+	}
+
+	/* Show link URLs after links */
+	a[href^="http"]::after {
+		content: " (" attr(href) ")";
+		font-size: 0.8em;
+		color: #666;
+	}
+
+	/* Don't show URLs for internal links or anchors */
+	a[href^="#"]::after,
+	a[href^="/"]::after {
+		content: "";
+	}
+
+	/* Code blocks */
+	pre {
+		border: 1px solid #ddd !important;
+		page-break-inside: avoid;
+		white-space: pre-wrap;
+		word-wrap: break-word;
+	}
+
+	/* Tables */
+	table {
+		border-collapse: collapse !important;
+	}
+
+	table td,
+	table th {
+		border: 1px solid #ddd !important;
+		padding: 8px !important;
+	}
+
+	/* Remove unnecessary margins */
+	@page {
+		margin: 2cm;
+	}
+
+	/* Ensure main content takes full width */
+	main {
+		max-width: 100% !important;
+		padding: 0 !important;
+		margin: 0 !important;
+	}
+}

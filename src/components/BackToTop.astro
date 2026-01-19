@@ -1,0 +1,125 @@
+---
+// Back to Top button component
+---
+
+<button
+	id="back-to-top"
+	aria-label="Back to top"
+	class="back-to-top"
+	title="Back to top"
+>
+	<svg
+		xmlns="http://www.w3.org/2000/svg"
+		width="20"
+		height="20"
+		viewBox="0 0 24 24"
+		fill="none"
+		stroke="currentColor"
+		stroke-width="2"
+		stroke-linecap="round"
+		stroke-linejoin="round"
+	>
+		<polyline points="18 15 12 9 6 15"></polyline>
+	</svg>
+</button>
+
+<style>
+	.back-to-top {
+		position: fixed;
+		bottom: 80px;
+		right: 24px;
+		width: 40px;
+		height: 40px;
+		border-radius: 50%;
+		background: #8953d1;
+		color: white;
+		border: none;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		opacity: 0;
+		visibility: hidden;
+		transition: all 0.3s ease;
+		z-index: 40;
+		box-shadow: 0 4px 12px rgba(137, 83, 209, 0.3);
+	}
+
+	.back-to-top:hover {
+		background: #7041b8;
+		transform: translateY(-2px);
+		box-shadow: 0 6px 16px rgba(137, 83, 209, 0.4);
+	}
+
+	.back-to-top:active {
+		transform: translateY(0);
+	}
+
+	.back-to-top.visible {
+		opacity: 1;
+		visibility: visible;
+	}
+
+	:global([data-theme="dark"]) .back-to-top {
+		background: #a175e8;
+		box-shadow: 0 4px 12px rgba(161, 117, 232, 0.3);
+	}
+
+	:global([data-theme="dark"]) .back-to-top:hover {
+		background: #b794e8;
+		box-shadow: 0 6px 16px rgba(161, 117, 232, 0.4);
+	}
+
+	@media (max-width: 640px) {
+		.back-to-top {
+			bottom: 70px;
+			right: 16px;
+			width: 36px;
+			height: 36px;
+		}
+	}
+</style>
+
+<script>
+	function initBackToTop() {
+		const button = document.getElementById("back-to-top");
+		if (!button) return;
+
+		// Show/hide button based on scroll position
+		const toggleButton = () => {
+			if (window.scrollY > 300) {
+				button.classList.add("visible");
+			} else {
+				button.classList.remove("visible");
+			}
+		};
+
+		// Scroll to top on click
+		button.addEventListener("click", () => {
+			window.scrollTo({
+				top: 0,
+				behavior: "smooth",
+			});
+		});
+
+		// Listen to scroll events
+		window.addEventListener("scroll", toggleButton, { passive: true });
+
+		// Initial check
+		toggleButton();
+	}
+
+	// Initialize on page load
+	initBackToTop();
+
+	// Reinitialize after view transitions
+	document.addEventListener("astro:after-swap", initBackToTop);
+
+	// Cleanup on navigation
+	document.addEventListener("astro:before-preparation", () => {
+		const button = document.getElementById("back-to-top");
+		if (button) {
+			button.removeEventListener("click", () => {});
+		}
+	});
+</script>

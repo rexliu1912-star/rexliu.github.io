@@ -190,21 +190,39 @@ Add unit and E2E tests.
 
 ---
 
-### 12. Other Small Improvements
-- [ ] Back to Top button
-- [ ] Smooth anchor scrolling
-- [ ] Print styles optimization
-- [ ] Enhanced 404 page (search suggestions, popular posts)
-- [ ] Full-text RSS feed
-- [ ] Environment variable validation with Zod
+### 12. Other Small Improvements ✅
+**Status**: ✅ Completed (2026-01-19)
+
+**Implementation**:
+- ✅ Back to Top button with smooth scroll behavior
+- ✅ Smooth anchor scrolling (already enabled with Tailwind's `scroll-smooth`)
+- ✅ Print styles optimization (hide non-essential elements, optimize page breaks)
+- ✅ Enhanced 404 page with popular posts and navigation buttons
+- ✅ Full-text RSS feed with Markdown content
+- ✅ Environment variable validation with Zod
+
+**Files Created**:
+- `src/components/BackToTop.astro`
+- `src/env.ts`
+- `src/types/pagefind.d.ts`
+
+**Files Modified**:
+- `src/styles/global.css` (added print styles)
+- `src/pages/404.astro` (enhanced with popular posts)
+- `src/pages/rss.xml.ts` (added full content)
+- `src/pages/notes/rss.xml.ts` (added full content)
+- `src/layouts/Base.astro` (added BackToTop component)
+- `src/components/ActivityGraph.astro` (use validated env vars)
+- `biome.json` (disabled noImportantStyles for CSS files)
+- `package.json` (added zod dependency)
 
 ---
 
 ## 📊 Technical Debt
 
-1. **TypeScript strict mode**: Fix @ts-ignore comments
+1. ✅ **TypeScript strict mode**: Fixed @ts-ignore comments (completed 2026-01-19)
 2. **Dependency updates**: Regular Astro and dependency updates
-3. **Error boundaries**: Add error handling and friendly messages
+3. **Error boundaries**: Add error handling and friendly messages (pending)
 4. **CI/CD enhancement**: Add type checking, linting, tests to CI pipeline
 
 ---

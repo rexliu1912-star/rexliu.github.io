@@ -2,6 +2,7 @@
 import { getCollection } from "astro:content";
 import fs from "node:fs";
 import path from "node:path";
+import { env } from "@/env";
 
 // 获取 GitHub 用户名
 const GITHUB_USERNAME = "rexliu1912-star";
@@ -66,7 +67,7 @@ interface ContributionData {
 
 // 使用 GitHub GraphQL API 获取贡献数据
 async function fetchGitHubContributions(): Promise<Record<string, number>> {
-	const token = import.meta.env.GITHUB_TOKEN;
+	const token = env.GITHUB_TOKEN;
 
 	if (!token) {
 		console.log("GITHUB_TOKEN not found, using fallback");

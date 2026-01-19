@@ -1,13 +1,261 @@
 ---
+import { getCollection } from "astro:content";
 import PageLayout from "@/layouts/Base.astro";
 
 const meta = {
 	description: "Oops! It looks like this page is lost in space!",
-	title: "Oops! You found a missing page!",
+	title: "404 - Page Not Found",
 };
+
+// Get popular posts (most recent published posts)
+const allPosts = await getCollection("post");
+const popularPosts = allPosts
+	.filter((post) => !post.data.draft)
+	.sort((a, b) => new Date(b.data.publishDate).valueOf() - new Date(a.data.publishDate).valueOf())
+	.slice(0, 5);
 ---
 
 <PageLayout meta={meta}>
-	<h1 class="title mb-12">404 | Oops something went wrong</h1>
-	<p class="mb-8">Please use the navigation to find your way back</p>
+	<div class="not-found-container">
+		<div class="not-found-content">
+			<h1 class="not-found-title">404</h1>
+			<h2 class="not-found-subtitle">Page Not Found</h2>
+			<p class="not-found-message">
+				抱歉，你访问的页面不存在或已被移除。<br />
+				Sorry, the page you're looking for doesn't exist or has been moved.
+			</p>
+
+			<div class="not-found-actions">
+				<a href="/" class="button button-primary">
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="16"
+						height="16"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					>
+						<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+						<polyline points="9 22 9 12 15 12 15 22"></polyline>
+					</svg>
+					回到首页 / Go Home
+				</a>
+				<a href="/posts/" class="button button-secondary">
+					浏览文章 / Browse Posts
+				</a>
+			</div>
+		</div>
+
+		{
+			popularPosts.length > 0 && (
+				<div class="popular-posts">
+					<h3 class="popular-posts-title">热门文章 / Popular Posts</h3>
+					<ul class="popular-posts-list">
+						{popularPosts.map((post) => (
+							<li>
+								<a href={`/posts/${post.id}/`} class="popular-post-link">
+									<span class="popular-post-title">{post.data.title}</span>
+									{post.data.description && (
+										<span class="popular-post-description">{post.data.description}</span>
+									)}
+								</a>
+							</li>
+						))}
+					</ul>
+				</div>
+			)
+		}
+	</div>
 </PageLayout>
+
+<style>
+	.not-found-container {
+		min-height: 60vh;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 3rem;
+		padding: 2rem 0;
+	}
+
+	.not-found-content {
+		text-align: center;
+		max-width: 600px;
+	}
+
+	.not-found-title {
+		font-size: 8rem;
+		font-weight: 700;
+		font-family: var(--font-serif);
+		color: #8953d1;
+		line-height: 1;
+		margin-bottom: 1rem;
+	}
+
+	:global([data-theme="dark"]) .not-found-title {
+		color: #a175e8;
+	}
+
+	.not-found-subtitle {
+		font-size: 2rem;
+		font-weight: 600;
+		font-family: var(--font-serif);
+		margin-bottom: 1rem;
+		color: var(--color-accent-2);
+	}
+
+	.not-found-message {
+		font-size: 1rem;
+		line-height: 1.6;
+		color: var(--color-global-text);
+		opacity: 0.8;
+		margin-bottom: 2rem;
+	}
+
+	.not-found-actions {
+		display: flex;
+		gap: 1rem;
+		justify-content: center;
+		flex-wrap: wrap;
+	}
+
+	.button {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.75rem 1.5rem;
+		border-radius: 0.5rem;
+		font-size: 0.875rem;
+		font-weight: 500;
+		text-decoration: none;
+		transition: all 0.2s ease;
+		font-family: var(--font-serif);
+	}
+
+	.button-primary {
+		background: #8953d1;
+		color: white;
+	}
+
+	.button-primary:hover {
+		background: #7041b8;
+		transform: translateY(-2px);
+		box-shadow: 0 4px 12px rgba(137, 83, 209, 0.3);
+	}
+
+	:global([data-theme="dark"]) .button-primary {
+		background: #a175e8;
+	}
+
+	:global([data-theme="dark"]) .button-primary:hover {
+		background: #b794e8;
+		box-shadow: 0 4px 12px rgba(161, 117, 232, 0.3);
+	}
+
+	.button-secondary {
+		background: transparent;
+		color: var(--color-global-text);
+		border: 1px solid #8953d1;
+	}
+
+	.button-secondary:hover {
+		background: rgba(137, 83, 209, 0.1);
+		transform: translateY(-2px);
+	}
+
+	:global([data-theme="dark"]) .button-secondary {
+		border-color: #a175e8;
+	}
+
+	:global([data-theme="dark"]) .button-secondary:hover {
+		background: rgba(161, 117, 232, 0.1);
+	}
+
+	.popular-posts {
+		width: 100%;
+		max-width: 600px;
+	}
+
+	.popular-posts-title {
+		font-size: 1.25rem;
+		font-weight: 600;
+		font-family: var(--font-serif);
+		margin-bottom: 1rem;
+		color: var(--color-accent-2);
+		text-align: center;
+	}
+
+	.popular-posts-list {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+
+	.popular-post-link {
+		display: block;
+		padding: 1rem;
+		border-radius: 0.5rem;
+		text-decoration: none;
+		transition: all 0.2s ease;
+		background: #fffaef;
+		box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
+	}
+
+	:global([data-theme="dark"]) .popular-post-link {
+		background: #181818;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+	}
+
+	.popular-post-link:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 4px 12px rgba(137, 83, 209, 0.15);
+	}
+
+	:global([data-theme="dark"]) .popular-post-link:hover {
+		box-shadow: 0 4px 16px rgba(161, 117, 232, 0.2);
+	}
+
+	.popular-post-title {
+		display: block;
+		font-weight: 600;
+		font-family: var(--font-serif);
+		color: var(--color-accent-2);
+		margin-bottom: 0.25rem;
+		font-size: 0.9rem;
+	}
+
+	.popular-post-description {
+		display: block;
+		font-size: 0.8rem;
+		color: var(--color-global-text);
+		opacity: 0.7;
+		line-height: 1.4;
+	}
+
+	@media (max-width: 640px) {
+		.not-found-title {
+			font-size: 5rem;
+		}
+
+		.not-found-subtitle {
+			font-size: 1.5rem;
+		}
+
+		.not-found-actions {
+			flex-direction: column;
+			width: 100%;
+		}
+
+		.button {
+			width: 100%;
+			justify-content: center;
+		}
+	}
+</style>
