@@ -36,8 +36,13 @@ function formatHomeDate(date: Date) {
 
 <PageLayout meta={meta}>
 	<section class="mb-12">
-		<h1 class="mb-4 font-serif text-4xl font-bold dark:text-white">Rex Liu</h1>
-		<p class="max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">
+		<h1 class="fade-in-up mb-4 font-serif text-4xl font-bold dark:text-white" style="--delay: 0ms">
+			Rex Liu
+		</h1>
+		<p
+			class="fade-in-up max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300"
+			style="--delay: 100ms"
+		>
 			Writer and Builder in Crypto, AI, and Life.<br />
 			在加密、人工智能和人生浪潮里，一边折腾一边记录的人。
 		</p>
@@ -54,8 +59,11 @@ function formatHomeDate(date: Date) {
 
 		<div class="space-y-12">
 			{
-				postsToDisplay.map((p) => (
-					<article class="flex flex-col">
+				postsToDisplay.map((p, index) => (
+					<article
+						class="glow-card fade-in-up flex flex-col"
+						style={`--delay: ${Math.min(index * 50, 400)}ms`}
+					>
 						<div class="mb-3 flex items-baseline justify-between">
 							{/* 标题链接：设为 group/title 以便带动 [Pinned] 变色 */}
 							<a

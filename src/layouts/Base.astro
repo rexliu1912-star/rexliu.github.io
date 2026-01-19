@@ -358,5 +358,21 @@ const GA_ID = "G-1EC76EZ517";
 				document.addEventListener("astro:page-load", updateUI);
 			})();
 		</script>
+
+		<script>
+			import { initScrollAnimations, initMouseGlow } from "@/utils/animations";
+
+			// 初始化滚动动画
+			initScrollAnimations();
+
+			// 初始化鼠标光晕效果
+			initMouseGlow();
+
+			// 支持 Astro View Transitions
+			document.addEventListener("astro:page-load", () => {
+				initScrollAnimations();
+				initMouseGlow();
+			});
+		</script>
 	</body>
 </html>
