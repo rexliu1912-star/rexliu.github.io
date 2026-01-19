@@ -112,3 +112,40 @@ const socialImageURL = new URL(imagePath, Astro.site).href;
 }
 
 <meta content={Astro.generator} name="generator" />
+
+{/* JSON-LD Structured Data */}
+<script is:inline type="application/ld+json" set:html={JSON.stringify({
+	"@context": "https://schema.org",
+	"@type": articleDate ? "BlogPosting" : "WebSite",
+	...(articleDate ? {
+		// BlogPosting schema for blog posts
+		"headline": title,
+		"description": description,
+		"image": socialImageURL,
+		"datePublished": articleDate,
+		"author": {
+			"@type": "Person",
+			"name": siteConfig.author,
+			"url": siteConfig.url
+		},
+		"publisher": {
+			"@type": "Person",
+			"name": siteConfig.author,
+			"url": siteConfig.url
+		},
+		"mainEntityOfPage": {
+			"@type": "WebPage",
+			"@id": canonicalURL
+		}
+	} : {
+		// WebSite schema for homepage
+		"name": siteConfig.title,
+		"description": siteConfig.description,
+		"url": siteConfig.url,
+		"author": {
+			"@type": "Person",
+			"name": siteConfig.author,
+			"url": siteConfig.url
+		}
+	})
+})} />

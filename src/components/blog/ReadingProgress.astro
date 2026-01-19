@@ -1,0 +1,65 @@
+---
+// Reading progress bar component
+---
+
+<div id="reading-progress" class="reading-progress"></div>
+
+<style>
+	.reading-progress {
+		position: fixed;
+		top: 0;
+		left: 0;
+		height: 3px;
+		background: linear-gradient(90deg, #8953d1, #a175e8);
+		width: 0%;
+		z-index: 9999;
+		transition: width 0.1s ease-out;
+		box-shadow: 0 2px 4px rgba(137, 83, 209, 0.3);
+	}
+
+	:global([data-theme="dark"]) .reading-progress {
+		background: linear-gradient(90deg, #a175e8, #b794e8);
+		box-shadow: 0 2px 4px rgba(161, 117, 232, 0.4);
+	}
+</style>
+
+<script>
+	function updateReadingProgress() {
+		const progressBar = document.getElementById("reading-progress");
+		if (!progressBar) return;
+
+		const windowHeight = window.innerHeight;
+		const documentHeight = document.documentElement.scrollHeight;
+		const scrollTop = window.scrollY || document.documentElement.scrollTop;
+
+		// Calculate scroll percentage
+		const trackLength = documentHeight - windowHeight;
+		const scrollPercentage = (scrollTop / trackLength) * 100;
+
+		// Update progress bar width
+		progressBar.style.width = `${Math.min(scrollPercentage, 100)}%`;
+	}
+
+	function initReadingProgress() {
+		// Update on scroll
+		window.addEventListener("scroll", updateReadingProgress, { passive: true });
+
+		// Update on resize
+		window.addEventListener("resize", updateReadingProgress, { passive: true });
+
+		// Initial update
+		updateReadingProgress();
+	}
+
+	// Initialize on first load
+	initReadingProgress();
+
+	// Cleanup on navigation (for view transitions)
+	document.addEventListener("astro:before-preparation", () => {
+		window.removeEventListener("scroll", updateReadingProgress);
+		window.removeEventListener("resize", updateReadingProgress);
+	});
+
+	// Reinitialize after view transition completes
+	document.addEventListener("astro:after-swap", initReadingProgress);
+</script>

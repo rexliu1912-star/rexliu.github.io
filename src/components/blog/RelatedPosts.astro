@@ -1,0 +1,102 @@
+---
+import type { CollectionEntry } from "astro:content";
+import FormattedDate from "@/components/FormattedDate.astro";
+
+interface Props {
+	posts: CollectionEntry<"post">[];
+}
+
+const { posts } = Astro.props;
+
+// Don't render if no related posts
+if (!posts || posts.length === 0) {
+	return null;
+}
+---
+
+<section class="related-posts">
+	<h2 class="related-posts-title">Related Articles</h2>
+	<div class="related-posts-grid">
+		{
+			posts.map((post) => (
+				<article class="related-post-card">
+					<a href={`/posts/${post.id}/`} class="related-post-link">
+						<h3 class="related-post-title">{post.data.title}</h3>
+						{post.data.description && (
+							<p class="related-post-description">{post.data.description}</p>
+						)}
+						<div class="related-post-meta">
+							<FormattedDate date={post.data.publishDate} />
+							{post.data.tags && post.data.tags.length > 0 && (
+								<span class="related-post-tags">
+									{post.data.tags.slice(0, 2).map((tag: string) => (
+										<span class="tag">#{tag}</span>
+									))}
+								</span>
+							)}
+						</div>
+					</a>
+				</article>
+			))
+		}
+	</div>
+</section>
+
+<style>
+	@reference "../../styles/global.css";
+
+	.related-posts {
+		@apply mt-16 pt-8 border-t border-dashed border-gray-200 dark:border-gray-700;
+	}
+
+	.related-posts-title {
+		@apply mb-6 font-serif text-2xl font-bold text-black dark:text-white;
+	}
+
+	.related-posts-grid {
+		@apply grid gap-4 sm:grid-cols-2 lg:grid-cols-3;
+	}
+
+	.related-post-card {
+		@apply rounded-lg p-5 transition-all;
+		background: #fffaef;
+		box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
+	}
+
+	.related-post-card:hover {
+		box-shadow: 0 4px 12px rgba(137, 83, 209, 0.15);
+	}
+
+	:global([data-theme="dark"]) .related-post-card {
+		background: #181818;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+	}
+
+	:global([data-theme="dark"]) .related-post-card:hover {
+		box-shadow: 0 4px 16px rgba(161, 117, 232, 0.2);
+	}
+
+	.related-post-link {
+		@apply block text-inherit no-underline;
+	}
+
+	.related-post-title {
+		@apply mb-2 font-serif text-lg font-semibold leading-snug text-black transition-colors hover:text-[#8953d1] dark:text-white dark:hover:text-[#a175e8];
+	}
+
+	.related-post-description {
+		@apply mb-3 line-clamp-2 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-400;
+	}
+
+	.related-post-meta {
+		@apply flex flex-wrap items-center gap-2 font-serif text-xs text-gray-400;
+	}
+
+	.related-post-tags {
+		@apply flex gap-2;
+	}
+
+	.tag {
+		@apply rounded bg-gray-100 px-2 py-0.5 text-gray-600 dark:bg-gray-700 dark:text-gray-300;
+	}
+</style>

@@ -3,9 +3,9 @@ import type { Config } from "tailwindcss";
 export default {
 	// 确保 Tailwind 能扫描到所有文件
 	content: ["./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}"],
-	
+
 	plugins: [require("@tailwindcss/typography")],
-	
+
 	theme: {
 		extend: {
 			// 1. 字体配置区域
@@ -21,13 +21,7 @@ export default {
 					"sans-serif",
 				],
 				// 衬线字体 (Serif)：用于标题，模仿杂志/文学风格
-				serif: [
-					"Georgia",
-					"Cambria",
-					"Times New Roman",
-					"Times",
-					"serif",
-				],
+				serif: ["Georgia", "Cambria", "Times New Roman", "Times", "serif"],
 			},
 
 			// 2. 排版插件配置 (保持原样，控制 Markdown 文章内的样式)

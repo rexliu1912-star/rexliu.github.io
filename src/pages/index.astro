@@ -1,7 +1,7 @@
 ---
 import { getCollection } from "astro:content";
-import PageLayout from "@/layouts/Base.astro";
 import ActivityGraph from "@/components/ActivityGraph.astro";
+import PageLayout from "@/layouts/Base.astro";
 
 const allPosts = await getCollection("post");
 const sortedPosts = allPosts.sort(

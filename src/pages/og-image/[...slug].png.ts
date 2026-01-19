@@ -1,10 +1,10 @@
 import { Resvg } from "@resvg/resvg-js";
 import satori, { type SatoriOptions } from "satori";
 import { html } from "satori-html";
-import { getAllPosts } from "@/data/post";
-import { siteConfig } from "@/site.config";
 // 使用项目内置字体，确保加载稳定性
 import RobotoMonoBold from "@/assets/roboto-mono-700.ttf";
+import { getAllPosts } from "@/data/post";
+import { siteConfig } from "@/site.config";
 
 const ogOptions: SatoriOptions = {
 	fonts: [

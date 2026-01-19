@@ -1,5 +1,9 @@
 ---
 import type { CollectionEntry } from "astro:content";
+import { getCollection } from "astro:content";
+import ReadingProgress from "@/components/blog/ReadingProgress.astro";
+import RelatedPosts from "@/components/blog/RelatedPosts.astro";
+import { getRelatedPosts } from "@/utils/post";
 import BaseLayout from "./Base.astro";
 
 interface Props {
@@ -7,6 +11,10 @@ interface Props {
 }
 
 const { post } = Astro.props;
+
+// Get all posts for related posts feature
+const allPosts = await getCollection("post");
+const relatedPosts = getRelatedPosts(post, allPosts, 3);
 const {
 	data: { title, description, publishDate, originalUrl, tags },
 } = post;
@@ -33,6 +41,7 @@ const displayDate = formatCustomDate(publishDate);
 ---
 
 <BaseLayout meta={{ title, description, articleDate }}>
+	<ReadingProgress />
 	<div class="mb-16 sm:mt-8">
 		{/* 1. Back 按钮 */}
 		<div class="mb-8">
@@ -137,6 +146,9 @@ const displayDate = formatCustomDate(publishDate);
 			<div class="prose prose-lg prose-serif dark:prose-invert max-w-none font-serif">
 				<slot />
 			</div>
+
+			{/* Related Posts */}
+			<RelatedPosts posts={relatedPosts} />
 		</article>
 	</div>
 </BaseLayout>
