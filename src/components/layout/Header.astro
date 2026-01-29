@@ -5,6 +5,7 @@ const { pathname } = Astro.url;
 const isHome = pathname === "/" || pathname === "/index.html";
 const TWITTER_URL = "https://twitter.com/rexliu";
 const GITHUB_URL = "https://github.com/rexliu1912-star";
+const SAMANTHA_URL = "https://samantha.rexliu.io";
 ---
 
 <header class="mb-16 flex items-center justify-between pt-2" id="main-header">
@@ -43,6 +44,15 @@ const GITHUB_URL = "https://github.com/rexliu1912-star";
 			class="text-sm transition-colors hover:text-[#8953d1] hover:underline hover:decoration-[#8953d1] hover:decoration-1 hover:underline-offset-4 dark:hover:text-[#a175e8] dark:hover:decoration-[#a175e8]"
 		>
 			GitHub
+		</a>
+
+		<a
+			href={SAMANTHA_URL}
+			target="_blank"
+			rel="noopener noreferrer"
+			class="text-sm transition-colors hover:text-[#FF6B6B] hover:underline hover:decoration-[#FF6B6B] hover:decoration-1 hover:underline-offset-4 dark:hover:text-[#FF8E7B] dark:hover:decoration-[#FF8E7B]"
+		>
+			Samantha 🧡
 		</a>
 	</nav>
 
