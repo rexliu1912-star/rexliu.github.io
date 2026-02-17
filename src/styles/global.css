@@ -84,6 +84,7 @@
 
 /* ==========================================================================
    5 Animation Effects for Rex Liu's Website
+   These styles are outside @layer to ensure they're always included
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
@@ -198,14 +199,14 @@
    -------------------------------------------------------------------------- */
 
 .animated-link,
-.prose a,
+.prose a:not(.no-underline),
 article a:not(.no-underline) {
 	position: relative;
 	text-decoration: none;
 }
 
 .animated-link::after,
-.prose a::after,
+.prose a:not(.no-underline)::after,
 article a:not(.no-underline)::after {
 	content: '';
 	position: absolute;
@@ -220,7 +221,7 @@ article a:not(.no-underline)::after {
 }
 
 .animated-link:hover::after,
-.prose a:hover::after,
+.prose a:not(.no-underline):hover::after,
 article a:not(.no-underline):hover::after {
 	transform: scaleX(1);
 	transform-origin: left;
@@ -228,7 +229,7 @@ article a:not(.no-underline):hover::after {
 
 /* Dark mode underline color */
 [data-theme="dark"] .animated-link::after,
-[data-theme="dark"] .prose a::after,
+[data-theme="dark"] .prose a:not(.no-underline)::after,
 [data-theme="dark"] article a:not(.no-underline)::after {
 	background-color: #a175e8;
 }
