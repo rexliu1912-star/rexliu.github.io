@@ -138,28 +138,8 @@
 }
 
 /* --------------------------------------------------------------------------
-   2. Post Card Hover Lift Effect
+   2. Post Card Base (hover lift removed per Rex's request)
    -------------------------------------------------------------------------- */
-
-.post-card-hover,
-.glow-card {
-	transition:
-		transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-		box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-	will-change: transform, box-shadow;
-}
-
-.post-card-hover:hover,
-.glow-card:hover {
-	transform: translateY(-4px);
-	box-shadow: 0 12px 40px -12px rgba(137, 83, 209, 0.25);
-}
-
-/* Dark mode adjustment for hover shadow */
-[data-theme="dark"] .post-card-hover:hover,
-[data-theme="dark"] .glow-card:hover {
-	box-shadow: 0 12px 40px -12px rgba(161, 117, 232, 0.2);
-}
 
 /* --------------------------------------------------------------------------
    3. Scroll-Triggered Fade-in Animations
