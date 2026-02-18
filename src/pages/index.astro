@@ -36,12 +36,11 @@ function formatHomeDate(date: Date) {
 
 <PageLayout meta={meta}>
 	<section class="mb-12">
-		<h1 class="fade-in-up mb-4 font-serif text-4xl font-bold dark:text-white" style="--delay: 0ms">
+		<h1 class="hero-reveal-text mb-4 font-serif text-4xl font-bold dark:text-white">
 			Rex Liu
 		</h1>
 		<p
-			class="fade-in-up max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300"
-			style="--delay: 100ms"
+			class="hero-reveal-subtitle max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300"
 		>
 			Writer and Builder in Crypto, AI, and Life.<br />
 			在加密、人工智能和人生浪潮里，一边折腾一边记录的人。
@@ -52,7 +51,8 @@ function formatHomeDate(date: Date) {
 
 	<section aria-label="Blog post list">
 		<h2
-			class="mb-8 font-serif text-xs font-bold tracking-widest text-gray-400 uppercase dark:text-gray-500"
+			class="fade-in-up mb-8 font-serif text-xs font-bold tracking-widest text-gray-400 uppercase dark:text-gray-500"
+			style="--delay: 200ms"
 		>
 			Essays
 		</h2>
@@ -62,13 +62,14 @@ function formatHomeDate(date: Date) {
 				postsToDisplay.map((p, index) => (
 					<article
 						class="glow-card fade-in-up flex flex-col"
-						style={`--delay: ${Math.min(index * 50, 400)}ms`}
+						style={`--delay: ${Math.min(300 + index * 80, 800)}ms`}
 					>
-						<div class="mb-3 flex items-baseline justify-between">
+						<div class="mb-3 flex items-baseline justify-between"
+						>
 							{/* 标题链接：设为 group/title 以便带动 [Pinned] 变色 */}
 							<a
 								href={`/posts/${p.id}/`}
-								class="group/title font-serif text-xl font-medium text-black transition-colors hover:text-[#8953d1] hover:underline hover:decoration-[#8953d1] hover:decoration-2 hover:underline-offset-4 dark:text-white dark:hover:text-[#a175e8] dark:hover:decoration-[#a175e8]"
+								class="group/title font-serif text-xl font-medium text-black transition-colors hover:text-[#8953d1] dark:text-white dark:hover:text-[#a175e8]"
 							>
 								{p.data.pinned && (
 									<span class="mr-2 text-base font-normal text-gray-400 transition-colors group-hover/title:text-[#8953d1] dark:text-gray-500 dark:group-hover/title:text-[#a175e8]">
@@ -76,6 +77,7 @@ function formatHomeDate(date: Date) {
 									</span>
 								)}
 								{p.data.title}
+								<!-- Underline effect via CSS ::after -->
 							</a>
 							<time
 								datetime={p.data.publishDate.toISOString()}
@@ -86,7 +88,8 @@ function formatHomeDate(date: Date) {
 						</div>
 
 						{p.data.description && (
-							<p class="mb-2 line-clamp-2 max-w-3xl overflow-hidden font-serif text-base leading-relaxed text-gray-600 dark:text-gray-400">
+							<p class="mb-2 line-clamp-2 max-w-3xl overflow-hidden font-serif text-base leading-relaxed text-gray-600 dark:text-gray-400"
+							>
 								{p.data.description}
 							</p>
 						)}
@@ -94,7 +97,7 @@ function formatHomeDate(date: Date) {
 						{/* More 链接：移除了 group-hover，仅在自身 hover 时变色 */}
 						<a
 							href={`/posts/${p.id}/`}
-							class="w-fit font-serif text-xs font-medium text-gray-400 transition-colors hover:text-[#8953d1] dark:hover:text-[#a175e8]"
+							class="animated-link w-fit font-serif text-xs font-medium text-gray-400 transition-colors hover:text-[#8953d1] dark:hover:text-[#a175e8]"
 						>
 							More
 						</a>

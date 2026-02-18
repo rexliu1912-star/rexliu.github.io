@@ -36,6 +36,16 @@ const GA_ID = "G-1EC76EZ517";
 			gtag("js", new Date());
 			gtag("config", GA_ID);
 		</script>
+		
+		<!-- Prevent transition flash on initial load -->
+		<script is:inline>
+			(function() {
+				document.documentElement.classList.add('theme-loaded');
+				setTimeout(() => {
+					document.documentElement.classList.remove('theme-loaded');
+				}, 100);
+			})();
+		</script>
 	</head>
 	<body
 		class="bg-global-bg text-global-text mx-auto flex min-h-screen max-w-4xl flex-col px-4 pt-8 font-mono text-sm font-normal antialiased sm:px-8"
@@ -94,11 +104,13 @@ const GA_ID = "G-1EC76EZ517";
 					id="expanded-controls"
 					class="pointer-events-none flex items-center pl-2 opacity-0 transition-opacity duration-300"
 				>
-					<div class="flex w-28 flex-col overflow-hidden whitespace-nowrap">
+					<div class="flex w-28 flex-col overflow-hidden whitespace-nowrap"
+					>
 						<span class="font-serif text-[8px] font-bold tracking-wider text-[#8953d1]/80 italic"
 							>Now Playing</span
 						>
-						<div id="current-song-container">
+						<div id="current-song-container"
+							>
 							<span
 								id="current-song-name"
 								class="inline-block font-serif text-[12px] leading-tight font-medium text-gray-600 dark:text-gray-300"
@@ -141,7 +153,8 @@ const GA_ID = "G-1EC76EZ517";
 							stroke="currentColor"
 							stroke-width="2"
 							stroke-linecap="round"
-							stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"></path></svg
+							stroke-linejoin="round"
+003e<path d="M18 6L6 18M6 6l12 12"></path></svg
 						>
 					</button>
 				</div>
@@ -360,18 +373,14 @@ const GA_ID = "G-1EC76EZ517";
 		</script>
 
 		<script>
-			import { initScrollAnimations, initMouseGlow } from "@/utils/animations";
+			import { initAllAnimations } from "@/utils/animations";
 
-			// 初始化滚动动画
-			initScrollAnimations();
+			// Initialize all animations on page load
+			initAllAnimations();
 
-			// 初始化鼠标光晕效果
-			initMouseGlow();
-
-			// 支持 Astro View Transitions
+			// Re-initialize after Astro view transitions
 			document.addEventListener("astro:page-load", () => {
-				initScrollAnimations();
-				initMouseGlow();
+				initAllAnimations();
 			});
 		</script>
 	</body>
