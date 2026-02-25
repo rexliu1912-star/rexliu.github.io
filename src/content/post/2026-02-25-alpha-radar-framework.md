@@ -74,11 +74,11 @@ One thing I've noticed across all six: none of them had a "marketing moment" tha
 
 Follower count is noise. I look at three things:
 
-**Bear market survival.** Is the community still active when there's no financial incentive to be? SNEK's Discord stayed alive through the worst of 2022. Most projects' communities evaporated.
+**Bear market survival.** Is the community still active when there's no financial incentive to be? SNEK's Discord stayed alive through the worst of 2023. Most projects' communities evaporated.
 
 **Organic interaction.** Are people talking because they care, or because there's an airdrop? You can feel the difference in five minutes.
 
-**Cultural identity.** The strongest communities have something that goes beyond price. SNEK has "In SNEK We Trust." Bitcoin has sovereign money. Cardano has peer-reviewed science. It's an identity, not just a position.
+**Cultural identity.** The strongest communities have something that goes beyond price. SNEK has "In SNEK We Trust." Bitcoin has sovereign money. Cardano has vibrant community. It's an identity, not just a position.
 
 ### 3. Value Capture — Beyond "Business Model"
 
