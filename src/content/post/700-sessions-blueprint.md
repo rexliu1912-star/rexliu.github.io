@@ -36,7 +36,6 @@ This is the full system. What works, what broke, and the exact files you can cop
 
 Each agent gets spawned per task via `sessions_spawn`. No long-running sessions. One task, one contract, one deliverable.
 
-![The Team — 6 AI agents around a Mac Mini](/posts/700-sessions-blueprint/team.png)
 
 ---
 
@@ -166,7 +165,6 @@ Memory gets pruned on a strict schedule: P0 = permanent, P1 = 90 days, P2 = 30 d
 
 Each thinking cron (01:00-03:30) scans for strategic gaps, produces proposals or reports "no action needed." Not every run produces output — and that's by design.
 
-![Cron Timeline — 24-hour mission control](/posts/700-sessions-blueprint/cron-timeline.png)
 
 ---
 
@@ -190,7 +188,6 @@ Each thinking cron (01:00-03:30) scans for strategic gaps, produces proposals or
 **Image generation failures.** Missing API keys in sub-agent environment. First 3 attempts failed before discovering the key wasn't inherited.
 → Fix: explicit `GEMINI_API_KEY` sourced from config before generation.
 
-![What Broke — debugging in production](/posts/700-sessions-blueprint/what-broke.png)
 
 ---
 
