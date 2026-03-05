@@ -1,0 +1,10 @@
+---
+title: "Moonshot Kimi Pushes Long-Context Capabilities"
+date: 2024-11-16
+category: model
+tags: ["moonshot", "kimi", "china"]
+source: "https://kimi.moonshot.cn/"
+source_name: "Moonshot AI"
+significance: medium
+---
+Kimi continues long-context positioning in China market with upgrades focused on document intelligence, research tasks, and productivity use cases.
