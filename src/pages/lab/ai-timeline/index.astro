@@ -240,4 +240,26 @@ function formatDate(date: Date) {
 			if (detail) detail.classList.toggle("hidden");
 		});
 	});
+
+	// Progressive reveal: hide year groups beyond the first 2, show on scroll
+	const yearGroups = document.querySelectorAll("[data-year-group]");
+	const INITIAL_YEARS = 2;
+	yearGroups.forEach((yg, i) => {
+		if (i >= INITIAL_YEARS) (yg as HTMLElement).style.display = "none";
+	});
+
+	let revealed = INITIAL_YEARS;
+	const loadMore = () => {
+		if (revealed >= yearGroups.length) return;
+		const sentinel = yearGroups[revealed - 1] as HTMLElement;
+		if (!sentinel) return;
+		const rect = sentinel.getBoundingClientRect();
+		if (rect.bottom < window.innerHeight + 600) {
+			(yearGroups[revealed] as HTMLElement).style.display = "";
+			revealed++;
+		}
+	};
+
+	window.addEventListener("scroll", loadMore, { passive: true });
+	loadMore(); // in case page is short
 </script>

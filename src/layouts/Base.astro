@@ -25,16 +25,24 @@ const GA_ID = "G-1EC76EZ517";
 		<BaseHead articleDate={articleDate} description={description} ogImage={ogImage} title={title} />
 		<link rel="icon" href="/avatar.png" type="image/png" />
 		<link rel="apple-touch-icon" href="/avatar.png" />
+		<link rel="preconnect" href="https://www.googletagmanager.com" />
+		<link rel="dns-prefetch" href="https://www.googletagmanager.com" />
 		<ClientRouter />
 
-		<script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}></script>
+		<!-- Defer GA to after page load -->
 		<script is:inline define:vars={{ GA_ID }}>
-			window.dataLayer = window.dataLayer || [];
-			function gtag() {
-				dataLayer.push(arguments);
-			}
-			gtag("js", new Date());
-			gtag("config", GA_ID);
+			window.addEventListener('load', function() {
+				var s = document.createElement('script');
+				s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+				s.async = true;
+				document.head.appendChild(s);
+				s.onload = function() {
+					window.dataLayer = window.dataLayer || [];
+					function gtag() { dataLayer.push(arguments); }
+					gtag('js', new Date());
+					gtag('config', GA_ID);
+				};
+			});
 		</script>
 		
 		<!-- Prevent transition flash on initial load -->
