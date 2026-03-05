@@ -1,0 +1,72 @@
+---
+import type { GetStaticPaths, InferGetStaticPropsType } from "astro";
+import { getCollection, render } from "astro:content";
+import PageLayout from "@/layouts/Base.astro";
+
+export const getStaticPaths = (async () => {
+	const dailies = await getCollection("snek-daily");
+	return dailies.map((entry) => ({
+		params: { id: entry.id },
+		props: { entry },
+	}));
+}) satisfies GetStaticPaths;
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+const { entry } = Astro.props as Props;
+const { Content } = await render(entry);
+
+const formatCustomDate = (date: Date) => {
+	const day = date.getDate();
+	const month = date.toLocaleDateString("en-US", { month: "short" });
+	const year = date.getFullYear();
+	const getOrdinal = (n: number) => {
+		const s = ["th", "st", "nd", "rd"];
+		const v = n % 100;
+		return s[(v - 20) % 10] || s[v] || s[0];
+	};
+	return `${month} ${day}${getOrdinal(day)} ${year}`;
+};
+
+const meta = {
+	title: `${entry.data.title} — SNEK Daily`,
+	description: entry.data.summary || `BTC/ADA/SNEK daily briefing for ${formatCustomDate(entry.data.date)}`,
+};
+---
+
+<PageLayout meta={meta}>
+	<div class="mb-16 sm:mt-8">
+		<div class="mb-8">
+			<button
+				onclick="history.back()"
+				class="group flex items-center gap-1 font-serif text-sm text-gray-500 transition-colors hover:text-[#8953d1] dark:hover:text-[#a175e8]"
+			>
+				<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="transition-transform group-hover:-translate-x-1"><polyline points="15 18 9 12 15 6"></polyline></svg>
+				Back
+			</button>
+		</div>
+
+		<article class="flex flex-col gap-4">
+			<h1 class="font-serif text-3xl leading-tight font-bold text-black sm:text-4xl dark:text-white">
+				{entry.data.title}
+			</h1>
+
+			<div class="mt-2 flex flex-wrap items-center gap-3 font-serif text-sm text-gray-400">
+				<time datetime={entry.data.date.toISOString()}>
+					{formatCustomDate(entry.data.date)}
+				</time>
+				{entry.data.btc_price && (
+					<>
+						<span>·</span>
+						<span class="font-mono">BTC {entry.data.btc_price} {entry.data.btc_change}</span>
+					</>
+				)}
+			</div>
+
+			<hr class="my-8 border-dashed border-gray-200 dark:border-gray-700" />
+
+			<div class="prose prose-lg prose-serif dark:prose-invert max-w-none font-serif">
+				<Content />
+			</div>
+		</article>
+	</div>
+</PageLayout>

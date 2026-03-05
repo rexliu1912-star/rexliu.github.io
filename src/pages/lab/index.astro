@@ -17,6 +17,11 @@ const timelineCategoryColors: Record<string, string> = {
 	product: "text-cyan-500",
 };
 
+const allSnekDaily = await getCollection("snek-daily");
+const latestSnek = allSnekDaily
+	.sort((a, b) => new Date(b.data.date).valueOf() - new Date(a.data.date).valueOf())
+	.slice(0, 3);
+
 const allBuilderLogs = await getCollection("builder-log");
 const latestLogs = allBuilderLogs
 	.sort((a, b) => new Date(b.data.date).valueOf() - new Date(a.data.date).valueOf())
@@ -115,6 +120,42 @@ const statusColors: Record<string, string> = {
 		<div class="mt-8">
 			<a href="/lab/digest/" class="font-serif text-sm text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]">
 				View all digests →
+			</a>
+		</div>
+	</section>
+
+	<!-- SNEK Daily -->
+	<section class="mb-16">
+		<h2 class="fade-in-up mb-8 font-serif text-xs font-bold tracking-widest text-gray-400 uppercase dark:text-gray-500" style="--delay: 200ms">
+			SNEK Daily
+		</h2>
+		<div class="space-y-8">
+			{latestSnek.map((d, i) => (
+				<article class="glow-card fade-in-up" style={`--delay: ${300 + i * 80}ms`}>
+					<div class="mb-2 flex items-baseline justify-between">
+						<a href={`/lab/snek-daily/${d.id}/`} class="font-serif text-xl font-medium text-black transition-colors hover:text-[#8953d1] dark:text-white dark:hover:text-[#a175e8]">
+							{d.data.title}
+						</a>
+						<time class="shrink-0 pl-4 font-serif text-xs text-gray-400 dark:text-gray-500" datetime={d.data.date.toISOString()}>
+							{formatDate(d.data.date)}
+						</time>
+					</div>
+					{d.data.btc_price && (
+						<div class="mt-1 flex flex-wrap items-center gap-4 font-mono text-sm text-gray-400">
+							<span>BTC {d.data.btc_price} {d.data.btc_change}</span>
+							{d.data.ada_price && <span>ADA {d.data.ada_price}</span>}
+							{d.data.snek_price && <span>SNEK {d.data.snek_price}</span>}
+						</div>
+					)}
+					{d.data.summary && (
+						<p class="mt-2 font-serif text-sm leading-relaxed text-gray-500 dark:text-gray-400">{d.data.summary}</p>
+					)}
+				</article>
+			))}
+		</div>
+		<div class="mt-8">
+			<a href="/lab/snek-daily/" class="font-serif text-sm text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]">
+				View all dailies →
 			</a>
 		</div>
 	</section>

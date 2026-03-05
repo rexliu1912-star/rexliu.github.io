@@ -113,5 +113,19 @@ const aiTimeline = defineCollection({
 	}),
 });
 
-// 8. 统一导出
-export const collections = { post, note, tag, digest, projects, "builder-log": builderLog, "ai-timeline": aiTimeline };
+// 8. SNEK Daily 集合
+const snekDaily = defineCollection({
+	loader: glob({ base: "./src/content/snek-daily", pattern: "**/*.{md,mdx}" }),
+	schema: z.object({
+		title: z.string(),
+		date: z.coerce.date(),
+		btc_price: z.string().optional(),
+		btc_change: z.string().optional(),
+		ada_price: z.string().optional(),
+		snek_price: z.string().optional(),
+		summary: z.string().optional(),
+	}),
+});
+
+// 9. 统一导出
+export const collections = { post, note, tag, digest, projects, "builder-log": builderLog, "ai-timeline": aiTimeline, "snek-daily": snekDaily };
