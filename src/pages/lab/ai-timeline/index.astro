@@ -2,8 +2,6 @@
 import { getCollection } from "astro:content";
 import PageLayout from "@/layouts/Base.astro";
 
-import { render } from "astro:content";
-
 const allEvents = await getCollection("ai-timeline");
 const sorted = allEvents.sort((a, b) => new Date(b.data.date).valueOf() - new Date(a.data.date).valueOf());
 
