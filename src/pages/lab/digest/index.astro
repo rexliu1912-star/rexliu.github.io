@@ -1,0 +1,61 @@
+---
+import { getCollection } from "astro:content";
+import PageLayout from "@/layouts/Base.astro";
+
+const allDigests = await getCollection("digest");
+const sortedDigests = allDigests.sort(
+	(a, b) => new Date(b.data.date).valueOf() - new Date(a.data.date).valueOf(),
+);
+
+const meta = {
+	title: "Digest — Lab",
+	description: "Curated readings on crypto, AI, and tech",
+};
+
+function formatDate(date: Date) {
+	return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }).replace(",", "");
+}
+---
+
+<PageLayout meta={meta}>
+	<section class="mb-12">
+		<a href="/lab/" class="font-serif text-sm text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]">
+			← Lab
+		</a>
+		<h1 class="hero-reveal-text mt-4 mb-4 font-serif text-4xl font-bold dark:text-white">
+			Digest
+		</h1>
+		<p class="hero-reveal-subtitle max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">
+			Curated articles and insights worth reading twice.
+		</p>
+	</section>
+
+	<section>
+		<div class="space-y-8">
+			{sortedDigests.map((d, i) => (
+				<article class="glow-card fade-in-up" style={`--delay: ${200 + i * 60}ms`}>
+					<div class="mb-2 flex items-baseline justify-between">
+						<a href={`/lab/digest/${d.id}/`} class="font-serif text-xl font-medium text-black transition-colors hover:text-[#8953d1] dark:text-white dark:hover:text-[#a175e8]">
+							{d.data.title}
+						</a>
+						<time class="shrink-0 pl-4 font-serif text-xs text-gray-400 dark:text-gray-500" datetime={d.data.date.toISOString()}>
+							{formatDate(d.data.date)}
+						</time>
+					</div>
+					{d.data.summary && (
+						<p class="font-serif text-sm leading-relaxed text-gray-500 dark:text-gray-400">{d.data.summary}</p>
+					)}
+					{d.data.tags.length > 0 && (
+						<div class="mt-2 flex flex-wrap gap-2">
+							{d.data.tags.map((tag: string) => (
+								<span class="rounded bg-gray-100 px-2 py-0.5 font-serif text-xs text-gray-500 dark:bg-gray-800 dark:text-gray-400">
+									{tag}
+								</span>
+							))}
+						</div>
+					)}
+				</article>
+			))}
+		</div>
+	</section>
+</PageLayout>

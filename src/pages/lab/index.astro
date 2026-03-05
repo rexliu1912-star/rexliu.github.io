@@ -1,0 +1,97 @@
+---
+import { getCollection } from "astro:content";
+import PageLayout from "@/layouts/Base.astro";
+
+const allDigests = await getCollection("digest");
+const sortedDigests = allDigests
+	.sort((a, b) => new Date(b.data.date).valueOf() - new Date(a.data.date).valueOf())
+	.slice(0, 5);
+
+const allProjects = await getCollection("projects");
+const sortedProjects = allProjects.sort((a, b) => (a.data.order ?? 0) - (b.data.order ?? 0));
+
+const meta = {
+	title: "Lab",
+	description: "Rex's Lab — Digest, Projects, and Experiments",
+};
+
+function formatDate(date: Date) {
+	return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }).replace(",", "");
+}
+
+const statusColors: Record<string, string> = {
+	running: "text-green-500",
+	building: "text-yellow-500",
+	planning: "text-gray-400",
+};
+---
+
+<PageLayout meta={meta}>
+	<section class="mb-12">
+		<h1 class="hero-reveal-text mb-4 font-serif text-4xl font-bold dark:text-white">
+			Lab 🧪
+		</h1>
+		<p class="hero-reveal-subtitle max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">
+			Curated readings, ongoing projects, and experiments in crypto & AI.
+		</p>
+	</section>
+
+	<!-- Latest Digest -->
+	<section class="mb-16">
+		<h2 class="fade-in-up mb-8 font-serif text-xs font-bold tracking-widest text-gray-400 uppercase dark:text-gray-500" style="--delay: 200ms">
+			Latest Digest
+		</h2>
+		<div class="space-y-8">
+			{sortedDigests.map((d, i) => (
+				<article class="glow-card fade-in-up" style={`--delay: ${300 + i * 80}ms`}>
+					<div class="mb-2 flex items-baseline justify-between">
+						<a href={`/lab/digest/${d.id}/`} class="font-serif text-xl font-medium text-black transition-colors hover:text-[#8953d1] dark:text-white dark:hover:text-[#a175e8]">
+							{d.data.title}
+						</a>
+						<time class="shrink-0 pl-4 font-serif text-xs text-gray-400 dark:text-gray-500" datetime={d.data.date.toISOString()}>
+							{formatDate(d.data.date)}
+						</time>
+					</div>
+					{d.data.summary && (
+						<p class="font-serif text-sm leading-relaxed text-gray-500 dark:text-gray-400">{d.data.summary}</p>
+					)}
+					{d.data.tags.length > 0 && (
+						<div class="mt-2 flex flex-wrap gap-2">
+							{d.data.tags.map((tag: string) => (
+								<span class="rounded bg-gray-100 px-2 py-0.5 font-serif text-xs text-gray-500 dark:bg-gray-800 dark:text-gray-400">
+									{tag}
+								</span>
+							))}
+						</div>
+					)}
+				</article>
+			))}
+		</div>
+		<div class="mt-8">
+			<a href="/lab/digest/" class="font-serif text-sm text-[#8953d1] transition-colors hover:underline dark:text-[#a175e8]">
+				View all digests →
+			</a>
+		</div>
+	</section>
+
+	<!-- Projects -->
+	<section class="mb-16">
+		<h2 class="fade-in-up mb-8 font-serif text-xs font-bold tracking-widest text-gray-400 uppercase dark:text-gray-500" style="--delay: 200ms">
+			Projects
+		</h2>
+		<div class="grid gap-4 sm:grid-cols-2">
+			{sortedProjects.map((p, i) => (
+				<div class="glow-card fade-in-up rounded-lg border border-gray-200 p-5 transition-colors dark:border-gray-800" style={`--delay: ${300 + i * 80}ms`}>
+					<div class="mb-2 flex items-center gap-2">
+						{p.data.icon && <span class="text-lg">{p.data.icon}</span>}
+						<h3 class="font-serif text-lg font-medium text-black dark:text-white">{p.data.title}</h3>
+						<span class={`ml-auto font-serif text-xs ${statusColors[p.data.status] || "text-gray-400"}`}>
+							{p.data.status}
+						</span>
+					</div>
+					<p class="font-serif text-sm text-gray-500 dark:text-gray-400">{p.data.description}</p>
+				</div>
+			))}
+		</div>
+	</section>
+</PageLayout>
