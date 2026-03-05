@@ -79,7 +79,7 @@ function formatDate(date: Date) {
 		<h1 class="hero-reveal-text mb-3 font-serif text-4xl font-bold dark:text-white">
 			AI Timeline
 		</h1>
-		<p class="hero-reveal-subtitle max-w-2xl font-serif text-base leading-relaxed text-gray-500 dark:text-gray-400">
+		<p class="hero-reveal-subtitle max-w-2xl font-serif text-lg leading-relaxed text-gray-500 dark:text-gray-400">
 			Major milestones in the AI revolution, annotated with a builder-investor lens.
 		</p>
 	</section>
@@ -138,12 +138,12 @@ function formatDate(date: Date) {
 
 										<div class="flex flex-wrap items-start gap-2">
 											{/* Category badge */}
-											<span class:list={["inline-block rounded-full px-2 py-0.5 font-serif text-[10px] font-medium uppercase tracking-wider", colors.bg, colors.text]}>
+											<span class:list={["inline-block rounded-full px-2 py-0.5 font-serif text-xs font-medium uppercase tracking-wider", colors.bg, colors.text]}>
 												{event.data.category}
 											</span>
 
 											{/* Date */}
-											<time class="font-serif text-xs text-gray-400 dark:text-gray-500" datetime={event.data.date.toISOString()}>
+											<time class="font-serif text-sm text-gray-400 dark:text-gray-500" datetime={event.data.date.toISOString()}>
 												{formatDate(event.data.date)}
 											</time>
 
@@ -162,11 +162,11 @@ function formatDate(date: Date) {
 
 										{/* Expandable content */}
 										<div class="timeline-detail mt-2 hidden">
-											<div class="font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-400" set:html={mdToHtml(event.body || '')} />
+											<div class="font-serif text-base leading-relaxed text-gray-600 dark:text-gray-400" set:html={mdToHtml(event.body || '')} />
 											{event.data.source && (
 												<a
 													href={event.data.source}
-													target="_blank"
+													target="_blank" rel="noopener noreferrer"
 													rel="noopener noreferrer"
 													class="mt-2 inline-block font-serif text-xs text-[#8953d1] no-underline transition-colors hover:text-[#6b3fad] dark:text-[#a175e8] dark:hover:text-[#c4a8f0]"
 												>
