@@ -2,8 +2,19 @@
 import { getCollection } from "astro:content";
 import PageLayout from "@/layouts/Base.astro";
 
+import { render } from "astro:content";
+
 const allEvents = await getCollection("ai-timeline");
 const sorted = allEvents.sort((a, b) => new Date(b.data.date).valueOf() - new Date(a.data.date).valueOf());
+
+// Simple markdown-to-HTML for event bodies (bold + links)
+function mdToHtml(md: string): string {
+	return md
+		.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+		.replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
+		.replace(/\n\n/g, '<br/><br/>')
+		.replace(/\n/g, '<br/>');
+}
 
 // Group by year then month
 type TimelineEvent = (typeof sorted)[number];
@@ -153,7 +164,7 @@ function formatDate(date: Date) {
 
 										{/* Expandable content */}
 										<div class="timeline-detail mt-2 hidden">
-											<div class="font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-400" set:html={event.body} />
+											<div class="font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-400" set:html={mdToHtml(event.body || '')} />
 											{event.data.source && (
 												<a
 													href={event.data.source}

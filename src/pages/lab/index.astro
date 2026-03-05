@@ -160,12 +160,14 @@ const statusColors: Record<string, string> = {
 					{latestSnek.map((d, i) => (
 						<article class="glow-card fade-in-up" style={`--delay: ${250 + i * 60}ms`}>
 							<div class="mb-1 flex items-baseline justify-between gap-2">
-								<a href={`/lab/snek-daily/${d.id}/`} class="font-serif text-base font-medium text-black transition-colors hover:text-[#8953d1] dark:text-white dark:hover:text-[#a175e8]">
-									{formatShortDate(d.data.date)}
-								</a>
 								{d.data.btc_price && (
-									<span class="shrink-0 font-serif text-xs text-gray-400">BTC {d.data.btc_price} {d.data.btc_change}</span>
+									<a href={`/lab/snek-daily/${d.id}/`} class="font-serif text-base font-medium text-black transition-colors hover:text-[#8953d1] dark:text-white dark:hover:text-[#a175e8]">
+										BTC {d.data.btc_price} {d.data.btc_change}
+									</a>
 								)}
+								<time class="shrink-0 font-serif text-xs text-gray-400 dark:text-gray-500" datetime={d.data.date.toISOString()}>
+									{formatShortDate(d.data.date)}
+								</time>
 							</div>
 							{d.data.summary && (
 								<p class="font-serif text-xs leading-relaxed text-gray-500 dark:text-gray-400">{d.data.summary}</p>
