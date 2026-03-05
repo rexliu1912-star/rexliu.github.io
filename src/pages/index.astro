@@ -1,6 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import PageLayout from "@/layouts/Base.astro";
+import ActivityGraph from "@/components/ActivityGraph.astro";
 
 const allPosts = await getCollection("post");
 const sortedPosts = allPosts.sort(
@@ -46,7 +47,7 @@ function formatHomeDate(date: Date) {
 		</p>
 	</section>
 
-	{/* <ActivityGraph /> */}
+	<ActivityGraph />
 
 	<section aria-label="Blog post list">
 		<h2
