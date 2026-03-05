@@ -51,7 +51,7 @@ This is the personal blog and digital garden of **Rex Liu**, built with **Astro 
 - **高性能**: 基于 Astro v5 构建，确保极速加载体验。
 - **现代化样式**: 使用 Tailwind CSS v4 设计，界面简洁响应式。
 - **专注内容**: 针对长文（文章与笔记）优化的 MDX 支持。
-- **活动热力图**: GitHub 风格热力图，整合展示 GitHub 提交、博客文章和 Flomo 笔记。
+- **活动热力图**: GitHub 风格热力图，整合展示 GitHub 提交、博客文章。
 - **全文搜索**: 内置搜索功能，快速发现内容。
 - **标签系统**: 通过标签组织内容，便于导航浏览。
 - **RSS 订阅**: 自动生成 RSS feed，方便读者订阅。
