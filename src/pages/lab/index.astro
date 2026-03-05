@@ -2,6 +2,11 @@
 import { getCollection } from "astro:content";
 import PageLayout from "@/layouts/Base.astro";
 
+const allBuilderLogs = await getCollection("builder-log");
+const latestLogs = allBuilderLogs
+	.sort((a, b) => new Date(b.data.date).valueOf() - new Date(a.data.date).valueOf())
+	.slice(0, 3);
+
 const allDigests = await getCollection("digest");
 const sortedDigests = allDigests
 	.sort((a, b) => new Date(b.data.date).valueOf() - new Date(a.data.date).valueOf())
@@ -70,6 +75,42 @@ const statusColors: Record<string, string> = {
 		<div class="mt-8">
 			<a href="/lab/digest/" class="font-serif text-sm text-[#8953d1] transition-colors hover:underline dark:text-[#a175e8]">
 				View all digests →
+			</a>
+		</div>
+	</section>
+
+	<!-- Builder's Log -->
+	<section class="mb-16">
+		<h2 class="fade-in-up mb-8 font-serif text-xs font-bold tracking-widest text-gray-400 uppercase dark:text-gray-500" style="--delay: 200ms">
+			Builder's Log
+		</h2>
+		<div class="space-y-8">
+			{latestLogs.map((log, i) => (
+				<article class="glow-card fade-in-up" style={`--delay: ${300 + i * 80}ms`}>
+					<div class="mb-2 flex items-baseline justify-between">
+						<a href={`/lab/builder-log/${log.id}/`} class="font-serif text-xl font-medium text-black transition-colors hover:text-[#8953d1] dark:text-white dark:hover:text-[#a175e8]">
+							{log.data.title}
+						</a>
+						<time class="shrink-0 pl-4 font-serif text-xs text-gray-400 dark:text-gray-500" datetime={log.data.date.toISOString()}>
+							{formatDate(log.data.date)}
+						</time>
+					</div>
+					<p class="font-serif text-sm leading-relaxed text-gray-500 dark:text-gray-400">{log.data.summary}</p>
+					{log.data.agents.length > 0 && (
+						<div class="mt-3 flex flex-wrap gap-1.5">
+							{log.data.agents.map((agent: string) => (
+								<span class="rounded-full bg-[#8953d1]/15 px-2.5 py-0.5 font-serif text-xs font-medium text-[#8953d1] dark:bg-[#8953d1]/25 dark:text-[#a175e8]">
+									{agent}
+								</span>
+							))}
+						</div>
+					)}
+				</article>
+			))}
+		</div>
+		<div class="mt-8">
+			<a href="/lab/builder-log/" class="font-serif text-sm text-[#8953d1] transition-colors hover:underline dark:text-[#a175e8]">
+				View all logs →
 			</a>
 		</div>
 	</section>

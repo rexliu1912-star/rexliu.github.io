@@ -87,5 +87,17 @@ const projects = defineCollection({
 	}),
 });
 
-// 6. 统一导出
-export const collections = { post, note, tag, digest, projects };
+// 6. Builder's Log 集合
+const builderLog = defineCollection({
+	loader: glob({ base: "./src/content/builder-log", pattern: "**/*.{md,mdx}" }),
+	schema: z.object({
+		title: z.string(),
+		date: z.coerce.date(),
+		summary: z.string(),
+		highlights: z.array(z.string()).default([]),
+		agents: z.array(z.string()).default([]),
+	}),
+});
+
+// 7. 统一导出
+export const collections = { post, note, tag, digest, projects, "builder-log": builderLog };

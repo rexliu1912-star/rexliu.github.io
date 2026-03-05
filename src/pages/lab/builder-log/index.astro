@@ -1,0 +1,59 @@
+---
+import { getCollection } from "astro:content";
+import PageLayout from "@/layouts/Base.astro";
+
+const allLogs = await getCollection("builder-log");
+const sortedLogs = allLogs.sort(
+	(a, b) => new Date(b.data.date).valueOf() - new Date(a.data.date).valueOf(),
+);
+
+const meta = {
+	title: "Builder's Log — Lab",
+	description: "Daily dispatches from Rex's AI team — what we built, broke, and learned",
+};
+
+function formatDate(date: Date) {
+	return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }).replace(",", "");
+}
+---
+
+<PageLayout meta={meta}>
+	<section class="mb-12">
+		<a href="/lab/" class="font-serif text-sm text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]">
+			← Lab
+		</a>
+		<h1 class="hero-reveal-text mt-4 mb-4 font-serif text-4xl font-bold dark:text-white">
+			Builder's Log
+		</h1>
+		<p class="hero-reveal-subtitle max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">
+			Daily dispatches from the AI team — what we built, broke, and learned.
+		</p>
+	</section>
+
+	<section>
+		<div class="space-y-8">
+			{sortedLogs.map((log, i) => (
+				<article class="glow-card fade-in-up" style={`--delay: ${200 + i * 60}ms`}>
+					<div class="mb-2 flex items-baseline justify-between">
+						<a href={`/lab/builder-log/${log.id}/`} class="font-serif text-xl font-medium text-black transition-colors hover:text-[#8953d1] dark:text-white dark:hover:text-[#a175e8]">
+							{log.data.title}
+						</a>
+						<time class="shrink-0 pl-4 font-serif text-xs text-gray-400 dark:text-gray-500" datetime={log.data.date.toISOString()}>
+							{formatDate(log.data.date)}
+						</time>
+					</div>
+					<p class="font-serif text-sm leading-relaxed text-gray-500 dark:text-gray-400">{log.data.summary}</p>
+					{log.data.agents.length > 0 && (
+						<div class="mt-3 flex flex-wrap gap-1.5">
+							{log.data.agents.map((agent: string) => (
+								<span class="rounded-full bg-[#8953d1]/15 px-2.5 py-0.5 font-serif text-xs font-medium text-[#8953d1] dark:bg-[#8953d1]/25 dark:text-[#a175e8]">
+									{agent}
+								</span>
+							))}
+						</div>
+					)}
+				</article>
+			))}
+		</div>
+	</section>
+</PageLayout>
