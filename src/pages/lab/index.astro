@@ -5,7 +5,7 @@ import PageLayout from "@/layouts/Base.astro";
 const allTimelineEvents = await getCollection("ai-timeline");
 const latestEvents = allTimelineEvents
 	.sort((a, b) => new Date(b.data.date).valueOf() - new Date(a.data.date).valueOf())
-	.slice(0, 5);
+	.slice(0, 8);
 
 const timelineCategoryColors: Record<string, string> = {
 	model: "text-purple-500",
@@ -17,6 +17,21 @@ const timelineCategoryColors: Record<string, string> = {
 	product: "text-cyan-500",
 };
 
+const timelineCategoryLabels: Record<string, string> = {
+	model: "Model",
+	funding: "Funding",
+	policy: "Policy",
+	robotics: "Robotics",
+	"crypto-ai": "Crypto×AI",
+	research: "Research",
+	product: "Product",
+};
+
+const allDigests = await getCollection("digest");
+const sortedDigests = allDigests
+	.sort((a, b) => new Date(b.data.date).valueOf() - new Date(a.data.date).valueOf())
+	.slice(0, 3);
+
 const allSnekDaily = await getCollection("snek-daily");
 const latestSnek = allSnekDaily
 	.sort((a, b) => new Date(b.data.date).valueOf() - new Date(a.data.date).valueOf())
@@ -27,21 +42,20 @@ const latestLogs = allBuilderLogs
 	.sort((a, b) => new Date(b.data.date).valueOf() - new Date(a.data.date).valueOf())
 	.slice(0, 3);
 
-const allDigests = await getCollection("digest");
-const sortedDigests = allDigests
-	.sort((a, b) => new Date(b.data.date).valueOf() - new Date(a.data.date).valueOf())
-	.slice(0, 5);
-
 const allProjects = await getCollection("projects");
 const sortedProjects = allProjects.sort((a, b) => (a.data.order ?? 0) - (b.data.order ?? 0));
 
 const meta = {
-	title: "Lab",
-	description: "Rex's Lab — Digest, Projects, and Experiments",
+	title: "Rex's Lab",
+	description: "Rex's Lab — AI Timeline, Digest, SNEK Daily, Builder's Log & Projects",
 };
 
 function formatDate(date: Date) {
 	return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }).replace(",", "");
+}
+
+function formatShortDate(date: Date) {
+	return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
 const statusColors: Record<string, string> = {
@@ -54,109 +68,121 @@ const statusColors: Record<string, string> = {
 <PageLayout meta={meta}>
 	<section class="mb-12">
 		<h1 class="hero-reveal-text mb-4 font-serif text-4xl font-bold dark:text-white">
-			Lab
+			Rex's Lab
 		</h1>
 		<p class="hero-reveal-subtitle max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">
-			Curated readings, ongoing projects, and experiments in crypto & AI.
+			Every moment of the AI era, curated readings, and experiments in crypto & AI.
 		</p>
 	</section>
 
-	<!-- AI Timeline -->
+	<!-- AI Timeline — Hero Section -->
 	<section class="mb-16">
-		<h2 class="fade-in-up mb-8 font-serif text-xs font-bold tracking-widest text-gray-400 uppercase dark:text-gray-500" style="--delay: 150ms">
+		<h2 class="fade-in-up mb-8 font-serif text-xs font-bold tracking-widest text-gray-400 uppercase dark:text-gray-500" style="--delay: 100ms">
 			AI Timeline
 		</h2>
-		<div class="space-y-4">
+		<div class="relative border-l-2 border-gray-200 pl-6 dark:border-gray-700">
 			{latestEvents.map((ev, i) => (
-				<div class="fade-in-up flex items-baseline gap-3" style={`--delay: ${200 + i * 60}ms`}>
-					<time class="shrink-0 font-serif text-xs text-gray-400 dark:text-gray-500" datetime={ev.data.date.toISOString()}>
-						{ev.data.date.toLocaleDateString("en-US", { month: "short", day: "numeric" })}
-					</time>
-					<span class={`shrink-0 font-serif text-[10px] font-medium uppercase ${timelineCategoryColors[ev.data.category] || "text-gray-400"}`}>
-						{ev.data.category}
-					</span>
-					<span class="font-serif text-sm text-black dark:text-white">
+				<div class="fade-in-up relative mb-6 last:mb-0" style={`--delay: ${150 + i * 60}ms`}>
+					<div class="absolute -left-[31px] top-1.5 h-3 w-3 rounded-full border-2 border-gray-200 bg-[var(--color-global-bg)] dark:border-gray-700" />
+					<div class="flex flex-wrap items-baseline gap-2">
+						<time class="shrink-0 font-serif text-xs text-gray-400 dark:text-gray-500" datetime={ev.data.date.toISOString()}>
+							{formatShortDate(ev.data.date)}
+						</time>
+						<span class={`shrink-0 rounded-sm px-1.5 py-0.5 font-serif text-[10px] font-medium uppercase ${timelineCategoryColors[ev.data.category] || "text-gray-400"} bg-gray-100 dark:bg-gray-800`}>
+							{timelineCategoryLabels[ev.data.category] || ev.data.category}
+						</span>
+					</div>
+					<p class="mt-1 font-serif text-sm leading-relaxed text-black dark:text-white">
 						{ev.data.title}
-					</span>
+					</p>
+					{ev.body && ev.body.trim() && (
+						<p class="mt-0.5 font-serif text-xs leading-relaxed text-gray-500 dark:text-gray-400">
+							{ev.body.trim().slice(0, 120)}{ev.body.trim().length > 120 ? "…" : ""}
+						</p>
+					)}
 				</div>
 			))}
 		</div>
-		<div class="mt-6">
+		<div class="mt-8">
 			<a href="/lab/ai-timeline/" class="font-serif text-sm text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]">
 				View full timeline →
 			</a>
 		</div>
 	</section>
 
-	<!-- Latest Digest -->
+	<!-- Daily Section: Digest + SNEK Daily -->
 	<section class="mb-16">
 		<h2 class="fade-in-up mb-8 font-serif text-xs font-bold tracking-widest text-gray-400 uppercase dark:text-gray-500" style="--delay: 200ms">
-			Latest Digest
+			Daily
 		</h2>
-		<div class="space-y-8">
-			{sortedDigests.map((d, i) => (
-				<article class="glow-card fade-in-up" style={`--delay: ${300 + i * 80}ms`}>
-					<div class="mb-2 flex items-baseline justify-between">
-						<a href={`/lab/digest/${d.id}/`} class="font-serif text-xl font-medium text-black transition-colors hover:text-[#8953d1] dark:text-white dark:hover:text-[#a175e8]">
-							{d.data.title}
-						</a>
-						<time class="shrink-0 pl-4 font-serif text-xs text-gray-400 dark:text-gray-500" datetime={d.data.date.toISOString()}>
-							{formatDate(d.data.date)}
-						</time>
-					</div>
-					{d.data.summary && (
-						<p class="font-serif text-sm leading-relaxed text-gray-500 dark:text-gray-400">{d.data.summary}</p>
-					)}
-					{d.data.tags.length > 0 && (
-						<div class="mt-2 flex flex-wrap items-center gap-3 font-serif text-sm text-gray-400">
-							{d.data.tags.map((tag: string) => (
-								<span class="capitalize before:content-['#']">{tag}</span>
-							))}
-						</div>
-					)}
-				</article>
-			))}
-		</div>
-		<div class="mt-8">
-			<a href="/lab/digest/" class="font-serif text-sm text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]">
-				View all digests →
-			</a>
-		</div>
-	</section>
 
-	<!-- SNEK Daily -->
-	<section class="mb-16">
-		<h2 class="fade-in-up mb-8 font-serif text-xs font-bold tracking-widest text-gray-400 uppercase dark:text-gray-500" style="--delay: 200ms">
-			SNEK Daily
-		</h2>
-		<div class="space-y-8">
-			{latestSnek.map((d, i) => (
-				<article class="glow-card fade-in-up" style={`--delay: ${300 + i * 80}ms`}>
-					<div class="mb-2 flex items-baseline justify-between">
-						<a href={`/lab/snek-daily/${d.id}/`} class="font-serif text-xl font-medium text-black transition-colors hover:text-[#8953d1] dark:text-white dark:hover:text-[#a175e8]">
-							{d.data.title}
-						</a>
-						<time class="shrink-0 pl-4 font-serif text-xs text-gray-400 dark:text-gray-500" datetime={d.data.date.toISOString()}>
-							{formatDate(d.data.date)}
-						</time>
-					</div>
-					{d.data.btc_price && (
-						<div class="mt-1 flex flex-wrap items-center gap-4 font-serif text-sm text-gray-400">
-							<span>BTC {d.data.btc_price} {d.data.btc_change}</span>
-							{d.data.ada_price && <span>ADA {d.data.ada_price}</span>}
-							{d.data.snek_price && <span>SNEK {d.data.snek_price}</span>}
-						</div>
-					)}
-					{d.data.summary && (
-						<p class="mt-2 font-serif text-sm leading-relaxed text-gray-500 dark:text-gray-400">{d.data.summary}</p>
-					)}
-				</article>
-			))}
-		</div>
-		<div class="mt-8">
-			<a href="/lab/snek-daily/" class="font-serif text-sm text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]">
-				View all dailies →
-			</a>
+		<div class="grid gap-8 lg:grid-cols-2">
+			<!-- Digest Column -->
+			<div>
+				<h3 class="mb-4 font-serif text-sm font-medium tracking-wide text-gray-500 dark:text-gray-400">Digest</h3>
+				<div class="space-y-6">
+					{sortedDigests.map((d, i) => (
+						<article class="glow-card fade-in-up" style={`--delay: ${250 + i * 60}ms`}>
+							<div class="mb-1 flex items-baseline justify-between gap-2">
+								<a href={`/lab/digest/${d.id}/`} class="font-serif text-base font-medium text-black transition-colors hover:text-[#8953d1] dark:text-white dark:hover:text-[#a175e8]">
+									{d.data.title}
+								</a>
+								<time class="shrink-0 font-serif text-xs text-gray-400 dark:text-gray-500" datetime={d.data.date.toISOString()}>
+									{formatShortDate(d.data.date)}
+								</time>
+							</div>
+							{d.data.summary && (
+								<p class="font-serif text-xs leading-relaxed text-gray-500 dark:text-gray-400">{d.data.summary}</p>
+							)}
+							{d.data.tags.length > 0 && (
+								<div class="mt-1.5 flex flex-wrap items-center gap-2 font-serif text-xs text-gray-400">
+									{d.data.tags.map((tag: string) => (
+										<span class="capitalize before:content-['#']">{tag}</span>
+									))}
+								</div>
+							)}
+						</article>
+					))}
+				</div>
+				<div class="mt-4">
+					<a href="/lab/digest/" class="font-serif text-sm text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]">
+						View all digests →
+					</a>
+				</div>
+			</div>
+
+			<!-- SNEK Daily Column -->
+			<div>
+				<h3 class="mb-4 font-serif text-sm font-medium tracking-wide text-gray-500 dark:text-gray-400">SNEK Daily</h3>
+				<div class="space-y-6">
+					{latestSnek.map((d, i) => (
+						<article class="glow-card fade-in-up" style={`--delay: ${250 + i * 60}ms`}>
+							<div class="mb-1 flex items-baseline justify-between gap-2">
+								<a href={`/lab/snek-daily/${d.id}/`} class="font-serif text-base font-medium text-black transition-colors hover:text-[#8953d1] dark:text-white dark:hover:text-[#a175e8]">
+									{formatShortDate(d.data.date)}
+								</a>
+								{d.data.btc_price && (
+									<span class="shrink-0 font-serif text-xs text-gray-400">BTC {d.data.btc_price} {d.data.btc_change}</span>
+								)}
+							</div>
+							{d.data.summary && (
+								<p class="font-serif text-xs leading-relaxed text-gray-500 dark:text-gray-400">{d.data.summary}</p>
+							)}
+							{d.data.ada_price && (
+								<div class="mt-1.5 flex flex-wrap items-center gap-3 font-serif text-xs text-gray-400">
+									<span>ADA {d.data.ada_price}</span>
+									{d.data.snek_price && <span>SNEK {d.data.snek_price}</span>}
+								</div>
+							)}
+						</article>
+					))}
+				</div>
+				<div class="mt-4">
+					<a href="/lab/snek-daily/" class="font-serif text-sm text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]">
+						View all dailies →
+					</a>
+				</div>
+			</div>
 		</div>
 	</section>
 
@@ -165,20 +191,20 @@ const statusColors: Record<string, string> = {
 		<h2 class="fade-in-up mb-8 font-serif text-xs font-bold tracking-widest text-gray-400 uppercase dark:text-gray-500" style="--delay: 200ms">
 			Builder's Log
 		</h2>
-		<div class="space-y-8">
+		<div class="space-y-6">
 			{latestLogs.map((log, i) => (
 				<article class="glow-card fade-in-up" style={`--delay: ${300 + i * 80}ms`}>
-					<div class="mb-2 flex items-baseline justify-between">
-						<a href={`/lab/builder-log/${log.id}/`} class="font-serif text-xl font-medium text-black transition-colors hover:text-[#8953d1] dark:text-white dark:hover:text-[#a175e8]">
+					<div class="mb-1 flex items-baseline justify-between gap-2">
+						<a href={`/lab/builder-log/${log.id}/`} class="font-serif text-base font-medium text-black transition-colors hover:text-[#8953d1] dark:text-white dark:hover:text-[#a175e8]">
 							{log.data.title}
 						</a>
-						<time class="shrink-0 pl-4 font-serif text-xs text-gray-400 dark:text-gray-500" datetime={log.data.date.toISOString()}>
-							{formatDate(log.data.date)}
+						<time class="shrink-0 font-serif text-xs text-gray-400 dark:text-gray-500" datetime={log.data.date.toISOString()}>
+							{formatShortDate(log.data.date)}
 						</time>
 					</div>
-					<p class="font-serif text-sm leading-relaxed text-gray-500 dark:text-gray-400">{log.data.summary}</p>
+					<p class="font-serif text-xs leading-relaxed text-gray-500 dark:text-gray-400">{log.data.summary}</p>
 					{log.data.agents.length > 0 && (
-						<div class="mt-2 flex flex-wrap items-center gap-3 font-serif text-sm text-gray-400">
+						<div class="mt-1.5 flex flex-wrap items-center gap-2 font-serif text-xs text-gray-400">
 							{log.data.agents.map((agent: string) => (
 								<span class="capitalize before:content-['@']">{agent}</span>
 							))}
@@ -187,7 +213,7 @@ const statusColors: Record<string, string> = {
 				</article>
 			))}
 		</div>
-		<div class="mt-8">
+		<div class="mt-6">
 			<a href="/lab/builder-log/" class="font-serif text-sm text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]">
 				View all logs →
 			</a>
