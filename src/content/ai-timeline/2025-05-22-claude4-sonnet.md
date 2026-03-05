@@ -3,7 +3,7 @@ title: "Claude 4 Sonnet — Agentic Coding Powerhouse"
 date: 2025-05-22
 category: model
 tags: ["anthropic", "claude"]
-source: "https://www.anthropic.com/news/claude-4-sonnet"
+source: "https://www.anthropic.com/news"
 source_name: "Anthropic"
 significance: high
 ---

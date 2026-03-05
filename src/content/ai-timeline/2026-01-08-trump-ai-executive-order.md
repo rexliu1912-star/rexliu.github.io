@@ -3,7 +3,7 @@ title: "Trump Signs Pro-Innovation AI Executive Order"
 date: 2026-01-08
 category: policy
 tags: ["trump", "us-policy", "executive-order"]
-source: "https://www.whitehouse.gov/ai-executive-order"
+source: "https://www.whitehouse.gov/presidential-actions/"
 source_name: "White House"
 significance: high
 ---

@@ -3,7 +3,7 @@ title: "Google Gemini 1.0 Ultra Released"
 date: 2024-02-08
 category: model
 tags: ["google", "gemini"]
-source: "https://blog.google/technology/ai/google-gemini-ultra/"
+source: "https://blog.google/technology/ai/google-gemini-update-february-2024/"
 source_name: "Google Blog"
 significance: high
 ---

@@ -3,7 +3,7 @@ title: "Mistral Raises €600M Series B at €5.8B Valuation"
 date: 2024-06-11
 category: funding
 tags: ["mistral", "europe", "funding", "venture-capital"]
-source: "https://mistral.ai/news/series-b"
+source: "https://mistral.ai/news/"
 source_name: "Mistral AI"
 significance: medium
 ---

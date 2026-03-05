@@ -3,7 +3,7 @@ title: "Hugging Face Hits 1 Million Models — Open-Source AI Reaches Critical M
 date: 2024-09-26
 category: product
 tags: ["hugging-face", "open-source", "model-hub", "platform"]
-source: "https://huggingface.co/posts/fdaudens/300554611911292"
+source: "https://huggingface.co/blog"
 source_name: "Hugging Face"
 significance: high
 ---

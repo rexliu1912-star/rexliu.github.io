@@ -3,7 +3,7 @@ title: "Google I/O 2024: Gemini Across Search, Workspace, Android"
 date: 2024-05-14
 category: product
 tags: ["google", "gemini", "workspace", "search"]
-source: "https://blog.google/technology/ai/google-io-2024-ai-overview/"
+source: "https://blog.google/technology/ai/google-io-2024-100-announcements/"
 source_name: "Google Blog"
 significance: high
 ---

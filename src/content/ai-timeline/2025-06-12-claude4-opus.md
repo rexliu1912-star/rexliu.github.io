@@ -3,7 +3,7 @@ title: "Claude 4 Opus — Frontier Intelligence"
 date: 2025-06-12
 category: model
 tags: ["anthropic", "claude"]
-source: "https://www.anthropic.com/news/claude-4-opus"
+source: "https://www.anthropic.com/news"
 source_name: "Anthropic"
 significance: high
 ---

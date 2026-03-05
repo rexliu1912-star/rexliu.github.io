@@ -3,7 +3,7 @@ title: "Amazon Completes $4B Investment in Anthropic"
 date: 2024-03-27
 category: funding
 tags: ["anthropic", "amazon"]
-source: "https://www.aboutamazon.com/news/company-news/amazon-anthropic-ai"
+source: "https://www.aboutamazon.com/news/"
 source_name: "Amazon"
 significance: high
 ---

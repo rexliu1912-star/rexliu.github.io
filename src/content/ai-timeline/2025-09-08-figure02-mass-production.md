@@ -3,7 +3,7 @@ title: "Figure 02 Humanoid Robot Mass Production"
 date: 2025-09-08
 category: robotics
 tags: ["figure", "humanoid", "robotics"]
-source: "https://www.figure.ai/news/figure-02-production"
+source: "https://www.figure.ai/"
 source_name: "Figure AI"
 significance: medium
 ---

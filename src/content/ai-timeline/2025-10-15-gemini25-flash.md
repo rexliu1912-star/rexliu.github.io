@@ -3,7 +3,7 @@ title: "Gemini 2.5 Flash — 1M Token Speed Demon"
 date: 2025-10-15
 category: model
 tags: ["google", "gemini"]
-source: "https://blog.google/technology/ai/gemini-2-5-flash/"
+source: "https://blog.google/technology/ai/"
 source_name: "Google Blog"
 significance: medium
 ---

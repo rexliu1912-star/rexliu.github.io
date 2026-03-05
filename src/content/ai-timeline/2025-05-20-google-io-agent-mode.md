@@ -3,7 +3,7 @@ title: "Google I/O 2025: Agent Mode and Gemini-native Apps"
 date: 2025-05-20
 category: product
 tags: ["google", "agent", "gemini"]
-source: "https://blog.google/technology/ai/google-io-2025-keynote/"
+source: "https://blog.google/technology/ai/"
 source_name: "Google Blog"
 significance: high
 ---
