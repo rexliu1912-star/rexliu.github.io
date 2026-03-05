@@ -118,7 +118,7 @@ function formatDate(date: Date) {
 						{/* Events */}
 						<div class="space-y-3">
 							{mg.events.map((event) => {
-								const colors = categoryColors[event.data.category] || categoryColors.research;
+								const colors = categoryColors[event.data.category] ?? { bg: "bg-gray-100 dark:bg-gray-800", text: "text-gray-600 dark:text-gray-400" };
 								return (
 									<article
 										class="timeline-event glow-card group relative cursor-pointer"
