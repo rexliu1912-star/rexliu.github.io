@@ -15,9 +15,17 @@ type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 const { entry } = Astro.props as Props;
 const { Content } = await render(entry);
 
-function formatDate(date: Date) {
-	return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }).replace(",", "");
-}
+const formatCustomDate = (date: Date) => {
+	const day = date.getDate();
+	const month = date.toLocaleDateString("en-US", { month: "short" });
+	const year = date.getFullYear();
+	const getOrdinal = (n: number) => {
+		const s = ["th", "st", "nd", "rd"];
+		const v = n % 100;
+		return s[(v - 20) % 10] || s[v] || s[0];
+	};
+	return `${month} ${day}${getOrdinal(day)} ${year}`;
+};
 
 const meta = {
 	title: `${entry.data.title} — Builder's Log`,
@@ -26,46 +34,50 @@ const meta = {
 ---
 
 <PageLayout meta={meta}>
-	<div class="mb-8">
-		<a href="/lab/builder-log/" class="font-serif text-sm text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]">
-			← All Logs
-		</a>
+	<div class="mb-16 sm:mt-8">
+		<div class="mb-8">
+			<button
+				onclick="history.back()"
+				class="group flex items-center gap-1 font-serif text-sm text-gray-500 transition-colors hover:text-[#8953d1] dark:hover:text-[#a175e8]"
+			>
+				<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="transition-transform group-hover:-translate-x-1"><polyline points="15 18 9 12 15 6"></polyline></svg>
+				Back
+			</button>
+		</div>
+
+		<article class="flex flex-col gap-4">
+			<h1 class="font-serif text-3xl leading-tight font-bold text-black sm:text-4xl dark:text-white">
+				{entry.data.title}
+			</h1>
+
+			<p class="font-serif text-lg leading-relaxed text-gray-500 dark:text-gray-400">
+				{entry.data.summary}
+			</p>
+
+			<div class="mt-2 flex flex-wrap items-center gap-3 font-serif text-sm text-gray-400">
+				<time datetime={entry.data.date.toISOString()}>
+					{formatCustomDate(entry.data.date)}
+				</time>
+
+				{entry.data.agents.length > 0 && (
+					<>
+						<span>·</span>
+						<div class="flex items-center gap-2">
+							{entry.data.agents.map((agent: string) => (
+								<span class="rounded-full bg-[#8953d1]/15 px-2.5 py-0.5 text-xs font-medium text-[#8953d1] dark:bg-[#8953d1]/25 dark:text-[#a175e8]">
+									{agent}
+								</span>
+							))}
+						</div>
+					</>
+				)}
+			</div>
+
+			<hr class="my-8 border-dashed border-gray-200 dark:border-gray-700" />
+
+			<div class="prose prose-lg prose-serif dark:prose-invert max-w-none font-serif">
+				<Content />
+			</div>
+		</article>
 	</div>
-
-	<article>
-		<h1 class="hero-reveal-text mb-4 font-serif text-3xl font-bold leading-tight dark:text-white">
-			{entry.data.title}
-		</h1>
-
-		<div class="mb-6 flex flex-wrap items-center gap-4 font-serif text-sm text-gray-400 dark:text-gray-500">
-			<time datetime={entry.data.date.toISOString()}>
-				{formatDate(entry.data.date)}
-			</time>
-		</div>
-
-		{entry.data.agents.length > 0 && (
-			<div class="mb-8 flex flex-wrap gap-1.5">
-				{entry.data.agents.map((agent: string) => (
-					<span class="rounded-full bg-[#8953d1]/15 px-2.5 py-0.5 font-serif text-xs font-medium text-[#8953d1] dark:bg-[#8953d1]/25 dark:text-[#a175e8]">
-						{agent}
-					</span>
-				))}
-			</div>
-		)}
-
-		{entry.data.highlights.length > 0 && (
-			<div class="mb-8 rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-gray-800 dark:bg-gray-900/50">
-				<h3 class="mb-2 font-serif text-xs font-bold tracking-widest text-gray-400 uppercase dark:text-gray-500">Highlights</h3>
-				<ul class="space-y-1">
-					{entry.data.highlights.map((h: string) => (
-						<li class="font-serif text-sm text-gray-600 dark:text-gray-400">• {h}</li>
-					))}
-				</ul>
-			</div>
-		)}
-
-		<div class="prose prose-cactus prose-headings:font-serif">
-			<Content />
-		</div>
-	</article>
 </PageLayout>
