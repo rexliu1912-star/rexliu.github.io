@@ -1,0 +1,13 @@
+---
+title: "Claude 4 Opus — Frontier Intelligence"
+date: 2025-06-12
+category: model
+tags: ["anthropic", "claude"]
+source: "https://www.anthropic.com/news/claude-4-opus"
+source_name: "Anthropic"
+significance: high
+---
+
+Anthropic releases Claude 4 Opus, their most capable model, excelling at creative writing, complex analysis, and multi-step reasoning.
+
+**So what?** Opus 4 is the first model that genuinely feels like a peer, not a tool. The ceiling for AI-human collaboration just got much higher.

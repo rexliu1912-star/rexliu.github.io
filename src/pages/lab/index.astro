@@ -2,6 +2,21 @@
 import { getCollection } from "astro:content";
 import PageLayout from "@/layouts/Base.astro";
 
+const allTimelineEvents = await getCollection("ai-timeline");
+const latestEvents = allTimelineEvents
+	.sort((a, b) => new Date(b.data.date).valueOf() - new Date(a.data.date).valueOf())
+	.slice(0, 5);
+
+const timelineCategoryColors: Record<string, string> = {
+	model: "text-purple-500",
+	funding: "text-green-500",
+	policy: "text-blue-500",
+	robotics: "text-orange-500",
+	"crypto-ai": "text-yellow-500",
+	research: "text-gray-400",
+	product: "text-cyan-500",
+};
+
 const allBuilderLogs = await getCollection("builder-log");
 const latestLogs = allBuilderLogs
 	.sort((a, b) => new Date(b.data.date).valueOf() - new Date(a.data.date).valueOf())
@@ -39,6 +54,33 @@ const statusColors: Record<string, string> = {
 		<p class="hero-reveal-subtitle max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">
 			Curated readings, ongoing projects, and experiments in crypto & AI.
 		</p>
+	</section>
+
+	<!-- AI Timeline -->
+	<section class="mb-16">
+		<h2 class="fade-in-up mb-8 font-serif text-xs font-bold tracking-widest text-gray-400 uppercase dark:text-gray-500" style="--delay: 150ms">
+			AI Timeline
+		</h2>
+		<div class="space-y-4">
+			{latestEvents.map((ev, i) => (
+				<div class="fade-in-up flex items-baseline gap-3" style={`--delay: ${200 + i * 60}ms`}>
+					<time class="shrink-0 font-serif text-xs text-gray-400 dark:text-gray-500" datetime={ev.data.date.toISOString()}>
+						{ev.data.date.toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+					</time>
+					<span class={`shrink-0 font-serif text-[10px] font-medium uppercase ${timelineCategoryColors[ev.data.category] || "text-gray-400"}`}>
+						{ev.data.category}
+					</span>
+					<span class="font-serif text-sm text-black dark:text-white">
+						{ev.data.title}
+					</span>
+				</div>
+			))}
+		</div>
+		<div class="mt-6">
+			<a href="/lab/ai-timeline/" class="font-serif text-sm text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]">
+				View full timeline →
+			</a>
+		</div>
 	</section>
 
 	<!-- Latest Digest -->

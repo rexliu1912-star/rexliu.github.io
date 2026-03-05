@@ -1,0 +1,219 @@
+---
+import { getCollection } from "astro:content";
+import PageLayout from "@/layouts/Base.astro";
+
+const allEvents = await getCollection("ai-timeline");
+const sorted = allEvents.sort((a, b) => new Date(b.data.date).valueOf() - new Date(a.data.date).valueOf());
+
+// Group by year then month
+type TimelineEvent = (typeof sorted)[number];
+type MonthGroup = { month: string; events: TimelineEvent[] };
+type YearGroup = { year: number; months: MonthGroup[] };
+
+const grouped: YearGroup[] = [];
+const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+for (const event of sorted) {
+	const d = new Date(event.data.date);
+	const year = d.getFullYear();
+	const month = monthNames[d.getMonth()]!;
+
+	let yg = grouped.find((g) => g.year === year);
+	if (!yg) {
+		yg = { year, months: [] };
+		grouped.push(yg);
+	}
+	let mg = yg.months.find((m) => m.month === month);
+	if (!mg) {
+		mg = { month, events: [] };
+		yg.months.push(mg);
+	}
+	mg.events.push(event);
+}
+
+const categories = [
+	{ key: "all", label: "All" },
+	{ key: "model", label: "Models" },
+	{ key: "funding", label: "Funding" },
+	{ key: "policy", label: "Policy" },
+	{ key: "robotics", label: "Robotics" },
+	{ key: "crypto-ai", label: "Crypto×AI" },
+	{ key: "research", label: "Research" },
+	{ key: "product", label: "Product" },
+];
+
+const categoryColors: Record<string, { bg: string; text: string }> = {
+	model: { bg: "bg-purple-500/15 dark:bg-purple-400/15", text: "text-purple-600 dark:text-purple-400" },
+	funding: { bg: "bg-green-500/15 dark:bg-green-400/15", text: "text-green-600 dark:text-green-400" },
+	policy: { bg: "bg-blue-500/15 dark:bg-blue-400/15", text: "text-blue-600 dark:text-blue-400" },
+	robotics: { bg: "bg-orange-500/15 dark:bg-orange-400/15", text: "text-orange-600 dark:text-orange-400" },
+	"crypto-ai": { bg: "bg-yellow-500/15 dark:bg-yellow-400/15", text: "text-yellow-600 dark:text-yellow-400" },
+	research: { bg: "bg-gray-500/15 dark:bg-gray-400/15", text: "text-gray-600 dark:text-gray-400" },
+	product: { bg: "bg-cyan-500/15 dark:bg-cyan-400/15", text: "text-cyan-600 dark:text-cyan-400" },
+};
+
+const meta = {
+	title: "AI Timeline",
+	description: "A curated timeline of major AI events, from Rex's perspective.",
+};
+
+function formatDate(date: Date) {
+	return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+---
+
+<PageLayout meta={meta}>
+	<section class="mb-10">
+		<a href="/lab/" class="fade-in-up mb-4 inline-block font-serif text-sm text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]">
+			← Lab
+		</a>
+		<h1 class="hero-reveal-text mb-3 font-serif text-4xl font-bold dark:text-white">
+			AI Timeline
+		</h1>
+		<p class="hero-reveal-subtitle max-w-2xl font-serif text-base leading-relaxed text-gray-500 dark:text-gray-400">
+			Major milestones in the AI revolution, annotated with a builder-investor lens.
+		</p>
+	</section>
+
+	<!-- Filter buttons -->
+	<section class="fade-in-up mb-10 flex flex-wrap gap-2" style="--delay: 200ms" id="timeline-filters">
+		{categories.map((cat) => (
+			<button
+				data-filter={cat.key}
+				class:list={[
+					"rounded-full border px-3 py-1 font-serif text-xs transition-all",
+					cat.key === "all"
+						? "border-[#8953d1] bg-[#8953d1]/10 text-[#8953d1] dark:border-[#a175e8] dark:bg-[#a175e8]/10 dark:text-[#a175e8]"
+						: "border-gray-200 text-gray-500 hover:border-[#8953d1] hover:text-[#8953d1] dark:border-gray-700 dark:text-gray-400 dark:hover:border-[#a175e8] dark:hover:text-[#a175e8]",
+				]}
+			>
+				{cat.label}
+			</button>
+		))}
+	</section>
+
+	<!-- Timeline -->
+	<section class="relative" id="timeline-container">
+		{grouped.map((yg, yi) => (
+			<div class="fade-in-up" style={`--delay: ${300 + yi * 100}ms`}>
+				{/* Year header */}
+				<div class="mb-6 flex items-center gap-4">
+					<span class="font-serif text-3xl font-bold text-[#8953d1] dark:text-[#a175e8]">{yg.year}</span>
+					<div class="h-px flex-1 bg-gray-200 dark:bg-gray-800" />
+				</div>
+
+				{yg.months.map((mg) => (
+					<div class="relative mb-8 pl-8 sm:pl-12">
+						{/* Vertical line */}
+						<div class="absolute top-0 bottom-0 left-3 sm:left-5 w-px bg-[#8953d1]/30 dark:bg-[#a175e8]/30" />
+
+						{/* Month label */}
+						<div class="relative mb-4">
+							<div class="absolute -left-5 sm:-left-7 top-0.5 h-3 w-3 rounded-full border-2 border-[#8953d1] bg-[var(--color-global-bg)] dark:border-[#a175e8]" />
+							<span class="font-serif text-sm font-semibold tracking-wide text-gray-400 uppercase dark:text-gray-500">
+								{mg.month}
+							</span>
+						</div>
+
+						{/* Events */}
+						<div class="space-y-3">
+							{mg.events.map((event) => {
+								const colors = categoryColors[event.data.category] || categoryColors.research;
+								return (
+									<article
+										class="timeline-event glow-card group relative cursor-pointer"
+										data-category={event.data.category}
+									>
+										{/* Dot on timeline */}
+										<div class="absolute -left-[25px] sm:-left-[33px] top-3 h-2 w-2 rounded-full bg-[#8953d1]/60 dark:bg-[#a175e8]/60" />
+
+										<div class="flex flex-wrap items-start gap-2">
+											{/* Category badge */}
+											<span class:list={["inline-block rounded-full px-2 py-0.5 font-serif text-[10px] font-medium uppercase tracking-wider", colors.bg, colors.text]}>
+												{event.data.category}
+											</span>
+
+											{/* Date */}
+											<time class="font-serif text-xs text-gray-400 dark:text-gray-500" datetime={event.data.date.toISOString()}>
+												{formatDate(event.data.date)}
+											</time>
+
+											{event.data.significance === "high" && (
+												<span class="text-xs text-[#8953d1] dark:text-[#a175e8]" title="High significance">★</span>
+											)}
+										</div>
+
+										{/* Title */}
+										<h3 class:list={[
+											"mt-1 font-serif text-base transition-colors group-hover:text-[#8953d1] dark:group-hover:text-[#a175e8]",
+											event.data.significance === "high" ? "font-bold text-black dark:text-white" : "font-medium text-gray-800 dark:text-gray-200",
+										]}>
+											{event.data.title}
+										</h3>
+
+										{/* Expandable content */}
+										<div class="timeline-detail mt-2 hidden">
+											<div class="font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-400" set:html={event.body} />
+											{event.data.source && (
+												<a
+													href={event.data.source}
+													target="_blank"
+													rel="noopener noreferrer"
+													class="mt-2 inline-block font-serif text-xs text-[#8953d1] no-underline transition-colors hover:text-[#6b3fad] dark:text-[#a175e8] dark:hover:text-[#c4a8f0]"
+												>
+													Source: {event.data.source_name || "Link"} ↗
+												</a>
+											)}
+										</div>
+									</article>
+								);
+							})}
+						</div>
+					</div>
+				))}
+			</div>
+		))}
+	</section>
+</PageLayout>
+
+<script>
+	// Filter
+	document.querySelectorAll("#timeline-filters button").forEach((btn) => {
+		btn.addEventListener("click", () => {
+			const filter = (btn as HTMLElement).dataset.filter;
+
+			// Update button styles
+			document.querySelectorAll("#timeline-filters button").forEach((b) => {
+				b.className = b.className
+					.replace(/border-\[#8953d1\]|bg-\[#8953d1\]\/10|text-\[#8953d1\]|dark:border-\[#a175e8\]|dark:bg-\[#a175e8\]\/10|dark:text-\[#a175e8\]/g, "")
+					.replace(/\s+/g, " ")
+					.trim();
+				b.classList.add("border-gray-200", "text-gray-500", "dark:border-gray-700", "dark:text-gray-400");
+			});
+			btn.classList.remove("border-gray-200", "text-gray-500", "dark:border-gray-700", "dark:text-gray-400");
+			btn.classList.add("border-[#8953d1]", "bg-[#8953d1]/10", "text-[#8953d1]");
+
+			// Filter events
+			document.querySelectorAll(".timeline-event").forEach((el) => {
+				const cat = (el as HTMLElement).dataset.category;
+				if (filter === "all" || cat === filter) {
+					(el as HTMLElement).style.display = "";
+				} else {
+					(el as HTMLElement).style.display = "none";
+				}
+			});
+		});
+	});
+
+	// Expand/collapse
+	document.querySelectorAll(".timeline-event").forEach((el) => {
+		el.addEventListener("click", (e) => {
+			// Don't toggle if clicking a link
+			if ((e.target as HTMLElement).closest("a")) return;
+			const detail = el.querySelector(".timeline-detail");
+			if (detail) {
+				detail.classList.toggle("hidden");
+			}
+		});
+	});
+</script>
