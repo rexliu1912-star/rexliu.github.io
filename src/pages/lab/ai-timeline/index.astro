@@ -95,7 +95,7 @@ function formatDate(date: Date) {
 	<!-- Timeline -->
 	<section class="relative" id="timeline-container">
 		{grouped.map((yg, yi) => (
-			<div class="fade-in-up" style={`--delay: ${300 + yi * 100}ms`}>
+			<div class="fade-in-up" data-year-group={yg.year} style={`--delay: ${300 + yi * 100}ms`}>
 				{/* Year header */}
 				<div class="mb-6 flex items-center gap-4">
 					<span class="font-serif text-3xl font-bold text-[#8953d1] dark:text-[#a175e8]">{yg.year}</span>
@@ -103,7 +103,7 @@ function formatDate(date: Date) {
 				</div>
 
 				{yg.months.map((mg) => (
-					<div class="relative mb-8 pl-8 sm:pl-12">
+					<div class="relative mb-8 pl-8 sm:pl-12" data-month-group={mg.month}>
 						{/* Vertical line */}
 						<div class="absolute top-0 bottom-0 left-3 sm:left-5 w-px bg-[#8953d1]/30 dark:bg-[#a175e8]/30" />
 
@@ -177,43 +177,58 @@ function formatDate(date: Date) {
 </PageLayout>
 
 <script>
-	// Filter
+	function applyFilter(filter: string) {
+		// Update button styles
+		const activeClasses = ["border-[#8953d1]", "bg-[#8953d1]/10", "text-[#8953d1]", "dark:border-[#a175e8]", "dark:bg-[#a175e8]/10", "dark:text-[#a175e8]"];
+		const inactiveClasses = ["border-gray-200", "text-gray-500", "dark:border-gray-700", "dark:text-gray-400"];
+
+		document.querySelectorAll("#timeline-filters button").forEach((b) => {
+			const el = b as HTMLElement;
+			activeClasses.forEach(c => el.classList.remove(c));
+			inactiveClasses.forEach(c => el.classList.add(c));
+		});
+
+		const activeBtn = document.querySelector(`#timeline-filters button[data-filter="${filter}"]`) as HTMLElement;
+		if (activeBtn) {
+			inactiveClasses.forEach(c => activeBtn.classList.remove(c));
+			activeClasses.forEach(c => activeBtn.classList.add(c));
+		}
+
+		// Filter events
+		document.querySelectorAll(".timeline-event").forEach((el) => {
+			const cat = (el as HTMLElement).dataset.category;
+			(el as HTMLElement).style.display = (filter === "all" || cat === filter) ? "" : "none";
+		});
+
+		// Hide empty month groups
+		document.querySelectorAll("[data-month-group]").forEach((mg) => {
+			const visibleEvents = mg.querySelectorAll(".timeline-event:not([style*='display: none'])");
+			(mg as HTMLElement).style.display = visibleEvents.length === 0 ? "none" : "";
+		});
+
+		// Hide empty year groups
+		document.querySelectorAll("[data-year-group]").forEach((yg) => {
+			const visibleMonths = yg.querySelectorAll("[data-month-group]:not([style*='display: none'])");
+			(yg as HTMLElement).style.display = visibleMonths.length === 0 ? "none" : "";
+		});
+	}
+
+	// Filter buttons
 	document.querySelectorAll("#timeline-filters button").forEach((btn) => {
-		btn.addEventListener("click", () => {
-			const filter = (btn as HTMLElement).dataset.filter;
-
-			// Update button styles
-			document.querySelectorAll("#timeline-filters button").forEach((b) => {
-				b.className = b.className
-					.replace(/border-\[#8953d1\]|bg-\[#8953d1\]\/10|text-\[#8953d1\]|dark:border-\[#a175e8\]|dark:bg-\[#a175e8\]\/10|dark:text-\[#a175e8\]/g, "")
-					.replace(/\s+/g, " ")
-					.trim();
-				b.classList.add("border-gray-200", "text-gray-500", "dark:border-gray-700", "dark:text-gray-400");
-			});
-			btn.classList.remove("border-gray-200", "text-gray-500", "dark:border-gray-700", "dark:text-gray-400");
-			btn.classList.add("border-[#8953d1]", "bg-[#8953d1]/10", "text-[#8953d1]");
-
-			// Filter events
-			document.querySelectorAll(".timeline-event").forEach((el) => {
-				const cat = (el as HTMLElement).dataset.category;
-				if (filter === "all" || cat === filter) {
-					(el as HTMLElement).style.display = "";
-				} else {
-					(el as HTMLElement).style.display = "none";
-				}
-			});
+		btn.addEventListener("click", (e) => {
+			e.preventDefault();
+			e.stopPropagation();
+			const filter = (btn as HTMLElement).dataset.filter || "all";
+			applyFilter(filter);
 		});
 	});
 
 	// Expand/collapse
 	document.querySelectorAll(".timeline-event").forEach((el) => {
 		el.addEventListener("click", (e) => {
-			// Don't toggle if clicking a link
 			if ((e.target as HTMLElement).closest("a")) return;
 			const detail = el.querySelector(".timeline-detail");
-			if (detail) {
-				detail.classList.toggle("hidden");
-			}
+			if (detail) detail.classList.toggle("hidden");
 		});
 	});
 </script>

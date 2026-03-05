@@ -88,9 +88,15 @@ const statusColors: Record<string, string> = {
 							{timelineCategoryLabels[ev.data.category] || ev.data.category}
 						</span>
 					</div>
-					<p class="mt-1 font-serif text-sm leading-relaxed text-black dark:text-white">
-						{ev.data.title}
-					</p>
+					{ev.data.source ? (
+						<a href={ev.data.source} target="_blank" rel="noopener noreferrer" class="mt-1 block font-serif text-sm leading-relaxed text-black transition-colors hover:text-[#8953d1] dark:text-white dark:hover:text-[#a175e8]">
+							{ev.data.title} ↗
+						</a>
+					) : (
+						<p class="mt-1 font-serif text-sm leading-relaxed text-black dark:text-white">
+							{ev.data.title}
+						</p>
+					)}
 					{ev.body && ev.body.trim() && (
 						<p class="mt-0.5 font-serif text-xs leading-relaxed text-gray-500 dark:text-gray-400">
 							{ev.body.trim().slice(0, 120)}{ev.body.trim().length > 120 ? "…" : ""}
