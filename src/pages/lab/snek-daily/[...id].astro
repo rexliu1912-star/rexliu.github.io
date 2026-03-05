@@ -54,12 +54,12 @@ const meta = {
 				<time datetime={entry.data.date.toISOString()}>
 					{formatCustomDate(entry.data.date)}
 				</time>
-				{entry.data.btc_price && (
-					<>
-						<span>·</span>
-						<span class="font-mono">BTC {entry.data.btc_price} {entry.data.btc_change}</span>
-					</>
-				)}
+				<span>·</span>
+				<div class="flex items-center gap-3">
+					<span class="capitalize before:content-['#']">BTC</span>
+					<span class="capitalize before:content-['#']">ADA</span>
+					<span class="capitalize before:content-['#']">SNEK</span>
+				</div>
 			</div>
 
 			<hr class="my-8 border-dashed border-gray-200 dark:border-gray-700" />
