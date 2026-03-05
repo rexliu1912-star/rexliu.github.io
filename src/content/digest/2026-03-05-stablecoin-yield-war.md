@@ -35,8 +35,29 @@ The fight is now in Congress. The **Clarity Act** — companion to last year's G
 
 ## Why It Matters
 
-If you hold stablecoins earning 4-5% today, you're already on the right side of this trade. The question is whether this becomes the norm or stays a crypto-native niche.
+If you hold stablecoins earning 4-5% today, you're already positioned for this shift. The question is whether yield-bearing stablecoins become the default savings vehicle or stay a crypto-native niche.
 
-For Rex's portfolio context: stablecoins represent the largest allocation at 37.4%. The yield on these isn't just "parking money" — it's a structural bet that the traditional banking margin compression is real and accelerating.
+**What to watch:**
+- **Clarity Act vote timeline** — if it passes with yield provisions, institutional stablecoin products will flood the market. Position before, not after.
+- **Regional bank stress** — even modest deposit outflows could trigger M&A or failures among smaller banks. Short regional banking ETFs could be a hedge.
+- **Stablecoin issuer tokens** — protocols that facilitate on-chain yield (Maker, Ethena, Mountain) stand to capture massive inflows if regulation blesses this model.
 
 The political signal is clear. Whether the bill passes or not, the direction is set: yield is moving from banks to holders. The only question is how fast.
+
+---
+
+## 要点总结
+
+美国银行体系每年通过净息差赚取约 **4900 亿美元**——用储户的钱投资赚收益，但给储户的利息接近零。稳定币正在打破这个格局：如果持有 USDC 就能赚 4-5% 的国债收益，谁还会把钱放在活期账户里？
+
+**战线已经划清：**
+- 银行警告：如果稳定币允许付息，可能导致 **6.6 万亿美元** 的存款流失
+- Crypto 阵营反驳：稳定币背后是国债，反而会增加美债需求
+- Trump 3月4日明确站队 Crypto：*"美国人应该从自己的钱上赚到钱"*
+
+**行动建议：**
+- 关注 **Clarity Act** 立法进展——一旦通过含付息条款的版本，机构级稳定币产品将大规模涌入
+- 留意区域性银行压力——即使少量存款外流也可能触发并购或危机
+- 关注稳定币基础设施协议（Maker、Ethena、Mountain）——如果监管放行，这些协议将承接巨量资金流入
+
+方向已定，收益正在从银行流向持有者。唯一的问题是速度。
