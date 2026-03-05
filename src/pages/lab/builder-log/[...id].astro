@@ -62,11 +62,9 @@ const meta = {
 				{entry.data.agents.length > 0 && (
 					<>
 						<span>·</span>
-						<div class="flex items-center gap-2">
+						<div class="flex items-center gap-3">
 							{entry.data.agents.map((agent: string) => (
-								<span class="rounded-full bg-[#8953d1]/15 px-2.5 py-0.5 text-xs font-medium text-[#8953d1] dark:bg-[#8953d1]/25 dark:text-[#a175e8]">
-									{agent}
-								</span>
+								<span class="capitalize before:content-['@']">{agent}</span>
 							))}
 						</div>
 					</>
