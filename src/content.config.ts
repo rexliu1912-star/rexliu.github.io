@@ -86,7 +86,7 @@ const projects = defineCollection({
 		description_zh: z.string().optional(),
 		status: z.enum(["running", "building", "planning"]),
 		icon: z.string().optional(),
-		url: z.string().url().optional(),
+		url: z.string().optional(),
 		order: z.number().default(0),
 	}),
 });

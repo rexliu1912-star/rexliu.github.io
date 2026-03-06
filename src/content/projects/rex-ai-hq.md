@@ -1,9 +1,10 @@
 ---
 title: "Rex AI HQ"
-description: "The AI headquarters — Samantha coordinates 6 specialized agents, manages crons, content pipeline, and daily operations."
+description: "The AI headquarters — 6 agents working around the clock. Click to see who's doing what right now."
 title_zh: "Rex AI 总部"
-description_zh: "AI 指挥中心 — Samantha 协调 6 个专业 Agent，管理定时任务、内容管线和日常运营。"
+description_zh: "AI 指挥中心 — 6 个 Agent 全天候运转。点击查看谁在干什么。"
 status: running
 icon: "🏠"
+url: "/lab/agents/"
 order: 0
 ---

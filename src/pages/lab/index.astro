@@ -237,23 +237,6 @@ const statusLabels: Record<string, { en: string; zh: string }> = {
 		</div>
 	</section>
 
-	<!-- Agent Activity -->
-	<section class="mb-16">
-		<a href="/lab/agents/" class="glow-card fade-in-up group block rounded-lg border border-purple-500/20 p-6 transition-all hover:border-purple-500/40 hover:shadow-[0_0_20px_#8953d122]" style="--delay: 80ms">
-			<div class="mb-2 flex items-center gap-3">
-				<span class="text-2xl">🤖</span>
-				<h2 class="font-serif text-xl font-bold text-black dark:text-white">
-					<span class="lang-en">Agent Activity</span><span class="lang-zh">Agent 工作室</span>
-				</h2>
-				<span class="ml-auto font-serif text-xs text-purple-400 opacity-0 transition-opacity group-hover:opacity-100">→</span>
-			</div>
-			<p class="font-serif text-sm text-gray-500 dark:text-gray-400">
-				<span class="lang-en">Pixel office — watch 6 AI agents work in real-time</span>
-				<span class="lang-zh">像素办公室 — 实时观察 6 个 AI Agent 的工作状态</span>
-			</p>
-		</a>
-	</section>
-
 	<!-- Projects -->
 	<section class="mb-16">
 		<h2 class="fade-in-up mb-8 font-serif text-xs font-bold tracking-widest text-gray-400 uppercase dark:text-gray-500" style="--delay: 200ms">
@@ -261,19 +244,25 @@ const statusLabels: Record<string, { en: string; zh: string }> = {
 		</h2>
 		<div class="grid gap-4 sm:grid-cols-2">
 			{sortedProjects.map((p, i) => {
-				const Tag = p.data.url ? "a" : "div";
-				const linkProps = p.data.url ? { href: p.data.url, target: "_blank", rel: "noopener noreferrer" } : {};
+				const hasUrl = !!p.data.url;
+				const isExternal = hasUrl && p.data.url!.startsWith("http");
+				const Tag = hasUrl ? "a" : "div";
+				const linkProps = hasUrl
+					? isExternal
+						? { href: p.data.url, target: "_blank", rel: "noopener noreferrer" }
+						: { href: p.data.url }
+					: {};
 				return (
-				<Tag {...linkProps} class={`glow-card fade-in-up rounded-lg border border-gray-200 p-5 transition-colors dark:border-gray-800 ${p.data.url ? "group block hover:border-purple-500/40 hover:shadow-[0_0_20px_#8953d122]" : ""}`} style={`--delay: ${300 + i * 80}ms`}>
+				<Tag {...linkProps} class={`glow-card fade-in-up rounded-lg border p-5 transition-all ${hasUrl ? "group block cursor-pointer border-purple-500/20 hover:border-purple-500/40 hover:shadow-[0_0_20px_#8953d122]" : "border-gray-200 dark:border-gray-800"}`} style={`--delay: ${300 + i * 80}ms`}>
 					<div class="mb-2 flex items-center gap-2">
 						{p.data.icon && <span class="text-lg">{p.data.icon}</span>}
-						<h3 class={`font-serif text-lg font-medium text-black dark:text-white ${p.data.url ? "group-hover:text-[#8953d1] dark:group-hover:text-[#a175e8]" : ""}`}>
+						<h3 class={`font-serif text-lg font-medium text-black dark:text-white ${hasUrl ? "group-hover:text-[#8953d1] dark:group-hover:text-[#a175e8]" : ""}`}>
 							<span class="lang-en">{p.data.title}</span><span class="lang-zh">{p.data.title_zh || p.data.title}</span>
 						</h3>
 						<span class={`ml-auto font-serif text-sm ${statusColors[p.data.status] || "text-gray-400"}`}>
 							<span class="lang-en">{statusLabels[p.data.status]?.en || p.data.status}</span><span class="lang-zh">{statusLabels[p.data.status]?.zh || p.data.status}</span>
 						</span>
-						{p.data.url && <span class="font-serif text-xs text-purple-400 opacity-0 transition-opacity group-hover:opacity-100">↗</span>}
+						{hasUrl && <span class="font-serif text-xs text-purple-400 transition-opacity group-hover:opacity-100">{isExternal ? "↗" : "→"}</span>}
 					</div>
 					<p class="font-serif text-base text-gray-500 dark:text-gray-400">
 						<span class="lang-en">{p.data.description}</span><span class="lang-zh">{p.data.description_zh || p.data.description}</span>
