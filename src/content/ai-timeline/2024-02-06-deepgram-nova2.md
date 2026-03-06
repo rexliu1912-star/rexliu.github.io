@@ -8,6 +8,7 @@ source: "https://deepgram.com/learn/nova-2-speech-to-text-api"
 source_name: "Deepgram"
 company: "Deepgram"
 significance: medium
+body_zh: "Deepgram 发布 Nova-2，实时语音转文字模型，在准确率、速度和成本上全面碾压竞品。低于 200ms 延迟、40+ 语言、比 Whisper 更便宜——语音 AI 从「技术上可行」变成了「企业级可用」。"
 ---
 Deepgram releases Nova-2, its most accurate real-time speech-to-text model, beating competitors on accuracy, speed, and cost across multiple languages and domains.
 

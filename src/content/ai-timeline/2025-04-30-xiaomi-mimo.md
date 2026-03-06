@@ -8,6 +8,7 @@ source: "https://github.com/XiaomiMiMo/MiMo"
 source_name: "Xiaomi GitHub"
 company: "Xiaomi"
 significance: medium
+body_zh: "小米开源 MiMo-7B，首款推理模型，在 AIME 2024-2025 和 LiveCodeBench v5 上超越 OpenAI o1-mini 和 QwQ-32B-Preview——只有 7B 参数。当一家以平价手机著称的硬件公司能造出顶级推理模型，说明 AI 已成为所有严肃科技玩家的标配。小米的入局让中国 AI 竞争从纯 AI 创业公司扩展到全行业。"
 ---
 Xiaomi releases MiMo-7B, its first open-source reasoning model, which surpasses OpenAI o1-mini and QwQ-32B-Preview on AIME 2024-2025 and LiveCodeBench v5 — at 7B parameters.
 

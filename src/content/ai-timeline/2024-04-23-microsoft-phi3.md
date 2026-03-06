@@ -8,6 +8,7 @@ source: "https://azure.microsoft.com/en-us/blog/introducing-phi-3-redefining-wha
 source_name: "Microsoft Azure Blog"
 company: "Microsoft"
 significance: high
+body_zh: "Microsoft 发布 Phi-3-mini（3.8B），一个小语言模型，性能媲美大 10 倍的模型，手机就能跑。Phi-3 证明高质量数据比暴力堆参数更重要。首次实现本地运行 GPT-3.5 级别的助手，掀起了 SLM 竞赛——端侧 AI 正式可行。"
 ---
 Microsoft releases Phi-3-mini (3.8B), a small language model that achieves performance comparable to models 10× its size, capable of running fully on-device on a smartphone.
 

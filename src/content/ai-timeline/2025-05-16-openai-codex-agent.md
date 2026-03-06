@@ -8,5 +8,6 @@ source: "https://openai.com/index/introducing-codex/"
 source_name: "OpenAI"
 company: "OpenAI"
 significance: medium
+body_zh: "OpenAI 发布 Codex，云端软件工程代理，跑 codex-1 模型。在沙盒环境中运行，能处理多文件编辑、测试和 PR。"
 ---
 OpenAI releases Codex, a cloud-based software engineering agent powered by codex-1 model. Runs in sandboxed environments, handles multi-file edits, tests, and PRs.

@@ -8,6 +8,7 @@ source: "https://www.sequoiacap.com/article/ais-600b-question/"
 source_name: "Sequoia Capital"
 company: "Sequoia"
 significance: medium
+body_zh: "Sequoia Capital 发布分析称 AI 公司需要产生 $600B 收入才能匹配当前基础设施投入。AI 的第一个「给我看到钱」时刻。像 2000 年互联网泡沫的现实检验——不过这次技术真的能用。"
 ---
 Sequoia Capital publishes analysis showing AI companies need to generate $600B in revenue to justify current infrastructure spend.
 

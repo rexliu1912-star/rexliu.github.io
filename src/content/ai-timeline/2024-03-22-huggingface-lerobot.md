@@ -8,6 +8,7 @@ source: "https://github.com/huggingface/lerobot"
 source_name: "Hugging Face GitHub"
 company: "Hugging Face"
 significance: medium
+body_zh: "Hugging Face 推出 LeRobot，一个用 PyTorch 做真实世界机器人机器学习的开源库，由前 Tesla 科学家 Remi Cadene 主导。包含模型、数据集和仿真环境。LeRobot 之于机器人，就像 Transformers.py 之于语言模型：一个打包了最优算法让所有人都能跑的库。"
 ---
 Hugging Face launches LeRobot, an open-source library for real-world robotics machine learning in PyTorch, led by former Tesla scientist Remi Cadene. Includes models, datasets, and simulation environments on the Hub.
 

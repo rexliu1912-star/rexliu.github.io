@@ -8,6 +8,7 @@ source: "https://nvidianews.nvidia.com/news/nvidia-blackwell-platform-arrives"
 source_name: "NVIDIA"
 company: "NVIDIA"
 significance: medium
+body_zh: "NVIDIA 在 GTC 上发布 Blackwell B200 GPU，声称 LLM 推理速度比 Hopper 快 30 倍。算力持续扩展，NVIDIA 的护城河越挖越深。"
 ---
 NVIDIA announces Blackwell B200 GPU at GTC, claiming 30x inference speedup over Hopper for LLMs.
 

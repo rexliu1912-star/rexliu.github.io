@@ -8,5 +8,6 @@ source: "https://www.variational.io/"
 source_name: "Variational"
 company: "Variational"
 significance: low
+body_zh: "Variational 凭借研究驱动的 AI×Crypto 设计引发关注，强调模型原生市场基础设施和自主系统。"
 ---
 Variational draws attention for research-led AI×Crypto design, emphasizing model-native market infrastructure and autonomous systems.

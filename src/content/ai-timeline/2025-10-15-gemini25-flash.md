@@ -8,6 +8,7 @@ source: "https://blog.google/technology/ai/"
 source_name: "Google Blog"
 company: "Google"
 significance: medium
+body_zh: "Google 发布 Gemini 2.5 Flash，原生思考能力、100 万 token 上下文、高吞吐场景的激进定价。「够好又便宜」的模型层变得可怕地好。90% 的场景不需要 Opus——这改变了 AI 产品的经济学。"
 ---
 Google releases Gemini 2.5 Flash with native thinking, 1M token context, and aggressive pricing for high-throughput applications.
 

@@ -8,6 +8,7 @@ source: "https://www.anthropic.com/news"
 source_name: "Anthropic"
 company: "Anthropic"
 significance: high
+body_zh: "Anthropic 发布 Claude 4 Sonnet，针对代理工作流和持续编程任务优化，工具调用能力大幅提升。「Vibe Coding」时代迎来最佳引擎。能可靠交付代码的 AI 代理——开发效率真正开始复利增长。"
 ---
 Anthropic releases Claude 4 Sonnet, optimized for agentic workflows and sustained coding tasks with dramatically improved tool use.
 

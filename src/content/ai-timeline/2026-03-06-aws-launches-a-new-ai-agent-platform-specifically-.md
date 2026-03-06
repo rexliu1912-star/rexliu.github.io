@@ -8,6 +8,7 @@ source: "https://aws.amazon.com/blogs/industries/introducing-amazon-connect-heal
 source_name: "AWS Blog"
 company: "Amazon"
 significance: medium
+body_zh: "AWS 发布 Amazon Connect Health，专为医疗行业打造的代理 AI 解决方案，处理高频行政任务——预约排期、临床文档记录、医疗编码——实时访问 EHR 和保险资格核查。AWS 赌 AI 代理能吃掉医疗行政——排班、计费、患者沟通。如果大规模跑通，将成为各垂直行业的模板。"
 ---
 AWS announces Amazon Connect Health, a purpose-built agentic AI solution that handles high-volume administrative tasks — appointment scheduling, clinical documentation, and medical coding — with real-time EHR access and insurance eligibility checks.
 

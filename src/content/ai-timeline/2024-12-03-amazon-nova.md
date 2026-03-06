@@ -8,6 +8,7 @@ source: "https://aws.amazon.com/blogs/aws/introducing-amazon-nova-frontier-intel
 source_name: "AWS Blog"
 company: "Amazon"
 significance: high
+body_zh: "AWS re:Invent 2024 上，Amazon 推出 Nova 家族——Micro、Lite、Pro 和 Canvas/Reel——首批自研前沿模型，通过 Bedrock 分发。Amazon 从「中立平台」变身「模型制造商」。Bedrock 做分发、Trainium 做芯片——从云到硅的垂直整合对 OpenAI 的企业护城河构成威胁。"
 ---
 At AWS re:Invent 2024, Amazon launches the Nova family — Micro, Lite, Pro, and Canvas/Reel — its first proprietary frontier models trained in-house and offered via Bedrock.
 
