@@ -498,69 +498,65 @@ const meta = {
 	}
 </style>
 
-<script>
-	import { ConvexHttpClient } from 'convex/browser';
+<script is:inline>
+	(function() {
+		const CONVEX_URL = 'https://fleet-heron-880.convex.cloud';
+		const statusEl = document.getElementById('connection-status');
 
-	const CONVEX_URL = 'https://fleet-heron-880.convex.cloud';
-	const AGENT_IDS = ['main', 'writer', 'researcher', 'coder', 'designer', 'analyst'];
+		function updateRoom(agent) {
+			const room = document.querySelector('[data-agent="' + agent.agentId + '"]');
+			if (!room) return;
 
-	const statusEl = document.getElementById('connection-status');
-
-	function updateRoom(agent) {
-		const room = document.querySelector(`[data-agent="${agent.agentId}"]`);
-		if (!room) return;
-
-		const sprite = room.querySelector('.agent-sprite');
-		const dot = room.querySelector('.agent-status-dot');
-		const bubble = room.querySelector('.task-bubble');
-		const status = agent.status || 'offline';
-
-		// Update sprite position
-		if (sprite) sprite.setAttribute('data-state', status === 'busy' ? 'busy' : status === 'error' ? 'error' : 'idle');
-
-		// Update dot
-		if (dot) {
-			dot.className = 'agent-status-dot ' + status;
-		}
-
-		// Update bubble
-		if (bubble) {
-			if (agent.currentTask && status === 'busy') {
-				bubble.textContent = agent.currentTask;
-				bubble.style.display = 'block';
-			} else {
-				bubble.style.display = 'none';
-			}
-		}
-	}
-
-	function setOffline() {
-		document.querySelectorAll('.agent-room').forEach(room => {
-			const dot = room.querySelector('.agent-status-dot');
 			const sprite = room.querySelector('.agent-sprite');
-			if (dot) dot.className = 'agent-status-dot offline';
-			if (sprite) sprite.setAttribute('data-state', 'idle');
-		});
-		if (statusEl) {
-			statusEl.innerHTML = '<span class="lang-en" style="color:#ef4444">⚠ Offline</span><span class="lang-zh" style="color:#ef4444">⚠ 离线</span>';
-		}
-	}
+			const dot = room.querySelector('.agent-status-dot');
+			const bubble = room.querySelector('.task-bubble');
+			const status = agent.status || 'offline';
 
-	async function pollAgents() {
-		try {
-			const client = new ConvexHttpClient(CONVEX_URL);
-			const agents = await client.query('agents:list', {});
-			if (statusEl) {
-				statusEl.innerHTML = '<span class="lang-en" style="color:#4ade80">● Live</span><span class="lang-zh" style="color:#4ade80">● 实时</span>';
+			if (sprite) sprite.setAttribute('data-state', status === 'busy' ? 'busy' : status === 'error' ? 'error' : 'idle');
+			if (dot) dot.className = 'agent-status-dot ' + status;
+
+			if (bubble) {
+				if (agent.currentTask && status === 'busy') {
+					bubble.textContent = agent.currentTask;
+					bubble.style.display = 'block';
+				} else {
+					bubble.style.display = 'none';
+				}
 			}
-			agents.forEach(updateRoom);
-		} catch (e) {
-			console.error('Convex poll failed:', e);
-			setOffline();
 		}
-	}
 
-	// Poll every 10s (ConvexHttpClient doesn't support subscriptions; use polling)
-	pollAgents();
-	setInterval(pollAgents, 10000);
+		function setOffline() {
+			document.querySelectorAll('.agent-room').forEach(function(room) {
+				var dot = room.querySelector('.agent-status-dot');
+				var sprite = room.querySelector('.agent-sprite');
+				if (dot) dot.className = 'agent-status-dot offline';
+				if (sprite) sprite.setAttribute('data-state', 'idle');
+			});
+			if (statusEl) {
+				statusEl.innerHTML = '<span class="lang-en" style="color:#ef4444">\u26a0 Offline</span><span class="lang-zh" style="color:#ef4444">\u26a0 离线</span>';
+			}
+		}
+
+		async function pollAgents() {
+			try {
+				var resp = await fetch(CONVEX_URL + '/api/query', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ path: 'agents:list', args: {} })
+				});
+				var data = await resp.json();
+				var agents = data.value || [];
+				if (statusEl) {
+					statusEl.innerHTML = '<span class="lang-en" style="color:#4ade80">\u25cf Live</span><span class="lang-zh" style="color:#4ade80">\u25cf 实时</span>';
+				}
+				agents.forEach(updateRoom);
+			} catch (e) {
+				console.error('Convex poll failed:', e);
+				setOffline();
+			}
+		}
+
+		pollAgents();
+		setInterval(pollAgents, 10000);
+	})();
 </script>
