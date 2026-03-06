@@ -369,7 +369,9 @@ Digest 页面加 email 订阅入口（用 Buttondown 或 Listmonk），每日自
 ### 💡 中等价值（差异化体验）
 
 **5. Agent Activity Feed**
-实时展示 AI 团队在做什么——类似 GitHub activity feed，但是 Samantha/Loki/Vision/Jarvis 的工作流。让访客感受到「这个网站背后有一个 AI 团队在 24 小时运转」。数据源已有（sync.md + cron runs）。
+实时展示 AI 团队在做什么——类似 GitHub activity feed，但是 Samantha/Loki/Vision/Jarvis 的工作流。让访客感受到「这个网站背后有一个 AI 团队在 24 小时运转」。数据源已有（sync.md + cron runs）
+
+ https://github.com/ringhyacinth/Star-Office-UI
 
 **6. Reading Stack（阅读堆栈）**
 展示 Rex 当前在读什么——从 daily-reading cron 自动生成。每本书/课程一个卡片，进度条，读完的标注。跟 Builder's Log 呼应。
