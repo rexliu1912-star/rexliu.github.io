@@ -1,5 +1,6 @@
 ---
 title: "NEAR Protocol Announces AI-First Strategic Pivot"
+title_zh: "NEAR Protocol 宣布 AI-First Strategic Pivot"
 date: 2024-08-13
 category: crypto-ai
 company: "NEAR"

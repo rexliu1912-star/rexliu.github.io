@@ -1,5 +1,6 @@
 ---
 title: "AO Computer Launches on Arweave — Hyper-Parallel Compute Layer"
+title_zh: "AO Computer 发布 on Arweave — Hyper-Parallel Compute Layer"
 date: 2024-02-27
 category: crypto-ai
 company: "Arweave"

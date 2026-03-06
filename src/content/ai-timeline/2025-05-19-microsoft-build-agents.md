@@ -1,5 +1,6 @@
 ---
 title: "Microsoft Build 2025 — The Agentic Web Declared Open"
+title_zh: "微软 Build 2025 — The Agentic Web Declared Open"
 date: 2025-05-19
 category: product
 tags: ["microsoft", "github", "copilot", "agent", "azure"]

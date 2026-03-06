@@ -1,5 +1,6 @@
 ---
 title: "OpenAI Introduces ChatGPT Canvas"
+title_zh: "OpenAI 推出 ChatGPT Canvas"
 date: 2024-10-03
 category: product
 company: "OpenAI"

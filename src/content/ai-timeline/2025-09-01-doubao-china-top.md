@@ -1,5 +1,6 @@
 ---
 title: "Doubao Becomes China's #1 AI App — 155M Weekly Active Users"
+title_zh: "Doubao 成为 China's #1 AI App — 155M Weekly Active Users"
 date: 2025-09-01
 category: product
 tags: ["bytedance", "doubao", "china", "consumer-ai"]

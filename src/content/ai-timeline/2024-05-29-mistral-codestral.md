@@ -1,5 +1,6 @@
 ---
 title: "Mistral Releases Codestral — First European AI Code Model"
+title_zh: "Mistral 发布 Codestral — First European AI Code Model"
 date: 2024-05-29
 category: model
 tags: ["mistral", "code", "open-weight", "europe"]

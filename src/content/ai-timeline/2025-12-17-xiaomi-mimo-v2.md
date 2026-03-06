@@ -1,5 +1,6 @@
 ---
 title: "Xiaomi MiMo-V2-Flash — 309B MoE Challenges DeepSeek at Scale"
+title_zh: "小米 MiMo-V2-Flash — 309B MoE Challenges DeepSeek at Scale"
 date: 2025-12-17
 category: model
 tags: ["xiaomi", "mimo", "moe", "open-source", "china"]

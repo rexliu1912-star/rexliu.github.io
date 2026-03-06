@@ -1,5 +1,6 @@
 ---
 title: "ai16z Launches on Solana — First AI DAO Running Autonomous Agents"
+title_zh: "ai16z 发布 on Solana — First AI DAO Running Autonomous Agents"
 date: 2024-10-24
 category: crypto-ai
 tags: ["ai16z", "eliza", "ai-agent", "dao", "solana"]

@@ -1,5 +1,6 @@
 ---
 title: "NEAR Protocol Pivots to Become the 'AI Layer' of Web3"
+title_zh: "NEAR Protocol 转型 to Become the 'AI Layer' of Web3"
 date: 2024-08-01
 category: crypto-ai
 tags: ["near", "ai-layer", "chain-abstraction", "web3"]

@@ -1,5 +1,6 @@
 ---
 title: "xAI Raises $6B Series B at $24B Valuation"
+title_zh: "xAI 融资 $6B Series B at $24B Valuation"
 date: 2024-05-26
 category: funding
 company: "xAI"

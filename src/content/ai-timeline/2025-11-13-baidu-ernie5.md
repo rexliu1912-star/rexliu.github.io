@@ -1,5 +1,6 @@
 ---
 title: "Baidu ERNIE 5.0 — Natively Omnimodal AI Model"
+title_zh: "百度 ERNIE 5.0 — Natively Omnimodal AI Model"
 date: 2025-11-13
 category: model
 tags: ["baidu", "ernie", "multimodal", "omnimodal", "china"]

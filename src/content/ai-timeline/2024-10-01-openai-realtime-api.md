@@ -1,5 +1,6 @@
 ---
 title: "OpenAI Launches Realtime API for Voice AI"
+title_zh: "OpenAI 发布 Realtime API for Voice AI"
 date: 2024-10-01
 category: product
 company: "OpenAI"

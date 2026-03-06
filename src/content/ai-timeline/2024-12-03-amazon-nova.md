@@ -1,5 +1,6 @@
 ---
 title: "Amazon Launches Nova — First Proprietary AI Model Family"
+title_zh: "亚马逊 发布 Nova — First Proprietary AI Model Family"
 date: 2024-12-03
 category: model
 tags: ["amazon", "aws", "nova", "multimodal"]

@@ -1,5 +1,6 @@
 ---
 title: "Meta Connect 2023: Quest 3 and AI Studio Launch"
+title_zh: "Meta Connect 2023: Quest 3 and AI Studio 发布"
 date: 2023-09-27
 category: product
 company: "Meta"

@@ -1,5 +1,6 @@
 ---
 title: "Sanctuary AI Unveils Phoenix Gen 6 — General Purpose Humanoid Robot"
+title_zh: "Sanctuary AI 发布 Phoenix Gen 6 — General Purpose 人形机器人"
 date: 2023-05-16
 category: robotics
 tags: ["sanctuary-ai", "humanoid", "general-purpose", "carbon-ai"]

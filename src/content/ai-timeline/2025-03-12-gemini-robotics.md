@@ -1,5 +1,6 @@
 ---
 title: "Google DeepMind Launches Gemini Robotics"
+title_zh: "Google DeepMind 发布 Gemini Robotics"
 date: 2025-03-12
 category: robotics
 company: "Google DeepMind"

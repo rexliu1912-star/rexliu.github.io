@@ -1,5 +1,6 @@
 ---
 title: "Google Launches Gemini 2.0 Flash (Experimental)"
+title_zh: "Google 发布 Gemini 2.0 Flash (Experimental)"
 date: 2024-12-11
 category: model
 tags: ["google", "gemini"]

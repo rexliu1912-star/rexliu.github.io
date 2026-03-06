@@ -1,5 +1,6 @@
 ---
 title: "Claude Powers First AI-Planned Drive on Mars"
+title_zh: "Claude 驱动 First AI-Planned Drive on Mars"
 date: 2026-01-30
 category: industry
 company: "Anthropic"

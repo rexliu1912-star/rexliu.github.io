@@ -1,5 +1,6 @@
 ---
 title: "Anthropic Launches Claude Code — Terminal AI Agent"
+title_zh: "Anthropic 发布 Claude Code — Terminal AI Agent"
 date: 2025-02-24
 category: product
 tags: ["anthropic", "claude", "agent", "coding"]

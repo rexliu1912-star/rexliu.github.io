@@ -1,5 +1,6 @@
 ---
 title: "Anthropic Positions Claude as an Ad-Free Space to Think"
+title_zh: "Anthropic 定位 Claude as an Ad-Free Space to Think"
 date: 2026-02-04
 category: product
 company: "Anthropic"

@@ -1,5 +1,6 @@
 ---
 title: "OpenAI Raises $40B at $300B Valuation"
+title_zh: "OpenAI 融资 $40B at $300B Valuation"
 date: 2025-04-07
 category: funding
 tags: ["openai", "venture-capital"]

@@ -1,5 +1,6 @@
 ---
 title: "Amazon Completes $4B Investment in Anthropic"
+title_zh: "亚马逊 Completes $4B Investment in Anthropic"
 date: 2024-03-27
 category: funding
 tags: ["anthropic", "amazon"]

@@ -1,5 +1,6 @@
 ---
 title: "Virtual Protocol Hits $1B TVL"
+title_zh: "Virtual Protocol 突破 $1B TVL"
 date: 2025-03-10
 category: crypto-ai
 tags: ["virtual-protocol", "ai-agents", "crypto"]

@@ -1,5 +1,6 @@
 ---
 title: "Hugging Face Hits 1 Million Models — Open-Source AI Reaches Critical Mass"
+title_zh: "Hugging Face 突破 1 Million Models — 开源 AI Reaches Critical Mass"
 date: 2024-09-26
 category: product
 tags: ["hugging-face", "open-source", "model-hub", "platform"]

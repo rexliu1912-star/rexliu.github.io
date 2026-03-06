@@ -1,5 +1,6 @@
 ---
 title: "Xiaomi Launches MiMo — Smartphone Giant Enters Open LLM Race"
+title_zh: "小米 发布 MiMo — Smartphone Giant 进入 Open LLM Race"
 date: 2025-04-30
 category: model
 tags: ["xiaomi", "mimo", "open-source", "reasoning", "china"]

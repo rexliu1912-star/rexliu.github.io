@@ -1,5 +1,6 @@
 ---
 title: "Zama Advances FHE for Privacy-Preserving AI"
+title_zh: "Zama 推进 FHE for Privacy-Preserving AI"
 date: 2025-02-28
 category: crypto-ai
 tags: ["zama", "fhe", "privacy"]

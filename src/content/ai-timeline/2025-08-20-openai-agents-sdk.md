@@ -1,5 +1,6 @@
 ---
 title: "OpenAI Agents SDK Goes GA"
+title_zh: "OpenAI Agents SDK 正式发布"
 date: 2025-08-20
 category: product
 tags: ["openai", "agents", "sdk"]

@@ -1,5 +1,6 @@
 ---
 title: "OpenAI Converts to Public Benefit Corporation"
+title_zh: "OpenAI 转型 to Public Benefit Corporation"
 date: 2025-10-28
 category: funding
 company: "OpenAI"

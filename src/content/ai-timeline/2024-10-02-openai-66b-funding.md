@@ -1,5 +1,6 @@
 ---
 title: "OpenAI Raises $6.6B at $157B Valuation"
+title_zh: "OpenAI 融资 $6.6B at $157B Valuation"
 date: 2024-10-02
 category: funding
 company: "OpenAI"

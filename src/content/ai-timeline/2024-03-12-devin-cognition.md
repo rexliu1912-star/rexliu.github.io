@@ -1,5 +1,6 @@
 ---
 title: "Cognition Reveals Devin Software Engineer Agent"
+title_zh: "Cognition 发布 Devin Software Engineer Agent"
 date: 2024-03-12
 category: product
 tags: ["devin", "cognition", "agent"]

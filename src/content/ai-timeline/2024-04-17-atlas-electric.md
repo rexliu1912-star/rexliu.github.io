@@ -1,5 +1,6 @@
 ---
 title: "Boston Dynamics Unveils All-Electric Atlas"
+title_zh: "Boston Dynamics 发布 All-Electric Atlas"
 date: 2024-04-17
 category: robotics
 tags: ["boston dynamics", "humanoid"]

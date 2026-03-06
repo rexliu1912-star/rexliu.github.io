@@ -1,5 +1,6 @@
 ---
 title: "Claude 3.5 Sonnet Drops"
+title_zh: "Claude 3.5 Sonnet 发布"
 date: 2024-06-20
 category: model
 tags: ["anthropic", "claude"]

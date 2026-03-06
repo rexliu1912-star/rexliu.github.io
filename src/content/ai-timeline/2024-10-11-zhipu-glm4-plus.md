@@ -1,5 +1,6 @@
 ---
 title: "Zhipu Releases GLM-4-Plus"
+title_zh: "Zhipu 发布 GLM-4-Plus"
 date: 2024-10-11
 category: model
 tags: ["zhipu", "glm", "china"]

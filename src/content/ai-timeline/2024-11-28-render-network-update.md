@@ -1,5 +1,6 @@
 ---
 title: "Render Network Expands AI Compute Positioning"
+title_zh: "Render Network 扩展 AI Compute Positioning"
 date: 2024-11-28
 category: crypto-ai
 tags: ["render", "gpu", "depin"]

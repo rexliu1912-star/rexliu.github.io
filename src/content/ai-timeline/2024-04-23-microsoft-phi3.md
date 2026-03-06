@@ -1,5 +1,6 @@
 ---
 title: "Microsoft Phi-3 — Frontier-Class AI That Runs on Your Phone"
+title_zh: "微软 Phi-3 — Frontier-Class AI That Runs on Your Phone"
 date: 2024-04-23
 category: model
 tags: ["microsoft", "phi", "slm", "on-device"]

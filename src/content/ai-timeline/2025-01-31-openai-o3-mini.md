@@ -1,5 +1,6 @@
 ---
 title: "OpenAI Releases o3-mini"
+title_zh: "OpenAI 发布 o3-mini"
 date: 2025-01-31
 category: model
 company: "OpenAI"

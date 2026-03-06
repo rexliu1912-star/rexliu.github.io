@@ -1,5 +1,6 @@
 ---
 title: "AWS launches Amazon Connect Health: Agentic AI for healthcare"
+title_zh: "AWS 发布 亚马逊 Connect Health: Agentic AI for healthcare"
 date: 2026-03-06
 category: product
 tags: ["amazon", "aws", "healthcare", "ai-agent"]

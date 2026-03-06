@@ -1,5 +1,6 @@
 ---
 title: "Grayscale Files for Bittensor (TAO) Trust"
+title_zh: "Grayscale 提交 for Bittensor (TAO) Trust"
 date: 2025-10-15
 category: crypto-ai
 tags: ["bittensor", "tao", "grayscale"]

@@ -1,5 +1,6 @@
 ---
 title: "OpenAI Introduces 4o Image Generation"
+title_zh: "OpenAI 推出 4o Image Generation"
 date: 2025-03-25
 category: product
 company: "OpenAI"

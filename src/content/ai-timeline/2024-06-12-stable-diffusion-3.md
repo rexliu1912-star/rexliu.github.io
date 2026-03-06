@@ -1,5 +1,6 @@
 ---
 title: "Stability AI Releases Stable Diffusion 3 Medium"
+title_zh: "Stability AI 发布 Stable Diffusion 3 Medium"
 date: 2024-06-12
 category: model
 company: "Stability AI"

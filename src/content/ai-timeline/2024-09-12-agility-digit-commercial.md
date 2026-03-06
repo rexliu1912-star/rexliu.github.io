@@ -1,5 +1,6 @@
 ---
 title: "Agility Robotics Expands Digit Commercial Deployments"
+title_zh: "Agility Robotics 扩展 Digit Commercial Deployments"
 date: 2024-09-12
 category: robotics
 tags: ["agility", "digit", "robotics"]

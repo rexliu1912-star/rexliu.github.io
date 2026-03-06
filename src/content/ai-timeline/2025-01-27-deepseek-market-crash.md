@@ -1,5 +1,6 @@
 ---
 title: "DeepSeek Triggers $1T Tech Selloff"
+title_zh: "DeepSeek 引发 $1T Tech Selloff"
 date: 2025-01-27
 category: funding
 tags: ["deepseek", "market", "nvidia"]

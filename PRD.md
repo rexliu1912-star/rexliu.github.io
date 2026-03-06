@@ -115,12 +115,39 @@ highlights: 3
 
 **数据：** `src/content/projects/*.md`，静态维护
 
-### F5: 语言切换（i18n）
-- 全站中英双语
-- URL 结构：`lab.rexliu.io/zh/...` / `lab.rexliu.io/en/...`
-- 默认语言：英文（匹配 Twitter 受众）
-- 右上角语言切换按钮
-- Daily Digest 中英文章互链
+### F5: 全站双语切换（i18n — 方案 C：单文件双语）
+
+**架构决策（2026-03-06 Rex 确认）：** 采用「单文件双语 + 客户端切换」方案，不做双 URL 路由。
+
+**核心机制：**
+1. **内容层**：每个 md 文件内用 `<!-- zh -->` / `<!-- en -->` 注释标记分隔两种语言的正文；frontmatter 加 `title_zh`/`title_en`、`summary_zh`/`summary_en` 等可选双语字段
+2. **解析层**：自定义 remark 插件 `remark-bilingual`，根据页面当前语言只渲染对应标记段落
+3. **切换层**：右上角 🌐 toggle 按钮（EN / 中文），偏好存 `localStorage`，切换时 JS 控制显隐
+4. **Fallback 规则**：没有第二语言版本的内容，自动显示原文语言，toggle 按钮标注「Translation coming soon」
+5. **默认语言**：英文（匹配 Twitter 主受众），中文读者点一下切换
+
+**适用范围（分阶段）：**
+- **Phase 1（Labs 页面）**：AI Timeline（175 条标题翻译）、Digest、SNEK Daily、Builder's Log、Projects — UI chrome + 内容
+- **Phase 2（全站）**：Posts、Notes — 长文章渐进翻译
+
+**UI 字典：**
+- `src/i18n/ui.ts`：所有 UI 文案（按钮、标签、导航）的中英对照，约 50-80 个 key
+- 页面模板通过 `t('key')` 函数调用
+
+**SEO 处理：**
+- `<html lang>` 跟随当前语言
+- `<meta>` 描述取当前语言版本
+- 不生成 hreflang（单 URL 架构）
+- 对 Rex 的流量来源（X/Telegram）影响可忽略
+
+**技术实现清单：**
+- [ ] `src/i18n/ui.ts` — UI 字典
+- [ ] `src/i18n/utils.ts` — `t()` 函数 + `getLang()` + `setLang()`
+- [ ] `src/components/LanguageToggle.astro` — 切换组件（Astro island）
+- [ ] `src/plugins/remark-bilingual.ts` — 解析 `<!-- zh/en -->` 标记
+- [ ] Schema 更新：所有 collection 加 `title_zh`/`summary_zh` 等可选字段
+- [ ] AI Timeline 175 条批量中文标题翻译（脚本生成）
+- [ ] Digest/SNEK Daily/Builder's Log/Projects 现有内容补充双语字段
 
 ### F6: RSS 输出
 - `/rss.xml`（全部内容）
@@ -276,7 +303,7 @@ rexs-lab/
 ### Must（MVP）
 - [x] 首页（Hero + 最新内容 + Projects）— 合并进 rexliu.io/lab/
 - [x] Daily Digest 列表页 + 详情页 — ✅ 上线，中英双语（英文正文 + 中文完整翻译）
-- [ ] ~~语言切换~~ — **架构调整**：不做独立 i18n 路由，改为单页内中英双语（已实现）
+- [ ] 语言切换 — **方案 C 确认（2026-03-06）**：单文件双语 + 客户端切换，Phase 1 先做 Labs 页面
 - [x] RSS 输出 — rexliu.io 已有全站 RSS
 - [x] 响应式设计 — ✅
 - [x] ~~lab.rexliu.io 域名~~ — **决策变更**：合并进 rexliu.io/lab/（非独立站）

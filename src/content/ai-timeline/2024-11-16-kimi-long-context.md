@@ -1,5 +1,6 @@
 ---
 title: "Moonshot Kimi Pushes Long-Context Capabilities"
+title_zh: "Moonshot Kimi 推进 Long-Context Capabilities"
 date: 2024-11-16
 category: model
 tags: ["moonshot", "kimi", "china"]

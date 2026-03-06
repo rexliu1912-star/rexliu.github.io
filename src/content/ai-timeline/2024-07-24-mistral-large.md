@@ -1,5 +1,6 @@
 ---
 title: "Mistral Large 2 Released"
+title_zh: "Mistral Large 2 发布"
 date: 2024-07-24
 category: model
 tags: ["mistral", "open-source", "europe"]

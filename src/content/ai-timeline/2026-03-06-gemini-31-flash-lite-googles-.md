@@ -1,5 +1,6 @@
 ---
 title: "Google releases Gemini 3.1 Flash-Lite, most cost-effective model yet"
+title_zh: "Google 发布 Gemini 3.1 Flash-Lite, most cost-effective model yet"
 date: 2026-03-06
 category: model
 tags: ["google", "gemini", "flash-lite"]

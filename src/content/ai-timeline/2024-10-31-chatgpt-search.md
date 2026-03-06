@@ -1,5 +1,6 @@
 ---
 title: "OpenAI Launches ChatGPT Search"
+title_zh: "OpenAI 发布 ChatGPT 搜索"
 date: 2024-10-31
 category: product
 company: "OpenAI"

@@ -66,11 +66,13 @@ const digest = defineCollection({
 	loader: glob({ base: "./src/content/digest", pattern: "**/*.{md,mdx}" }),
 	schema: z.object({
 		title: z.string(),
+		title_zh: z.string().optional(),
 		date: z.coerce.date(),
 		source: z.string().url().optional(),
 		source_name: z.string().optional(),
 		tags: z.array(z.string()).default([]),
 		summary: z.string().optional(),
+		summary_zh: z.string().optional(),
 	}),
 });
 
@@ -79,7 +81,9 @@ const projects = defineCollection({
 	loader: glob({ base: "./src/content/projects", pattern: "**/*.{md,mdx}" }),
 	schema: z.object({
 		title: z.string(),
+		title_zh: z.string().optional(),
 		description: z.string(),
+		description_zh: z.string().optional(),
 		status: z.enum(["running", "building", "planning"]),
 		icon: z.string().optional(),
 		url: z.string().url().optional(),
@@ -92,8 +96,10 @@ const builderLog = defineCollection({
 	loader: glob({ base: "./src/content/builder-log", pattern: "**/*.{md,mdx}" }),
 	schema: z.object({
 		title: z.string(),
+		title_zh: z.string().optional(),
 		date: z.coerce.date(),
 		summary: z.string(),
+		summary_zh: z.string().optional(),
 		highlights: z.array(z.string()).default([]),
 		agents: z.array(z.string()).default([]),
 	}),
@@ -104,6 +110,7 @@ const aiTimeline = defineCollection({
 	loader: glob({ base: "./src/content/ai-timeline", pattern: "**/*.{md,mdx}" }),
 	schema: z.object({
 		title: z.string(),
+		title_zh: z.string().optional(),
 		date: z.coerce.date(),
 		category: z.enum(["model", "funding", "industry", "robotics", "crypto-ai", "product"]),
 		tags: z.array(z.string()).default([]),
@@ -119,12 +126,14 @@ const snekDaily = defineCollection({
 	loader: glob({ base: "./src/content/snek-daily", pattern: "**/*.{md,mdx}" }),
 	schema: z.object({
 		title: z.string(),
+		title_zh: z.string().optional(),
 		date: z.coerce.date(),
 		btc_price: z.string().optional(),
 		btc_change: z.string().optional(),
 		ada_price: z.string().optional(),
 		snek_price: z.string().optional(),
 		summary: z.string().optional(),
+		summary_zh: z.string().optional(),
 	}),
 });
 

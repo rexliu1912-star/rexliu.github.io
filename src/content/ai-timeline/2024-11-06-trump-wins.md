@@ -1,5 +1,6 @@
 ---
 title: "Trump Wins 2024 Election — Pro-AI Agenda"
+title_zh: "特朗普 赢得 2024 Election — Pro-AI Agenda"
 date: 2024-11-06
 category: industry
 tags: ["us-politics", "regulation"]

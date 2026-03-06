@@ -1,5 +1,6 @@
 ---
 title: "Claude 3.5 Sonnet Gains Computer Use Capability"
+title_zh: "Claude 3.5 Sonnet 获得 Computer Use Capability"
 date: 2024-10-22
 category: product
 company: "Anthropic"

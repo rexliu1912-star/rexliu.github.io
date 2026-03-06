@@ -1,5 +1,6 @@
 ---
 title: "MiniMax Launches Hailuo AI Video — China's Sora Moment"
+title_zh: "MiniMax 发布 Hailuo AI Video — China's Sora Moment"
 date: 2024-09-10
 category: model
 tags: ["minimax", "video", "text-to-video", "china"]

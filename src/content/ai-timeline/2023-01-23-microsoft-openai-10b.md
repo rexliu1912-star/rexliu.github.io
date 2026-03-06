@@ -1,5 +1,6 @@
 ---
 title: "Microsoft Invests $10B in OpenAI"
+title_zh: "微软向 OpenAI 投资 100 亿美元"
 date: 2023-01-23
 category: funding
 company: "Microsoft"

@@ -1,5 +1,6 @@
 ---
 title: "Ritual Raises $25M Seed to Decentralize AI Infrastructure"
+title_zh: "Ritual 融资 $25M Seed to Decentralize AI Infrastructure"
 date: 2023-11-08
 category: crypto-ai
 tags: ["ritual", "depin", "infrastructure", "funding"]

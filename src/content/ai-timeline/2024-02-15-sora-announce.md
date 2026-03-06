@@ -1,5 +1,6 @@
 ---
 title: "OpenAI Announces Sora Text-to-Video Model"
+title_zh: "OpenAI 宣布 Sora Text-to-Video Model"
 date: 2024-02-15
 category: model
 tags: ["openai", "sora", "video"]

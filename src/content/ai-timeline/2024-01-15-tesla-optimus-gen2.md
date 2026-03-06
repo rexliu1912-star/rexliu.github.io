@@ -1,5 +1,6 @@
 ---
 title: "Tesla Shows Optimus Gen 2 Walking, Folding Shirts"
+title_zh: "特斯拉 Shows Optimus Gen 2 Walking, Folding Shirts"
 date: 2024-01-15
 category: robotics
 tags: ["tesla", "optimus", "humanoid"]

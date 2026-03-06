@@ -1,5 +1,6 @@
 ---
 title: "1X Robotics Opens NEO Consumer Robot Pre-Orders"
+title_zh: "1X Robotics 开放 NEO Consumer Robot Pre-Orders"
 date: 2025-10-01
 category: robotics
 tags: ["1x-robotics", "neo", "consumer", "home-robot"]

@@ -1,5 +1,6 @@
 ---
 title: "OpenAI Launches ChatGPT Agent Mode"
+title_zh: "OpenAI 发布 ChatGPT Agent Mode"
 date: 2025-07-17
 category: product
 company: "OpenAI"

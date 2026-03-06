@@ -1,5 +1,6 @@
 ---
 title: "New York Times Sues OpenAI and Microsoft Over Copyright"
+title_zh: "New York Times Sues OpenAI and 微软 Over Copyright"
 date: 2023-12-27
 category: industry
 tags: ["copyright", "openai", "microsoft", "legal"]

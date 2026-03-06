@@ -1,5 +1,6 @@
 ---
 title: "Google Gemini 1.0 Ultra Released"
+title_zh: "Google Gemini 1.0 Ultra 发布"
 date: 2024-02-08
 category: model
 tags: ["google", "gemini"]

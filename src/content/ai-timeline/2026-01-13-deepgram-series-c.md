@@ -1,5 +1,6 @@
 ---
 title: "Deepgram Raises $130M Series C at $1.3B Valuation"
+title_zh: "Deepgram 融资 $130M Series C at $1.3B Valuation"
 date: 2026-01-13
 category: funding
 tags: ["deepgram", "voice-ai", "funding", "unicorn"]

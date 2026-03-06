@@ -1,5 +1,6 @@
 ---
 title: "Anthropic Introduces Model Context Protocol (MCP)"
+title_zh: "Anthropic 推出 Model Context Protocol (MCP)"
 date: 2024-11-25
 category: industry
 tags: ["anthropic", "mcp", "protocol"]

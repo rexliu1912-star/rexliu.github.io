@@ -1,5 +1,6 @@
 ---
 title: "Alibaba Releases Qwen2 — China's Most Capable Open-Weight Model Family"
+title_zh: "阿里巴巴 发布 Qwen2 — China's Most Capable Open-Weight Model Family"
 date: 2024-06-07
 category: model
 tags: ["alibaba", "qwen", "open-source", "china", "multilingual"]

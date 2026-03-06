@@ -1,5 +1,6 @@
 ---
 title: "OpenAI Releases o3 and o4-mini with Full Tool Use"
+title_zh: "OpenAI 发布 o3 and o4-mini with Full Tool Use"
 date: 2025-04-16
 category: model
 company: "OpenAI"

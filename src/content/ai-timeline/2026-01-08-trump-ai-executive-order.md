@@ -1,5 +1,6 @@
 ---
 title: "Trump Signs Pro-Innovation AI Executive Order"
+title_zh: "特朗普 签署 Pro-Innovation AI 行政令"
 date: 2026-01-08
 category: industry
 tags: ["trump", "us-policy", "executive-order"]

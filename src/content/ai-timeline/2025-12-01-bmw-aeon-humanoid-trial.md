@@ -1,5 +1,6 @@
 ---
 title: "BMW Leipzig Factory Deploys AEON Humanoid Robots in Pilot Program"
+title_zh: "BMW Leipzig Factory 部署 AEON 人形机器人s in Pilot Program"
 date: 2025-12-01
 category: robotics
 tags: ["bmw", "aeon", "humanoid", "automotive", "manufacturing"]

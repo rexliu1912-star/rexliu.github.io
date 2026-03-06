@@ -1,5 +1,6 @@
 ---
 title: "Biden Signs Landmark AI Executive Order"
+title_zh: "拜登 签署 Landmark AI 行政令"
 date: 2023-10-30
 category: industry
 tags: ["us-policy", "regulation", "executive-order"]

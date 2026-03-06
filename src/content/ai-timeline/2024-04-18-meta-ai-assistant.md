@@ -1,5 +1,6 @@
 ---
 title: "Meta Launches Meta AI Assistant"
+title_zh: "Meta 发布 Meta AI Assistant"
 date: 2024-04-18
 category: product
 company: "Meta"

@@ -1,5 +1,6 @@
 ---
 title: "OpenAI Launches ChatGPT"
+title_zh: "OpenAI 发布 ChatGPT"
 date: 2022-11-30
 category: product
 company: "OpenAI"

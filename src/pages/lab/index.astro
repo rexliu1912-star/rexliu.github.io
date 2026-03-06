@@ -10,21 +10,19 @@ const latestEvents = allTimelineEvents
 const timelineCategoryColors: Record<string, string> = {
 	model: "text-purple-500",
 	funding: "text-green-500",
-	policy: "text-blue-500",
+	industry: "text-blue-500",
 	robotics: "text-orange-500",
 	"crypto-ai": "text-yellow-500",
-	research: "text-gray-400",
 	product: "text-cyan-500",
 };
 
-const timelineCategoryLabels: Record<string, string> = {
-	model: "Model",
-	funding: "Funding",
-	policy: "Policy",
-	robotics: "Robotics",
-	"crypto-ai": "Crypto×AI",
-	research: "Research",
-	product: "Product",
+const timelineCategoryLabels: Record<string, { en: string; zh: string }> = {
+	model: { en: "Model", zh: "模型" },
+	funding: { en: "Funding", zh: "融资" },
+	industry: { en: "Industry", zh: "行业" },
+	robotics: { en: "Robotics", zh: "机器人" },
+	"crypto-ai": { en: "Crypto×AI", zh: "Crypto×AI" },
+	product: { en: "Product", zh: "产品" },
 };
 
 const allDigests = await getCollection("digest");
@@ -59,6 +57,12 @@ const statusColors: Record<string, string> = {
 	building: "text-yellow-500",
 	planning: "text-gray-400",
 };
+
+const statusLabels: Record<string, { en: string; zh: string }> = {
+	running: { en: "running", zh: "运行中" },
+	building: { en: "building", zh: "开发中" },
+	planning: { en: "planning", zh: "规划中" },
+};
 ---
 
 <PageLayout meta={meta}>
@@ -66,15 +70,18 @@ const statusColors: Record<string, string> = {
 		<h1 class="hero-reveal-text mb-4 font-serif text-4xl font-bold dark:text-white">
 			Rex's Lab
 		</h1>
-		<p class="hero-reveal-subtitle max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">
+		<p class="hero-reveal-subtitle lang-en max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">
 			Every moment of the AI era, curated readings, and experiments in crypto & AI.
+		</p>
+		<p class="hero-reveal-subtitle lang-zh max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">
+			AI 时代的每个瞬间，精选阅读，以及加密与 AI 的实验。
 		</p>
 	</section>
 
 	<!-- AI Timeline — Hero Section -->
 	<section class="mb-16">
 		<h2 class="fade-in-up mb-8 font-serif text-xs font-bold tracking-widest text-gray-400 uppercase dark:text-gray-500" style="--delay: 100ms">
-			AI Timeline
+			<span class="lang-en">AI Timeline</span><span class="lang-zh">AI 大事记</span>
 		</h2>
 		<div class="relative border-l-2 border-gray-200 pl-6 dark:border-gray-700">
 			{latestEvents.map((ev, i) => (
@@ -85,7 +92,7 @@ const statusColors: Record<string, string> = {
 							{formatShortDate(ev.data.date)}
 						</time>
 						<span class={`shrink-0 rounded-sm px-1.5 py-0.5 font-serif text-[10px] font-medium uppercase ${timelineCategoryColors[ev.data.category] || "text-gray-400"} bg-gray-100 dark:bg-gray-800`}>
-							{timelineCategoryLabels[ev.data.category] || ev.data.category}
+							<span class="lang-en">{timelineCategoryLabels[ev.data.category]?.en || ev.data.category}</span><span class="lang-zh">{timelineCategoryLabels[ev.data.category]?.zh || ev.data.category}</span>
 						</span>
 					</div>
 					{ev.data.source ? (
@@ -107,7 +114,7 @@ const statusColors: Record<string, string> = {
 		</div>
 		<div class="mt-8">
 			<a href="/lab/ai-timeline/" class="font-serif text-sm text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]">
-				View full timeline →
+				<span class="lang-en">View full timeline →</span><span class="lang-zh">查看完整时间线 →</span>
 			</a>
 		</div>
 	</section>
@@ -115,13 +122,13 @@ const statusColors: Record<string, string> = {
 	<!-- Daily Section: Digest + SNEK Daily -->
 	<section class="mb-16">
 		<h2 class="fade-in-up mb-8 font-serif text-xs font-bold tracking-widest text-gray-400 uppercase dark:text-gray-500" style="--delay: 200ms">
-			Daily
+			<span class="lang-en">Daily</span><span class="lang-zh">每日更新</span>
 		</h2>
 
 		<div class="grid gap-8 lg:grid-cols-2">
 			<!-- Digest Column -->
 			<div>
-				<h3 class="mb-4 font-serif text-base font-medium tracking-wide text-gray-500 dark:text-gray-400">Digest</h3>
+				<h3 class="mb-4 font-serif text-base font-medium tracking-wide text-gray-500 dark:text-gray-400"><span class="lang-en">Digest</span><span class="lang-zh">精选阅读</span></h3>
 				<div class="space-y-6">
 					{sortedDigests.map((d, i) => (
 						<article class="glow-card fade-in-up" style={`--delay: ${250 + i * 60}ms`}>
@@ -148,14 +155,14 @@ const statusColors: Record<string, string> = {
 				</div>
 				<div class="mt-4">
 					<a href="/lab/digest/" class="font-serif text-sm text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]">
-						View all digests →
+						<span class="lang-en">View all digests →</span><span class="lang-zh">查看全部精选 →</span>
 					</a>
 				</div>
 			</div>
 
 			<!-- SNEK Daily Column -->
 			<div>
-				<h3 class="mb-4 font-serif text-base font-medium tracking-wide text-gray-500 dark:text-gray-400">SNEK Daily</h3>
+				<h3 class="mb-4 font-serif text-base font-medium tracking-wide text-gray-500 dark:text-gray-400"><span class="lang-en">SNEK Daily</span><span class="lang-zh">SNEK 日报</span></h3>
 				<div class="space-y-6">
 					{latestSnek.map((d, i) => (
 						<article class="glow-card fade-in-up" style={`--delay: ${250 + i * 60}ms`}>
@@ -183,7 +190,7 @@ const statusColors: Record<string, string> = {
 				</div>
 				<div class="mt-4">
 					<a href="/lab/snek-daily/" class="font-serif text-sm text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]">
-						View all dailies →
+						<span class="lang-en">View all dailies →</span><span class="lang-zh">查看全部日报 →</span>
 					</a>
 				</div>
 			</div>
@@ -193,7 +200,7 @@ const statusColors: Record<string, string> = {
 	<!-- Builder's Log -->
 	<section class="mb-16">
 		<h2 class="fade-in-up mb-8 font-serif text-xs font-bold tracking-widest text-gray-400 uppercase dark:text-gray-500" style="--delay: 200ms">
-			Builder's Log
+			<span class="lang-en">Builder's Log</span><span class="lang-zh">Builder's Log</span>
 		</h2>
 		<div class="space-y-6">
 			{latestLogs.map((log, i) => (
@@ -219,7 +226,7 @@ const statusColors: Record<string, string> = {
 		</div>
 		<div class="mt-6">
 			<a href="/lab/builder-log/" class="font-serif text-sm text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]">
-				View all logs →
+				<span class="lang-en">View all logs →</span><span class="lang-zh">查看全部日志 →</span>
 			</a>
 		</div>
 	</section>
@@ -227,19 +234,23 @@ const statusColors: Record<string, string> = {
 	<!-- Projects -->
 	<section class="mb-16">
 		<h2 class="fade-in-up mb-8 font-serif text-xs font-bold tracking-widest text-gray-400 uppercase dark:text-gray-500" style="--delay: 200ms">
-			Projects
+			<span class="lang-en">Projects</span><span class="lang-zh">项目</span>
 		</h2>
 		<div class="grid gap-4 sm:grid-cols-2">
 			{sortedProjects.map((p, i) => (
 				<div class="glow-card fade-in-up rounded-lg border border-gray-200 p-5 transition-colors dark:border-gray-800" style={`--delay: ${300 + i * 80}ms`}>
 					<div class="mb-2 flex items-center gap-2">
 						{p.data.icon && <span class="text-lg">{p.data.icon}</span>}
-						<h3 class="font-serif text-lg font-medium text-black dark:text-white">{p.data.title}</h3>
+						<h3 class="font-serif text-lg font-medium text-black dark:text-white">
+							<span class="lang-en">{p.data.title}</span><span class="lang-zh">{p.data.title_zh || p.data.title}</span>
+						</h3>
 						<span class={`ml-auto font-serif text-sm ${statusColors[p.data.status] || "text-gray-400"}`}>
-							{p.data.status}
+							<span class="lang-en">{statusLabels[p.data.status]?.en || p.data.status}</span><span class="lang-zh">{statusLabels[p.data.status]?.zh || p.data.status}</span>
 						</span>
 					</div>
-					<p class="font-serif text-base text-gray-500 dark:text-gray-400">{p.data.description}</p>
+					<p class="font-serif text-base text-gray-500 dark:text-gray-400">
+						<span class="lang-en">{p.data.description}</span><span class="lang-zh">{p.data.description_zh || p.data.description}</span>
+					</p>
 				</div>
 			))}
 		</div>

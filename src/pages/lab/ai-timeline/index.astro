@@ -59,13 +59,13 @@ for (const event of sorted) {
 }
 
 const categories = [
-	{ key: "all", label: "All" },
-	{ key: "model", label: "Models" },
-	{ key: "product", label: "Products" },
-	{ key: "funding", label: "Funding" },
-	{ key: "robotics", label: "Robotics" },
-	{ key: "crypto-ai", label: "Crypto×AI" },
-	{ key: "industry", label: "Industry" },
+	{ key: "all", en: "All", zh: "全部" },
+	{ key: "model", en: "Models", zh: "模型" },
+	{ key: "product", en: "Products", zh: "产品" },
+	{ key: "funding", en: "Funding", zh: "融资" },
+	{ key: "robotics", en: "Robotics", zh: "机器人" },
+	{ key: "crypto-ai", en: "Crypto×AI", zh: "Crypto×AI" },
+	{ key: "industry", en: "Industry", zh: "行业" },
 ];
 
 const categoryColors: Record<string, { bg: string; text: string }> = {
@@ -90,13 +90,16 @@ function formatDate(date: Date) {
 <PageLayout meta={meta}>
 	<section class="mb-10">
 		<a href="/lab/" class="fade-in-up mb-4 inline-block font-serif text-sm text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]">
-			← Lab
+			<span class="lang-en">← Lab</span><span class="lang-zh">← Lab</span>
 		</a>
 		<h1 class="hero-reveal-text mb-3 font-serif text-4xl font-bold dark:text-white">
-			AI Timeline
+			<span class="lang-en">AI Timeline</span><span class="lang-zh">AI 大事记</span>
 		</h1>
-		<p class="hero-reveal-subtitle max-w-2xl font-serif text-lg leading-relaxed text-gray-500 dark:text-gray-400">
+		<p class="hero-reveal-subtitle lang-en max-w-2xl font-serif text-lg leading-relaxed text-gray-500 dark:text-gray-400">
 			Major milestones in the AI revolution, annotated with a builder-investor lens.
+		</p>
+		<p class="hero-reveal-subtitle lang-zh max-w-2xl font-serif text-lg leading-relaxed text-gray-500 dark:text-gray-400">
+			AI 革命的重要里程碑，以建造者与投资者的视角标注。
 		</p>
 	</section>
 
@@ -112,19 +115,19 @@ function formatDate(date: Date) {
 						: "border-gray-200 text-gray-500 hover:border-[#8953d1] hover:text-[#8953d1] dark:border-gray-700 dark:text-gray-400 dark:hover:border-[#a175e8] dark:hover:text-[#a175e8]",
 				]}
 			>
-				{cat.label}
+				<span class="lang-en">{cat.en}</span><span class="lang-zh">{cat.zh}</span>
 			</button>
 		))}
 	</section>
 
 	<!-- Company dropdown filter -->
 	<section class="fade-in-up mb-8 flex items-center gap-3" style="--delay: 250ms">
-		<span class="font-serif text-xs text-gray-400 dark:text-gray-500">Company:</span>
+		<span class="font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Company:</span><span class="lang-zh">公司：</span></span>
 		<select
 			id="company-filter"
 			class="cursor-pointer rounded-full border border-gray-200 bg-transparent px-3 py-1 font-serif text-xs text-gray-500 transition-all hover:border-[#8953d1] hover:text-[#8953d1] focus:border-[#8953d1] focus:text-[#8953d1] focus:outline-none dark:border-gray-700 dark:text-gray-400 dark:hover:border-[#a175e8] dark:hover:text-[#a175e8] dark:focus:border-[#a175e8] dark:focus:text-[#a175e8]"
 		>
-			<option value="all">All Companies</option>
+			<option value="all" data-en="All Companies" data-zh="所有公司">All Companies</option>
 			{topCompanies.map(([co, count]) => (
 				<option value={co}>{co} ({count})</option>
 			))}
@@ -171,7 +174,7 @@ function formatDate(date: Date) {
 										<div class="flex flex-wrap items-start gap-2">
 											{/* Category badge */}
 											<span class:list={["inline-block rounded-full px-2 py-0.5 font-serif text-xs font-medium uppercase tracking-wider", colors.bg, colors.text]}>
-												{event.data.category}
+												<span class="lang-en">{categories.find(c => c.key === event.data.category)?.en || event.data.category}</span><span class="lang-zh">{categories.find(c => c.key === event.data.category)?.zh || event.data.category}</span>
 											</span>
 
 											{/* Date */}
@@ -184,12 +187,12 @@ function formatDate(date: Date) {
 											)}
 										</div>
 
-										{/* Title */}
+										{/* Title — bilingual */}
 										<h3 class:list={[
 											"mt-1 font-serif text-base transition-colors group-hover:text-[#8953d1] dark:group-hover:text-[#a175e8]",
 											event.data.significance === "high" ? "font-bold text-black dark:text-white" : "font-medium text-gray-800 dark:text-gray-200",
 										]}>
-											{event.data.title}
+											<span class="lang-en">{event.data.title}</span><span class="lang-zh">{event.data.title_zh || event.data.title}</span>
 										</h3>
 
 										{/* Expandable content */}

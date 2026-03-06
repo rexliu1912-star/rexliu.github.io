@@ -1,5 +1,6 @@
 ---
 title: "US AI Safety Institute Publishes Early Evaluation Framework"
+title_zh: "US AI Safety Institute 发布 Early Evaluation Framework"
 date: 2024-10-30
 category: industry
 tags: ["us", "policy", "safety"]

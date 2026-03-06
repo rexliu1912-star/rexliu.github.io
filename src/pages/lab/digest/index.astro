@@ -23,10 +23,13 @@ function formatDate(date: Date) {
 			← Lab
 		</a>
 		<h1 class="hero-reveal-text mt-4 mb-4 font-serif text-4xl font-bold dark:text-white">
-			Digest
+			<span class="lang-en">Digest</span><span class="lang-zh">精选阅读</span>
 		</h1>
-		<p class="hero-reveal-subtitle max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">
+		<p class="hero-reveal-subtitle lang-en max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">
 			Curated articles and insights worth reading twice.
+		</p>
+		<p class="hero-reveal-subtitle lang-zh max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">
+			精选文章与值得反复阅读的洞察。
 		</p>
 	</section>
 
@@ -36,14 +39,16 @@ function formatDate(date: Date) {
 				<article class="glow-card fade-in-up" style={`--delay: ${200 + i * 60}ms`}>
 					<div class="mb-2 flex items-baseline justify-between">
 						<a href={`/lab/digest/${d.id}/`} class="font-serif text-xl font-medium text-black transition-colors hover:text-[#8953d1] dark:text-white dark:hover:text-[#a175e8]">
-							{d.data.title}
+							<span class="lang-en">{d.data.title}</span><span class="lang-zh">{d.data.title_zh || d.data.title}</span>
 						</a>
 						<time class="shrink-0 pl-4 font-serif text-xs text-gray-400 dark:text-gray-500" datetime={d.data.date.toISOString()}>
 							{formatDate(d.data.date)}
 						</time>
 					</div>
 					{d.data.summary && (
-						<p class="font-serif text-sm leading-relaxed text-gray-500 dark:text-gray-400">{d.data.summary}</p>
+						<p class="font-serif text-sm leading-relaxed text-gray-500 dark:text-gray-400">
+							<span class="lang-en">{d.data.summary}</span><span class="lang-zh">{d.data.summary_zh || d.data.summary}</span>
+						</p>
 					)}
 					{d.data.tags.length > 0 && (
 						<div class="mt-2 flex flex-wrap items-center gap-3 font-serif text-sm text-gray-400">

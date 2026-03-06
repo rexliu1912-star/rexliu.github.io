@@ -1,5 +1,6 @@
 ---
 title: "GitHub Copilot Workspace Enters Public Preview"
+title_zh: "GitHub Copilot Workspace 进入 公开预览"
 date: 2024-10-29
 category: product
 tags: ["github", "copilot", "workspace"]

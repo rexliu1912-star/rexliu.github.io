@@ -411,3 +411,16 @@ html.theme-transitioning * {
 		margin: 0 !important;
 	}
 }
+
+/* ==========================================
+   Bilingual language switching (i18n)
+   html[data-lang] controls which .lang-* is visible.
+   Default: English. Toggle sets data-lang="zh".
+   ========================================== */
+html[data-lang="en"] .lang-zh,
+html:not([data-lang]) .lang-zh {
+	display: none !important;
+}
+html[data-lang="zh"] .lang-en {
+	display: none !important;
+}

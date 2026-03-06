@@ -1,5 +1,6 @@
 ---
 title: "Figure 02 Humanoid Robot Mass Production"
+title_zh: "Figure 02 人形机器人 量产"
 date: 2025-09-08
 category: robotics
 tags: ["figure", "humanoid", "robotics"]

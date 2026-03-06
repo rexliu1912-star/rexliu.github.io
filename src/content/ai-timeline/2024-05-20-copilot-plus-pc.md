@@ -1,5 +1,6 @@
 ---
 title: "Microsoft Announces Copilot+ PCs with NPUs"
+title_zh: "微软 宣布 Copilot+ PCs with NPUs"
 date: 2024-05-20
 category: product
 tags: ["microsoft", "copilot", "on-device"]

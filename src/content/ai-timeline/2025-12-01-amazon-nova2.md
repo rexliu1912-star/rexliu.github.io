@@ -1,5 +1,6 @@
 ---
 title: "Amazon Nova 2 + Kiro — AWS Bets on Agentic AI at re:Invent 2025"
+title_zh: "亚马逊 Nova 2 + Kiro — AWS Bets on Agentic AI at re:Invent 2025"
 date: 2025-12-01
 category: model
 tags: ["amazon", "aws", "nova", "agent", "kiro"]

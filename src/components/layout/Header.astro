@@ -1,5 +1,6 @@
 ---
 import ThemeToggle from "../ThemeToggle.astro";
+import LanguageToggle from "../LanguageToggle.astro";
 
 const { pathname } = Astro.url;
 const isHome = pathname === "/" || pathname === "/index.html";
@@ -134,6 +135,7 @@ const SAMANTHA_URL = "https://samantha.rexliu.io";
 			</svg>
 		</a>
 
+		<LanguageToggle />
 		<ThemeToggle />
 	</div>
 </header>

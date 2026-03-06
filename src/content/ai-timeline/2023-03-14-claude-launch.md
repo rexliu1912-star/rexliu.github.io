@@ -1,5 +1,6 @@
 ---
 title: "Anthropic Launches Claude"
+title_zh: "Anthropic 发布 Claude"
 date: 2023-03-14
 category: product
 company: "Anthropic"

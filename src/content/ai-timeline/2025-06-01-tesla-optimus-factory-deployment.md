@@ -1,5 +1,6 @@
 ---
 title: "Tesla Optimus Robots Begin Internal Factory Deployment"
+title_zh: "特斯拉 Optimus Robots Begin Internal Factory Deployment"
 date: 2025-06-01
 category: robotics
 tags: ["tesla", "optimus", "factory", "humanoid", "deployment"]

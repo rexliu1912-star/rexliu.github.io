@@ -1,5 +1,6 @@
 ---
 title: "io.net Accelerates Decentralized AI Compute Rollout"
+title_zh: "io.net 加速 Decentralized AI Compute Rollout"
 date: 2025-01-14
 category: crypto-ai
 tags: ["io.net", "compute", "depin"]

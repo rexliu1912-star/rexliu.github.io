@@ -1,5 +1,6 @@
 ---
 title: "Virtuals Protocol ($VIRTUAL) Hits All-Time High — AI Agent Tokenization Leader"
+title_zh: "Virtuals Protocol ($VIRTUAL) 突破 历史新高 — AI Agent Tokenization Leader"
 date: 2025-01-06
 category: crypto-ai
 company: "Virtual Protocol"

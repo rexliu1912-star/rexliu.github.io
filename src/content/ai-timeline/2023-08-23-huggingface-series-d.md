@@ -1,5 +1,6 @@
 ---
 title: "Hugging Face Raises $235M Series D at $4.5B Valuation"
+title_zh: "Hugging Face 融资 $235M Series D at $4.5B Valuation"
 date: 2023-08-23
 category: funding
 company: "Hugging Face"

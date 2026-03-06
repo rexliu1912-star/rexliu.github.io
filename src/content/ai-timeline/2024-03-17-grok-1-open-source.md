@@ -1,5 +1,6 @@
 ---
 title: "xAI Open-Sources Grok-1 (314B Parameters)"
+title_zh: "xAI 开源 Grok-1 (314B Parameters)"
 date: 2024-03-17
 category: model
 company: "xAI"

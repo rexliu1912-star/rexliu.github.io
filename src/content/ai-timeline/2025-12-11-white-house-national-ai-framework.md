@@ -1,5 +1,6 @@
 ---
 title: "White House Executive Order Establishes National AI Policy Framework"
+title_zh: "White House 行政令 Establishes National AI Policy Framework"
 date: 2025-12-11
 category: industry
 tags: ["us-policy", "executive-order", "regulation"]

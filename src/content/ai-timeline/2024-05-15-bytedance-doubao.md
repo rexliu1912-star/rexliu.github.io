@@ -1,5 +1,6 @@
 ---
 title: "ByteDance Expands Doubao Model Family"
+title_zh: "字节跳动 扩展 Doubao Model Family"
 date: 2024-05-15
 category: model
 tags: ["bytedance", "doubao", "china"]

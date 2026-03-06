@@ -1,5 +1,6 @@
 ---
 title: "OpenAI Fires and Reinstates Sam Altman"
+title_zh: "OpenAI 解雇 and Reinstates Sam Altman"
 date: 2023-11-17
 category: funding
 company: "OpenAI"

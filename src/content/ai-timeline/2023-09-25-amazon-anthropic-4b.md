@@ -1,5 +1,6 @@
 ---
 title: "Amazon Invests $4B in Anthropic"
+title_zh: "亚马逊 投资 $4B in Anthropic"
 date: 2023-09-25
 category: funding
 company: "Amazon"

@@ -1,5 +1,6 @@
 ---
 title: "NVIDIA Unveils Blackwell GPU Architecture"
+title_zh: "英伟达 发布 Blackwell GPU Architecture"
 date: 2024-03-27
 category: product
 tags: ["nvidia", "hardware", "gpu"]

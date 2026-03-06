@@ -1,5 +1,6 @@
 ---
 title: "Nvidia Becomes World's Most Valuable Company"
+title_zh: "Nvidia 成为 World's 全球市值最高公司"
 date: 2024-06-18
 category: funding
 tags: ["nvidia", "market cap"]

@@ -1,5 +1,6 @@
 ---
 title: "Google Announces Bard AI Chatbot"
+title_zh: "Google 宣布 Bard AI Chatbot"
 date: 2023-02-06
 category: product
 company: "Google"

@@ -1,5 +1,6 @@
 ---
 title: "Akash Pushes AI Cloud Marketplace Integrations"
+title_zh: "Akash 推进 AI Cloud Marketplace Integrations"
 date: 2024-09-10
 category: crypto-ai
 tags: ["akash", "decentralized cloud", "ai"]

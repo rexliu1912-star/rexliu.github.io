@@ -1,5 +1,6 @@
 ---
 title: "Unitree Robots Perform Martial Arts at China's 2026 Spring Festival Gala"
+title_zh: "Unitree Robots 表演 Martial Arts at China's 2026 Spring Festival Gala"
 date: 2026-01-28
 category: robotics
 tags: ["unitree", "china", "humanoid", "spring-festival", "cctv"]

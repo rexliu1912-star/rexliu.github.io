@@ -1,5 +1,6 @@
 ---
 title: "Anthropic Launches Claude 3 Opus"
+title_zh: "Anthropic 发布 Claude 3 Opus"
 date: 2024-03-04
 category: model
 tags: ["anthropic", "claude"]

@@ -1,5 +1,6 @@
 ---
 title: "OpenAI Launches ChatGPT Pro at $200/Month"
+title_zh: "OpenAI 发布 ChatGPT Pro at $200/Month"
 date: 2024-12-05
 category: product
 company: "OpenAI"

@@ -1,5 +1,6 @@
 ---
 title: "Hugging Face Launches LeRobot — Democratizing Open-Source Robotics AI"
+title_zh: "Hugging Face 发布 LeRobot — Democratizing 开源 Robotics AI"
 date: 2024-03-22
 category: product
 tags: ["hugging-face", "robotics", "open-source", "lerobot"]

@@ -1,5 +1,6 @@
 ---
 title: "OpenAI Launches Codex — Cloud Coding Agent"
+title_zh: "OpenAI 发布 Codex — Cloud Coding Agent"
 date: 2025-05-16
 category: product
 tags: ["openai", "codex", "agent"]

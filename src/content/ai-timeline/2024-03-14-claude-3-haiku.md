@@ -1,5 +1,6 @@
 ---
 title: "Anthropic Releases Claude 3 Haiku"
+title_zh: "Anthropic 发布 Claude 3 Haiku"
 date: 2024-03-14
 category: model
 company: "Anthropic"

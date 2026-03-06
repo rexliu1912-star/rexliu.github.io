@@ -1,5 +1,6 @@
 ---
 title: "OpenAI Sora Video Generation Launches"
+title_zh: "OpenAI Sora Video Generation 发布"
 date: 2024-12-09
 category: product
 tags: ["openai", "sora", "video"]

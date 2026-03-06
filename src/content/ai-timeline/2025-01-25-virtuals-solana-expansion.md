@@ -1,5 +1,6 @@
 ---
 title: "Virtuals Protocol Expands to Solana — Multi-Chain AI Agent Platform"
+title_zh: "Virtuals Protocol 扩展 to Solana — Multi-Chain AI Agent Platform"
 date: 2025-01-25
 category: crypto-ai
 tags: ["virtuals", "solana", "ai-agent", "multi-chain"]

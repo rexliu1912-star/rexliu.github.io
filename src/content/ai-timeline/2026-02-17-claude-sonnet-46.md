@@ -1,5 +1,6 @@
 ---
 title: "Anthropic Releases Claude Sonnet 4.6"
+title_zh: "Anthropic 发布 Claude Sonnet 4.6"
 date: 2026-02-17
 category: model
 company: "Anthropic"

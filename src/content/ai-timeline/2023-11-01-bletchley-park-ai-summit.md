@@ -1,5 +1,6 @@
 ---
 title: "First Global AI Safety Summit at Bletchley Park"
+title_zh: "First Global AI 安全峰会 at Bletchley Park"
 date: 2023-11-01
 category: industry
 tags: ["safety", "uk", "global-summit", "policy"]

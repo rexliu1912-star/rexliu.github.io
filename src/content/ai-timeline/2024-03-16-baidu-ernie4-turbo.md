@@ -1,5 +1,6 @@
 ---
 title: "Baidu Upgrades ERNIE 4.0 Turbo"
+title_zh: "百度 升级 ERNIE 4.0 Turbo"
 date: 2024-03-16
 category: model
 tags: ["baidu", "ernie", "china"]

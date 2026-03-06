@@ -1,5 +1,6 @@
 ---
 title: "Mistral AI Launches Mistral Large"
+title_zh: "Mistral AI 发布 Mistral Large"
 date: 2024-02-26
 category: model
 company: "Mistral AI"

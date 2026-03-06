@@ -1,5 +1,6 @@
 ---
 title: "Unitree Ships 5,000th General-Purpose Robot — Targets 20K in 2026"
+title_zh: "Unitree 出货 5,000th General-Purpose Robot — Targets 20K in 2026"
 date: 2025-12-08
 category: robotics
 company: "Unitree"

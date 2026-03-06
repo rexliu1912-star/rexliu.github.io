@@ -1,5 +1,6 @@
 ---
 title: "OpenAI Launches Operator — Web-Browsing AI Agent"
+title_zh: "OpenAI 发布 Operator — Web-Browsing AI Agent"
 date: 2025-01-23
 category: product
 company: "OpenAI"

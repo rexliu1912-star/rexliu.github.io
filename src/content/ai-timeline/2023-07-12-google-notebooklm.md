@@ -1,5 +1,6 @@
 ---
 title: "Google Launches NotebookLM"
+title_zh: "Google 发布 NotebookLM"
 date: 2023-07-12
 category: product
 company: "Google"

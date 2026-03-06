@@ -1,5 +1,6 @@
 ---
 title: "Virtuals Protocol Integrates Coinbase x402 Payment Standard"
+title_zh: "Virtuals Protocol 集成 Coinbase x402 Payment Standard"
 date: 2025-10-01
 category: crypto-ai
 tags: ["virtuals", "coinbase", "x402", "payments", "ai-agent"]

@@ -1,5 +1,6 @@
 ---
 title: "Physical Intelligence Raises $400M for Robot Foundation Models"
+title_zh: "Physical Intelligence 融资 $400M for Robot 基础模型s"
 date: 2024-10-31
 category: robotics
 tags: ["physical intelligence", "robotics", "foundation model"]

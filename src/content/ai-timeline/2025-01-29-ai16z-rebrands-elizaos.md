@@ -1,5 +1,6 @@
 ---
 title: "ai16z Officially Rebrands to ElizaOS After a16z Request"
+title_zh: "ai16z Officially 更名 to ElizaOS After a16z Request"
 date: 2025-01-29
 category: crypto-ai
 tags: ["elizaos", "ai16z", "rebrand", "ai-agent", "framework"]

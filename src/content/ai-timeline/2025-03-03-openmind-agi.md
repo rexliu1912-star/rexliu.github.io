@@ -1,5 +1,6 @@
 ---
 title: "OpenMind AGI Expands Decentralized Agent Narrative"
+title_zh: "OpenMind AGI 扩展 Decentralized Agent Narrative"
 date: 2025-03-03
 category: crypto-ai
 tags: ["openmind agi", "agents"]
