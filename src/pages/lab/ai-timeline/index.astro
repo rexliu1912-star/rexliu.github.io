@@ -250,6 +250,15 @@ function formatDate(date: Date) {
 			activeClasses.forEach(c => activeBtn.classList.add(c));
 		}
 
+		// When filtering, reveal all year groups first (override progressive reveal)
+		if (currentCategory !== "all" || currentCompany !== "all") {
+			yearGroups?.forEach((yg) => {
+				const el = yg as HTMLElement;
+				delete el.dataset.revealHidden;
+				el.style.display = "";
+			});
+		}
+
 		// Filter events: AND logic
 		document.querySelectorAll(".timeline-event").forEach((el) => {
 			const cat = (el as HTMLElement).dataset.category ?? "";

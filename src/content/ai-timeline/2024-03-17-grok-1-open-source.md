@@ -1,0 +1,11 @@
+---
+title: "xAI Open-Sources Grok-1 (314B Parameters)"
+date: 2024-03-17
+category: model
+company: "xAI"
+tags: ["xai", "grok", "open-source", "mixture-of-experts", "elon-musk"]
+source: "https://x.ai/news/grok-os"
+source_name: "xAI"
+significance: high
+---
+xAI open-sourced Grok-1 on March 17, 2024, releasing the weights and architecture of its 314 billion parameter Mixture-of-Experts language model under the Apache 2.0 license on GitHub and Hugging Face. Grok-1 was the raw base model checkpoint from the pre-training phase completed in October 2023, not fine-tuned for dialogue — making it one of the largest open-weight models ever released at the time. The release came shortly after the open-source community had been debating whether frontier labs would ever release such large models. It significantly raised the bar for what the open-source AI ecosystem could work with and build upon.
