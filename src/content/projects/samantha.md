@@ -1,10 +1,10 @@
 ---
-title: Samantha
-description: "AI chief of staff — coordinates 6 specialized agents, manages crons, content pipeline, and daily operations."
-title_zh: "Samantha"
-description_zh: "AI 首席参谋 — 协调 6 个专业 Agent，管理定时任务、内容管线和日常运营。"
+title: "Rex AI HQ"
+description: "The AI headquarters — Samantha coordinates 6 specialized agents, manages daily operations, and documents the journey."
+title_zh: "Rex AI 总部"
+description_zh: "AI 指挥中心 — Samantha 协调 6 个专业 Agent，管理日常运营，记录这段旅程。"
 status: running
-icon: "🧡"
+icon: "🏠"
 url: "https://samantha.rexliu.io"
 order: 0
 ---
