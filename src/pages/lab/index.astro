@@ -97,11 +97,11 @@ const statusLabels: Record<string, { en: string; zh: string }> = {
 					</div>
 					{ev.data.source ? (
 						<a href={ev.data.source} target="_blank" rel="noopener noreferrer" class="mt-1 block font-serif text-base leading-relaxed text-black transition-colors hover:text-[#8953d1] dark:text-white dark:hover:text-[#a175e8]">
-							{ev.data.title} ↗
+							<span class="lang-en">{ev.data.title}</span><span class="lang-zh">{ev.data.title_zh || ev.data.title}</span> ↗
 						</a>
 					) : (
 						<p class="mt-1 font-serif text-base leading-relaxed text-black dark:text-white">
-							{ev.data.title}
+							<span class="lang-en">{ev.data.title}</span><span class="lang-zh">{ev.data.title_zh || ev.data.title}</span>
 						</p>
 					)}
 					{ev.body && ev.body.trim() && (
@@ -134,14 +134,16 @@ const statusLabels: Record<string, { en: string; zh: string }> = {
 						<article class="glow-card fade-in-up" style={`--delay: ${250 + i * 60}ms`}>
 							<div class="mb-1 flex items-baseline justify-between gap-2">
 								<a href={`/lab/digest/${d.id}/`} class="font-serif text-base font-medium text-black transition-colors hover:text-[#8953d1] dark:text-white dark:hover:text-[#a175e8]">
-									{d.data.title}
+									<span class="lang-en">{d.data.title}</span><span class="lang-zh">{d.data.title_zh || d.data.title}</span>
 								</a>
 								<time class="shrink-0 font-serif text-sm text-gray-400 dark:text-gray-500" datetime={d.data.date.toISOString()}>
 									{formatShortDate(d.data.date)}
 								</time>
 							</div>
 							{d.data.summary && (
-								<p class="font-serif text-sm leading-relaxed text-gray-500 dark:text-gray-400">{d.data.summary}</p>
+								<p class="font-serif text-sm leading-relaxed text-gray-500 dark:text-gray-400">
+									<span class="lang-en">{d.data.summary}</span><span class="lang-zh">{d.data.summary_zh || d.data.summary}</span>
+								</p>
 							)}
 							{d.data.tags.length > 0 && (
 								<div class="mt-1.5 flex flex-wrap items-center gap-2 font-serif text-sm text-gray-400">
@@ -177,7 +179,9 @@ const statusLabels: Record<string, { en: string; zh: string }> = {
 								</time>
 							</div>
 							{d.data.summary && (
-								<p class="font-serif text-sm leading-relaxed text-gray-500 dark:text-gray-400">{d.data.summary}</p>
+								<p class="font-serif text-sm leading-relaxed text-gray-500 dark:text-gray-400">
+									<span class="lang-en">{d.data.summary}</span><span class="lang-zh">{d.data.summary_zh || d.data.summary}</span>
+								</p>
 							)}
 							{d.data.ada_price && (
 								<div class="mt-1.5 flex flex-wrap items-center gap-3 font-serif text-sm text-gray-400">
@@ -207,13 +211,15 @@ const statusLabels: Record<string, { en: string; zh: string }> = {
 				<article class="glow-card fade-in-up" style={`--delay: ${300 + i * 80}ms`}>
 					<div class="mb-1 flex items-baseline justify-between gap-2">
 						<a href={`/lab/builder-log/${log.id}/`} class="font-serif text-base font-medium text-black transition-colors hover:text-[#8953d1] dark:text-white dark:hover:text-[#a175e8]">
-							{log.data.title}
+							<span class="lang-en">{log.data.title}</span><span class="lang-zh">{log.data.title_zh || log.data.title}</span>
 						</a>
 						<time class="shrink-0 font-serif text-sm text-gray-400 dark:text-gray-500" datetime={log.data.date.toISOString()}>
 							{formatShortDate(log.data.date)}
 						</time>
 					</div>
-					<p class="font-serif text-sm leading-relaxed text-gray-500 dark:text-gray-400">{log.data.summary}</p>
+					<p class="font-serif text-sm leading-relaxed text-gray-500 dark:text-gray-400">
+						<span class="lang-en">{log.data.summary}</span><span class="lang-zh">{log.data.summary_zh || log.data.summary}</span>
+					</p>
 					{log.data.agents.length > 0 && (
 						<div class="mt-1.5 flex flex-wrap items-center gap-2 font-serif text-sm text-gray-400">
 							{log.data.agents.map((agent: string) => (
