@@ -374,10 +374,16 @@ Digest 页面加 email 订阅入口（用 Buttondown 或 Listmonk），每日自
 
 ### 💡 中等价值（差异化体验）
 
-**5. Agent Activity Feed**
-实时展示 AI 团队在做什么——类似 GitHub activity feed，但是 Samantha/Loki/Vision/Jarvis 的工作流。让访客感受到「这个网站背后有一个 AI 团队在 24 小时运转」。数据源已有（sync.md + cron runs）
+**5. Agent Activity Feed（像素办公室）**
+实时展示 AI 团队在做什么。让访客感受到「这个网站背后有一个 AI 团队在 24 小时运转」。
 
- https://github.com/ringhyacinth/Star-Office-UI
+- **视觉**: 像素风办公室场景，6 个 Agent 角色（Samantha/Loki/Vision/Jarvis/Shuri/Friday），CSS sprite sheet animation，idle/working/error 状态映射到不同区域（沙发/办公桌/Bug 区），气泡显示当前任务
+- **数据源**: Convex 实时数据库（已有）。`ping-agent.mjs` 已在写入 Agent 状态，与 Discord #ops 同一条管线，零延迟
+- **技术**: Astro 页面 + client-side Convex SDK subscription，状态变化自动更新，不需要轮询或 rebuild
+- **美术**: 需要 6 个 Agent 的 sprite sheet（Shuri 设计）。参考 [Star-Office-UI](https://github.com/ringhyacinth/Star-Office-UI)（非商业学习授权，正式用需自己画）
+- **已知局限**: 当前只有一个 Anthropic 账户，多 Agent 难以同时在线。后续接入不同模型/provider 后效果会更好
+- **实现步骤**: ① 静态原型（占位符角色 + 动画跑通） ② Shuri 画 sprite sheet ③ 接 Convex 实时数据
+- **状态**: 方案确认，待排期 [2026-03-06]
 
 **6. Reading Stack（阅读堆栈）**
 展示 Rex 当前在读什么——从 daily-reading cron 自动生成。每本书/课程一个卡片，进度条，读完的标注。跟 Builder's Log 呼应。
