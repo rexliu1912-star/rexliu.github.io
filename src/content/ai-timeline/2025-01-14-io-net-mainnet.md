@@ -5,6 +5,7 @@ category: crypto-ai
 tags: ["io.net", "compute", "depin"]
 source: "https://io.net/"
 source_name: "io.net"
+company: "io.net"
 significance: medium
 ---
 io.net expands distributed GPU network and integrations for AI teams needing flexible training/inference capacity without centralized cloud dependence.

@@ -5,6 +5,7 @@ category: robotics
 tags: ["figure ai", "openai", "humanoid"]
 source: "https://www.figure.ai/"
 source_name: "Figure AI"
+company: "Figure"
 significance: high
 ---
 Figure AI raises $675M at $2.6B valuation. Investors include Microsoft, OpenAI, Nvidia, Jeff Bezos. OpenAI provides multimodal AI models for Figure 01 humanoid.

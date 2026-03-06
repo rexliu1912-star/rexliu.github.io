@@ -5,6 +5,24 @@ import PageLayout from "@/layouts/Base.astro";
 const allEvents = await getCollection("ai-timeline");
 const sorted = allEvents.sort((a, b) => new Date(b.data.date).valueOf() - new Date(a.data.date).valueOf());
 
+// Build company counts for dropdown
+const companyCounts: Record<string, number> = {};
+for (const event of sorted) {
+	const co = event.data.company;
+	if (co) companyCounts[co] = (companyCounts[co] ?? 0) + 1;
+}
+
+// Companies with ≥2 events, sorted by count desc
+const topCompanies = Object.entries(companyCounts)
+	.filter(([, count]) => count >= 2)
+	.sort((a, b) => b[1] - a[1]);
+
+// Companies with <2 events → "Others"
+const otherCompanies = new Set(
+	Object.entries(companyCounts).filter(([, count]) => count < 2).map(([co]) => co)
+);
+const hasOthers = otherCompanies.size > 0;
+
 // Simple markdown-to-HTML for event bodies (bold + links)
 function mdToHtml(md: string): string {
 	return md
@@ -85,7 +103,7 @@ function formatDate(date: Date) {
 	</section>
 
 	<!-- Filter buttons -->
-	<section class="fade-in-up mb-10 flex flex-wrap gap-2" style="--delay: 200ms" id="timeline-filters">
+	<section class="fade-in-up mb-4 flex flex-wrap gap-2" style="--delay: 200ms" id="timeline-filters">
 		{categories.map((cat) => (
 			<button
 				data-filter={cat.key}
@@ -99,6 +117,21 @@ function formatDate(date: Date) {
 				{cat.label}
 			</button>
 		))}
+	</section>
+
+	<!-- Company dropdown filter -->
+	<section class="fade-in-up mb-8 flex items-center gap-3" style="--delay: 250ms">
+		<span class="font-serif text-xs text-gray-400 dark:text-gray-500">Company:</span>
+		<select
+			id="company-filter"
+			class="cursor-pointer rounded-full border border-gray-200 bg-transparent px-3 py-1 font-serif text-xs text-gray-500 transition-all hover:border-[#8953d1] hover:text-[#8953d1] focus:border-[#8953d1] focus:text-[#8953d1] focus:outline-none dark:border-gray-700 dark:text-gray-400 dark:hover:border-[#a175e8] dark:hover:text-[#a175e8] dark:focus:border-[#a175e8] dark:focus:text-[#a175e8]"
+		>
+			<option value="all">All Companies</option>
+			{topCompanies.map(([co, count]) => (
+				<option value={co}>{co} ({count})</option>
+			))}
+			{hasOthers && <option value="others">Others</option>}
+		</select>
 	</section>
 
 	<!-- Timeline -->
@@ -132,6 +165,7 @@ function formatDate(date: Date) {
 									<article
 										class="timeline-event glow-card group relative cursor-pointer"
 										data-category={event.data.category}
+										data-company={event.data.company ?? ""}
 									>
 										{/* Dot on timeline */}
 										<div class="absolute -left-[25px] sm:-left-[33px] top-3 h-2 w-2 rounded-full bg-[#8953d1]/60 dark:bg-[#a175e8]/60" />
@@ -186,51 +220,94 @@ function formatDate(date: Date) {
 </PageLayout>
 
 <script>
-	function applyFilter(filter: string) {
-		// Update button styles
+	// Other companies (single-event) passed from server
+	const OTHER_COMPANIES = new Set<string>(
+		Array.from(document.querySelectorAll(".timeline-event"))
+			.map(el => (el as HTMLElement).dataset.company ?? "")
+			.filter(co => co !== "")
+			.filter(co => {
+				// count occurrences
+				return document.querySelectorAll(`.timeline-event[data-company="${co}"]`).length < 2;
+			})
+	);
+
+	let currentCategory = "all";
+	let currentCompany = "all";
+
+	function applyFilters() {
 		const activeClasses = ["border-[#8953d1]", "bg-[#8953d1]/10", "text-[#8953d1]", "dark:border-[#a175e8]", "dark:bg-[#a175e8]/10", "dark:text-[#a175e8]"];
 		const inactiveClasses = ["border-gray-200", "text-gray-500", "dark:border-gray-700", "dark:text-gray-400"];
 
+		// Update category button styles
 		document.querySelectorAll("#timeline-filters button").forEach((b) => {
 			const el = b as HTMLElement;
 			activeClasses.forEach(c => el.classList.remove(c));
 			inactiveClasses.forEach(c => el.classList.add(c));
 		});
-
-		const activeBtn = document.querySelector(`#timeline-filters button[data-filter="${filter}"]`) as HTMLElement;
+		const activeBtn = document.querySelector(`#timeline-filters button[data-filter="${currentCategory}"]`) as HTMLElement;
 		if (activeBtn) {
 			inactiveClasses.forEach(c => activeBtn.classList.remove(c));
 			activeClasses.forEach(c => activeBtn.classList.add(c));
 		}
 
-		// Filter events
+		// Filter events: AND logic
 		document.querySelectorAll(".timeline-event").forEach((el) => {
-			const cat = (el as HTMLElement).dataset.category;
-			(el as HTMLElement).style.display = (filter === "all" || cat === filter) ? "" : "none";
+			const cat = (el as HTMLElement).dataset.category ?? "";
+			const co = (el as HTMLElement).dataset.company ?? "";
+
+			const catMatch = currentCategory === "all" || cat === currentCategory;
+			let coMatch = false;
+			if (currentCompany === "all") {
+				coMatch = true;
+			} else if (currentCompany === "others") {
+				coMatch = co === "" || OTHER_COMPANIES.has(co);
+			} else {
+				coMatch = co === currentCompany;
+			}
+
+			(el as HTMLElement).style.display = (catMatch && coMatch) ? "" : "none";
 		});
 
 		// Hide empty month groups
 		document.querySelectorAll("[data-month-group]").forEach((mg) => {
-			const visibleEvents = mg.querySelectorAll(".timeline-event:not([style*='display: none'])");
-			(mg as HTMLElement).style.display = visibleEvents.length === 0 ? "none" : "";
+			const visible = mg.querySelectorAll(".timeline-event:not([style*='display: none'])");
+			(mg as HTMLElement).style.display = visible.length === 0 ? "none" : "";
 		});
 
-		// Hide empty year groups
+		// Hide empty year groups (but respect the progressive reveal)
 		document.querySelectorAll("[data-year-group]").forEach((yg) => {
-			const visibleMonths = yg.querySelectorAll("[data-month-group]:not([style*='display: none'])");
-			(yg as HTMLElement).style.display = visibleMonths.length === 0 ? "none" : "";
+			const el = yg as HTMLElement;
+			// Only hide if it was previously visible (not hidden by progressive reveal)
+			if (el.style.display === "none" && !el.dataset.revealHidden) return;
+			const visibleMonths = el.querySelectorAll("[data-month-group]:not([style*='display: none'])");
+			if (visibleMonths.length === 0) {
+				el.dataset.filterHidden = "1";
+				el.style.display = "none";
+			} else {
+				delete el.dataset.filterHidden;
+				el.style.display = "";
+			}
 		});
 	}
 
-	// Filter buttons
+	// Category filter buttons
 	document.querySelectorAll("#timeline-filters button").forEach((btn) => {
 		btn.addEventListener("click", (e) => {
 			e.preventDefault();
 			e.stopPropagation();
-			const filter = (btn as HTMLElement).dataset.filter || "all";
-			applyFilter(filter);
+			currentCategory = (btn as HTMLElement).dataset.filter || "all";
+			applyFilters();
 		});
 	});
+
+	// Company dropdown
+	const companySelect = document.getElementById("company-filter") as HTMLSelectElement;
+	if (companySelect) {
+		companySelect.addEventListener("change", () => {
+			currentCompany = companySelect.value;
+			applyFilters();
+		});
+	}
 
 	// Expand/collapse
 	document.querySelectorAll(".timeline-event").forEach((el) => {
@@ -245,7 +322,11 @@ function formatDate(date: Date) {
 	const yearGroups = document.querySelectorAll("[data-year-group]");
 	const INITIAL_YEARS = 2;
 	yearGroups.forEach((yg, i) => {
-		if (i >= INITIAL_YEARS) (yg as HTMLElement).style.display = "none";
+		if (i >= INITIAL_YEARS) {
+			const el = yg as HTMLElement;
+			el.style.display = "none";
+			el.dataset.revealHidden = "1";
+		}
 	});
 
 	let revealed = INITIAL_YEARS;
@@ -255,7 +336,10 @@ function formatDate(date: Date) {
 		if (!sentinel) return;
 		const rect = sentinel.getBoundingClientRect();
 		if (rect.bottom < window.innerHeight + 600) {
-			(yearGroups[revealed] as HTMLElement).style.display = "";
+			const el = yearGroups[revealed] as HTMLElement;
+			delete el.dataset.revealHidden;
+			// Only show if not filter-hidden
+			if (!el.dataset.filterHidden) el.style.display = "";
 			revealed++;
 		}
 	};

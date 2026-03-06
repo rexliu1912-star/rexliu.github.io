@@ -5,6 +5,7 @@ category: crypto-ai
 tags: ["zama", "fhe", "privacy"]
 source: "https://www.zama.ai/"
 source_name: "Zama"
+company: "Zama"
 significance: medium
 ---
 Zama expands fully homomorphic encryption tooling for on-chain and AI use cases, enabling private inference and computation withoutTLS-style confidentiality for AI workflows.

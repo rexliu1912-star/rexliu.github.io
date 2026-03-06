@@ -5,6 +5,7 @@ category: model
 tags: ["moonshot", "kimi", "china"]
 source: "https://kimi.moonshot.cn/"
 source_name: "Moonshot AI"
+company: "Moonshot"
 significance: medium
 ---
 Kimi continues long-context positioning in China market with upgrades focused on document intelligence, research tasks, and productivity use cases.

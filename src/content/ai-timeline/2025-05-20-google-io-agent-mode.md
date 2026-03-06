@@ -5,6 +5,7 @@ category: product
 tags: ["google", "agent", "gemini"]
 source: "https://blog.google/technology/ai/"
 source_name: "Google Blog"
+company: "Google"
 significance: high
 ---
 Google positions Gemini as an operating layer with agent workflows in Search, Android, and Workspace. Product strategy shifts from features to autonomous completion.

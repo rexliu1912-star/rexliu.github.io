@@ -109,6 +109,7 @@ const aiTimeline = defineCollection({
 		tags: z.array(z.string()).default([]),
 		source: z.string().url().optional(),
 		source_name: z.string().optional(),
+		company: z.string().optional(),
 		significance: z.enum(["high", "medium", "low"]).default("medium"),
 	}),
 });

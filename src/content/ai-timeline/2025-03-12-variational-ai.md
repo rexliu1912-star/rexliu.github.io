@@ -5,6 +5,7 @@ category: crypto-ai
 tags: ["variational", "crypto-ai"]
 source: "https://www.variational.io/"
 source_name: "Variational"
+company: "Variational"
 significance: low
 ---
 Variational draws attention for research-led AI×Crypto design, emphasizing model-native market infrastructure and autonomous systems.

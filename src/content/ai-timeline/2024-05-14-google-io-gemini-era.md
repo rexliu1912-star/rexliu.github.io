@@ -5,6 +5,7 @@ category: product
 tags: ["google", "gemini", "workspace", "search"]
 source: "https://blog.google/technology/ai/google-io-2024-100-announcements/"
 source_name: "Google Blog"
+company: "Google"
 significance: high
 ---
 Google announces Gemini integration across Search AI Overviews, Gmail, Docs, and Android at I/O 2024. AI becomes default interface layer across Google's product stack.

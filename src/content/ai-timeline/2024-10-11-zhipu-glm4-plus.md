@@ -5,6 +5,7 @@ category: model
 tags: ["zhipu", "glm", "china"]
 source: "https://open.bigmodel.cn/"
 source_name: "Zhipu Open Platform"
+company: "Zhipu"
 significance: medium
 ---
 Zhipu introduces GLM-4-Plus with stronger coding and Chinese reasoning performance, expanding domestic alternatives for enterprise AI workloads.

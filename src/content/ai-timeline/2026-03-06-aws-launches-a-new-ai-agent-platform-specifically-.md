@@ -5,9 +5,9 @@ category: product
 tags: ["amazon", "aws", "healthcare", "ai-agent"]
 source: "https://aws.amazon.com/blogs/industries/introducing-amazon-connect-health-agentic-ai-for-healthcare-built-for-the-people-who-deliver-it/"
 source_name: "AWS Blog"
+company: "Amazon"
 significance: medium
 ---
-
 AWS announces Amazon Connect Health, a purpose-built agentic AI solution that handles high-volume administrative tasks — appointment scheduling, clinical documentation, and medical coding — with real-time EHR access and insurance eligibility checks.
 
 **So what?** AWS is betting that AI agents can eat healthcare admin — scheduling, billing, patient engagement. If this works at scale, it's a template for every vertical. The "AI agent platform" play is now AWS vs Google vs Microsoft, sector by sector.

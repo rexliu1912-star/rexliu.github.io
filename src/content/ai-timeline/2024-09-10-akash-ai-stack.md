@@ -5,6 +5,7 @@ category: crypto-ai
 tags: ["akash", "decentralized cloud", "ai"]
 source: "https://akash.network/"
 source_name: "Akash Network"
+company: "Akash"
 significance: medium
 ---
 Akash expands AI-focused cloud marketplace features and partner integrations, strengthening decentralized alternatives to hyperscaler GPU pricing.

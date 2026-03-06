@@ -5,6 +5,7 @@ category: robotics
 tags: ["physical intelligence", "robotics", "foundation model"]
 source: "https://www.physicalintelligence.company/"
 source_name: "Physical Intelligence"
+company: "Physical Intelligence"
 significance: medium
 ---
 Physical Intelligence raises $400M at $2.4B valuation from Bezos, Thiel, OpenAI. Building pi0 — a foundation model for general-purpose robot control.

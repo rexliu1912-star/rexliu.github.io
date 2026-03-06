@@ -5,6 +5,7 @@ category: crypto-ai
 tags: ["fetch.ai", "ocean", "singularitynet", "asi"]
 source: "https://superintelligence.io/"
 source_name: "ASI Alliance"
+company: "ASI Alliance"
 significance: high
 ---
 Three major AI crypto projects merge tokens into the Artificial Superintelligence Alliance (ASI). Combined entity becomes largest decentralized AI network by market cap.

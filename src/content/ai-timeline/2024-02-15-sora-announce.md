@@ -5,6 +5,7 @@ category: model
 tags: ["openai", "sora", "video"]
 source: "https://openai.com/sora"
 source_name: "OpenAI"
+company: "OpenAI"
 significance: high
 ---
 OpenAI reveals Sora, capable of generating 60-second realistic videos from text. Demonstrates unprecedented temporal consistency. Not yet publicly available.
