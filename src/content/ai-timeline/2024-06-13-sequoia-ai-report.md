@@ -1,5 +1,6 @@
 ---
 title: "Sequoia's $600B AI Revenue Gap Report"
+title_zh: "红杉资本报告：AI 行业 6000 亿美元收入缺口"
 date: 2024-06-13
 category: funding
 tags: ["sequoia", "venture-capital", "ai-bubble"]

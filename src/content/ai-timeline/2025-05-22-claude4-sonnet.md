@@ -1,5 +1,6 @@
 ---
 title: "Claude 4 Sonnet — Agentic Coding Powerhouse"
+title_zh: "Claude 4 Sonnet — Agent 编程利器"
 date: 2025-05-22
 category: model
 tags: ["anthropic", "claude"]

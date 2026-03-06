@@ -1,5 +1,6 @@
 ---
 title: "Sam Altman Testifies Before US Senate on AI Regulation"
+title_zh: "Sam Altman 在美国参议院就 AI 监管作证"
 date: 2023-05-16
 category: industry
 tags: ["openai", "regulation", "congress", "policy"]

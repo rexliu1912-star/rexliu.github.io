@@ -1,5 +1,6 @@
 ---
 title: "China's Generative AI Regulations Take Effect"
+title_zh: "中国生成式 AI 管理规定正式生效"
 date: 2023-08-15
 category: industry
 tags: ["china", "regulation", "policy", "generative-ai"]

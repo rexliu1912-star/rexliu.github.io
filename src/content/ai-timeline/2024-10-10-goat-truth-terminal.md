@@ -1,5 +1,6 @@
 ---
 title: "$GOAT Token Explodes — Truth Terminal AI Agent Sparks Memecoin Mania"
+title_zh: "$GOAT 代币爆发 — Truth Terminal AI Agent 引爆 Memecoin 狂潮"
 date: 2024-10-10
 category: crypto-ai
 tags: ["goat", "truth-terminal", "ai-agent", "memecoin", "solana"]

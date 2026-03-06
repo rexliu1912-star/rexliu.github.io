@@ -1,5 +1,6 @@
 ---
 title: "Gemini 2.5 Flash — 1M Token Speed Demon"
+title_zh: "Gemini 2.5 Flash — 百万 Token 极速模型"
 date: 2025-10-15
 category: model
 tags: ["google", "gemini"]

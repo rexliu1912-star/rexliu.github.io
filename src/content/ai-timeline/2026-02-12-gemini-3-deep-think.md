@@ -1,5 +1,6 @@
 ---
 title: "Google Updates Gemini 3 Deep Think for Science and Engineering"
+title_zh: "Google 更新 Gemini 3 Deep Think，面向科学与工程"
 date: 2026-02-12
 category: model
 company: "Google DeepMind"

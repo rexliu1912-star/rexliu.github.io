@@ -1,5 +1,6 @@
 ---
 title: "Claude 3.7 Sonnet with Extended Thinking"
+title_zh: "Claude 3.7 Sonnet 搭载扩展思考"
 date: 2025-02-24
 category: model
 tags: ["anthropic", "claude", "reasoning"]

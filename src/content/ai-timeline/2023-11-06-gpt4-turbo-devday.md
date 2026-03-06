@@ -1,5 +1,6 @@
 ---
 title: "OpenAI DevDay: GPT-4 Turbo and Custom GPTs"
+title_zh: "OpenAI DevDay：GPT-4 Turbo 和自定义 GPTs"
 date: 2023-11-06
 category: product
 company: "OpenAI"

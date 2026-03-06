@@ -1,5 +1,6 @@
 ---
 title: "Geoffrey Hinton Leaves Google, Warns of AI Existential Risk"
+title_zh: "Geoffrey Hinton 离开 Google，警告 AI 存在性风险"
 date: 2023-05-01
 category: industry
 company: "Google"

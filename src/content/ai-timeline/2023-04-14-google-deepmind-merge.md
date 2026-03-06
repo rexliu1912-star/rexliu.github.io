@@ -1,5 +1,6 @@
 ---
 title: "Google DeepMind Formed by Merger of DeepMind and Google Brain"
+title_zh: "Google DeepMind 成立：DeepMind 与 Google Brain 合并"
 date: 2023-04-14
 category: industry
 company: "Google DeepMind"

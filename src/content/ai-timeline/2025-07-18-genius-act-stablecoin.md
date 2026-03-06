@@ -1,5 +1,6 @@
 ---
 title: "GENIUS Act Signed: US Federal Stablecoin Framework Enacted"
+title_zh: "GENIUS 法案签署：美国联邦稳定币框架落地"
 date: 2025-07-18
 category: industry
 tags: ["us", "regulation", "stablecoin", "crypto", "policy"]

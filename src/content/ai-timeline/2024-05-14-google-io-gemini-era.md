@@ -1,5 +1,6 @@
 ---
 title: "Google I/O 2024: Gemini Across Search, Workspace, Android"
+title_zh: "Google I/O 2024：Gemini 全面接入搜索、Workspace 和 Android"
 date: 2024-05-14
 category: product
 tags: ["google", "gemini", "workspace", "search"]

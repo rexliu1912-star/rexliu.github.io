@@ -1,5 +1,6 @@
 ---
 title: "Fetch.ai, Ocean, SingularityNET Merge into ASI Alliance"
+title_zh: "Fetch.ai、Ocean、SingularityNET 合并为 ASI 联盟"
 date: 2024-06-13
 category: crypto-ai
 tags: ["fetch.ai", "ocean", "singularitynet", "asi"]

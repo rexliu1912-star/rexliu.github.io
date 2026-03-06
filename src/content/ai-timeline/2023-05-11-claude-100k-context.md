@@ -1,5 +1,6 @@
 ---
 title: "Claude Achieves 100K Token Context Window"
+title_zh: "Claude 实现 10 万 Token 上下文窗口"
 date: 2023-05-11
 category: model
 company: "Anthropic"

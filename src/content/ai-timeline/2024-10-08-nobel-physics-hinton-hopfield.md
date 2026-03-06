@@ -1,5 +1,6 @@
 ---
 title: "Nobel Prize in Physics Awarded to AI Pioneers Hinton & Hopfield"
+title_zh: "诺贝尔物理学奖授予 AI 先驱 Hinton 和 Hopfield"
 date: 2024-10-08
 category: industry
 tags: ["nobel", "deeplearning", "neural-networks", "recognition"]

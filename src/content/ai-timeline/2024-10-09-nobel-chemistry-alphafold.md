@@ -1,5 +1,6 @@
 ---
 title: "Nobel Prize in Chemistry Awarded to Hassabis, Jumper & Baker for AlphaFold"
+title_zh: "诺贝尔化学奖授予 Hassabis、Jumper 和 Baker（AlphaFold）"
 date: 2024-10-09
 category: industry
 tags: ["nobel", "deepmind", "alphafold", "protein", "recognition"]

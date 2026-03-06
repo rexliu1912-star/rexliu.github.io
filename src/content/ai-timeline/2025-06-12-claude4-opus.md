@@ -1,5 +1,6 @@
 ---
 title: "Claude 4 Opus — Frontier Intelligence"
+title_zh: "Claude 4 Opus — 前沿智能"
 date: 2025-06-12
 category: model
 tags: ["anthropic", "claude"]

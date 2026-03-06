@@ -1,5 +1,6 @@
 ---
 title: "Deepgram Aura-2 — Enterprise-Grade Real-Time TTS"
+title_zh: "Deepgram Aura-2 — 企业级实时语音合成"
 date: 2025-04-15
 category: model
 tags: ["deepgram", "tts", "voice-ai", "enterprise"]

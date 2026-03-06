@@ -1,5 +1,6 @@
 ---
 title: "Deepgram Nova-2 — Real-Time STT Sets New Accuracy Standard"
+title_zh: "Deepgram Nova-2 — 实时语音转文字刷新精度标准"
 date: 2024-02-06
 category: model
 tags: ["deepgram", "speech", "stt", "voice-ai"]

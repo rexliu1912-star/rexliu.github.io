@@ -1,5 +1,6 @@
 ---
 title: "It’s official: The Pentagon has labeled Anthropic a supply-chain risk The Depart"
+title_zh: "五角大楼正式将 Anthropic 列为供应链风险"
 date: 2026-03-06
 category: product
 tags: ["anthropic", "claude"]

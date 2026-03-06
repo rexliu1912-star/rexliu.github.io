@@ -1,5 +1,6 @@
 ---
 title: "SB 1047 Debate Reshapes US Frontier Model Governance"
+title_zh: "SB 1047 争论重塑美国前沿模型治理"
 date: 2025-06-01
 category: industry
 tags: ["sb1047", "policy", "us"]
