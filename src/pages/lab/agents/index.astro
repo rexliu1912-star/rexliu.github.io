@@ -1,0 +1,566 @@
+---
+import PageLayout from "@/layouts/Base.astro";
+
+const meta = {
+	title: "Agent Activity — Rex's Lab",
+	description: "Live pixel office — 6 AI agents working in real-time",
+};
+---
+
+<PageLayout meta={meta}>
+	<section class="mb-8">
+		<a href="/lab/" class="fade-in-up font-serif text-sm text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]" style="--delay: 50ms">
+			<span class="lang-en">← Back to Lab</span><span class="lang-zh">← 返回 Lab</span>
+		</a>
+		<h1 class="hero-reveal-text mt-4 mb-2 font-serif text-4xl font-bold dark:text-white">
+			<span class="lang-en">Agent Activity</span><span class="lang-zh">Agent 工作室</span>
+		</h1>
+		<p class="hero-reveal-subtitle max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">
+			<span class="lang-en">The pixel office — watch our AI agents work in real-time.</span>
+			<span class="lang-zh">像素办公室 — 实时观察 AI Agent 的工作状态。</span>
+		</p>
+		<div id="connection-status" class="mt-2 font-serif text-xs text-gray-400">
+			<span class="lang-en">Connecting...</span><span class="lang-zh">连接中...</span>
+		</div>
+	</section>
+
+	<section class="agent-grid mb-16">
+		<!-- Samantha -->
+		<div class="agent-room room-samantha glow-card fade-in-up" data-agent="main" style="--delay: 100ms">
+			<div class="room-interior">
+				<div class="room-furniture desk"></div>
+				<div class="room-furniture monitor"></div>
+				<div class="room-furniture sofa"></div>
+				<div class="agent-sprite" data-state="idle">
+					<div class="sprite-body"></div>
+					<span class="sprite-emoji">🧡</span>
+				</div>
+				<div class="task-bubble" style="display:none"></div>
+			</div>
+			<div class="room-label">
+				<span class="agent-name">Samantha</span>
+				<span class="agent-title font-serif text-xs text-gray-400">
+					<span class="lang-en">Mastermind</span><span class="lang-zh">主脑</span>
+				</span>
+				<span class="agent-status-dot"></span>
+			</div>
+		</div>
+
+		<!-- Loki -->
+		<div class="agent-room room-loki glow-card fade-in-up" data-agent="writer" style="--delay: 160ms">
+			<div class="room-interior">
+				<div class="room-furniture desk typewriter"></div>
+				<div class="room-furniture bookshelf"></div>
+				<div class="room-furniture sofa"></div>
+				<div class="agent-sprite" data-state="idle">
+					<div class="sprite-body"></div>
+					<span class="sprite-emoji">🐍</span>
+				</div>
+				<div class="task-bubble" style="display:none"></div>
+			</div>
+			<div class="room-label">
+				<span class="agent-name">Loki</span>
+				<span class="agent-title font-serif text-xs text-gray-400">
+					<span class="lang-en">Writer</span><span class="lang-zh">写手</span>
+				</span>
+				<span class="agent-status-dot"></span>
+			</div>
+		</div>
+
+		<!-- Vision -->
+		<div class="agent-room room-vision glow-card fade-in-up" data-agent="researcher" style="--delay: 220ms">
+			<div class="room-interior">
+				<div class="room-furniture desk telescope"></div>
+				<div class="room-furniture lab-shelf"></div>
+				<div class="room-furniture sofa"></div>
+				<div class="agent-sprite" data-state="idle">
+					<div class="sprite-body"></div>
+					<span class="sprite-emoji">👁️</span>
+				</div>
+				<div class="task-bubble" style="display:none"></div>
+			</div>
+			<div class="room-label">
+				<span class="agent-name">Vision</span>
+				<span class="agent-title font-serif text-xs text-gray-400">
+					<span class="lang-en">Researcher</span><span class="lang-zh">研究员</span>
+				</span>
+				<span class="agent-status-dot"></span>
+			</div>
+		</div>
+
+		<!-- Jarvis -->
+		<div class="agent-room room-jarvis glow-card fade-in-up" data-agent="coder" style="--delay: 280ms">
+			<div class="room-interior">
+				<div class="room-furniture desk terminal"></div>
+				<div class="room-furniture server-rack"></div>
+				<div class="room-furniture sofa"></div>
+				<div class="agent-sprite" data-state="idle">
+					<div class="sprite-body"></div>
+					<span class="sprite-emoji">⚙️</span>
+				</div>
+				<div class="task-bubble" style="display:none"></div>
+			</div>
+			<div class="room-label">
+				<span class="agent-name">Jarvis</span>
+				<span class="agent-title font-serif text-xs text-gray-400">
+					<span class="lang-en">Coder</span><span class="lang-zh">工程师</span>
+				</span>
+				<span class="agent-status-dot"></span>
+			</div>
+		</div>
+
+		<!-- Shuri -->
+		<div class="agent-room room-shuri glow-card fade-in-up" data-agent="designer" style="--delay: 340ms">
+			<div class="room-interior">
+				<div class="room-furniture desk easel"></div>
+				<div class="room-furniture palette"></div>
+				<div class="room-furniture sofa"></div>
+				<div class="agent-sprite" data-state="idle">
+					<div class="sprite-body"></div>
+					<span class="sprite-emoji">🎨</span>
+				</div>
+				<div class="task-bubble" style="display:none"></div>
+			</div>
+			<div class="room-label">
+				<span class="agent-name">Shuri</span>
+				<span class="agent-title font-serif text-xs text-gray-400">
+					<span class="lang-en">Designer</span><span class="lang-zh">设计师</span>
+				</span>
+				<span class="agent-status-dot"></span>
+			</div>
+		</div>
+
+		<!-- Friday -->
+		<div class="agent-room room-friday glow-card fade-in-up" data-agent="analyst" style="--delay: 400ms">
+			<div class="room-interior">
+				<div class="room-furniture desk data-screen"></div>
+				<div class="room-furniture chart-wall"></div>
+				<div class="room-furniture sofa"></div>
+				<div class="agent-sprite" data-state="idle">
+					<div class="sprite-body"></div>
+					<span class="sprite-emoji">📊</span>
+				</div>
+				<div class="task-bubble" style="display:none"></div>
+			</div>
+			<div class="room-label">
+				<span class="agent-name">Friday</span>
+				<span class="agent-title font-serif text-xs text-gray-400">
+					<span class="lang-en">Analyst</span><span class="lang-zh">分析师</span>
+				</span>
+				<span class="agent-status-dot"></span>
+			</div>
+		</div>
+	</section>
+</PageLayout>
+
+<style>
+	/* ── Pixel Art Foundation ─────────────────────────────────── */
+	* { image-rendering: pixelated; }
+
+	.agent-grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 1.25rem;
+	}
+	@media (max-width: 1024px) {
+		.agent-grid { grid-template-columns: repeat(2, 1fr); }
+	}
+	@media (max-width: 640px) {
+		.agent-grid { grid-template-columns: 1fr; }
+	}
+
+	/* ── Room Base ────────────────────────────────────────────── */
+	.agent-room {
+		border: 3px solid #2a2a3a;
+		border-radius: 4px;
+		overflow: hidden;
+		background: #1a1a2e;
+		box-shadow: 0 0 0 1px #8953d133;
+		transition: box-shadow 0.3s;
+	}
+	.agent-room:hover {
+		box-shadow: 0 0 20px #8953d144, 0 0 0 1px #8953d155;
+	}
+
+	.room-interior {
+		position: relative;
+		height: 180px;
+		overflow: hidden;
+		/* Pixel grid floor */
+		background:
+			repeating-linear-gradient(90deg, transparent 0 15px, #ffffff06 15px 16px),
+			repeating-linear-gradient(0deg, transparent 0 15px, #ffffff06 15px 16px),
+			linear-gradient(180deg, #12122a 0%, #1a1a2e 60%, #222240 100%);
+	}
+
+	.room-label {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.5rem 0.75rem;
+		background: #12122a;
+		border-top: 2px solid #2a2a3a;
+	}
+	.agent-name {
+		font-family: serif;
+		font-weight: 600;
+		font-size: 0.9rem;
+		color: white;
+	}
+	.agent-title { flex: 1; }
+
+	/* ── Status Dot ───────────────────────────────────────────── */
+	.agent-status-dot {
+		width: 8px; height: 8px;
+		border-radius: 50%;
+		background: #666;
+		flex-shrink: 0;
+	}
+	.agent-status-dot.idle { background: #4ade80; }
+	.agent-status-dot.busy { background: #f59e0b; animation: pulse-dot 1.5s infinite; }
+	.agent-status-dot.error { background: #ef4444; animation: blink-dot 0.5s infinite; }
+	.agent-status-dot.offline { background: #666; }
+
+	@keyframes pulse-dot {
+		0%, 100% { opacity: 1; }
+		50% { opacity: 0.4; }
+	}
+	@keyframes blink-dot {
+		0%, 100% { opacity: 1; }
+		50% { opacity: 0.2; }
+	}
+
+	/* ── Furniture (pixel blocks) ─────────────────────────────── */
+	.room-furniture {
+		position: absolute;
+	}
+	.desk {
+		bottom: 0; left: 50%; transform: translateX(-50%);
+		width: 64px; height: 32px;
+		background: #5c3d2e;
+		border-top: 3px solid #7a5640;
+		border-radius: 2px 2px 0 0;
+	}
+	.monitor {
+		bottom: 32px; left: 50%; transform: translateX(-50%);
+		width: 32px; height: 24px;
+		background: #2a2a4a;
+		border: 2px solid #8953d1;
+		border-radius: 2px;
+	}
+	.monitor::after {
+		content: ''; position: absolute;
+		top: 3px; left: 3px; right: 3px; bottom: 3px;
+		background: #8953d133;
+		animation: screen-flicker 3s infinite;
+	}
+	.sofa {
+		bottom: 0; right: 12px;
+		width: 40px; height: 20px;
+		background: #3a3a5a;
+		border-radius: 4px 4px 0 0;
+		border-top: 3px solid #4a4a6a;
+	}
+
+	/* Room-specific furniture */
+	.typewriter { background: #4a3a2e; }
+	.typewriter::after {
+		content: ''; position: absolute;
+		top: -8px; left: 50%; transform: translateX(-50%);
+		width: 24px; height: 8px; background: #333;
+		border-radius: 2px;
+	}
+	.bookshelf {
+		top: 10px; left: 8px;
+		width: 20px; height: 60px;
+		background: #5c3d2e;
+		border: 2px solid #7a5640;
+	}
+	.bookshelf::before {
+		content: ''; position: absolute;
+		top: 5px; left: 2px;
+		width: 12px; height: 48px;
+		background: repeating-linear-gradient(
+			180deg,
+			#e74c3c 0 6px, #3498db 6px 12px,
+			#f39c12 12px 18px, #2ecc71 18px 24px
+		);
+	}
+
+	.telescope {
+		background: #3a3a5a;
+	}
+	.telescope::after {
+		content: ''; position: absolute;
+		top: -20px; left: 50%; transform: translateX(-50%) rotate(-30deg);
+		width: 8px; height: 28px;
+		background: linear-gradient(#888, #aaa);
+		border-radius: 2px;
+	}
+	.lab-shelf {
+		top: 8px; right: 8px;
+		width: 24px; height: 50px;
+		background: #2a4a3a;
+		border: 2px solid #3a6a4a;
+	}
+	.lab-shelf::before {
+		content: ''; position: absolute;
+		top: 4px; left: 3px;
+		width: 16px; height: 40px;
+		background: repeating-linear-gradient(
+			180deg,
+			#00ff8844 0 8px, transparent 8px 12px
+		);
+	}
+
+	.terminal { background: #1a1a1a; border-top-color: #0f0; }
+	.terminal::after {
+		content: '>_'; position: absolute;
+		top: -20px; left: 50%; transform: translateX(-50%);
+		width: 32px; height: 20px;
+		background: #111;
+		border: 2px solid #0f0;
+		color: #0f0;
+		font-size: 8px;
+		font-family: monospace;
+		display: flex; align-items: center; justify-content: center;
+		border-radius: 2px;
+		animation: terminal-blink 1s steps(2) infinite;
+	}
+	.server-rack {
+		top: 8px; left: 6px;
+		width: 18px; height: 70px;
+		background: #1a1a2e;
+		border: 2px solid #333;
+	}
+	.server-rack::before {
+		content: ''; position: absolute;
+		top: 4px; left: 3px;
+		width: 8px; height: 58px;
+		background: repeating-linear-gradient(
+			180deg,
+			#0f0 0 2px, transparent 2px 8px
+		);
+		animation: server-lights 2s steps(3) infinite;
+	}
+
+	.easel {
+		background: #f5f5dc33;
+		border-top-color: #8953d1;
+	}
+	.easel::after {
+		content: ''; position: absolute;
+		top: -28px; left: 50%; transform: translateX(-50%);
+		width: 28px; height: 28px;
+		background: linear-gradient(135deg, #e74c3c, #8953d1, #3498db, #2ecc71);
+		border: 2px solid #5c3d2e;
+		border-radius: 2px;
+	}
+	.palette {
+		top: 15px; right: 10px;
+		width: 24px; height: 16px;
+		border-radius: 50%;
+		background: #f5deb3;
+		border: 2px solid #d2b48c;
+	}
+	.palette::before {
+		content: ''; position: absolute;
+		top: 2px; left: 3px;
+		width: 4px; height: 4px;
+		border-radius: 50%;
+		background: #e74c3c;
+		box-shadow: 6px 0 0 #3498db, 3px 6px 0 #f39c12, 10px 5px 0 #2ecc71;
+	}
+
+	.data-screen {
+		background: #1a1a2e;
+		border-top-color: #00d4ff;
+	}
+	.data-screen::after {
+		content: ''; position: absolute;
+		top: -24px; left: 50%; transform: translateX(-50%);
+		width: 36px; height: 24px;
+		background: #0a0a1e;
+		border: 2px solid #00d4ff;
+		border-radius: 2px;
+	}
+	.chart-wall {
+		top: 10px; left: 8px;
+		width: 28px; height: 40px;
+		background: #0a0a1e;
+		border: 1px solid #00d4ff44;
+	}
+	.chart-wall::before {
+		content: ''; position: absolute;
+		bottom: 2px; left: 2px;
+		width: 22px; height: 32px;
+		background: repeating-linear-gradient(
+			90deg,
+			#00d4ff44 0 3px, transparent 3px 5px
+		);
+		mask-image: linear-gradient(0deg, white 20%, white 40%, transparent 40%, white 55%, white 80%, transparent 80%, white 90%, white 100%);
+		-webkit-mask-image: linear-gradient(0deg, white 20%, white 40%, transparent 40%, white 55%, white 80%, transparent 80%, white 90%, white 100%);
+	}
+
+	/* ── Agent Sprite ─────────────────────────────────────────── */
+	.agent-sprite {
+		position: absolute;
+		width: 24px; height: 32px;
+		transition: left 0.8s steps(8), bottom 0.5s steps(4);
+	}
+	/* idle = on sofa */
+	.agent-sprite[data-state="idle"] {
+		right: 16px; bottom: 20px; left: auto;
+	}
+	/* busy = at desk */
+	.agent-sprite[data-state="busy"] {
+		left: calc(50% - 12px); bottom: 32px; right: auto;
+		animation: work-bob 1s steps(2) infinite;
+	}
+	/* error = blinking */
+	.agent-sprite[data-state="error"] {
+		left: calc(50% - 12px); bottom: 32px; right: auto;
+		animation: error-flash 0.5s steps(2) infinite;
+	}
+
+	.sprite-body {
+		width: 24px; height: 24px;
+		border-radius: 4px;
+	}
+	.sprite-emoji {
+		position: absolute;
+		top: -2px; left: 50%; transform: translateX(-50%);
+		font-size: 20px;
+		line-height: 1;
+		filter: drop-shadow(0 0 4px rgba(0,0,0,0.5));
+	}
+
+	/* Room-specific sprite colors */
+	.room-samantha .sprite-body { background: #ff6b35; }
+	.room-loki .sprite-body { background: #4a9e4a; }
+	.room-vision .sprite-body { background: #4a8ab5; }
+	.room-jarvis .sprite-body { background: #7a7a8a; }
+	.room-shuri .sprite-body { background: #c54ab5; }
+	.room-friday .sprite-body { background: #4ac5c5; }
+
+	@keyframes work-bob {
+		0%, 100% { transform: translateY(0); }
+		50% { transform: translateY(-3px); }
+	}
+	@keyframes error-flash {
+		0%, 100% { opacity: 1; }
+		50% { opacity: 0.3; }
+	}
+	@keyframes screen-flicker {
+		0%, 90%, 100% { opacity: 1; }
+		92% { opacity: 0.6; }
+	}
+	@keyframes terminal-blink {
+		0%, 100% { opacity: 1; }
+		50% { opacity: 0; }
+	}
+	@keyframes server-lights {
+		0% { opacity: 1; }
+		33% { opacity: 0.5; }
+		66% { opacity: 0.8; }
+	}
+
+	/* ── Task Bubble ──────────────────────────────────────────── */
+	.task-bubble {
+		position: absolute;
+		top: 8px; left: 50%; transform: translateX(-50%);
+		max-width: 90%;
+		padding: 4px 8px;
+		background: #8953d1dd;
+		color: white;
+		font-family: serif;
+		font-size: 10px;
+		line-height: 1.3;
+		border-radius: 4px;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		z-index: 10;
+		animation: bubble-in 0.3s ease-out;
+	}
+	.task-bubble::after {
+		content: '';
+		position: absolute;
+		bottom: -4px; left: 50%; transform: translateX(-50%);
+		width: 0; height: 0;
+		border-left: 4px solid transparent;
+		border-right: 4px solid transparent;
+		border-top: 4px solid #8953d1dd;
+	}
+	@keyframes bubble-in {
+		from { opacity: 0; transform: translateX(-50%) translateY(-4px); }
+		to { opacity: 1; transform: translateX(-50%) translateY(0); }
+	}
+</style>
+
+<script>
+	import { ConvexHttpClient } from 'convex/browser';
+
+	const CONVEX_URL = 'https://fleet-heron-880.convex.cloud';
+	const AGENT_IDS = ['main', 'writer', 'researcher', 'coder', 'designer', 'analyst'];
+
+	const statusEl = document.getElementById('connection-status');
+
+	function updateRoom(agent) {
+		const room = document.querySelector(`[data-agent="${agent.agentId}"]`);
+		if (!room) return;
+
+		const sprite = room.querySelector('.agent-sprite');
+		const dot = room.querySelector('.agent-status-dot');
+		const bubble = room.querySelector('.task-bubble');
+		const status = agent.status || 'offline';
+
+		// Update sprite position
+		if (sprite) sprite.setAttribute('data-state', status === 'busy' ? 'busy' : status === 'error' ? 'error' : 'idle');
+
+		// Update dot
+		if (dot) {
+			dot.className = 'agent-status-dot ' + status;
+		}
+
+		// Update bubble
+		if (bubble) {
+			if (agent.currentTask && status === 'busy') {
+				bubble.textContent = agent.currentTask;
+				bubble.style.display = 'block';
+			} else {
+				bubble.style.display = 'none';
+			}
+		}
+	}
+
+	function setOffline() {
+		document.querySelectorAll('.agent-room').forEach(room => {
+			const dot = room.querySelector('.agent-status-dot');
+			const sprite = room.querySelector('.agent-sprite');
+			if (dot) dot.className = 'agent-status-dot offline';
+			if (sprite) sprite.setAttribute('data-state', 'idle');
+		});
+		if (statusEl) {
+			statusEl.innerHTML = '<span class="lang-en" style="color:#ef4444">⚠ Offline</span><span class="lang-zh" style="color:#ef4444">⚠ 离线</span>';
+		}
+	}
+
+	async function pollAgents() {
+		try {
+			const client = new ConvexHttpClient(CONVEX_URL);
+			const agents = await client.query('agents:list', {});
+			if (statusEl) {
+				statusEl.innerHTML = '<span class="lang-en" style="color:#4ade80">● Live</span><span class="lang-zh" style="color:#4ade80">● 实时</span>';
+			}
+			agents.forEach(updateRoom);
+		} catch (e) {
+			console.error('Convex poll failed:', e);
+			setOffline();
+		}
+	}
+
+	// Poll every 10s (ConvexHttpClient doesn't support subscriptions; use polling)
+	pollAgents();
+	setInterval(pollAgents, 10000);
+</script>
