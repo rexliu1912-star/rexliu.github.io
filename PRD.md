@@ -356,7 +356,13 @@ rexs-lab/
 每周一篇 Rex 视角的市场/AI 深度观点，从当周 Digest + Timeline + SNEK Daily 中提炼。相当于「Rex 的周报」对外版。跟 50k follower 目标直接挂钩——这是 Twitter 引流回网站的最强内容。
 
 **2. Portfolio Tracker 公开版**
-把 Finance 页面的一个子集做成公开可见的投资组合展示（配置比例 + 月度收益曲线），不暴露具体金额。Build in Public 的投资版。参考 @raaborern 的公开持仓页。
+Build in Public 的投资版。参考 @raaborern 的公开持仓页。
+
+- **展示**: 资产类别占比饼图/条形图（稳定币/债券固收/权益/加密…）+ 每类下具体标的名称 + 各标的占比
+- **隐藏**: 绝对金额、收益率/盈亏、收益曲线（月度曲线可反推绝对值，不做）
+- **技术**: 定时任务从 portfolio.json 生成脱敏 JSON（只留 name + percentage），commit 进 repo，Astro 构建时读 JSON 渲染静态页
+- **更新频率**: 每天或每周一次
+- **状态**: Rex 尚未决定是否公开，方案先留着 [2026-03-06]
 
 **3. AI Timeline 互动模式**
 - 公司维度筛选（Google / OpenAI / Anthropic...）
