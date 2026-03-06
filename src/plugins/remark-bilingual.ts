@@ -6,7 +6,6 @@
 import type { Root, RootContent } from "mdast";
 
 export function remarkBilingual() {
-	// @ts-expect-error:next-line
 	return (tree: Root) => {
 		const children = tree.children;
 
