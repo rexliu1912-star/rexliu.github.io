@@ -153,9 +153,14 @@ const meta = {
 	</section>
 </PageLayout>
 
-<style>
+<style is:global>
+	/* ── Language toggle (ensure global override) ──────────────── */
+	html[data-lang="en"] .lang-zh,
+	html:not([data-lang]) .lang-zh,
+	html[data-lang="zh"] .lang-en { display: none !important; }
+
 	/* ── Pixel Art Foundation ─────────────────────────────────── */
-	* { image-rendering: pixelated; }
+	.agent-grid, .agent-grid * { image-rendering: pixelated; }
 
 	.agent-grid {
 		display: grid;
