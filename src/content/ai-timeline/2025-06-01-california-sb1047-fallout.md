@@ -1,7 +1,7 @@
 ---
 title: "SB 1047 Debate Reshapes US Frontier Model Governance"
 date: 2025-06-01
-category: policy
+category: industry
 tags: ["sb1047", "policy", "us"]
 source: "https://leginfo.legislature.ca.gov/faces/billTextClient.xhtml?bill_id=202320240SB1047"
 source_name: "California Legislature"

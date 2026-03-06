@@ -1,7 +1,7 @@
 ---
 title: "Google DeepMind Formed by Merger of DeepMind and Google Brain"
 date: 2023-04-14
-category: research
+category: industry
 company: "Google DeepMind"
 tags: ["google", "deepmind", "google-brain", "merger", "research"]
 source: "https://deepmind.google/discover/blog/announcing-google-deepmind/"

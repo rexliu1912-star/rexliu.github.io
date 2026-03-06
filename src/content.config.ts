@@ -105,7 +105,7 @@ const aiTimeline = defineCollection({
 	schema: z.object({
 		title: z.string(),
 		date: z.coerce.date(),
-		category: z.enum(["model", "funding", "policy", "robotics", "crypto-ai", "research", "product"]),
+		category: z.enum(["model", "funding", "industry", "robotics", "crypto-ai", "product"]),
 		tags: z.array(z.string()).default([]),
 		source: z.string().url().optional(),
 		source_name: z.string().optional(),

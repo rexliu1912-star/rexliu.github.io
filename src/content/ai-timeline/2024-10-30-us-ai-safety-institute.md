@@ -1,7 +1,7 @@
 ---
 title: "US AI Safety Institute Publishes Early Evaluation Framework"
 date: 2024-10-30
-category: policy
+category: industry
 tags: ["us", "policy", "safety"]
 source: "https://www.nist.gov/artificial-intelligence"
 source_name: "NIST"

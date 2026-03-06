@@ -1,7 +1,7 @@
 ---
 title: "Trump Wins 2024 Election — Pro-AI Agenda"
 date: 2024-11-06
-category: policy
+category: industry
 tags: ["us-politics", "regulation"]
 source: "https://www.reuters.com/world/us/us-election/"
 source_name: "Reuters"

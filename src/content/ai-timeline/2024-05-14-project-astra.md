@@ -1,7 +1,7 @@
 ---
 title: "DeepMind Reveals Project Astra Real-Time Multimodal Agent"
 date: 2024-05-14
-category: research
+category: industry
 tags: ["google deepmind", "astra", "agent"]
 source: "https://deepmind.google/technologies/project-astra/"
 source_name: "Google DeepMind"

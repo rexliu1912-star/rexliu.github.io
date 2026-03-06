@@ -1,7 +1,7 @@
 ---
 title: "Anthropic Introduces Model Context Protocol (MCP)"
 date: 2024-11-25
-category: research
+category: industry
 tags: ["anthropic", "mcp", "protocol"]
 source: "https://www.anthropic.com/news/model-context-protocol"
 source_name: "Anthropic"

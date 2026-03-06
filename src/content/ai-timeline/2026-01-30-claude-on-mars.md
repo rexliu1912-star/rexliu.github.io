@@ -1,7 +1,7 @@
 ---
 title: "Claude Powers First AI-Planned Drive on Mars"
 date: 2026-01-30
-category: research
+category: industry
 company: "Anthropic"
 tags: ["anthropic", "claude", "nasa", "mars", "robotics", "space"]
 source: "https://www.jpl.nasa.gov/news/nasas-perseverance-rover-completes-first-ai-planned-drive-on-mars/"
