@@ -17,17 +17,34 @@ export function initTextReveal() {
 	const heroSubtitle = document.querySelector('.hero-reveal-subtitle');
 	
 	if (heroTitle) {
-		// Wrap each character in a span for staggered animation
-		const text = heroTitle.textContent || '';
-		heroTitle.innerHTML = text
-			.split('')
-			.map((char, i) => 
-				char === ' ' 
-					? ' ' 
-					: `<span class="char-reveal" style="--char-index: ${i}">${char}</span>`
-			)
-			.join('');
-		
+		// Check if title has bilingual lang-en/lang-zh spans — if so, animate each span's text separately
+		const langSpans = heroTitle.querySelectorAll('.lang-en, .lang-zh');
+		if (langSpans.length > 0) {
+			let charIndex = 0;
+			langSpans.forEach((span) => {
+				const text = span.textContent || '';
+				span.innerHTML = text
+					.split('')
+					.map((char) =>
+						char === ' '
+							? ' '
+							: `<span class="char-reveal" style="--char-index: ${charIndex++}">${char}</span>`
+					)
+					.join('');
+			});
+		} else {
+			// Original behavior for non-bilingual titles
+			const text = heroTitle.textContent || '';
+			heroTitle.innerHTML = text
+				.split('')
+				.map((char, i) =>
+					char === ' '
+						? ' '
+						: `<span class="char-reveal" style="--char-index: ${i}">${char}</span>`
+				)
+				.join('');
+		}
+
 		// Trigger animation after a short delay
 		setTimeout(() => {
 			heroTitle.classList.add('revealed');
