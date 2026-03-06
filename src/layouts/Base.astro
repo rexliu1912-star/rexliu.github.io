@@ -22,6 +22,9 @@ const GA_ID = "G-1EC76EZ517";
 
 <html class="scroll-smooth" lang={siteConfig.lang}>
 	<head>
+		<script is:inline>
+			(function(){try{var l=localStorage.getItem("rex-lang")||"en";document.documentElement.setAttribute("data-lang",l)}catch(e){document.documentElement.setAttribute("data-lang","en")}})();
+		</script>
 		<BaseHead articleDate={articleDate} description={description} ogImage={ogImage} title={title} />
 		<link rel="icon" href="/avatar.png" type="image/png" />
 		<link rel="apple-touch-icon" href="/avatar.png" />

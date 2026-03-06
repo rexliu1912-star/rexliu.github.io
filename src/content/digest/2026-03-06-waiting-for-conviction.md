@@ -1,11 +1,15 @@
 ---
 title: "Waiting for Conviction: Bitcoin's Bear Market Anatomy"
+title_zh: "等待信念：比特币熊市解剖"
 date: 2026-03-06
 source: "https://insights.glassnode.com/the-week-onchain-week-08-2026/"
 source_name: "Glassnode Insights"
 tags: ["bitcoin", "onchain", "market-structure"]
 summary: "BTC range-bound at -47% from ATH with 9.2M BTC underwater. Large holders passive, ETF outflows persistent, spot CVD at cycle lows. The market is stabilizing but not strengthening."
+summary_zh: "BTC 距 ATH 回撤 47%，920 万枚 BTC 处于亏损。大户被动观望，ETF 持续流出，现货 CVD 处于周期低点。市场在稳定，但没有转强。"
 ---
+
+<!-- en -->
 
 ## The Setup
 
@@ -43,9 +47,7 @@ For Rex's framework — "buy expectation, sell fact" + "study the counterparty" 
 
 The miner cost basis at $70k (from this morning's briefing) + this report's structural analysis converge on the same conclusion: $70k is the line. Above it, relief. Below it, another leg down.
 
----
-
-## 中文版
+<!-- zh -->
 
 ## 背景
 

@@ -1,11 +1,15 @@
 ---
 title: "The $490 Billion Question: Who Gets the Yield?"
+title_zh: "4900 亿美元之问：收益归谁？"
 date: 2026-03-05
 source: "https://messari.io/article/yield-for-me-not-for-thee"
 source_name: "Messari"
 tags: ["crypto", "stablecoin", "macro", "defi"]
 summary: "U.S. banks pocket $490B/year in net interest margin while paying depositors near-zero. Stablecoins are about to change that — and Trump just picked a side."
+summary_zh: "美国银行每年以净息差赚取 4900 亿美元，储户几乎零收益。稳定币正要改变这一切——Trump 已经选边站了。"
 ---
+
+<!-- en -->
 
 ## The Setup
 
@@ -44,9 +48,7 @@ If you hold stablecoins earning 4-5% today, you're already positioned for this s
 
 The political signal is clear. Whether the bill passes or not, the direction is set: yield is moving from banks to holders. The only question is how fast.
 
----
-
-## 中文版
+<!-- zh -->
 
 ## 背景
 
