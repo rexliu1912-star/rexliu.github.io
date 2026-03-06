@@ -106,7 +106,8 @@ const statusLabels: Record<string, { en: string; zh: string }> = {
 					)}
 					{ev.body && ev.body.trim() && (
 						<p class="mt-0.5 font-serif text-sm leading-relaxed text-gray-500 dark:text-gray-400">
-							{ev.body.trim().slice(0, 120)}{ev.body.trim().length > 120 ? "…" : ""}
+							<span class="lang-en">{ev.body.trim().slice(0, 120)}{ev.body.trim().length > 120 ? "…" : ""}</span>
+							<span class="lang-zh">{(ev.data.body_zh || ev.body).trim().slice(0, 120)}{(ev.data.body_zh || ev.body).trim().length > 120 ? "…" : ""}</span>
 						</p>
 					)}
 				</div>
