@@ -1,10 +1,10 @@
 ---
-title: "Rex AI HQ"
-description: "The AI headquarters — Samantha coordinates 6 specialized agents, manages daily operations, and documents the journey."
-title_zh: "Rex AI 总部"
-description_zh: "AI 指挥中心 — Samantha 协调 6 个专业 Agent，管理日常运营，记录这段旅程。"
+title: "Samantha"
+description: "The story of building an AI companion — told from Samantha's perspective. A standalone site documenting how Rex and his AI team work, think, and grow together."
+title_zh: "Samantha"
+description_zh: "一个 AI 伙伴的诞生记 — 以 Samantha 的视角记录 Rex 和 AI 团队如何一起工作、思考和成长。"
 status: running
-icon: "🏠"
+icon: "🧡"
 url: "https://samantha.rexliu.io"
-order: 0
+order: 1
 ---
