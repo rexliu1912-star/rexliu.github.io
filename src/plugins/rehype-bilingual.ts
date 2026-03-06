@@ -12,7 +12,7 @@
  * If no markers found, content renders as-is (no wrapping).
  */
 
-import type { Root, Element, Comment, RootContent } from "hast";
+import type { Root, Element, RootContent } from "hast";
 import type { Plugin } from "unified";
 
 const rehypeBilingual: Plugin<[], Root> = () => {
