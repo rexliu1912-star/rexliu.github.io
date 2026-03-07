@@ -27,10 +27,8 @@ const formatCustomDate = (date: Date) => {
 	return `${month} ${day}${getOrdinal(day)} ${year}`;
 };
 
-// OG meta: bilingual title for share cards
-const ogTitle = entry.data.title_zh
-	? `${entry.data.title_zh} | ${entry.data.title}`
-	: entry.data.title;
+// OG meta: Chinese-first for share cards
+const ogTitle = entry.data.title_zh || entry.data.title;
 const ogDesc = entry.data.summary_zh || entry.data.summary || entry.data.title;
 
 const meta = {
@@ -87,19 +85,16 @@ const meta = {
 						</div>
 					</>
 				)}
-			</div>
 
-			<div class="mt-4 flex items-center gap-3">
+				<span>·</span>
 				<button
 					id="share-btn"
-					class="inline-flex items-center gap-1.5 rounded-md border border-gray-200 px-3 py-1.5 font-serif text-sm text-gray-500 transition-all hover:border-[#8953d1] hover:text-[#8953d1] dark:border-gray-700 dark:hover:border-[#a175e8] dark:hover:text-[#a175e8]"
+					class="inline-flex items-center text-gray-400 transition-colors hover:text-[#8953d1] dark:hover:text-[#a175e8]"
+					title="Copy link"
 				>
 					<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-					<span class="lang-en">Copy Link</span><span class="lang-zh">复制链接</span>
 				</button>
-				<span id="share-toast" class="font-serif text-sm text-[#8953d1] opacity-0 transition-opacity duration-300">
-					<span class="lang-en">✓ Copied!</span><span class="lang-zh">✓ 已复制</span>
-				</span>
+				<span id="share-toast" class="font-serif text-xs text-[#8953d1] opacity-0 transition-opacity duration-300">✓</span>
 			</div>
 
 			<hr class="my-8 border-dashed border-gray-200 dark:border-gray-700" />
@@ -113,24 +108,18 @@ const meta = {
 	document.getElementById('share-btn')?.addEventListener('click', async () => {
 		try {
 			await navigator.clipboard.writeText(window.location.href);
-			const toast = document.getElementById('share-toast');
-			if (toast) {
-				toast.style.opacity = '1';
-				setTimeout(() => { toast.style.opacity = '0'; }, 2000);
-			}
 		} catch {
-			// fallback
 			const input = document.createElement('input');
 			input.value = window.location.href;
 			document.body.appendChild(input);
 			input.select();
 			document.execCommand('copy');
 			document.body.removeChild(input);
-			const toast = document.getElementById('share-toast');
-			if (toast) {
-				toast.style.opacity = '1';
-				setTimeout(() => { toast.style.opacity = '0'; }, 2000);
-			}
+		}
+		const toast = document.getElementById('share-toast');
+		if (toast) {
+			toast.style.opacity = '1';
+			setTimeout(() => { toast.style.opacity = '0'; }, 1500);
 		}
 	});
 </script>
