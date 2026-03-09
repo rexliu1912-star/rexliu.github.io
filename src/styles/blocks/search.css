@@ -1,19 +1,22 @@
 @import "@pagefind/default-ui/css/ui.css";
 
 :root {
-	--pagefind-ui-font: inherit;
+	--pagefind-ui-font: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
 }
 
 #cactus__search {
-	--pagefind-ui-primary: var(--color-accent);
+	--pagefind-ui-primary: #8953d1;
 	--pagefind-ui-text: var(--color-global-text);
-	--pagefind-ui-background: var(--color-zinc-100);
-	--pagefind-ui-border: var(--color-zinc-300);
+	--pagefind-ui-background: var(--color-global-bg);
+	--pagefind-ui-border: color-mix(in srgb, var(--color-global-text) 16%, transparent);
 	--pagefind-ui-border-width: 1px;
+	--pagefind-ui-border-radius: 0;
+	--pagefind-ui-tag: transparent;
+	--pagefind-ui-scale: 0.95;
 
 	[data-theme="dark"] & {
-		--pagefind-ui-background: var(--color-zinc-800);
-		--pagefind-ui-border: var(--color-zinc-500);
+		--pagefind-ui-background: var(--color-global-bg);
+		--pagefind-ui-border: color-mix(in srgb, white 14%, transparent);
 	}
 }
 
@@ -42,8 +45,76 @@
 	height: 100%;
 }
 
+#cactus__search .pagefind-ui__drawer {
+	padding-top: 0.5rem;
+}
+
+#cactus__search .pagefind-ui__form {
+	border: 0;
+	border-bottom: 1px solid var(--pagefind-ui-border);
+	padding-bottom: 0.75rem;
+	margin-bottom: 1rem;
+}
+
+#cactus__search .pagefind-ui__search-input {
+	font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+	font-size: 1rem;
+	line-height: 1.6;
+	background: transparent;
+	border: 0;
+	padding: 0.25rem 0;
+}
+
+#cactus__search .pagefind-ui__search-input::placeholder {
+	color: color-mix(in srgb, var(--color-global-text) 45%, transparent);
+}
+
+#cactus__search .pagefind-ui__message {
+	font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+	font-size: 0.95rem;
+	color: color-mix(in srgb, var(--color-global-text) 70%, transparent);
+}
+
+#cactus__search .pagefind-ui__results {
+	display: flex;
+	flex-direction: column;
+	gap: 0;
+}
+
 #cactus__search .pagefind-ui__result {
 	border: 0;
+	border-top: 1px solid var(--pagefind-ui-border);
+	padding: 1rem 0;
+	margin: 0;
+}
+
+#cactus__search .pagefind-ui__result:first-child {
+	border-top: 0;
+	padding-top: 0.25rem;
+}
+
+#cactus__search .pagefind-ui__result-title {
+	font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+	font-size: 1.05rem;
+	line-height: 1.5;
+	font-weight: 500;
+}
+
+#cactus__search .pagefind-ui__result-excerpt,
+#cactus__search .pagefind-ui__result-link,
+#cactus__search .pagefind-ui__result-nested {
+	font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+}
+
+#cactus__search .pagefind-ui__result-excerpt {
+	font-size: 0.95rem;
+	line-height: 1.7;
+	color: color-mix(in srgb, var(--color-global-text) 78%, transparent);
+	margin-top: 0.4rem;
+}
+
+#cactus__search .pagefind-ui__result-thumb {
+	display: none;
 }
 
 #cactus__search .pagefind-ui__result-link {
@@ -66,6 +137,25 @@
 		var(--color-link) 4px,
 		var(--color-link)
 	);
+}
+
+#cactus__search .pagefind-ui__result-nested {
+	margin-top: 0.5rem;
+	padding-top: 0.5rem;
+	border-top: 1px dashed var(--pagefind-ui-border);
+}
+
+#cactus__search .pagefind-ui__button {
+	font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+	font-size: 0.9rem;
+	background: transparent;
+	border: 1px solid var(--pagefind-ui-border);
+	color: var(--pagefind-ui-text);
+}
+
+#cactus__search .pagefind-ui__button:hover {
+	border-color: #8953d1;
+	color: #8953d1;
 }
 
 #cactus__search mark {
