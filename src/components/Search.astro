@@ -65,6 +65,9 @@ import "@/styles/blocks/search.css";
 		#dialogFrame: HTMLDivElement | null;
 		#openBtn: HTMLButtonElement | null;
 		#controller: AbortController;
+		#pagefindUi: any = null;
+		#pagefindCtor: any = null;
+		#uiLang: string | null = null;
 
 		constructor() {
 			super();
@@ -74,65 +77,105 @@ import "@/styles/blocks/search.css";
 			this.#dialogFrame = this.querySelector(".dialog-frame");
 			this.#controller = new AbortController();
 
-			// Set up events
 			if (this.#openBtn) {
 				this.#openBtn.addEventListener("click", this.openModal);
 				this.#openBtn.disabled = false;
-			} else {
-				console.warn("Search button not found");
 			}
 
 			if (this.#closeBtn) {
 				this.#closeBtn.addEventListener("click", this.closeModal);
-			} else {
-				console.warn("Close button not found");
 			}
 
 			if (this.#dialog) {
 				this.#dialog.addEventListener("close", () => {
 					window.removeEventListener("click", this.onWindowClick);
 				});
-			} else {
-				console.warn("Dialog not found");
 			}
 
-			// only add pagefind in production
 			if (import.meta.env.DEV) return;
 			const onIdle = window.requestIdleCallback || ((cb) => setTimeout(cb, 1));
 			onIdle(async () => {
-				const { PagefindUI } = await import("@pagefind/default-ui");
-				new PagefindUI({
-					baseUrl: import.meta.env.BASE_URL,
-					bundlePath: import.meta.env.BASE_URL.replace(/\/$/, "") + "/pagefind/",
-					element: "#cactus__search",
-					showImages: false,
-					showSubResults: true,
-				});
+				const mod = await import("@pagefind/default-ui");
+				this.#pagefindCtor = mod.PagefindUI;
+				await this.buildUi();
 			});
 		}
 
+		getLang = () => {
+			try {
+				return localStorage.getItem("rex-lang") || document.documentElement.getAttribute("data-lang") || "en";
+			} catch {
+				return document.documentElement.getAttribute("data-lang") || "en";
+			}
+		};
+
+		getTranslations = (lang: string) => lang === "zh"
+			? {
+				search_label: "搜索",
+				placeholder: "搜索 Lab 内容",
+				clear_search: "清除",
+				load_more: "加载更多",
+				zero_results: "没有找到结果",
+				many_results: "[COUNT] 个结果",
+				one_result: "[COUNT] 个结果",
+				alt_search: "搜索",
+			}
+			: {
+				search_label: "Search",
+				placeholder: "Search the Lab",
+				clear_search: "Clear",
+				load_more: "Load more",
+				zero_results: "No results found",
+				many_results: "[COUNT] results",
+				one_result: "[COUNT] result",
+				alt_search: "Search",
+			};
+
+		buildUi = async () => {
+			if (!this.#pagefindCtor) return;
+			const lang = this.getLang();
+			const mount = this.querySelector("#cactus__search");
+			if (!mount) return;
+			if (this.#pagefindUi && this.#uiLang === lang) return;
+			mount.innerHTML = "";
+			this.#uiLang = lang;
+			this.#pagefindUi = new this.#pagefindCtor({
+				baseUrl: import.meta.env.BASE_URL,
+				bundlePath: import.meta.env.BASE_URL.replace(/\/$/, "") + "/pagefind/",
+				element: "#cactus__search",
+				showImages: false,
+				showSubResults: false,
+				excerptLength: 18,
+				translations: this.getTranslations(lang),
+			});
+		};
+
 		connectedCallback() {
-			// window events, requires cleanup
 			window.addEventListener("keydown", this.onWindowKeydown, { signal: this.#controller.signal });
+			window.addEventListener("storage", this.onLangMaybeChanged, { signal: this.#controller.signal });
+			document.addEventListener("astro:after-swap", this.onLangMaybeChanged, { signal: this.#controller.signal });
+			document.addEventListener("click", this.onLangMaybeChanged, { signal: this.#controller.signal });
 		}
 
 		disconnectedCallback() {
 			this.#controller.abort();
 		}
 
-		openModal = (event?: MouseEvent) => {
-			if (!this.#dialog) {
-				console.warn("Dialog not found");
-				return;
-			}
-
+		openModal = async (event?: MouseEvent) => {
+			if (!this.#dialog) return;
+			await this.buildUi();
 			this.#dialog.showModal();
-			this.querySelector("input")?.focus();
+			setTimeout(() => this.querySelector("input")?.focus(), 30);
 			event?.stopPropagation();
 			window.addEventListener("click", this.onWindowClick, { signal: this.#controller.signal });
 		};
 
 		closeModal = () => this.#dialog?.close();
+
+		onLangMaybeChanged = async () => {
+			const nextLang = this.getLang();
+			if (nextLang !== this.#uiLang) await this.buildUi();
+		};
 
 		onWindowClick = (event: MouseEvent) => {
 			// check if it's a link
