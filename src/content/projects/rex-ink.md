@@ -1,8 +1,8 @@
 ---
 title: "Rex Ink"
-description: "A personal writing system — train AI to write in your exact voice. Distill your taste, codify your style. Open source."
+description: "A personal writing system — train AI to write in your exact voice. Taste extraction, style rules, platform-agnostic. Open source."
 title_zh: "Rex Ink"
-description_zh: "个人写作系统 — 训练 AI 写出你的风格。蒸馏审美，提炼方法，即将开源。"
+description_zh: "个人写作系统 — 训练 AI 写出你的声音。蒸馏品味，沉淀风格规则，平台无关。即将开源。"
 status: "running"
 icon: "🧠"
 order: 3
