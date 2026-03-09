@@ -131,6 +131,33 @@ import "@/styles/blocks/search.css";
 				alt_search: "Search",
 			};
 
+		getSectionInfo = (url: string, lang: string): { label: string; cls: string } | null => {
+			if (url.includes("/lab/digest/"))       return { label: lang === "zh" ? "精读"        : "Digest",       cls: "badge-digest" };
+			if (url.includes("/lab/builder-log/"))  return { label: lang === "zh" ? "Builder's Log" : "Builder's Log", cls: "badge-builder" };
+			if (url.includes("/lab/snek-daily/"))   return { label: lang === "zh" ? "SNEK Daily"  : "SNEK Daily",   cls: "badge-snek" };
+			if (url.includes("/lab/ai-timeline"))   return { label: lang === "zh" ? "AI 时间线"   : "AI Timeline",  cls: "badge-timeline" };
+			if (url.includes("/lab/"))              return { label: "Lab",                                           cls: "badge-lab" };
+			if (url.includes("/posts/"))            return { label: lang === "zh" ? "文章"         : "Posts",        cls: "badge-posts" };
+			return null;
+		};
+
+		labelResults = () => {
+			const lang = this.getLang();
+			const results = this.querySelectorAll<HTMLElement>(".pagefind-ui__result:not([data-labeled])");
+			results.forEach((result) => {
+				result.dataset.labeled = "1";
+				const link = result.querySelector<HTMLAnchorElement>(".pagefind-ui__result-link");
+				const titleEl = result.querySelector(".pagefind-ui__result-title");
+				if (!link || !titleEl) return;
+				const info = this.getSectionInfo(link.getAttribute("href") || "", lang);
+				if (!info) return;
+				const badge = document.createElement("span");
+				badge.className = `search-section-badge ${info.cls}`;
+				badge.textContent = info.label;
+				titleEl.insertBefore(badge, titleEl.firstChild);
+			});
+		};
+
 		buildUi = async () => {
 			if (!this.#pagefindCtor) return;
 			const lang = this.getLang();
@@ -148,6 +175,9 @@ import "@/styles/blocks/search.css";
 				excerptLength: 18,
 				translations: this.getTranslations(lang),
 			});
+			// Watch for results being injected by Pagefind
+			const observer = new MutationObserver(() => this.labelResults());
+			observer.observe(mount, { childList: true, subtree: true });
 		};
 
 		connectedCallback() {
