@@ -1,5 +1,6 @@
 @import "@pagefind/default-ui/css/ui.css";
 
+/* ─── Token overrides ────────────────────────────────────────── */
 :root {
 	--pagefind-ui-font: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
 }
@@ -8,91 +9,121 @@
 	--pagefind-ui-primary: #8953d1;
 	--pagefind-ui-text: var(--color-global-text);
 	--pagefind-ui-background: var(--color-global-bg);
-	--pagefind-ui-border: color-mix(in srgb, var(--color-global-text) 16%, transparent);
+	--pagefind-ui-border: color-mix(in srgb, var(--color-global-text) 14%, transparent);
 	--pagefind-ui-border-width: 1px;
 	--pagefind-ui-border-radius: 0;
 	--pagefind-ui-tag: transparent;
-	--pagefind-ui-scale: 0.95;
-
-	[data-theme="dark"] & {
-		--pagefind-ui-background: var(--color-global-bg);
-		--pagefind-ui-border: color-mix(in srgb, white 14%, transparent);
-	}
+	--pagefind-ui-scale: 1;
 }
 
+[data-theme="dark"] #cactus__search {
+	--pagefind-ui-border: color-mix(in srgb, white 14%, transparent);
+}
+
+/* ─── Form row: icon + input + clear all in one line ─────────── */
 #cactus__search .pagefind-ui__form {
-	display: grid;
-	grid-template-columns: 1fr auto;
+	display: flex;
 	align-items: center;
-	column-gap: 1rem;
+	gap: 0.5rem;
 	border: 0;
 	border-bottom: 1px solid var(--pagefind-ui-border);
 	padding: 0 0 0.75rem;
-	margin-bottom: 1rem;
-	min-height: 2.75rem;
+	margin-bottom: 1.25rem;
 }
 
+/* label wraps the svg icon + input */
+#cactus__search .pagefind-ui__search-input-label {
+	display: flex;
+	align-items: center;
+	flex: 1;
+	min-width: 0;
+	gap: 0.5rem;
+}
+
+/* the magnifying-glass icon inside label */
+#cactus__search .pagefind-ui__search-input-label svg {
+	width: 1rem;
+	height: 1rem;
+	flex-shrink: 0;
+	color: color-mix(in srgb, var(--color-global-text) 40%, transparent);
+}
+
+/* input field */
 #cactus__search .pagefind-ui__search-input {
+	flex: 1;
+	min-width: 0;
+	width: 100% !important;
+	background: transparent;
+	border: 0;
+	outline: none !important;
+	box-shadow: none !important;
 	font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
 	font-size: 1rem;
 	line-height: 1.6;
-	background: transparent;
-	border: 0;
 	padding: 0;
-	min-height: 2.25rem;
-	align-self: center;
+	color: var(--color-global-text);
 }
 
+#cactus__search .pagefind-ui__search-input::placeholder {
+	color: color-mix(in srgb, var(--color-global-text) 38%, transparent);
+}
+
+#cactus__search .pagefind-ui__search-input:focus {
+	outline: none !important;
+	box-shadow: none !important;
+}
+
+/* ─── Clear button: × icon only, no text ────────────────────── */
 #cactus__search .pagefind-ui__search-clear {
-	width: 2.25rem;
-	height: 2.25rem;
+	flex-shrink: 0;
+	width: 1.5rem;
+	height: 1.5rem;
 	padding: 0;
-	background-color: transparent;
-	overflow: hidden;
+	background: transparent;
+	border: 0;
+	cursor: pointer;
+	font-size: 0; /* hide "清除" / "Clear" text */
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	justify-self: end;
-	align-self: center;
-	border-radius: 9999px;
 }
 
 #cactus__search .pagefind-ui__search-clear:focus {
-	outline: 1px solid var(--color-accent-2);
+	outline: none;
 }
 
 #cactus__search .pagefind-ui__search-clear::before {
 	content: "";
-	-webkit-mask:
-		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='currentColor' %3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M6 18L18 6M6 6l12 12'%3E%3C/path%3E%3C/svg%3E")
-		center / 58% no-repeat;
-	mask:
-		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='currentColor' %3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M6 18L18 6M6 6l12 12'%3E%3C/path%3E%3C/svg%3E")
-		center / 58% no-repeat;
-	background-color: var(--color-accent);
 	display: block;
-	width: 1.5rem;
-	height: 1.5rem;
+	width: 1rem;
+	height: 1rem;
+	background-color: color-mix(in srgb, var(--color-global-text) 50%, transparent);
+	transition: background-color 0.2s;
+	-webkit-mask:
+		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='currentColor'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M6 18L18 6M6 6l12 12'/%3E%3C/svg%3E")
+		center / contain no-repeat;
+	mask:
+		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='currentColor'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M6 18L18 6M6 6l12 12'/%3E%3C/svg%3E")
+		center / contain no-repeat;
 }
 
-#cactus__search .pagefind-ui__drawer {
-	padding-top: 0.5rem;
+#cactus__search .pagefind-ui__search-clear:hover::before {
+	background-color: #8953d1;
 }
 
-#cactus__search .pagefind-ui__search-input::placeholder {
-	color: color-mix(in srgb, var(--color-global-text) 45%, transparent);
-}
-
+/* ─── Result count ───────────────────────────────────────────── */
 #cactus__search .pagefind-ui__message {
 	font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-	font-size: 0.95rem;
-	color: color-mix(in srgb, var(--color-global-text) 70%, transparent);
+	font-size: 0.85rem;
+	color: color-mix(in srgb, var(--color-global-text) 55%, transparent);
+	margin-bottom: 1rem;
+	padding: 0;
 }
 
+/* ─── Results list ───────────────────────────────────────────── */
 #cactus__search .pagefind-ui__results {
 	display: flex;
 	flex-direction: column;
-	gap: 0;
 }
 
 #cactus__search .pagefind-ui__result {
@@ -107,73 +138,78 @@
 	padding-top: 0.25rem;
 }
 
+/* ─── Result title link: clean, no gradient underline ────────── */
 #cactus__search .pagefind-ui__result-title {
 	font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-	font-size: 1.05rem;
+	font-size: 1rem;
 	line-height: 1.5;
 	font-weight: 500;
 }
 
-#cactus__search .pagefind-ui__result-excerpt,
-#cactus__search .pagefind-ui__result-link,
-#cactus__search .pagefind-ui__result-nested {
-	font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-}
-
-#cactus__search .pagefind-ui__result-excerpt {
-	font-size: 0.95rem;
-	line-height: 1.7;
-	color: color-mix(in srgb, var(--color-global-text) 78%, transparent);
-	margin-top: 0.4rem;
-}
-
-#cactus__search .pagefind-ui__result-thumb {
-	display: none;
-}
-
 #cactus__search .pagefind-ui__result-link {
-	background-size: 100% 6px;
-	background-position: bottom;
-	background-repeat: repeat-x;
-	background-image: linear-gradient(
-		transparent,
-		transparent 5px,
-		var(--color-global-text) 5px,
-		var(--color-global-text)
-	);
+	background: none !important;
+	text-decoration: none !important;
+	color: var(--color-global-text);
+	transition: color 0.2s;
 }
 
 #cactus__search .pagefind-ui__result-link:hover {
-	text-decoration: none;
-	background-image: linear-gradient(
-		transparent,
-		transparent 4px,
-		var(--color-link) 4px,
-		var(--color-link)
-	);
+	color: #8953d1;
+	background: none !important;
+	text-decoration: none !important;
 }
 
-#cactus__search .pagefind-ui__result-nested {
-	margin-top: 0.5rem;
-	padding-top: 0.5rem;
-	border-top: 1px dashed var(--pagefind-ui-border);
+[data-theme="dark"] #cactus__search .pagefind-ui__result-link:hover {
+	color: #a175e8;
 }
 
-#cactus__search .pagefind-ui__button {
+/* ─── Excerpt ────────────────────────────────────────────────── */
+#cactus__search .pagefind-ui__result-excerpt {
 	font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-	font-size: 0.9rem;
+	font-size: 0.875rem;
+	line-height: 1.7;
+	color: color-mix(in srgb, var(--color-global-text) 65%, transparent);
+	margin-top: 0.3rem;
+}
+
+/* ─── Highlighted match ──────────────────────────────────────── */
+#cactus__search mark {
+	color: #8953d1;
+	background-color: transparent;
+	font-weight: 600;
+}
+
+[data-theme="dark"] #cactus__search mark {
+	color: #a175e8;
+}
+
+/* ─── Thumbnail: hide ────────────────────────────────────────── */
+#cactus__search .pagefind-ui__result-thumb {
+	display: none !important;
+}
+
+/* ─── Load more button ───────────────────────────────────────── */
+#cactus__search .pagefind-ui__button {
+	display: block;
+	width: auto;
+	margin: 1.5rem auto 0;
+	padding: 0.5rem 1.5rem;
 	background: transparent;
 	border: 1px solid var(--pagefind-ui-border);
-	color: var(--pagefind-ui-text);
+	border-radius: 0;
+	font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+	font-size: 0.875rem;
+	color: color-mix(in srgb, var(--color-global-text) 60%, transparent);
+	cursor: pointer;
+	transition: color 0.2s, border-color 0.2s;
 }
 
 #cactus__search .pagefind-ui__button:hover {
-	border-color: #8953d1;
 	color: #8953d1;
+	border-color: #8953d1;
 }
 
-#cactus__search mark {
-	color: var(--color-quote);
-	background-color: transparent;
-	font-weight: 600;
+/* ─── Nested sub-results: hide (cleaner look) ────────────────── */
+#cactus__search .pagefind-ui__result-nested {
+	display: none;
 }
