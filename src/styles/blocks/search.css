@@ -1,6 +1,6 @@
 @import "@pagefind/default-ui/css/ui.css";
 
-/* ─── Token overrides ────────────────────────────────────────── */
+/* ─── Tokens ─────────────────────────────────────────────────── */
 :root {
 	--pagefind-ui-font: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
 }
@@ -11,79 +11,54 @@
 	--pagefind-ui-background: var(--color-global-bg);
 	--pagefind-ui-border: color-mix(in srgb, var(--color-global-text) 14%, transparent);
 	--pagefind-ui-border-width: 1px;
-	--pagefind-ui-border-radius: 0;
+	--pagefind-ui-border-radius: 2px;
 	--pagefind-ui-tag: transparent;
-	--pagefind-ui-scale: 1;
+	--pagefind-ui-scale: 0.85;
 }
 
 [data-theme="dark"] #cactus__search {
 	--pagefind-ui-border: color-mix(in srgb, white 14%, transparent);
 }
 
-/* ─── Form row: icon + input + clear all in one line ─────────── */
-#cactus__search .pagefind-ui__form {
-	display: flex;
-	align-items: center;
-	gap: 0.5rem;
-	border: 0;
-	border-bottom: 1px solid var(--pagefind-ui-border);
-	padding: 0 0 0.75rem;
-	margin-bottom: 1.25rem;
+/* ─── Form: keep position:relative block — DO NOT set display:flex ─ */
+/* The form has ::before icon (absolute) + input + clear button (absolute) + drawer (block) */
+
+/* Search icon: tone it down */
+#cactus__search .pagefind-ui__form::before {
+	background-color: color-mix(in srgb, var(--color-global-text) 38%, transparent);
 }
 
-/* label wraps the svg icon + input */
-#cactus__search .pagefind-ui__search-input-label {
-	display: flex;
-	align-items: center;
-	flex: 1;
-	min-width: 0;
-	gap: 0.5rem;
-}
-
-/* the magnifying-glass icon inside label */
-#cactus__search .pagefind-ui__search-input-label svg {
-	width: 1rem;
-	height: 1rem;
-	flex-shrink: 0;
-	color: color-mix(in srgb, var(--color-global-text) 40%, transparent);
-}
-
-/* input field */
+/* Input: strip the box, replace with bottom line only.
+   Keep pagefind's left/right padding (54px / 70px * scale) — they clear the icon and close button. */
 #cactus__search .pagefind-ui__search-input {
-	flex: 1;
-	min-width: 0;
-	width: 100% !important;
 	background: transparent;
-	border: 0;
+	border-width: 0;
+	border-bottom: 1px solid var(--pagefind-ui-border);
+	border-radius: 0;
+	font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+	font-size: calc(18px * var(--pagefind-ui-scale));
+	color: var(--color-global-text);
 	outline: none !important;
 	box-shadow: none !important;
-	font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-	font-size: 1rem;
-	line-height: 1.6;
-	padding: 0;
-	color: var(--color-global-text);
-}
-
-#cactus__search .pagefind-ui__search-input::placeholder {
-	color: color-mix(in srgb, var(--color-global-text) 38%, transparent);
 }
 
 #cactus__search .pagefind-ui__search-input:focus {
 	outline: none !important;
 	box-shadow: none !important;
+	border-color: color-mix(in srgb, var(--color-global-text) 25%, transparent);
 }
 
-/* ─── Clear button: × icon only, no text ────────────────────── */
+#cactus__search .pagefind-ui__search-input::placeholder {
+	opacity: 0.35;
+}
+
+/* Clear (×) button: absolute positioned by pagefind — just hide text, show icon via ::before */
 #cactus__search .pagefind-ui__search-clear {
-	flex-shrink: 0;
-	width: 1.5rem;
-	height: 1.5rem;
-	padding: 0;
+	font-size: 0;      /* hide "清除" / "Clear" text */
 	background: transparent;
 	border: 0;
 	cursor: pointer;
-	font-size: 0; /* hide "清除" / "Clear" text */
-	display: inline-flex;
+	display: flex;
 	align-items: center;
 	justify-content: center;
 }
@@ -95,9 +70,9 @@
 #cactus__search .pagefind-ui__search-clear::before {
 	content: "";
 	display: block;
-	width: 1rem;
-	height: 1rem;
-	background-color: color-mix(in srgb, var(--color-global-text) 50%, transparent);
+	width: calc(16px * var(--pagefind-ui-scale));
+	height: calc(16px * var(--pagefind-ui-scale));
+	background-color: color-mix(in srgb, var(--color-global-text) 45%, transparent);
 	transition: background-color 0.2s;
 	-webkit-mask:
 		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='currentColor'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M6 18L18 6M6 6l12 12'/%3E%3C/svg%3E")
@@ -111,25 +86,35 @@
 	background-color: #8953d1;
 }
 
+/* ─── Drawer: no gap (we don't use filter columns) ───────────── */
+#cactus__search .pagefind-ui__drawer {
+	gap: 0;
+}
+
 /* ─── Result count ───────────────────────────────────────────── */
 #cactus__search .pagefind-ui__message {
 	font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-	font-size: 0.85rem;
-	color: color-mix(in srgb, var(--color-global-text) 55%, transparent);
-	margin-bottom: 1rem;
-	padding: 0;
+	font-size: 0.82rem;
+	color: color-mix(in srgb, var(--color-global-text) 50%, transparent);
+	height: auto;
+	padding: 0.75rem 0 0.5rem;
 }
 
 /* ─── Results list ───────────────────────────────────────────── */
+#cactus__search .pagefind-ui__results-area {
+	margin-top: 0;
+}
+
 #cactus__search .pagefind-ui__results {
 	display: flex;
 	flex-direction: column;
+	padding: 0;
 }
 
 #cactus__search .pagefind-ui__result {
 	border: 0;
 	border-top: 1px solid var(--pagefind-ui-border);
-	padding: 1rem 0;
+	padding: 0.9rem 0;
 	margin: 0;
 }
 
@@ -138,7 +123,7 @@
 	padding-top: 0.25rem;
 }
 
-/* ─── Result title link: clean, no gradient underline ────────── */
+/* ─── Result title ───────────────────────────────────────────── */
 #cactus__search .pagefind-ui__result-title {
 	font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
 	font-size: 1rem;
@@ -156,23 +141,22 @@
 #cactus__search .pagefind-ui__result-link:hover {
 	color: #8953d1;
 	background: none !important;
-	text-decoration: none !important;
 }
 
 [data-theme="dark"] #cactus__search .pagefind-ui__result-link:hover {
 	color: #a175e8;
 }
 
-/* ─── Excerpt ────────────────────────────────────────────────── */
+/* ─── Result excerpt ─────────────────────────────────────────── */
 #cactus__search .pagefind-ui__result-excerpt {
 	font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
 	font-size: 0.875rem;
 	line-height: 1.7;
-	color: color-mix(in srgb, var(--color-global-text) 65%, transparent);
-	margin-top: 0.3rem;
+	color: color-mix(in srgb, var(--color-global-text) 62%, transparent);
+	margin-top: 0.25rem;
 }
 
-/* ─── Highlighted match ──────────────────────────────────────── */
+/* ─── Highlight match ────────────────────────────────────────── */
 #cactus__search mark {
 	color: #8953d1;
 	background-color: transparent;
@@ -183,23 +167,29 @@
 	color: #a175e8;
 }
 
-/* ─── Thumbnail: hide ────────────────────────────────────────── */
+/* ─── Hide thumbnail ─────────────────────────────────────────── */
 #cactus__search .pagefind-ui__result-thumb {
 	display: none !important;
 }
 
-/* ─── Load more button ───────────────────────────────────────── */
+/* ─── Hide sub-results ───────────────────────────────────────── */
+#cactus__search .pagefind-ui__result-nested {
+	display: none;
+}
+
+/* ─── Load more ──────────────────────────────────────────────── */
 #cactus__search .pagefind-ui__button {
 	display: block;
 	width: auto;
 	margin: 1.5rem auto 0;
-	padding: 0.5rem 1.5rem;
+	padding: 0.45rem 1.5rem;
 	background: transparent;
 	border: 1px solid var(--pagefind-ui-border);
 	border-radius: 0;
 	font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
 	font-size: 0.875rem;
-	color: color-mix(in srgb, var(--color-global-text) 60%, transparent);
+	font-weight: 400;
+	color: color-mix(in srgb, var(--color-global-text) 55%, transparent);
 	cursor: pointer;
 	transition: color 0.2s, border-color 0.2s;
 }
@@ -207,9 +197,4 @@
 #cactus__search .pagefind-ui__button:hover {
 	color: #8953d1;
 	border-color: #8953d1;
-}
-
-/* ─── Nested sub-results: hide (cleaner look) ────────────────── */
-#cactus__search .pagefind-ui__result-nested {
-	display: none;
 }
