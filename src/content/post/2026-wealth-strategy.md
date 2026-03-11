@@ -4,7 +4,7 @@ description: "How do I grow my wealth when currencies fluctuate, economies shift
 publishDate: "2026-01-05"
 tags: ["Wealth","Evergreen"] 
 originalUrl: "https://x.com/rexliu/status/2008092149070651874"
-pinned: true
+pinned: false
 ---
 
 ## Introduction

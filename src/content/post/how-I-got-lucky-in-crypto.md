@@ -4,7 +4,7 @@ description: "Luck = Preparation + Positioning + Patience + People."
 publishDate: "2025-12-06"
 tags: ["Evergreen","Crypto"] 
 originalUrl: "https://x.com/rexliu/status/1997120991626244421"
-pinned: true
+pinned: false
 ---
 
 ## Introduction

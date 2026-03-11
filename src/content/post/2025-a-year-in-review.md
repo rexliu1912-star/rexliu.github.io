@@ -3,7 +3,7 @@ title: "2025: A Year of Transformation, Turbulence, and New Beginnings"
 description: "2025 taught me that the most valuable asset isn't in your portfolio—it's your ability to adapt, learn, and maintain relationships through chaos."
 publishDate: "2025-12-23"
 tags: ["Crypto", "Wealth","Evergreen","Life" ] 
-pinned: true
+pinned: false
 ---
 
 ## Introduction: When Everything You Knew Changed

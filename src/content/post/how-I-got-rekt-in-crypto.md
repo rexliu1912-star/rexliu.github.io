@@ -4,7 +4,7 @@ description: "The difference between those who eventually win and those who quit
 publishDate: "2025-12-02"
 tags: ["Evergreen","Crypto"] 
 originalUrl: "https://x.com/rexliu/status/1995717665739157684"
-pinned: true
+pinned: false
 ---
 
 ## Introduction
