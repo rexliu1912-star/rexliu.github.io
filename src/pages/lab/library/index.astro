@@ -34,14 +34,14 @@ type LibraryItem = {
   title: string;
   subtitle: string;
   format: "book" | "movie" | "series" | "variety";
-  rating?: string | null;
+  rating: string | null | undefined;
   tags: string[];
-  notes?: Notes;
-  meta?: string;
+  notes: Notes | undefined;
+  meta: string | undefined;
   coverClass: string;
   aspectClass: string;
-  sortDate?: string;
-  year?: number;
+  sortDate: string | undefined;
+  year: number | undefined;
 };
 
 const books = (booksData as BookEntry[])
@@ -57,6 +57,7 @@ const books = (booksData as BookEntry[])
     coverClass: "bg-gradient-to-br from-[#8953d1] to-[#6b3fa0]",
     aspectClass: "aspect-[2/3]",
     sortDate: book.endDate && book.endDate !== "-" ? book.endDate : undefined,
+    year: undefined,
   }))
   .sort((a, b) => {
     if (!a.sortDate && !b.sortDate) return 0;
