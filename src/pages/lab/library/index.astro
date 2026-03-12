@@ -18,6 +18,7 @@ type BookEntry = {
   tags?: string[];
   endDate?: string;
   notes?: Notes;
+  cover?: string;
 };
 
 type MediaEntry = {
@@ -42,6 +43,7 @@ type LibraryItem = {
   aspectClass: string;
   sortDate: string | undefined;
   year: number | undefined;
+  cover: string | undefined;
 };
 
 const books = (booksData as BookEntry[])
@@ -58,6 +60,7 @@ const books = (booksData as BookEntry[])
     aspectClass: "aspect-[2/3]",
     sortDate: book.endDate && book.endDate !== "-" ? book.endDate : undefined,
     year: undefined,
+    cover: book.cover,
   }))
   .sort((a, b) => {
     if (!a.sortDate && !b.sortDate) return 0;
@@ -72,10 +75,15 @@ const media = (mediaData as MediaEntry[])
     title: item.title,
     subtitle: item.type === "movie" ? "Film" : item.type === "series" ? "Series" : "Variety",
     format: item.type,
+    rating: undefined,
     tags: item.tags || [],
+    notes: undefined,
+    meta: undefined,
     coverClass: "bg-gradient-to-br from-[#8953d1] to-[#6b3fa0]",
     aspectClass: "aspect-video",
+    sortDate: undefined,
     year: item.year,
+    cover: undefined,
   }))
   .sort((a, b) => (b.year || 0) - (a.year || 0));
 
@@ -116,6 +124,7 @@ function badgeLine(item: LibraryItem) {
   if (item.tags.length) bits.push(item.tags.join(" · "));
   return bits.join(" · ");
 }
+
 ---
 
 <PageLayout meta={meta}>
@@ -134,7 +143,7 @@ function badgeLine(item: LibraryItem) {
     </p>
   </section>
 
-  <section class="mb-10 fade-in-up" style="--delay: 120ms">
+  <section class="mb-4 fade-in-up" style="--delay: 120ms">
     <div class="flex flex-wrap gap-6 border-b border-gray-200 font-serif text-sm dark:border-gray-800">
       <button type="button" class="library-tab inline-flex items-center gap-2 border-b-2 border-[#8953d1] pb-3 font-medium text-[#8953d1] transition-colors dark:text-[#a175e8]" data-tab-button data-tab-target="books" aria-pressed="true">
         <span>📚 Books ({books.length})</span>
@@ -148,13 +157,23 @@ function badgeLine(item: LibraryItem) {
     </div>
   </section>
 
+  <section class="mb-10 fade-in-up" style="--delay: 140ms">
+    <div id="library-tag-filters" class="flex flex-wrap gap-3"></div>
+  </section>
+
   <section data-tab-panel="books" class="library-panel space-y-4">
     <div class="grid gap-4 sm:grid-cols-3 lg:grid-cols-4">
       {books.map((item, index) => {
         const expandable = hasNotes(item);
         return (
           <Fragment>
-            <article class="glow-card fade-in-up rounded-lg border border-purple-500/20 p-4 transition-all hover:border-purple-500/40 hover:shadow-[0_0_20px_#8953d122] dark:border-purple-500/15" style={`--delay: ${180 + index * 30}ms`}>
+            <article
+              class="library-card glow-card fade-in-up rounded-lg border border-purple-500/20 p-4 transition-all hover:border-purple-500/40 hover:shadow-[0_0_20px_#8953d122] dark:border-purple-500/15"
+              style={`--delay: ${180 + index * 30}ms`}
+              data-library-item
+              data-tab-group="books"
+              data-tags={JSON.stringify(item.tags || [])}
+            >
               {expandable ? (
                 <button
                   type="button"
@@ -163,9 +182,19 @@ function badgeLine(item: LibraryItem) {
                   data-target={item.id}
                   aria-expanded="false"
                 >
-                  <div class={`mb-4 flex ${item.aspectClass} items-center justify-center rounded-md px-4 text-center ${item.coverClass}`}>
-                    <span class="font-serif text-base font-medium text-white">{item.title}</span>
-                  </div>
+                  {item.cover ? (
+                    <img
+                      src={item.cover}
+                      alt={`${item.title} cover`}
+                      loading="lazy"
+                      referrerpolicy="no-referrer"
+                      class={`mb-4 block w-full ${item.aspectClass} rounded-md object-cover object-center`}
+                    />
+                  ) : (
+                    <div class={`mb-4 flex ${item.aspectClass} items-center justify-center rounded-md px-4 text-center ${item.coverClass}`}>
+                      <span class="font-serif text-base font-medium text-white">{item.title}</span>
+                    </div>
+                  )}
                   <h2 class="font-serif text-sm font-medium text-black dark:text-white">{item.title}</h2>
                   <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500">{item.subtitle}</p>
                   {(item.rating || expandable) && (
@@ -177,9 +206,19 @@ function badgeLine(item: LibraryItem) {
                 </button>
               ) : (
                 <div>
-                  <div class={`mb-4 flex ${item.aspectClass} items-center justify-center rounded-md px-4 text-center ${item.coverClass}`}>
-                    <span class="font-serif text-base font-medium text-white">{item.title}</span>
-                  </div>
+                  {item.cover ? (
+                    <img
+                      src={item.cover}
+                      alt={`${item.title} cover`}
+                      loading="lazy"
+                      referrerpolicy="no-referrer"
+                      class={`mb-4 block w-full ${item.aspectClass} rounded-md object-cover object-center`}
+                    />
+                  ) : (
+                    <div class={`mb-4 flex ${item.aspectClass} items-center justify-center rounded-md px-4 text-center ${item.coverClass}`}>
+                      <span class="font-serif text-base font-medium text-white">{item.title}</span>
+                    </div>
+                  )}
                   <h2 class="font-serif text-sm font-medium text-black dark:text-white">{item.title}</h2>
                   <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500">{item.subtitle}</p>
                   {item.rating && (
@@ -191,7 +230,14 @@ function badgeLine(item: LibraryItem) {
               )}
             </article>
             {expandable && (
-              <div id={item.id} class="library-details col-span-full hidden fade-in-up rounded-lg border border-purple-500/20 px-5 py-4 dark:border-purple-500/15" style={`--delay: ${210 + index * 30}ms`}>
+              <div
+                id={item.id}
+                class="library-details col-span-full hidden fade-in-up rounded-lg border border-purple-500/20 px-5 py-4 dark:border-purple-500/15"
+                style={`--delay: ${210 + index * 30}ms`}
+                data-library-detail
+                data-detail-for={item.id}
+                data-tab-group="books"
+              >
                 <div class="mb-3 flex flex-wrap items-baseline gap-x-3 gap-y-2">
                   <h3 class="font-serif text-lg font-medium text-black dark:text-white">{item.title}</h3>
                   <p class="font-serif text-sm text-gray-400 dark:text-gray-500">{item.subtitle}</p>
@@ -233,7 +279,13 @@ function badgeLine(item: LibraryItem) {
       </div>
       <div class="grid gap-4 sm:grid-cols-3 lg:grid-cols-4">
         {films.map((item, index) => (
-          <article class="glow-card fade-in-up rounded-lg border border-purple-500/20 p-4 transition-all hover:border-purple-500/40 hover:shadow-[0_0_20px_#8953d122] dark:border-purple-500/15" style={`--delay: ${180 + index * 30}ms`}>
+          <article
+            class="library-card glow-card fade-in-up rounded-lg border border-purple-500/20 p-4 transition-all hover:border-purple-500/40 hover:shadow-[0_0_20px_#8953d122] dark:border-purple-500/15"
+            style={`--delay: ${180 + index * 30}ms`}
+            data-library-item
+            data-tab-group="film-tv"
+            data-tags={JSON.stringify(item.tags || [])}
+          >
             <div class={`mb-4 flex ${item.aspectClass} items-center justify-center rounded-md px-4 text-center ${item.coverClass}`}>
               <span class="font-serif text-base font-medium text-white">{item.title}</span>
             </div>
@@ -250,7 +302,13 @@ function badgeLine(item: LibraryItem) {
       </div>
       <div class="grid gap-4 sm:grid-cols-3 lg:grid-cols-4">
         {series.map((item, index) => (
-          <article class="glow-card fade-in-up rounded-lg border border-purple-500/20 p-4 transition-all hover:border-purple-500/40 hover:shadow-[0_0_20px_#8953d122] dark:border-purple-500/15" style={`--delay: ${220 + index * 30}ms`}>
+          <article
+            class="library-card glow-card fade-in-up rounded-lg border border-purple-500/20 p-4 transition-all hover:border-purple-500/40 hover:shadow-[0_0_20px_#8953d122] dark:border-purple-500/15"
+            style={`--delay: ${220 + index * 30}ms`}
+            data-library-item
+            data-tab-group="film-tv"
+            data-tags={JSON.stringify(item.tags || [])}
+          >
             <div class={`mb-4 flex ${item.aspectClass} items-center justify-center rounded-md px-4 text-center ${item.coverClass}`}>
               <span class="font-serif text-base font-medium text-white">{item.title}</span>
             </div>
@@ -266,7 +324,13 @@ function badgeLine(item: LibraryItem) {
     {variety.length > 0 ? (
       <div class="grid gap-4 sm:grid-cols-3 lg:grid-cols-4">
         {variety.map((item, index) => (
-          <article class="glow-card fade-in-up rounded-lg border border-purple-500/20 p-4 transition-all hover:border-purple-500/40 hover:shadow-[0_0_20px_#8953d122] dark:border-purple-500/15" style={`--delay: ${180 + index * 30}ms`}>
+          <article
+            class="library-card glow-card fade-in-up rounded-lg border border-purple-500/20 p-4 transition-all hover:border-purple-500/40 hover:shadow-[0_0_20px_#8953d122] dark:border-purple-500/15"
+            style={`--delay: ${180 + index * 30}ms`}
+            data-library-item
+            data-tab-group="variety"
+            data-tags={JSON.stringify(item.tags || [])}
+          >
             <div class={`mb-4 flex ${item.aspectClass} items-center justify-center rounded-md px-4 text-center ${item.coverClass}`}>
               <span class="font-serif text-base font-medium text-white">{item.title}</span>
             </div>
@@ -291,10 +355,97 @@ function badgeLine(item: LibraryItem) {
   <script is:inline>
     const tabButtons = Array.from(document.querySelectorAll('[data-tab-button]'));
     const tabPanels = Array.from(document.querySelectorAll('[data-tab-panel]'));
-    const detailPanels = Array.from(document.querySelectorAll('.library-details'));
+    const detailPanels = Array.from(document.querySelectorAll('[data-library-detail]'));
     const detailButtons = Array.from(document.querySelectorAll('[data-library-toggle]'));
+    const tagFilterRoot = document.getElementById('library-tag-filters');
+    const libraryItems = Array.from(document.querySelectorAll('[data-library-item]'));
+    let activeTab = 'books';
+    let activeTag = '全部';
+
+    const closeAllDetails = () => {
+      detailPanels.forEach((panel) => panel.classList.add('hidden'));
+      detailButtons.forEach((button) => button.setAttribute('aria-expanded', 'false'));
+    };
+
+    const createTagButton = (label, selected) => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.dataset.tagFilter = label;
+      button.textContent = label;
+      button.className = 'glow-card inline-flex items-center rounded-full border px-4 py-2 font-serif text-sm transition-all';
+
+      if (selected) {
+        button.classList.add('border-[#8953d1]', 'bg-[#8953d1]', 'text-white', 'dark:border-[#a175e8]', 'dark:bg-[#a175e8]', 'dark:text-black');
+      } else {
+        button.classList.add('border-purple-500/20', 'text-gray-500', 'hover:border-[#8953d1]', 'hover:text-[#8953d1]', 'dark:border-purple-500/15', 'dark:text-gray-400', 'dark:hover:border-[#a175e8]', 'dark:hover:text-[#a175e8]');
+      }
+
+      button.addEventListener('click', () => {
+        activeTag = label === '全部' ? '全部' : activeTag === label ? '全部' : label;
+        closeAllDetails();
+        renderTagFilters();
+        applyFilters();
+      });
+
+      return button;
+    };
+
+    const tagsForTab = (tab) => {
+      const tags = new Set();
+      libraryItems
+        .filter((item) => item.dataset.tabGroup === tab)
+        .forEach((item) => {
+          try {
+            const parsed = JSON.parse(item.dataset.tags || '[]');
+            parsed.forEach((tag) => tags.add(tag));
+          } catch {
+            // ignore broken tags payload
+          }
+        });
+      return ['全部', ...Array.from(tags).sort((a, b) => a.localeCompare(b, 'zh-Hans-CN'))];
+    };
+
+    const renderTagFilters = () => {
+      if (!tagFilterRoot) return;
+      const tags = tagsForTab(activeTab);
+      if (!tags.includes(activeTag)) activeTag = '全部';
+      tagFilterRoot.replaceChildren(...tags.map((tag) => createTagButton(tag, tag === activeTag)));
+    };
+
+    const applyFilters = () => {
+      libraryItems.forEach((item) => {
+        const inActiveTab = item.dataset.tabGroup === activeTab;
+        let matchesTag = true;
+
+        if (activeTag !== '全部') {
+          try {
+            const parsed = JSON.parse(item.dataset.tags || '[]');
+            matchesTag = parsed.includes(activeTag);
+          } catch {
+            matchesTag = false;
+          }
+        }
+
+        item.classList.toggle('hidden', !(inActiveTab && matchesTag));
+      });
+
+      detailPanels.forEach((panel) => {
+        const button = detailButtons.find((item) => item.dataset.target === panel.dataset.detailFor);
+        const ownerCard = button?.closest('[data-library-item]');
+        const shouldHide = !ownerCard || ownerCard.classList.contains('hidden') || panel.dataset.tabGroup !== activeTab;
+        if (shouldHide) {
+          panel.classList.add('hidden');
+        }
+      });
+
+      detailButtons.forEach((button) => {
+        const panel = button.dataset.target ? document.getElementById(button.dataset.target) : null;
+        button.setAttribute('aria-expanded', panel && !panel.classList.contains('hidden') ? 'true' : 'false');
+      });
+    };
 
     const setActiveTab = (target) => {
+      activeTab = target;
       tabButtons.forEach((button) => {
         const active = button.dataset.tabTarget === target;
         button.setAttribute('aria-pressed', active ? 'true' : 'false');
@@ -309,16 +460,15 @@ function badgeLine(item: LibraryItem) {
       tabPanels.forEach((panel) => {
         panel.classList.toggle('hidden', panel.dataset.tabPanel !== target);
       });
-    };
 
-    const closeAllDetails = () => {
-      detailPanels.forEach((panel) => panel.classList.add('hidden'));
-      detailButtons.forEach((button) => button.setAttribute('aria-expanded', 'false'));
+      renderTagFilters();
+      applyFilters();
     };
 
     tabButtons.forEach((button) => {
       button.addEventListener('click', () => {
         closeAllDetails();
+        activeTag = '全部';
         setActiveTab(button.dataset.tabTarget || 'books');
       });
     });
@@ -337,5 +487,7 @@ function badgeLine(item: LibraryItem) {
         }
       });
     });
+
+    setActiveTab(activeTab);
   </script>
 </PageLayout>
