@@ -6,5 +6,5 @@ description_zh: "读过的书、看过的片，塑造了现在的我。"
 status: running
 icon: "📚"
 url: "/lab/library"
-order: 10
+order: 3
 ---

@@ -5,5 +5,5 @@ title_zh: "Alpha Radar"
 description_zh: "每日加密情报 — 从 200+ 信源中精选信号，AI 过滤噪音。"
 status: "running"
 icon: "📡"
-order: 2
+order: 7
 ---
