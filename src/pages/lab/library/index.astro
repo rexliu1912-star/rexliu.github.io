@@ -1,0 +1,340 @@
+---
+import PageLayout from "@/layouts/Base.astro";
+import booksData from "@/data/books.json";
+import mediaData from "@/data/media.json";
+
+type Notes = {
+  quotes?: string[];
+  core_ideas?: string[];
+  impact?: string;
+};
+
+type BookEntry = {
+  title: string;
+  author?: string;
+  status: string;
+  type?: string;
+  rating?: string | null;
+  tags?: string[];
+  endDate?: string;
+  notes?: Notes;
+};
+
+type MediaEntry = {
+  title: string;
+  titleEn?: string;
+  year?: number;
+  status: string;
+  type: "movie" | "series" | "variety";
+  tags?: string[];
+};
+
+type LibraryItem = {
+  id: string;
+  title: string;
+  subtitle: string;
+  format: "book" | "movie" | "series" | "variety";
+  rating?: string | null;
+  tags: string[];
+  notes?: Notes;
+  meta?: string;
+  coverClass: string;
+  aspectClass: string;
+  sortDate?: string;
+  year?: number;
+};
+
+const books = (booksData as BookEntry[])
+  .map((book, index) => ({
+    id: `book-${index}`,
+    title: book.title,
+    subtitle: book.author || "Unknown author",
+    format: "book" as const,
+    rating: book.rating,
+    tags: book.tags || [],
+    notes: book.notes,
+    meta: book.type,
+    coverClass: "bg-gradient-to-br from-[#8953d1] to-[#6b3fa0]",
+    aspectClass: "aspect-[2/3]",
+    sortDate: book.endDate && book.endDate !== "-" ? book.endDate : undefined,
+  }))
+  .sort((a, b) => {
+    if (!a.sortDate && !b.sortDate) return 0;
+    if (!a.sortDate) return 1;
+    if (!b.sortDate) return -1;
+    return new Date(b.sortDate).valueOf() - new Date(a.sortDate).valueOf();
+  });
+
+const media = (mediaData as MediaEntry[])
+  .map((item, index) => ({
+    id: `media-${index}`,
+    title: item.title,
+    subtitle: item.type === "movie" ? "Film" : item.type === "series" ? "Series" : "Variety",
+    format: item.type,
+    tags: item.tags || [],
+    coverClass: "bg-gradient-to-br from-[#8953d1] to-[#6b3fa0]",
+    aspectClass: "aspect-video",
+    year: item.year,
+  }))
+  .sort((a, b) => (b.year || 0) - (a.year || 0));
+
+const films = media.filter((item) => item.format === "movie");
+const series = media.filter((item) => item.format === "series");
+const variety = media.filter((item) => item.format === "variety");
+
+const meta = {
+  title: "Rex's Library — Lab",
+  description: "Books, films, and shows that shaped how Rex thinks.",
+};
+
+function formatType(format: LibraryItem["format"]) {
+  return format === "book"
+    ? "Book"
+    : format === "movie"
+      ? "Film"
+      : format === "series"
+        ? "Series"
+        : "Variety";
+}
+
+function hasNotes(item: LibraryItem) {
+  return !!(
+    item.notes &&
+    ((item.notes.quotes && item.notes.quotes.length > 0) ||
+      (item.notes.core_ideas && item.notes.core_ideas.length > 0) ||
+      (item.notes.impact && item.notes.impact.trim().length > 0))
+  );
+}
+
+function badgeLine(item: LibraryItem) {
+  const bits = [];
+  if (item.rating) bits.push(item.rating);
+  bits.push(formatType(item.format));
+  if (item.meta) bits.push(item.meta);
+  if (item.year) bits.push(String(item.year));
+  if (item.tags.length) bits.push(item.tags.join(" · "));
+  return bits.join(" · ");
+}
+---
+
+<PageLayout meta={meta}>
+  <section class="mb-12">
+    <a href="/lab/" class="font-serif text-sm text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]">
+      ← Lab
+    </a>
+    <h1 class="hero-reveal-text mt-4 mb-4 font-serif text-4xl font-bold dark:text-white">
+      Rex's Library
+    </h1>
+    <p class="hero-reveal-subtitle lang-en max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">
+      Books, films, and shows that shaped how I think.
+    </p>
+    <p class="hero-reveal-subtitle lang-zh max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">
+      读过的书、看过的片，塑造了现在的我。
+    </p>
+  </section>
+
+  <section class="mb-10 fade-in-up" style="--delay: 120ms">
+    <div class="flex flex-wrap gap-6 border-b border-gray-200 font-serif text-sm dark:border-gray-800">
+      <button type="button" class="library-tab inline-flex items-center gap-2 border-b-2 border-[#8953d1] pb-3 font-medium text-[#8953d1] transition-colors dark:text-[#a175e8]" data-tab-button data-tab-target="books" aria-pressed="true">
+        <span>📚 Books ({books.length})</span>
+      </button>
+      <button type="button" class="library-tab inline-flex items-center gap-2 border-b-2 border-transparent pb-3 text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]" data-tab-button data-tab-target="film-tv" aria-pressed="false">
+        <span>🎬 Film & TV ({media.length})</span>
+      </button>
+      <button type="button" class="library-tab inline-flex items-center gap-2 border-b-2 border-transparent pb-3 text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]" data-tab-button data-tab-target="variety" aria-pressed="false">
+        <span>🎭 Variety ({variety.length})</span>
+      </button>
+    </div>
+  </section>
+
+  <section data-tab-panel="books" class="library-panel space-y-4">
+    <div class="grid gap-4 sm:grid-cols-3 lg:grid-cols-4">
+      {books.map((item, index) => {
+        const expandable = hasNotes(item);
+        return (
+          <Fragment>
+            <article class="glow-card fade-in-up rounded-lg border border-purple-500/20 p-4 transition-all hover:border-purple-500/40 hover:shadow-[0_0_20px_#8953d122] dark:border-purple-500/15" style={`--delay: ${180 + index * 30}ms`}>
+              {expandable ? (
+                <button
+                  type="button"
+                  class="block w-full text-left"
+                  data-library-toggle
+                  data-target={item.id}
+                  aria-expanded="false"
+                >
+                  <div class={`mb-4 flex ${item.aspectClass} items-center justify-center rounded-md px-4 text-center ${item.coverClass}`}>
+                    <span class="font-serif text-base font-medium text-white">{item.title}</span>
+                  </div>
+                  <h2 class="font-serif text-sm font-medium text-black dark:text-white">{item.title}</h2>
+                  <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500">{item.subtitle}</p>
+                  {(item.rating || expandable) && (
+                    <div class="mt-3 flex flex-wrap items-center gap-3 font-serif text-xs text-gray-400 dark:text-gray-500">
+                      {item.rating && <span>⭐ {item.rating}</span>}
+                      {expandable && <span>💬 Notes</span>}
+                    </div>
+                  )}
+                </button>
+              ) : (
+                <div>
+                  <div class={`mb-4 flex ${item.aspectClass} items-center justify-center rounded-md px-4 text-center ${item.coverClass}`}>
+                    <span class="font-serif text-base font-medium text-white">{item.title}</span>
+                  </div>
+                  <h2 class="font-serif text-sm font-medium text-black dark:text-white">{item.title}</h2>
+                  <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500">{item.subtitle}</p>
+                  {item.rating && (
+                    <div class="mt-3 flex flex-wrap items-center gap-3 font-serif text-xs text-gray-400 dark:text-gray-500">
+                      <span>⭐ {item.rating}</span>
+                    </div>
+                  )}
+                </div>
+              )}
+            </article>
+            {expandable && (
+              <div id={item.id} class="library-details col-span-full hidden fade-in-up rounded-lg border border-purple-500/20 px-5 py-4 dark:border-purple-500/15" style={`--delay: ${210 + index * 30}ms`}>
+                <div class="mb-3 flex flex-wrap items-baseline gap-x-3 gap-y-2">
+                  <h3 class="font-serif text-lg font-medium text-black dark:text-white">{item.title}</h3>
+                  <p class="font-serif text-sm text-gray-400 dark:text-gray-500">{item.subtitle}</p>
+                </div>
+                <p class="font-serif text-sm text-gray-400 dark:text-gray-500">{badgeLine(item)}</p>
+                {item.notes?.quotes && item.notes.quotes.length > 0 && (
+                  <div class="mt-4 space-y-3">
+                    {item.notes.quotes.map((quote) => (
+                      <blockquote class="border-l-2 border-[var(--color-quote)] pl-4 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300">
+                        {quote}
+                      </blockquote>
+                    ))}
+                  </div>
+                )}
+                {item.notes?.core_ideas && item.notes.core_ideas.length > 0 && (
+                  <ul class="mt-4 space-y-2 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300">
+                    {item.notes.core_ideas.map((idea) => (
+                      <li class="flex gap-2"><span class="text-[#8953d1] dark:text-[#a175e8]">•</span><span>{idea}</span></li>
+                    ))}
+                  </ul>
+                )}
+                {item.notes?.impact && item.notes.impact.trim() && (
+                  <p class="mt-4 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300">
+                    {item.notes.impact}
+                  </p>
+                )}
+              </div>
+            )}
+          </Fragment>
+        );
+      })}
+    </div>
+  </section>
+
+  <section data-tab-panel="film-tv" class="library-panel hidden space-y-10">
+    <div>
+      <div class="mb-4 flex items-center justify-between">
+        <h2 class="font-serif text-lg font-medium text-black dark:text-white">🎬 Films</h2>
+      </div>
+      <div class="grid gap-4 sm:grid-cols-3 lg:grid-cols-4">
+        {films.map((item, index) => (
+          <article class="glow-card fade-in-up rounded-lg border border-purple-500/20 p-4 transition-all hover:border-purple-500/40 hover:shadow-[0_0_20px_#8953d122] dark:border-purple-500/15" style={`--delay: ${180 + index * 30}ms`}>
+            <div class={`mb-4 flex ${item.aspectClass} items-center justify-center rounded-md px-4 text-center ${item.coverClass}`}>
+              <span class="font-serif text-base font-medium text-white">{item.title}</span>
+            </div>
+            <h3 class="font-serif text-sm font-medium text-black dark:text-white">{item.title}</h3>
+            <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500">Film · {item.year || "—"}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+
+    <div>
+      <div class="mb-4 flex items-center justify-between">
+        <h2 class="font-serif text-lg font-medium text-black dark:text-white">📺 Series</h2>
+      </div>
+      <div class="grid gap-4 sm:grid-cols-3 lg:grid-cols-4">
+        {series.map((item, index) => (
+          <article class="glow-card fade-in-up rounded-lg border border-purple-500/20 p-4 transition-all hover:border-purple-500/40 hover:shadow-[0_0_20px_#8953d122] dark:border-purple-500/15" style={`--delay: ${220 + index * 30}ms`}>
+            <div class={`mb-4 flex ${item.aspectClass} items-center justify-center rounded-md px-4 text-center ${item.coverClass}`}>
+              <span class="font-serif text-base font-medium text-white">{item.title}</span>
+            </div>
+            <h3 class="font-serif text-sm font-medium text-black dark:text-white">{item.title}</h3>
+            <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500">Series · {item.year || "—"}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section data-tab-panel="variety" class="library-panel hidden">
+    {variety.length > 0 ? (
+      <div class="grid gap-4 sm:grid-cols-3 lg:grid-cols-4">
+        {variety.map((item, index) => (
+          <article class="glow-card fade-in-up rounded-lg border border-purple-500/20 p-4 transition-all hover:border-purple-500/40 hover:shadow-[0_0_20px_#8953d122] dark:border-purple-500/15" style={`--delay: ${180 + index * 30}ms`}>
+            <div class={`mb-4 flex ${item.aspectClass} items-center justify-center rounded-md px-4 text-center ${item.coverClass}`}>
+              <span class="font-serif text-base font-medium text-white">{item.title}</span>
+            </div>
+            <h3 class="font-serif text-sm font-medium text-black dark:text-white">{item.title}</h3>
+            <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500">Variety · {item.year || "—"}</p>
+          </article>
+        ))}
+      </div>
+    ) : (
+      <div class="glow-card fade-in-up rounded-lg border border-dashed border-purple-500/20 px-5 py-8 font-serif text-sm text-gray-400 dark:border-purple-500/15 dark:text-gray-500" style="--delay: 180ms">
+        Rex will add variety shows here later.
+      </div>
+    )}
+  </section>
+
+  <section class="mt-12 fade-in-up" style="--delay: 260ms">
+    <p class="font-serif text-sm text-gray-400 dark:text-gray-500">
+      {books.length} books · {series.length} series · {films.length} films
+    </p>
+  </section>
+
+  <script is:inline>
+    const tabButtons = Array.from(document.querySelectorAll('[data-tab-button]'));
+    const tabPanels = Array.from(document.querySelectorAll('[data-tab-panel]'));
+    const detailPanels = Array.from(document.querySelectorAll('.library-details'));
+    const detailButtons = Array.from(document.querySelectorAll('[data-library-toggle]'));
+
+    const setActiveTab = (target) => {
+      tabButtons.forEach((button) => {
+        const active = button.dataset.tabTarget === target;
+        button.setAttribute('aria-pressed', active ? 'true' : 'false');
+        button.classList.toggle('border-[#8953d1]', active);
+        button.classList.toggle('text-[#8953d1]', active);
+        button.classList.toggle('dark:text-[#a175e8]', active);
+        button.classList.toggle('border-transparent', !active);
+        button.classList.toggle('text-gray-400', !active);
+        button.classList.toggle('dark:text-gray-500', !active);
+      });
+
+      tabPanels.forEach((panel) => {
+        panel.classList.toggle('hidden', panel.dataset.tabPanel !== target);
+      });
+    };
+
+    const closeAllDetails = () => {
+      detailPanels.forEach((panel) => panel.classList.add('hidden'));
+      detailButtons.forEach((button) => button.setAttribute('aria-expanded', 'false'));
+    };
+
+    tabButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        closeAllDetails();
+        setActiveTab(button.dataset.tabTarget || 'books');
+      });
+    });
+
+    detailButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const targetId = button.dataset.target;
+        const panel = targetId ? document.getElementById(targetId) : null;
+        if (!panel) return;
+        const isOpen = !panel.classList.contains('hidden');
+        closeAllDetails();
+        if (!isOpen) {
+          panel.classList.remove('hidden');
+          button.setAttribute('aria-expanded', 'true');
+          panel.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        }
+      });
+    });
+  </script>
+</PageLayout>
