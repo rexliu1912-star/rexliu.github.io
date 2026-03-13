@@ -591,12 +591,14 @@ function badgeLine(item: LibraryItem) {
     const openModal = (detailEl) => {
       if (!modal || !modalBody || !detailEl) return;
       modalBody.innerHTML = detailEl.innerHTML;
+      modal.classList.remove('hidden');
       modal.classList.add('modal-open');
       document.body.style.overflow = 'hidden';
     };
     const closeModal = () => {
       if (!modal) return;
       modal.classList.remove('modal-open');
+      modal.classList.add('hidden');
       document.body.style.overflow = '';
     };
     if (modalClose) modalClose.addEventListener('click', closeModal);
