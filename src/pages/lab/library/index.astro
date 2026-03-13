@@ -293,7 +293,22 @@ function shelfHeightFor(index: number) {
                     data-library-detail
                     data-detail-for={item.id}
                     data-tab-group="books"
+                    data-cover={item.cover || ''}
+                    data-cover-class={item.coverClass}
                   >
+                    {item.cover ? (
+                      <img
+                        src={item.cover}
+                        alt={`${item.title} cover`}
+                        loading="lazy"
+                        referrerpolicy="no-referrer"
+                        class="detail-cover mx-auto mb-4 block max-h-48 rounded-md object-cover object-center shadow-lg"
+                      />
+                    ) : (
+                      <div class={`detail-cover mx-auto mb-4 flex h-48 w-32 items-center justify-center rounded-md px-4 text-center shadow-lg ${item.coverClass}`}>
+                        <span class="font-serif text-sm font-medium text-white">{item.title}</span>
+                      </div>
+                    )}
                     <div class="mb-3 flex flex-wrap items-baseline gap-x-3 gap-y-2">
                       <h3 class="font-serif text-lg font-medium text-black dark:text-white">{item.title}</h3>
                       <p class="font-serif text-sm text-gray-400 dark:text-gray-500">{item.subtitle}</p>
@@ -604,6 +619,9 @@ function shelfHeightFor(index: number) {
   </div>
 
   <style>
+    /* Hide cover in inline detail panels (only show in modal) */
+    .library-details .detail-cover { display: none; }
+    #library-modal-body .detail-cover { display: block; }
     .library-card { perspective: 800px; }
     .library-card-inner { transition: transform 0.3s ease, box-shadow 0.3s ease; transform-style: preserve-3d; }
     .library-card.scroll-reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease, transform 0.5s ease; }
@@ -735,7 +753,6 @@ function shelfHeightFor(index: number) {
     const tabButtons = Array.from(document.querySelectorAll('[data-tab-button]'));
     const tabPanels = Array.from(document.querySelectorAll('[data-tab-panel]'));
     const detailPanels = Array.from(document.querySelectorAll('[data-library-detail]'));
-    const detailButtons = Array.from(document.querySelectorAll('[data-library-toggle]'));
     const tagFilterRoot = document.getElementById('library-tag-filters');
     const libraryItems = Array.from(document.querySelectorAll('[data-library-item]'));
     const cards = Array.from(document.querySelectorAll('.library-card'));
@@ -757,7 +774,7 @@ function shelfHeightFor(index: number) {
       const start = performance.now();
       const step = (now) => {
         const progress = Math.min((now - start) / duration, 1);
-        const eased = 1 - Math.pow(1 - progress, 3); // easeOutCubic
+        const eased = 1 - Math.pow(1 - progress, 3);
         el.textContent = Math.round(eased * target);
         if (progress < 1) requestAnimationFrame(step);
       };
@@ -782,7 +799,7 @@ function shelfHeightFor(index: number) {
     // === SCROLL REVEAL ===
     cards.forEach(card => card.classList.add('scroll-reveal'));
     const revealObserver = new IntersectionObserver((entries) => {
-      entries.forEach((entry, i) => {
+      entries.forEach((entry) => {
         if (entry.isIntersecting) {
           const card = entry.target;
           const siblings = Array.from(card.parentElement?.querySelectorAll('.scroll-reveal:not(.revealed)') || []);
@@ -797,15 +814,12 @@ function shelfHeightFor(index: number) {
     // === MODAL ===
     const openModal = (detailEl) => {
       if (!modal || !modalBody || !detailEl) return;
-      if (modalCloseTimer) {
-        clearTimeout(modalCloseTimer);
-        modalCloseTimer = undefined;
-      }
+      if (modalCloseTimer) { clearTimeout(modalCloseTimer); modalCloseTimer = undefined; }
       modalBody.innerHTML = detailEl.innerHTML;
       modal.style.display = 'flex';
       modal.classList.remove('modal-closing');
       void modal.offsetWidth;
-      requestAnimationFrame(() => modal.classList.add('modal-open'));
+      modal.classList.add('modal-open');
       document.body.style.overflow = 'hidden';
     };
     const closeModal = () => {
@@ -826,7 +840,7 @@ function shelfHeightFor(index: number) {
     // === TAB SWITCHING WITH FADE ===
     const closeAllDetails = () => {
       detailPanels.forEach((panel) => panel.classList.add('hidden'));
-      detailButtons.forEach((button) => button.setAttribute('aria-expanded', 'false'));
+      document.querySelectorAll('[data-library-toggle]').forEach((b) => b.setAttribute('aria-expanded', 'false'));
     };
 
     const createTagButton = (label, selected) => {
@@ -864,7 +878,53 @@ function shelfHeightFor(index: number) {
       tagFilterRoot.replaceChildren(...tags.map((tag) => createTagButton(tag, tag === activeTag)));
     };
 
+    // === SHELF ROW LAYOUT (respects current filter) ===
+    const layoutShelfRows = () => {
+      if (!shelfStage) return;
+      const allBooks = Array.from(shelfStage.querySelectorAll('[data-shelf-book]'));
+      if (!allBooks.length) return;
+
+      // Determine which books are visible based on current tag filter
+      const visibleBooks = allBooks.filter((book) => {
+        if (activeTag === '全部') return true;
+        try { return JSON.parse(book.dataset.tags || '[]').includes(activeTag); } catch { return false; }
+      });
+      const hiddenBooks = allBooks.filter((book) => !visibleBooks.includes(book));
+
+      const width = window.innerWidth;
+      const columns = width >= 1536 ? 16 : width >= 1280 ? 14 : width >= 1024 ? 12 : width >= 768 ? 10 : width >= 640 ? 8 : 7;
+      const frag = document.createDocumentFragment();
+
+      // Layout visible books into rows
+      for (let i = 0; i < visibleBooks.length; i += columns) {
+        const row = document.createElement('div');
+        row.className = 'shelf-row';
+        visibleBooks.slice(i, i + columns).forEach((book) => {
+          book.classList.remove('hidden');
+          book.style.display = '';
+          row.appendChild(book);
+        });
+        frag.appendChild(row);
+      }
+
+      // Put hidden books in a hidden container so they stay in DOM
+      if (hiddenBooks.length) {
+        const hiddenRow = document.createElement('div');
+        hiddenRow.className = 'shelf-row hidden';
+        hiddenRow.style.display = 'none';
+        hiddenBooks.forEach((book) => {
+          book.classList.add('hidden');
+          book.style.display = 'none';
+          hiddenRow.appendChild(book);
+        });
+        frag.appendChild(hiddenRow);
+      }
+
+      shelfStage.replaceChildren(frag);
+    };
+
     const applyFilters = () => {
+      // For grid view items and non-books
       libraryItems.forEach((item) => {
         const inActiveTab = item.dataset.tabGroup === activeTab;
         const matchesView = activeTab !== 'books' || (item.dataset.view || 'grid') === activeBooksView;
@@ -879,30 +939,10 @@ function shelfHeightFor(index: number) {
       detailPanels.forEach((panel) => {
         if (panel.dataset.tabGroup !== activeTab) panel.classList.add('hidden');
       });
-      if (shelfStage) {
-        shelfStage.querySelectorAll('.shelf-row').forEach((row) => {
-          const hasVisibleBook = Array.from(row.querySelectorAll('[data-shelf-book]')).some((book) => !book.classList.contains('hidden'));
-          row.classList.toggle('hidden', !hasVisibleBook);
-          if (row instanceof HTMLElement) row.style.display = hasVisibleBook ? 'flex' : 'none';
-        });
+      // Re-layout shelf rows when in shelf view
+      if (activeTab === 'books' && activeBooksView === 'shelf') {
+        layoutShelfRows();
       }
-    };
-
-    const layoutShelfRows = () => {
-      if (!shelfStage) return;
-      const books = Array.from(shelfStage.querySelectorAll('[data-shelf-book]'));
-      if (!books.length) return;
-      const width = window.innerWidth;
-      const columns = width >= 1536 ? 16 : width >= 1280 ? 14 : width >= 1024 ? 12 : width >= 768 ? 10 : width >= 640 ? 8 : 7;
-      const frag = document.createDocumentFragment();
-      for (let i = 0; i < books.length; i += columns) {
-        const row = document.createElement('div');
-        row.className = 'shelf-row';
-        books.slice(i, i + columns).forEach((book) => row.appendChild(book));
-        frag.appendChild(row);
-      }
-      shelfStage.replaceChildren(frag);
-      applyFilters();
     };
 
     const setBooksView = (view) => {
@@ -930,7 +970,6 @@ function shelfHeightFor(index: number) {
     };
 
     const setActiveTab = (target) => {
-      // Fade out current panel
       const currentPanel = tabPanels.find(p => p.dataset.tabPanel === activeTab);
       const newPanel = tabPanels.find(p => p.dataset.tabPanel === target);
 
@@ -954,7 +993,6 @@ function shelfHeightFor(index: number) {
           });
           renderTagFilters();
           applyFilters();
-          // Re-reveal cards in new panel
           newPanel.querySelectorAll('.library-card.scroll-reveal:not(.revealed)').forEach((card, i) => {
             setTimeout(() => card.classList.add('revealed'), i * 50);
           });
@@ -986,8 +1024,12 @@ function shelfHeightFor(index: number) {
       });
     });
 
-    window.addEventListener('resize', layoutShelfRows);
+    // Initial shelf layout
     layoutShelfRows();
+
+    window.addEventListener('resize', () => {
+      if (activeTab === 'books' && activeBooksView === 'shelf') layoutShelfRows();
+    });
 
     tabButtons.forEach((button) => {
       button.addEventListener('click', () => {
@@ -998,13 +1040,19 @@ function shelfHeightFor(index: number) {
       });
     });
 
-    // Notes → open modal instead of inline
-    detailButtons.forEach((button) => {
-      button.addEventListener('click', () => {
-        const targetId = button.dataset.target;
-        const panel = targetId ? document.getElementById(targetId) : null;
-        if (panel) openModal(panel);
-      });
+    // === EVENT DELEGATION for book/media click → open modal ===
+    // Using delegation so it works even after DOM re-arrangement (shelf rows)
+    document.addEventListener('click', (e) => {
+      const toggle = e.target.closest('[data-library-toggle]');
+      if (!toggle) return;
+      const targetId = toggle.dataset.target;
+      if (!targetId) return;
+      const panel = document.getElementById(targetId);
+      if (panel) {
+        e.preventDefault();
+        e.stopPropagation();
+        openModal(panel);
+      }
     });
 
     setActiveTab(activeTab);
