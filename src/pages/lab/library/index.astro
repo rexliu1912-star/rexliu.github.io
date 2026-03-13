@@ -206,8 +206,9 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
             data-tags={JSON.stringify(item.tags)}
             data-group="books"
           >
+            {hasNotes(item) && <span class="lib-bookmark" aria-hidden="true"></span>}
             {item.cover ? (
-              <img src={item.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="block w-full aspect-[2/3] object-cover object-center" />
+              <img src={item.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="block w-full aspect-[2/3] object-cover object-center transition-transform duration-500 ease-out group-hover:scale-[1.05]" />
             ) : (
               <div class={`flex w-full aspect-[2/3] items-center justify-center px-3 text-center ${item.coverClass}`}>
                 <span class="font-serif text-sm font-semibold leading-snug text-white drop-shadow">{item.title}</span>
@@ -224,12 +225,6 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
                       <span class={`block w-1.5 h-1.5 rounded-full ${ratingDots(item.rating) >= n ? 'bg-[#8953d1]' : 'bg-gray-200 dark:bg-gray-700'}`} />
                     ))}
                   </div>
-                )}
-                {hasNotes(item) && (
-                  <span class="inline-flex items-center gap-1 rounded-full bg-purple-50 px-2 py-0.5 text-[10px] font-medium text-[#8953d1] dark:bg-purple-900/30 dark:text-[#a175e8]">
-                    <span class="block w-1 h-1 rounded-full bg-current"></span>
-                    <span class="lang-zh">笔记</span><span class="lang-en">Notes</span>
-                  </span>
                 )}
               </div>
             </div>
@@ -331,9 +326,9 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
         <div class="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
           {films.map((item) => (
             <Fragment>
-              <article class="lib-card group cursor-pointer overflow-hidden rounded-xl transition-all lib-card-surface" data-id={item.id} data-tags={JSON.stringify(item.tags)} data-group="film-tv">
+              <article class="lib-card group cursor-pointer overflow-hidden rounded-xl transition-all lib-card-surface" data-id={item.id} data-tags={JSON.stringify(item.tags)} data-group="film-tv">{hasNotes(item) && <span class="lib-bookmark" aria-hidden="true"></span>}
                 {item.cover ? (
-                  <img src={item.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="block w-full aspect-[2/3] object-cover object-center" />
+                  <img src={item.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="block w-full aspect-[2/3] object-cover object-center transition-transform duration-500 ease-out group-hover:scale-[1.05]" />
                 ) : (
                   <div class={`flex w-full aspect-[2/3] items-center justify-center px-3 text-center ${item.coverClass}`}><span class="font-serif text-sm font-semibold leading-snug text-white drop-shadow">{item.title}</span></div>
                 )}
@@ -377,9 +372,9 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
         <div class="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
           {series.map((item) => (
             <Fragment>
-              <article class="lib-card group cursor-pointer overflow-hidden rounded-xl transition-all lib-card-surface" data-id={item.id} data-tags={JSON.stringify(item.tags)} data-group="film-tv">
+              <article class="lib-card group cursor-pointer overflow-hidden rounded-xl transition-all lib-card-surface" data-id={item.id} data-tags={JSON.stringify(item.tags)} data-group="film-tv">{hasNotes(item) && <span class="lib-bookmark" aria-hidden="true"></span>}
                 {item.cover ? (
-                  <img src={item.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="block w-full aspect-[2/3] object-cover object-center" />
+                  <img src={item.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="block w-full aspect-[2/3] object-cover object-center transition-transform duration-500 ease-out group-hover:scale-[1.05]" />
                 ) : (
                   <div class={`flex w-full aspect-[2/3] items-center justify-center px-3 text-center ${item.coverClass}`}><span class="font-serif text-sm font-semibold leading-snug text-white drop-shadow">{item.title}</span></div>
                 )}
@@ -424,8 +419,9 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
         {variety.map((item) => (
           <Fragment>
             <article class="lib-card group cursor-pointer overflow-hidden rounded-xl transition-all lib-card-surface" data-id={item.id} data-tags={JSON.stringify(item.tags)} data-group="variety">
+              {hasNotes(item) && <span class="lib-bookmark" aria-hidden="true"></span>}
               {item.cover ? (
-                <img src={item.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="block w-full aspect-[2/3] object-cover object-center" />
+                <img src={item.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="block w-full aspect-[2/3] object-cover object-center transition-transform duration-500 ease-out group-hover:scale-[1.05]" />
               ) : (
                 <div class={`flex w-full aspect-[2/3] items-center justify-center px-3 text-center ${item.coverClass}`}><span class="font-serif text-sm font-semibold leading-snug text-white drop-shadow">{item.title}</span></div>
               )}
@@ -471,8 +467,9 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
         {documentary.map((item) => (
           <Fragment>
             <article class="lib-card group cursor-pointer overflow-hidden rounded-xl transition-all lib-card-surface" data-id={item.id} data-tags={JSON.stringify(item.tags)} data-group="documentary">
+              {hasNotes(item) && <span class="lib-bookmark" aria-hidden="true"></span>}
               {item.cover ? (
-                <img src={item.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="block w-full aspect-[2/3] object-cover object-center" />
+                <img src={item.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="block w-full aspect-[2/3] object-cover object-center transition-transform duration-500 ease-out group-hover:scale-[1.05]" />
               ) : (
                 <div class={`flex w-full aspect-[2/3] items-center justify-center px-3 text-center ${item.coverClass}`}><span class="font-serif text-sm font-semibold leading-snug text-white drop-shadow">{item.title}</span></div>
               )}
@@ -623,6 +620,32 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
       backdrop-filter: blur(6px);
       -webkit-backdrop-filter: blur(6px);
     }
+    /* ── Bookmark ribbon ── */
+    .lib-bookmark {
+      position: absolute; top: -32px; right: 14px; z-index: 20;
+      width: 13px; height: 32px;
+      background: #8953d1;
+      clip-path: polygon(0 0, 100% 0, 100% 78%, 50% 100%, 0 78%);
+      transition: top 0.32s cubic-bezier(0.34,1.4,0.64,1);
+      pointer-events: none;
+    }
+    .lib-card:hover .lib-bookmark { top: 0; }
+    :global(.dark) .lib-bookmark { background: #a175e8; }
+
+    /* ── Tab page-turn animation ── */
+    @keyframes pageFromRight { from { opacity: 0; transform: translateX(48px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes pageFromLeft  { from { opacity: 0; transform: translateX(-48px); } to { opacity: 1; transform: translateX(0); } }
+
+    /* ── Modal book-open / book-close ── */
+    @keyframes bookOpen {
+      0%   { opacity: 0; transform: perspective(900px) rotateY(-22deg) translateX(-24px) scale(0.94); }
+      100% { opacity: 1; transform: perspective(900px) rotateY(0deg)   translateX(0)     scale(1); }
+    }
+    @keyframes bookClose {
+      0%   { opacity: 1; transform: perspective(900px) rotateY(0deg)   scale(1); }
+      100% { opacity: 0; transform: perspective(900px) rotateY(-22deg) translateX(-20px) scale(0.94); }
+    }
+
     #lib-modal-card {
       position: relative; z-index: 10;
       background: #ffffff;
@@ -632,15 +655,15 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
       max-height: 88vh; overflow-y: auto;
       padding: 2rem;
       box-shadow: 0 24px 80px rgba(0,0,0,0.22), 0 0 0 1px rgba(137,83,209,0.15);
-      transform: scale(0.96) translateY(12px);
-      transition: transform 0.28s cubic-bezier(0.34,1.56,0.64,1);
+      transform-origin: left center;
     }
     :global(.dark) #lib-modal-card {
       background: #16162a;
       color: #e5e7eb;
       box-shadow: 0 24px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(137,83,209,0.25);
     }
-    #lib-modal.open #lib-modal-card { transform: scale(1) translateY(0); }
+    #lib-modal.open #lib-modal-card { animation: bookOpen 0.38s cubic-bezier(0.34,1.2,0.64,1) both; }
+    #lib-modal.closing #lib-modal-card { animation: bookClose 0.22s ease both; }
     /* Modal content text colors — explicit, not relying on inherit */
     #lib-modal-content h3 { color: #111827; }
     :global(.dark) #lib-modal-content h3 { color: #f9fafb; }
@@ -818,7 +841,13 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
     const tabs   = document.querySelectorAll('.lib-tab');
     const panels = document.querySelectorAll('.lib-panel');
 
+    const TAB_ORDER = ['books', 'film-tv', 'variety', 'documentary'];
+
     function switchTab(tab) {
+      const prevIdx = TAB_ORDER.indexOf(activeTab);
+      const nextIdx = TAB_ORDER.indexOf(tab);
+      const goRight = nextIdx > prevIdx; // forward = slide in from right
+
       activeTab = tab;
       activeTag = '全部';
       tabs.forEach(t => {
@@ -834,10 +863,13 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
         const show = p.dataset.panel === tab;
         p.classList.toggle('hidden', !show);
         if (show) {
-          // re-trigger animation
+          // Directional page-turn
+          const anim = goRight ? 'pageFromRight' : 'pageFromLeft';
           p.style.animation = 'none';
-          requestAnimationFrame(() => { p.style.animation = ''; });
-          // re-stagger newly visible cards
+          requestAnimationFrame(() => {
+            p.style.animation = `${anim} 0.3s cubic-bezier(0.34,1.15,0.64,1) both`;
+          });
+          // Stagger newly visible cards
           p.querySelectorAll('.lib-card:not(.revealed)').forEach((c, i) => {
             c.style.transitionDelay = `${(i % 16) * 45}ms`;
           });
@@ -925,6 +957,8 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
       const modalContent = getModalContent();
       if (!detail || !modal || !modalContent) return;
 
+      // If closing animation running, cut it short
+      modal.classList.remove('closing');
       modalContent.innerHTML = detail.innerHTML;
       modal.classList.add('open');
       document.body.style.overflow = 'hidden';
@@ -935,10 +969,14 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
 
     function closeModal() {
       const modal = getModal();
-      if (!modal) return;
-      modal.classList.remove('open');
-      document.body.style.overflow = '';
-      document.querySelectorAll('.lib-card.is-active').forEach(c => c.classList.remove('is-active'));
+      if (!modal || !modal.classList.contains('open')) return;
+      // Play closing animation, then hide
+      modal.classList.add('closing');
+      setTimeout(() => {
+        modal.classList.remove('open', 'closing');
+        document.body.style.overflow = '';
+        document.querySelectorAll('.lib-card.is-active').forEach(c => c.classList.remove('is-active'));
+      }, 220);
     }
 
     document.addEventListener('click', (e) => {
