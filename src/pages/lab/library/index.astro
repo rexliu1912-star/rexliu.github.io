@@ -65,6 +65,13 @@ const mediaTypeColors: Record<string, string> = {
   "documentary": "bg-gradient-to-br from-[#6b7280] to-[#374151]",
 };
 
+function ratingDots(rating: string | null | undefined): number {
+  if (!rating) return 0;
+  const m = rating.match(/^(\d+(?:\.\d+)?)\/(\d+)/);
+  if (!m) return 0;
+  return Math.round((parseFloat(m[1]) / parseFloat(m[2])) * 5);
+}
+
 function hasNotes(item: LibraryItem) {
   return !!(
     item.notes &&
@@ -194,28 +201,36 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
       {books.map((item) => (
         <Fragment>
           <article
-            class="lib-card group cursor-pointer rounded-lg border border-purple-500/20 p-3 transition-all hover:border-purple-500/40 hover:shadow-[0_0_20px_#8953d122] dark:border-purple-500/15"
+            class="lib-card group cursor-pointer overflow-hidden rounded-xl bg-white shadow-[0_2px_10px_rgba(0,0,0,0.07)] transition-all hover:shadow-[0_8px_28px_rgba(137,83,209,0.18)] dark:bg-gray-900/90 dark:shadow-[0_2px_10px_rgba(0,0,0,0.25)]"
             data-id={item.id}
             data-tags={JSON.stringify(item.tags)}
             data-group="books"
           >
             {item.cover ? (
-              <img src={item.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="mb-3 block w-full aspect-[2/3] rounded-md object-cover object-center" />
+              <img src={item.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="block w-full aspect-[2/3] object-cover object-center" />
             ) : (
-              <div class={`mb-3 flex w-full aspect-[2/3] items-center justify-center rounded-md px-3 text-center ${item.coverClass}`}>
-                <span class="font-serif text-sm font-medium text-white">{item.title}</span>
+              <div class={`flex w-full aspect-[2/3] items-center justify-center px-3 text-center ${item.coverClass}`}>
+                <span class="font-serif text-sm font-semibold leading-snug text-white drop-shadow">{item.title}</span>
               </div>
             )}
-            <h2 class="font-serif text-sm font-medium text-black dark:text-white leading-snug">{item.title}</h2>
-            {item.titleEn && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500">{item.titleEn}</p>}
-            <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500">{item.subtitle}</p>
-            <div class="mt-2 flex items-center gap-2 font-serif text-xs text-gray-400 dark:text-gray-500">
-              {item.rating && <span>⭐ {item.rating}</span>}
-              {hasNotes(item) && (
-                <span class="text-[#8953d1] dark:text-[#a175e8]">
-                  <span class="lang-en">💬 Notes</span><span class="lang-zh">💬 笔记</span>
-                </span>
-              )}
+            <div class="p-3">
+              <h2 class="font-serif text-sm font-medium text-black dark:text-white leading-snug line-clamp-2">{item.title}</h2>
+              <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500 truncate">{item.subtitle}</p>
+              <div class="mt-2 flex items-center gap-2">
+                {item.rating && (
+                  <div class="flex gap-0.5">
+                    {[1,2,3,4,5].map(n => (
+                      <span class={`block w-1.5 h-1.5 rounded-full ${ratingDots(item.rating) >= n ? 'bg-[#8953d1]' : 'bg-gray-200 dark:bg-gray-700'}`} />
+                    ))}
+                  </div>
+                )}
+                {hasNotes(item) && (
+                  <span class="inline-flex items-center gap-1 rounded-full bg-purple-50 px-2 py-0.5 text-[10px] font-medium text-[#8953d1] dark:bg-purple-900/30 dark:text-[#a175e8]">
+                    <span class="block w-1 h-1 rounded-full bg-current"></span>
+                    <span class="lang-zh">笔记</span><span class="lang-en">Notes</span>
+                  </span>
+                )}
+              </div>
             </div>
           </article>
           <!-- Inline detail (inserted after row via JS) -->
@@ -315,16 +330,22 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
         <div class="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
           {films.map((item) => (
             <Fragment>
-              <article class="lib-card group cursor-pointer rounded-lg border border-purple-500/20 p-3 transition-all hover:border-purple-500/40 dark:border-purple-500/15" data-id={item.id} data-tags={JSON.stringify(item.tags)} data-group="film-tv">
+              <article class="lib-card group cursor-pointer overflow-hidden rounded-xl bg-white shadow-[0_2px_10px_rgba(0,0,0,0.07)] transition-all hover:shadow-[0_8px_28px_rgba(137,83,209,0.18)] dark:bg-gray-900/90 dark:shadow-[0_2px_10px_rgba(0,0,0,0.25)]" data-id={item.id} data-tags={JSON.stringify(item.tags)} data-group="film-tv">
                 {item.cover ? (
-                  <img src={item.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="mb-3 block w-full aspect-[2/3] rounded-md object-cover object-center" />
+                  <img src={item.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="block w-full aspect-[2/3] object-cover object-center" />
                 ) : (
-                  <div class={`mb-3 flex w-full aspect-[2/3] items-center justify-center rounded-md px-3 text-center ${item.coverClass}`}><span class="font-serif text-sm font-medium text-white">{item.title}</span></div>
+                  <div class={`flex w-full aspect-[2/3] items-center justify-center px-3 text-center ${item.coverClass}`}><span class="font-serif text-sm font-semibold leading-snug text-white drop-shadow">{item.title}</span></div>
                 )}
-                <h3 class="font-serif text-sm font-medium text-black dark:text-white">{item.title}</h3>
-                {item.titleEn && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500">{item.titleEn}</p>}
-                <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Film</span><span class="lang-zh">电影</span> · {item.year || "—"}</p>
-                {hasNotes(item) && <p class="mt-2 font-serif text-xs text-[#8953d1] dark:text-[#a175e8]"><span class="lang-en">💬 Notes</span><span class="lang-zh">💬 笔记</span></p>}
+                <div class="p-3">
+                  <h3 class="font-serif text-sm font-medium text-black dark:text-white line-clamp-2">{item.title}</h3>
+                  <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Film</span><span class="lang-zh">电影</span> · {item.year || "—"}</p>
+                  {hasNotes(item) && (
+                    <span class="mt-2 inline-flex items-center gap-1 rounded-full bg-purple-50 px-2 py-0.5 text-[10px] font-medium text-[#8953d1] dark:bg-purple-900/30 dark:text-[#a175e8]">
+                      <span class="block w-1 h-1 rounded-full bg-current"></span>
+                      <span class="lang-zh">笔记</span><span class="lang-en">Notes</span>
+                    </span>
+                  )}
+                </div>
               </article>
               <div class="lib-detail hidden" data-detail={item.id}>
                 <div class="flex flex-col sm:flex-row gap-5">
@@ -355,16 +376,22 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
         <div class="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
           {series.map((item) => (
             <Fragment>
-              <article class="lib-card group cursor-pointer rounded-lg border border-purple-500/20 p-3 transition-all hover:border-purple-500/40 dark:border-purple-500/15" data-id={item.id} data-tags={JSON.stringify(item.tags)} data-group="film-tv">
+              <article class="lib-card group cursor-pointer overflow-hidden rounded-xl bg-white shadow-[0_2px_10px_rgba(0,0,0,0.07)] transition-all hover:shadow-[0_8px_28px_rgba(137,83,209,0.18)] dark:bg-gray-900/90 dark:shadow-[0_2px_10px_rgba(0,0,0,0.25)]" data-id={item.id} data-tags={JSON.stringify(item.tags)} data-group="film-tv">
                 {item.cover ? (
-                  <img src={item.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="mb-3 block w-full aspect-[2/3] rounded-md object-cover object-center" />
+                  <img src={item.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="block w-full aspect-[2/3] object-cover object-center" />
                 ) : (
-                  <div class={`mb-3 flex w-full aspect-[2/3] items-center justify-center rounded-md px-3 text-center ${item.coverClass}`}><span class="font-serif text-sm font-medium text-white">{item.title}</span></div>
+                  <div class={`flex w-full aspect-[2/3] items-center justify-center px-3 text-center ${item.coverClass}`}><span class="font-serif text-sm font-semibold leading-snug text-white drop-shadow">{item.title}</span></div>
                 )}
-                <h3 class="font-serif text-sm font-medium text-black dark:text-white">{item.title}</h3>
-                {item.titleEn && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500">{item.titleEn}</p>}
-                <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Series</span><span class="lang-zh">剧集</span> · {item.year || "—"}</p>
-                {hasNotes(item) && <p class="mt-2 font-serif text-xs text-[#8953d1] dark:text-[#a175e8]"><span class="lang-en">💬 Notes</span><span class="lang-zh">💬 笔记</span></p>}
+                <div class="p-3">
+                  <h3 class="font-serif text-sm font-medium text-black dark:text-white line-clamp-2">{item.title}</h3>
+                  <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Series</span><span class="lang-zh">剧集</span> · {item.year || "—"}</p>
+                  {hasNotes(item) && (
+                    <span class="mt-2 inline-flex items-center gap-1 rounded-full bg-purple-50 px-2 py-0.5 text-[10px] font-medium text-[#8953d1] dark:bg-purple-900/30 dark:text-[#a175e8]">
+                      <span class="block w-1 h-1 rounded-full bg-current"></span>
+                      <span class="lang-zh">笔记</span><span class="lang-en">Notes</span>
+                    </span>
+                  )}
+                </div>
               </article>
               <div class="lib-detail hidden" data-detail={item.id}>
                 <div class="flex flex-col sm:flex-row gap-5">
@@ -395,16 +422,22 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
       <div class="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
         {variety.map((item) => (
           <Fragment>
-            <article class="lib-card group cursor-pointer rounded-lg border border-purple-500/20 p-3 transition-all hover:border-purple-500/40 dark:border-purple-500/15" data-id={item.id} data-tags={JSON.stringify(item.tags)} data-group="variety">
+            <article class="lib-card group cursor-pointer overflow-hidden rounded-xl bg-white shadow-[0_2px_10px_rgba(0,0,0,0.07)] transition-all hover:shadow-[0_8px_28px_rgba(137,83,209,0.18)] dark:bg-gray-900/90 dark:shadow-[0_2px_10px_rgba(0,0,0,0.25)]" data-id={item.id} data-tags={JSON.stringify(item.tags)} data-group="variety">
               {item.cover ? (
-                <img src={item.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="mb-3 block w-full aspect-[2/3] rounded-md object-cover object-center" />
+                <img src={item.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="block w-full aspect-[2/3] object-cover object-center" />
               ) : (
-                <div class={`mb-3 flex w-full aspect-[2/3] items-center justify-center rounded-md px-3 text-center ${item.coverClass}`}><span class="font-serif text-sm font-medium text-white">{item.title}</span></div>
+                <div class={`flex w-full aspect-[2/3] items-center justify-center px-3 text-center ${item.coverClass}`}><span class="font-serif text-sm font-semibold leading-snug text-white drop-shadow">{item.title}</span></div>
               )}
-              <h3 class="font-serif text-sm font-medium text-black dark:text-white">{item.title}</h3>
-              {item.titleEn && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500">{item.titleEn}</p>}
-              <p class="mt-1 font-serif text-xs text-gray-400"><span class="lang-en">Variety</span><span class="lang-zh">综艺</span> · {item.year || "—"}</p>
-              {hasNotes(item) && <p class="mt-2 font-serif text-xs text-[#8953d1] dark:text-[#a175e8]">💬</p>}
+              <div class="p-3">
+                <h3 class="font-serif text-sm font-medium text-black dark:text-white line-clamp-2">{item.title}</h3>
+                <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Variety</span><span class="lang-zh">综艺</span> · {item.year || "—"}</p>
+                {hasNotes(item) && (
+                  <span class="mt-2 inline-flex items-center gap-1 rounded-full bg-purple-50 px-2 py-0.5 text-[10px] font-medium text-[#8953d1] dark:bg-purple-900/30 dark:text-[#a175e8]">
+                    <span class="block w-1 h-1 rounded-full bg-current"></span>
+                    <span class="lang-zh">笔记</span><span class="lang-en">Notes</span>
+                  </span>
+                )}
+              </div>
             </article>
             <div class="lib-detail hidden" data-detail={item.id}>
               <div class="flex flex-col sm:flex-row gap-5">
@@ -436,16 +469,22 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
       <div class="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
         {documentary.map((item) => (
           <Fragment>
-            <article class="lib-card group cursor-pointer rounded-lg border border-purple-500/20 p-3 transition-all hover:border-purple-500/40 dark:border-purple-500/15" data-id={item.id} data-tags={JSON.stringify(item.tags)} data-group="documentary">
+            <article class="lib-card group cursor-pointer overflow-hidden rounded-xl bg-white shadow-[0_2px_10px_rgba(0,0,0,0.07)] transition-all hover:shadow-[0_8px_28px_rgba(137,83,209,0.18)] dark:bg-gray-900/90 dark:shadow-[0_2px_10px_rgba(0,0,0,0.25)]" data-id={item.id} data-tags={JSON.stringify(item.tags)} data-group="documentary">
               {item.cover ? (
-                <img src={item.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="mb-3 block w-full aspect-[2/3] rounded-md object-cover object-center" />
+                <img src={item.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="block w-full aspect-[2/3] object-cover object-center" />
               ) : (
-                <div class={`mb-3 flex w-full aspect-[2/3] items-center justify-center rounded-md px-3 text-center ${item.coverClass}`}><span class="font-serif text-sm font-medium text-white">{item.title}</span></div>
+                <div class={`flex w-full aspect-[2/3] items-center justify-center px-3 text-center ${item.coverClass}`}><span class="font-serif text-sm font-semibold leading-snug text-white drop-shadow">{item.title}</span></div>
               )}
-              <h3 class="font-serif text-sm font-medium text-black dark:text-white">{item.title}</h3>
-              {item.titleEn && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500">{item.titleEn}</p>}
-              <p class="mt-1 font-serif text-xs text-gray-400"><span class="lang-en">Documentary</span><span class="lang-zh">纪录片</span> · {item.year || "—"}</p>
-              {hasNotes(item) && <p class="mt-2 font-serif text-xs text-[#8953d1] dark:text-[#a175e8]">💬</p>}
+              <div class="p-3">
+                <h3 class="font-serif text-sm font-medium text-black dark:text-white line-clamp-2">{item.title}</h3>
+                <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Documentary</span><span class="lang-zh">纪录片</span> · {item.year || "—"}</p>
+                {hasNotes(item) && (
+                  <span class="mt-2 inline-flex items-center gap-1 rounded-full bg-purple-50 px-2 py-0.5 text-[10px] font-medium text-[#8953d1] dark:bg-purple-900/30 dark:text-[#a175e8]">
+                    <span class="block w-1 h-1 rounded-full bg-current"></span>
+                    <span class="lang-zh">笔记</span><span class="lang-en">Notes</span>
+                  </span>
+                )}
+              </div>
             </article>
             <div class="lib-detail hidden" data-detail={item.id}>
               <div class="flex flex-col sm:flex-row gap-5">
@@ -505,7 +544,7 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
       --rx: 0deg; --ry: 0deg; --rs: 1;
       opacity: 0;
       transform: translateY(20px);
-      transition: opacity 0.5s ease, transform 0.5s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+      transition: opacity 0.5s ease, transform 0.5s ease, box-shadow 0.25s ease;
     }
     .lib-card.revealed {
       opacity: 1;
@@ -513,8 +552,7 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
       transform: perspective(700px) rotateX(var(--rx)) rotateY(var(--ry)) scale(var(--rs)) translateY(0px);
     }
     .lib-card.is-active {
-      border-color: rgba(137,83,209,0.6) !important;
-      box-shadow: 0 0 28px rgba(137,83,209,0.18);
+      box-shadow: 0 0 0 2px rgba(137,83,209,0.55), 0 8px 28px rgba(137,83,209,0.2);
     }
 
     /* ── Inline detail (kept as data container, always hidden) ── */
@@ -713,14 +751,14 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
         card.style.setProperty('--rx', `${-y * 9}deg`);
         card.style.setProperty('--ry', `${x * 9}deg`);
         card.style.setProperty('--rs', '1.045');
-        card.style.transition = 'transform 0.1s ease, box-shadow 0.1s ease, opacity 0.5s ease, border-color 0.2s ease';
+        card.style.transition = 'transform 0.1s ease, box-shadow 0.1s ease, opacity 0.5s ease';
         card.style.boxShadow = `${-x*14}px ${y*14}px 32px rgba(137,83,209,0.18)`;
       });
       card.addEventListener('mouseleave', () => {
         card.style.setProperty('--rx', '0deg');
         card.style.setProperty('--ry', '0deg');
         card.style.setProperty('--rs', '1');
-        card.style.transition = 'transform 0.4s ease, box-shadow 0.4s ease, opacity 0.5s ease, border-color 0.2s ease';
+        card.style.transition = 'transform 0.4s ease, box-shadow 0.4s ease, opacity 0.5s ease';
         card.style.boxShadow = '';
       });
     }
