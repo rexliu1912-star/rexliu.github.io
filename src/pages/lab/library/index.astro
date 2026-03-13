@@ -215,6 +215,7 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
             )}
             <div class="p-3">
               <h2 class="font-serif text-sm font-medium text-black dark:text-white leading-snug line-clamp-2">{item.title}</h2>
+              {item.titleEn && <p class="lang-en mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500 truncate italic">{item.titleEn}</p>}
               <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500 truncate">{item.subtitle}</p>
               <div class="mt-2 flex items-center gap-2">
                 {item.rating && (
@@ -660,7 +661,8 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
       background: transparent; border: 0; padding: 0; cursor: pointer;
       transition: transform 0.28s ease, filter 0.28s ease;
     }
-    .shelf-book:hover { transform: translateY(-22px) !important; filter: drop-shadow(0 16px 28px rgba(17,24,39,0.28)); }
+    .shelf-book { z-index: 1; isolation: isolate; }
+    .shelf-book:hover { transform: translateY(-22px) !important; filter: drop-shadow(0 16px 28px rgba(17,24,39,0.28)); z-index: 50 !important; }
     .shelf-spine {
       position: relative;
       display: flex; align-items: center; justify-content: center;
