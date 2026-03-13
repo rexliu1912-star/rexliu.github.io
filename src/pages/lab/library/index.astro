@@ -43,14 +43,12 @@ type LibraryItem = {
   tags: string[];
   notes: Notes | undefined;
   meta: string | undefined;
-  coverClass: string;
-  aspectClass: string;
   sortDate: string | undefined;
   year: number | undefined;
   cover: string | undefined;
+  coverClass: string;
 };
 
-// Tag-based gradient colors for books without covers
 const bookTagColors: Record<string, string> = {
   "投资": "bg-gradient-to-br from-[#8953d1] to-[#6b3fa0]",
   "成长": "bg-gradient-to-br from-[#3b82f6] to-[#1d4ed8]",
@@ -60,8 +58,6 @@ const bookTagColors: Record<string, string> = {
   "写作": "bg-gradient-to-br from-[#6366f1] to-[#4338ca]",
 };
 const defaultBookColor = "bg-gradient-to-br from-[#8953d1] to-[#6b3fa0]";
-
-// Type-based gradient colors for media without covers
 const mediaTypeColors: Record<string, string> = {
   "movie": "bg-gradient-to-br from-[#8953d1] to-[#6b3fa0]",
   "series": "bg-gradient-to-br from-[#3b82f6] to-[#1d4ed8]",
@@ -69,7 +65,16 @@ const mediaTypeColors: Record<string, string> = {
   "documentary": "bg-gradient-to-br from-[#6b7280] to-[#374151]",
 };
 
-const books = (booksData as BookEntry[])
+function hasNotes(item: LibraryItem) {
+  return !!(
+    item.notes &&
+    ((item.notes.quotes && item.notes.quotes.length > 0) ||
+      (item.notes.core_ideas && item.notes.core_ideas.length > 0) ||
+      (item.notes.impact && item.notes.impact.trim().length > 0))
+  );
+}
+
+const books: LibraryItem[] = (booksData as BookEntry[])
   .map((book, index) => ({
     id: `book-${index}`,
     title: book.title,
@@ -80,11 +85,10 @@ const books = (booksData as BookEntry[])
     tags: book.tags || [],
     notes: book.notes,
     meta: book.type,
-    coverClass: (book.tags && book.tags[0] ? bookTagColors[book.tags[0]] : undefined) || defaultBookColor,
-    aspectClass: "aspect-[2/3]",
     sortDate: book.endDate && book.endDate !== "-" ? book.endDate : undefined,
     year: undefined,
     cover: book.cover,
+    coverClass: (book.tags && book.tags[0] ? bookTagColors[book.tags[0]] : undefined) || defaultBookColor,
   }))
   .sort((a, b) => {
     if (!a.sortDate && !b.sortDate) return 0;
@@ -93,7 +97,7 @@ const books = (booksData as BookEntry[])
     return new Date(b.sortDate).valueOf() - new Date(a.sortDate).valueOf();
   });
 
-const media = (mediaData as MediaEntry[])
+const media: LibraryItem[] = (mediaData as MediaEntry[])
   .map((item, index) => ({
     id: `media-${index}`,
     title: item.title,
@@ -104,11 +108,10 @@ const media = (mediaData as MediaEntry[])
     tags: item.tags || [],
     notes: item.notes,
     meta: undefined,
-    coverClass: mediaTypeColors[item.type] || defaultBookColor,
-    aspectClass: "aspect-[2/3]",
     sortDate: undefined,
     year: item.year,
     cover: item.cover,
+    coverClass: mediaTypeColors[item.type] || defaultBookColor,
   }))
   .sort((a, b) => (b.year || 0) - (a.year || 0));
 
@@ -122,940 +125,476 @@ const meta = {
   description: "Books, films, and shows that shaped how Rex thinks.",
 };
 
-// Stats for count-up
-const statsBookNotes = books.filter(b => hasNotes(b)).length;
-const statsMediaNotes = media.filter(m => hasNotes(m)).length;
-
-function formatType(format: LibraryItem["format"]) {
-  return format === "book"
-    ? "Book"
-    : format === "movie"
-      ? "Film"
-      : format === "series"
-        ? "Series"
-        : format === "documentary"
-          ? "Documentary"
-          : "Variety";
-}
+const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m => hasNotes(m)).length;
 
 function formatTypeZh(format: LibraryItem["format"]) {
-  return format === "book"
-    ? "书籍"
-    : format === "movie"
-      ? "电影"
-      : format === "series"
-        ? "剧集"
-        : format === "documentary"
-          ? "纪录片"
-          : "综艺";
+  return format === "book" ? "书籍" : format === "movie" ? "电影" : format === "series" ? "剧集" : format === "documentary" ? "纪录片" : "综艺";
 }
-
-function hasNotes(item: LibraryItem) {
-  return !!(
-    item.notes &&
-    ((item.notes.quotes && item.notes.quotes.length > 0) ||
-      (item.notes.core_ideas && item.notes.core_ideas.length > 0) ||
-      (item.notes.impact && item.notes.impact.trim().length > 0))
-  );
+function formatType(format: LibraryItem["format"]) {
+  return format === "book" ? "Book" : format === "movie" ? "Film" : format === "series" ? "Series" : format === "documentary" ? "Documentary" : "Variety";
 }
-
-
-function shelfHeightFor(index: number) {
-  return 180 + (index * 17) % 41;
-}
-
-
 ---
 
 <PageLayout meta={meta}>
+  <!-- Header -->
   <section class="mb-12">
-    <a href="/lab/" class="font-serif text-sm text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]">
-      ← Lab
-    </a>
-    <h1 class="hero-reveal-text mt-4 mb-4 font-serif text-4xl font-bold dark:text-white">
-      Rex's Library
-    </h1>
-    <p class="hero-reveal-subtitle lang-en max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">
-      Books, films, and shows that shaped how I think.
-    </p>
-    <p class="hero-reveal-subtitle lang-zh max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">
-      读过的书、看过的片，塑造了现在的我。
-    </p>
+    <a href="/lab/" class="font-serif text-sm text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]">← Lab</a>
+    <h1 class="mt-4 mb-4 font-serif text-4xl font-bold dark:text-white">Rex's Library</h1>
+    <p class="lang-en max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">Books, films, and shows that shaped how I think.</p>
+    <p class="lang-zh max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">读过的书、看过的片，塑造了现在的我。</p>
     <p class="mt-4 font-serif text-sm text-gray-400 dark:text-gray-500">
       <span data-countup={books.length}>0</span>
-      <span class="lang-en"> books</span>
-      <span class="lang-zh"> 本书</span>
-      ·
-      <span data-countup={statsBookNotes + statsMediaNotes}>0</span>
-      <span class="lang-en"> with notes</span>
-      <span class="lang-zh"> 有笔记</span>
-      ·
+      <span class="lang-en"> books</span><span class="lang-zh"> 本书</span> ·
+      <span data-countup={statsWithNotes}>0</span>
+      <span class="lang-en"> with notes</span><span class="lang-zh"> 有笔记</span> ·
       <span data-countup={media.length}>0</span>
-      <span class="lang-en"> films & shows</span>
-      <span class="lang-zh"> 部影视</span>
+      <span class="lang-en"> films & shows</span><span class="lang-zh"> 部影视</span>
     </p>
   </section>
 
-  <section class="mb-4 fade-in-up" style="--delay: 120ms">
+  <!-- Tabs -->
+  <section class="mb-4">
     <div class="flex flex-wrap gap-6 border-b border-gray-200 font-serif text-sm dark:border-gray-800">
-      <button type="button" class="library-tab inline-flex items-center gap-2 border-b-2 border-[#8953d1] pb-3 font-medium text-[#8953d1] transition-colors dark:text-[#a175e8]" data-tab-button data-tab-target="books" aria-pressed="true">
-        <span class="lang-en">📚 Books ({books.length})</span>
-        <span class="lang-zh">📚 书籍 ({books.length})</span>
+      <button type="button" class="lib-tab border-b-2 border-[#8953d1] pb-3 font-medium text-[#8953d1] dark:text-[#a175e8]" data-tab="books" aria-pressed="true">
+        <span class="lang-en">📚 Books ({books.length})</span><span class="lang-zh">📚 书籍 ({books.length})</span>
       </button>
-      <button type="button" class="library-tab inline-flex items-center gap-2 border-b-2 border-transparent pb-3 text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]" data-tab-button data-tab-target="film-tv" aria-pressed="false">
-        <span class="lang-en">🎬 Film & TV ({media.length})</span>
-        <span class="lang-zh">🎬 影视 ({media.length})</span>
+      <button type="button" class="lib-tab border-b-2 border-transparent pb-3 text-gray-400 hover:text-[#8953d1] dark:text-gray-500" data-tab="film-tv" aria-pressed="false">
+        <span class="lang-en">🎬 Film & TV ({films.length + series.length})</span><span class="lang-zh">🎬 影视 ({films.length + series.length})</span>
       </button>
-      <button type="button" class="library-tab inline-flex items-center gap-2 border-b-2 border-transparent pb-3 text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]" data-tab-button data-tab-target="variety" aria-pressed="false">
-        <span class="lang-en">🎭 Variety ({variety.length})</span>
-        <span class="lang-zh">🎭 综艺 ({variety.length})</span>
+      <button type="button" class="lib-tab border-b-2 border-transparent pb-3 text-gray-400 hover:text-[#8953d1] dark:text-gray-500" data-tab="variety" aria-pressed="false">
+        <span class="lang-en">🎭 Variety ({variety.length})</span><span class="lang-zh">🎭 综艺 ({variety.length})</span>
       </button>
-      <button type="button" class="library-tab inline-flex items-center gap-2 border-b-2 border-transparent pb-3 text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]" data-tab-button data-tab-target="documentary" aria-pressed="false">
-        <span class="lang-en">🎬 Documentary ({documentary.length})</span>
-        <span class="lang-zh">🎬 纪录片 ({documentary.length})</span>
+      <button type="button" class="lib-tab border-b-2 border-transparent pb-3 text-gray-400 hover:text-[#8953d1] dark:text-gray-500" data-tab="documentary" aria-pressed="false">
+        <span class="lang-en">🎬 Doc ({documentary.length})</span><span class="lang-zh">🎬 纪录片 ({documentary.length})</span>
       </button>
     </div>
   </section>
 
-  <section class="mb-10 fade-in-up" style="--delay: 140ms">
-    <div id="library-tag-filters" class="flex flex-wrap gap-3"></div>
+  <!-- Tag Filters -->
+  <section class="mb-8">
+    <div id="tag-filters" class="flex flex-wrap gap-3"></div>
   </section>
 
-  <section data-tab-panel="books" class="library-panel space-y-4">
-    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-      <div class="font-serif text-sm text-gray-400 dark:text-gray-500">
-        <p class="lang-en">Browse by tag, then switch between the classic grid and a shelf-style view.</p>
-        <p class="lang-zh">按标签浏览，可切换网格和书架两种视图。</p>
-      </div>
-      <div class="inline-flex w-fit items-center rounded-full border border-purple-500/20 bg-white/70 p-1 font-serif text-sm shadow-[0_0_20px_#8953d10f] backdrop-blur dark:border-purple-500/15 dark:bg-gray-900/60">
-        <button type="button" class="library-view-toggle rounded-full bg-[#8953d1] px-4 py-2 text-white transition-all dark:bg-[#a175e8] dark:text-black" data-books-view-button data-view-target="grid" aria-pressed="true">📚 Grid</button>
-        <button type="button" class="library-view-toggle rounded-full px-4 py-2 text-gray-500 transition-all hover:text-[#8953d1] dark:text-gray-400 dark:hover:text-[#a175e8]" data-books-view-button data-view-target="shelf" aria-pressed="false">📖 Shelf</button>
-      </div>
-    </div>
-
-    <div class="books-view-stage relative">
-      <div data-books-view="grid" class="library-books-view grid-view">
-        <div class="grid gap-4 sm:grid-cols-3 lg:grid-cols-4">
-          {books.map((item, index) => {
-            return (
-              <Fragment>
-                <article
-                  class="library-card glow-card fade-in-up rounded-lg border border-purple-500/20 p-4 transition-all hover:border-purple-500/40 hover:shadow-[0_0_20px_#8953d122] dark:border-purple-500/15"
-                  style={`--delay: ${180 + index * 30}ms`}
-                  data-library-item
-                  data-tab-group="books"
-                  data-view="grid"
-                  data-tags={JSON.stringify(item.tags || [])}
-                >
-                  <button
-                    type="button"
-                    class="block w-full text-left"
-                    data-library-toggle
-                    data-target={item.id}
-                    aria-expanded="false"
-                  >
-                      {item.cover ? (
-                        <img
-                          src={item.cover}
-                          alt={`${item.title} cover`}
-                          loading="lazy"
-                          referrerpolicy="no-referrer"
-                          class={`mb-4 block w-full ${item.aspectClass} rounded-md object-cover object-center`}
-                        />
-                      ) : (
-                        <div class={`mb-4 flex ${item.aspectClass} items-center justify-center rounded-md px-4 text-center ${item.coverClass}`}>
-                          <span class="font-serif text-base font-medium text-white">{item.title}</span>
-                        </div>
-                      )}
-                      <h2 class="font-serif text-sm font-medium text-black dark:text-white">{item.title}</h2>
-                      {item.titleEn && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500">{item.titleEn}</p>}
-                      <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500">{item.subtitle}</p>
-                      <div class="mt-3 flex flex-wrap items-center gap-3 font-serif text-xs text-gray-400 dark:text-gray-500">
-                        {item.rating && <span>⭐ {item.rating}</span>}
-                        {hasNotes(item) ? (
-                          <>
-                            <span class="lang-en">💬 Notes</span>
-                            <span class="lang-zh">💬 笔记</span>
-                          </>
-                        ) : (
-                          <>
-                            <span class="lang-en">↗ Details</span>
-                            <span class="lang-zh">↗ 详情</span>
-                          </>
-                        )}
-                      </div>
-                    </button>
-                </article>
-                <div
-                    id={item.id}
-                    class="library-details col-span-full hidden fade-in-up rounded-lg border border-purple-500/20 px-5 py-4 dark:border-purple-500/15"
-                    style={`--delay: ${210 + index * 30}ms`}
-                    data-library-detail
-                    data-detail-for={item.id}
-                    data-tab-group="books"
-                    data-cover={item.cover || ''}
-                    data-cover-class={item.coverClass}
-                  >
-                    {item.cover ? (
-                      <img
-                        src={item.cover}
-                        alt={`${item.title} cover`}
-                        loading="lazy"
-                        referrerpolicy="no-referrer"
-                        class="detail-cover mx-auto mb-4 block max-h-48 rounded-md object-cover object-center shadow-lg"
-                      />
-                    ) : (
-                      <div class={`detail-cover mx-auto mb-4 flex h-48 w-32 items-center justify-center rounded-md px-4 text-center shadow-lg ${item.coverClass}`}>
-                        <span class="font-serif text-sm font-medium text-white">{item.title}</span>
-                      </div>
-                    )}
-                    <div class="mb-3 flex flex-wrap items-baseline gap-x-3 gap-y-2">
-                      <h3 class="font-serif text-lg font-medium text-black dark:text-white">{item.title}</h3>
-                      <p class="font-serif text-sm text-gray-400 dark:text-gray-500">{item.subtitle}</p>
-                    </div>
-                    <p class="font-serif text-sm text-gray-400 dark:text-gray-500">
-                      {item.rating && <span>{item.rating} · </span>}
-                      <span class="lang-en">{formatType(item.format)}</span>
-                      <span class="lang-zh">{formatTypeZh(item.format)}</span>
-                      {item.meta && <span> · {item.meta}</span>}
-                      {item.year && <span> · {item.year}</span>}
-                      {item.tags.length > 0 && <span> · {item.tags.join(" · ")}</span>}
-                    </p>
-                    {item.notes?.quotes && item.notes.quotes.length > 0 && (
-                      <div class="mt-4 space-y-3">
-                        {item.notes.quotes.map((quote) => (
-                          <blockquote class="border-l-2 border-[var(--color-quote)] pl-4 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300">
-                            {quote}
-                          </blockquote>
-                        ))}
-                      </div>
-                    )}
-                    {item.notes?.core_ideas && item.notes.core_ideas.length > 0 && (
-                      <ul class="mt-4 space-y-2 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300">
-                        {item.notes.core_ideas.map((idea) => (
-                          <li class="flex gap-2"><span class="text-[#8953d1] dark:text-[#a175e8]">•</span><span>{idea}</span></li>
-                        ))}
-                      </ul>
-                    )}
-                    {item.notes?.impact && item.notes.impact.trim() && (
-                      <p class="mt-4 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300">
-                        {item.notes.impact}
-                      </p>
-                    )}
-                    {!hasNotes(item) && (
-                      <div class="mt-4 font-serif text-sm leading-relaxed text-gray-500 dark:text-gray-400">
-                        <p class="lang-en">No notes yet.</p>
-                        <p class="lang-zh">暂无笔记。</p>
-                      </div>
-                    )}
+  <!-- ===== BOOKS PANEL ===== -->
+  <section data-panel="books" class="lib-panel">
+    <div class="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4" id="books-grid">
+      {books.map((item, idx) => (
+        <Fragment>
+          <article
+            class="lib-card group cursor-pointer rounded-lg border border-purple-500/20 p-3 transition-all hover:border-purple-500/40 hover:shadow-[0_0_20px_#8953d122] dark:border-purple-500/15"
+            data-id={item.id}
+            data-tags={JSON.stringify(item.tags)}
+            data-group="books"
+          >
+            {item.cover ? (
+              <img src={item.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="mb-3 block w-full aspect-[2/3] rounded-md object-cover object-center" />
+            ) : (
+              <div class={`mb-3 flex w-full aspect-[2/3] items-center justify-center rounded-md px-3 text-center ${item.coverClass}`}>
+                <span class="font-serif text-sm font-medium text-white">{item.title}</span>
+              </div>
+            )}
+            <h2 class="font-serif text-sm font-medium text-black dark:text-white leading-snug">{item.title}</h2>
+            {item.titleEn && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500">{item.titleEn}</p>}
+            <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500">{item.subtitle}</p>
+            <div class="mt-2 flex items-center gap-2 font-serif text-xs text-gray-400 dark:text-gray-500">
+              {item.rating && <span>⭐ {item.rating}</span>}
+              {hasNotes(item) && (
+                <span class="text-[#8953d1] dark:text-[#a175e8]">
+                  <span class="lang-en">💬 Notes</span><span class="lang-zh">💬 笔记</span>
+                </span>
+              )}
+            </div>
+          </article>
+          <!-- Inline detail (inserted after row via JS) -->
+          <div class="lib-detail hidden" data-detail={item.id}>
+            <div class="flex flex-col sm:flex-row gap-5">
+              {item.cover ? (
+                <img src={item.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="w-28 sm:w-36 aspect-[2/3] rounded-md object-cover object-center shrink-0 shadow-lg" />
+              ) : (
+                <div class={`w-28 sm:w-36 aspect-[2/3] flex items-center justify-center rounded-md px-3 text-center shrink-0 shadow-lg ${item.coverClass}`}>
+                  <span class="font-serif text-sm font-medium text-white">{item.title}</span>
+                </div>
+              )}
+              <div class="flex-1 min-w-0">
+                <h3 class="font-serif text-lg font-medium text-black dark:text-white">{item.title}</h3>
+                {item.titleEn && <p class="mt-0.5 font-serif text-sm text-gray-400 dark:text-gray-500">{item.titleEn}</p>}
+                <p class="mt-1 font-serif text-sm text-gray-400 dark:text-gray-500">
+                  {item.subtitle}
+                  {item.rating && <span> · {item.rating}</span>}
+                  {item.tags.length > 0 && <span> · {item.tags.join(" · ")}</span>}
+                </p>
+                {item.notes?.quotes && item.notes.quotes.length > 0 && (
+                  <div class="mt-4 space-y-3">
+                    {item.notes.quotes.map((q) => (
+                      <blockquote class="border-l-2 border-[#8953d1] pl-4 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300 dark:border-[#a175e8]">{q}</blockquote>
+                    ))}
                   </div>
-              </Fragment>
-            );
-          })}
-        </div>
-      </div>
+                )}
+                {item.notes?.core_ideas && item.notes.core_ideas.length > 0 && (
+                  <ul class="mt-4 space-y-2 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300">
+                    {item.notes.core_ideas.map((idea) => (
+                      <li class="flex gap-2"><span class="text-[#8953d1] dark:text-[#a175e8]">•</span><span>{idea}</span></li>
+                    ))}
+                  </ul>
+                )}
+                {item.notes?.impact && item.notes.impact.trim() && (
+                  <p class="mt-4 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300">{item.notes.impact}</p>
+                )}
+                {!hasNotes(item) && (
+                  <p class="mt-4 font-serif text-sm text-gray-500 dark:text-gray-400">
+                    <span class="lang-en">No notes yet.</span><span class="lang-zh">暂无笔记。</span>
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        </Fragment>
+      ))}
+    </div>
+  </section>
 
-      <div data-books-view="shelf" class="library-books-view shelf-view hidden">
-        <div data-shelf-stage class="library-shelf-stage">
-          {books.map((item, index) => {
-            const expandable = hasNotes(item);
-            return (
-              <button
-                type="button"
-                class="shelf-book group"
-                style={`--shelf-height: ${shelfHeightFor(index)}px`}
-                data-library-item
-                data-shelf-book
-                data-tab-group="books"
-                data-view="shelf"
-                data-tags={JSON.stringify(item.tags || [])}
-                data-library-toggle
-                data-target={item.id}
-                aria-expanded="false"
-              >
-                <span class="shelf-book-preview">
+  <!-- ===== FILM & TV PANEL ===== -->
+  <section data-panel="film-tv" class="lib-panel hidden">
+    {films.length > 0 && (
+      <div class="mb-10">
+        <h2 class="mb-4 font-serif text-lg font-medium text-black dark:text-white">
+          <span class="lang-en">🎬 Films</span><span class="lang-zh">🎬 电影</span>
+        </h2>
+        <div class="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
+          {films.map((item) => (
+            <Fragment>
+              <article class="lib-card group cursor-pointer rounded-lg border border-purple-500/20 p-3 transition-all hover:border-purple-500/40 dark:border-purple-500/15" data-id={item.id} data-tags={JSON.stringify(item.tags)} data-group="film-tv">
+                {item.cover ? (
+                  <img src={item.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="mb-3 block w-full aspect-[2/3] rounded-md object-cover object-center" />
+                ) : (
+                  <div class={`mb-3 flex w-full aspect-[2/3] items-center justify-center rounded-md px-3 text-center ${item.coverClass}`}><span class="font-serif text-sm font-medium text-white">{item.title}</span></div>
+                )}
+                <h3 class="font-serif text-sm font-medium text-black dark:text-white">{item.title}</h3>
+                {item.titleEn && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500">{item.titleEn}</p>}
+                <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Film</span><span class="lang-zh">电影</span> · {item.year || "—"}</p>
+                {hasNotes(item) && <p class="mt-2 font-serif text-xs text-[#8953d1] dark:text-[#a175e8]"><span class="lang-en">💬 Notes</span><span class="lang-zh">💬 笔记</span></p>}
+              </article>
+              <div class="lib-detail hidden" data-detail={item.id}>
+                <div class="flex flex-col sm:flex-row gap-5">
                   {item.cover ? (
-                    <img
-                      src={item.cover}
-                      alt={`${item.title} cover`}
-                      loading="lazy"
-                      referrerpolicy="no-referrer"
-                      class="h-full w-full rounded-lg object-cover object-center shadow-2xl"
-                    />
+                    <img src={item.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="w-28 sm:w-36 aspect-[2/3] rounded-md object-cover shrink-0 shadow-lg" />
                   ) : (
-                    <span class={`flex h-full w-full items-center justify-center rounded-lg px-3 text-center ${item.coverClass}`}>
-                      <span class="font-serif text-xs font-medium leading-snug text-white">{item.title}</span>
-                    </span>
+                    <div class={`w-28 sm:w-36 aspect-[2/3] flex items-center justify-center rounded-md shrink-0 shadow-lg ${item.coverClass}`}><span class="font-serif text-sm text-white">{item.title}</span></div>
                   )}
-                </span>
-                <span class={`shelf-spine ${item.coverClass}`}>
-                  <span class="shelf-spine-sheen"></span>
-                  <span class="shelf-spine-title">{item.title}</span>
-                  {expandable && <span class="shelf-spine-dot"></span>}
-                </span>
-              </button>
-            );
-          })}
+                  <div class="flex-1 min-w-0">
+                    <h3 class="font-serif text-lg font-medium text-black dark:text-white">{item.title}</h3>
+                    <p class="mt-1 font-serif text-sm text-gray-400">{item.year || "—"} · {item.tags.join(" · ")}</p>
+                    {item.notes?.quotes && item.notes.quotes.length > 0 && (<div class="mt-4 space-y-3">{item.notes.quotes.map((q) => (<blockquote class="border-l-2 border-[#8953d1] pl-4 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300 dark:border-[#a175e8]">{q}</blockquote>))}</div>)}
+                    {item.notes?.core_ideas && item.notes.core_ideas.length > 0 && (<ul class="mt-4 space-y-2 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300">{item.notes.core_ideas.map((idea) => (<li class="flex gap-2"><span class="text-[#8953d1] dark:text-[#a175e8]">•</span><span>{idea}</span></li>))}</ul>)}
+                    {!hasNotes(item) && <p class="mt-4 font-serif text-sm text-gray-500"><span class="lang-en">No notes yet.</span><span class="lang-zh">暂无笔记。</span></p>}
+                  </div>
+                </div>
+              </div>
+            </Fragment>
+          ))}
         </div>
       </div>
-    </div>
+    )}
+    {series.length > 0 && (
+      <div>
+        <h2 class="mb-4 font-serif text-lg font-medium text-black dark:text-white">
+          <span class="lang-en">📺 Series</span><span class="lang-zh">📺 剧集</span>
+        </h2>
+        <div class="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
+          {series.map((item) => (
+            <Fragment>
+              <article class="lib-card group cursor-pointer rounded-lg border border-purple-500/20 p-3 transition-all hover:border-purple-500/40 dark:border-purple-500/15" data-id={item.id} data-tags={JSON.stringify(item.tags)} data-group="film-tv">
+                {item.cover ? (
+                  <img src={item.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="mb-3 block w-full aspect-[2/3] rounded-md object-cover object-center" />
+                ) : (
+                  <div class={`mb-3 flex w-full aspect-[2/3] items-center justify-center rounded-md px-3 text-center ${item.coverClass}`}><span class="font-serif text-sm font-medium text-white">{item.title}</span></div>
+                )}
+                <h3 class="font-serif text-sm font-medium text-black dark:text-white">{item.title}</h3>
+                {item.titleEn && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500">{item.titleEn}</p>}
+                <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Series</span><span class="lang-zh">剧集</span> · {item.year || "—"}</p>
+                {hasNotes(item) && <p class="mt-2 font-serif text-xs text-[#8953d1] dark:text-[#a175e8]"><span class="lang-en">💬 Notes</span><span class="lang-zh">💬 笔记</span></p>}
+              </article>
+              <div class="lib-detail hidden" data-detail={item.id}>
+                <div class="flex flex-col sm:flex-row gap-5">
+                  {item.cover ? (
+                    <img src={item.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="w-28 sm:w-36 aspect-[2/3] rounded-md object-cover shrink-0 shadow-lg" />
+                  ) : (
+                    <div class={`w-28 sm:w-36 aspect-[2/3] flex items-center justify-center rounded-md shrink-0 shadow-lg ${item.coverClass}`}><span class="font-serif text-sm text-white">{item.title}</span></div>
+                  )}
+                  <div class="flex-1 min-w-0">
+                    <h3 class="font-serif text-lg font-medium text-black dark:text-white">{item.title}</h3>
+                    <p class="mt-1 font-serif text-sm text-gray-400">{item.year || "—"} · {item.tags.join(" · ")}</p>
+                    {item.notes?.quotes && item.notes.quotes.length > 0 && (<div class="mt-4 space-y-3">{item.notes.quotes.map((q) => (<blockquote class="border-l-2 border-[#8953d1] pl-4 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300 dark:border-[#a175e8]">{q}</blockquote>))}</div>)}
+                    {item.notes?.core_ideas && item.notes.core_ideas.length > 0 && (<ul class="mt-4 space-y-2 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300">{item.notes.core_ideas.map((idea) => (<li class="flex gap-2"><span class="text-[#8953d1] dark:text-[#a175e8]">•</span><span>{idea}</span></li>))}</ul>)}
+                    {!hasNotes(item) && <p class="mt-4 font-serif text-sm text-gray-500"><span class="lang-en">No notes yet.</span><span class="lang-zh">暂无笔记。</span></p>}
+                  </div>
+                </div>
+              </div>
+            </Fragment>
+          ))}
+        </div>
+      </div>
+    )}
   </section>
 
-  <section data-tab-panel="film-tv" class="library-panel hidden space-y-10">
-    <div>
-      <div class="mb-4 flex items-center justify-between">
-        <h2 class="font-serif text-lg font-medium text-black dark:text-white">
-          <span class="lang-en">🎬 Films</span>
-          <span class="lang-zh">🎬 电影</span>
-        </h2>
-      </div>
-      <div class="grid gap-4 sm:grid-cols-3 lg:grid-cols-4">
-        {films.map((item, index) => {
-          const expandable = hasNotes(item);
-          return (
-            <Fragment>
-              <article class="library-card glow-card fade-in-up rounded-lg border border-purple-500/20 p-4 transition-all hover:border-purple-500/40 hover:shadow-[0_0_20px_#8953d122] dark:border-purple-500/15" style={`--delay: ${180 + index * 30}ms`} data-library-item data-tab-group="film-tv" data-tags={JSON.stringify(item.tags || [])}>
-                {expandable ? (
-                  <button type="button" class="block w-full text-left" data-library-toggle data-target={item.id} aria-expanded="false">
-                    {item.cover ? (
-                      <img src={item.cover} alt={`${item.title} poster`} loading="lazy" referrerpolicy="no-referrer" class={`mb-4 block w-full ${item.aspectClass} rounded-md object-cover object-center`} />
-                    ) : (
-                      <div class={`mb-4 flex ${item.aspectClass} items-center justify-center rounded-md px-4 text-center ${item.coverClass}`}><span class="font-serif text-base font-medium text-white">{item.title}</span></div>
-                    )}
-                    <h3 class="font-serif text-sm font-medium text-black dark:text-white">{item.title}</h3>
-                    {item.titleEn && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500">{item.titleEn}</p>}
-                    <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Film</span><span class="lang-zh">电影</span> · {item.year || "—"}</p>
-                    <div class="mt-3 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">💬 Notes</span><span class="lang-zh">💬 笔记</span></div>
-                  </button>
-                ) : (
-                  <div>
-                    {item.cover ? (
-                      <img src={item.cover} alt={`${item.title} poster`} loading="lazy" referrerpolicy="no-referrer" class={`mb-4 block w-full ${item.aspectClass} rounded-md object-cover object-center`} />
-                    ) : (
-                      <div class={`mb-4 flex ${item.aspectClass} items-center justify-center rounded-md px-4 text-center ${item.coverClass}`}><span class="font-serif text-base font-medium text-white">{item.title}</span></div>
-                    )}
-                    <h3 class="font-serif text-sm font-medium text-black dark:text-white">{item.title}</h3>
-                    {item.titleEn && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500">{item.titleEn}</p>}
-                    <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Film</span><span class="lang-zh">电影</span> · {item.year || "—"}</p>
-                  </div>
-                )}
-              </article>
-              {expandable && (
-                <div id={item.id} class="library-details col-span-full hidden fade-in-up rounded-lg border border-purple-500/20 px-5 py-4 dark:border-purple-500/15" data-library-detail data-detail-for={item.id} data-tab-group="film-tv">
-                  <h3 class="mb-3 font-serif text-lg font-medium text-black dark:text-white">{item.title}</h3>
-                  {item.notes?.quotes && item.notes.quotes.length > 0 && (<div class="mt-4 space-y-3">{item.notes.quotes.map((q) => (<blockquote class="border-l-2 border-[var(--color-quote)] pl-4 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300">{q}</blockquote>))}</div>)}
-                  {item.notes?.core_ideas && item.notes.core_ideas.length > 0 && (<ul class="mt-4 space-y-2 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300">{item.notes.core_ideas.map((idea) => (<li class="flex gap-2"><span class="text-[#8953d1] dark:text-[#a175e8]">•</span><span>{idea}</span></li>))}</ul>)}
-                </div>
-              )}
-            </Fragment>
-          );
-        })}
-      </div>
-    </div>
-
-    <div>
-      <div class="mb-4 flex items-center justify-between">
-        <h2 class="font-serif text-lg font-medium text-black dark:text-white">
-          <span class="lang-en">📺 Series</span>
-          <span class="lang-zh">📺 剧集</span>
-        </h2>
-      </div>
-      <div class="grid gap-4 sm:grid-cols-3 lg:grid-cols-4">
-        {series.map((item, index) => {
-          const expandable = hasNotes(item);
-          return (
-            <Fragment>
-              <article class="library-card glow-card fade-in-up rounded-lg border border-purple-500/20 p-4 transition-all hover:border-purple-500/40 hover:shadow-[0_0_20px_#8953d122] dark:border-purple-500/15" style={`--delay: ${220 + index * 30}ms`} data-library-item data-tab-group="film-tv" data-tags={JSON.stringify(item.tags || [])}>
-                {expandable ? (
-                  <button type="button" class="block w-full text-left" data-library-toggle data-target={item.id} aria-expanded="false">
-                    {item.cover ? (
-                      <img src={item.cover} alt={`${item.title} poster`} loading="lazy" referrerpolicy="no-referrer" class={`mb-4 block w-full ${item.aspectClass} rounded-md object-cover object-center`} />
-                    ) : (
-                      <div class={`mb-4 flex ${item.aspectClass} items-center justify-center rounded-md px-4 text-center ${item.coverClass}`}><span class="font-serif text-base font-medium text-white">{item.title}</span></div>
-                    )}
-                    <h3 class="font-serif text-sm font-medium text-black dark:text-white">{item.title}</h3>
-                    {item.titleEn && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500">{item.titleEn}</p>}
-                    <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Series</span><span class="lang-zh">剧集</span> · {item.year || "—"}</p>
-                    <div class="mt-3 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">💬 Notes</span><span class="lang-zh">💬 笔记</span></div>
-                  </button>
-                ) : (
-                  <div>
-                    {item.cover ? (
-                      <img src={item.cover} alt={`${item.title} poster`} loading="lazy" referrerpolicy="no-referrer" class={`mb-4 block w-full ${item.aspectClass} rounded-md object-cover object-center`} />
-                    ) : (
-                      <div class={`mb-4 flex ${item.aspectClass} items-center justify-center rounded-md px-4 text-center ${item.coverClass}`}><span class="font-serif text-base font-medium text-white">{item.title}</span></div>
-                    )}
-                    <h3 class="font-serif text-sm font-medium text-black dark:text-white">{item.title}</h3>
-                    {item.titleEn && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500">{item.titleEn}</p>}
-                    <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Series</span><span class="lang-zh">剧集</span> · {item.year || "—"}</p>
-                  </div>
-                )}
-              </article>
-              {expandable && (
-                <div id={item.id} class="library-details col-span-full hidden fade-in-up rounded-lg border border-purple-500/20 px-5 py-4 dark:border-purple-500/15" data-library-detail data-detail-for={item.id} data-tab-group="film-tv">
-                  <h3 class="mb-3 font-serif text-lg font-medium text-black dark:text-white">{item.title}</h3>
-                  {item.notes?.quotes && item.notes.quotes.length > 0 && (<div class="mt-4 space-y-3">{item.notes.quotes.map((q) => (<blockquote class="border-l-2 border-[var(--color-quote)] pl-4 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300">{q}</blockquote>))}</div>)}
-                  {item.notes?.core_ideas && item.notes.core_ideas.length > 0 && (<ul class="mt-4 space-y-2 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300">{item.notes.core_ideas.map((idea) => (<li class="flex gap-2"><span class="text-[#8953d1] dark:text-[#a175e8]">•</span><span>{idea}</span></li>))}</ul>)}
-                </div>
-              )}
-            </Fragment>
-          );
-        })}
-      </div>
-    </div>
-  </section>
-
-  <section data-tab-panel="variety" class="library-panel hidden">
+  <!-- ===== VARIETY PANEL ===== -->
+  <section data-panel="variety" class="lib-panel hidden">
     {variety.length > 0 ? (
-      <div class="grid gap-4 sm:grid-cols-3 lg:grid-cols-4">
-        {variety.map((item, index) => {
-          const expandable = hasNotes(item);
-          return (
-            <Fragment>
-              <article class="library-card glow-card fade-in-up rounded-lg border border-purple-500/20 p-4 transition-all hover:border-purple-500/40 hover:shadow-[0_0_20px_#8953d122] dark:border-purple-500/15" style={`--delay: ${180 + index * 30}ms`} data-library-item data-tab-group="variety" data-tags={JSON.stringify(item.tags || [])}>
-                {expandable ? (
-                  <button type="button" class="block w-full text-left" data-library-toggle data-target={item.id} aria-expanded="false">
-                    {item.cover ? (
-                      <img src={item.cover} alt={`${item.title} poster`} loading="lazy" referrerpolicy="no-referrer" class={`mb-4 block w-full ${item.aspectClass} rounded-md object-cover object-center`} />
-                    ) : (
-                      <div class={`mb-4 flex ${item.aspectClass} items-center justify-center rounded-md px-4 text-center ${item.coverClass}`}><span class="font-serif text-base font-medium text-white">{item.title}</span></div>
-                    )}
-                    <h3 class="font-serif text-sm font-medium text-black dark:text-white">{item.title}</h3>
-                    {item.titleEn && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500">{item.titleEn}</p>}
-                    <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Variety</span><span class="lang-zh">综艺</span> · {item.year || "—"}</p>
-                    <div class="mt-3 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">💬 Notes</span><span class="lang-zh">💬 笔记</span></div>
-                  </button>
-                ) : (
-                  <div>
-                    {item.cover ? (
-                      <img src={item.cover} alt={`${item.title} poster`} loading="lazy" referrerpolicy="no-referrer" class={`mb-4 block w-full ${item.aspectClass} rounded-md object-cover object-center`} />
-                    ) : (
-                      <div class={`mb-4 flex ${item.aspectClass} items-center justify-center rounded-md px-4 text-center ${item.coverClass}`}><span class="font-serif text-base font-medium text-white">{item.title}</span></div>
-                    )}
-                    <h3 class="font-serif text-sm font-medium text-black dark:text-white">{item.title}</h3>
-                    {item.titleEn && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500">{item.titleEn}</p>}
-                    <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Variety</span><span class="lang-zh">综艺</span> · {item.year || "—"}</p>
-                  </div>
-                )}
-              </article>
-              {expandable && (
-                <div id={item.id} class="library-details col-span-full hidden fade-in-up rounded-lg border border-purple-500/20 px-5 py-4 dark:border-purple-500/15" data-library-detail data-detail-for={item.id} data-tab-group="variety">
-                  <h3 class="mb-3 font-serif text-lg font-medium text-black dark:text-white">{item.title}</h3>
-                  {item.notes?.quotes && item.notes.quotes.length > 0 && (<div class="mt-4 space-y-3">{item.notes.quotes.map((q) => (<blockquote class="border-l-2 border-[var(--color-quote)] pl-4 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300">{q}</blockquote>))}</div>)}
-                  {item.notes?.core_ideas && item.notes.core_ideas.length > 0 && (<ul class="mt-4 space-y-2 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300">{item.notes.core_ideas.map((idea) => (<li class="flex gap-2"><span class="text-[#8953d1] dark:text-[#a175e8]">•</span><span>{idea}</span></li>))}</ul>)}
-                </div>
+      <div class="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
+        {variety.map((item) => (
+          <Fragment>
+            <article class="lib-card group cursor-pointer rounded-lg border border-purple-500/20 p-3 transition-all hover:border-purple-500/40 dark:border-purple-500/15" data-id={item.id} data-tags={JSON.stringify(item.tags)} data-group="variety">
+              {item.cover ? (
+                <img src={item.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="mb-3 block w-full aspect-[2/3] rounded-md object-cover object-center" />
+              ) : (
+                <div class={`mb-3 flex w-full aspect-[2/3] items-center justify-center rounded-md px-3 text-center ${item.coverClass}`}><span class="font-serif text-sm font-medium text-white">{item.title}</span></div>
               )}
-            </Fragment>
-          );
-        })}
+              <h3 class="font-serif text-sm font-medium text-black dark:text-white">{item.title}</h3>
+              {item.titleEn && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500">{item.titleEn}</p>}
+              <p class="mt-1 font-serif text-xs text-gray-400"><span class="lang-en">Variety</span><span class="lang-zh">综艺</span> · {item.year || "—"}</p>
+              {hasNotes(item) && <p class="mt-2 font-serif text-xs text-[#8953d1] dark:text-[#a175e8]">💬</p>}
+            </article>
+            <div class="lib-detail hidden" data-detail={item.id}>
+              <div class="flex flex-col sm:flex-row gap-5">
+                {item.cover ? (
+                  <img src={item.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="w-28 sm:w-36 aspect-[2/3] rounded-md object-cover shrink-0 shadow-lg" />
+                ) : (
+                  <div class={`w-28 sm:w-36 aspect-[2/3] flex items-center justify-center rounded-md shrink-0 shadow-lg ${item.coverClass}`}><span class="font-serif text-sm text-white">{item.title}</span></div>
+                )}
+                <div class="flex-1 min-w-0">
+                  <h3 class="font-serif text-lg font-medium text-black dark:text-white">{item.title}</h3>
+                  <p class="mt-1 font-serif text-sm text-gray-400">{item.year || "—"}</p>
+                  {item.notes?.quotes && item.notes.quotes.length > 0 && (<div class="mt-4 space-y-3">{item.notes.quotes.map((q) => (<blockquote class="border-l-2 border-[#8953d1] pl-4 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300 dark:border-[#a175e8]">{q}</blockquote>))}</div>)}
+                  {item.notes?.core_ideas && item.notes.core_ideas.length > 0 && (<ul class="mt-4 space-y-2 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300">{item.notes.core_ideas.map((idea) => (<li class="flex gap-2"><span class="text-[#8953d1] dark:text-[#a175e8]">•</span><span>{idea}</span></li>))}</ul>)}
+                  {!hasNotes(item) && <p class="mt-4 font-serif text-sm text-gray-500"><span class="lang-en">No notes yet.</span><span class="lang-zh">暂无笔记。</span></p>}
+                </div>
+              </div>
+            </div>
+          </Fragment>
+        ))}
       </div>
     ) : (
-      <div class="glow-card fade-in-up rounded-lg border border-dashed border-purple-500/20 px-5 py-8 font-serif text-sm text-gray-400 dark:border-purple-500/15 dark:text-gray-500" style="--delay: 180ms">
-        <p class="lang-en">Rex will add variety shows here later.</p>
-        <p class="lang-zh">综艺节目，敬请期待。</p>
-      </div>
+      <p class="font-serif text-sm text-gray-400"><span class="lang-en">Coming soon.</span><span class="lang-zh">敬请期待。</span></p>
     )}
   </section>
 
-  <section data-tab-panel="documentary" class="library-panel hidden">
+  <!-- ===== DOCUMENTARY PANEL ===== -->
+  <section data-panel="documentary" class="lib-panel hidden">
     {documentary.length > 0 ? (
-      <div class="grid gap-4 sm:grid-cols-3 lg:grid-cols-4">
-        {documentary.map((item, index) => {
-          const expandable = hasNotes(item);
-          return (
-            <Fragment>
-              <article class="library-card glow-card fade-in-up rounded-lg border border-purple-500/20 p-4 transition-all hover:border-purple-500/40 hover:shadow-[0_0_20px_#8953d122] dark:border-purple-500/15" style={`--delay: ${180 + index * 30}ms`} data-library-item data-tab-group="documentary" data-tags={JSON.stringify(item.tags || [])}>
-                {expandable ? (
-                  <button type="button" class="block w-full text-left" data-library-toggle data-target={item.id} aria-expanded="false">
-                    {item.cover ? (
-                      <img src={item.cover} alt={`${item.title} poster`} loading="lazy" referrerpolicy="no-referrer" class={`mb-4 block w-full ${item.aspectClass} rounded-md object-cover object-center`} />
-                    ) : (
-                      <div class={`mb-4 flex ${item.aspectClass} items-center justify-center rounded-md px-4 text-center ${item.coverClass}`}><span class="font-serif text-base font-medium text-white">{item.title}</span></div>
-                    )}
-                    <h3 class="font-serif text-sm font-medium text-black dark:text-white">{item.title}</h3>
-                    {item.titleEn && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500">{item.titleEn}</p>}
-                    <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Documentary</span><span class="lang-zh">纪录片</span> · {item.year || "—"}</p>
-                    <div class="mt-3 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">💬 Notes</span><span class="lang-zh">💬 笔记</span></div>
-                  </button>
-                ) : (
-                  <div>
-                    {item.cover ? (
-                      <img src={item.cover} alt={`${item.title} poster`} loading="lazy" referrerpolicy="no-referrer" class={`mb-4 block w-full ${item.aspectClass} rounded-md object-cover object-center`} />
-                    ) : (
-                      <div class={`mb-4 flex ${item.aspectClass} items-center justify-center rounded-md px-4 text-center ${item.coverClass}`}><span class="font-serif text-base font-medium text-white">{item.title}</span></div>
-                    )}
-                    <h3 class="font-serif text-sm font-medium text-black dark:text-white">{item.title}</h3>
-                    {item.titleEn && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500">{item.titleEn}</p>}
-                    <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Documentary</span><span class="lang-zh">纪录片</span> · {item.year || "—"}</p>
-                  </div>
-                )}
-              </article>
-              {expandable && (
-                <div id={item.id} class="library-details col-span-full hidden fade-in-up rounded-lg border border-purple-500/20 px-5 py-4 dark:border-purple-500/15" data-library-detail data-detail-for={item.id} data-tab-group="documentary">
-                  <h3 class="mb-3 font-serif text-lg font-medium text-black dark:text-white">{item.title}</h3>
-                  {item.notes?.quotes && item.notes.quotes.length > 0 && (<div class="mt-4 space-y-3">{item.notes.quotes.map((q) => (<blockquote class="border-l-2 border-[var(--color-quote)] pl-4 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300">{q}</blockquote>))}</div>)}
-                  {item.notes?.core_ideas && item.notes.core_ideas.length > 0 && (<ul class="mt-4 space-y-2 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300">{item.notes.core_ideas.map((idea) => (<li class="flex gap-2"><span class="text-[#8953d1] dark:text-[#a175e8]">•</span><span>{idea}</span></li>))}</ul>)}
-                </div>
+      <div class="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
+        {documentary.map((item) => (
+          <Fragment>
+            <article class="lib-card group cursor-pointer rounded-lg border border-purple-500/20 p-3 transition-all hover:border-purple-500/40 dark:border-purple-500/15" data-id={item.id} data-tags={JSON.stringify(item.tags)} data-group="documentary">
+              {item.cover ? (
+                <img src={item.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="mb-3 block w-full aspect-[2/3] rounded-md object-cover object-center" />
+              ) : (
+                <div class={`mb-3 flex w-full aspect-[2/3] items-center justify-center rounded-md px-3 text-center ${item.coverClass}`}><span class="font-serif text-sm font-medium text-white">{item.title}</span></div>
               )}
-            </Fragment>
-          );
-        })}
+              <h3 class="font-serif text-sm font-medium text-black dark:text-white">{item.title}</h3>
+              {item.titleEn && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500">{item.titleEn}</p>}
+              <p class="mt-1 font-serif text-xs text-gray-400"><span class="lang-en">Documentary</span><span class="lang-zh">纪录片</span> · {item.year || "—"}</p>
+              {hasNotes(item) && <p class="mt-2 font-serif text-xs text-[#8953d1] dark:text-[#a175e8]">💬</p>}
+            </article>
+            <div class="lib-detail hidden" data-detail={item.id}>
+              <div class="flex flex-col sm:flex-row gap-5">
+                {item.cover ? (
+                  <img src={item.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="w-28 sm:w-36 aspect-[2/3] rounded-md object-cover shrink-0 shadow-lg" />
+                ) : (
+                  <div class={`w-28 sm:w-36 aspect-[2/3] flex items-center justify-center rounded-md shrink-0 shadow-lg ${item.coverClass}`}><span class="font-serif text-sm text-white">{item.title}</span></div>
+                )}
+                <div class="flex-1 min-w-0">
+                  <h3 class="font-serif text-lg font-medium text-black dark:text-white">{item.title}</h3>
+                  <p class="mt-1 font-serif text-sm text-gray-400">{item.year || "—"}</p>
+                  {item.notes?.quotes && item.notes.quotes.length > 0 && (<div class="mt-4 space-y-3">{item.notes.quotes.map((q) => (<blockquote class="border-l-2 border-[#8953d1] pl-4 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300 dark:border-[#a175e8]">{q}</blockquote>))}</div>)}
+                  {item.notes?.core_ideas && item.notes.core_ideas.length > 0 && (<ul class="mt-4 space-y-2 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300">{item.notes.core_ideas.map((idea) => (<li class="flex gap-2"><span class="text-[#8953d1] dark:text-[#a175e8]">•</span><span>{idea}</span></li>))}</ul>)}
+                  {!hasNotes(item) && <p class="mt-4 font-serif text-sm text-gray-500"><span class="lang-en">No notes yet.</span><span class="lang-zh">暂无笔记。</span></p>}
+                </div>
+              </div>
+            </div>
+          </Fragment>
+        ))}
       </div>
     ) : (
-      <div class="glow-card fade-in-up rounded-lg border border-dashed border-purple-500/20 px-5 py-8 font-serif text-sm text-gray-400 dark:border-purple-500/15 dark:text-gray-500" style="--delay: 180ms">
-        <p class="lang-en">Rex will add documentaries here later.</p>
-        <p class="lang-zh">纪录片，敬请期待。</p>
-      </div>
+      <p class="font-serif text-sm text-gray-400"><span class="lang-en">Coming soon.</span><span class="lang-zh">敬请期待。</span></p>
     )}
   </section>
-
-  <!-- Notes Modal -->
-  <div id="library-modal" class="fixed inset-0 z-50 items-center justify-center p-4" style="display:none;background:rgba(0,0,0,0.6);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)">
-    <div id="library-modal-content" class="relative max-h-[80vh] w-full max-w-xl overflow-y-auto rounded-xl border border-purple-500/30 bg-white/95 px-6 py-5 shadow-2xl dark:bg-gray-900/95 dark:border-purple-500/20" style="transform:scale(0.95);opacity:0;transition:transform 0.2s ease,opacity 0.2s ease">
-      <div class="library-modal-handle mx-auto mb-4 h-1.5 w-12 rounded-full bg-gray-300/90 dark:bg-gray-600/90"></div>
-      <button type="button" id="library-modal-close" class="absolute right-4 top-4 font-serif text-lg text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]">✕</button>
-      <div id="library-modal-body"></div>
-    </div>
-  </div>
 
   <style>
-    /* Hide cover in inline detail panels (only show in modal) */
-    .library-details .detail-cover { display: none; }
-    #library-modal-body .detail-cover { display: block; }
-    .library-card { perspective: 800px; }
-    .library-card-inner { transition: transform 0.3s ease, box-shadow 0.3s ease; transform-style: preserve-3d; }
-    .library-card.scroll-reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease, transform 0.5s ease; }
-    .library-card.scroll-reveal.revealed { opacity: 1; transform: translateY(0); }
-    .library-panel { transition: opacity 0.2s ease; }
-    .library-panel.fading { opacity: 0; }
-    .books-view-stage { position: relative; }
-    .library-books-view { transition: opacity 0.28s ease, transform 0.28s ease; }
-    .library-books-view.is-transitioning { opacity: 0; transform: translateY(8px); }
-    #library-modal.modal-open { display: flex; }
-    #library-modal.modal-open #library-modal-content { transform: scale(1); opacity: 1; }
-    #library-modal.modal-closing { display: flex; }
-    #library-modal.modal-closing #library-modal-content { transform: scale(0.95); opacity: 0; }
-    .library-modal-handle { display: none; }
-
-    .library-shelf-stage { display: flex; flex-direction: column; gap: 1.25rem; }
-    .shelf-row {
-      position: relative;
-      display: flex;
-      flex-direction: row;
-      flex-wrap: nowrap;
-      align-items: flex-end;
-      justify-content: flex-start;
-      gap: 0.35rem;
-      padding: 1.25rem 1rem 1.1rem;
-      border-bottom: 10px solid rgba(120, 76, 42, 0.42);
-      border-image: linear-gradient(90deg, rgba(82, 49, 24, 0.62), rgba(168, 121, 77, 0.85), rgba(82, 49, 24, 0.62)) 1;
-      background: linear-gradient(180deg, rgba(137,83,209,0.03), rgba(137,83,209,0));
-      overflow-x: auto;
-      scrollbar-width: none;
+    .lib-panel { transition: opacity 0.2s ease; }
+    .lib-detail {
+      grid-column: 1 / -1;
+      border: 1px solid rgba(137,83,209,0.2);
+      border-radius: 0.5rem;
+      padding: 1.25rem;
+      animation: slideDown 0.25s ease;
     }
-    .shelf-row::-webkit-scrollbar { display: none; }
-    .shelf-book {
-      position: relative;
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-      width: clamp(32px, 3vw, 40px);
-      min-height: 240px;
-      flex: 0 0 clamp(32px, 3vw, 40px);
-      background: transparent;
-      border: 0;
-      padding: 0;
-      cursor: pointer;
-      transition: transform 0.28s ease, filter 0.28s ease;
+    .lib-detail.hidden { display: none; }
+    .lib-card.is-active {
+      border-color: rgba(137,83,209,0.6);
+      box-shadow: 0 0 24px rgba(137,83,209,0.15);
     }
-    .shelf-book:hover { transform: translateY(-24px); filter: drop-shadow(0 18px 30px rgba(17, 24, 39, 0.24)); }
-    .shelf-spine {
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: clamp(32px, 3vw, 40px);
-      height: var(--shelf-height);
-      border-radius: 10px 10px 4px 4px;
-      overflow: hidden;
-      box-shadow: 0 10px 25px rgba(17, 24, 39, 0.15), inset 1px 0 0 rgba(255,255,255,0.22), inset -2px 0 0 rgba(0,0,0,0.14);
-      transition: transform 0.28s ease;
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
     }
-    .shelf-spine-sheen { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(255,255,255,0.24), transparent 30%, transparent 72%, rgba(0,0,0,0.14)); }
-    .shelf-spine-title {
-      position: relative;
-      z-index: 1;
-      padding: 0.75rem 0.25rem;
-      font-family: Georgia, serif;
-      font-size: 0.74rem;
-      line-height: 1.15;
-      letter-spacing: 0.04em;
-      color: white;
-      writing-mode: vertical-rl;
-      text-orientation: mixed;
-      white-space: normal;
-      max-height: calc(var(--shelf-height) - 18px);
-      overflow: hidden;
+    .lib-tab { transition: all 0.15s ease; }
+    .tag-btn { transition: all 0.15s ease; }
+    .tag-btn.active {
+      background: #8953d1; color: white; border-color: #8953d1;
     }
-    .shelf-spine-dot {
-      position: absolute;
-      left: 50%;
-      bottom: 10px;
-      z-index: 1;
-      width: 6px;
-      height: 6px;
-      margin-left: -3px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.75);
-      box-shadow: 0 0 12px rgba(255,255,255,0.4);
+    :global(.dark) .tag-btn.active {
+      background: #a175e8; color: black; border-color: #a175e8;
     }
-    .shelf-book-preview {
-      position: absolute;
-      left: 50%;
-      bottom: 14px;
-      width: 108px;
-      aspect-ratio: 2 / 3;
-      transform: translateX(-50%) translateY(10px) scale(0.92);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.28s ease, transform 0.28s ease;
-      z-index: 0;
-    }
-    .shelf-book:hover .shelf-book-preview { opacity: 1; transform: translateX(-50%) translateY(-44px) scale(1); }
-    .shelf-book:hover .shelf-spine { transform: translateY(-2px) scale(1.02); }
-
-    @media (max-width: 639px) {
-      .shelf-row { gap: 0.3rem; padding-inline: 0.5rem; }
-      .shelf-book { width: clamp(30px, 10vw, 36px); min-height: 214px; flex-basis: clamp(30px, 10vw, 36px); }
-      .shelf-book-preview { width: 82px; }
-      #library-modal { align-items: flex-end; padding: 0; }
-      #library-modal-content {
-        width: 100%;
-        max-width: none;
-        max-height: 80vh;
-        margin: 0;
-        border-radius: 16px 16px 0 0;
-        padding: 0.9rem 1.25rem 1.25rem;
-        transform: translateY(100%);
-        opacity: 1;
-        transition: transform 0.3s ease-out, opacity 0.3s ease-out;
-      }
-      #library-modal.modal-open #library-modal-content { transform: translateY(0); opacity: 1; }
-      #library-modal.modal-closing #library-modal-content { transform: translateY(100%); opacity: 1; }
-      .library-modal-handle { display: block; }
-      #library-modal-close { top: 0.85rem; }
-      #library-modal-body { padding-bottom: max(1rem, env(safe-area-inset-bottom)); }
-    }
-
   </style>
 
   <script is:inline>
-    const tabButtons = Array.from(document.querySelectorAll('[data-tab-button]'));
-    const tabPanels = Array.from(document.querySelectorAll('[data-tab-panel]'));
-    const detailPanels = Array.from(document.querySelectorAll('[data-library-detail]'));
-    const tagFilterRoot = document.getElementById('library-tag-filters');
-    const libraryItems = Array.from(document.querySelectorAll('[data-library-item]'));
-    const cards = Array.from(document.querySelectorAll('.library-card'));
-    const modal = document.getElementById('library-modal');
-    const modalBody = document.getElementById('library-modal-body');
-    const modalClose = document.getElementById('library-modal-close');
-    const booksViewButtons = Array.from(document.querySelectorAll('[data-books-view-button]'));
-    const booksViews = Array.from(document.querySelectorAll('[data-books-view]'));
-    const shelfStage = document.querySelector('[data-shelf-stage]');
     let activeTab = 'books';
     let activeTag = '全部';
-    let activeBooksView = 'grid';
-    let modalCloseTimer;
+    let openDetailId = null;
 
-    // === COUNT-UP ANIMATION ===
+    // Count-up
     document.querySelectorAll('[data-countup]').forEach(el => {
       const target = parseInt(el.dataset.countup, 10);
-      const duration = 1000;
       const start = performance.now();
       const step = (now) => {
-        const progress = Math.min((now - start) / duration, 1);
-        const eased = 1 - Math.pow(1 - progress, 3);
-        el.textContent = Math.round(eased * target);
-        if (progress < 1) requestAnimationFrame(step);
+        const p = Math.min((now - start) / 1000, 1);
+        el.textContent = Math.round((1 - Math.pow(1 - p, 3)) * target);
+        if (p < 1) requestAnimationFrame(step);
       };
       requestAnimationFrame(step);
     });
 
-    // === 3D TILT EFFECT ===
-    cards.forEach(card => {
-      card.addEventListener('mousemove', (e) => {
-        const rect = card.getBoundingClientRect();
-        const x = (e.clientX - rect.left) / rect.width - 0.5;
-        const y = (e.clientY - rect.top) / rect.height - 0.5;
-        card.style.transform = `perspective(800px) rotateY(${x * 12}deg) rotateX(${-y * 12}deg)`;
-        card.style.boxShadow = `${-x * 15}px ${y * 15}px 30px rgba(137,83,209,0.12)`;
+    // Tab switching
+    const tabs = document.querySelectorAll('.lib-tab');
+    const panels = document.querySelectorAll('.lib-panel');
+
+    function switchTab(tab) {
+      activeTab = tab;
+      activeTag = '全部';
+      closeDetail();
+      tabs.forEach(t => {
+        const active = t.dataset.tab === tab;
+        t.setAttribute('aria-pressed', active);
+        t.classList.toggle('border-[#8953d1]', active);
+        t.classList.toggle('text-[#8953d1]', active);
+        t.classList.toggle('dark:text-[#a175e8]', active);
+        t.classList.toggle('border-transparent', !active);
+        t.classList.toggle('text-gray-400', !active);
       });
-      card.addEventListener('mouseleave', () => {
-        card.style.transform = '';
-        card.style.boxShadow = '';
-      });
-    });
+      panels.forEach(p => p.classList.toggle('hidden', p.dataset.panel !== tab));
+      renderTags();
+      applyTagFilter();
+    }
 
-    // === SCROLL REVEAL ===
-    cards.forEach(card => card.classList.add('scroll-reveal'));
-    const revealObserver = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          const card = entry.target;
-          const siblings = Array.from(card.parentElement?.querySelectorAll('.scroll-reveal:not(.revealed)') || []);
-          const idx = siblings.indexOf(card);
-          setTimeout(() => card.classList.add('revealed'), Math.max(0, idx) * 50);
-          revealObserver.unobserve(card);
-        }
-      });
-    }, { threshold: 0.1, rootMargin: '0px 0px 50px 0px' });
-    cards.forEach(card => revealObserver.observe(card));
+    tabs.forEach(t => t.addEventListener('click', () => switchTab(t.dataset.tab)));
 
-    // === MODAL ===
-    const openModal = (detailEl) => {
-      if (!modal || !modalBody || !detailEl) return;
-      if (modalCloseTimer) { clearTimeout(modalCloseTimer); modalCloseTimer = undefined; }
-      modalBody.innerHTML = detailEl.innerHTML;
-      modal.style.display = 'flex';
-      modal.classList.remove('modal-closing');
-      void modal.offsetWidth;
-      modal.classList.add('modal-open');
-      document.body.style.overflow = 'hidden';
-    };
-    const closeModal = () => {
-      if (!modal || modal.style.display === 'none') return;
-      modal.classList.remove('modal-open');
-      modal.classList.add('modal-closing');
-      document.body.style.overflow = '';
-      if (modalCloseTimer) clearTimeout(modalCloseTimer);
-      modalCloseTimer = window.setTimeout(() => {
-        modal.style.display = 'none';
-        modal.classList.remove('modal-closing');
-      }, window.innerWidth < 640 ? 300 : 200);
-    };
-    if (modalClose) modalClose.addEventListener('click', closeModal);
-    if (modal) modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+    // Tag filters
+    const tagRoot = document.getElementById('tag-filters');
 
-    // === TAB SWITCHING WITH FADE ===
-    const closeAllDetails = () => {
-      detailPanels.forEach((panel) => panel.classList.add('hidden'));
-      document.querySelectorAll('[data-library-toggle]').forEach((b) => b.setAttribute('aria-expanded', 'false'));
-    };
-
-    const createTagButton = (label, selected) => {
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.dataset.tagFilter = label;
-      button.textContent = label;
-      button.className = 'glow-card inline-flex items-center rounded-full border px-4 py-2 font-serif text-sm transition-all';
-      if (selected) {
-        button.classList.add('border-[#8953d1]', 'bg-[#8953d1]', 'text-white', 'dark:border-[#a175e8]', 'dark:bg-[#a175e8]', 'dark:text-black');
-      } else {
-        button.classList.add('border-purple-500/20', 'text-gray-500', 'hover:border-[#8953d1]', 'hover:text-[#8953d1]', 'dark:border-purple-500/15', 'dark:text-gray-400', 'dark:hover:border-[#a175e8]', 'dark:hover:text-[#a175e8]');
-      }
-      button.addEventListener('click', () => {
-        activeTag = label === '全部' ? '全部' : activeTag === label ? '全部' : label;
-        closeAllDetails();
-        renderTagFilters();
-        applyFilters();
-      });
-      return button;
-    };
-
-    const tagsForTab = (tab) => {
+    function getTagsForTab() {
       const tags = new Set();
-      libraryItems.filter((item) => item.dataset.tabGroup === tab).forEach((item) => {
-        try { JSON.parse(item.dataset.tags || '[]').forEach((tag) => tags.add(tag)); } catch {}
+      document.querySelectorAll(`.lib-card[data-group="${activeTab}"]`).forEach(card => {
+        try { JSON.parse(card.dataset.tags || '[]').forEach(t => tags.add(t)); } catch {}
       });
       return ['全部', ...Array.from(tags).sort((a, b) => a.localeCompare(b, 'zh-Hans-CN'))];
-    };
+    }
 
-    const renderTagFilters = () => {
-      if (!tagFilterRoot) return;
-      const tags = tagsForTab(activeTab);
-      if (!tags.includes(activeTag)) activeTag = '全部';
-      tagFilterRoot.replaceChildren(...tags.map((tag) => createTagButton(tag, tag === activeTag)));
-    };
-
-    // === SHELF ROW LAYOUT (respects current filter) ===
-    const layoutShelfRows = () => {
-      if (!shelfStage) return;
-      const allBooks = Array.from(shelfStage.querySelectorAll('[data-shelf-book]'));
-      if (!allBooks.length) return;
-
-      // Determine which books are visible based on current tag filter
-      const visibleBooks = allBooks.filter((book) => {
-        if (activeTag === '全部') return true;
-        try { return JSON.parse(book.dataset.tags || '[]').includes(activeTag); } catch { return false; }
+    function renderTags() {
+      const tags = getTagsForTab();
+      tagRoot.innerHTML = '';
+      tags.forEach(tag => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.textContent = tag;
+        btn.className = 'tag-btn rounded-full border border-purple-500/20 px-4 py-2 font-serif text-sm text-gray-500 dark:border-purple-500/15 dark:text-gray-400';
+        if (tag === activeTag) btn.classList.add('active');
+        btn.addEventListener('click', () => {
+          activeTag = tag === activeTag ? '全部' : tag;
+          closeDetail();
+          renderTags();
+          applyTagFilter();
+        });
+        tagRoot.appendChild(btn);
       });
-      const hiddenBooks = allBooks.filter((book) => !visibleBooks.includes(book));
+    }
 
-      const width = window.innerWidth;
-      const columns = width >= 1536 ? 16 : width >= 1280 ? 14 : width >= 1024 ? 12 : width >= 768 ? 10 : width >= 640 ? 8 : 7;
-      const frag = document.createDocumentFragment();
-
-      // Layout visible books into rows
-      for (let i = 0; i < visibleBooks.length; i += columns) {
-        const row = document.createElement('div');
-        row.className = 'shelf-row';
-        visibleBooks.slice(i, i + columns).forEach((book) => {
-          book.classList.remove('hidden');
-          book.style.display = '';
-          row.appendChild(book);
-        });
-        frag.appendChild(row);
-      }
-
-      // Put hidden books in a hidden container so they stay in DOM
-      if (hiddenBooks.length) {
-        const hiddenRow = document.createElement('div');
-        hiddenRow.className = 'shelf-row hidden';
-        hiddenRow.style.display = 'none';
-        hiddenBooks.forEach((book) => {
-          book.classList.add('hidden');
-          book.style.display = 'none';
-          hiddenRow.appendChild(book);
-        });
-        frag.appendChild(hiddenRow);
-      }
-
-      shelfStage.replaceChildren(frag);
-    };
-
-    const applyFilters = () => {
-      // For grid view items and non-books
-      libraryItems.forEach((item) => {
-        const inActiveTab = item.dataset.tabGroup === activeTab;
-        const matchesView = activeTab !== 'books' || (item.dataset.view || 'grid') === activeBooksView;
-        let matchesTag = true;
-        if (activeTag !== '全部') {
-          try { matchesTag = JSON.parse(item.dataset.tags || '[]').includes(activeTag); } catch { matchesTag = false; }
+    function applyTagFilter() {
+      document.querySelectorAll(`.lib-card[data-group="${activeTab}"]`).forEach(card => {
+        if (activeTag === '全部') {
+          card.style.display = '';
+        } else {
+          try {
+            const tags = JSON.parse(card.dataset.tags || '[]');
+            card.style.display = tags.includes(activeTag) ? '' : 'none';
+          } catch { card.style.display = 'none'; }
         }
-        const visible = inActiveTab && matchesView && matchesTag;
-        item.classList.toggle('hidden', !visible);
-        if (item instanceof HTMLElement) item.style.display = visible ? '' : 'none';
       });
-      detailPanels.forEach((panel) => {
-        if (panel.dataset.tabGroup !== activeTab) panel.classList.add('hidden');
-      });
-      // Re-layout shelf rows when in shelf view
-      if (activeTab === 'books' && activeBooksView === 'shelf') {
-        layoutShelfRows();
+    }
+
+    // Detail panel — inline expand below the row
+    function closeDetail() {
+      if (openDetailId) {
+        const oldDetail = document.querySelector(`.lib-detail[data-detail="${openDetailId}"]`);
+        const oldCard = document.querySelector(`.lib-card[data-id="${openDetailId}"]`);
+        if (oldDetail) { oldDetail.classList.add('hidden'); oldDetail.remove(); /* move back */ reattachDetail(oldDetail, oldCard); }
+        if (oldCard) oldCard.classList.remove('is-active');
+        openDetailId = null;
       }
-    };
+      // Also hide any visible details
+      document.querySelectorAll('.lib-detail:not(.hidden)').forEach(d => d.classList.add('hidden'));
+      document.querySelectorAll('.lib-card.is-active').forEach(c => c.classList.remove('is-active'));
+    }
 
-    const setBooksView = (view) => {
-      activeBooksView = view === 'shelf' ? 'shelf' : 'grid';
-      booksViewButtons.forEach((button) => {
-        const active = button.dataset.viewTarget === activeBooksView;
-        button.setAttribute('aria-pressed', active ? 'true' : 'false');
-        button.classList.toggle('bg-[#8953d1]', active);
-        button.classList.toggle('text-white', active);
-        button.classList.toggle('dark:bg-[#a175e8]', active);
-        button.classList.toggle('dark:text-black', active);
-        button.classList.toggle('text-gray-500', !active);
-        button.classList.toggle('dark:text-gray-400', !active);
-      });
-      booksViews.forEach((panel) => {
-        const active = panel.dataset.booksView === activeBooksView;
-        panel.classList.add('is-transitioning');
-        if (active) panel.classList.remove('hidden');
-        window.setTimeout(() => {
-          panel.classList.toggle('hidden', !active);
-          panel.classList.remove('is-transitioning');
-        }, active ? 16 : 220);
-      });
-      applyFilters();
-    };
-
-    const setActiveTab = (target) => {
-      const currentPanel = tabPanels.find(p => p.dataset.tabPanel === activeTab);
-      const newPanel = tabPanels.find(p => p.dataset.tabPanel === target);
-
-      if (currentPanel && newPanel && currentPanel !== newPanel) {
-        currentPanel.classList.add('fading');
-        setTimeout(() => {
-          activeTab = target;
-          tabButtons.forEach((button) => {
-            const active = button.dataset.tabTarget === target;
-            button.setAttribute('aria-pressed', active ? 'true' : 'false');
-            button.classList.toggle('border-[#8953d1]', active);
-            button.classList.toggle('text-[#8953d1]', active);
-            button.classList.toggle('dark:text-[#a175e8]', active);
-            button.classList.toggle('border-transparent', !active);
-            button.classList.toggle('text-gray-400', !active);
-            button.classList.toggle('dark:text-gray-500', !active);
-          });
-          tabPanels.forEach((panel) => {
-            panel.classList.remove('fading');
-            panel.classList.toggle('hidden', panel.dataset.tabPanel !== target);
-          });
-          renderTagFilters();
-          applyFilters();
-          newPanel.querySelectorAll('.library-card.scroll-reveal:not(.revealed)').forEach((card, i) => {
-            setTimeout(() => card.classList.add('revealed'), i * 50);
-          });
-        }, 200);
-      } else {
-        activeTab = target;
-        tabButtons.forEach((button) => {
-          const active = button.dataset.tabTarget === target;
-          button.setAttribute('aria-pressed', active ? 'true' : 'false');
-          button.classList.toggle('border-[#8953d1]', active);
-          button.classList.toggle('text-[#8953d1]', active);
-          button.classList.toggle('dark:text-[#a175e8]', active);
-          button.classList.toggle('border-transparent', !active);
-          button.classList.toggle('text-gray-400', !active);
-          button.classList.toggle('dark:text-gray-500', !active);
-        });
-        tabPanels.forEach((panel) => panel.classList.toggle('hidden', panel.dataset.tabPanel !== target));
-        renderTagFilters();
-        applyFilters();
+    function reattachDetail(detail, card) {
+      // Put detail back after its card (original position)
+      if (card && detail) {
+        card.insertAdjacentElement('afterend', detail);
+        detail.classList.add('hidden');
       }
-    };
+    }
 
-    booksViewButtons.forEach((button) => {
-      button.addEventListener('click', () => {
-        if (activeBooksView === (button.dataset.viewTarget || 'grid')) return;
-        closeAllDetails();
-        closeModal();
-        setBooksView(button.dataset.viewTarget || 'grid');
+    function openDetail(cardEl) {
+      const id = cardEl.dataset.id;
+      if (openDetailId === id) { closeDetail(); return; }
+      closeDetail();
+
+      const detail = document.querySelector(`.lib-detail[data-detail="${id}"]`);
+      if (!detail) return;
+
+      // Find the grid container
+      const grid = cardEl.closest('.grid');
+      if (!grid) return;
+
+      // Figure out which row this card is in
+      const cards = Array.from(grid.children).filter(el => el.classList.contains('lib-card') && el.style.display !== 'none');
+      const cardIndex = cards.indexOf(cardEl);
+      const style = getComputedStyle(grid);
+      const cols = style.gridTemplateColumns.split(' ').length;
+      const rowEnd = Math.min(cardIndex + (cols - (cardIndex % cols)), cards.length);
+      const lastCardInRow = cards[rowEnd - 1];
+
+      // Insert detail after the last card in this row
+      lastCardInRow.insertAdjacentElement('afterend', detail);
+      detail.classList.remove('hidden');
+      cardEl.classList.add('is-active');
+      openDetailId = id;
+
+      // Scroll into view
+      requestAnimationFrame(() => {
+        detail.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       });
-    });
+    }
 
-    // Initial shelf layout
-    layoutShelfRows();
-
-    window.addEventListener('resize', () => {
-      if (activeTab === 'books' && activeBooksView === 'shelf') layoutShelfRows();
-    });
-
-    tabButtons.forEach((button) => {
-      button.addEventListener('click', () => {
-        closeAllDetails();
-        closeModal();
-        activeTag = '全部';
-        setActiveTab(button.dataset.tabTarget || 'books');
-      });
-    });
-
-    // === EVENT DELEGATION for book/media click → open modal ===
-    // Using delegation so it works even after DOM re-arrangement (shelf rows)
+    // Event delegation for card clicks
     document.addEventListener('click', (e) => {
-      const toggle = e.target.closest('[data-library-toggle]');
-      if (!toggle) return;
-      const targetId = toggle.dataset.target;
-      if (!targetId) return;
-      const panel = document.getElementById(targetId);
-      if (panel) {
+      const card = e.target.closest('.lib-card');
+      if (card) {
         e.preventDefault();
-        e.stopPropagation();
-        openModal(panel);
+        openDetail(card);
       }
     });
 
-    setActiveTab(activeTab);
-    setBooksView(activeBooksView);
+    // Init
+    renderTags();
   </script>
 </PageLayout>
