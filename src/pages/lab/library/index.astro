@@ -215,7 +215,6 @@ function shelfHeightFor(index: number) {
       <div data-books-view="grid" class="library-books-view grid-view">
         <div class="grid gap-4 sm:grid-cols-3 lg:grid-cols-4">
           {books.map((item, index) => {
-            const expandable = hasNotes(item);
             return (
               <Fragment>
                 <article
@@ -226,14 +225,13 @@ function shelfHeightFor(index: number) {
                   data-view="grid"
                   data-tags={JSON.stringify(item.tags || [])}
                 >
-                  {expandable ? (
-                    <button
-                      type="button"
-                      class="block w-full text-left"
-                      data-library-toggle
-                      data-target={item.id}
-                      aria-expanded="false"
-                    >
+                  <button
+                    type="button"
+                    class="block w-full text-left"
+                    data-library-toggle
+                    data-target={item.id}
+                    aria-expanded="false"
+                  >
                       {item.cover ? (
                         <img
                           src={item.cover}
@@ -250,41 +248,13 @@ function shelfHeightFor(index: number) {
                       <h2 class="font-serif text-sm font-medium text-black dark:text-white">{item.title}</h2>
                       {item.titleEn && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500">{item.titleEn}</p>}
                       <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500">{item.subtitle}</p>
-                      {(item.rating || expandable) && (
-                        <div class="mt-3 flex flex-wrap items-center gap-3 font-serif text-xs text-gray-400 dark:text-gray-500">
-                          {item.rating && <span>⭐ {item.rating}</span>}
-                          {expandable && <span>💬 Notes</span>}
-                        </div>
-                      )}
+                      <div class="mt-3 flex flex-wrap items-center gap-3 font-serif text-xs text-gray-400 dark:text-gray-500">
+                        {item.rating && <span>⭐ {item.rating}</span>}
+                        <span>{hasNotes(item) ? '💬 Notes' : '↗ Details'}</span>
+                      </div>
                     </button>
-                  ) : (
-                    <div>
-                      {item.cover ? (
-                        <img
-                          src={item.cover}
-                          alt={`${item.title} cover`}
-                          loading="lazy"
-                          referrerpolicy="no-referrer"
-                          class={`mb-4 block w-full ${item.aspectClass} rounded-md object-cover object-center`}
-                        />
-                      ) : (
-                        <div class={`mb-4 flex ${item.aspectClass} items-center justify-center rounded-md px-4 text-center ${item.coverClass}`}>
-                          <span class="font-serif text-base font-medium text-white">{item.title}</span>
-                        </div>
-                      )}
-                      <h2 class="font-serif text-sm font-medium text-black dark:text-white">{item.title}</h2>
-                      {item.titleEn && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500">{item.titleEn}</p>}
-                      <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500">{item.subtitle}</p>
-                      {item.rating && (
-                        <div class="mt-3 flex flex-wrap items-center gap-3 font-serif text-xs text-gray-400 dark:text-gray-500">
-                          <span>⭐ {item.rating}</span>
-                        </div>
-                      )}
-                    </div>
-                  )}
                 </article>
-                {expandable && (
-                  <div
+                <div
                     id={item.id}
                     class="library-details col-span-full hidden fade-in-up rounded-lg border border-purple-500/20 px-5 py-4 dark:border-purple-500/15"
                     style={`--delay: ${210 + index * 30}ms`}
@@ -318,8 +288,12 @@ function shelfHeightFor(index: number) {
                         {item.notes.impact}
                       </p>
                     )}
+                    {!hasNotes(item) && (
+                      <p class="mt-4 font-serif text-sm leading-relaxed text-gray-500 dark:text-gray-400">
+                        No notes yet.
+                      </p>
+                    )}
                   </div>
-                )}
               </Fragment>
             );
           })}
@@ -340,10 +314,9 @@ function shelfHeightFor(index: number) {
                 data-tab-group="books"
                 data-view="shelf"
                 data-tags={JSON.stringify(item.tags || [])}
-                data-library-toggle={expandable ? '' : undefined}
-                data-target={expandable ? item.id : undefined}
+                data-library-toggle
+                data-target={item.id}
                 aria-expanded="false"
-                disabled={!expandable}
               >
                 <span class="shelf-book-preview">
                   {item.cover ? (
@@ -601,28 +574,31 @@ function shelfHeightFor(index: number) {
     .library-shelf-stage { display: flex; flex-direction: column; gap: 1.25rem; }
     .shelf-row {
       position: relative;
-      display: grid;
-      align-items: end;
-      gap: 0.75rem;
+      display: flex;
+      align-items: flex-end;
+      gap: 0.35rem;
       padding: 1.25rem 1rem 1.1rem;
       border-bottom: 10px solid rgba(120, 76, 42, 0.42);
       border-image: linear-gradient(90deg, rgba(82, 49, 24, 0.62), rgba(168, 121, 77, 0.85), rgba(82, 49, 24, 0.62)) 1;
       background: linear-gradient(180deg, rgba(137,83,209,0.03), rgba(137,83,209,0));
+      overflow-x: auto;
+      scrollbar-width: none;
     }
+    .shelf-row::-webkit-scrollbar { display: none; }
     .shelf-book {
       position: relative;
       display: flex;
       justify-content: center;
       align-items: flex-end;
       min-height: 240px;
+      flex: 0 0 auto;
       background: transparent;
       border: 0;
       padding: 0;
       cursor: pointer;
       transition: transform 0.28s ease, filter 0.28s ease;
     }
-    .shelf-book:disabled { cursor: default; }
-    .shelf-book:not(:disabled):hover { transform: translateY(-24px); filter: drop-shadow(0 18px 30px rgba(17, 24, 39, 0.24)); }
+    .shelf-book:hover { transform: translateY(-24px); filter: drop-shadow(0 18px 30px rgba(17, 24, 39, 0.24)); }
     .shelf-spine {
       position: relative;
       display: flex;
@@ -675,12 +651,11 @@ function shelfHeightFor(index: number) {
       transition: opacity 0.28s ease, transform 0.28s ease;
       z-index: 0;
     }
-    .shelf-book:not(:disabled):hover .shelf-book-preview { opacity: 1; transform: translateX(-50%) translateY(-44px) scale(1); }
-    .shelf-book:not(:disabled):hover .shelf-spine { transform: translateY(-2px) scale(1.02); }
+    .shelf-book:hover .shelf-book-preview { opacity: 1; transform: translateX(-50%) translateY(-44px) scale(1); }
+    .shelf-book:hover .shelf-spine { transform: translateY(-2px) scale(1.02); }
 
-    @media (min-width: 640px) { .shelf-row { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
     @media (max-width: 639px) {
-      .shelf-row { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.5rem; padding-inline: 0.5rem; }
+      .shelf-row { gap: 0.3rem; padding-inline: 0.5rem; }
       .shelf-book { min-height: 214px; }
       .shelf-book-preview { width: 82px; }
       #library-modal { align-items: flex-end; padding: 0; }
@@ -701,9 +676,7 @@ function shelfHeightFor(index: number) {
       #library-modal-close { top: 0.85rem; }
       #library-modal-body { padding-bottom: max(1rem, env(safe-area-inset-bottom)); }
     }
-    @media (min-width: 768px) { .shelf-row { grid-template-columns: repeat(8, minmax(0, 1fr)); } }
-    @media (min-width: 1024px) { .shelf-row { grid-template-columns: repeat(10, minmax(0, 1fr)); } }
-    @media (min-width: 1280px) { .shelf-row { grid-template-columns: repeat(12, minmax(0, 1fr)); } }
+
   </style>
 
   <script is:inline>
