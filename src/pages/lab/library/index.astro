@@ -127,12 +127,7 @@ const meta = {
 
 const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m => hasNotes(m)).length;
 
-function formatTypeZh(format: LibraryItem["format"]) {
-  return format === "book" ? "书籍" : format === "movie" ? "电影" : format === "series" ? "剧集" : format === "documentary" ? "纪录片" : "综艺";
-}
-function formatType(format: LibraryItem["format"]) {
-  return format === "book" ? "Book" : format === "movie" ? "Film" : format === "series" ? "Series" : format === "documentary" ? "Documentary" : "Variety";
-}
+
 ---
 
 <PageLayout meta={meta}>
@@ -178,7 +173,7 @@ function formatType(format: LibraryItem["format"]) {
   <!-- ===== BOOKS PANEL ===== -->
   <section data-panel="books" class="lib-panel">
     <div class="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4" id="books-grid">
-      {books.map((item, idx) => (
+      {books.map((item) => (
         <Fragment>
           <article
             class="lib-card group cursor-pointer rounded-lg border border-purple-500/20 p-3 transition-all hover:border-purple-500/40 hover:shadow-[0_0_20px_#8953d122] dark:border-purple-500/15"
