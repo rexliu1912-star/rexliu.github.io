@@ -490,7 +490,6 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
         transform 0.5s ease,
         border-color 0.2s ease,
         box-shadow 0.2s ease;
-      will-change: transform;
     }
     .lib-card.revealed {
       opacity: 1;
@@ -579,12 +578,13 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
     #lib-modal-close:hover { background: rgba(137,83,209,0.2); }
 
     /* ── Shelf view ── */
-    .lib-view-toggle { transition: all 0.18s ease; }
+    :global(.lib-view-toggle) { transition: all 0.18s ease; }
     .books-shelf-view { display: none; }
     .books-shelf-view.active { display: block; }
     .books-grid-view.hidden-view { display: none; }
-    .lib-shelf-stage { display: flex; flex-direction: column; gap: 1.5rem; }
-    .shelf-row {
+    :global(.lib-shelf-stage) { display: flex; flex-direction: column; gap: 1.5rem; }
+    /* shelf-row is JS-created — must use :global to bypass Astro scoping */
+    :global(.shelf-row) {
       position: relative;
       display: flex; flex-direction: row; flex-wrap: nowrap;
       align-items: flex-end; justify-content: flex-start;
@@ -595,7 +595,7 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
       background: linear-gradient(180deg, rgba(137,83,209,0.03), rgba(137,83,209,0));
       overflow-x: auto; scrollbar-width: none;
     }
-    .shelf-row::-webkit-scrollbar { display: none; }
+    :global(.shelf-row::-webkit-scrollbar) { display: none; }
     .shelf-book {
       position: relative;
       display: flex; justify-content: center; align-items: flex-end;
@@ -605,7 +605,7 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
       background: transparent; border: 0; padding: 0; cursor: pointer;
       transition: transform 0.28s ease, filter 0.28s ease;
     }
-    .shelf-book:hover { transform: translateY(-22px); filter: drop-shadow(0 16px 28px rgba(17,24,39,0.28)); }
+    .shelf-book:hover { transform: translateY(-22px) !important; filter: drop-shadow(0 16px 28px rgba(17,24,39,0.28)); }
     .shelf-spine {
       position: relative;
       display: flex; align-items: center; justify-content: center;
@@ -689,14 +689,21 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
 
     // ── 3D hover tilt ─────────────────────────────────────────
     function attachTilt(card) {
+      card.addEventListener('mouseenter', () => {
+        // Override transition for snappy tilt
+        card.style.transition = 'transform 0.15s ease, box-shadow 0.15s ease';
+      });
       card.addEventListener('mousemove', (e) => {
         const r = card.getBoundingClientRect();
         const x = (e.clientX - r.left) / r.width - 0.5;
         const y = (e.clientY - r.top)  / r.height - 0.5;
-        card.style.transform = `perspective(700px) rotateX(${-y * 9}deg) rotateY(${x * 9}deg) scale(1.04) translateY(0px)`;
+        card.style.transform = `perspective(700px) rotateX(${-y * 8}deg) rotateY(${x * 8}deg) scale(1.04)`;
+        card.style.boxShadow = `${-x*12}px ${y*12}px 28px rgba(137,83,209,0.15)`;
       });
       card.addEventListener('mouseleave', () => {
+        card.style.transition = 'transform 0.35s ease, box-shadow 0.35s ease, opacity 0.5s ease, border-color 0.2s ease';
         card.style.transform = '';
+        card.style.boxShadow = '';
       });
     }
     document.querySelectorAll('.lib-card').forEach(attachTilt);
