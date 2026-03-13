@@ -133,7 +133,21 @@ function formatType(format: LibraryItem["format"]) {
       ? "Film"
       : format === "series"
         ? "Series"
-        : "Variety";
+        : format === "documentary"
+          ? "Documentary"
+          : "Variety";
+}
+
+function formatTypeZh(format: LibraryItem["format"]) {
+  return format === "book"
+    ? "书籍"
+    : format === "movie"
+      ? "电影"
+      : format === "series"
+        ? "剧集"
+        : format === "documentary"
+          ? "纪录片"
+          : "综艺";
 }
 
 function hasNotes(item: LibraryItem) {
@@ -177,23 +191,37 @@ function shelfHeightFor(index: number) {
       读过的书、看过的片，塑造了现在的我。
     </p>
     <p class="mt-4 font-serif text-sm text-gray-400 dark:text-gray-500">
-      <span data-countup={books.length}>0</span> books · <span data-countup={statsBookNotes + statsMediaNotes}>0</span> with notes · <span data-countup={media.length}>0</span> films & shows
+      <span data-countup={books.length}>0</span>
+      <span class="lang-en"> books</span>
+      <span class="lang-zh"> 本书</span>
+      ·
+      <span data-countup={statsBookNotes + statsMediaNotes}>0</span>
+      <span class="lang-en"> with notes</span>
+      <span class="lang-zh"> 有笔记</span>
+      ·
+      <span data-countup={media.length}>0</span>
+      <span class="lang-en"> films & shows</span>
+      <span class="lang-zh"> 部影视</span>
     </p>
   </section>
 
   <section class="mb-4 fade-in-up" style="--delay: 120ms">
     <div class="flex flex-wrap gap-6 border-b border-gray-200 font-serif text-sm dark:border-gray-800">
       <button type="button" class="library-tab inline-flex items-center gap-2 border-b-2 border-[#8953d1] pb-3 font-medium text-[#8953d1] transition-colors dark:text-[#a175e8]" data-tab-button data-tab-target="books" aria-pressed="true">
-        <span>📚 Books ({books.length})</span>
+        <span class="lang-en">📚 Books ({books.length})</span>
+        <span class="lang-zh">📚 书籍 ({books.length})</span>
       </button>
       <button type="button" class="library-tab inline-flex items-center gap-2 border-b-2 border-transparent pb-3 text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]" data-tab-button data-tab-target="film-tv" aria-pressed="false">
-        <span>🎬 Film & TV ({media.length})</span>
+        <span class="lang-en">🎬 Film & TV ({media.length})</span>
+        <span class="lang-zh">🎬 影视 ({media.length})</span>
       </button>
       <button type="button" class="library-tab inline-flex items-center gap-2 border-b-2 border-transparent pb-3 text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]" data-tab-button data-tab-target="variety" aria-pressed="false">
-        <span>🎭 Variety ({variety.length})</span>
+        <span class="lang-en">🎭 Variety ({variety.length})</span>
+        <span class="lang-zh">🎭 综艺 ({variety.length})</span>
       </button>
       <button type="button" class="library-tab inline-flex items-center gap-2 border-b-2 border-transparent pb-3 text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]" data-tab-button data-tab-target="documentary" aria-pressed="false">
-        <span>🎬 Documentary ({documentary.length})</span>
+        <span class="lang-en">🎬 Documentary ({documentary.length})</span>
+        <span class="lang-zh">🎬 纪录片 ({documentary.length})</span>
       </button>
     </div>
   </section>
@@ -204,7 +232,10 @@ function shelfHeightFor(index: number) {
 
   <section data-tab-panel="books" class="library-panel space-y-4">
     <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-      <p class="font-serif text-sm text-gray-400 dark:text-gray-500">Browse by tag, then switch between the classic grid and a shelf-style view.</p>
+      <div class="font-serif text-sm text-gray-400 dark:text-gray-500">
+        <p class="lang-en">Browse by tag, then switch between the classic grid and a shelf-style view.</p>
+        <p class="lang-zh">按标签浏览，可切换网格和书架两种视图。</p>
+      </div>
       <div class="inline-flex w-fit items-center rounded-full border border-purple-500/20 bg-white/70 p-1 font-serif text-sm shadow-[0_0_20px_#8953d10f] backdrop-blur dark:border-purple-500/15 dark:bg-gray-900/60">
         <button type="button" class="library-view-toggle rounded-full bg-[#8953d1] px-4 py-2 text-white transition-all dark:bg-[#a175e8] dark:text-black" data-books-view-button data-view-target="grid" aria-pressed="true">📚 Grid</button>
         <button type="button" class="library-view-toggle rounded-full px-4 py-2 text-gray-500 transition-all hover:text-[#8953d1] dark:text-gray-400 dark:hover:text-[#a175e8]" data-books-view-button data-view-target="shelf" aria-pressed="false">📖 Shelf</button>
@@ -250,7 +281,17 @@ function shelfHeightFor(index: number) {
                       <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500">{item.subtitle}</p>
                       <div class="mt-3 flex flex-wrap items-center gap-3 font-serif text-xs text-gray-400 dark:text-gray-500">
                         {item.rating && <span>⭐ {item.rating}</span>}
-                        <span>{hasNotes(item) ? '💬 Notes' : '↗ Details'}</span>
+                        {hasNotes(item) ? (
+                          <>
+                            <span class="lang-en">💬 Notes</span>
+                            <span class="lang-zh">💬 笔记</span>
+                          </>
+                        ) : (
+                          <>
+                            <span class="lang-en">↗ Details</span>
+                            <span class="lang-zh">↗ 详情</span>
+                          </>
+                        )}
                       </div>
                     </button>
                 </article>
@@ -266,7 +307,14 @@ function shelfHeightFor(index: number) {
                       <h3 class="font-serif text-lg font-medium text-black dark:text-white">{item.title}</h3>
                       <p class="font-serif text-sm text-gray-400 dark:text-gray-500">{item.subtitle}</p>
                     </div>
-                    <p class="font-serif text-sm text-gray-400 dark:text-gray-500">{badgeLine(item)}</p>
+                    <p class="font-serif text-sm text-gray-400 dark:text-gray-500">
+                      {item.rating && <span>{item.rating} · </span>}
+                      <span class="lang-en">{formatType(item.format)}</span>
+                      <span class="lang-zh">{formatTypeZh(item.format)}</span>
+                      {item.meta && <span> · {item.meta}</span>}
+                      {item.year && <span> · {item.year}</span>}
+                      {item.tags.length > 0 && <span> · {item.tags.join(" · ")}</span>}
+                    </p>
                     {item.notes?.quotes && item.notes.quotes.length > 0 && (
                       <div class="mt-4 space-y-3">
                         {item.notes.quotes.map((quote) => (
@@ -289,9 +337,10 @@ function shelfHeightFor(index: number) {
                       </p>
                     )}
                     {!hasNotes(item) && (
-                      <p class="mt-4 font-serif text-sm leading-relaxed text-gray-500 dark:text-gray-400">
-                        No notes yet.
-                      </p>
+                      <div class="mt-4 font-serif text-sm leading-relaxed text-gray-500 dark:text-gray-400">
+                        <p class="lang-en">No notes yet.</p>
+                        <p class="lang-zh">暂无笔记。</p>
+                      </div>
                     )}
                   </div>
               </Fragment>
@@ -349,7 +398,10 @@ function shelfHeightFor(index: number) {
   <section data-tab-panel="film-tv" class="library-panel hidden space-y-10">
     <div>
       <div class="mb-4 flex items-center justify-between">
-        <h2 class="font-serif text-lg font-medium text-black dark:text-white">🎬 Films</h2>
+        <h2 class="font-serif text-lg font-medium text-black dark:text-white">
+          <span class="lang-en">🎬 Films</span>
+          <span class="lang-zh">🎬 电影</span>
+        </h2>
       </div>
       <div class="grid gap-4 sm:grid-cols-3 lg:grid-cols-4">
         {films.map((item, index) => {
@@ -366,8 +418,8 @@ function shelfHeightFor(index: number) {
                     )}
                     <h3 class="font-serif text-sm font-medium text-black dark:text-white">{item.title}</h3>
                     {item.titleEn && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500">{item.titleEn}</p>}
-                    <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500">Film · {item.year || "—"}</p>
-                    <div class="mt-3 font-serif text-xs text-gray-400 dark:text-gray-500">💬 Notes</div>
+                    <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Film</span><span class="lang-zh">电影</span> · {item.year || "—"}</p>
+                    <div class="mt-3 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">💬 Notes</span><span class="lang-zh">💬 笔记</span></div>
                   </button>
                 ) : (
                   <div>
@@ -378,7 +430,7 @@ function shelfHeightFor(index: number) {
                     )}
                     <h3 class="font-serif text-sm font-medium text-black dark:text-white">{item.title}</h3>
                     {item.titleEn && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500">{item.titleEn}</p>}
-                    <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500">Film · {item.year || "—"}</p>
+                    <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Film</span><span class="lang-zh">电影</span> · {item.year || "—"}</p>
                   </div>
                 )}
               </article>
@@ -397,7 +449,10 @@ function shelfHeightFor(index: number) {
 
     <div>
       <div class="mb-4 flex items-center justify-between">
-        <h2 class="font-serif text-lg font-medium text-black dark:text-white">📺 Series</h2>
+        <h2 class="font-serif text-lg font-medium text-black dark:text-white">
+          <span class="lang-en">📺 Series</span>
+          <span class="lang-zh">📺 剧集</span>
+        </h2>
       </div>
       <div class="grid gap-4 sm:grid-cols-3 lg:grid-cols-4">
         {series.map((item, index) => {
@@ -414,8 +469,8 @@ function shelfHeightFor(index: number) {
                     )}
                     <h3 class="font-serif text-sm font-medium text-black dark:text-white">{item.title}</h3>
                     {item.titleEn && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500">{item.titleEn}</p>}
-                    <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500">Series · {item.year || "—"}</p>
-                    <div class="mt-3 font-serif text-xs text-gray-400 dark:text-gray-500">💬 Notes</div>
+                    <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Series</span><span class="lang-zh">剧集</span> · {item.year || "—"}</p>
+                    <div class="mt-3 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">💬 Notes</span><span class="lang-zh">💬 笔记</span></div>
                   </button>
                 ) : (
                   <div>
@@ -426,7 +481,7 @@ function shelfHeightFor(index: number) {
                     )}
                     <h3 class="font-serif text-sm font-medium text-black dark:text-white">{item.title}</h3>
                     {item.titleEn && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500">{item.titleEn}</p>}
-                    <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500">Series · {item.year || "—"}</p>
+                    <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Series</span><span class="lang-zh">剧集</span> · {item.year || "—"}</p>
                   </div>
                 )}
               </article>
@@ -461,8 +516,8 @@ function shelfHeightFor(index: number) {
                     )}
                     <h3 class="font-serif text-sm font-medium text-black dark:text-white">{item.title}</h3>
                     {item.titleEn && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500">{item.titleEn}</p>}
-                    <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500">Variety · {item.year || "—"}</p>
-                    <div class="mt-3 font-serif text-xs text-gray-400 dark:text-gray-500">💬 Notes</div>
+                    <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Variety</span><span class="lang-zh">综艺</span> · {item.year || "—"}</p>
+                    <div class="mt-3 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">💬 Notes</span><span class="lang-zh">💬 笔记</span></div>
                   </button>
                 ) : (
                   <div>
@@ -473,7 +528,7 @@ function shelfHeightFor(index: number) {
                     )}
                     <h3 class="font-serif text-sm font-medium text-black dark:text-white">{item.title}</h3>
                     {item.titleEn && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500">{item.titleEn}</p>}
-                    <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500">Variety · {item.year || "—"}</p>
+                    <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Variety</span><span class="lang-zh">综艺</span> · {item.year || "—"}</p>
                   </div>
                 )}
               </article>
@@ -490,7 +545,8 @@ function shelfHeightFor(index: number) {
       </div>
     ) : (
       <div class="glow-card fade-in-up rounded-lg border border-dashed border-purple-500/20 px-5 py-8 font-serif text-sm text-gray-400 dark:border-purple-500/15 dark:text-gray-500" style="--delay: 180ms">
-        Rex will add variety shows here later.
+        <p class="lang-en">Rex will add variety shows here later.</p>
+        <p class="lang-zh">综艺节目，敬请期待。</p>
       </div>
     )}
   </section>
@@ -512,8 +568,8 @@ function shelfHeightFor(index: number) {
                     )}
                     <h3 class="font-serif text-sm font-medium text-black dark:text-white">{item.title}</h3>
                     {item.titleEn && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500">{item.titleEn}</p>}
-                    <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500">Documentary · {item.year || "—"}</p>
-                    <div class="mt-3 font-serif text-xs text-gray-400 dark:text-gray-500">💬 Notes</div>
+                    <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Documentary</span><span class="lang-zh">纪录片</span> · {item.year || "—"}</p>
+                    <div class="mt-3 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">💬 Notes</span><span class="lang-zh">💬 笔记</span></div>
                   </button>
                 ) : (
                   <div>
@@ -524,7 +580,7 @@ function shelfHeightFor(index: number) {
                     )}
                     <h3 class="font-serif text-sm font-medium text-black dark:text-white">{item.title}</h3>
                     {item.titleEn && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500">{item.titleEn}</p>}
-                    <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500">Documentary · {item.year || "—"}</p>
+                    <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Documentary</span><span class="lang-zh">纪录片</span> · {item.year || "—"}</p>
                   </div>
                 )}
               </article>
@@ -541,13 +597,14 @@ function shelfHeightFor(index: number) {
       </div>
     ) : (
       <div class="glow-card fade-in-up rounded-lg border border-dashed border-purple-500/20 px-5 py-8 font-serif text-sm text-gray-400 dark:border-purple-500/15 dark:text-gray-500" style="--delay: 180ms">
-        Rex will add documentaries here later.
+        <p class="lang-en">Rex will add documentaries here later.</p>
+        <p class="lang-zh">纪录片，敬请期待。</p>
       </div>
     )}
   </section>
 
   <!-- Notes Modal -->
-  <div id="library-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4" style="background:rgba(0,0,0,0.6);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)">
+  <div id="library-modal" class="fixed inset-0 z-50 items-center justify-center p-4" style="display:none;background:rgba(0,0,0,0.6);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)">
     <div id="library-modal-content" class="relative max-h-[80vh] w-full max-w-xl overflow-y-auto rounded-xl border border-purple-500/30 bg-white/95 px-6 py-5 shadow-2xl dark:bg-gray-900/95 dark:border-purple-500/20" style="transform:scale(0.95);opacity:0;transition:transform 0.2s ease,opacity 0.2s ease">
       <div class="library-modal-handle mx-auto mb-4 h-1.5 w-12 rounded-full bg-gray-300/90 dark:bg-gray-600/90"></div>
       <button type="button" id="library-modal-close" class="absolute right-4 top-4 font-serif text-lg text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]">✕</button>
@@ -575,7 +632,10 @@ function shelfHeightFor(index: number) {
     .shelf-row {
       position: relative;
       display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
       align-items: flex-end;
+      justify-content: flex-start;
       gap: 0.35rem;
       padding: 1.25rem 1rem 1.1rem;
       border-bottom: 10px solid rgba(120, 76, 42, 0.42);
@@ -590,8 +650,9 @@ function shelfHeightFor(index: number) {
       display: flex;
       justify-content: center;
       align-items: flex-end;
+      width: clamp(32px, 3vw, 40px);
       min-height: 240px;
-      flex: 0 0 auto;
+      flex: 0 0 clamp(32px, 3vw, 40px);
       background: transparent;
       border: 0;
       padding: 0;
@@ -656,7 +717,7 @@ function shelfHeightFor(index: number) {
 
     @media (max-width: 639px) {
       .shelf-row { gap: 0.3rem; padding-inline: 0.5rem; }
-      .shelf-book { min-height: 214px; }
+      .shelf-book { width: clamp(30px, 10vw, 36px); min-height: 214px; flex-basis: clamp(30px, 10vw, 36px); }
       .shelf-book-preview { width: 82px; }
       #library-modal { align-items: flex-end; padding: 0; }
       #library-modal-content {
@@ -750,18 +811,20 @@ function shelfHeightFor(index: number) {
         modalCloseTimer = undefined;
       }
       modalBody.innerHTML = detailEl.innerHTML;
-      modal.classList.remove('hidden', 'modal-closing');
+      modal.style.display = 'flex';
+      modal.classList.remove('modal-closing');
+      void modal.offsetWidth;
       requestAnimationFrame(() => modal.classList.add('modal-open'));
       document.body.style.overflow = 'hidden';
     };
     const closeModal = () => {
-      if (!modal || modal.classList.contains('hidden')) return;
+      if (!modal || modal.style.display === 'none') return;
       modal.classList.remove('modal-open');
       modal.classList.add('modal-closing');
       document.body.style.overflow = '';
       if (modalCloseTimer) clearTimeout(modalCloseTimer);
       modalCloseTimer = window.setTimeout(() => {
-        modal.classList.add('hidden');
+        modal.style.display = 'none';
         modal.classList.remove('modal-closing');
       }, window.innerWidth < 640 ? 300 : 200);
     };
@@ -818,14 +881,18 @@ function shelfHeightFor(index: number) {
         if (activeTag !== '全部') {
           try { matchesTag = JSON.parse(item.dataset.tags || '[]').includes(activeTag); } catch { matchesTag = false; }
         }
-        item.classList.toggle('hidden', !(inActiveTab && matchesView && matchesTag));
+        const visible = inActiveTab && matchesView && matchesTag;
+        item.classList.toggle('hidden', !visible);
+        if (item instanceof HTMLElement) item.style.display = visible ? '' : 'none';
       });
       detailPanels.forEach((panel) => {
         if (panel.dataset.tabGroup !== activeTab) panel.classList.add('hidden');
       });
       if (shelfStage) {
         shelfStage.querySelectorAll('.shelf-row').forEach((row) => {
-          row.classList.toggle('hidden', !row.querySelector('[data-shelf-book]:not(.hidden)'));
+          const hasVisibleBook = Array.from(row.querySelectorAll('[data-shelf-book]')).some((book) => !book.classList.contains('hidden'));
+          row.classList.toggle('hidden', !hasVisibleBook);
+          if (row instanceof HTMLElement) row.style.display = hasVisibleBook ? 'flex' : 'none';
         });
       }
     };
@@ -835,7 +902,7 @@ function shelfHeightFor(index: number) {
       const books = Array.from(shelfStage.querySelectorAll('[data-shelf-book]'));
       if (!books.length) return;
       const width = window.innerWidth;
-      const columns = width >= 1280 ? 12 : width >= 1024 ? 10 : width >= 768 ? 8 : width >= 640 ? 6 : 4;
+      const columns = width >= 1536 ? 16 : width >= 1280 ? 14 : width >= 1024 ? 12 : width >= 768 ? 10 : width >= 640 ? 8 : 7;
       const frag = document.createDocumentFragment();
       for (let i = 0; i < books.length; i += columns) {
         const row = document.createElement('div');
@@ -844,6 +911,7 @@ function shelfHeightFor(index: number) {
         frag.appendChild(row);
       }
       shelfStage.replaceChildren(frag);
+      applyFilters();
     };
 
     const setBooksView = (view) => {
