@@ -172,6 +172,20 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
 
   <!-- ===== BOOKS PANEL ===== -->
   <section data-panel="books" class="lib-panel">
+    <!-- View toggle -->
+    <div class="mb-5 flex items-center justify-between">
+      <div class="font-serif text-xs text-gray-400 dark:text-gray-500">
+        <span class="lang-zh">按标签筛选，可切换网格和书架视图</span>
+        <span class="lang-en">Filter by tag, toggle grid or shelf view</span>
+      </div>
+      <div class="inline-flex items-center rounded-full border border-purple-500/20 bg-white/70 p-1 text-sm shadow-sm backdrop-blur dark:border-purple-500/15 dark:bg-gray-900/60">
+        <button type="button" id="view-btn-grid" class="lib-view-toggle rounded-full bg-[#8953d1] px-3 py-1.5 font-serif text-xs text-white dark:bg-[#a175e8] dark:text-black" aria-pressed="true">📚 Grid</button>
+        <button type="button" id="view-btn-shelf" class="lib-view-toggle rounded-full px-3 py-1.5 font-serif text-xs text-gray-500 hover:text-[#8953d1] dark:text-gray-400 dark:hover:text-[#a175e8]" aria-pressed="false">📖 Shelf</button>
+      </div>
+    </div>
+
+    <!-- Grid view -->
+    <div id="books-grid-view" class="books-grid-view">
     <div class="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4" id="books-grid">
       {books.map((item) => (
         <Fragment>
@@ -245,6 +259,45 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
           </div>
         </Fragment>
       ))}
+    </div>
+    </div>{/* end books-grid-view */}
+
+    <!-- Shelf view -->
+    <div id="books-shelf-view" class="books-shelf-view">
+      <div class="lib-shelf-stage" id="lib-shelf-stage">
+        {/* Books are injected here by JS */}
+        {books.map((item, index) => {
+          const spineHeight = 180 + (index * 17) % 41;
+          return (
+            <button
+              type="button"
+              class="shelf-book"
+              style={`--shelf-height: ${spineHeight}px; display:none`}
+              data-shelf-book
+              data-id={item.id}
+              data-tags={JSON.stringify(item.tags)}
+              data-group="books"
+            >
+              <span class="shelf-book-preview">
+                {item.cover ? (
+                  <img src={item.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="h-full w-full object-cover object-center" />
+                ) : (
+                  <span class={`flex h-full w-full items-center justify-center px-2 text-center ${item.coverClass}`}>
+                    <span class="font-serif text-xs font-medium leading-snug text-white">{item.title}</span>
+                  </span>
+                )}
+              </span>
+              <span class={`shelf-spine ${item.coverClass}`}>
+                <span class="shelf-spine-sheen"></span>
+                <span class="shelf-spine-title">{item.title}</span>
+                {!!(item.notes && ((item.notes.quotes && item.notes.quotes.length > 0) || (item.notes.core_ideas && item.notes.core_ideas.length > 0))) && (
+                  <span class="shelf-spine-dot"></span>
+                )}
+              </span>
+            </button>
+          );
+        })}
+      </div>
     </div>
   </section>
 
@@ -474,9 +527,7 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
       opacity: 0; pointer-events: none;
       transition: opacity 0.25s ease;
     }
-    #lib-modal.open {
-      opacity: 1; pointer-events: auto;
-    }
+    #lib-modal.open { opacity: 1; pointer-events: auto; }
     #lib-modal-backdrop {
       position: absolute; inset: 0;
       background: rgba(0,0,0,0.55);
@@ -485,7 +536,8 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
     }
     #lib-modal-card {
       position: relative; z-index: 10;
-      background: rgba(255,255,255,0.96);
+      background: #ffffff;
+      color: #1a1a1a;
       border-radius: 1rem;
       max-width: 640px; width: 100%;
       max-height: 88vh; overflow-y: auto;
@@ -495,25 +547,106 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
       transition: transform 0.28s cubic-bezier(0.34,1.56,0.64,1);
     }
     :global(.dark) #lib-modal-card {
-      background: rgba(17,17,27,0.96);
-      box-shadow: 0 24px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(137,83,209,0.2);
+      background: #16162a;
+      color: #e5e7eb;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(137,83,209,0.25);
     }
-    #lib-modal.open #lib-modal-card {
-      transform: scale(1) translateY(0);
-    }
+    #lib-modal.open #lib-modal-card { transform: scale(1) translateY(0); }
+    /* Modal content text colors — explicit, not relying on inherit */
+    #lib-modal-content h3 { color: #111827; }
+    :global(.dark) #lib-modal-content h3 { color: #f9fafb; }
+    #lib-modal-content p, #lib-modal-content li span:last-child { color: #4b5563; }
+    :global(.dark) #lib-modal-content p,
+    :global(.dark) #lib-modal-content li span:last-child { color: #d1d5db; }
+    #lib-modal-content blockquote { color: #4b5563; border-color: #8953d1; }
+    :global(.dark) #lib-modal-content blockquote { color: #d1d5db; border-color: #a175e8; }
     #lib-modal-close {
       position: absolute; top: 1rem; right: 1rem;
       width: 2rem; height: 2rem;
       display: flex; align-items: center; justify-content: center;
       border-radius: 9999px;
-      background: rgba(137,83,209,0.08);
+      background: rgba(137,83,209,0.1);
       color: #8953d1;
       font-size: 1.1rem; line-height: 1;
       cursor: pointer;
       transition: background 0.15s ease;
       border: none;
     }
-    #lib-modal-close:hover { background: rgba(137,83,209,0.18); }
+    #lib-modal-close:hover { background: rgba(137,83,209,0.2); }
+
+    /* ── Shelf view ── */
+    .lib-view-toggle { transition: all 0.18s ease; }
+    .books-shelf-view { display: none; }
+    .books-shelf-view.active { display: block; }
+    .books-grid-view.hidden-view { display: none; }
+    .lib-shelf-stage { display: flex; flex-direction: column; gap: 1.5rem; }
+    .shelf-row {
+      position: relative;
+      display: flex; flex-direction: row; flex-wrap: nowrap;
+      align-items: flex-end; justify-content: flex-start;
+      gap: 0.35rem;
+      padding: 1rem 1rem 0;
+      border-bottom: 10px solid rgba(120,76,42,0.45);
+      border-image: linear-gradient(90deg, rgba(82,49,24,0.6), rgba(168,121,77,0.9), rgba(82,49,24,0.6)) 1;
+      background: linear-gradient(180deg, rgba(137,83,209,0.03), rgba(137,83,209,0));
+      overflow-x: auto; scrollbar-width: none;
+    }
+    .shelf-row::-webkit-scrollbar { display: none; }
+    .shelf-book {
+      position: relative;
+      display: flex; justify-content: center; align-items: flex-end;
+      width: clamp(32px, 3vw, 42px);
+      min-height: 220px;
+      flex: 0 0 clamp(32px, 3vw, 42px);
+      background: transparent; border: 0; padding: 0; cursor: pointer;
+      transition: transform 0.28s ease, filter 0.28s ease;
+    }
+    .shelf-book:hover { transform: translateY(-22px); filter: drop-shadow(0 16px 28px rgba(17,24,39,0.28)); }
+    .shelf-spine {
+      position: relative;
+      display: flex; align-items: center; justify-content: center;
+      width: clamp(32px, 3vw, 42px);
+      height: var(--shelf-height, 180px);
+      border-radius: 10px 10px 4px 4px;
+      overflow: hidden;
+      box-shadow: 0 8px 22px rgba(17,24,39,0.18),
+                  inset 1px 0 0 rgba(255,255,255,0.22),
+                  inset -2px 0 0 rgba(0,0,0,0.14);
+      transition: transform 0.28s ease;
+    }
+    .shelf-spine-sheen {
+      position: absolute; inset: 0;
+      background: linear-gradient(90deg, rgba(255,255,255,0.22), transparent 30%, transparent 72%, rgba(0,0,0,0.14));
+    }
+    .shelf-spine-title {
+      position: relative; z-index: 1;
+      padding: 0.6rem 0.2rem;
+      font-family: Georgia, serif; font-size: 0.72rem;
+      line-height: 1.15; letter-spacing: 0.04em;
+      color: white;
+      writing-mode: vertical-rl; text-orientation: mixed;
+      white-space: normal;
+      max-height: calc(var(--shelf-height, 180px) - 16px); overflow: hidden;
+    }
+    .shelf-spine-dot {
+      position: absolute; left: 50%; bottom: 8px; z-index: 1;
+      width: 6px; height: 6px; margin-left: -3px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.75);
+      box-shadow: 0 0 10px rgba(255,255,255,0.4);
+    }
+    .shelf-book-preview {
+      position: absolute; left: 50%; bottom: 12px;
+      width: 100px; aspect-ratio: 2/3;
+      transform: translateX(-50%) translateY(8px) scale(0.92);
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.28s ease, transform 0.28s ease;
+      z-index: 10; border-radius: 4px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+    .shelf-book:hover .shelf-book-preview { opacity: 1; transform: translateX(-50%) translateY(-42px) scale(1); }
+    .shelf-book:hover .shelf-spine { transform: translateY(-2px) scale(1.02); }
   </style>
 
   <script is:inline>
@@ -635,6 +768,8 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
         const show = activeTag === '全部' || (() => { try { return JSON.parse(card.dataset.tags||'[]').includes(activeTag); } catch { return false; } })();
         card.style.display = show ? '' : 'none';
       });
+      // Re-layout shelf if active
+      if (activeTab === 'books' && activeView === 'shelf') organizeShelf();
     }
 
     // ── Frosted-glass Modal ───────────────────────────────────
@@ -675,6 +810,73 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
       if (card) { e.preventDefault(); openModal(card); }
     });
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+    // ── Shelf view ───────────────────────────────────────────
+    let activeView = 'grid';
+    const gridView  = document.getElementById('books-grid-view');
+    const shelfView = document.getElementById('books-shelf-view');
+    const shelfStage = document.getElementById('lib-shelf-stage');
+    const btnGrid  = document.getElementById('view-btn-grid');
+    const btnShelf = document.getElementById('view-btn-shelf');
+
+    function organizeShelf() {
+      if (!shelfStage) return;
+      const allBooks = Array.from(shelfStage.querySelectorAll('[data-shelf-book]'));
+      const visibleBooks = allBooks.filter(b => {
+        if (activeTag === '全部') return true;
+        try { return JSON.parse(b.dataset.tags || '[]').includes(activeTag); } catch { return false; }
+      });
+
+      const w = window.innerWidth;
+      const cols = w >= 1280 ? 14 : w >= 1024 ? 12 : w >= 768 ? 10 : w >= 640 ? 8 : 7;
+
+      // Remove existing rows
+      shelfStage.querySelectorAll('.shelf-row').forEach(r => r.remove());
+      // Re-append all books hidden first
+      allBooks.forEach(b => { b.style.display = 'none'; shelfStage.appendChild(b); });
+
+      // Create rows
+      for (let i = 0; i < visibleBooks.length; i += cols) {
+        const row = document.createElement('div');
+        row.className = 'shelf-row';
+        visibleBooks.slice(i, i + cols).forEach(b => { b.style.display = ''; row.appendChild(b); });
+        shelfStage.insertBefore(row, shelfStage.firstChild);
+      }
+    }
+
+    function switchView(view) {
+      activeView = view;
+      if (view === 'shelf') {
+        gridView.classList.add('hidden-view');
+        shelfView.classList.add('active');
+        btnGrid.classList.remove('bg-[#8953d1]', 'text-white', 'dark:bg-[#a175e8]', 'dark:text-black');
+        btnGrid.classList.add('text-gray-500');
+        btnShelf.classList.add('bg-[#8953d1]', 'text-white', 'dark:bg-[#a175e8]', 'dark:text-black');
+        btnShelf.classList.remove('text-gray-500');
+        organizeShelf();
+      } else {
+        shelfView.classList.remove('active');
+        gridView.classList.remove('hidden-view');
+        btnShelf.classList.remove('bg-[#8953d1]', 'text-white', 'dark:bg-[#a175e8]', 'dark:text-black');
+        btnShelf.classList.add('text-gray-500');
+        btnGrid.classList.add('bg-[#8953d1]', 'text-white', 'dark:bg-[#a175e8]', 'dark:text-black');
+        btnGrid.classList.remove('text-gray-500');
+      }
+    }
+
+    if (btnGrid)  btnGrid.addEventListener('click',  () => switchView('grid'));
+    if (btnShelf) btnShelf.addEventListener('click', () => switchView('shelf'));
+
+    // Shelf book click → open modal
+    document.addEventListener('click', (e) => {
+      const sb = e.target.closest('[data-shelf-book]');
+      if (sb) {
+        e.preventDefault();
+        const id = sb.dataset.id;
+        const card = document.querySelector(`.lib-card[data-id="${id}"]`);
+        if (card) openModal(card);
+      }
+    });
 
     // ── Init ──────────────────────────────────────────────────
     renderTags();
