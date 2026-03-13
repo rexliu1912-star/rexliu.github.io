@@ -540,28 +540,31 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
       transition: opacity 0.4s ease;
       z-index: 0;
     }
-    /* ── Card surface (light mode 3D depth) ── */
+    /* ── Card surface — warm cream, matches site background ── */
     .lib-card-surface {
-      background: linear-gradient(160deg, #ffffff 0%, #f5f3fb 100%);
+      /* warm cream gradient, same color family as site background */
+      background: linear-gradient(175deg, #fefcf6 0%, #f9f5ec 100%);
       box-shadow:
-        0 1px 0 rgba(255,255,255,0.95) inset,   /* top highlight */
-        0 -1px 0 rgba(137,83,209,0.06) inset,   /* bottom tint */
-        0 2px 8px rgba(137,83,209,0.06),
+        0 1px 0 rgba(255,253,245,1) inset,          /* top warm highlight */
+        0 2px 6px rgba(120,90,40,0.07),              /* warm-toned shadow */
         0 1px 2px rgba(0,0,0,0.04);
+      border: 1px solid rgba(180,150,100,0.10);      /* barely-there warm border */
     }
     .lib-card-surface:hover {
       box-shadow:
-        0 1px 0 rgba(255,255,255,0.95) inset,
-        0 -1px 0 rgba(137,83,209,0.08) inset,
-        0 8px 28px rgba(137,83,209,0.18),
+        0 1px 0 rgba(255,253,245,1) inset,
+        0 8px 28px rgba(137,83,209,0.16),
         0 2px 6px rgba(0,0,0,0.05);
+      border-color: rgba(137,83,209,0.15);
     }
     :global(.dark) .lib-card-surface {
-      background: linear-gradient(160deg, rgba(30,27,46,0.95) 0%, rgba(24,22,38,0.92) 100%);
+      background: linear-gradient(175deg, rgba(30,27,46,0.95) 0%, rgba(22,20,36,0.92) 100%);
+      border: 1px solid rgba(137,83,209,0.12);
       box-shadow: 0 2px 10px rgba(0,0,0,0.3);
     }
     :global(.dark) .lib-card-surface:hover {
       box-shadow: 0 8px 28px rgba(137,83,209,0.22), 0 2px 8px rgba(0,0,0,0.3);
+      border-color: rgba(137,83,209,0.25);
     }
     /* ── Card entry animation + 3D tilt via CSS vars ── */
     .lib-card {
