@@ -76,7 +76,7 @@ const books = (booksData as BookEntry[])
     tags: book.tags || [],
     notes: book.notes,
     meta: book.type,
-    coverClass: bookTagColors[(book.tags || [])[0]] || defaultBookColor,
+    coverClass: (book.tags && book.tags[0] ? bookTagColors[book.tags[0]] : undefined) || defaultBookColor,
     aspectClass: "aspect-[2/3]",
     sortDate: book.endDate && book.endDate !== "-" ? book.endDate : undefined,
     year: undefined,
