@@ -11,6 +11,7 @@ type Notes = {
 
 type BookEntry = {
   title: string;
+  titleEn?: string;
   author?: string;
   status: string;
   type?: string;
@@ -29,11 +30,13 @@ type MediaEntry = {
   type: "movie" | "series" | "variety" | "documentary";
   tags?: string[];
   notes?: Notes;
+  cover?: string;
 };
 
 type LibraryItem = {
   id: string;
   title: string;
+  titleEn: string | undefined;
   subtitle: string;
   format: "book" | "movie" | "series" | "variety" | "documentary";
   rating: string | null | undefined;
@@ -70,6 +73,7 @@ const books = (booksData as BookEntry[])
   .map((book, index) => ({
     id: `book-${index}`,
     title: book.title,
+    titleEn: book.titleEn,
     subtitle: book.author || "Unknown author",
     format: "book" as const,
     rating: book.rating,
@@ -93,6 +97,7 @@ const media = (mediaData as MediaEntry[])
   .map((item, index) => ({
     id: `media-${index}`,
     title: item.title,
+    titleEn: item.titleEn,
     subtitle: item.type === "movie" ? "Film" : item.type === "series" ? "Series" : item.type === "documentary" ? "Documentary" : "Variety",
     format: item.type,
     rating: undefined,
@@ -100,10 +105,10 @@ const media = (mediaData as MediaEntry[])
     notes: item.notes,
     meta: undefined,
     coverClass: mediaTypeColors[item.type] || defaultBookColor,
-    aspectClass: "aspect-video",
+    aspectClass: "aspect-[2/3]",
     sortDate: undefined,
     year: item.year,
-    cover: undefined,
+    cover: item.cover,
   }))
   .sort((a, b) => (b.year || 0) - (a.year || 0));
 
@@ -227,6 +232,7 @@ function badgeLine(item: LibraryItem) {
                     </div>
                   )}
                   <h2 class="font-serif text-sm font-medium text-black dark:text-white">{item.title}</h2>
+                  {item.titleEn && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500">{item.titleEn}</p>}
                   <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500">{item.subtitle}</p>
                   {(item.rating || expandable) && (
                     <div class="mt-3 flex flex-wrap items-center gap-3 font-serif text-xs text-gray-400 dark:text-gray-500">
@@ -251,6 +257,7 @@ function badgeLine(item: LibraryItem) {
                     </div>
                   )}
                   <h2 class="font-serif text-sm font-medium text-black dark:text-white">{item.title}</h2>
+                  {item.titleEn && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500">{item.titleEn}</p>}
                   <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500">{item.subtitle}</p>
                   {item.rating && (
                     <div class="mt-3 flex flex-wrap items-center gap-3 font-serif text-xs text-gray-400 dark:text-gray-500">
@@ -316,15 +323,25 @@ function badgeLine(item: LibraryItem) {
               <article class="library-card glow-card fade-in-up rounded-lg border border-purple-500/20 p-4 transition-all hover:border-purple-500/40 hover:shadow-[0_0_20px_#8953d122] dark:border-purple-500/15" style={`--delay: ${180 + index * 30}ms`} data-library-item data-tab-group="film-tv" data-tags={JSON.stringify(item.tags || [])}>
                 {expandable ? (
                   <button type="button" class="block w-full text-left" data-library-toggle data-target={item.id} aria-expanded="false">
-                    <div class={`mb-4 flex ${item.aspectClass} items-center justify-center rounded-md px-4 text-center ${item.coverClass}`}><span class="font-serif text-base font-medium text-white">{item.title}</span></div>
+                    {item.cover ? (
+                      <img src={item.cover} alt={`${item.title} poster`} loading="lazy" referrerpolicy="no-referrer" class={`mb-4 block w-full ${item.aspectClass} rounded-md object-cover object-center`} />
+                    ) : (
+                      <div class={`mb-4 flex ${item.aspectClass} items-center justify-center rounded-md px-4 text-center ${item.coverClass}`}><span class="font-serif text-base font-medium text-white">{item.title}</span></div>
+                    )}
                     <h3 class="font-serif text-sm font-medium text-black dark:text-white">{item.title}</h3>
+                    {item.titleEn && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500">{item.titleEn}</p>}
                     <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500">Film · {item.year || "—"}</p>
                     <div class="mt-3 font-serif text-xs text-gray-400 dark:text-gray-500">💬 Notes</div>
                   </button>
                 ) : (
                   <div>
-                    <div class={`mb-4 flex ${item.aspectClass} items-center justify-center rounded-md px-4 text-center ${item.coverClass}`}><span class="font-serif text-base font-medium text-white">{item.title}</span></div>
+                    {item.cover ? (
+                      <img src={item.cover} alt={`${item.title} poster`} loading="lazy" referrerpolicy="no-referrer" class={`mb-4 block w-full ${item.aspectClass} rounded-md object-cover object-center`} />
+                    ) : (
+                      <div class={`mb-4 flex ${item.aspectClass} items-center justify-center rounded-md px-4 text-center ${item.coverClass}`}><span class="font-serif text-base font-medium text-white">{item.title}</span></div>
+                    )}
                     <h3 class="font-serif text-sm font-medium text-black dark:text-white">{item.title}</h3>
+                    {item.titleEn && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500">{item.titleEn}</p>}
                     <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500">Film · {item.year || "—"}</p>
                   </div>
                 )}
@@ -354,15 +371,25 @@ function badgeLine(item: LibraryItem) {
               <article class="library-card glow-card fade-in-up rounded-lg border border-purple-500/20 p-4 transition-all hover:border-purple-500/40 hover:shadow-[0_0_20px_#8953d122] dark:border-purple-500/15" style={`--delay: ${220 + index * 30}ms`} data-library-item data-tab-group="film-tv" data-tags={JSON.stringify(item.tags || [])}>
                 {expandable ? (
                   <button type="button" class="block w-full text-left" data-library-toggle data-target={item.id} aria-expanded="false">
-                    <div class={`mb-4 flex ${item.aspectClass} items-center justify-center rounded-md px-4 text-center ${item.coverClass}`}><span class="font-serif text-base font-medium text-white">{item.title}</span></div>
+                    {item.cover ? (
+                      <img src={item.cover} alt={`${item.title} poster`} loading="lazy" referrerpolicy="no-referrer" class={`mb-4 block w-full ${item.aspectClass} rounded-md object-cover object-center`} />
+                    ) : (
+                      <div class={`mb-4 flex ${item.aspectClass} items-center justify-center rounded-md px-4 text-center ${item.coverClass}`}><span class="font-serif text-base font-medium text-white">{item.title}</span></div>
+                    )}
                     <h3 class="font-serif text-sm font-medium text-black dark:text-white">{item.title}</h3>
+                    {item.titleEn && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500">{item.titleEn}</p>}
                     <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500">Series · {item.year || "—"}</p>
                     <div class="mt-3 font-serif text-xs text-gray-400 dark:text-gray-500">💬 Notes</div>
                   </button>
                 ) : (
                   <div>
-                    <div class={`mb-4 flex ${item.aspectClass} items-center justify-center rounded-md px-4 text-center ${item.coverClass}`}><span class="font-serif text-base font-medium text-white">{item.title}</span></div>
+                    {item.cover ? (
+                      <img src={item.cover} alt={`${item.title} poster`} loading="lazy" referrerpolicy="no-referrer" class={`mb-4 block w-full ${item.aspectClass} rounded-md object-cover object-center`} />
+                    ) : (
+                      <div class={`mb-4 flex ${item.aspectClass} items-center justify-center rounded-md px-4 text-center ${item.coverClass}`}><span class="font-serif text-base font-medium text-white">{item.title}</span></div>
+                    )}
                     <h3 class="font-serif text-sm font-medium text-black dark:text-white">{item.title}</h3>
+                    {item.titleEn && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500">{item.titleEn}</p>}
                     <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500">Series · {item.year || "—"}</p>
                   </div>
                 )}
@@ -391,15 +418,25 @@ function badgeLine(item: LibraryItem) {
               <article class="library-card glow-card fade-in-up rounded-lg border border-purple-500/20 p-4 transition-all hover:border-purple-500/40 hover:shadow-[0_0_20px_#8953d122] dark:border-purple-500/15" style={`--delay: ${180 + index * 30}ms`} data-library-item data-tab-group="variety" data-tags={JSON.stringify(item.tags || [])}>
                 {expandable ? (
                   <button type="button" class="block w-full text-left" data-library-toggle data-target={item.id} aria-expanded="false">
-                    <div class={`mb-4 flex ${item.aspectClass} items-center justify-center rounded-md px-4 text-center ${item.coverClass}`}><span class="font-serif text-base font-medium text-white">{item.title}</span></div>
+                    {item.cover ? (
+                      <img src={item.cover} alt={`${item.title} poster`} loading="lazy" referrerpolicy="no-referrer" class={`mb-4 block w-full ${item.aspectClass} rounded-md object-cover object-center`} />
+                    ) : (
+                      <div class={`mb-4 flex ${item.aspectClass} items-center justify-center rounded-md px-4 text-center ${item.coverClass}`}><span class="font-serif text-base font-medium text-white">{item.title}</span></div>
+                    )}
                     <h3 class="font-serif text-sm font-medium text-black dark:text-white">{item.title}</h3>
+                    {item.titleEn && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500">{item.titleEn}</p>}
                     <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500">Variety · {item.year || "—"}</p>
                     <div class="mt-3 font-serif text-xs text-gray-400 dark:text-gray-500">💬 Notes</div>
                   </button>
                 ) : (
                   <div>
-                    <div class={`mb-4 flex ${item.aspectClass} items-center justify-center rounded-md px-4 text-center ${item.coverClass}`}><span class="font-serif text-base font-medium text-white">{item.title}</span></div>
+                    {item.cover ? (
+                      <img src={item.cover} alt={`${item.title} poster`} loading="lazy" referrerpolicy="no-referrer" class={`mb-4 block w-full ${item.aspectClass} rounded-md object-cover object-center`} />
+                    ) : (
+                      <div class={`mb-4 flex ${item.aspectClass} items-center justify-center rounded-md px-4 text-center ${item.coverClass}`}><span class="font-serif text-base font-medium text-white">{item.title}</span></div>
+                    )}
                     <h3 class="font-serif text-sm font-medium text-black dark:text-white">{item.title}</h3>
+                    {item.titleEn && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500">{item.titleEn}</p>}
                     <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500">Variety · {item.year || "—"}</p>
                   </div>
                 )}
@@ -432,15 +469,25 @@ function badgeLine(item: LibraryItem) {
               <article class="library-card glow-card fade-in-up rounded-lg border border-purple-500/20 p-4 transition-all hover:border-purple-500/40 hover:shadow-[0_0_20px_#8953d122] dark:border-purple-500/15" style={`--delay: ${180 + index * 30}ms`} data-library-item data-tab-group="documentary" data-tags={JSON.stringify(item.tags || [])}>
                 {expandable ? (
                   <button type="button" class="block w-full text-left" data-library-toggle data-target={item.id} aria-expanded="false">
-                    <div class={`mb-4 flex ${item.aspectClass} items-center justify-center rounded-md px-4 text-center ${item.coverClass}`}><span class="font-serif text-base font-medium text-white">{item.title}</span></div>
+                    {item.cover ? (
+                      <img src={item.cover} alt={`${item.title} poster`} loading="lazy" referrerpolicy="no-referrer" class={`mb-4 block w-full ${item.aspectClass} rounded-md object-cover object-center`} />
+                    ) : (
+                      <div class={`mb-4 flex ${item.aspectClass} items-center justify-center rounded-md px-4 text-center ${item.coverClass}`}><span class="font-serif text-base font-medium text-white">{item.title}</span></div>
+                    )}
                     <h3 class="font-serif text-sm font-medium text-black dark:text-white">{item.title}</h3>
+                    {item.titleEn && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500">{item.titleEn}</p>}
                     <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500">Documentary · {item.year || "—"}</p>
                     <div class="mt-3 font-serif text-xs text-gray-400 dark:text-gray-500">💬 Notes</div>
                   </button>
                 ) : (
                   <div>
-                    <div class={`mb-4 flex ${item.aspectClass} items-center justify-center rounded-md px-4 text-center ${item.coverClass}`}><span class="font-serif text-base font-medium text-white">{item.title}</span></div>
+                    {item.cover ? (
+                      <img src={item.cover} alt={`${item.title} poster`} loading="lazy" referrerpolicy="no-referrer" class={`mb-4 block w-full ${item.aspectClass} rounded-md object-cover object-center`} />
+                    ) : (
+                      <div class={`mb-4 flex ${item.aspectClass} items-center justify-center rounded-md px-4 text-center ${item.coverClass}`}><span class="font-serif text-base font-medium text-white">{item.title}</span></div>
+                    )}
                     <h3 class="font-serif text-sm font-medium text-black dark:text-white">{item.title}</h3>
+                    {item.titleEn && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500">{item.titleEn}</p>}
                     <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500">Documentary · {item.year || "—"}</p>
                   </div>
                 )}
