@@ -121,7 +121,7 @@ const variety = media.filter((item) => item.format === "variety");
 const documentary = media.filter((item) => item.format === "documentary");
 
 const meta = {
-  title: "Rex's Library — Lab",
+  title: "Library — Lab",
   description: "Books, films, and shows that shaped how Rex thinks.",
 };
 
@@ -134,7 +134,7 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
   <!-- Header -->
   <section class="mb-12">
     <a href="/lab/" class="font-serif text-sm text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]">← Lab</a>
-    <h1 class="mt-4 mb-4 font-serif text-4xl font-bold dark:text-white">Rex's Library</h1>
+    <h1 class="mt-4 mb-4 font-serif text-4xl font-bold dark:text-white"><span class="lang-en">Library</span><span class="lang-zh">书影音</span></h1>
     <p class="lang-en max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">Books, films, and shows that shaped how I think.</p>
     <p class="lang-zh max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">读过的书、看过的片，塑造了现在的我。</p>
     <p class="mt-4 font-serif text-sm text-gray-400 dark:text-gray-500">
@@ -481,19 +481,36 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
   </div>
 
   <style>
-    /* ── Card entry animation ── */
+    /* ── Cursor spotlight on panels ── */
+    .lib-panel {
+      position: relative;
+      --mx: 50%; --my: 50%; --spotlight: 0;
+    }
+    .lib-panel::before {
+      content: '';
+      position: absolute;
+      inset: -40px;
+      pointer-events: none;
+      background: radial-gradient(
+        600px circle at var(--mx) var(--my),
+        rgba(137,83,209,0.07),
+        transparent 50%
+      );
+      opacity: var(--spotlight);
+      transition: opacity 0.4s ease;
+      z-index: 0;
+    }
+    /* ── Card entry animation + 3D tilt via CSS vars ── */
     .lib-card {
+      --rx: 0deg; --ry: 0deg; --rs: 1;
       opacity: 0;
       transform: translateY(20px);
-      transition:
-        opacity 0.5s ease,
-        transform 0.5s ease,
-        border-color 0.2s ease,
-        box-shadow 0.2s ease;
+      transition: opacity 0.5s ease, transform 0.5s ease, border-color 0.2s ease, box-shadow 0.2s ease;
     }
     .lib-card.revealed {
       opacity: 1;
-      transform: translateY(0) !important;
+      /* CSS vars drive the tilt; JS only sets --rx/--ry/--rs */
+      transform: perspective(700px) rotateX(var(--rx)) rotateY(var(--ry)) scale(var(--rs)) translateY(0px);
     }
     .lib-card.is-active {
       border-color: rgba(137,83,209,0.6) !important;
@@ -687,22 +704,23 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
     }
     initStagger();
 
-    // ── 3D hover tilt ─────────────────────────────────────────
+    // ── 3D hover tilt (via CSS vars — no conflict with .revealed transform) ──
     function attachTilt(card) {
-      card.addEventListener('mouseenter', () => {
-        // Override transition for snappy tilt
-        card.style.transition = 'transform 0.15s ease, box-shadow 0.15s ease';
-      });
       card.addEventListener('mousemove', (e) => {
         const r = card.getBoundingClientRect();
         const x = (e.clientX - r.left) / r.width - 0.5;
         const y = (e.clientY - r.top)  / r.height - 0.5;
-        card.style.transform = `perspective(700px) rotateX(${-y * 8}deg) rotateY(${x * 8}deg) scale(1.04)`;
-        card.style.boxShadow = `${-x*12}px ${y*12}px 28px rgba(137,83,209,0.15)`;
+        card.style.setProperty('--rx', `${-y * 9}deg`);
+        card.style.setProperty('--ry', `${x * 9}deg`);
+        card.style.setProperty('--rs', '1.045');
+        card.style.transition = 'transform 0.1s ease, box-shadow 0.1s ease, opacity 0.5s ease, border-color 0.2s ease';
+        card.style.boxShadow = `${-x*14}px ${y*14}px 32px rgba(137,83,209,0.18)`;
       });
       card.addEventListener('mouseleave', () => {
-        card.style.transition = 'transform 0.35s ease, box-shadow 0.35s ease, opacity 0.5s ease, border-color 0.2s ease';
-        card.style.transform = '';
+        card.style.setProperty('--rx', '0deg');
+        card.style.setProperty('--ry', '0deg');
+        card.style.setProperty('--rs', '1');
+        card.style.transition = 'transform 0.4s ease, box-shadow 0.4s ease, opacity 0.5s ease, border-color 0.2s ease';
         card.style.boxShadow = '';
       });
     }
@@ -761,16 +779,33 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
       return document.documentElement.lang === 'en' || document.body.classList.contains('lang-en') ? 'en' : 'zh';
     }
 
+    // Tag translations (zh → en)
+    const TAG_EN = {
+      '成长':'Growth','古琴':'Guqin','历史':'History','投资':'Investing',
+      '文化':'Culture','文学':'Literature','写作':'Writing','哲学':'Philosophy',
+      '心理':'Psychology','商业':'Business','传记':'Biography','科技':'Tech',
+      '社会':'Society','经济':'Economics','艺术':'Art','音乐':'Music',
+      '爱情':'Romance','家庭':'Family','剧情':'Drama','喜剧':'Comedy',
+      '悬疑':'Thriller','动画':'Animation','科幻':'Sci-Fi','战争':'War',
+      '日剧':'J-Drama','韩剧':'K-Drama','美剧':'US Drama','港剧':'HK Drama',
+      '励志':'Inspire','认知':'Cognition','财富':'Wealth','时间':'Time',
+      '人生':'Life','情感':'Emotion','亲情':'Kinship',
+    };
+    function tagLabel(tag) {
+      if (tag === '全部') return '<span class="lang-zh">全部</span><span class="lang-en">All</span>';
+      const en = TAG_EN[tag];
+      return en
+        ? `<span class="lang-zh">${tag}</span><span class="lang-en">${en}</span>`
+        : tag;
+    }
+
     function renderTags() {
       tagRoot.innerHTML = '';
       getTagsForTab().forEach(tag => {
         const btn = document.createElement('button');
         btn.type = 'button';
         btn.className = 'tag-btn rounded-full border border-purple-500/20 px-4 py-2 font-serif text-sm text-gray-500 dark:border-purple-500/15 dark:text-gray-400';
-        // "全部" shows as "All" in English, other tags keep Chinese names
-        btn.innerHTML = tag === '全部'
-          ? '<span class="lang-zh">全部</span><span class="lang-en">All</span>'
-          : tag;
+        btn.innerHTML = tagLabel(tag);
         if (tag === activeTag) btn.classList.add('active');
         btn.addEventListener('click', () => {
           activeTag = tag === activeTag ? '全部' : tag;
@@ -905,6 +940,19 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
         const card = document.querySelector(`.lib-card[data-id="${id}"]`);
         if (card) openModal(card);
       }
+    });
+
+    // ── Cursor spotlight on card grids ────────────────────────
+    document.querySelectorAll('.lib-panel').forEach(panel => {
+      panel.addEventListener('mousemove', (e) => {
+        const r = panel.getBoundingClientRect();
+        panel.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+        panel.style.setProperty('--my', (e.clientY - r.top)  + 'px');
+        panel.style.setProperty('--spotlight', '1');
+      });
+      panel.addEventListener('mouseleave', () => {
+        panel.style.setProperty('--spotlight', '0');
+      });
     });
 
     // ── Init ──────────────────────────────────────────────────
