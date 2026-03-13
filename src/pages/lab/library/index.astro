@@ -159,15 +159,6 @@ function hasNotes(item: LibraryItem) {
   );
 }
 
-function badgeLine(item: LibraryItem) {
-  const bits = [];
-  if (item.rating) bits.push(item.rating);
-  bits.push(formatType(item.format));
-  if (item.meta) bits.push(item.meta);
-  if (item.year) bits.push(String(item.year));
-  if (item.tags.length) bits.push(item.tags.join(" · "));
-  return bits.join(" · ");
-}
 
 function shelfHeightFor(index: number) {
   return 180 + (index * 17) % 41;
