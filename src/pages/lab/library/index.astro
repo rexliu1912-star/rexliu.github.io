@@ -68,7 +68,7 @@ const mediaTypeColors: Record<string, string> = {
 function ratingDots(rating: string | null | undefined): number {
   if (!rating) return 0;
   const m = rating.match(/^(\d+(?:\.\d+)?)\/(\d+)/);
-  if (!m) return 0;
+  if (!m || !m[1] || !m[2]) return 0;
   return Math.round((parseFloat(m[1]) / parseFloat(m[2])) * 5);
 }
 
