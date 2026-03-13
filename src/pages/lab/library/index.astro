@@ -47,6 +47,25 @@ type LibraryItem = {
   cover: string | undefined;
 };
 
+// Tag-based gradient colors for books without covers
+const bookTagColors: Record<string, string> = {
+  "投资": "bg-gradient-to-br from-[#8953d1] to-[#6b3fa0]",
+  "成长": "bg-gradient-to-br from-[#3b82f6] to-[#1d4ed8]",
+  "文化": "bg-gradient-to-br from-[#f59e0b] to-[#d97706]",
+  "文学": "bg-gradient-to-br from-[#ec4899] to-[#be185d]",
+  "古琴": "bg-gradient-to-br from-[#10b981] to-[#047857]",
+  "写作": "bg-gradient-to-br from-[#6366f1] to-[#4338ca]",
+};
+const defaultBookColor = "bg-gradient-to-br from-[#8953d1] to-[#6b3fa0]";
+
+// Type-based gradient colors for media without covers
+const mediaTypeColors: Record<string, string> = {
+  "movie": "bg-gradient-to-br from-[#8953d1] to-[#6b3fa0]",
+  "series": "bg-gradient-to-br from-[#3b82f6] to-[#1d4ed8]",
+  "variety": "bg-gradient-to-br from-[#f59e0b] to-[#d97706]",
+  "documentary": "bg-gradient-to-br from-[#6b7280] to-[#374151]",
+};
+
 const books = (booksData as BookEntry[])
   .map((book, index) => ({
     id: `book-${index}`,
@@ -57,7 +76,7 @@ const books = (booksData as BookEntry[])
     tags: book.tags || [],
     notes: book.notes,
     meta: book.type,
-    coverClass: "bg-gradient-to-br from-[#8953d1] to-[#6b3fa0]",
+    coverClass: bookTagColors[(book.tags || [])[0]] || defaultBookColor,
     aspectClass: "aspect-[2/3]",
     sortDate: book.endDate && book.endDate !== "-" ? book.endDate : undefined,
     year: undefined,
@@ -80,7 +99,7 @@ const media = (mediaData as MediaEntry[])
     tags: item.tags || [],
     notes: item.notes,
     meta: undefined,
-    coverClass: "bg-gradient-to-br from-[#8953d1] to-[#6b3fa0]",
+    coverClass: mediaTypeColors[item.type] || defaultBookColor,
     aspectClass: "aspect-video",
     sortDate: undefined,
     year: item.year,
@@ -97,6 +116,10 @@ const meta = {
   title: "Rex's Library — Lab",
   description: "Books, films, and shows that shaped how Rex thinks.",
 };
+
+// Stats for count-up
+const statsBookNotes = books.filter(b => hasNotes(b)).length;
+const statsMediaNotes = media.filter(m => hasNotes(m)).length;
 
 function formatType(format: LibraryItem["format"]) {
   return format === "book"
@@ -142,6 +165,9 @@ function badgeLine(item: LibraryItem) {
     </p>
     <p class="hero-reveal-subtitle lang-zh max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">
       读过的书、看过的片，塑造了现在的我。
+    </p>
+    <p class="mt-4 font-serif text-sm text-gray-400 dark:text-gray-500">
+      <span data-countup={books.length}>0</span> books · <span data-countup={statsBookNotes + statsMediaNotes}>0</span> with notes · <span data-countup={media.length}>0</span> films & shows
     </p>
   </section>
 
@@ -437,11 +463,24 @@ function badgeLine(item: LibraryItem) {
     )}
   </section>
 
-  <section class="mt-12 fade-in-up" style="--delay: 260ms">
-    <p class="font-serif text-sm text-gray-400 dark:text-gray-500">
-      {books.length} books · {series.length} series · {films.length} films · {variety.length} variety · {documentary.length} documentaries
-    </p>
-  </section>
+  <!-- Notes Modal -->
+  <div id="library-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4" style="background:rgba(0,0,0,0.6);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)">
+    <div id="library-modal-content" class="relative max-h-[80vh] w-full max-w-xl overflow-y-auto rounded-xl border border-purple-500/30 bg-white/95 px-6 py-5 shadow-2xl dark:bg-gray-900/95 dark:border-purple-500/20" style="transform:scale(0.95);opacity:0;transition:transform 0.2s ease,opacity 0.2s ease">
+      <button type="button" id="library-modal-close" class="absolute right-4 top-4 font-serif text-lg text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]">✕</button>
+      <div id="library-modal-body"></div>
+    </div>
+  </div>
+
+  <style>
+    .library-card { perspective: 800px; }
+    .library-card-inner { transition: transform 0.3s ease, box-shadow 0.3s ease; transform-style: preserve-3d; }
+    .library-card.scroll-reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease, transform 0.5s ease; }
+    .library-card.scroll-reveal.revealed { opacity: 1; transform: translateY(0); }
+    .library-panel { transition: opacity 0.2s ease; }
+    .library-panel.fading { opacity: 0; }
+    #library-modal.modal-open { display: flex; }
+    #library-modal.modal-open #library-modal-content { transform: scale(1); opacity: 1; }
+  </style>
 
   <script is:inline>
     const tabButtons = Array.from(document.querySelectorAll('[data-tab-button]'));
@@ -450,9 +489,74 @@ function badgeLine(item: LibraryItem) {
     const detailButtons = Array.from(document.querySelectorAll('[data-library-toggle]'));
     const tagFilterRoot = document.getElementById('library-tag-filters');
     const libraryItems = Array.from(document.querySelectorAll('[data-library-item]'));
+    const cards = Array.from(document.querySelectorAll('.library-card'));
+    const modal = document.getElementById('library-modal');
+    const modalBody = document.getElementById('library-modal-body');
+    const modalClose = document.getElementById('library-modal-close');
     let activeTab = 'books';
     let activeTag = '全部';
 
+    // === COUNT-UP ANIMATION ===
+    document.querySelectorAll('[data-countup]').forEach(el => {
+      const target = parseInt(el.dataset.countup, 10);
+      const duration = 1000;
+      const start = performance.now();
+      const step = (now) => {
+        const progress = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3); // easeOutCubic
+        el.textContent = Math.round(eased * target);
+        if (progress < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    });
+
+    // === 3D TILT EFFECT ===
+    cards.forEach(card => {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - 0.5;
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
+        card.style.transform = `perspective(800px) rotateY(${x * 12}deg) rotateX(${-y * 12}deg)`;
+        card.style.boxShadow = `${-x * 15}px ${y * 15}px 30px rgba(137,83,209,0.12)`;
+      });
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = '';
+        card.style.boxShadow = '';
+      });
+    });
+
+    // === SCROLL REVEAL ===
+    cards.forEach(card => card.classList.add('scroll-reveal'));
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          const card = entry.target;
+          const siblings = Array.from(card.parentElement?.querySelectorAll('.scroll-reveal:not(.revealed)') || []);
+          const idx = siblings.indexOf(card);
+          setTimeout(() => card.classList.add('revealed'), Math.max(0, idx) * 50);
+          revealObserver.unobserve(card);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px 50px 0px' });
+    cards.forEach(card => revealObserver.observe(card));
+
+    // === MODAL ===
+    const openModal = (detailEl) => {
+      if (!modal || !modalBody || !detailEl) return;
+      modalBody.innerHTML = detailEl.innerHTML;
+      modal.classList.add('modal-open');
+      document.body.style.overflow = 'hidden';
+    };
+    const closeModal = () => {
+      if (!modal) return;
+      modal.classList.remove('modal-open');
+      document.body.style.overflow = '';
+    };
+    if (modalClose) modalClose.addEventListener('click', closeModal);
+    if (modal) modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+    // === TAB SWITCHING WITH FADE ===
     const closeAllDetails = () => {
       detailPanels.forEach((panel) => panel.classList.add('hidden'));
       detailButtons.forEach((button) => button.setAttribute('aria-expanded', 'false'));
@@ -464,35 +568,25 @@ function badgeLine(item: LibraryItem) {
       button.dataset.tagFilter = label;
       button.textContent = label;
       button.className = 'glow-card inline-flex items-center rounded-full border px-4 py-2 font-serif text-sm transition-all';
-
       if (selected) {
         button.classList.add('border-[#8953d1]', 'bg-[#8953d1]', 'text-white', 'dark:border-[#a175e8]', 'dark:bg-[#a175e8]', 'dark:text-black');
       } else {
         button.classList.add('border-purple-500/20', 'text-gray-500', 'hover:border-[#8953d1]', 'hover:text-[#8953d1]', 'dark:border-purple-500/15', 'dark:text-gray-400', 'dark:hover:border-[#a175e8]', 'dark:hover:text-[#a175e8]');
       }
-
       button.addEventListener('click', () => {
         activeTag = label === '全部' ? '全部' : activeTag === label ? '全部' : label;
         closeAllDetails();
         renderTagFilters();
         applyFilters();
       });
-
       return button;
     };
 
     const tagsForTab = (tab) => {
       const tags = new Set();
-      libraryItems
-        .filter((item) => item.dataset.tabGroup === tab)
-        .forEach((item) => {
-          try {
-            const parsed = JSON.parse(item.dataset.tags || '[]');
-            parsed.forEach((tag) => tags.add(tag));
-          } catch {
-            // ignore broken tags payload
-          }
-        });
+      libraryItems.filter((item) => item.dataset.tabGroup === tab).forEach((item) => {
+        try { JSON.parse(item.dataset.tags || '[]').forEach((tag) => tags.add(tag)); } catch {}
+      });
       return ['全部', ...Array.from(tags).sort((a, b) => a.localeCompare(b, 'zh-Hans-CN'))];
     };
 
@@ -507,75 +601,82 @@ function badgeLine(item: LibraryItem) {
       libraryItems.forEach((item) => {
         const inActiveTab = item.dataset.tabGroup === activeTab;
         let matchesTag = true;
-
         if (activeTag !== '全部') {
-          try {
-            const parsed = JSON.parse(item.dataset.tags || '[]');
-            matchesTag = parsed.includes(activeTag);
-          } catch {
-            matchesTag = false;
-          }
+          try { matchesTag = JSON.parse(item.dataset.tags || '[]').includes(activeTag); } catch { matchesTag = false; }
         }
-
         item.classList.toggle('hidden', !(inActiveTab && matchesTag));
       });
-
       detailPanels.forEach((panel) => {
         const button = detailButtons.find((item) => item.dataset.target === panel.dataset.detailFor);
         const ownerCard = button?.closest('[data-library-item]');
         const shouldHide = !ownerCard || ownerCard.classList.contains('hidden') || panel.dataset.tabGroup !== activeTab;
-        if (shouldHide) {
-          panel.classList.add('hidden');
-        }
-      });
-
-      detailButtons.forEach((button) => {
-        const panel = button.dataset.target ? document.getElementById(button.dataset.target) : null;
-        button.setAttribute('aria-expanded', panel && !panel.classList.contains('hidden') ? 'true' : 'false');
+        if (shouldHide) panel.classList.add('hidden');
       });
     };
 
     const setActiveTab = (target) => {
-      activeTab = target;
-      tabButtons.forEach((button) => {
-        const active = button.dataset.tabTarget === target;
-        button.setAttribute('aria-pressed', active ? 'true' : 'false');
-        button.classList.toggle('border-[#8953d1]', active);
-        button.classList.toggle('text-[#8953d1]', active);
-        button.classList.toggle('dark:text-[#a175e8]', active);
-        button.classList.toggle('border-transparent', !active);
-        button.classList.toggle('text-gray-400', !active);
-        button.classList.toggle('dark:text-gray-500', !active);
-      });
+      // Fade out current panel
+      const currentPanel = tabPanels.find(p => p.dataset.tabPanel === activeTab);
+      const newPanel = tabPanels.find(p => p.dataset.tabPanel === target);
 
-      tabPanels.forEach((panel) => {
-        panel.classList.toggle('hidden', panel.dataset.tabPanel !== target);
-      });
-
-      renderTagFilters();
-      applyFilters();
+      if (currentPanel && newPanel && currentPanel !== newPanel) {
+        currentPanel.classList.add('fading');
+        setTimeout(() => {
+          activeTab = target;
+          tabButtons.forEach((button) => {
+            const active = button.dataset.tabTarget === target;
+            button.setAttribute('aria-pressed', active ? 'true' : 'false');
+            button.classList.toggle('border-[#8953d1]', active);
+            button.classList.toggle('text-[#8953d1]', active);
+            button.classList.toggle('dark:text-[#a175e8]', active);
+            button.classList.toggle('border-transparent', !active);
+            button.classList.toggle('text-gray-400', !active);
+            button.classList.toggle('dark:text-gray-500', !active);
+          });
+          tabPanels.forEach((panel) => {
+            panel.classList.remove('fading');
+            panel.classList.toggle('hidden', panel.dataset.tabPanel !== target);
+          });
+          renderTagFilters();
+          applyFilters();
+          // Re-reveal cards in new panel
+          newPanel.querySelectorAll('.library-card.scroll-reveal:not(.revealed)').forEach((card, i) => {
+            setTimeout(() => card.classList.add('revealed'), i * 50);
+          });
+        }, 200);
+      } else {
+        activeTab = target;
+        tabButtons.forEach((button) => {
+          const active = button.dataset.tabTarget === target;
+          button.setAttribute('aria-pressed', active ? 'true' : 'false');
+          button.classList.toggle('border-[#8953d1]', active);
+          button.classList.toggle('text-[#8953d1]', active);
+          button.classList.toggle('dark:text-[#a175e8]', active);
+          button.classList.toggle('border-transparent', !active);
+          button.classList.toggle('text-gray-400', !active);
+          button.classList.toggle('dark:text-gray-500', !active);
+        });
+        tabPanels.forEach((panel) => panel.classList.toggle('hidden', panel.dataset.tabPanel !== target));
+        renderTagFilters();
+        applyFilters();
+      }
     };
 
     tabButtons.forEach((button) => {
       button.addEventListener('click', () => {
         closeAllDetails();
+        closeModal();
         activeTag = '全部';
         setActiveTab(button.dataset.tabTarget || 'books');
       });
     });
 
+    // Notes → open modal instead of inline
     detailButtons.forEach((button) => {
       button.addEventListener('click', () => {
         const targetId = button.dataset.target;
         const panel = targetId ? document.getElementById(targetId) : null;
-        if (!panel) return;
-        const isOpen = !panel.classList.contains('hidden');
-        closeAllDetails();
-        if (!isOpen) {
-          panel.classList.remove('hidden');
-          button.setAttribute('aria-expanded', 'true');
-          panel.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-        }
+        if (panel) openModal(panel);
       });
     });
 
