@@ -201,7 +201,7 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
       {books.map((item) => (
         <Fragment>
           <article
-            class="lib-card group cursor-pointer overflow-hidden rounded-xl bg-white shadow-[0_2px_10px_rgba(0,0,0,0.07)] transition-all hover:shadow-[0_8px_28px_rgba(137,83,209,0.18)] dark:bg-gray-900/90 dark:shadow-[0_2px_10px_rgba(0,0,0,0.25)]"
+            class="lib-card group cursor-pointer overflow-hidden rounded-xl transition-all lib-card-surface"
             data-id={item.id}
             data-tags={JSON.stringify(item.tags)}
             data-group="books"
@@ -331,7 +331,7 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
         <div class="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
           {films.map((item) => (
             <Fragment>
-              <article class="lib-card group cursor-pointer overflow-hidden rounded-xl bg-white shadow-[0_2px_10px_rgba(0,0,0,0.07)] transition-all hover:shadow-[0_8px_28px_rgba(137,83,209,0.18)] dark:bg-gray-900/90 dark:shadow-[0_2px_10px_rgba(0,0,0,0.25)]" data-id={item.id} data-tags={JSON.stringify(item.tags)} data-group="film-tv">
+              <article class="lib-card group cursor-pointer overflow-hidden rounded-xl transition-all lib-card-surface" data-id={item.id} data-tags={JSON.stringify(item.tags)} data-group="film-tv">
                 {item.cover ? (
                   <img src={item.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="block w-full aspect-[2/3] object-cover object-center" />
                 ) : (
@@ -377,7 +377,7 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
         <div class="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
           {series.map((item) => (
             <Fragment>
-              <article class="lib-card group cursor-pointer overflow-hidden rounded-xl bg-white shadow-[0_2px_10px_rgba(0,0,0,0.07)] transition-all hover:shadow-[0_8px_28px_rgba(137,83,209,0.18)] dark:bg-gray-900/90 dark:shadow-[0_2px_10px_rgba(0,0,0,0.25)]" data-id={item.id} data-tags={JSON.stringify(item.tags)} data-group="film-tv">
+              <article class="lib-card group cursor-pointer overflow-hidden rounded-xl transition-all lib-card-surface" data-id={item.id} data-tags={JSON.stringify(item.tags)} data-group="film-tv">
                 {item.cover ? (
                   <img src={item.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="block w-full aspect-[2/3] object-cover object-center" />
                 ) : (
@@ -423,7 +423,7 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
       <div class="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
         {variety.map((item) => (
           <Fragment>
-            <article class="lib-card group cursor-pointer overflow-hidden rounded-xl bg-white shadow-[0_2px_10px_rgba(0,0,0,0.07)] transition-all hover:shadow-[0_8px_28px_rgba(137,83,209,0.18)] dark:bg-gray-900/90 dark:shadow-[0_2px_10px_rgba(0,0,0,0.25)]" data-id={item.id} data-tags={JSON.stringify(item.tags)} data-group="variety">
+            <article class="lib-card group cursor-pointer overflow-hidden rounded-xl transition-all lib-card-surface" data-id={item.id} data-tags={JSON.stringify(item.tags)} data-group="variety">
               {item.cover ? (
                 <img src={item.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="block w-full aspect-[2/3] object-cover object-center" />
               ) : (
@@ -470,7 +470,7 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
       <div class="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
         {documentary.map((item) => (
           <Fragment>
-            <article class="lib-card group cursor-pointer overflow-hidden rounded-xl bg-white shadow-[0_2px_10px_rgba(0,0,0,0.07)] transition-all hover:shadow-[0_8px_28px_rgba(137,83,209,0.18)] dark:bg-gray-900/90 dark:shadow-[0_2px_10px_rgba(0,0,0,0.25)]" data-id={item.id} data-tags={JSON.stringify(item.tags)} data-group="documentary">
+            <article class="lib-card group cursor-pointer overflow-hidden rounded-xl transition-all lib-card-surface" data-id={item.id} data-tags={JSON.stringify(item.tags)} data-group="documentary">
               {item.cover ? (
                 <img src={item.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="block w-full aspect-[2/3] object-cover object-center" />
               ) : (
@@ -524,21 +524,45 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
     /* ── Cursor spotlight on panels ── */
     .lib-panel {
       position: relative;
+      overflow: clip; /* prevent spotlight pseudo-el from causing scrollbar */
       --mx: 50%; --my: 50%; --spotlight: 0;
     }
     .lib-panel::before {
       content: '';
       position: absolute;
-      inset: -40px;
+      inset: 0;
       pointer-events: none;
       background: radial-gradient(
-        600px circle at var(--mx) var(--my),
+        700px circle at var(--mx) var(--my),
         rgba(137,83,209,0.07),
         transparent 50%
       );
       opacity: var(--spotlight);
       transition: opacity 0.4s ease;
       z-index: 0;
+    }
+    /* ── Card surface (light mode 3D depth) ── */
+    .lib-card-surface {
+      background: linear-gradient(160deg, #ffffff 0%, #f5f3fb 100%);
+      box-shadow:
+        0 1px 0 rgba(255,255,255,0.95) inset,   /* top highlight */
+        0 -1px 0 rgba(137,83,209,0.06) inset,   /* bottom tint */
+        0 2px 8px rgba(137,83,209,0.06),
+        0 1px 2px rgba(0,0,0,0.04);
+    }
+    .lib-card-surface:hover {
+      box-shadow:
+        0 1px 0 rgba(255,255,255,0.95) inset,
+        0 -1px 0 rgba(137,83,209,0.08) inset,
+        0 8px 28px rgba(137,83,209,0.18),
+        0 2px 6px rgba(0,0,0,0.05);
+    }
+    :global(.dark) .lib-card-surface {
+      background: linear-gradient(160deg, rgba(30,27,46,0.95) 0%, rgba(24,22,38,0.92) 100%);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+    :global(.dark) .lib-card-surface:hover {
+      box-shadow: 0 8px 28px rgba(137,83,209,0.22), 0 2px 8px rgba(0,0,0,0.3);
     }
     /* ── Card entry animation + 3D tilt via CSS vars ── */
     .lib-card {
@@ -829,7 +853,7 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
       '悬疑':'Thriller','动画':'Animation','科幻':'Sci-Fi','战争':'War',
       '日剧':'J-Drama','韩剧':'K-Drama','美剧':'US Drama','港剧':'HK Drama',
       '励志':'Inspire','认知':'Cognition','财富':'Wealth','时间':'Time',
-      '人生':'Life','情感':'Emotion','亲情':'Kinship',
+      '人生':'Life','情感':'Emotion','亲情':'Kinship','纪实':'Documentary',
     };
     function tagLabel(tag) {
       if (tag === '全部') return '<span class="lang-zh">全部</span><span class="lang-en">All</span>';
