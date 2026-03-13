@@ -524,7 +524,6 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
     /* ── Cursor spotlight on panels ── */
     .lib-panel {
       position: relative;
-      overflow: clip; /* prevent spotlight pseudo-el from causing scrollbar */
       --mx: 50%; --my: 50%; --spotlight: 0;
     }
     .lib-panel::before {
