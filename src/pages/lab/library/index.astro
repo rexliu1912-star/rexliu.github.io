@@ -155,6 +155,11 @@ function badgeLine(item: LibraryItem) {
   return bits.join(" · ");
 }
 
+function shelfHeightFor(index: number) {
+  return 180 + (index * 17) % 41;
+}
+
+
 ---
 
 <PageLayout meta={meta}>
@@ -198,115 +203,173 @@ function badgeLine(item: LibraryItem) {
   </section>
 
   <section data-tab-panel="books" class="library-panel space-y-4">
-    <div class="grid gap-4 sm:grid-cols-3 lg:grid-cols-4">
-      {books.map((item, index) => {
-        const expandable = hasNotes(item);
-        return (
-          <Fragment>
-            <article
-              class="library-card glow-card fade-in-up rounded-lg border border-purple-500/20 p-4 transition-all hover:border-purple-500/40 hover:shadow-[0_0_20px_#8953d122] dark:border-purple-500/15"
-              style={`--delay: ${180 + index * 30}ms`}
-              data-library-item
-              data-tab-group="books"
-              data-tags={JSON.stringify(item.tags || [])}
-            >
-              {expandable ? (
-                <button
-                  type="button"
-                  class="block w-full text-left"
-                  data-library-toggle
-                  data-target={item.id}
-                  aria-expanded="false"
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <p class="font-serif text-sm text-gray-400 dark:text-gray-500">Browse by tag, then switch between the classic grid and a shelf-style view.</p>
+      <div class="inline-flex w-fit items-center rounded-full border border-purple-500/20 bg-white/70 p-1 font-serif text-sm shadow-[0_0_20px_#8953d10f] backdrop-blur dark:border-purple-500/15 dark:bg-gray-900/60">
+        <button type="button" class="library-view-toggle rounded-full bg-[#8953d1] px-4 py-2 text-white transition-all dark:bg-[#a175e8] dark:text-black" data-books-view-button data-view-target="grid" aria-pressed="true">📚 Grid</button>
+        <button type="button" class="library-view-toggle rounded-full px-4 py-2 text-gray-500 transition-all hover:text-[#8953d1] dark:text-gray-400 dark:hover:text-[#a175e8]" data-books-view-button data-view-target="shelf" aria-pressed="false">📖 Shelf</button>
+      </div>
+    </div>
+
+    <div class="books-view-stage relative">
+      <div data-books-view="grid" class="library-books-view grid-view">
+        <div class="grid gap-4 sm:grid-cols-3 lg:grid-cols-4">
+          {books.map((item, index) => {
+            const expandable = hasNotes(item);
+            return (
+              <Fragment>
+                <article
+                  class="library-card glow-card fade-in-up rounded-lg border border-purple-500/20 p-4 transition-all hover:border-purple-500/40 hover:shadow-[0_0_20px_#8953d122] dark:border-purple-500/15"
+                  style={`--delay: ${180 + index * 30}ms`}
+                  data-library-item
+                  data-tab-group="books"
+                  data-view="grid"
+                  data-tags={JSON.stringify(item.tags || [])}
                 >
-                  {item.cover ? (
-                    <img
-                      src={item.cover}
-                      alt={`${item.title} cover`}
-                      loading="lazy"
-                      referrerpolicy="no-referrer"
-                      class={`mb-4 block w-full ${item.aspectClass} rounded-md object-cover object-center`}
-                    />
+                  {expandable ? (
+                    <button
+                      type="button"
+                      class="block w-full text-left"
+                      data-library-toggle
+                      data-target={item.id}
+                      aria-expanded="false"
+                    >
+                      {item.cover ? (
+                        <img
+                          src={item.cover}
+                          alt={`${item.title} cover`}
+                          loading="lazy"
+                          referrerpolicy="no-referrer"
+                          class={`mb-4 block w-full ${item.aspectClass} rounded-md object-cover object-center`}
+                        />
+                      ) : (
+                        <div class={`mb-4 flex ${item.aspectClass} items-center justify-center rounded-md px-4 text-center ${item.coverClass}`}>
+                          <span class="font-serif text-base font-medium text-white">{item.title}</span>
+                        </div>
+                      )}
+                      <h2 class="font-serif text-sm font-medium text-black dark:text-white">{item.title}</h2>
+                      {item.titleEn && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500">{item.titleEn}</p>}
+                      <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500">{item.subtitle}</p>
+                      {(item.rating || expandable) && (
+                        <div class="mt-3 flex flex-wrap items-center gap-3 font-serif text-xs text-gray-400 dark:text-gray-500">
+                          {item.rating && <span>⭐ {item.rating}</span>}
+                          {expandable && <span>💬 Notes</span>}
+                        </div>
+                      )}
+                    </button>
                   ) : (
-                    <div class={`mb-4 flex ${item.aspectClass} items-center justify-center rounded-md px-4 text-center ${item.coverClass}`}>
-                      <span class="font-serif text-base font-medium text-white">{item.title}</span>
+                    <div>
+                      {item.cover ? (
+                        <img
+                          src={item.cover}
+                          alt={`${item.title} cover`}
+                          loading="lazy"
+                          referrerpolicy="no-referrer"
+                          class={`mb-4 block w-full ${item.aspectClass} rounded-md object-cover object-center`}
+                        />
+                      ) : (
+                        <div class={`mb-4 flex ${item.aspectClass} items-center justify-center rounded-md px-4 text-center ${item.coverClass}`}>
+                          <span class="font-serif text-base font-medium text-white">{item.title}</span>
+                        </div>
+                      )}
+                      <h2 class="font-serif text-sm font-medium text-black dark:text-white">{item.title}</h2>
+                      {item.titleEn && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500">{item.titleEn}</p>}
+                      <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500">{item.subtitle}</p>
+                      {item.rating && (
+                        <div class="mt-3 flex flex-wrap items-center gap-3 font-serif text-xs text-gray-400 dark:text-gray-500">
+                          <span>⭐ {item.rating}</span>
+                        </div>
+                      )}
                     </div>
                   )}
-                  <h2 class="font-serif text-sm font-medium text-black dark:text-white">{item.title}</h2>
-                  {item.titleEn && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500">{item.titleEn}</p>}
-                  <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500">{item.subtitle}</p>
-                  {(item.rating || expandable) && (
-                    <div class="mt-3 flex flex-wrap items-center gap-3 font-serif text-xs text-gray-400 dark:text-gray-500">
-                      {item.rating && <span>⭐ {item.rating}</span>}
-                      {expandable && <span>💬 Notes</span>}
+                </article>
+                {expandable && (
+                  <div
+                    id={item.id}
+                    class="library-details col-span-full hidden fade-in-up rounded-lg border border-purple-500/20 px-5 py-4 dark:border-purple-500/15"
+                    style={`--delay: ${210 + index * 30}ms`}
+                    data-library-detail
+                    data-detail-for={item.id}
+                    data-tab-group="books"
+                  >
+                    <div class="mb-3 flex flex-wrap items-baseline gap-x-3 gap-y-2">
+                      <h3 class="font-serif text-lg font-medium text-black dark:text-white">{item.title}</h3>
+                      <p class="font-serif text-sm text-gray-400 dark:text-gray-500">{item.subtitle}</p>
                     </div>
-                  )}
-                </button>
-              ) : (
-                <div>
-                  {item.cover ? (
-                    <img
-                      src={item.cover}
-                      alt={`${item.title} cover`}
-                      loading="lazy"
-                      referrerpolicy="no-referrer"
-                      class={`mb-4 block w-full ${item.aspectClass} rounded-md object-cover object-center`}
-                    />
-                  ) : (
-                    <div class={`mb-4 flex ${item.aspectClass} items-center justify-center rounded-md px-4 text-center ${item.coverClass}`}>
-                      <span class="font-serif text-base font-medium text-white">{item.title}</span>
-                    </div>
-                  )}
-                  <h2 class="font-serif text-sm font-medium text-black dark:text-white">{item.title}</h2>
-                  {item.titleEn && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500">{item.titleEn}</p>}
-                  <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500">{item.subtitle}</p>
-                  {item.rating && (
-                    <div class="mt-3 flex flex-wrap items-center gap-3 font-serif text-xs text-gray-400 dark:text-gray-500">
-                      <span>⭐ {item.rating}</span>
-                    </div>
-                  )}
-                </div>
-              )}
-            </article>
-            {expandable && (
-              <div
-                id={item.id}
-                class="library-details col-span-full hidden fade-in-up rounded-lg border border-purple-500/20 px-5 py-4 dark:border-purple-500/15"
-                style={`--delay: ${210 + index * 30}ms`}
-                data-library-detail
-                data-detail-for={item.id}
-                data-tab-group="books"
-              >
-                <div class="mb-3 flex flex-wrap items-baseline gap-x-3 gap-y-2">
-                  <h3 class="font-serif text-lg font-medium text-black dark:text-white">{item.title}</h3>
-                  <p class="font-serif text-sm text-gray-400 dark:text-gray-500">{item.subtitle}</p>
-                </div>
-                <p class="font-serif text-sm text-gray-400 dark:text-gray-500">{badgeLine(item)}</p>
-                {item.notes?.quotes && item.notes.quotes.length > 0 && (
-                  <div class="mt-4 space-y-3">
-                    {item.notes.quotes.map((quote) => (
-                      <blockquote class="border-l-2 border-[var(--color-quote)] pl-4 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300">
-                        {quote}
-                      </blockquote>
-                    ))}
+                    <p class="font-serif text-sm text-gray-400 dark:text-gray-500">{badgeLine(item)}</p>
+                    {item.notes?.quotes && item.notes.quotes.length > 0 && (
+                      <div class="mt-4 space-y-3">
+                        {item.notes.quotes.map((quote) => (
+                          <blockquote class="border-l-2 border-[var(--color-quote)] pl-4 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300">
+                            {quote}
+                          </blockquote>
+                        ))}
+                      </div>
+                    )}
+                    {item.notes?.core_ideas && item.notes.core_ideas.length > 0 && (
+                      <ul class="mt-4 space-y-2 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300">
+                        {item.notes.core_ideas.map((idea) => (
+                          <li class="flex gap-2"><span class="text-[#8953d1] dark:text-[#a175e8]">•</span><span>{idea}</span></li>
+                        ))}
+                      </ul>
+                    )}
+                    {item.notes?.impact && item.notes.impact.trim() && (
+                      <p class="mt-4 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300">
+                        {item.notes.impact}
+                      </p>
+                    )}
                   </div>
                 )}
-                {item.notes?.core_ideas && item.notes.core_ideas.length > 0 && (
-                  <ul class="mt-4 space-y-2 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300">
-                    {item.notes.core_ideas.map((idea) => (
-                      <li class="flex gap-2"><span class="text-[#8953d1] dark:text-[#a175e8]">•</span><span>{idea}</span></li>
-                    ))}
-                  </ul>
-                )}
-                {item.notes?.impact && item.notes.impact.trim() && (
-                  <p class="mt-4 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300">
-                    {item.notes.impact}
-                  </p>
-                )}
-              </div>
-            )}
-          </Fragment>
-        );
-      })}
+              </Fragment>
+            );
+          })}
+        </div>
+      </div>
+
+      <div data-books-view="shelf" class="library-books-view shelf-view hidden">
+        <div data-shelf-stage class="library-shelf-stage">
+          {books.map((item, index) => {
+            const expandable = hasNotes(item);
+            return (
+              <button
+                type="button"
+                class="shelf-book group"
+                style={`--shelf-height: ${shelfHeightFor(index)}px`}
+                data-library-item
+                data-shelf-book
+                data-tab-group="books"
+                data-view="shelf"
+                data-tags={JSON.stringify(item.tags || [])}
+                data-library-toggle={expandable ? '' : undefined}
+                data-target={expandable ? item.id : undefined}
+                aria-expanded="false"
+                disabled={!expandable}
+              >
+                <span class="shelf-book-preview">
+                  {item.cover ? (
+                    <img
+                      src={item.cover}
+                      alt={`${item.title} cover`}
+                      loading="lazy"
+                      referrerpolicy="no-referrer"
+                      class="h-full w-full rounded-lg object-cover object-center shadow-2xl"
+                    />
+                  ) : (
+                    <span class={`flex h-full w-full items-center justify-center rounded-lg px-3 text-center ${item.coverClass}`}>
+                      <span class="font-serif text-xs font-medium leading-snug text-white">{item.title}</span>
+                    </span>
+                  )}
+                </span>
+                <span class={`shelf-spine ${item.coverClass}`}>
+                  <span class="shelf-spine-sheen"></span>
+                  <span class="shelf-spine-title">{item.title}</span>
+                  {expandable && <span class="shelf-spine-dot"></span>}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
     </div>
   </section>
 
@@ -513,6 +576,7 @@ function badgeLine(item: LibraryItem) {
   <!-- Notes Modal -->
   <div id="library-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4" style="background:rgba(0,0,0,0.6);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)">
     <div id="library-modal-content" class="relative max-h-[80vh] w-full max-w-xl overflow-y-auto rounded-xl border border-purple-500/30 bg-white/95 px-6 py-5 shadow-2xl dark:bg-gray-900/95 dark:border-purple-500/20" style="transform:scale(0.95);opacity:0;transition:transform 0.2s ease,opacity 0.2s ease">
+      <div class="library-modal-handle mx-auto mb-4 h-1.5 w-12 rounded-full bg-gray-300/90 dark:bg-gray-600/90"></div>
       <button type="button" id="library-modal-close" class="absolute right-4 top-4 font-serif text-lg text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]">✕</button>
       <div id="library-modal-body"></div>
     </div>
@@ -525,8 +589,121 @@ function badgeLine(item: LibraryItem) {
     .library-card.scroll-reveal.revealed { opacity: 1; transform: translateY(0); }
     .library-panel { transition: opacity 0.2s ease; }
     .library-panel.fading { opacity: 0; }
+    .books-view-stage { position: relative; }
+    .library-books-view { transition: opacity 0.28s ease, transform 0.28s ease; }
+    .library-books-view.is-transitioning { opacity: 0; transform: translateY(8px); }
     #library-modal.modal-open { display: flex; }
     #library-modal.modal-open #library-modal-content { transform: scale(1); opacity: 1; }
+    #library-modal.modal-closing { display: flex; }
+    #library-modal.modal-closing #library-modal-content { transform: scale(0.95); opacity: 0; }
+    .library-modal-handle { display: none; }
+
+    .library-shelf-stage { display: flex; flex-direction: column; gap: 1.25rem; }
+    .shelf-row {
+      position: relative;
+      display: grid;
+      align-items: end;
+      gap: 0.75rem;
+      padding: 1.25rem 1rem 1.1rem;
+      border-bottom: 10px solid rgba(120, 76, 42, 0.42);
+      border-image: linear-gradient(90deg, rgba(82, 49, 24, 0.62), rgba(168, 121, 77, 0.85), rgba(82, 49, 24, 0.62)) 1;
+      background: linear-gradient(180deg, rgba(137,83,209,0.03), rgba(137,83,209,0));
+    }
+    .shelf-book {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      min-height: 240px;
+      background: transparent;
+      border: 0;
+      padding: 0;
+      cursor: pointer;
+      transition: transform 0.28s ease, filter 0.28s ease;
+    }
+    .shelf-book:disabled { cursor: default; }
+    .shelf-book:not(:disabled):hover { transform: translateY(-24px); filter: drop-shadow(0 18px 30px rgba(17, 24, 39, 0.24)); }
+    .shelf-spine {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: clamp(32px, 3vw, 40px);
+      height: var(--shelf-height);
+      border-radius: 10px 10px 4px 4px;
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(17, 24, 39, 0.15), inset 1px 0 0 rgba(255,255,255,0.22), inset -2px 0 0 rgba(0,0,0,0.14);
+      transition: transform 0.28s ease;
+    }
+    .shelf-spine-sheen { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(255,255,255,0.24), transparent 30%, transparent 72%, rgba(0,0,0,0.14)); }
+    .shelf-spine-title {
+      position: relative;
+      z-index: 1;
+      padding: 0.75rem 0.25rem;
+      font-family: Georgia, serif;
+      font-size: 0.74rem;
+      line-height: 1.15;
+      letter-spacing: 0.04em;
+      color: white;
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      white-space: normal;
+      max-height: calc(var(--shelf-height) - 18px);
+      overflow: hidden;
+    }
+    .shelf-spine-dot {
+      position: absolute;
+      left: 50%;
+      bottom: 10px;
+      z-index: 1;
+      width: 6px;
+      height: 6px;
+      margin-left: -3px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.75);
+      box-shadow: 0 0 12px rgba(255,255,255,0.4);
+    }
+    .shelf-book-preview {
+      position: absolute;
+      left: 50%;
+      bottom: 14px;
+      width: 108px;
+      aspect-ratio: 2 / 3;
+      transform: translateX(-50%) translateY(10px) scale(0.92);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.28s ease, transform 0.28s ease;
+      z-index: 0;
+    }
+    .shelf-book:not(:disabled):hover .shelf-book-preview { opacity: 1; transform: translateX(-50%) translateY(-44px) scale(1); }
+    .shelf-book:not(:disabled):hover .shelf-spine { transform: translateY(-2px) scale(1.02); }
+
+    @media (min-width: 640px) { .shelf-row { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
+    @media (max-width: 639px) {
+      .shelf-row { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.5rem; padding-inline: 0.5rem; }
+      .shelf-book { min-height: 214px; }
+      .shelf-book-preview { width: 82px; }
+      #library-modal { align-items: flex-end; padding: 0; }
+      #library-modal-content {
+        width: 100%;
+        max-width: none;
+        max-height: 80vh;
+        margin: 0;
+        border-radius: 16px 16px 0 0;
+        padding: 0.9rem 1.25rem 1.25rem;
+        transform: translateY(100%);
+        opacity: 1;
+        transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+      }
+      #library-modal.modal-open #library-modal-content { transform: translateY(0); opacity: 1; }
+      #library-modal.modal-closing #library-modal-content { transform: translateY(100%); opacity: 1; }
+      .library-modal-handle { display: block; }
+      #library-modal-close { top: 0.85rem; }
+      #library-modal-body { padding-bottom: max(1rem, env(safe-area-inset-bottom)); }
+    }
+    @media (min-width: 768px) { .shelf-row { grid-template-columns: repeat(8, minmax(0, 1fr)); } }
+    @media (min-width: 1024px) { .shelf-row { grid-template-columns: repeat(10, minmax(0, 1fr)); } }
+    @media (min-width: 1280px) { .shelf-row { grid-template-columns: repeat(12, minmax(0, 1fr)); } }
   </style>
 
   <script is:inline>
@@ -540,8 +717,13 @@ function badgeLine(item: LibraryItem) {
     const modal = document.getElementById('library-modal');
     const modalBody = document.getElementById('library-modal-body');
     const modalClose = document.getElementById('library-modal-close');
+    const booksViewButtons = Array.from(document.querySelectorAll('[data-books-view-button]'));
+    const booksViews = Array.from(document.querySelectorAll('[data-books-view]'));
+    const shelfStage = document.querySelector('[data-shelf-stage]');
     let activeTab = 'books';
     let activeTag = '全部';
+    let activeBooksView = 'grid';
+    let modalCloseTimer;
 
     // === COUNT-UP ANIMATION ===
     document.querySelectorAll('[data-countup]').forEach(el => {
@@ -590,16 +772,25 @@ function badgeLine(item: LibraryItem) {
     // === MODAL ===
     const openModal = (detailEl) => {
       if (!modal || !modalBody || !detailEl) return;
+      if (modalCloseTimer) {
+        clearTimeout(modalCloseTimer);
+        modalCloseTimer = undefined;
+      }
       modalBody.innerHTML = detailEl.innerHTML;
-      modal.classList.remove('hidden');
-      modal.classList.add('modal-open');
+      modal.classList.remove('hidden', 'modal-closing');
+      requestAnimationFrame(() => modal.classList.add('modal-open'));
       document.body.style.overflow = 'hidden';
     };
     const closeModal = () => {
-      if (!modal) return;
+      if (!modal || modal.classList.contains('hidden')) return;
       modal.classList.remove('modal-open');
-      modal.classList.add('hidden');
+      modal.classList.add('modal-closing');
       document.body.style.overflow = '';
+      if (modalCloseTimer) clearTimeout(modalCloseTimer);
+      modalCloseTimer = window.setTimeout(() => {
+        modal.classList.add('hidden');
+        modal.classList.remove('modal-closing');
+      }, window.innerWidth < 640 ? 300 : 200);
     };
     if (modalClose) modalClose.addEventListener('click', closeModal);
     if (modal) modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
@@ -649,18 +840,61 @@ function badgeLine(item: LibraryItem) {
     const applyFilters = () => {
       libraryItems.forEach((item) => {
         const inActiveTab = item.dataset.tabGroup === activeTab;
+        const matchesView = activeTab !== 'books' || (item.dataset.view || 'grid') === activeBooksView;
         let matchesTag = true;
         if (activeTag !== '全部') {
           try { matchesTag = JSON.parse(item.dataset.tags || '[]').includes(activeTag); } catch { matchesTag = false; }
         }
-        item.classList.toggle('hidden', !(inActiveTab && matchesTag));
+        item.classList.toggle('hidden', !(inActiveTab && matchesView && matchesTag));
       });
       detailPanels.forEach((panel) => {
-        const button = detailButtons.find((item) => item.dataset.target === panel.dataset.detailFor);
-        const ownerCard = button?.closest('[data-library-item]');
-        const shouldHide = !ownerCard || ownerCard.classList.contains('hidden') || panel.dataset.tabGroup !== activeTab;
-        if (shouldHide) panel.classList.add('hidden');
+        if (panel.dataset.tabGroup !== activeTab) panel.classList.add('hidden');
       });
+      if (shelfStage) {
+        shelfStage.querySelectorAll('.shelf-row').forEach((row) => {
+          row.classList.toggle('hidden', !row.querySelector('[data-shelf-book]:not(.hidden)'));
+        });
+      }
+    };
+
+    const layoutShelfRows = () => {
+      if (!shelfStage) return;
+      const books = Array.from(shelfStage.querySelectorAll('[data-shelf-book]'));
+      if (!books.length) return;
+      const width = window.innerWidth;
+      const columns = width >= 1280 ? 12 : width >= 1024 ? 10 : width >= 768 ? 8 : width >= 640 ? 6 : 4;
+      const frag = document.createDocumentFragment();
+      for (let i = 0; i < books.length; i += columns) {
+        const row = document.createElement('div');
+        row.className = 'shelf-row';
+        books.slice(i, i + columns).forEach((book) => row.appendChild(book));
+        frag.appendChild(row);
+      }
+      shelfStage.replaceChildren(frag);
+    };
+
+    const setBooksView = (view) => {
+      activeBooksView = view === 'shelf' ? 'shelf' : 'grid';
+      booksViewButtons.forEach((button) => {
+        const active = button.dataset.viewTarget === activeBooksView;
+        button.setAttribute('aria-pressed', active ? 'true' : 'false');
+        button.classList.toggle('bg-[#8953d1]', active);
+        button.classList.toggle('text-white', active);
+        button.classList.toggle('dark:bg-[#a175e8]', active);
+        button.classList.toggle('dark:text-black', active);
+        button.classList.toggle('text-gray-500', !active);
+        button.classList.toggle('dark:text-gray-400', !active);
+      });
+      booksViews.forEach((panel) => {
+        const active = panel.dataset.booksView === activeBooksView;
+        panel.classList.add('is-transitioning');
+        if (active) panel.classList.remove('hidden');
+        window.setTimeout(() => {
+          panel.classList.toggle('hidden', !active);
+          panel.classList.remove('is-transitioning');
+        }, active ? 16 : 220);
+      });
+      applyFilters();
     };
 
     const setActiveTab = (target) => {
@@ -711,6 +945,18 @@ function badgeLine(item: LibraryItem) {
       }
     };
 
+    booksViewButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        if (activeBooksView === (button.dataset.viewTarget || 'grid')) return;
+        closeAllDetails();
+        closeModal();
+        setBooksView(button.dataset.viewTarget || 'grid');
+      });
+    });
+
+    window.addEventListener('resize', layoutShelfRows);
+    layoutShelfRows();
+
     tabButtons.forEach((button) => {
       button.addEventListener('click', () => {
         closeAllDetails();
@@ -730,5 +976,6 @@ function badgeLine(item: LibraryItem) {
     });
 
     setActiveTab(activeTab);
+    setBooksView(activeBooksView);
   </script>
 </PageLayout>
