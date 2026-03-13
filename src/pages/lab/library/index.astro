@@ -179,8 +179,12 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
         <span class="lang-en">Filter by tag, toggle grid or shelf view</span>
       </div>
       <div class="inline-flex items-center rounded-full border border-purple-500/20 bg-white/70 p-1 text-sm shadow-sm backdrop-blur dark:border-purple-500/15 dark:bg-gray-900/60">
-        <button type="button" id="view-btn-grid" class="lib-view-toggle rounded-full bg-[#8953d1] px-3 py-1.5 font-serif text-xs text-white dark:bg-[#a175e8] dark:text-black" aria-pressed="true">📚 Grid</button>
-        <button type="button" id="view-btn-shelf" class="lib-view-toggle rounded-full px-3 py-1.5 font-serif text-xs text-gray-500 hover:text-[#8953d1] dark:text-gray-400 dark:hover:text-[#a175e8]" aria-pressed="false">📖 Shelf</button>
+        <button type="button" id="view-btn-grid" class="lib-view-toggle rounded-full bg-[#8953d1] px-3 py-1.5 font-serif text-xs text-white dark:bg-[#a175e8] dark:text-black" aria-pressed="true">
+          <span class="lang-en">📚 Grid</span><span class="lang-zh">📚 网格</span>
+        </button>
+        <button type="button" id="view-btn-shelf" class="lib-view-toggle rounded-full px-3 py-1.5 font-serif text-xs text-gray-500 hover:text-[#8953d1] dark:text-gray-400 dark:hover:text-[#a175e8]" aria-pressed="false">
+          <span class="lang-en">📖 Shelf</span><span class="lang-zh">📖 书架</span>
+        </button>
       </div>
     </div>
 
@@ -511,12 +515,12 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
 
     /* ── Tab / tag button ── */
     .lib-tab { transition: all 0.15s ease; }
-    .tag-btn { transition: all 0.15s ease; }
-    .tag-btn.active {
-      background: #8953d1; color: white; border-color: #8953d1;
+    :global(.tag-btn) { transition: all 0.15s ease; }
+    :global(.tag-btn.active) {
+      background: #8953d1 !important; color: white !important; border-color: #8953d1 !important;
     }
-    :global(.dark) .tag-btn.active {
-      background: #a175e8; color: black; border-color: #a175e8;
+    :global(.dark .tag-btn.active) {
+      background: #a175e8 !important; color: black !important; border-color: #a175e8 !important;
     }
 
     /* ── Frosted-glass Modal ── */
@@ -746,13 +750,20 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
       return ['全部', ...Array.from(tags).sort((a, b) => a.localeCompare(b, 'zh-Hans-CN'))];
     }
 
+    function getLang() {
+      return document.documentElement.lang === 'en' || document.body.classList.contains('lang-en') ? 'en' : 'zh';
+    }
+
     function renderTags() {
       tagRoot.innerHTML = '';
       getTagsForTab().forEach(tag => {
         const btn = document.createElement('button');
         btn.type = 'button';
-        btn.textContent = tag;
         btn.className = 'tag-btn rounded-full border border-purple-500/20 px-4 py-2 font-serif text-sm text-gray-500 dark:border-purple-500/15 dark:text-gray-400';
+        // "全部" shows as "All" in English, other tags keep Chinese names
+        btn.innerHTML = tag === '全部'
+          ? '<span class="lang-zh">全部</span><span class="lang-en">All</span>'
+          : tag;
         if (tag === activeTag) btn.classList.add('active');
         btn.addEventListener('click', () => {
           activeTag = tag === activeTag ? '全部' : tag;
@@ -821,26 +832,37 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
 
     function organizeShelf() {
       if (!shelfStage) return;
-      const allBooks = Array.from(shelfStage.querySelectorAll('[data-shelf-book]'));
+      // Collect ALL shelf books from anywhere in the DOM (they may be in rows or loose)
+      const allBooks = Array.from(document.querySelectorAll('[data-shelf-book]'));
+      if (!allBooks.length) return;
+
       const visibleBooks = allBooks.filter(b => {
         if (activeTag === '全部') return true;
         try { return JSON.parse(b.dataset.tags || '[]').includes(activeTag); } catch { return false; }
       });
+      const hiddenBooks = allBooks.filter(b => !visibleBooks.includes(b));
 
       const w = window.innerWidth;
       const cols = w >= 1280 ? 14 : w >= 1024 ? 12 : w >= 768 ? 10 : w >= 640 ? 8 : 7;
 
-      // Remove existing rows
-      shelfStage.querySelectorAll('.shelf-row').forEach(r => r.remove());
-      // Re-append all books hidden first
-      allBooks.forEach(b => { b.style.display = 'none'; shelfStage.appendChild(b); });
+      // Detach all books first, then clear stage
+      allBooks.forEach(b => b.parentNode && b.parentNode.removeChild(b));
+      shelfStage.innerHTML = '';
 
-      // Create rows
+      // Build rows in order and append
       for (let i = 0; i < visibleBooks.length; i += cols) {
         const row = document.createElement('div');
         row.className = 'shelf-row';
         visibleBooks.slice(i, i + cols).forEach(b => { b.style.display = ''; row.appendChild(b); });
-        shelfStage.insertBefore(row, shelfStage.firstChild);
+        shelfStage.appendChild(row);
+      }
+
+      // Hidden books: keep in DOM (needed for modal data) in a hidden container
+      if (hiddenBooks.length) {
+        const hiddenWrap = document.createElement('div');
+        hiddenWrap.style.display = 'none';
+        hiddenBooks.forEach(b => { b.style.display = 'none'; hiddenWrap.appendChild(b); });
+        shelfStage.appendChild(hiddenWrap);
       }
     }
 
