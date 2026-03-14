@@ -183,24 +183,26 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
 
   <!-- ===== BOOKS PANEL ===== -->
   <section data-panel="books" class="lib-panel">
-    <!-- View toggle -->
-    <div class="mb-5 flex items-center justify-between">
-      <div class="font-serif text-xs text-gray-400 dark:text-gray-500">
+    <!-- Controls row: hint left, sort + view toggle right -->
+    <div class="mb-5 flex items-center justify-between gap-3">
+      <p class="font-serif text-xs text-gray-400 dark:text-gray-500">
         <span class="lang-zh">按标签筛选，可切换网格和书架视图</span>
-        <span class="lang-en">Filter by tag, toggle grid or shelf view</span>
-      </div>
-      <select id="books-sort" autocomplete="off" class="font-serif text-xs text-gray-500 dark:text-gray-400 bg-transparent border border-purple-500/20 rounded-full px-3 py-1.5 cursor-pointer hover:border-purple-500/40 focus:outline-none">
-        <option value="date" selected data-zh="最近阅读" data-en="Recent">最近阅读</option>
-        <option value="rating" data-zh="评分" data-en="Rating">评分</option>
-        <option value="notes" data-zh="有笔记" data-en="With Notes">有笔记</option>
-      </select>
-      <div class="inline-flex items-center rounded-full border border-purple-500/20 bg-white/70 p-1 text-sm shadow-sm backdrop-blur dark:border-purple-500/15 dark:bg-gray-900/60">
-        <button type="button" id="view-btn-grid" class="lib-view-toggle rounded-full bg-[#8953d1] px-3 py-1.5 font-serif text-xs text-white dark:bg-[#a175e8] dark:text-black" aria-pressed="true">
-          <span class="lang-en">📚 Grid</span><span class="lang-zh">📚 网格</span>
-        </button>
-        <button type="button" id="view-btn-shelf" class="lib-view-toggle rounded-full px-3 py-1.5 font-serif text-xs text-gray-500 hover:text-[#8953d1] dark:text-gray-400 dark:hover:text-[#a175e8]" aria-pressed="false">
-          <span class="lang-en">📖 Shelf</span><span class="lang-zh">📖 书架</span>
-        </button>
+        <span class="lang-en">Filter by tag · toggle view</span>
+      </p>
+      <div class="flex items-center gap-2">
+        <select id="books-sort" autocomplete="off" class="font-serif text-xs text-gray-500 dark:text-gray-400 bg-transparent border border-purple-500/20 rounded-full px-3 py-1.5 cursor-pointer hover:border-purple-500/40 focus:outline-none dark:bg-gray-900/60">
+          <option value="date" selected data-zh="最近阅读" data-en="Recent">最近阅读</option>
+          <option value="rating" data-zh="评分" data-en="Rating">评分</option>
+          <option value="notes" data-zh="有笔记" data-en="With Notes">有笔记</option>
+        </select>
+        <div class="inline-flex items-center rounded-full border border-purple-500/20 bg-white/70 p-1 text-sm shadow-sm backdrop-blur dark:border-purple-500/15 dark:bg-gray-900/60">
+          <button type="button" id="view-btn-grid" class="lib-view-toggle rounded-full bg-[#8953d1] px-3 py-1.5 font-serif text-xs text-white dark:bg-[#a175e8] dark:text-black" aria-pressed="true">
+            <span class="lang-en">📚 Grid</span><span class="lang-zh">📚 网格</span>
+          </button>
+          <button type="button" id="view-btn-shelf" class="lib-view-toggle rounded-full px-3 py-1.5 font-serif text-xs text-gray-500 hover:text-[#8953d1] dark:text-gray-400 dark:hover:text-[#a175e8]" aria-pressed="false">
+            <span class="lang-en">📖 Shelf</span><span class="lang-zh">📖 书架</span>
+          </button>
+        </div>
       </div>
     </div>
 
@@ -368,6 +370,7 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
                   <div class="flex-1 min-w-0">
                     <h3 class="font-serif text-lg font-medium text-black dark:text-white">{item.title}</h3>
                     <p class="mt-1 font-serif text-sm text-gray-400">{item.year || "—"} · {item.tags.join(" · ")}</p>
+                    {hasNotes(item) && item.year && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-zh">看于 {item.year}</span><span class="lang-en">Watched {item.year}</span></p>}
                     {item.notes?.quotes && item.notes.quotes.length > 0 && (<div class="mt-4 space-y-3">{item.notes.quotes.map((q) => (<blockquote class="border-l-2 border-[#8953d1] pl-4 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300 dark:border-[#a175e8]">{q}</blockquote>))}</div>)}
                     {item.notes?.core_ideas && item.notes.core_ideas.length > 0 && (<ul class="mt-4 space-y-2 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300">{item.notes.core_ideas.map((idea) => (<li class="flex gap-2"><span class="text-[#8953d1] dark:text-[#a175e8]">•</span><span>{idea}</span></li>))}</ul>)}
                     {!hasNotes(item) && <p class="mt-4 font-serif text-sm text-gray-500"><span class="lang-en">No notes yet.</span><span class="lang-zh">暂无笔记。</span></p>}
@@ -414,6 +417,7 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
                   <div class="flex-1 min-w-0">
                     <h3 class="font-serif text-lg font-medium text-black dark:text-white">{item.title}</h3>
                     <p class="mt-1 font-serif text-sm text-gray-400">{item.year || "—"} · {item.tags.join(" · ")}</p>
+                    {hasNotes(item) && item.year && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-zh">看于 {item.year}</span><span class="lang-en">Watched {item.year}</span></p>}
                     {item.notes?.quotes && item.notes.quotes.length > 0 && (<div class="mt-4 space-y-3">{item.notes.quotes.map((q) => (<blockquote class="border-l-2 border-[#8953d1] pl-4 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300 dark:border-[#a175e8]">{q}</blockquote>))}</div>)}
                     {item.notes?.core_ideas && item.notes.core_ideas.length > 0 && (<ul class="mt-4 space-y-2 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300">{item.notes.core_ideas.map((idea) => (<li class="flex gap-2"><span class="text-[#8953d1] dark:text-[#a175e8]">•</span><span>{idea}</span></li>))}</ul>)}
                     {!hasNotes(item) && <p class="mt-4 font-serif text-sm text-gray-500"><span class="lang-en">No notes yet.</span><span class="lang-zh">暂无笔记。</span></p>}
@@ -461,6 +465,7 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
                 <div class="flex-1 min-w-0">
                   <h3 class="font-serif text-lg font-medium text-black dark:text-white">{item.title}</h3>
                   <p class="mt-1 font-serif text-sm text-gray-400">{item.year || "—"}</p>
+                  {hasNotes(item) && item.year && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-zh">看于 {item.year}</span><span class="lang-en">Watched {item.year}</span></p>}
                   {item.notes?.quotes && item.notes.quotes.length > 0 && (<div class="mt-4 space-y-3">{item.notes.quotes.map((q) => (<blockquote class="border-l-2 border-[#8953d1] pl-4 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300 dark:border-[#a175e8]">{q}</blockquote>))}</div>)}
                   {item.notes?.core_ideas && item.notes.core_ideas.length > 0 && (<ul class="mt-4 space-y-2 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300">{item.notes.core_ideas.map((idea) => (<li class="flex gap-2"><span class="text-[#8953d1] dark:text-[#a175e8]">•</span><span>{idea}</span></li>))}</ul>)}
                   {!hasNotes(item) && <p class="mt-4 font-serif text-sm text-gray-500"><span class="lang-en">No notes yet.</span><span class="lang-zh">暂无笔记。</span></p>}
@@ -509,6 +514,7 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
                 <div class="flex-1 min-w-0">
                   <h3 class="font-serif text-lg font-medium text-black dark:text-white">{item.title}</h3>
                   <p class="mt-1 font-serif text-sm text-gray-400">{item.year || "—"}</p>
+                  {hasNotes(item) && item.year && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-zh">看于 {item.year}</span><span class="lang-en">Watched {item.year}</span></p>}
                   {item.notes?.quotes && item.notes.quotes.length > 0 && (<div class="mt-4 space-y-3">{item.notes.quotes.map((q) => (<blockquote class="border-l-2 border-[#8953d1] pl-4 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300 dark:border-[#a175e8]">{q}</blockquote>))}</div>)}
                   {item.notes?.core_ideas && item.notes.core_ideas.length > 0 && (<ul class="mt-4 space-y-2 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300">{item.notes.core_ideas.map((idea) => (<li class="flex gap-2"><span class="text-[#8953d1] dark:text-[#a175e8]">•</span><span>{idea}</span></li>))}</ul>)}
                   {!hasNotes(item) && <p class="mt-4 font-serif text-sm text-gray-500"><span class="lang-en">No notes yet.</span><span class="lang-zh">暂无笔记。</span></p>}
