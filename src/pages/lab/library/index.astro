@@ -189,8 +189,8 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
         <span class="lang-zh">按标签筛选，可切换网格和书架视图</span>
         <span class="lang-en">Filter by tag, toggle grid or shelf view</span>
       </div>
-      <select id="books-sort" class="font-serif text-xs text-gray-500 dark:text-gray-400 bg-transparent border border-purple-500/20 rounded-full px-3 py-1.5 cursor-pointer hover:border-purple-500/40 focus:outline-none">
-        <option value="date">最近阅读 / Recent</option>
+      <select id="books-sort" autocomplete="off" class="font-serif text-xs text-gray-500 dark:text-gray-400 bg-transparent border border-purple-500/20 rounded-full px-3 py-1.5 cursor-pointer hover:border-purple-500/40 focus:outline-none">
+        <option value="date" selected>最近阅读 / Recent</option>
         <option value="rating">评分 / Rating</option>
         <option value="notes">有笔记 / With Notes</option>
       </select>
@@ -1201,6 +1201,8 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
     if (booksSortEl) booksSortEl.addEventListener('change', applySortFilter);
 
     // ── Init ──────────────────────────────────────────────────
+    // Force reset select to default (prevent browser form history restoring a filter)
+    if (booksSortEl) booksSortEl.value = 'date';
     renderTags();
   </script>
 
