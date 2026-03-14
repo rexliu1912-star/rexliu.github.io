@@ -797,6 +797,7 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
   </style>
 
   <script is:inline>
+  function initLibrary() {
     let activeTab = 'books';
     let activeTag = '全部';
 
@@ -1204,6 +1205,10 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
     // Force reset select to default (prevent browser form history restoring a filter)
     if (booksSortEl) booksSortEl.value = 'date';
     renderTags();
+  } // end initLibrary
+
+  // Run on both initial load and View Transitions navigation
+  document.addEventListener('astro:page-load', initLibrary);
   </script>
 
 </PageLayout>
