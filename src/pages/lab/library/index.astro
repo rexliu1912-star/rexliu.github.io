@@ -190,9 +190,9 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
         <span class="lang-en">Filter by tag, toggle grid or shelf view</span>
       </div>
       <select id="books-sort" autocomplete="off" class="font-serif text-xs text-gray-500 dark:text-gray-400 bg-transparent border border-purple-500/20 rounded-full px-3 py-1.5 cursor-pointer hover:border-purple-500/40 focus:outline-none">
-        <option value="date" selected>最近阅读 / Recent</option>
-        <option value="rating">评分 / Rating</option>
-        <option value="notes">有笔记 / With Notes</option>
+        <option value="date" selected data-zh="最近阅读" data-en="Recent">最近阅读</option>
+        <option value="rating" data-zh="评分" data-en="Rating">评分</option>
+        <option value="notes" data-zh="有笔记" data-en="With Notes">有笔记</option>
       </select>
       <div class="inline-flex items-center rounded-full border border-purple-500/20 bg-white/70 p-1 text-sm shadow-sm backdrop-blur dark:border-purple-500/15 dark:bg-gray-900/60">
         <button type="button" id="view-btn-grid" class="lib-view-toggle rounded-full bg-[#8953d1] px-3 py-1.5 font-serif text-xs text-white dark:bg-[#a175e8] dark:text-black" aria-pressed="true">
@@ -1200,6 +1200,18 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
     }
 
     if (booksSortEl) booksSortEl.addEventListener('change', applySortFilter);
+
+    // ── Sort select language sync ─────────────────────────────
+    function syncSortLang() {
+      const lang = document.documentElement.getAttribute('data-lang') || 'zh';
+      if (!booksSortEl) return;
+      booksSortEl.querySelectorAll('option').forEach(opt => {
+        opt.textContent = lang === 'en' ? (opt.dataset.en || opt.textContent) : (opt.dataset.zh || opt.textContent);
+      });
+    }
+    syncSortLang();
+    // Re-sync when language changes (MutationObserver on html[data-lang])
+    new MutationObserver(syncSortLang).observe(document.documentElement, { attributes: true, attributeFilter: ['data-lang'] });
 
     // ── Init ──────────────────────────────────────────────────
     // Force reset select to default (prevent browser form history restoring a filter)
