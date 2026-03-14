@@ -68,8 +68,12 @@ const mediaTypeColors: Record<string, string> = {
 function ratingDots(rating: string | null | undefined): number {
   if (!rating) return 0;
   const m = rating.match(/^(\d+(?:\.\d+)?)\/(\d+)/);
-  if (!m || !m[1] || !m[2]) return 0;
-  return Math.round((parseFloat(m[1]) / parseFloat(m[2])) * 5);
+  if (m && m[1] && m[2]) {
+    return Math.round((parseFloat(m[1]) / parseFloat(m[2])) * 5);
+  }
+  const full = (rating.match(/🌕/g) || []).length;
+  const half = (rating.match(/🌗/g) || []).length;
+  return Math.min(5, Math.round(full + half * 0.5));
 }
 
 function hasNotes(item: LibraryItem) {
@@ -185,6 +189,11 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
         <span class="lang-zh">按标签筛选，可切换网格和书架视图</span>
         <span class="lang-en">Filter by tag, toggle grid or shelf view</span>
       </div>
+      <select id="books-sort" class="font-serif text-xs text-gray-500 dark:text-gray-400 bg-transparent border border-purple-500/20 rounded-full px-3 py-1.5 cursor-pointer hover:border-purple-500/40 focus:outline-none">
+        <option value="date">最近阅读 / Recent</option>
+        <option value="rating">评分 / Rating</option>
+        <option value="notes">有笔记 / With Notes</option>
+      </select>
       <div class="inline-flex items-center rounded-full border border-purple-500/20 bg-white/70 p-1 text-sm shadow-sm backdrop-blur dark:border-purple-500/15 dark:bg-gray-900/60">
         <button type="button" id="view-btn-grid" class="lib-view-toggle rounded-full bg-[#8953d1] px-3 py-1.5 font-serif text-xs text-white dark:bg-[#a175e8] dark:text-black" aria-pressed="true">
           <span class="lang-en">📚 Grid</span><span class="lang-zh">📚 网格</span>
@@ -216,7 +225,7 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
             )}
             <div class="p-3">
               <h2 class="font-serif text-sm font-medium text-black dark:text-white leading-snug line-clamp-2">{item.title}</h2>
-              {item.titleEn && <p class="lang-en mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500 truncate italic">{item.titleEn}</p>}
+              {item.titleEn && <p class="lang-en mt-0.5 font-serif text-xs text-gray-600 dark:text-gray-300 truncate italic">{item.titleEn}</p>}
               <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500 truncate">{item.subtitle}</p>
               <div class="mt-2 flex items-center gap-2">
                 {item.rating && (
@@ -247,6 +256,12 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
                   {item.rating && <span> · {item.rating}</span>}
                   {item.tags.length > 0 && <span> · {item.tags.join(" · ")}</span>}
                 </p>
+                {item.sortDate && (
+                  <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500">
+                    <span class="lang-zh">读于 {item.sortDate}</span>
+                    <span class="lang-en">Read {item.sortDate}</span>
+                  </p>
+                )}
                 {item.notes?.quotes && item.notes.quotes.length > 0 && (
                   <div class="mt-4 space-y-3">
                     {item.notes.quotes.map((q) => (
@@ -554,12 +569,12 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
         0 2px 6px rgba(0,0,0,0.05);
       border-color: rgba(137,83,209,0.15);
     }
-    :global(.dark) .lib-card-surface {
+    :global([data-theme="dark"]) .lib-card-surface {
       background: linear-gradient(175deg, rgba(30,27,46,0.95) 0%, rgba(22,20,36,0.92) 100%);
       border: 1px solid rgba(137,83,209,0.12);
       box-shadow: 0 2px 10px rgba(0,0,0,0.3);
     }
-    :global(.dark) .lib-card-surface:hover {
+    :global([data-theme="dark"]) .lib-card-surface:hover {
       box-shadow: 0 8px 28px rgba(137,83,209,0.22), 0 2px 8px rgba(0,0,0,0.3);
       border-color: rgba(137,83,209,0.25);
     }
@@ -630,7 +645,7 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
       pointer-events: none;
     }
     .lib-card:hover .lib-bookmark { top: 0; }
-    :global(.dark) .lib-bookmark { background: #a175e8; }
+    :global([data-theme="dark"]) .lib-bookmark { background: #a175e8; }
 
     /* ── Tab page-turn animation ── */
     @keyframes pageFromRight { from { opacity: 0; transform: translateX(48px); } to { opacity: 1; transform: translateX(0); } }
@@ -657,7 +672,7 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
       box-shadow: 0 24px 80px rgba(0,0,0,0.22), 0 0 0 1px rgba(137,83,209,0.15);
       transform-origin: left center;
     }
-    :global(.dark) #lib-modal-card {
+    :global([data-theme="dark"]) #lib-modal-card {
       background: #16162a;
       color: #e5e7eb;
       box-shadow: 0 24px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(137,83,209,0.25);
@@ -666,12 +681,12 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
     #lib-modal.closing #lib-modal-card { animation: bookClose 0.22s ease both; }
     /* Modal content text colors — explicit, not relying on inherit */
     #lib-modal-content h3 { color: #111827; }
-    :global(.dark) #lib-modal-content h3 { color: #f9fafb; }
+    :global([data-theme="dark"]) #lib-modal-content h3 { color: #f9fafb; }
     #lib-modal-content p, #lib-modal-content li span:last-child { color: #4b5563; }
-    :global(.dark) #lib-modal-content p,
-    :global(.dark) #lib-modal-content li span:last-child { color: #d1d5db; }
+    :global([data-theme="dark"]) #lib-modal-content p,
+    :global([data-theme="dark"]) #lib-modal-content li span:last-child { color: #d1d5db; }
     #lib-modal-content blockquote { color: #4b5563; border-color: #8953d1; }
-    :global(.dark) #lib-modal-content blockquote { color: #d1d5db; border-color: #a175e8; }
+    :global([data-theme="dark"]) #lib-modal-content blockquote { color: #d1d5db; border-color: #a175e8; }
     #lib-modal-close {
       position: absolute; top: 1rem; right: 1rem;
       width: 2rem; height: 2rem;
@@ -814,6 +829,9 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
       });
     }
     initStagger();
+    setTimeout(() => {
+      document.querySelectorAll('.lib-card:not(.revealed)').forEach(c => c.classList.add('revealed'));
+    }, 800);
 
     // ── 3D hover tilt (via CSS vars — no conflict with .revealed transform) ──
     function attachTilt(card) {
@@ -1145,6 +1163,42 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
         panel.style.setProperty('--spotlight', '0');
       });
     });
+
+    // Sort/filter books
+    const booksSortEl = document.getElementById('books-sort');
+    const booksGridEl = document.getElementById('books-grid');
+    const allBookCards = Array.from(document.querySelectorAll('.lib-card[data-group="books"]'));
+    const originalOrder = allBookCards.map(c => c.dataset.id);
+
+    function applySortFilter() {
+      const sort = booksSortEl ? booksSortEl.value : 'date';
+      if (!booksGridEl) return;
+      if (sort === 'notes') {
+        allBookCards.forEach(c => {
+          const hasNote = c.querySelector('.lib-bookmark') !== null;
+          c.style.display = hasNote ? '' : 'none';
+        });
+        return;
+      }
+      allBookCards.forEach(c => { c.style.display = ''; });
+      if (sort === 'date') {
+        originalOrder.forEach(id => {
+          const c = booksGridEl.querySelector('.lib-card[data-id="' + id + '"]');
+          if (c) booksGridEl.appendChild(c);
+        });
+      } else if (sort === 'rating') {
+        const cards = Array.from(booksGridEl.querySelectorAll('.lib-card[data-group="books"]'));
+        const sorted = cards.sort((a, b) => {
+          const ra = (a.querySelectorAll('.bg-\\[\\#8953d1\\]') || []).length;
+          const rb = (b.querySelectorAll('.bg-\\[\\#8953d1\\]') || []).length;
+          return rb - ra;
+        });
+        sorted.forEach(c => booksGridEl.appendChild(c));
+      }
+      applyTagFilter();
+    }
+
+    if (booksSortEl) booksSortEl.addEventListener('change', applySortFilter);
 
     // ── Init ──────────────────────────────────────────────────
     renderTags();
