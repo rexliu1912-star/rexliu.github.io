@@ -232,7 +232,7 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
                 <span class="font-serif text-sm font-semibold leading-snug text-white drop-shadow">{item.title}</span>
               </div>
             )}
-            <div class="p-3">
+            <div class="p-3 flex flex-col">
               <h2 class="font-serif text-sm font-medium text-black dark:text-white leading-snug line-clamp-2">{item.title}</h2>
               {item.titleEn && <p class="lang-en mt-0.5 font-serif text-xs text-gray-600 dark:text-gray-300 truncate italic">{item.titleEn}</p>}
               <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500 truncate">{item.subtitle}</p>
@@ -245,10 +245,10 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
                   </div>
                 )}
               </div>
-              <div class="lib-reaction mt-2 flex w-full items-center justify-center gap-2">
+              <div class="lib-reaction mt-auto pt-2 flex w-full items-center justify-center gap-2">
                 <button
                   type="button"
-                  class="lib-react-btn inline-flex w-auto items-center gap-1.5 rounded-full border border-[#8953d1]/30 px-3 py-0.5 text-xs text-[#8953d1] transition-colors hover:bg-[#8953d1]/10 dark:border-[#a175e8]/30 dark:text-[#a175e8]"
+                  class="lib-react-btn group/btn inline-flex w-auto items-center gap-1 text-xs text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]"
                   data-item-id={item.id}
                   aria-label="我也看过"
                 >
@@ -308,7 +308,7 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
                 <div class="lib-reaction-modal mt-4 flex items-center gap-3">
                   <button
                     type="button"
-                    class="lib-react-btn flex items-center gap-1.5 rounded-full border border-[#8953d1]/40 px-4 py-1.5 text-sm text-[#8953d1] transition-colors hover:bg-[#8953d1]/10 dark:border-[#a175e8]/40 dark:text-[#a175e8]"
+                    class="lib-react-btn inline-flex items-center gap-1.5 text-sm text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]"
                     data-item-id=""
                     aria-label="我也看过"
                   >
@@ -393,10 +393,10 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
                 <div class="p-3">
                   <h3 class="font-serif text-sm font-medium text-black dark:text-white line-clamp-2">{item.title}</h3>
                   <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Film</span><span class="lang-zh">电影</span> · {item.year || "—"}</p>
-                  <div class="lib-reaction mt-2 flex w-full items-center justify-center gap-2">
+                  <div class="lib-reaction mt-auto pt-2 flex w-full items-center justify-center gap-2">
                     <button
                       type="button"
-                      class="lib-react-btn inline-flex w-auto items-center gap-1.5 rounded-full border border-[#8953d1]/30 px-3 py-0.5 text-xs text-[#8953d1] transition-colors hover:bg-[#8953d1]/10 dark:border-[#a175e8]/30 dark:text-[#a175e8]"
+                      class="lib-react-btn group/btn inline-flex w-auto items-center gap-1 text-xs text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]"
                       data-item-id={item.id}
                       aria-label="我也看过"
                     >
@@ -446,10 +446,10 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
                 <div class="p-3">
                   <h3 class="font-serif text-sm font-medium text-black dark:text-white line-clamp-2">{item.title}</h3>
                   <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Series</span><span class="lang-zh">剧集</span> · {item.year || "—"}</p>
-                  <div class="lib-reaction mt-2 flex w-full items-center justify-center gap-2">
+                  <div class="lib-reaction mt-auto pt-2 flex w-full items-center justify-center gap-2">
                     <button
                       type="button"
-                      class="lib-react-btn inline-flex w-auto items-center gap-1.5 rounded-full border border-[#8953d1]/30 px-3 py-0.5 text-xs text-[#8953d1] transition-colors hover:bg-[#8953d1]/10 dark:border-[#a175e8]/30 dark:text-[#a175e8]"
+                      class="lib-react-btn group/btn inline-flex w-auto items-center gap-1 text-xs text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]"
                       data-item-id={item.id}
                       aria-label="我也看过"
                     >
@@ -501,10 +501,10 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
               <div class="p-3">
                 <h3 class="font-serif text-sm font-medium text-black dark:text-white line-clamp-2">{item.title}</h3>
                 <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Variety</span><span class="lang-zh">综艺</span> · {item.year || "—"}</p>
-                <div class="lib-reaction mt-2 flex w-full items-center justify-center gap-2">
+                <div class="lib-reaction mt-auto pt-2 flex w-full items-center justify-center gap-2">
                   <button
                     type="button"
-                    class="lib-react-btn inline-flex w-auto items-center gap-1.5 rounded-full border border-[#8953d1]/30 px-3 py-0.5 text-xs text-[#8953d1] transition-colors hover:bg-[#8953d1]/10 dark:border-[#a175e8]/30 dark:text-[#a175e8]"
+                    class="lib-react-btn group/btn inline-flex w-auto items-center gap-1 text-xs text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]"
                     data-item-id={item.id}
                     aria-label="我也看过"
                   >
@@ -557,10 +557,10 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
               <div class="p-3">
                 <h3 class="font-serif text-sm font-medium text-black dark:text-white line-clamp-2">{item.title}</h3>
                 <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Documentary</span><span class="lang-zh">纪录片</span> · {item.year || "—"}</p>
-                <div class="lib-reaction mt-2 flex w-full items-center justify-center gap-2">
+                <div class="lib-reaction mt-auto pt-2 flex w-full items-center justify-center gap-2">
                   <button
                     type="button"
-                    class="lib-react-btn inline-flex w-auto items-center gap-1.5 rounded-full border border-[#8953d1]/30 px-3 py-0.5 text-xs text-[#8953d1] transition-colors hover:bg-[#8953d1]/10 dark:border-[#a175e8]/30 dark:text-[#a175e8]"
+                    class="lib-react-btn group/btn inline-flex w-auto items-center gap-1 text-xs text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]"
                     data-item-id={item.id}
                     aria-label="我也看过"
                   >
@@ -812,9 +812,10 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
     }
     :global(.shelf-row::-webkit-scrollbar) { display: none; }
     .lib-react-btn.lib-reacted {
-      border-color: #8953d1;
-      background: rgba(137, 83, 209, 0.1);
       color: #8953d1;
+    }
+    :global([data-theme="dark"]) .lib-react-btn.lib-reacted {
+      color: #a175e8;
     }
     .lib-reaction {
       flex-wrap: wrap;
@@ -1087,7 +1088,7 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
           <div class="lib-reaction-modal mt-4 flex items-center gap-3">
             <button
               type="button"
-              class="lib-react-btn flex items-center gap-1.5 rounded-full border border-[#8953d1]/40 px-4 py-1.5 text-sm text-[#8953d1] transition-colors hover:bg-[#8953d1]/10 dark:border-[#a175e8]/40 dark:text-[#a175e8]"
+              class="lib-react-btn inline-flex items-center gap-1.5 text-sm text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]"
               data-item-id=""
               aria-label="我也看过"
             >
