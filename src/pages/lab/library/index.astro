@@ -245,15 +245,15 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
                   </div>
                 )}
               </div>
-              <div class="lib-reaction mt-2 flex items-center gap-2">
+              <div class="lib-reaction mt-2 flex items-center justify-center gap-2">
                 <button
                   type="button"
-                  class="lib-react-btn flex items-center gap-1.5 rounded-full border border-[#8953d1]/30 px-3 py-1 text-xs text-[#8953d1] hover:bg-[#8953d1]/10 transition-colors dark:text-[#a175e8] dark:border-[#a175e8]/30"
+                  class="lib-react-btn inline-flex w-auto items-center gap-1.5 rounded-full border border-[#8953d1]/30 px-3 py-0.5 text-xs text-[#8953d1] transition-colors hover:bg-[#8953d1]/10 dark:border-[#a175e8]/30 dark:text-[#a175e8]"
                   data-item-id={item.id}
                   aria-label="我也看过"
                 >
                   <span class="react-icon">👁</span>
-                  <span class="react-label">我也看过</span>
+                  <span class="react-label" data-zh="我也看过" data-en="Read it too">我也看过</span>
                 </button>
                 <span class="react-count text-xs text-gray-400 dark:text-gray-500" data-item-id={item.id}></span>
               </div>
@@ -305,6 +305,18 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
                     <span class="lang-en">No notes yet.</span><span class="lang-zh">暂无笔记。</span>
                   </p>
                 )}
+                <div class="lib-reaction-modal mt-4 flex items-center gap-3">
+                  <button
+                    type="button"
+                    class="lib-react-btn flex items-center gap-1.5 rounded-full border border-[#8953d1]/40 px-4 py-1.5 text-sm text-[#8953d1] transition-colors hover:bg-[#8953d1]/10 dark:border-[#a175e8]/40 dark:text-[#a175e8]"
+                    data-item-id=""
+                    aria-label="我也看过"
+                  >
+                    <span class="react-icon">👁</span>
+                    <span class="react-label" data-zh="我也看过" data-en="Read it too">我也看过</span>
+                  </button>
+                  <span class="react-count text-sm text-gray-400 dark:text-gray-500" data-item-id=""></span>
+                </div>
               </div>
             </div>
           </div>
@@ -355,18 +367,6 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
                   )}
                 </span>
               </button>
-              <div class="lib-reaction shelf-reaction mt-2 flex items-center gap-2">
-                <button
-                  type="button"
-                  class="lib-react-btn flex items-center gap-1.5 rounded-full border border-[#8953d1]/30 px-3 py-1 text-xs text-[#8953d1] hover:bg-[#8953d1]/10 transition-colors dark:text-[#a175e8] dark:border-[#a175e8]/30"
-                  data-item-id={item.id}
-                  aria-label="我也看过"
-                >
-                  <span class="react-icon">👁</span>
-                  <span class="react-label">我也看过</span>
-                </button>
-                <span class="react-count text-xs text-gray-400 dark:text-gray-500" data-item-id={item.id}></span>
-              </div>
             </div>
           );
         })}
@@ -393,21 +393,15 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
                 <div class="p-3">
                   <h3 class="font-serif text-sm font-medium text-black dark:text-white line-clamp-2">{item.title}</h3>
                   <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Film</span><span class="lang-zh">电影</span> · {item.year || "—"}</p>
-                  {hasNotes(item) && (
-                    <span class="mt-2 inline-flex items-center gap-1 rounded-full bg-purple-50 px-2 py-0.5 text-[10px] font-medium text-[#8953d1] dark:bg-purple-900/30 dark:text-[#a175e8]">
-                      <span class="block w-1 h-1 rounded-full bg-current"></span>
-                      <span class="lang-zh">笔记</span><span class="lang-en">Notes</span>
-                    </span>
-                  )}
-                  <div class="lib-reaction mt-2 flex items-center gap-2">
+                  <div class="lib-reaction mt-2 flex items-center justify-center gap-2">
                     <button
                       type="button"
-                      class="lib-react-btn flex items-center gap-1.5 rounded-full border border-[#8953d1]/30 px-3 py-1 text-xs text-[#8953d1] hover:bg-[#8953d1]/10 transition-colors dark:text-[#a175e8] dark:border-[#a175e8]/30"
+                      class="lib-react-btn inline-flex w-auto items-center gap-1.5 rounded-full border border-[#8953d1]/30 px-3 py-0.5 text-xs text-[#8953d1] transition-colors hover:bg-[#8953d1]/10 dark:border-[#a175e8]/30 dark:text-[#a175e8]"
                       data-item-id={item.id}
                       aria-label="我也看过"
                     >
                       <span class="react-icon">👁</span>
-                      <span class="react-label">我也看过</span>
+                      <span class="react-label" data-zh="我也看过" data-en="Read it too">我也看过</span>
                     </button>
                     <span class="react-count text-xs text-gray-400 dark:text-gray-500" data-item-id={item.id}></span>
                   </div>
@@ -452,21 +446,15 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
                 <div class="p-3">
                   <h3 class="font-serif text-sm font-medium text-black dark:text-white line-clamp-2">{item.title}</h3>
                   <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Series</span><span class="lang-zh">剧集</span> · {item.year || "—"}</p>
-                  {hasNotes(item) && (
-                    <span class="mt-2 inline-flex items-center gap-1 rounded-full bg-purple-50 px-2 py-0.5 text-[10px] font-medium text-[#8953d1] dark:bg-purple-900/30 dark:text-[#a175e8]">
-                      <span class="block w-1 h-1 rounded-full bg-current"></span>
-                      <span class="lang-zh">笔记</span><span class="lang-en">Notes</span>
-                    </span>
-                  )}
-                  <div class="lib-reaction mt-2 flex items-center gap-2">
+                  <div class="lib-reaction mt-2 flex items-center justify-center gap-2">
                     <button
                       type="button"
-                      class="lib-react-btn flex items-center gap-1.5 rounded-full border border-[#8953d1]/30 px-3 py-1 text-xs text-[#8953d1] hover:bg-[#8953d1]/10 transition-colors dark:text-[#a175e8] dark:border-[#a175e8]/30"
+                      class="lib-react-btn inline-flex w-auto items-center gap-1.5 rounded-full border border-[#8953d1]/30 px-3 py-0.5 text-xs text-[#8953d1] transition-colors hover:bg-[#8953d1]/10 dark:border-[#a175e8]/30 dark:text-[#a175e8]"
                       data-item-id={item.id}
                       aria-label="我也看过"
                     >
                       <span class="react-icon">👁</span>
-                      <span class="react-label">我也看过</span>
+                      <span class="react-label" data-zh="我也看过" data-en="Read it too">我也看过</span>
                     </button>
                     <span class="react-count text-xs text-gray-400 dark:text-gray-500" data-item-id={item.id}></span>
                   </div>
@@ -513,21 +501,15 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
               <div class="p-3">
                 <h3 class="font-serif text-sm font-medium text-black dark:text-white line-clamp-2">{item.title}</h3>
                 <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Variety</span><span class="lang-zh">综艺</span> · {item.year || "—"}</p>
-                {hasNotes(item) && (
-                  <span class="mt-2 inline-flex items-center gap-1 rounded-full bg-purple-50 px-2 py-0.5 text-[10px] font-medium text-[#8953d1] dark:bg-purple-900/30 dark:text-[#a175e8]">
-                    <span class="block w-1 h-1 rounded-full bg-current"></span>
-                    <span class="lang-zh">笔记</span><span class="lang-en">Notes</span>
-                  </span>
-                )}
-                <div class="lib-reaction mt-2 flex items-center gap-2">
+                <div class="lib-reaction mt-2 flex items-center justify-center gap-2">
                   <button
                     type="button"
-                    class="lib-react-btn flex items-center gap-1.5 rounded-full border border-[#8953d1]/30 px-3 py-1 text-xs text-[#8953d1] hover:bg-[#8953d1]/10 transition-colors dark:text-[#a175e8] dark:border-[#a175e8]/30"
+                    class="lib-react-btn inline-flex w-auto items-center gap-1.5 rounded-full border border-[#8953d1]/30 px-3 py-0.5 text-xs text-[#8953d1] transition-colors hover:bg-[#8953d1]/10 dark:border-[#a175e8]/30 dark:text-[#a175e8]"
                     data-item-id={item.id}
                     aria-label="我也看过"
                   >
                     <span class="react-icon">👁</span>
-                    <span class="react-label">我也看过</span>
+                    <span class="react-label" data-zh="我也看过" data-en="Read it too">我也看过</span>
                   </button>
                   <span class="react-count text-xs text-gray-400 dark:text-gray-500" data-item-id={item.id}></span>
                 </div>
@@ -575,21 +557,15 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
               <div class="p-3">
                 <h3 class="font-serif text-sm font-medium text-black dark:text-white line-clamp-2">{item.title}</h3>
                 <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Documentary</span><span class="lang-zh">纪录片</span> · {item.year || "—"}</p>
-                {hasNotes(item) && (
-                  <span class="mt-2 inline-flex items-center gap-1 rounded-full bg-purple-50 px-2 py-0.5 text-[10px] font-medium text-[#8953d1] dark:bg-purple-900/30 dark:text-[#a175e8]">
-                    <span class="block w-1 h-1 rounded-full bg-current"></span>
-                    <span class="lang-zh">笔记</span><span class="lang-en">Notes</span>
-                  </span>
-                )}
-                <div class="lib-reaction mt-2 flex items-center gap-2">
+                <div class="lib-reaction mt-2 flex items-center justify-center gap-2">
                   <button
                     type="button"
-                    class="lib-react-btn flex items-center gap-1.5 rounded-full border border-[#8953d1]/30 px-3 py-1 text-xs text-[#8953d1] hover:bg-[#8953d1]/10 transition-colors dark:text-[#a175e8] dark:border-[#a175e8]/30"
+                    class="lib-react-btn inline-flex w-auto items-center gap-1.5 rounded-full border border-[#8953d1]/30 px-3 py-0.5 text-xs text-[#8953d1] transition-colors hover:bg-[#8953d1]/10 dark:border-[#a175e8]/30 dark:text-[#a175e8]"
                     data-item-id={item.id}
                     aria-label="我也看过"
                   >
                     <span class="react-icon">👁</span>
-                    <span class="react-label">我也看过</span>
+                    <span class="react-label" data-zh="我也看过" data-en="Read it too">我也看过</span>
                   </button>
                   <span class="react-count text-xs text-gray-400 dark:text-gray-500" data-item-id={item.id}></span>
                 </div>
@@ -856,15 +832,6 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
       min-width: clamp(32px, 3vw, 42px);
       padding-bottom: 0.75rem;
     }
-    .shelf-reaction {
-      min-height: 3rem;
-      justify-content: center;
-    }
-    .shelf-reaction .react-count,
-    .shelf-reaction .react-quote {
-      width: 100%;
-      text-align: center;
-    }
     .shelf-book {
       position: relative;
       display: flex; justify-content: center; align-items: flex-end;
@@ -1041,9 +1008,18 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
       return ['全部', ...Array.from(tags).sort((a, b) => a.localeCompare(b, 'zh-Hans-CN'))];
     }
 
-    function getLang() {
-      return document.documentElement.lang === 'en' || document.body.classList.contains('lang-en') ? 'en' : 'zh';
+    function isEnglish() {
+      return document.documentElement.classList.contains('lang-en') ||
+        document.documentElement.lang === 'en' ||
+        document.documentElement.getAttribute('data-lang') === 'en' ||
+        document.body.classList.contains('lang-en');
     }
+
+    function t(zh, en) {
+      return isEnglish() ? en : zh;
+    }
+
+    window.__isEn = isEnglish();
 
     // Tag translations (zh → en)
     const TAG_EN = {
@@ -1106,8 +1082,51 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
       // If closing animation running, cut it short
       modal.classList.remove('closing');
       modalContent.innerHTML = detail.innerHTML;
+      if (!modalContent.querySelector('.lib-reaction-modal')) {
+        modalContent.insertAdjacentHTML('beforeend', `
+          <div class="lib-reaction-modal mt-4 flex items-center gap-3">
+            <button
+              type="button"
+              class="lib-react-btn flex items-center gap-1.5 rounded-full border border-[#8953d1]/40 px-4 py-1.5 text-sm text-[#8953d1] transition-colors hover:bg-[#8953d1]/10 dark:border-[#a175e8]/40 dark:text-[#a175e8]"
+              data-item-id=""
+              aria-label="我也看过"
+            >
+              <span class="react-icon">👁</span>
+              <span class="react-label" data-zh="我也看过" data-en="Read it too">我也看过</span>
+            </button>
+            <span class="react-count text-sm text-gray-400 dark:text-gray-500" data-item-id=""></span>
+          </div>
+        `);
+      }
       modal.classList.add('open');
       document.body.style.overflow = 'hidden';
+
+      const itemId = id;
+      const modalReactBtn = document.querySelector('.lib-reaction-modal .lib-react-btn');
+      const modalCountEl = document.querySelector('.lib-reaction-modal .react-count');
+      if (modalReactBtn) modalReactBtn.dataset.itemId = itemId;
+      if (modalCountEl) modalCountEl.dataset.itemId = itemId;
+
+      if (clicked[itemId]) {
+        modalReactBtn?.classList.add('lib-reacted');
+        if (modalReactBtn) {
+          const modalIcon = modalReactBtn.querySelector('.react-icon');
+          const modalLabel = modalReactBtn.querySelector('.react-label');
+          if (modalIcon) modalIcon.textContent = '✓';
+          if (modalLabel) modalLabel.textContent = t('已标记', 'Marked');
+        }
+      } else {
+        modalReactBtn?.classList.remove('lib-reacted');
+        if (modalReactBtn) {
+          const modalIcon = modalReactBtn.querySelector('.react-icon');
+          const modalLabel = modalReactBtn.querySelector('.react-label');
+          if (modalIcon) modalIcon.textContent = '👁';
+          if (modalLabel) modalLabel.textContent = t('我也看过', 'Read it too');
+        }
+      }
+
+      const currentCount = reactionCounts[itemId] || 0;
+      if (modalCountEl) modalCountEl.textContent = formatReactionCount(currentCount);
 
       document.querySelectorAll('.lib-card.is-active').forEach(c => c.classList.remove('is-active'));
       cardEl.classList.add('is-active');
@@ -1328,17 +1347,60 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
 
     if (booksSortEl) booksSortEl.addEventListener('change', applySortFilter);
 
+    let clicked = {};
+    let reactionCounts = {};
+
+    try {
+      clicked = JSON.parse(localStorage.getItem('lib_reactions') || '{}');
+    } catch {}
+
+    const formatReactionCount = (count) => count > 0 ? `${count} ${t('人读过', 'readers')}` : '';
+
     // ── Sort select language sync ─────────────────────────────
     function syncSortLang() {
-      const lang = document.documentElement.getAttribute('data-lang') || 'zh';
       if (!booksSortEl) return;
       booksSortEl.querySelectorAll('option').forEach(opt => {
-        opt.textContent = lang === 'en' ? (opt.dataset.en || opt.textContent) : (opt.dataset.zh || opt.textContent);
+        opt.textContent = isEnglish() ? (opt.dataset.en || opt.textContent) : (opt.dataset.zh || opt.textContent);
       });
     }
+
+    function syncReactionLabels() {
+      window.__isEn = isEnglish();
+      document.querySelectorAll('.react-label').forEach((el) => {
+        const isReacted = el.closest('.lib-react-btn')?.classList.contains('lib-reacted');
+        el.textContent = isReacted ? t('已标记', 'Marked') : t('我也看过', 'Read it too');
+      });
+      document.querySelectorAll('.react-count').forEach((el) => {
+        const itemId = el.dataset.itemId;
+        if (!itemId) return;
+        el.textContent = formatReactionCount(reactionCounts[itemId] || 0);
+      });
+      document.querySelectorAll('.react-quote').forEach((el) => {
+        const rawQuote = el.dataset.quoteText;
+        if (!rawQuote) return;
+        el.textContent = `${t('Rex 的感悟: "', "Rex's note: \"")}${rawQuote}..."`;
+      });
+    }
+
     syncSortLang();
-    // Re-sync when language changes (MutationObserver on html[data-lang])
-    new MutationObserver(syncSortLang).observe(document.documentElement, { attributes: true, attributeFilter: ['data-lang'] });
+    syncReactionLabels();
+
+    const syncLanguageUI = () => {
+      syncSortLang();
+      syncReactionLabels();
+    };
+
+    new MutationObserver(syncLanguageUI).observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-lang', 'lang', 'class'],
+    });
+
+    const langToggle = document.querySelector('[data-lang-toggle], .lang-toggle-btn, button[aria-label*="lang"], button[aria-label*="English"], button[aria-label*="中文"]');
+    if (langToggle) {
+      langToggle.addEventListener('click', () => {
+        setTimeout(syncLanguageUI, 50);
+      });
+    }
 
     // ── Init ──────────────────────────────────────────────────
     // Force reset select to default (prevent browser form history restoring a filter)
@@ -1346,86 +1408,83 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
     renderTags();
 
     // ── Library Reactions ──────────────────────────────────
+    const applyReactionState = (id, count) => {
+      reactionCounts[id] = count;
+      document.querySelectorAll(`.react-count[data-item-id="${id}"]`).forEach((countEl) => {
+        countEl.textContent = formatReactionCount(count);
+      });
+      document.querySelectorAll(`.lib-react-btn[data-item-id="${id}"]`).forEach((btn) => {
+        const icon = btn.querySelector('.react-icon');
+        const label = btn.querySelector('.react-label');
+        if (clicked[id]) {
+          btn.classList.add('lib-reacted');
+          if (icon) icon.textContent = '✓';
+          if (label) label.textContent = t('已标记', 'Marked');
+        } else {
+          btn.classList.remove('lib-reacted');
+          if (icon) icon.textContent = '👁';
+          if (label) label.textContent = t('我也看过', 'Read it too');
+        }
+      });
+    };
+
+    const showReactionQuote = (id, quote) => {
+      if (!quote) return;
+      document.querySelectorAll(`.lib-reaction .react-quote[data-item-id="${id}"]`).forEach((node) => node.remove());
+      document.querySelectorAll(`.lib-reaction .react-count[data-item-id="${id}"]`).forEach((countEl) => {
+        const quoteEl = document.createElement('span');
+        quoteEl.className = 'react-quote mt-1 block text-xs italic text-gray-500 dark:text-gray-400';
+        quoteEl.dataset.itemId = id;
+        quoteEl.dataset.quoteText = quote;
+        quoteEl.textContent = `${t('Rex 的感悟: "', "Rex's note: \"")}${quote}..."`;
+        countEl.parentNode?.insertBefore(quoteEl, countEl.nextSibling);
+        window.setTimeout(() => quoteEl.remove(), 5000);
+      });
+    };
+
     (async () => {
       const reactionButtons = Array.from(document.querySelectorAll('.lib-react-btn'));
       const itemIds = [...new Set(reactionButtons.map((button) => button.dataset.itemId).filter(Boolean))];
       if (!itemIds.length) return;
 
-      let clicked = {};
-      try {
-        clicked = JSON.parse(localStorage.getItem('lib_reactions') || '{}');
-      } catch {}
-
-      const applyReactionState = (id, count) => {
-        document.querySelectorAll(`.react-count[data-item-id="${id}"]`).forEach((countEl) => {
-          countEl.textContent = count > 0 ? `${count} 人读过` : '';
-        });
-        document.querySelectorAll(`.lib-react-btn[data-item-id="${id}"]`).forEach((btn) => {
-          const icon = btn.querySelector('.react-icon');
-          const label = btn.querySelector('.react-label');
-          if (clicked[id]) {
-            btn.classList.add('lib-reacted');
-            if (icon) icon.textContent = '✓';
-            if (label) label.textContent = '已标记';
-          } else {
-            btn.classList.remove('lib-reacted');
-            if (icon) icon.textContent = '👁';
-            if (label) label.textContent = '我也看过';
-          }
-        });
-      };
-
-      const showReactionQuote = (id, quote) => {
-        if (!quote) return;
-        document.querySelectorAll(`.lib-reaction .react-quote[data-item-id="${id}"]`).forEach((node) => node.remove());
-        document.querySelectorAll(`.lib-reaction .react-count[data-item-id="${id}"]`).forEach((countEl) => {
-          const quoteEl = document.createElement('span');
-          quoteEl.className = 'react-quote text-xs text-gray-500 dark:text-gray-400 italic mt-1 block';
-          quoteEl.dataset.itemId = id;
-          quoteEl.textContent = `Rex: "${quote}..."`;
-          countEl.parentNode?.insertBefore(quoteEl, countEl.nextSibling);
-          window.setTimeout(() => quoteEl.remove(), 5000);
-        });
-      };
-
       try {
         const res = await fetch(`/api/library-reactions?ids=${itemIds.join(',')}`);
-        const counts = await res.json();
-        itemIds.forEach((id) => applyReactionState(id, counts[id] || 0));
+        reactionCounts = await res.json();
+        itemIds.forEach((id) => applyReactionState(id, reactionCounts[id] || 0));
       } catch (error) {
         console.warn('reactions fetch failed', error);
       }
 
-      reactionButtons.forEach((btn) => {
-        btn.addEventListener('click', async (event) => {
-          event.preventDefault();
-          event.stopPropagation();
-          const id = btn.dataset.itemId;
-          if (!id || clicked[id]) return;
+      document.addEventListener('click', async (event) => {
+        const btn = event.target.closest('.lib-react-btn');
+        if (!btn) return;
 
-          clicked[id] = true;
-          localStorage.setItem('lib_reactions', JSON.stringify(clicked));
+        event.preventDefault();
+        event.stopPropagation();
+        const id = btn.dataset.itemId;
+        if (!id || clicked[id]) return;
 
-          const countEls = document.querySelectorAll(`.react-count[data-item-id="${id}"]`);
-          const currentCount = countEls.length ? Number.parseInt(countEls[0].textContent || '0', 10) || 0 : 0;
-          applyReactionState(id, currentCount + 1);
+        clicked[id] = true;
+        localStorage.setItem('lib_reactions', JSON.stringify(clicked));
 
-          const quoteSource = btn.closest('[data-id]') || document.querySelector(`[data-id="${id}"][data-quote]`);
-          const quote = quoteSource?.dataset.quote;
+        const currentCount = reactionCounts[id] || 0;
+        applyReactionState(id, currentCount + 1);
 
-          try {
-            const res = await fetch('/api/library-reactions', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ itemId: id }),
-            });
-            const { count } = await res.json();
-            applyReactionState(id, count || 0);
-            showReactionQuote(id, quote);
-          } catch (error) {
-            console.warn('reaction post failed', error);
-          }
-        });
+        const quoteSource = btn.closest('[data-id]') || document.querySelector(`[data-id="${id}"][data-quote]`);
+        const quote = quoteSource?.dataset.quote;
+
+        try {
+          const res = await fetch('/api/library-reactions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ itemId: id }),
+          });
+          const { count } = await res.json();
+          applyReactionState(id, count || 0);
+          showReactionQuote(id, quote);
+        } catch (error) {
+          console.warn('reaction post failed', error);
+        }
       });
     })();
   } // end initLibrary
