@@ -382,9 +382,10 @@ const totalGithubCommits = Object.values(githubContributions).reduce((sum, c) =>
 </style>
 
 <script is:inline>
-(() => {
+function initNudge() {
   const stat = document.querySelector('[data-nudge-stat]');
-  if (!stat || stat.dataset.bound === 'true') return;
+  if (!stat) return;
+  // 重新绑定（View Transitions 后 DOM 刷新，需重置）
   stat.dataset.bound = 'true';
 
   const countEl = stat.querySelector('[data-nudge-count]');
@@ -489,5 +490,8 @@ const totalGithubCommits = Object.values(githubContributions).reduce((sum, c) =>
   stat.addEventListener('click', handleClick);
   stat.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleClick(); } });
   loadCount();
-})();
+}
+
+// 首次加载 + View Transitions 切换后都重新初始化
+document.addEventListener('astro:page-load', initNudge);
 </script>
