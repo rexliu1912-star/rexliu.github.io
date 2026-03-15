@@ -245,7 +245,7 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
                   </div>
                 )}
               </div>
-              <div class="lib-reaction mt-2 flex items-center justify-center gap-2">
+              <div class="lib-reaction mt-2 flex w-full items-center justify-center gap-2">
                 <button
                   type="button"
                   class="lib-react-btn inline-flex w-auto items-center gap-1.5 rounded-full border border-[#8953d1]/30 px-3 py-0.5 text-xs text-[#8953d1] transition-colors hover:bg-[#8953d1]/10 dark:border-[#a175e8]/30 dark:text-[#a175e8]"
@@ -393,7 +393,7 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
                 <div class="p-3">
                   <h3 class="font-serif text-sm font-medium text-black dark:text-white line-clamp-2">{item.title}</h3>
                   <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Film</span><span class="lang-zh">电影</span> · {item.year || "—"}</p>
-                  <div class="lib-reaction mt-2 flex items-center justify-center gap-2">
+                  <div class="lib-reaction mt-2 flex w-full items-center justify-center gap-2">
                     <button
                       type="button"
                       class="lib-react-btn inline-flex w-auto items-center gap-1.5 rounded-full border border-[#8953d1]/30 px-3 py-0.5 text-xs text-[#8953d1] transition-colors hover:bg-[#8953d1]/10 dark:border-[#a175e8]/30 dark:text-[#a175e8]"
@@ -446,7 +446,7 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
                 <div class="p-3">
                   <h3 class="font-serif text-sm font-medium text-black dark:text-white line-clamp-2">{item.title}</h3>
                   <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Series</span><span class="lang-zh">剧集</span> · {item.year || "—"}</p>
-                  <div class="lib-reaction mt-2 flex items-center justify-center gap-2">
+                  <div class="lib-reaction mt-2 flex w-full items-center justify-center gap-2">
                     <button
                       type="button"
                       class="lib-react-btn inline-flex w-auto items-center gap-1.5 rounded-full border border-[#8953d1]/30 px-3 py-0.5 text-xs text-[#8953d1] transition-colors hover:bg-[#8953d1]/10 dark:border-[#a175e8]/30 dark:text-[#a175e8]"
@@ -501,7 +501,7 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
               <div class="p-3">
                 <h3 class="font-serif text-sm font-medium text-black dark:text-white line-clamp-2">{item.title}</h3>
                 <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Variety</span><span class="lang-zh">综艺</span> · {item.year || "—"}</p>
-                <div class="lib-reaction mt-2 flex items-center justify-center gap-2">
+                <div class="lib-reaction mt-2 flex w-full items-center justify-center gap-2">
                   <button
                     type="button"
                     class="lib-react-btn inline-flex w-auto items-center gap-1.5 rounded-full border border-[#8953d1]/30 px-3 py-0.5 text-xs text-[#8953d1] transition-colors hover:bg-[#8953d1]/10 dark:border-[#a175e8]/30 dark:text-[#a175e8]"
@@ -557,7 +557,7 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
               <div class="p-3">
                 <h3 class="font-serif text-sm font-medium text-black dark:text-white line-clamp-2">{item.title}</h3>
                 <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Documentary</span><span class="lang-zh">纪录片</span> · {item.year || "—"}</p>
-                <div class="lib-reaction mt-2 flex items-center justify-center gap-2">
+                <div class="lib-reaction mt-2 flex w-full items-center justify-center gap-2">
                   <button
                     type="button"
                     class="lib-react-btn inline-flex w-auto items-center gap-1.5 rounded-full border border-[#8953d1]/30 px-3 py-0.5 text-xs text-[#8953d1] transition-colors hover:bg-[#8953d1]/10 dark:border-[#a175e8]/30 dark:text-[#a175e8]"
@@ -1102,8 +1102,8 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
       document.body.style.overflow = 'hidden';
 
       const itemId = id;
-      const modalReactBtn = document.querySelector('.lib-reaction-modal .lib-react-btn');
-      const modalCountEl = document.querySelector('.lib-reaction-modal .react-count');
+      const modalReactBtn = modalContent.querySelector('.lib-reaction-modal .lib-react-btn');
+      const modalCountEl = modalContent.querySelector('.lib-reaction-modal .react-count');
       if (modalReactBtn) modalReactBtn.dataset.itemId = itemId;
       if (modalCountEl) modalCountEl.dataset.itemId = itemId;
 
