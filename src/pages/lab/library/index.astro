@@ -245,17 +245,16 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
                   </div>
                 )}
               </div>
-              <div class="lib-reaction mt-auto pt-2 flex w-full items-center justify-center gap-2">
+              <div class="lib-reaction mt-auto pt-2 flex w-full items-center justify-center">
                 <button
                   type="button"
-                  class="lib-react-btn group/btn inline-flex w-auto items-center gap-1 text-xs text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]"
+                  class="lib-react-btn inline-flex items-center gap-1 text-xs text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]"
                   data-item-id={item.id}
                   aria-label="我也看过"
                 >
                   <span class="react-icon">👁</span>
-                  <span class="react-label" data-zh="我也看过" data-en="Read it too">我也看过</span>
+                  <span class="react-label" data-zh="我也看过" data-en="Read it too">我也看过</span><span class="react-count ml-1" data-item-id={item.id}></span>
                 </button>
-                <span class="react-count text-xs text-gray-400 dark:text-gray-500" data-item-id={item.id}></span>
               </div>
             </div>
           </article>
@@ -393,7 +392,7 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
                 <div class="p-3">
                   <h3 class="font-serif text-sm font-medium text-black dark:text-white line-clamp-2">{item.title}</h3>
                   <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Film</span><span class="lang-zh">电影</span> · {item.year || "—"}</p>
-                  <div class="lib-reaction mt-auto pt-2 flex w-full items-center justify-center gap-2">
+                  <div class="lib-reaction mt-auto pt-2 flex w-full items-center justify-center">
                     <button
                       type="button"
                       class="lib-react-btn group/btn inline-flex w-auto items-center gap-1 text-xs text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]"
@@ -401,9 +400,8 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
                       aria-label="我也看过"
                     >
                       <span class="react-icon">👁</span>
-                      <span class="react-label" data-zh="我也看过" data-en="Read it too">我也看过</span>
+                      <span class="react-label" data-zh="我也看过" data-en="Read it too">我也看过</span><span class="react-count ml-1" data-item-id={item.id}></span>
                     </button>
-                    <span class="react-count text-xs text-gray-400 dark:text-gray-500" data-item-id={item.id}></span>
                   </div>
                 </div>
               </article>
@@ -446,7 +444,7 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
                 <div class="p-3">
                   <h3 class="font-serif text-sm font-medium text-black dark:text-white line-clamp-2">{item.title}</h3>
                   <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Series</span><span class="lang-zh">剧集</span> · {item.year || "—"}</p>
-                  <div class="lib-reaction mt-auto pt-2 flex w-full items-center justify-center gap-2">
+                  <div class="lib-reaction mt-auto pt-2 flex w-full items-center justify-center">
                     <button
                       type="button"
                       class="lib-react-btn group/btn inline-flex w-auto items-center gap-1 text-xs text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]"
@@ -454,9 +452,8 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
                       aria-label="我也看过"
                     >
                       <span class="react-icon">👁</span>
-                      <span class="react-label" data-zh="我也看过" data-en="Read it too">我也看过</span>
+                      <span class="react-label" data-zh="我也看过" data-en="Read it too">我也看过</span><span class="react-count ml-1" data-item-id={item.id}></span>
                     </button>
-                    <span class="react-count text-xs text-gray-400 dark:text-gray-500" data-item-id={item.id}></span>
                   </div>
                 </div>
               </article>
@@ -501,7 +498,7 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
               <div class="p-3">
                 <h3 class="font-serif text-sm font-medium text-black dark:text-white line-clamp-2">{item.title}</h3>
                 <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Variety</span><span class="lang-zh">综艺</span> · {item.year || "—"}</p>
-                <div class="lib-reaction mt-auto pt-2 flex w-full items-center justify-center gap-2">
+                <div class="lib-reaction mt-auto pt-2 flex w-full items-center justify-center">
                   <button
                     type="button"
                     class="lib-react-btn group/btn inline-flex w-auto items-center gap-1 text-xs text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]"
@@ -509,9 +506,8 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
                     aria-label="我也看过"
                   >
                     <span class="react-icon">👁</span>
-                    <span class="react-label" data-zh="我也看过" data-en="Read it too">我也看过</span>
+                    <span class="react-label" data-zh="我也看过" data-en="Read it too">我也看过</span><span class="react-count ml-1" data-item-id={item.id}></span>
                   </button>
-                  <span class="react-count text-xs text-gray-400 dark:text-gray-500" data-item-id={item.id}></span>
                 </div>
               </div>
             </article>
@@ -557,7 +553,7 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
               <div class="p-3">
                 <h3 class="font-serif text-sm font-medium text-black dark:text-white line-clamp-2">{item.title}</h3>
                 <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Documentary</span><span class="lang-zh">纪录片</span> · {item.year || "—"}</p>
-                <div class="lib-reaction mt-auto pt-2 flex w-full items-center justify-center gap-2">
+                <div class="lib-reaction mt-auto pt-2 flex w-full items-center justify-center">
                   <button
                     type="button"
                     class="lib-react-btn group/btn inline-flex w-auto items-center gap-1 text-xs text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]"
@@ -565,9 +561,8 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
                     aria-label="我也看过"
                   >
                     <span class="react-icon">👁</span>
-                    <span class="react-label" data-zh="我也看过" data-en="Read it too">我也看过</span>
+                    <span class="react-label" data-zh="我也看过" data-en="Read it too">我也看过</span><span class="react-count ml-1" data-item-id={item.id}></span>
                   </button>
-                  <span class="react-count text-xs text-gray-400 dark:text-gray-500" data-item-id={item.id}></span>
                 </div>
               </div>
             </article>
@@ -1355,7 +1350,7 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
       clicked = JSON.parse(localStorage.getItem('lib_reactions') || '{}');
     } catch {}
 
-    const formatReactionCount = (count) => count > 0 ? `${count} ${t('人读过', 'readers')}` : '';
+    const formatReactionCount = (count) => count > 0 ? ` · ${count} ${t('人读过', 'readers')}` : '';
 
     // ── Sort select language sync ─────────────────────────────
     function syncSortLang() {
