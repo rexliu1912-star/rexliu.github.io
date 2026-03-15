@@ -2,7 +2,7 @@
 import type { CollectionEntry } from "astro:content";
 import { getCollection } from "astro:content";
 import ReadingProgress from "@/components/blog/ReadingProgress.astro";
-import EmojiReactions from "@/components/blog/EmojiReactions.astro";
+import Comments from "@/components/blog/Comments.astro";
 import RelatedPosts from "@/components/blog/RelatedPosts.astro";
 import { getRelatedPosts } from "@/utils/post";
 import BaseLayout from "./Base.astro";
@@ -148,7 +148,7 @@ const displayDate = formatCustomDate(publishDate);
 				<slot />
 			</div>
 
-			<EmojiReactions slug={post.id} />
+			<Comments slug={post.id} />
 
 			{/* Related Posts */}
 			<RelatedPosts posts={relatedPosts} />

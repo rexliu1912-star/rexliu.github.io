@@ -6,6 +6,11 @@ const BRAND_PURPLE = "#8953d1";
 <footer
 	class="mt-auto flex w-full flex-col items-center justify-center gap-y-2 pt-20 pb-8 text-center align-middle font-serif text-sm text-gray-500 dark:text-gray-400"
 >
+	<div class="rex-quote" data-rex-quote>
+		<span class="quote-text font-serif" data-quote-text></span>
+		<button type="button" class="quote-refresh" data-quote-refresh title="换一条" aria-label="Refresh quote">↻</button>
+	</div>
+
 	<div class="mb-1">
 		&copy; {year}
 		<span style={`color: ${BRAND_PURPLE}; font-weight: 500;`}>Rex Liu</span>
@@ -22,11 +27,6 @@ const BRAND_PURPLE = "#8953d1";
 		<span class="text-gray-300 dark:text-gray-600">|</span>
 
 		<span class="tracking-wider">Sovereign Individual</span>
-	</div>
-
-	<div class="rex-quote" data-rex-quote>
-		<span class="quote-text font-serif" data-quote-text></span>
-		<button type="button" class="quote-refresh" data-quote-refresh title="换一条" aria-label="Refresh quote">↻</button>
 	</div>
 </footer>
 
@@ -87,6 +87,7 @@ function initRexQuote() {
   if (!textEl || !refreshBtn) return;
 
   const rexQuotes = [
+    // 中文
     '买预期，卖事实',
     '研究对手盘——知道赚的是谁的钱',
     '复杂问题简单化，简单事情重复做',
@@ -95,6 +96,14 @@ function initRexQuote() {
     '死要面子活受罪，想明白后心里舒坦',
     '矛盾源于期待，失望才会改变',
     '做好自己的事是本分，其他都是福分',
+    '学会晚表态，在可以打明牌时再出手',
+    '盈亏同源，追求大赚小赔',
+    '手心微出汗，晚上睡得香',
+    '人生关系的交集是时间段的重合',
+    '珍惜当下每一天',
+    '老婆第一位，沟通交流满足都不可少',
+    '凡事要对着干是最难改的脾气',
+    // 英文
     'Stay Invested in the Game',
     'Be the sovereign individual',
     'Patience is the real alpha',
@@ -103,6 +112,13 @@ function initRexQuote() {
     'Ship first, perfect later',
     'Simple systems beat complex ones',
     'The game rewards those who stay',
+    'Know whose money you are making',
+    'Show your hand only when you can play it openly',
+    'Win big, lose small — that is the framework',
+    'Every relationship is an intersection of timelines',
+    'Build in public, learn in private',
+    'Palms slightly sweaty, sleep soundly at night',
+    'Do your part — everything else is a bonus',
   ];
 
   let lastIndex = -1;
