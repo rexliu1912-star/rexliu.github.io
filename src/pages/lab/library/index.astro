@@ -218,7 +218,7 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
       {books.map((item) => (
         <Fragment>
           <article
-            class="lib-card group cursor-pointer overflow-hidden rounded-xl transition-all lib-card-surface"
+            class="lib-card group cursor-pointer overflow-hidden rounded-xl transition-all lib-card-surface flex flex-col h-full"
             data-id={item.id}
             data-tags={JSON.stringify(item.tags)}
             data-group="books"
@@ -232,7 +232,7 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
                 <span class="font-serif text-sm font-semibold leading-snug text-white drop-shadow">{item.title}</span>
               </div>
             )}
-            <div class="p-3 flex flex-col">
+            <div class="p-3 flex-1 flex flex-col">
               <h2 class="font-serif text-sm font-medium text-black dark:text-white leading-snug line-clamp-2">{item.title}</h2>
               {item.titleEn && <p class="lang-en mt-0.5 font-serif text-xs text-gray-600 dark:text-gray-300 truncate italic">{item.titleEn}</p>}
               <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500 truncate">{item.subtitle}</p>
@@ -252,8 +252,8 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
                   data-item-id={item.id}
                   aria-label="我也看过"
                 >
-                  <span class="react-icon">👁</span>
-                  <span class="react-label" data-zh="我也看过" data-en="Read it too">我也看过</span><span class="react-count ml-1" data-item-id={item.id}></span>
+                  <span class="react-icon font-serif">👁</span>
+                  <span class="react-label font-serif" data-zh="我也看过" data-en="Read it too">我也看过</span><span class="react-count ml-1" data-item-id={item.id}></span>
                 </button>
               </div>
             </div>
@@ -311,8 +311,8 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
                     data-item-id=""
                     aria-label="我也看过"
                   >
-                    <span class="react-icon">👁</span>
-                    <span class="react-label" data-zh="我也看过" data-en="Read it too">我也看过</span>
+                    <span class="react-icon font-serif">👁</span>
+                    <span class="react-label font-serif" data-zh="我也看过" data-en="Read it too">我也看过</span>
                   </button>
                   <span class="react-count text-sm text-gray-400 dark:text-gray-500" data-item-id=""></span>
                 </div>
@@ -383,13 +383,13 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
         <div class="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
           {films.map((item) => (
             <Fragment>
-              <article class="lib-card group cursor-pointer overflow-hidden rounded-xl transition-all lib-card-surface" data-id={item.id} data-tags={JSON.stringify(item.tags)} data-group="film-tv" data-quote={getReactionQuote(item)}>{hasNotes(item) && <span class="lib-bookmark" aria-hidden="true"></span>}
+              <article class="lib-card group cursor-pointer overflow-hidden rounded-xl transition-all lib-card-surface flex flex-col h-full" data-id={item.id} data-tags={JSON.stringify(item.tags)} data-group="film-tv" data-quote={getReactionQuote(item)}>{hasNotes(item) && <span class="lib-bookmark" aria-hidden="true"></span>}
                 {item.cover ? (
                   <img src={item.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="block w-full aspect-[2/3] object-cover object-center transition-transform duration-500 ease-out group-hover:scale-[1.05]" />
                 ) : (
                   <div class={`flex w-full aspect-[2/3] items-center justify-center px-3 text-center ${item.coverClass}`}><span class="font-serif text-sm font-semibold leading-snug text-white drop-shadow">{item.title}</span></div>
                 )}
-                <div class="p-3">
+                <div class="p-3 flex-1 flex flex-col">
                   <h3 class="font-serif text-sm font-medium text-black dark:text-white line-clamp-2">{item.title}</h3>
                   <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Film</span><span class="lang-zh">电影</span> · {item.year || "—"}</p>
                   <div class="lib-reaction mt-auto pt-2 flex w-full items-center justify-center">
@@ -399,8 +399,8 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
                       data-item-id={item.id}
                       aria-label="我也看过"
                     >
-                      <span class="react-icon">👁</span>
-                      <span class="react-label" data-zh="我也看过" data-en="Read it too">我也看过</span><span class="react-count ml-1" data-item-id={item.id}></span>
+                      <span class="react-icon font-serif">👁</span>
+                      <span class="react-label font-serif" data-zh="我也看过" data-en="Read it too">我也看过</span><span class="react-count ml-1" data-item-id={item.id}></span>
                     </button>
                   </div>
                 </div>
@@ -435,13 +435,13 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
         <div class="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
           {series.map((item) => (
             <Fragment>
-              <article class="lib-card group cursor-pointer overflow-hidden rounded-xl transition-all lib-card-surface" data-id={item.id} data-tags={JSON.stringify(item.tags)} data-group="film-tv" data-quote={getReactionQuote(item)}>{hasNotes(item) && <span class="lib-bookmark" aria-hidden="true"></span>}
+              <article class="lib-card group cursor-pointer overflow-hidden rounded-xl transition-all lib-card-surface flex flex-col h-full" data-id={item.id} data-tags={JSON.stringify(item.tags)} data-group="film-tv" data-quote={getReactionQuote(item)}>{hasNotes(item) && <span class="lib-bookmark" aria-hidden="true"></span>}
                 {item.cover ? (
                   <img src={item.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="block w-full aspect-[2/3] object-cover object-center transition-transform duration-500 ease-out group-hover:scale-[1.05]" />
                 ) : (
                   <div class={`flex w-full aspect-[2/3] items-center justify-center px-3 text-center ${item.coverClass}`}><span class="font-serif text-sm font-semibold leading-snug text-white drop-shadow">{item.title}</span></div>
                 )}
-                <div class="p-3">
+                <div class="p-3 flex-1 flex flex-col">
                   <h3 class="font-serif text-sm font-medium text-black dark:text-white line-clamp-2">{item.title}</h3>
                   <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Series</span><span class="lang-zh">剧集</span> · {item.year || "—"}</p>
                   <div class="lib-reaction mt-auto pt-2 flex w-full items-center justify-center">
@@ -451,8 +451,8 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
                       data-item-id={item.id}
                       aria-label="我也看过"
                     >
-                      <span class="react-icon">👁</span>
-                      <span class="react-label" data-zh="我也看过" data-en="Read it too">我也看过</span><span class="react-count ml-1" data-item-id={item.id}></span>
+                      <span class="react-icon font-serif">👁</span>
+                      <span class="react-label font-serif" data-zh="我也看过" data-en="Read it too">我也看过</span><span class="react-count ml-1" data-item-id={item.id}></span>
                     </button>
                   </div>
                 </div>
@@ -487,7 +487,7 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
       <div class="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
         {variety.map((item) => (
           <Fragment>
-            <article class="lib-card group cursor-pointer overflow-hidden rounded-xl transition-all lib-card-surface" data-id={item.id} data-tags={JSON.stringify(item.tags)} data-group="variety" data-quote={getReactionQuote(item)}
+            <article class="lib-card group cursor-pointer overflow-hidden rounded-xl transition-all lib-card-surface flex flex-col h-full" data-id={item.id} data-tags={JSON.stringify(item.tags)} data-group="variety" data-quote={getReactionQuote(item)}
             >
               {hasNotes(item) && <span class="lib-bookmark" aria-hidden="true"></span>}
               {item.cover ? (
@@ -495,7 +495,7 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
               ) : (
                 <div class={`flex w-full aspect-[2/3] items-center justify-center px-3 text-center ${item.coverClass}`}><span class="font-serif text-sm font-semibold leading-snug text-white drop-shadow">{item.title}</span></div>
               )}
-              <div class="p-3">
+              <div class="p-3 flex-1 flex flex-col">
                 <h3 class="font-serif text-sm font-medium text-black dark:text-white line-clamp-2">{item.title}</h3>
                 <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Variety</span><span class="lang-zh">综艺</span> · {item.year || "—"}</p>
                 <div class="lib-reaction mt-auto pt-2 flex w-full items-center justify-center">
@@ -505,8 +505,8 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
                     data-item-id={item.id}
                     aria-label="我也看过"
                   >
-                    <span class="react-icon">👁</span>
-                    <span class="react-label" data-zh="我也看过" data-en="Read it too">我也看过</span><span class="react-count ml-1" data-item-id={item.id}></span>
+                    <span class="react-icon font-serif">👁</span>
+                    <span class="react-label font-serif" data-zh="我也看过" data-en="Read it too">我也看过</span><span class="react-count ml-1" data-item-id={item.id}></span>
                   </button>
                 </div>
               </div>
@@ -542,7 +542,7 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
       <div class="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
         {documentary.map((item) => (
           <Fragment>
-            <article class="lib-card group cursor-pointer overflow-hidden rounded-xl transition-all lib-card-surface" data-id={item.id} data-tags={JSON.stringify(item.tags)} data-group="documentary" data-quote={getReactionQuote(item)}
+            <article class="lib-card group cursor-pointer overflow-hidden rounded-xl transition-all lib-card-surface flex flex-col h-full" data-id={item.id} data-tags={JSON.stringify(item.tags)} data-group="documentary" data-quote={getReactionQuote(item)}
             >
               {hasNotes(item) && <span class="lib-bookmark" aria-hidden="true"></span>}
               {item.cover ? (
@@ -550,7 +550,7 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
               ) : (
                 <div class={`flex w-full aspect-[2/3] items-center justify-center px-3 text-center ${item.coverClass}`}><span class="font-serif text-sm font-semibold leading-snug text-white drop-shadow">{item.title}</span></div>
               )}
-              <div class="p-3">
+              <div class="p-3 flex-1 flex flex-col">
                 <h3 class="font-serif text-sm font-medium text-black dark:text-white line-clamp-2">{item.title}</h3>
                 <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Documentary</span><span class="lang-zh">纪录片</span> · {item.year || "—"}</p>
                 <div class="lib-reaction mt-auto pt-2 flex w-full items-center justify-center">
@@ -560,8 +560,8 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
                     data-item-id={item.id}
                     aria-label="我也看过"
                   >
-                    <span class="react-icon">👁</span>
-                    <span class="react-label" data-zh="我也看过" data-en="Read it too">我也看过</span><span class="react-count ml-1" data-item-id={item.id}></span>
+                    <span class="react-icon font-serif">👁</span>
+                    <span class="react-label font-serif" data-zh="我也看过" data-en="Read it too">我也看过</span><span class="react-count ml-1" data-item-id={item.id}></span>
                   </button>
                 </div>
               </div>
@@ -1087,8 +1087,8 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
               data-item-id=""
               aria-label="我也看过"
             >
-              <span class="react-icon">👁</span>
-              <span class="react-label" data-zh="我也看过" data-en="Read it too">我也看过</span>
+              <span class="react-icon font-serif">👁</span>
+              <span class="react-label font-serif" data-zh="我也看过" data-en="Read it too">我也看过</span>
             </button>
             <span class="react-count text-sm text-gray-400 dark:text-gray-500" data-item-id=""></span>
           </div>
