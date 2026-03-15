@@ -167,24 +167,23 @@ const totalGithubCommits = Object.values(githubContributions).reduce((sum, c) =>
 
 		<div class="activity-footer">
 			<div class="stats">
-				<span>Last 365 Days</span>
-				<span><span class="count">{totalGithubCommits}</span> commits</span>
-				<span><span class="count">{totalPosts}</span> posts</span>
-				<span class="nudge-stat" data-nudge-stat role="button" tabindex="0" title="Click to nudge Rex!">
-					<span class="nudge-snek-icon">🐍</span>
-					<span class="count" data-nudge-count>0</span> nudges
+				<span><span class="lang-en">Last 365 Days</span><span class="lang-zh">过去 365 天</span></span>
+				<span><span class="count">{totalGithubCommits}</span> <span class="lang-en">commits</span><span class="lang-zh">次提交</span></span>
+				<span><span class="count">{totalPosts}</span> <span class="lang-en">posts</span><span class="lang-zh">篇文章</span></span>
+				<span class="nudge-stat" data-nudge-stat role="button" tabindex="0" title="点一下催 Rex 干活">
+					<span class="count" data-nudge-count>0</span> <span class="lang-en">nudges</span><span class="lang-zh">次催更</span>
 				</span>
 			</div>
 
 			<div class="nudge-quote-bubble font-serif" data-nudge-quote></div>
 			<div class="legend">
-				<span class="legend-label">Less</span>
+				<span class="legend-label"><span class="lang-en">Less</span><span class="lang-zh">少</span></span>
 				<div class="day level-0"></div>
 				<div class="day level-1"></div>
 				<div class="day level-2"></div>
 				<div class="day level-3"></div>
 				<div class="day level-4"></div>
-				<span class="legend-label">More</span>
+				<span class="legend-label"><span class="lang-en">More</span><span class="lang-zh">多</span></span>
 			</div>
 		</div>
 	</div>
@@ -326,17 +325,8 @@ const totalGithubCommits = Object.values(githubContributions).reduce((sum, c) =>
 		color: #a175e8 !important;
 	}
 
-	.nudge-snek-icon {
-		display: inline-block;
-		transition: transform 0.2s;
-	}
-
-	.nudge-stat:hover .nudge-snek-icon {
-		transform: scale(1.3);
-	}
-
-	.nudge-stat.is-clicked .nudge-snek-icon {
-		animation: nudge-wiggle 0.4s ease-in-out;
+	.nudge-stat.is-clicked {
+		animation: nudge-wiggle 0.3s ease-in-out;
 	}
 
 	.nudge-quote-bubble {
@@ -385,10 +375,9 @@ const totalGithubCommits = Object.values(githubContributions).reduce((sum, c) =>
 	}
 
 	@keyframes nudge-wiggle {
-		0%, 100% { transform: scale(1.3) rotate(0deg); }
-		25% { transform: scale(1.3) rotate(-12deg); }
-		50% { transform: scale(1.3) rotate(10deg); }
-		75% { transform: scale(1.3) rotate(-8deg); }
+		0%, 100% { transform: translateX(0); }
+		25% { transform: translateX(-2px); }
+		75% { transform: translateX(2px); }
 	}
 </style>
 
