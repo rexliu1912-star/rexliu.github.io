@@ -22,48 +22,29 @@ const quotes = [
 ---
 
 <section class="nudge-shell fade-in-up" style="--delay: 260ms">
-  <div class="nudge-card" data-nudge-root data-quotes={JSON.stringify(quotes)}>
-    <div class="snek-stage" aria-hidden="true">
-      <div class="pixel-snek" data-snek>
-        {
-          Array.from({ length: 54 }).map((_, index) => (
-            <div class:list={["px", snekPixels.includes(index) && "filled"]} />
-          ))
-        }
-        <div class="eye eye-top"></div>
-        <div class="eye eye-bottom"></div>
-      </div>
-      <div class="snek-quote" data-quote></div>
+  <div class="nudge-row" data-nudge-root data-quotes={JSON.stringify(quotes)}>
+    <div class="snek-mini" data-snek aria-hidden="true">
+      {
+        Array.from({ length: 54 }).map((_, index) => (
+          <div class:list={["px", snekPixels.includes(index) && "filled"]} />
+        ))
+      }
     </div>
 
-    <div class="nudge-copy">
-      <p class="nudge-title font-serif text-lg font-semibold text-gray-900 dark:text-white">
-        <span class="lang-en">Nudge Rex to Code</span>
-        <span class="lang-zh">催 Rex 写代码</span>
-      </p>
-      <p class="nudge-subtitle font-serif text-sm text-gray-500 dark:text-gray-400">
-        <span class="lang-en">A tiny poke for the next build.</span>
-        <span class="lang-zh">轻轻一催，下一版就更快来了。</span>
-      </p>
+    <button type="button" class="nudge-btn font-serif" data-button>
+      <span class="label-ready">
+        <span class="lang-en">Nudge Rex to write</span>
+        <span class="lang-zh">催 Rex 写</span>
+      </span>
+      <span class="label-done">
+        <span class="lang-en">Nudged ✓</span>
+        <span class="lang-zh">已催 ✓</span>
+      </span>
+    </button>
 
-      <div class="nudge-meta">
-        <div class="nudge-count font-serif" data-count>0</div>
-        <button type="button" class="nudge-action font-serif" data-button>
-          <span class="label-ready">
-            <span class="lang-en">Nudge</span>
-            <span class="lang-zh">催一下</span>
-          </span>
-          <span class="label-done">
-            <span class="lang-en">Nudged today</span>
-            <span class="lang-zh">今天已催过</span>
-          </span>
-          <span class="label-loading">
-            <span class="lang-en">Sending...</span>
-            <span class="lang-zh">发送中...</span>
-          </span>
-        </button>
-      </div>
-    </div>
+    <span class="nudge-count font-serif" data-count>0</span>
+
+    <div class="snek-quote font-serif" data-quote></div>
   </div>
 </section>
 
@@ -83,78 +64,43 @@ const quotes = [
   let quoteTimer;
 
   function todayLocal() {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
   }
 
   function hasNudgedToday() {
-    try {
-      return localStorage.getItem(STORAGE_KEY) === todayLocal();
-    } catch (_error) {
-      return false;
-    }
+    try { return localStorage.getItem(STORAGE_KEY) === todayLocal(); } catch { return false; }
   }
 
   function setNudgedToday() {
-    try {
-      localStorage.setItem(STORAGE_KEY, todayLocal());
-    } catch (_error) {}
+    try { localStorage.setItem(STORAGE_KEY, todayLocal()); } catch {}
   }
 
-  function formatCount(value) {
-    return new Intl.NumberFormat('en-US').format(value);
-  }
+  function fmt(n) { return new Intl.NumberFormat('en-US').format(n); }
 
-  function animateCount(nextCount) {
-    const start = currentCount;
-    const end = Number(nextCount) || 0;
-    const diff = end - start;
-
-    if (!countEl) return;
-    if (diff === 0) {
-      countEl.textContent = formatCount(end);
-      currentCount = end;
-      return;
-    }
-
-    const steps = Math.min(24, Math.max(10, Math.abs(diff)));
+  function animateCount(next) {
+    const start = currentCount, end = Number(next) || 0, diff = end - start;
+    if (!countEl || diff === 0) { if (countEl) countEl.textContent = fmt(end); currentCount = end; return; }
+    const steps = Math.min(20, Math.max(8, Math.abs(diff)));
     let step = 0;
     const tick = () => {
-      step += 1;
-      const progress = step / steps;
-      const value = Math.round(start + diff * progress);
-      countEl.textContent = formatCount(value);
-      if (step < steps) {
-        window.setTimeout(tick, 24);
-      } else {
-        currentCount = end;
-        countEl.textContent = formatCount(end);
-      }
+      step++;
+      countEl.textContent = fmt(Math.round(start + diff * (step / steps)));
+      if (step < steps) setTimeout(tick, 20); else { currentCount = end; countEl.textContent = fmt(end); }
     };
-
     tick();
   }
 
-  function setState(state) {
-    if (!button) return;
-    button.dataset.state = state;
-    const disabled = state === 'done' || state === 'loading';
-    button.disabled = disabled;
-    root.dataset.status = state;
+  function setState(s) {
+    if (button) { button.dataset.state = s; button.disabled = s !== 'ready'; }
   }
 
   function showQuote() {
     if (!quoteEl || !quotes.length) return;
-    const quote = quotes[Math.floor(Math.random() * quotes.length)];
-    quoteEl.textContent = quote;
+    quoteEl.textContent = quotes[Math.floor(Math.random() * quotes.length)];
     quoteEl.dataset.visible = 'true';
-    window.clearTimeout(quoteTimer);
-    quoteTimer = window.setTimeout(() => {
-      quoteEl.dataset.visible = 'false';
-    }, 3000);
+    clearTimeout(quoteTimer);
+    quoteTimer = setTimeout(() => { quoteEl.dataset.visible = 'false'; }, 3000);
   }
 
   function shakeSnek() {
@@ -162,46 +108,32 @@ const quotes = [
     snek.classList.remove('is-shaking');
     void snek.offsetWidth;
     snek.classList.add('is-shaking');
-    window.setTimeout(() => snek.classList.remove('is-shaking'), 520);
+    setTimeout(() => snek.classList.remove('is-shaking'), 500);
   }
 
   async function loadCount() {
     try {
-      const response = await fetch('/api/nudge');
-      const data = await response.json();
-      currentCount = Number(data.count) || 0;
-      if (countEl) countEl.textContent = formatCount(currentCount);
-    } catch (_error) {
-      if (countEl) countEl.textContent = formatCount(currentCount);
-    }
+      const r = await fetch('/api/nudge');
+      const d = await r.json();
+      currentCount = Number(d.count) || 0;
+      if (countEl) countEl.textContent = fmt(currentCount);
+    } catch {}
   }
 
   async function handleClick() {
-    if (hasNudgedToday()) {
-      setState('done');
-      return;
-    }
-
-    setState('loading');
-
+    if (hasNudgedToday()) { setState('done'); return; }
+    setState('done');
     try {
-      const response = await fetch('/api/nudge', { method: 'POST' });
-      if (!response.ok) throw new Error('Failed to increment nudge');
-      const data = await response.json();
-      animateCount(Number(data.count) || currentCount + 1);
+      const r = await fetch('/api/nudge', { method: 'POST' });
+      const d = await r.json();
+      animateCount(Number(d.count) || currentCount + 1);
       setNudgedToday();
-      setState('done');
       shakeSnek();
       showQuote();
-    } catch (_error) {
-      setState('ready');
-    }
+    } catch { setState('ready'); }
   }
 
-  if (button) {
-    button.addEventListener('click', handleClick);
-  }
-
+  if (button) button.addEventListener('click', handleClick);
   loadCount();
   setState(hasNudgedToday() ? 'done' : 'ready');
 })();
@@ -211,148 +143,78 @@ const quotes = [
   @reference "../styles/global.css";
 
   .nudge-shell {
-    @apply mb-10 flex w-full justify-center;
+    @apply mb-6 flex w-full justify-center;
   }
 
-  .nudge-card {
-    @apply flex w-full max-w-4xl flex-col items-center justify-center gap-6 rounded-3xl border border-[#8953d1]/15 bg-[#8953d1]/[0.06] px-6 py-6 text-center sm:flex-row sm:items-center sm:justify-between sm:px-8 sm:text-left dark:border-[#a175e8]/20 dark:bg-[#a175e8]/[0.08];
+  .nudge-row {
+    @apply relative flex w-full max-w-4xl items-center justify-center gap-3;
   }
 
-  .snek-stage {
-    @apply relative flex min-w-[92px] items-center justify-center;
-  }
-
-  .pixel-snek {
-    position: relative;
+  .snek-mini {
     display: grid;
-    grid-template-columns: repeat(6, 6px);
+    grid-template-columns: repeat(6, 4px);
     gap: 1px;
-    padding: 7px;
     transform-origin: center;
-    animation: snek-sway 2s ease-in-out infinite;
+    animation: snek-sway 2.5s ease-in-out infinite;
   }
 
   .px {
-    width: 6px;
-    height: 6px;
+    width: 4px;
+    height: 4px;
     border-radius: 1px;
     background: transparent;
   }
 
   .px.filled {
     background: #8953d1;
-    box-shadow: 0 0 0 1px rgba(137, 83, 209, 0.08);
   }
 
-  :global(.dark) .px.filled,
   :global(html[data-theme="dark"]) .px.filled {
     background: #a175e8;
-    box-shadow: 0 0 0 1px rgba(161, 117, 232, 0.12);
   }
 
-  .eye {
-    position: absolute;
-    width: 4px;
-    height: 4px;
-    border-radius: 999px;
-    background: #18181b;
-    left: 24px;
-  }
-
-  .eye-top { top: 13px; }
-  .eye-bottom { top: 21px; }
-
-  :global(html[data-theme="dark"]) .eye {
-    background: #faf5ff;
-  }
-
-  .pixel-snek.is-shaking {
+  .snek-mini.is-shaking {
     animation: snek-shake 0.5s ease-in-out;
   }
 
+  .nudge-btn {
+    @apply inline-flex items-center rounded-full border border-gray-200 bg-white px-4 py-1.5 text-xs text-gray-600 transition-all hover:border-[#8953d1]/40 hover:text-[#8953d1] dark:border-zinc-700 dark:bg-zinc-800 dark:text-gray-400 dark:hover:border-[#a175e8]/40 dark:hover:text-[#a175e8];
+    cursor: pointer;
+  }
+
+  .nudge-btn[data-state='done'] {
+    @apply border-[#8953d1]/30 text-[#8953d1] dark:border-[#a175e8]/30 dark:text-[#a175e8];
+    cursor: default;
+  }
+
+  .nudge-btn .label-done { display: none; }
+  .nudge-btn[data-state='done'] .label-ready { display: none; }
+  .nudge-btn[data-state='done'] .label-done { display: inline; }
+
+  .nudge-count {
+    @apply text-sm font-semibold text-[#8953d1] dark:text-[#a175e8];
+    min-width: 3ch;
+  }
+
   .snek-quote {
-    @apply pointer-events-none absolute left-1/2 top-[-14px] w-max max-w-[220px] -translate-x-1/2 rounded-full border border-[#8953d1]/20 bg-white/95 px-3 py-1 text-center font-serif text-xs font-medium text-[#8953d1] opacity-0 shadow-sm transition-all duration-200 dark:border-[#a175e8]/25 dark:bg-zinc-900/95 dark:text-[#d5b8ff];
-    transform: translate(-50%, 4px);
+    @apply pointer-events-none absolute -top-8 left-1/2 w-max max-w-[200px] -translate-x-1/2 rounded-full bg-white/95 px-3 py-1 text-center text-xs text-[#8953d1] opacity-0 shadow-sm transition-all duration-200 dark:bg-zinc-900/95 dark:text-[#d5b8ff];
   }
 
   .snek-quote[data-visible='true'] {
     opacity: 1;
-    transform: translate(-50%, -8px);
-  }
-
-  .nudge-copy {
-    @apply flex min-w-0 flex-1 flex-col items-center gap-2 sm:items-start;
-  }
-
-  .nudge-title,
-  .nudge-subtitle,
-  .nudge-count,
-  .nudge-action {
-    font-family: var(--font-serif);
-  }
-
-  .nudge-meta {
-    @apply mt-2 flex flex-col items-center gap-4 sm:flex-row sm:items-center;
-  }
-
-  .nudge-count {
-    @apply text-4xl font-bold tracking-tight text-[#8953d1] sm:text-5xl dark:text-[#a175e8];
-    min-width: 5ch;
-  }
-
-  .nudge-action {
-    @apply inline-flex min-w-[168px] items-center justify-center rounded-full bg-[#8953d1] px-5 py-3 text-sm font-semibold text-white transition-all duration-200 hover:scale-[1.03] hover:bg-[#7340b8] disabled:cursor-not-allowed;
-  }
-
-  .nudge-action .label-done,
-  .nudge-action .label-loading {
-    display: none;
-  }
-
-  .nudge-action[data-state='done'] {
-    @apply bg-gray-300 text-gray-600 dark:bg-zinc-700 dark:text-gray-300;
-  }
-
-  .nudge-action[data-state='loading'] {
-    @apply bg-[#7340b8];
-  }
-
-  .nudge-action[data-state='done'] .label-ready,
-  .nudge-action[data-state='loading'] .label-ready {
-    display: none;
-  }
-
-  .nudge-action[data-state='done'] .label-done,
-  .nudge-action[data-state='loading'] .label-loading {
-    display: inline;
+    transform: translate(-50%, -4px);
   }
 
   @keyframes snek-sway {
-    0%,
-    100% {
-      transform: rotate(-3deg) translateX(-1px);
-    }
-    50% {
-      transform: rotate(3deg) translateX(1px);
-    }
+    0%, 100% { transform: rotate(-2deg); }
+    50% { transform: rotate(2deg); }
   }
 
   @keyframes snek-shake {
-    0%,
-    100% {
-      transform: translateX(0) rotate(0deg);
-    }
-    20% {
-      transform: translateX(-4px) rotate(-8deg);
-    }
-    40% {
-      transform: translateX(3px) rotate(7deg);
-    }
-    60% {
-      transform: translateX(-3px) rotate(-6deg);
-    }
-    80% {
-      transform: translateX(3px) rotate(5deg);
-    }
+    0%, 100% { transform: translateX(0) rotate(0deg); }
+    20% { transform: translateX(-3px) rotate(-6deg); }
+    40% { transform: translateX(2px) rotate(5deg); }
+    60% { transform: translateX(-2px) rotate(-4deg); }
+    80% { transform: translateX(2px) rotate(3deg); }
   }
 </style>
