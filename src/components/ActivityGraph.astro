@@ -369,6 +369,21 @@ const totalGithubCommits = Object.values(githubContributions).reduce((sum, c) =>
 		transform: translateY(0);
 	}
 
+	.nudge-quote-bubble.is-milestone {
+		font-size: 12px;
+		font-weight: 600;
+		background: #8953d1;
+		color: #fff;
+		max-width: 300px;
+		white-space: normal;
+		text-align: center;
+	}
+
+	:global([data-theme="dark"]) .nudge-quote-bubble.is-milestone {
+		background: #a175e8;
+		color: #fff;
+	}
+
 	@keyframes nudge-wiggle {
 		0%, 100% { transform: scale(1.3) rotate(0deg); }
 		25% { transform: scale(1.3) rotate(-12deg); }
@@ -387,20 +402,35 @@ const totalGithubCommits = Object.values(githubContributions).reduce((sum, c) =>
   const quoteEl = document.querySelector('[data-nudge-quote]');
   const quotes = [
     'Stay Invested in the Game 🐍',
-    '又被催了，那就继续干 👨‍💻',
-    '复杂问题简单化，简单事情重复做',
-    '信心就是黄金，你的催促是利息',
-    '买预期，卖事实——你催我，我执行',
-    '耐心是关键，但被催了就快一点',
-    'Be the sovereign individual',
-    '2017 年就入圈了，还差这一行代码？',
-    '催催催，蛇蛇蛇 🐍',
-    '每一次点击都是对抗熵增的努力',
-    '福福问我为什么总在用电脑，因为有人在催',
-    'Build in public，催在 rexliu.io',
-    '一催一个准，谢谢老铁',
+    '又被催了，继续干 👨‍💻',
+    '信心就是黄金，催促是利息',
+    '买预期，卖事实。你催，我执行',
+    '蛇不催，蛇不动 🐍',
+    '2017 入圈，还差这一行代码？',
+    '催催催，蛇蛇蛇',
+    '福福问我为啥总用电脑，因为有人催',
     'Shipped > Perfect',
     '数字在涨，代码在烧 🔥',
+    'One more nudge. Come on.',
+    '你点一下，我少摸一分钟鱼',
+    '谢谢催我，真的，不是客气',
+    'ok ok I'm coding 👀',
+    '复杂问题简单化，简单事情重复做',
+    'Be the sovereign individual',
+    '蛇感受到了你的诚意',
+    'Every click counts 🫡',
+    '催完记得去书架点「我也看过」',
+    '你催，我 build，大家赢',
+    '牛市催代码，熊市催代码，永远催代码',
+    'Rex noticed your nudge 👁',
+    '数字到 100 有彩蛋，继续点',
+    '不催白不催，催了也许有用',
+    'gm gm gm 🐍',
+    '一个 sovereign individual 正在被催',
+    'brb shipping something',
+    '耐心是关键，但被催就快一点',
+    '你是第几个催我的？看数字',
+    'Stay frosty. Stay building.',
   ];
   let currentCount = 0;
   let clicking = false;
@@ -462,6 +492,7 @@ const totalGithubCommits = Object.values(githubContributions).reduce((sum, c) =>
       const d = await r.json();
       animateCount(Number(d.value) || currentCount + 1);
       showQuote();
+      checkMilestone(Number(d.value) || currentCount);
     } catch {}
     setTimeout(() => { clicking = false; }, 500);
   }
