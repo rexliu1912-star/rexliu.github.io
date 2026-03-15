@@ -170,8 +170,13 @@ const totalGithubCommits = Object.values(githubContributions).reduce((sum, c) =>
 				<span>Last 365 Days</span>
 				<span><span class="count">{totalGithubCommits}</span> commits</span>
 				<span><span class="count">{totalPosts}</span> posts</span>
-
+				<span class="nudge-stat" data-nudge-stat role="button" tabindex="0" title="Click to nudge Rex!">
+					<span class="nudge-snek-icon">🐍</span>
+					<span class="count" data-nudge-count>0</span> nudges
+				</span>
 			</div>
+
+			<div class="nudge-quote-bubble font-serif" data-nudge-quote></div>
 			<div class="legend">
 				<span class="legend-label">Less</span>
 				<div class="day level-0"></div>
@@ -272,7 +277,7 @@ const totalGithubCommits = Object.values(githubContributions).reduce((sum, c) =>
 	}
 
 	.activity-footer {
-		@apply mt-4 flex flex-col gap-3 font-serif text-xs text-gray-500 sm:flex-row sm:items-center sm:justify-between sm:gap-2;
+		@apply relative mt-4 flex flex-col gap-3 font-serif text-xs text-gray-500 sm:flex-row sm:items-center sm:justify-between sm:gap-2;
 	}
 
 	.stats {
@@ -305,4 +310,146 @@ const totalGithubCommits = Object.values(githubContributions).reduce((sum, c) =>
 		transform: none;
 		cursor: default;
 	}
+
+	.nudge-stat {
+		cursor: pointer;
+		transition: color 0.2s;
+		position: relative;
+		user-select: none;
+	}
+
+	.nudge-stat:hover {
+		color: #8953d1 !important;
+	}
+
+	:global([data-theme="dark"]) .nudge-stat:hover {
+		color: #a175e8 !important;
+	}
+
+	.nudge-snek-icon {
+		display: inline-block;
+		transition: transform 0.2s;
+	}
+
+	.nudge-stat:hover .nudge-snek-icon {
+		transform: scale(1.3);
+	}
+
+	.nudge-stat.is-clicked .nudge-snek-icon {
+		animation: nudge-wiggle 0.4s ease-in-out;
+	}
+
+	.nudge-quote-bubble {
+		position: absolute;
+		bottom: calc(100% + 8px);
+		right: 0;
+		max-width: 220px;
+		padding: 4px 12px;
+		border-radius: 999px;
+		font-size: 11px;
+		color: #8953d1;
+		background: rgba(255,255,255,0.95);
+		box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+		opacity: 0;
+		pointer-events: none;
+		transition: opacity 0.2s, transform 0.2s;
+		transform: translateY(4px);
+		white-space: nowrap;
+		z-index: 10;
+	}
+
+	:global([data-theme="dark"]) .nudge-quote-bubble {
+		background: rgba(24,24,27,0.95);
+		color: #d5b8ff;
+	}
+
+	.nudge-quote-bubble.is-visible {
+		opacity: 1;
+		transform: translateY(0);
+	}
+
+	@keyframes nudge-wiggle {
+		0%, 100% { transform: scale(1.3) rotate(0deg); }
+		25% { transform: scale(1.3) rotate(-12deg); }
+		50% { transform: scale(1.3) rotate(10deg); }
+		75% { transform: scale(1.3) rotate(-8deg); }
+	}
 </style>
+
+<script is:inline>
+(() => {
+  const stat = document.querySelector('[data-nudge-stat]');
+  if (!stat || stat.dataset.bound === 'true') return;
+  stat.dataset.bound = 'true';
+
+  const countEl = stat.querySelector('[data-nudge-count]');
+  const quoteEl = document.querySelector('[data-nudge-quote]');
+  const quotes = [
+    'Stay Invested in the Game 🐍',
+    '复杂问题简单化，简单事情重复做',
+    '信心就是黄金',
+    '买预期，卖事实',
+    '耐心是关键',
+    'Be the sovereign individual',
+  ];
+  let currentCount = 0;
+  let clicking = false;
+  let quoteTimer;
+
+  function fmt(n) { return new Intl.NumberFormat('en-US').format(n); }
+
+  function animateCount(next) {
+    const start = currentCount, end = Number(next) || 0, diff = end - start;
+    if (!countEl || diff === 0) { if (countEl) countEl.textContent = fmt(end); currentCount = end; return; }
+    const steps = Math.min(15, Math.max(6, Math.abs(diff)));
+    let step = 0;
+    const tick = () => {
+      step++;
+      countEl.textContent = fmt(Math.round(start + diff * (step / steps)));
+      if (step < steps) setTimeout(tick, 25); else { currentCount = end; countEl.textContent = fmt(end); }
+    };
+    tick();
+  }
+
+  function showQuote() {
+    if (!quoteEl) return;
+    quoteEl.textContent = quotes[Math.floor(Math.random() * quotes.length)];
+    quoteEl.classList.add('is-visible');
+    clearTimeout(quoteTimer);
+    quoteTimer = setTimeout(() => quoteEl.classList.remove('is-visible'), 3000);
+  }
+
+  function wiggle() {
+    stat.classList.remove('is-clicked');
+    void stat.offsetWidth;
+    stat.classList.add('is-clicked');
+    setTimeout(() => stat.classList.remove('is-clicked'), 400);
+  }
+
+  async function loadCount() {
+    try {
+      const r = await fetch('/api/nudge');
+      const d = await r.json();
+      currentCount = Number(d.count) || 0;
+      if (countEl) countEl.textContent = fmt(currentCount);
+    } catch {}
+  }
+
+  async function handleClick() {
+    if (clicking) return;
+    clicking = true;
+    wiggle();
+    try {
+      const r = await fetch('/api/nudge', { method: 'POST' });
+      const d = await r.json();
+      animateCount(Number(d.count) || currentCount + 1);
+      showQuote();
+    } catch {}
+    setTimeout(() => { clicking = false; }, 500);
+  }
+
+  stat.addEventListener('click', handleClick);
+  stat.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleClick(); } });
+  loadCount();
+})();
+</script>
