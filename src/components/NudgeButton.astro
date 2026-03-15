@@ -33,16 +33,16 @@ const quotes = [
 
     <button type="button" class="nudge-btn font-serif" data-button>
       <span class="label-ready">
-        <span class="lang-en">Nudge Rex to write</span>
-        <span class="lang-zh">催 Rex 写</span>
+        <span class="lang-en">Nudge Rex</span>
+        <span class="lang-zh">催 Rex 干活</span>
       </span>
       <span class="label-done">
-        <span class="lang-en">Nudged ✓</span>
-        <span class="lang-zh">已催 ✓</span>
+        <span class="lang-en">Nudged</span>
+        <span class="lang-zh">已催</span>
       </span>
+      <span class="nudge-sep">·</span>
+      <span class="nudge-count font-serif" data-count>0</span>
     </button>
-
-    <span class="nudge-count font-serif" data-count>0</span>
 
     <div class="snek-quote font-serif" data-quote></div>
   </div>
@@ -92,7 +92,7 @@ const quotes = [
   }
 
   function setState(s) {
-    if (button) { button.dataset.state = s; button.disabled = s !== 'ready'; }
+    if (button) { button.dataset.state = s; }
   }
 
   function showQuote() {
@@ -120,22 +120,23 @@ const quotes = [
     } catch {}
   }
 
+  let clicking = false;
   async function handleClick() {
-    if (hasNudgedToday()) { setState('done'); return; }
-    setState('done');
+    if (clicking) return;
+    clicking = true;
     try {
       const r = await fetch('/api/nudge', { method: 'POST' });
       const d = await r.json();
       animateCount(Number(d.count) || currentCount + 1);
-      setNudgedToday();
       shakeSnek();
       showQuote();
-    } catch { setState('ready'); }
+    } catch {}
+    setTimeout(() => { clicking = false; }, 600);
   }
 
   if (button) button.addEventListener('click', handleClick);
   loadCount();
-  setState(hasNudgedToday() ? 'done' : 'ready');
+  setState('ready');
 })();
 </script>
 
@@ -184,16 +185,18 @@ const quotes = [
 
   .nudge-btn[data-state='done'] {
     @apply border-[#8953d1]/30 text-[#8953d1] dark:border-[#a175e8]/30 dark:text-[#a175e8];
-    cursor: default;
   }
 
   .nudge-btn .label-done { display: none; }
-  .nudge-btn[data-state='done'] .label-ready { display: none; }
-  .nudge-btn[data-state='done'] .label-done { display: inline; }
+  
+  
 
   .nudge-count {
-    @apply text-sm font-semibold text-[#8953d1] dark:text-[#a175e8];
-    min-width: 3ch;
+    @apply font-semibold text-[#8953d1] dark:text-[#a175e8];
+    font-size: inherit;
+  }
+  .nudge-sep {
+    @apply mx-1 text-gray-300 dark:text-gray-600;
   }
 
   .snek-quote {
