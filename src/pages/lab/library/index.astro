@@ -10,6 +10,7 @@ type Notes = {
 };
 
 type BookEntry = {
+  slug?: string;
   title: string;
   titleEn?: string;
   author?: string;
@@ -23,6 +24,7 @@ type BookEntry = {
 };
 
 type MediaEntry = {
+  slug?: string;
   title: string;
   titleEn?: string;
   year?: number;
@@ -85,9 +87,13 @@ function hasNotes(item: LibraryItem) {
   );
 }
 
+function getReactionQuote(item: LibraryItem) {
+  return item.notes?.quotes?.[0]?.slice(0, 80) ?? "";
+}
+
 const books: LibraryItem[] = (booksData as BookEntry[])
   .map((book, index) => ({
-    id: `book-${index}`,
+    id: book.slug || `book-${index}`,
     title: book.title,
     titleEn: book.titleEn,
     subtitle: book.author || "Unknown author",
@@ -110,7 +116,7 @@ const books: LibraryItem[] = (booksData as BookEntry[])
 
 const media: LibraryItem[] = (mediaData as MediaEntry[])
   .map((item, index) => ({
-    id: `media-${index}`,
+    id: item.slug || `media-${index}`,
     title: item.title,
     titleEn: item.titleEn,
     subtitle: item.type === "movie" ? "Film" : item.type === "series" ? "Series" : item.type === "documentary" ? "Documentary" : "Variety",
@@ -216,6 +222,7 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
             data-id={item.id}
             data-tags={JSON.stringify(item.tags)}
             data-group="books"
+            data-quote={getReactionQuote(item)}
           >
             {hasNotes(item) && <span class="lib-bookmark" aria-hidden="true"></span>}
             {item.cover ? (
@@ -237,6 +244,18 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
                     ))}
                   </div>
                 )}
+              </div>
+              <div class="lib-reaction mt-2 flex items-center gap-2">
+                <button
+                  type="button"
+                  class="lib-react-btn flex items-center gap-1.5 rounded-full border border-[#8953d1]/30 px-3 py-1 text-xs text-[#8953d1] hover:bg-[#8953d1]/10 transition-colors dark:text-[#a175e8] dark:border-[#a175e8]/30"
+                  data-item-id={item.id}
+                  aria-label="我也看过"
+                >
+                  <span class="react-icon">👁</span>
+                  <span class="react-label">我也看过</span>
+                </button>
+                <span class="react-count text-xs text-gray-400 dark:text-gray-500" data-item-id={item.id}></span>
               </div>
             </div>
           </article>
@@ -301,32 +320,54 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
         {books.map((item, index) => {
           const spineHeight = 180 + (index * 17) % 41;
           return (
-            <button
-              type="button"
-              class="shelf-book"
-              style={`--shelf-height: ${spineHeight}px; display:none`}
-              data-shelf-book
+            <div
+              class="shelf-entry"
+              style="display:none"
+              data-shelf-entry
               data-id={item.id}
               data-tags={JSON.stringify(item.tags)}
               data-group="books"
+              data-quote={getReactionQuote(item)}
             >
-              <span class="shelf-book-preview">
-                {item.cover ? (
-                  <img src={item.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="h-full w-full object-cover object-center" />
-                ) : (
-                  <span class={`flex h-full w-full items-center justify-center px-2 text-center ${item.coverClass}`}>
-                    <span class="font-serif text-xs font-medium leading-snug text-white">{item.title}</span>
-                  </span>
-                )}
-              </span>
-              <span class={`shelf-spine ${item.coverClass}`}>
-                <span class="shelf-spine-sheen"></span>
-                <span class="shelf-spine-title">{item.title}</span>
-                {!!(item.notes && ((item.notes.quotes && item.notes.quotes.length > 0) || (item.notes.core_ideas && item.notes.core_ideas.length > 0))) && (
-                  <span class="shelf-spine-dot"></span>
-                )}
-              </span>
-            </button>
+              <button
+                type="button"
+                class="shelf-book"
+                style={`--shelf-height: ${spineHeight}px`}
+                data-shelf-book
+                data-id={item.id}
+                data-tags={JSON.stringify(item.tags)}
+                data-group="books"
+              >
+                <span class="shelf-book-preview">
+                  {item.cover ? (
+                    <img src={item.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="h-full w-full object-cover object-center" />
+                  ) : (
+                    <span class={`flex h-full w-full items-center justify-center px-2 text-center ${item.coverClass}`}>
+                      <span class="font-serif text-xs font-medium leading-snug text-white">{item.title}</span>
+                    </span>
+                  )}
+                </span>
+                <span class={`shelf-spine ${item.coverClass}`}>
+                  <span class="shelf-spine-sheen"></span>
+                  <span class="shelf-spine-title">{item.title}</span>
+                  {!!(item.notes && ((item.notes.quotes && item.notes.quotes.length > 0) || (item.notes.core_ideas && item.notes.core_ideas.length > 0))) && (
+                    <span class="shelf-spine-dot"></span>
+                  )}
+                </span>
+              </button>
+              <div class="lib-reaction shelf-reaction mt-2 flex items-center gap-2">
+                <button
+                  type="button"
+                  class="lib-react-btn flex items-center gap-1.5 rounded-full border border-[#8953d1]/30 px-3 py-1 text-xs text-[#8953d1] hover:bg-[#8953d1]/10 transition-colors dark:text-[#a175e8] dark:border-[#a175e8]/30"
+                  data-item-id={item.id}
+                  aria-label="我也看过"
+                >
+                  <span class="react-icon">👁</span>
+                  <span class="react-label">我也看过</span>
+                </button>
+                <span class="react-count text-xs text-gray-400 dark:text-gray-500" data-item-id={item.id}></span>
+              </div>
+            </div>
           );
         })}
       </div>
@@ -343,7 +384,7 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
         <div class="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
           {films.map((item) => (
             <Fragment>
-              <article class="lib-card group cursor-pointer overflow-hidden rounded-xl transition-all lib-card-surface" data-id={item.id} data-tags={JSON.stringify(item.tags)} data-group="film-tv">{hasNotes(item) && <span class="lib-bookmark" aria-hidden="true"></span>}
+              <article class="lib-card group cursor-pointer overflow-hidden rounded-xl transition-all lib-card-surface" data-id={item.id} data-tags={JSON.stringify(item.tags)} data-group="film-tv" data-quote={getReactionQuote(item)}>{hasNotes(item) && <span class="lib-bookmark" aria-hidden="true"></span>}
                 {item.cover ? (
                   <img src={item.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="block w-full aspect-[2/3] object-cover object-center transition-transform duration-500 ease-out group-hover:scale-[1.05]" />
                 ) : (
@@ -358,6 +399,18 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
                       <span class="lang-zh">笔记</span><span class="lang-en">Notes</span>
                     </span>
                   )}
+                  <div class="lib-reaction mt-2 flex items-center gap-2">
+                    <button
+                      type="button"
+                      class="lib-react-btn flex items-center gap-1.5 rounded-full border border-[#8953d1]/30 px-3 py-1 text-xs text-[#8953d1] hover:bg-[#8953d1]/10 transition-colors dark:text-[#a175e8] dark:border-[#a175e8]/30"
+                      data-item-id={item.id}
+                      aria-label="我也看过"
+                    >
+                      <span class="react-icon">👁</span>
+                      <span class="react-label">我也看过</span>
+                    </button>
+                    <span class="react-count text-xs text-gray-400 dark:text-gray-500" data-item-id={item.id}></span>
+                  </div>
                 </div>
               </article>
               <div class="lib-detail hidden" data-detail={item.id}>
@@ -390,7 +443,7 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
         <div class="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
           {series.map((item) => (
             <Fragment>
-              <article class="lib-card group cursor-pointer overflow-hidden rounded-xl transition-all lib-card-surface" data-id={item.id} data-tags={JSON.stringify(item.tags)} data-group="film-tv">{hasNotes(item) && <span class="lib-bookmark" aria-hidden="true"></span>}
+              <article class="lib-card group cursor-pointer overflow-hidden rounded-xl transition-all lib-card-surface" data-id={item.id} data-tags={JSON.stringify(item.tags)} data-group="film-tv" data-quote={getReactionQuote(item)}>{hasNotes(item) && <span class="lib-bookmark" aria-hidden="true"></span>}
                 {item.cover ? (
                   <img src={item.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="block w-full aspect-[2/3] object-cover object-center transition-transform duration-500 ease-out group-hover:scale-[1.05]" />
                 ) : (
@@ -405,6 +458,18 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
                       <span class="lang-zh">笔记</span><span class="lang-en">Notes</span>
                     </span>
                   )}
+                  <div class="lib-reaction mt-2 flex items-center gap-2">
+                    <button
+                      type="button"
+                      class="lib-react-btn flex items-center gap-1.5 rounded-full border border-[#8953d1]/30 px-3 py-1 text-xs text-[#8953d1] hover:bg-[#8953d1]/10 transition-colors dark:text-[#a175e8] dark:border-[#a175e8]/30"
+                      data-item-id={item.id}
+                      aria-label="我也看过"
+                    >
+                      <span class="react-icon">👁</span>
+                      <span class="react-label">我也看过</span>
+                    </button>
+                    <span class="react-count text-xs text-gray-400 dark:text-gray-500" data-item-id={item.id}></span>
+                  </div>
                 </div>
               </article>
               <div class="lib-detail hidden" data-detail={item.id}>
@@ -437,7 +502,8 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
       <div class="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
         {variety.map((item) => (
           <Fragment>
-            <article class="lib-card group cursor-pointer overflow-hidden rounded-xl transition-all lib-card-surface" data-id={item.id} data-tags={JSON.stringify(item.tags)} data-group="variety">
+            <article class="lib-card group cursor-pointer overflow-hidden rounded-xl transition-all lib-card-surface" data-id={item.id} data-tags={JSON.stringify(item.tags)} data-group="variety" data-quote={getReactionQuote(item)}
+            >
               {hasNotes(item) && <span class="lib-bookmark" aria-hidden="true"></span>}
               {item.cover ? (
                 <img src={item.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="block w-full aspect-[2/3] object-cover object-center transition-transform duration-500 ease-out group-hover:scale-[1.05]" />
@@ -453,6 +519,18 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
                     <span class="lang-zh">笔记</span><span class="lang-en">Notes</span>
                   </span>
                 )}
+                <div class="lib-reaction mt-2 flex items-center gap-2">
+                  <button
+                    type="button"
+                    class="lib-react-btn flex items-center gap-1.5 rounded-full border border-[#8953d1]/30 px-3 py-1 text-xs text-[#8953d1] hover:bg-[#8953d1]/10 transition-colors dark:text-[#a175e8] dark:border-[#a175e8]/30"
+                    data-item-id={item.id}
+                    aria-label="我也看过"
+                  >
+                    <span class="react-icon">👁</span>
+                    <span class="react-label">我也看过</span>
+                  </button>
+                  <span class="react-count text-xs text-gray-400 dark:text-gray-500" data-item-id={item.id}></span>
+                </div>
               </div>
             </article>
             <div class="lib-detail hidden" data-detail={item.id}>
@@ -486,7 +564,8 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
       <div class="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
         {documentary.map((item) => (
           <Fragment>
-            <article class="lib-card group cursor-pointer overflow-hidden rounded-xl transition-all lib-card-surface" data-id={item.id} data-tags={JSON.stringify(item.tags)} data-group="documentary">
+            <article class="lib-card group cursor-pointer overflow-hidden rounded-xl transition-all lib-card-surface" data-id={item.id} data-tags={JSON.stringify(item.tags)} data-group="documentary" data-quote={getReactionQuote(item)}
+            >
               {hasNotes(item) && <span class="lib-bookmark" aria-hidden="true"></span>}
               {item.cover ? (
                 <img src={item.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="block w-full aspect-[2/3] object-cover object-center transition-transform duration-500 ease-out group-hover:scale-[1.05]" />
@@ -502,6 +581,18 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
                     <span class="lang-zh">笔记</span><span class="lang-en">Notes</span>
                   </span>
                 )}
+                <div class="lib-reaction mt-2 flex items-center gap-2">
+                  <button
+                    type="button"
+                    class="lib-react-btn flex items-center gap-1.5 rounded-full border border-[#8953d1]/30 px-3 py-1 text-xs text-[#8953d1] hover:bg-[#8953d1]/10 transition-colors dark:text-[#a175e8] dark:border-[#a175e8]/30"
+                    data-item-id={item.id}
+                    aria-label="我也看过"
+                  >
+                    <span class="react-icon">👁</span>
+                    <span class="react-label">我也看过</span>
+                  </button>
+                  <span class="react-count text-xs text-gray-400 dark:text-gray-500" data-item-id={item.id}></span>
+                </div>
               </div>
             </article>
             <div class="lib-detail hidden" data-detail={item.id}>
@@ -744,6 +835,36 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
       overflow-x: auto; scrollbar-width: none;
     }
     :global(.shelf-row::-webkit-scrollbar) { display: none; }
+    .lib-react-btn.lib-reacted {
+      border-color: #8953d1;
+      background: rgba(137, 83, 209, 0.1);
+      color: #8953d1;
+    }
+    .lib-reaction {
+      flex-wrap: wrap;
+    }
+    .react-quote {
+      flex-basis: 100%;
+    }
+    .shelf-entry {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 0.5rem;
+      flex: 0 0 auto;
+      min-width: clamp(32px, 3vw, 42px);
+      padding-bottom: 0.75rem;
+    }
+    .shelf-reaction {
+      min-height: 3rem;
+      justify-content: center;
+    }
+    .shelf-reaction .react-count,
+    .shelf-reaction .react-quote {
+      width: 100%;
+      text-align: center;
+    }
     .shelf-book {
       position: relative;
       display: flex; justify-content: center; align-items: flex-end;
@@ -1026,7 +1147,7 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
     function organizeShelf() {
       if (!shelfStage) return;
       // Collect ALL shelf books from anywhere in the DOM (they may be in rows or loose)
-      const allBooks = Array.from(document.querySelectorAll('[data-shelf-book]'));
+      const allBooks = Array.from(document.querySelectorAll('[data-shelf-entry]'));
       if (!allBooks.length) return;
 
       const visibleBooks = allBooks.filter(b => {
@@ -1103,7 +1224,7 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
         organizeShelf();
 
         // 3. Spine books spring up
-        const spines = [...document.querySelectorAll('.shelf-book')];
+        const spines = [...document.querySelectorAll('.shelf-entry')];
         spines.forEach((s, i) => {
           const d = Math.min(i * 10, CAP);
           s.style.animation = `libSpineIn 0.38s ${d}ms cubic-bezier(0.34,1.56,0.64,1) both`;
@@ -1113,7 +1234,7 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
 
       } else {
         // 1. Fly out spine books
-        const spines = [...document.querySelectorAll('.shelf-book')];
+        const spines = [...document.querySelectorAll('.shelf-entry')];
         spines.forEach((s, i) => {
           const d = Math.min(i * 8, 120);
           s.style.animation = `libSpineOut 0.18s ${d}ms ease both`;
@@ -1223,6 +1344,90 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
     // Force reset select to default (prevent browser form history restoring a filter)
     if (booksSortEl) booksSortEl.value = 'date';
     renderTags();
+
+    // ── Library Reactions ──────────────────────────────────
+    (async () => {
+      const reactionButtons = Array.from(document.querySelectorAll('.lib-react-btn'));
+      const itemIds = [...new Set(reactionButtons.map((button) => button.dataset.itemId).filter(Boolean))];
+      if (!itemIds.length) return;
+
+      let clicked = {};
+      try {
+        clicked = JSON.parse(localStorage.getItem('lib_reactions') || '{}');
+      } catch {}
+
+      const applyReactionState = (id, count) => {
+        document.querySelectorAll(`.react-count[data-item-id="${id}"]`).forEach((countEl) => {
+          countEl.textContent = count > 0 ? `${count} 人读过` : '';
+        });
+        document.querySelectorAll(`.lib-react-btn[data-item-id="${id}"]`).forEach((btn) => {
+          const icon = btn.querySelector('.react-icon');
+          const label = btn.querySelector('.react-label');
+          if (clicked[id]) {
+            btn.classList.add('lib-reacted');
+            if (icon) icon.textContent = '✓';
+            if (label) label.textContent = '已标记';
+          } else {
+            btn.classList.remove('lib-reacted');
+            if (icon) icon.textContent = '👁';
+            if (label) label.textContent = '我也看过';
+          }
+        });
+      };
+
+      const showReactionQuote = (id, quote) => {
+        if (!quote) return;
+        document.querySelectorAll(`.lib-reaction .react-quote[data-item-id="${id}"]`).forEach((node) => node.remove());
+        document.querySelectorAll(`.lib-reaction .react-count[data-item-id="${id}"]`).forEach((countEl) => {
+          const quoteEl = document.createElement('span');
+          quoteEl.className = 'react-quote text-xs text-gray-500 dark:text-gray-400 italic mt-1 block';
+          quoteEl.dataset.itemId = id;
+          quoteEl.textContent = `Rex: "${quote}..."`;
+          countEl.parentNode?.insertBefore(quoteEl, countEl.nextSibling);
+          window.setTimeout(() => quoteEl.remove(), 5000);
+        });
+      };
+
+      try {
+        const res = await fetch(`/api/library-reactions?ids=${itemIds.join(',')}`);
+        const counts = await res.json();
+        itemIds.forEach((id) => applyReactionState(id, counts[id] || 0));
+      } catch (error) {
+        console.warn('reactions fetch failed', error);
+      }
+
+      reactionButtons.forEach((btn) => {
+        btn.addEventListener('click', async (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          const id = btn.dataset.itemId;
+          if (!id || clicked[id]) return;
+
+          clicked[id] = true;
+          localStorage.setItem('lib_reactions', JSON.stringify(clicked));
+
+          const countEls = document.querySelectorAll(`.react-count[data-item-id="${id}"]`);
+          const currentCount = countEls.length ? Number.parseInt(countEls[0].textContent || '0', 10) || 0 : 0;
+          applyReactionState(id, currentCount + 1);
+
+          const quoteSource = btn.closest('[data-id]') || document.querySelector(`[data-id="${id}"][data-quote]`);
+          const quote = quoteSource?.dataset.quote;
+
+          try {
+            const res = await fetch('/api/library-reactions', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ itemId: id }),
+            });
+            const { count } = await res.json();
+            applyReactionState(id, count || 0);
+            showReactionQuote(id, quote);
+          } catch (error) {
+            console.warn('reaction post failed', error);
+          }
+        });
+      });
+    })();
   } // end initLibrary
 
   // Run on both initial load and View Transitions navigation
