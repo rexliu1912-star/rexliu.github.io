@@ -218,7 +218,7 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
       {books.map((item) => (
         <Fragment>
           <article
-            class="lib-card group cursor-pointer overflow-hidden rounded-xl transition-all lib-card-surface flex flex-col h-full"
+            class="lib-card group cursor-pointer overflow-hidden rounded-xl transition-all lib-card-surface"
             data-id={item.id}
             data-tags={JSON.stringify(item.tags)}
             data-group="books"
@@ -232,7 +232,7 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
                 <span class="font-serif text-sm font-semibold leading-snug text-white drop-shadow">{item.title}</span>
               </div>
             )}
-            <div class="p-3 flex-1 flex flex-col">
+            <div class="p-3">
               <h2 class="font-serif text-sm font-medium text-black dark:text-white leading-snug line-clamp-2">{item.title}</h2>
               {item.titleEn && <p class="lang-en mt-0.5 font-serif text-xs text-gray-600 dark:text-gray-300 truncate italic">{item.titleEn}</p>}
               <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500 truncate">{item.subtitle}</p>
@@ -245,15 +245,15 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
                   </div>
                 )}
               </div>
-              <div class="lib-reaction mt-auto pt-2 flex w-full items-center justify-center">
+              <div class="lib-reaction" style="text-align:right; margin-top:auto; padding-top:6px;">
                 <button
                   type="button"
-                  class="lib-react-btn inline-flex items-center gap-1 text-xs text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]"
+                  class="lib-react-btn font-serif"
                   data-item-id={item.id}
                   aria-label="我也看过"
+                  style="background:none; border:none; cursor:pointer; color:#9ca3af; font-size:12px; padding:0; transition:color 0.2s;"
                 >
-                  <span class="react-icon font-serif">👁</span>
-                  <span class="react-label font-serif" data-zh="我也看过" data-en="Read it too">我也看过</span><span class="react-count ml-1" data-item-id={item.id}></span>
+                  <span class="react-icon">📖</span><span class="react-count ml-1 font-serif" data-item-id={item.id}></span>
                 </button>
               </div>
             </div>
@@ -304,18 +304,19 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
                     <span class="lang-en">No notes yet.</span><span class="lang-zh">暂无笔记。</span>
                   </p>
                 )}
-                <div class="lib-reaction-modal mt-4 flex items-center gap-3">
-                  <button
-                    type="button"
-                    class="lib-react-btn inline-flex items-center gap-1.5 text-sm text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]"
-                    data-item-id=""
-                    aria-label="我也看过"
-                  >
-                    <span class="react-icon font-serif">👁</span>
-                    <span class="react-label font-serif" data-zh="我也看过" data-en="Read it too">我也看过</span>
-                  </button>
-                  <span class="react-count text-sm text-gray-400 dark:text-gray-500" data-item-id=""></span>
-                </div>
+                <div class="lib-reaction-modal" style="margin-top:16px;">
+                <button
+                  type="button"
+                  class="lib-react-btn font-serif"
+                  data-item-id=""
+                  aria-label="我也看过"
+                  style="background:none; border:none; cursor:pointer; color:#9ca3af; font-size:14px; padding:0; transition:color 0.2s;"
+                >
+                  <span class="react-icon">📖</span>
+                  <span class="react-label font-serif" data-zh="我也看过" data-en="Read it too" style="margin-left:4px;">我也看过</span>
+                  <span class="react-count font-serif" data-item-id="" style="margin-left:4px;"></span>
+                </button>
+              </div>
               </div>
             </div>
           </div>
@@ -383,26 +384,26 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
         <div class="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
           {films.map((item) => (
             <Fragment>
-              <article class="lib-card group cursor-pointer overflow-hidden rounded-xl transition-all lib-card-surface flex flex-col h-full" data-id={item.id} data-tags={JSON.stringify(item.tags)} data-group="film-tv" data-quote={getReactionQuote(item)}>{hasNotes(item) && <span class="lib-bookmark" aria-hidden="true"></span>}
+              <article class="lib-card group cursor-pointer overflow-hidden rounded-xl transition-all lib-card-surface" data-id={item.id} data-tags={JSON.stringify(item.tags)} data-group="film-tv" data-quote={getReactionQuote(item)}>{hasNotes(item) && <span class="lib-bookmark" aria-hidden="true"></span>}
                 {item.cover ? (
                   <img src={item.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="block w-full aspect-[2/3] object-cover object-center transition-transform duration-500 ease-out group-hover:scale-[1.05]" />
                 ) : (
                   <div class={`flex w-full aspect-[2/3] items-center justify-center px-3 text-center ${item.coverClass}`}><span class="font-serif text-sm font-semibold leading-snug text-white drop-shadow">{item.title}</span></div>
                 )}
-                <div class="p-3 flex-1 flex flex-col">
+                <div class="p-3">
                   <h3 class="font-serif text-sm font-medium text-black dark:text-white line-clamp-2">{item.title}</h3>
                   <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Film</span><span class="lang-zh">电影</span> · {item.year || "—"}</p>
-                  <div class="lib-reaction mt-auto pt-2 flex w-full items-center justify-center">
-                    <button
-                      type="button"
-                      class="lib-react-btn group/btn inline-flex w-auto items-center gap-1 text-xs text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]"
-                      data-item-id={item.id}
-                      aria-label="我也看过"
-                    >
-                      <span class="react-icon font-serif">👁</span>
-                      <span class="react-label font-serif" data-zh="我也看过" data-en="Read it too">我也看过</span><span class="react-count ml-1" data-item-id={item.id}></span>
-                    </button>
-                  </div>
+                  <div class="lib-reaction" style="text-align:right; margin-top:auto; padding-top:6px;">
+                <button
+                  type="button"
+                  class="lib-react-btn font-serif"
+                  data-item-id={item.id}
+                  aria-label="我也看过"
+                  style="background:none; border:none; cursor:pointer; color:#9ca3af; font-size:12px; padding:0; transition:color 0.2s;"
+                >
+                  <span class="react-icon">📖</span><span class="react-count ml-1 font-serif" data-item-id={item.id}></span>
+                </button>
+              </div>
                 </div>
               </article>
               <div class="lib-detail hidden" data-detail={item.id}>
@@ -435,26 +436,26 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
         <div class="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
           {series.map((item) => (
             <Fragment>
-              <article class="lib-card group cursor-pointer overflow-hidden rounded-xl transition-all lib-card-surface flex flex-col h-full" data-id={item.id} data-tags={JSON.stringify(item.tags)} data-group="film-tv" data-quote={getReactionQuote(item)}>{hasNotes(item) && <span class="lib-bookmark" aria-hidden="true"></span>}
+              <article class="lib-card group cursor-pointer overflow-hidden rounded-xl transition-all lib-card-surface" data-id={item.id} data-tags={JSON.stringify(item.tags)} data-group="film-tv" data-quote={getReactionQuote(item)}>{hasNotes(item) && <span class="lib-bookmark" aria-hidden="true"></span>}
                 {item.cover ? (
                   <img src={item.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="block w-full aspect-[2/3] object-cover object-center transition-transform duration-500 ease-out group-hover:scale-[1.05]" />
                 ) : (
                   <div class={`flex w-full aspect-[2/3] items-center justify-center px-3 text-center ${item.coverClass}`}><span class="font-serif text-sm font-semibold leading-snug text-white drop-shadow">{item.title}</span></div>
                 )}
-                <div class="p-3 flex-1 flex flex-col">
+                <div class="p-3">
                   <h3 class="font-serif text-sm font-medium text-black dark:text-white line-clamp-2">{item.title}</h3>
                   <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Series</span><span class="lang-zh">剧集</span> · {item.year || "—"}</p>
-                  <div class="lib-reaction mt-auto pt-2 flex w-full items-center justify-center">
-                    <button
-                      type="button"
-                      class="lib-react-btn group/btn inline-flex w-auto items-center gap-1 text-xs text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]"
-                      data-item-id={item.id}
-                      aria-label="我也看过"
-                    >
-                      <span class="react-icon font-serif">👁</span>
-                      <span class="react-label font-serif" data-zh="我也看过" data-en="Read it too">我也看过</span><span class="react-count ml-1" data-item-id={item.id}></span>
-                    </button>
-                  </div>
+                  <div class="lib-reaction" style="text-align:right; margin-top:auto; padding-top:6px;">
+                <button
+                  type="button"
+                  class="lib-react-btn font-serif"
+                  data-item-id={item.id}
+                  aria-label="我也看过"
+                  style="background:none; border:none; cursor:pointer; color:#9ca3af; font-size:12px; padding:0; transition:color 0.2s;"
+                >
+                  <span class="react-icon">📖</span><span class="react-count ml-1 font-serif" data-item-id={item.id}></span>
+                </button>
+              </div>
                 </div>
               </article>
               <div class="lib-detail hidden" data-detail={item.id}>
@@ -487,7 +488,7 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
       <div class="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
         {variety.map((item) => (
           <Fragment>
-            <article class="lib-card group cursor-pointer overflow-hidden rounded-xl transition-all lib-card-surface flex flex-col h-full" data-id={item.id} data-tags={JSON.stringify(item.tags)} data-group="variety" data-quote={getReactionQuote(item)}
+            <article class="lib-card group cursor-pointer overflow-hidden rounded-xl transition-all lib-card-surface" data-id={item.id} data-tags={JSON.stringify(item.tags)} data-group="variety" data-quote={getReactionQuote(item)}
             >
               {hasNotes(item) && <span class="lib-bookmark" aria-hidden="true"></span>}
               {item.cover ? (
@@ -495,20 +496,20 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
               ) : (
                 <div class={`flex w-full aspect-[2/3] items-center justify-center px-3 text-center ${item.coverClass}`}><span class="font-serif text-sm font-semibold leading-snug text-white drop-shadow">{item.title}</span></div>
               )}
-              <div class="p-3 flex-1 flex flex-col">
+              <div class="p-3">
                 <h3 class="font-serif text-sm font-medium text-black dark:text-white line-clamp-2">{item.title}</h3>
                 <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Variety</span><span class="lang-zh">综艺</span> · {item.year || "—"}</p>
-                <div class="lib-reaction mt-auto pt-2 flex w-full items-center justify-center">
-                  <button
-                    type="button"
-                    class="lib-react-btn group/btn inline-flex w-auto items-center gap-1 text-xs text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]"
-                    data-item-id={item.id}
-                    aria-label="我也看过"
-                  >
-                    <span class="react-icon font-serif">👁</span>
-                    <span class="react-label font-serif" data-zh="我也看过" data-en="Read it too">我也看过</span><span class="react-count ml-1" data-item-id={item.id}></span>
-                  </button>
-                </div>
+                <div class="lib-reaction" style="text-align:right; margin-top:auto; padding-top:6px;">
+                <button
+                  type="button"
+                  class="lib-react-btn font-serif"
+                  data-item-id={item.id}
+                  aria-label="我也看过"
+                  style="background:none; border:none; cursor:pointer; color:#9ca3af; font-size:12px; padding:0; transition:color 0.2s;"
+                >
+                  <span class="react-icon">📖</span><span class="react-count ml-1 font-serif" data-item-id={item.id}></span>
+                </button>
+              </div>
               </div>
             </article>
             <div class="lib-detail hidden" data-detail={item.id}>
@@ -542,7 +543,7 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
       <div class="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
         {documentary.map((item) => (
           <Fragment>
-            <article class="lib-card group cursor-pointer overflow-hidden rounded-xl transition-all lib-card-surface flex flex-col h-full" data-id={item.id} data-tags={JSON.stringify(item.tags)} data-group="documentary" data-quote={getReactionQuote(item)}
+            <article class="lib-card group cursor-pointer overflow-hidden rounded-xl transition-all lib-card-surface" data-id={item.id} data-tags={JSON.stringify(item.tags)} data-group="documentary" data-quote={getReactionQuote(item)}
             >
               {hasNotes(item) && <span class="lib-bookmark" aria-hidden="true"></span>}
               {item.cover ? (
@@ -550,20 +551,20 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
               ) : (
                 <div class={`flex w-full aspect-[2/3] items-center justify-center px-3 text-center ${item.coverClass}`}><span class="font-serif text-sm font-semibold leading-snug text-white drop-shadow">{item.title}</span></div>
               )}
-              <div class="p-3 flex-1 flex flex-col">
+              <div class="p-3">
                 <h3 class="font-serif text-sm font-medium text-black dark:text-white line-clamp-2">{item.title}</h3>
                 <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Documentary</span><span class="lang-zh">纪录片</span> · {item.year || "—"}</p>
-                <div class="lib-reaction mt-auto pt-2 flex w-full items-center justify-center">
-                  <button
-                    type="button"
-                    class="lib-react-btn group/btn inline-flex w-auto items-center gap-1 text-xs text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]"
-                    data-item-id={item.id}
-                    aria-label="我也看过"
-                  >
-                    <span class="react-icon font-serif">👁</span>
-                    <span class="react-label font-serif" data-zh="我也看过" data-en="Read it too">我也看过</span><span class="react-count ml-1" data-item-id={item.id}></span>
-                  </button>
-                </div>
+                <div class="lib-reaction" style="text-align:right; margin-top:auto; padding-top:6px;">
+                <button
+                  type="button"
+                  class="lib-react-btn font-serif"
+                  data-item-id={item.id}
+                  aria-label="我也看过"
+                  style="background:none; border:none; cursor:pointer; color:#9ca3af; font-size:12px; padding:0; transition:color 0.2s;"
+                >
+                  <span class="react-icon">📖</span><span class="react-count ml-1 font-serif" data-item-id={item.id}></span>
+                </button>
+              </div>
               </div>
             </article>
             <div class="lib-detail hidden" data-detail={item.id}>
@@ -806,12 +807,10 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
       overflow-x: auto; scrollbar-width: none;
     }
     :global(.shelf-row::-webkit-scrollbar) { display: none; }
-    .lib-react-btn.lib-reacted {
-      color: #8953d1;
-    }
-    :global([data-theme="dark"]) .lib-react-btn.lib-reacted {
-      color: #a175e8;
-    }
+    .lib-react-btn.lib-reacted { color: #8953d1 !important; }
+    :global([data-theme="dark"]) .lib-react-btn.lib-reacted { color: #a175e8 !important; }
+    .lib-react-btn:hover { color: #8953d1 !important; }
+    :global([data-theme="dark"]) .lib-react-btn:hover { color: #a175e8 !important; }
     .lib-reaction {
       flex-wrap: wrap;
     }
@@ -1079,20 +1078,13 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
       modal.classList.remove('closing');
       modalContent.innerHTML = detail.innerHTML;
       if (!modalContent.querySelector('.lib-reaction-modal')) {
-        modalContent.insertAdjacentHTML('beforeend', `
-          <div class="lib-reaction-modal mt-4 flex items-center gap-3">
-            <button
-              type="button"
-              class="lib-react-btn inline-flex items-center gap-1.5 text-sm text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]"
-              data-item-id=""
-              aria-label="我也看过"
-            >
-              <span class="react-icon font-serif">👁</span>
-              <span class="react-label font-serif" data-zh="我也看过" data-en="Read it too">我也看过</span>
+        modalContent.insertAdjacentHTML('beforeend', `<div class="lib-reaction-modal" style="margin-top:16px;">
+            <button type="button" class="lib-react-btn font-serif" data-item-id="" aria-label="我也看过" style="background:none; border:none; cursor:pointer; color:#9ca3af; font-size:14px; padding:0; transition:color 0.2s;">
+              <span class="react-icon">📖</span>
+              <span class="react-label font-serif" data-zh="我也看过" data-en="Read it too" style="margin-left:4px;">我也看过</span>
+              <span class="react-count font-serif" data-item-id="" style="margin-left:4px;"></span>
             </button>
-            <span class="react-count text-sm text-gray-400 dark:text-gray-500" data-item-id=""></span>
-          </div>
-        `);
+          </div>`);
       }
       modal.classList.add('open');
       document.body.style.overflow = 'hidden';
@@ -1116,7 +1108,7 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
         if (modalReactBtn) {
           const modalIcon = modalReactBtn.querySelector('.react-icon');
           const modalLabel = modalReactBtn.querySelector('.react-label');
-          if (modalIcon) modalIcon.textContent = '👁';
+          if (modalIcon) modalIcon.textContent = '📖';
           if (modalLabel) modalLabel.textContent = t('我也看过', 'Read it too');
         }
       }
@@ -1414,12 +1406,16 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
         const label = btn.querySelector('.react-label');
         if (clicked[id]) {
           btn.classList.add('lib-reacted');
-          if (icon) icon.textContent = '✓';
-          if (label) label.textContent = t('已标记', 'Marked');
+          if (label) {
+            if (icon) icon.textContent = '✓';
+            label.textContent = t('已标记', 'Marked');
+          }
         } else {
           btn.classList.remove('lib-reacted');
-          if (icon) icon.textContent = '👁';
-          if (label) label.textContent = t('我也看过', 'Read it too');
+          if (label) {
+            if (icon) icon.textContent = '📖';
+            label.textContent = t('我也看过', 'Read it too');
+          }
         }
       });
     };
