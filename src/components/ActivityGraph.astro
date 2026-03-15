@@ -492,6 +492,11 @@ function initNudge() {
   loadCount();
 }
 
-// 首次加载 + View Transitions 切换后都重新初始化
+// 多种方式确保初始化
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initNudge);
+} else {
+  initNudge();
+}
 document.addEventListener('astro:page-load', initNudge);
 </script>
