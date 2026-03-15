@@ -1462,6 +1462,41 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
         console.warn('reactions fetch failed', error);
       }
 
+      // Retry helper for Convex mutations
+      async function incrementWithRetry(itemId, retries = 3) {
+        for (let i = 0; i < retries; i++) {
+          try {
+            const res = await fetch('https://shiny-butterfly-744.convex.cloud/api/mutation', {
+              method: 'POST',
+              headers: {'Content-Type': 'application/json'},
+              body: JSON.stringify({path: 'library:increment', args: {itemId}, format: 'json'}),
+            });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const data = await res.json();
+            if (data.status === 'success') return data.value;
+            throw new Error(data.errorMessage || 'mutation failed');
+          } catch (e) {
+            if (i < retries - 1) {
+              await new Promise(r => setTimeout(r, 1000 * Math.pow(2, i)));
+            } else {
+              throw e;
+            }
+          }
+        }
+      }
+
+      // Reconcile: fix localStorage clicks that never reached Convex
+      for (const id of Object.keys(clicked)) {
+        if (clicked[id] && (reactionCounts[id] || 0) === 0) {
+          try {
+            const count = await incrementWithRetry(id);
+            applyReactionState(id, count || 1);
+          } catch (e) {
+            console.warn('reconcile failed for', id, e);
+          }
+        }
+      }
+
       document.addEventListener('click', async (event) => {
         const btn = event.target.closest('.lib-react-btn');
         if (!btn) return;
@@ -1481,17 +1516,15 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
         const quote = quoteSource?.dataset.quote;
 
         try {
-          const res = await fetch('https://shiny-butterfly-744.convex.cloud/api/mutation', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({path: 'library:increment', args: {itemId: id}, format: 'json'}),
-          });
-          const lrd = await res.json();
-          const count = lrd.value;
+          const count = await incrementWithRetry(id);
           applyReactionState(id, count || 0);
           showReactionQuote(id, quote);
         } catch (error) {
-          console.warn('reaction post failed', error);
+          // Mutation failed after retries — rollback localStorage
+          console.warn('reaction failed after retries, rolling back', error);
+          delete clicked[id];
+          localStorage.setItem('lib_reactions', JSON.stringify(clicked));
+          applyReactionState(id, currentCount);
         }
       });
     })();
