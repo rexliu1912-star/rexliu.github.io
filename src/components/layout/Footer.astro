@@ -23,4 +23,121 @@ const BRAND_PURPLE = "#8953d1";
 
 		<span class="tracking-wider">Sovereign Individual</span>
 	</div>
+
+	<div class="rex-quote" data-rex-quote>
+		<span class="quote-text font-serif" data-quote-text></span>
+		<button type="button" class="quote-refresh" data-quote-refresh title="换一条" aria-label="Refresh quote">↻</button>
+	</div>
 </footer>
+
+<style>
+	.rex-quote {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.35rem;
+		max-width: 34rem;
+		padding: 0 1rem;
+	}
+
+	.quote-text {
+		font-size: 0.75rem;
+		line-height: 1.5;
+		color: rgb(156 163 175);
+		font-style: italic;
+		opacity: 0;
+		transition: opacity 0.3s ease;
+	}
+
+	.quote-text.is-visible {
+		opacity: 1;
+	}
+
+	.quote-refresh {
+		margin-left: 0.5rem;
+		font-size: 0.75rem;
+		line-height: 1;
+		color: rgb(209 213 219);
+		background: transparent;
+		border: 0;
+		padding: 0;
+		cursor: pointer;
+		transition: color 0.2s ease, transform 0.2s ease;
+	}
+
+	.quote-refresh:hover,
+	.quote-refresh:focus-visible {
+		color: #8953d1;
+		transform: rotate(20deg);
+		outline: none;
+	}
+
+	:global([data-theme="dark"]) .quote-refresh {
+		color: rgb(156 163 175);
+	}
+</style>
+
+<script is:inline>
+function initRexQuote() {
+  const root = document.querySelector('[data-rex-quote]');
+  if (!root) return;
+
+  const textEl = root.querySelector('[data-quote-text]');
+  const refreshBtn = root.querySelector('[data-quote-refresh]');
+  if (!textEl || !refreshBtn) return;
+
+  const rexQuotes = [
+    '买预期，卖事实',
+    '研究对手盘——知道赚的是谁的钱',
+    '复杂问题简单化，简单事情重复做',
+    '信心就是黄金',
+    '含苞待放，始终留有底牌',
+    '死要面子活受罪，想明白后心里舒坦',
+    '矛盾源于期待，失望才会改变',
+    '做好自己的事是本分，其他都是福分',
+    'Stay Invested in the Game',
+    'Be the sovereign individual',
+    'Patience is the real alpha',
+    'Buy expectations, sell facts',
+    'Confidence is gold',
+    'Ship first, perfect later',
+    'Simple systems beat complex ones',
+    'The game rewards those who stay',
+  ];
+
+  let lastIndex = -1;
+
+  function pickQuote() {
+    if (rexQuotes.length === 1) return 0;
+    let index = Math.floor(Math.random() * rexQuotes.length);
+    while (index === lastIndex) {
+      index = Math.floor(Math.random() * rexQuotes.length);
+    }
+    return index;
+  }
+
+  function renderQuote() {
+    const nextIndex = pickQuote();
+    lastIndex = nextIndex;
+    textEl.classList.remove('is-visible');
+    window.setTimeout(() => {
+      textEl.textContent = rexQuotes[nextIndex];
+      textEl.classList.add('is-visible');
+    }, 40);
+  }
+
+  if (refreshBtn.dataset.bound !== 'true') {
+    refreshBtn.dataset.bound = 'true';
+    refreshBtn.addEventListener('click', renderQuote);
+  }
+
+  renderQuote();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initRexQuote);
+} else {
+  initRexQuote();
+}
+document.addEventListener('astro:page-load', initRexQuote);
+</script>
