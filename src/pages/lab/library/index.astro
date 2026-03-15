@@ -1450,8 +1450,13 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
       if (!itemIds.length) return;
 
       try {
-        const res = await fetch(`/api/library-reactions?ids=${itemIds.join(',')}`);
-        reactionCounts = await res.json();
+        const res = await fetch('https://shiny-butterfly-744.convex.cloud/api/query', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({path: 'library:getCounts', args: {itemIds}, format: 'json'}),
+      });
+      const qd = await res.json();
+      reactionCounts = qd.value || {};
         itemIds.forEach((id) => applyReactionState(id, reactionCounts[id] || 0));
       } catch (error) {
         console.warn('reactions fetch failed', error);
@@ -1476,12 +1481,13 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
         const quote = quoteSource?.dataset.quote;
 
         try {
-          const res = await fetch('/api/library-reactions', {
+          const res = await fetch('https://shiny-butterfly-744.convex.cloud/api/mutation', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ itemId: id }),
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({path: 'library:increment', args: {itemId: id}, format: 'json'}),
           });
-          const { count } = await res.json();
+          const lrd = await res.json();
+          const count = lrd.value;
           applyReactionState(id, count || 0);
           showReactionQuote(id, quote);
         } catch (error) {
