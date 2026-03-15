@@ -2,7 +2,6 @@
 import { getCollection } from "astro:content";
 import PageLayout from "@/layouts/Base.astro";
 import ActivityGraph from "@/components/ActivityGraph.astro";
-import TelegramCTA from "@/components/TelegramCTA.astro";
 
 const allPosts = await getCollection("post");
 const sortedPosts = allPosts.sort(
@@ -111,6 +110,4 @@ function formatHomeDate(date: Date) {
 			}
 		</div>
 	</section>
-
-	<TelegramCTA />
 </PageLayout>
