@@ -143,6 +143,36 @@ pnpm dev
 
 ---
 
+## Architecture
+
+### Hosting & CDN
+
+| Service | Domain | Purpose |
+|---------|--------|---------|
+| Cloudflare Pages | `rexliu.io` | Main site hosting (auto-deploy from GitHub) |
+| Cloudflare R2 | `cdn.rexliu.io` | Static assets CDN (music, future: images/video) |
+| Cloudflare Pages | `samantha.rexliu.io` | Samantha's journal (separate repo) |
+| Convex | `shiny-butterfly-744.convex.cloud` | Backend: nudge counter, library reactions |
+
+### Cloudflare R2 (`rexliu-cdn` bucket)
+
+Music and large static files are served from R2 CDN instead of the Git repo:
+
+- **Bucket**: `rexliu-cdn` (APAC region)
+- **Domain**: `https://cdn.rexliu.io`
+- **Current content**: `/music/*.mp3` (10 tracks, ~108MB)
+- **Management**: `npx wrangler r2 object put "rexliu-cdn/<path>" --file <local> --content-type <mime> --remote`
+- **Free tier**: 10GB storage, 10M reads/mo, unlimited egress
+
+To add new music:
+```bash
+npx wrangler r2 object put "rexliu-cdn/music/new-song.mp3" \
+  --file ~/path/to/new-song.mp3 \
+  --content-type "audio/mpeg" --remote
+```
+
+Then reference in `src/layouts/Base.astro` playlist as `CDN + "/music/new-song.mp3"`.
+
 ## Project Structure
 
 - `src/pages`: Website pages (Home, Blog, etc.)
@@ -150,7 +180,7 @@ pnpm dev
 - `src/components`: Reusable UI components
 - `src/layouts`: Page layouts
 - `src/styles`: Global styles and Tailwind config
-- `public`: Static assets (Images, Fonts)
+- `public`: Static assets (Images, Fonts — music moved to R2 CDN)
 
 ## 项目结构
 
@@ -159,7 +189,7 @@ pnpm dev
 - `src/components`: 可复用的 UI 组件
 - `src/layouts`: 页面布局
 - `src/styles`: 全局样式和 Tailwind 配置
-- `public`: 静态资源（图片、字体）
+- `public`: 静态资源（图片、字体——音乐已迁移到 R2 CDN）
 
 ---
 
