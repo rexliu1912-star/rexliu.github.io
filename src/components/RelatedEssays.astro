@@ -13,7 +13,7 @@ const sortedPosts = allPosts.sort(
   (a, b) => new Date(b.data.publishDate).valueOf() - new Date(a.data.publishDate).valueOf(),
 );
 
-// Map digest/builder-log tags to essay tags (case-insensitive fuzzy match)
+// Map source tags (digest/builder-log) to essay tags
 const TAG_MAP: Record<string, string[]> = {
   crypto: ["Crypto"],
   bitcoin: ["Crypto"],
@@ -21,28 +21,42 @@ const TAG_MAP: Record<string, string[]> = {
   stablecoin: ["Crypto", "Wealth"],
   defi: ["Crypto"],
   macro: ["Macro", "Investment"],
-  "onchain": ["Crypto"],
+  onchain: ["Crypto", "Investment"],
   "market-structure": ["Crypto", "Investment"],
   ai: ["AI"],
   life: ["Life"],
   investment: ["Investment"],
   wealth: ["Wealth"],
+  product: ["Product"],
+  tools: ["Tools"],
   evergreen: ["Evergreen"],
 };
 
-// Build set of essay tags from input tags
-const essayTagSet = new Set<string>();
+// Expand input tags to essay tag set with weights
+const tagWeights = new Map<string, number>();
 for (const tag of tags) {
-  const mapped = TAG_MAP[tag.toLowerCase()];
-  if (mapped) {
-    mapped.forEach(t => essayTagSet.add(t.toLowerCase()));
-  } else {
-    essayTagSet.add(tag.toLowerCase());
+  const mapped = TAG_MAP[tag.toLowerCase()] || [tag];
+  for (const t of mapped) {
+    const key = t.toLowerCase();
+    tagWeights.set(key, (tagWeights.get(key) || 0) + 1);
   }
 }
 
-const relatedPosts = sortedPosts
-  .filter(p => p.data.tags?.some((t: string) => essayTagSet.has(t.toLowerCase())))
+// Score each post by weighted tag overlap
+const scored = sortedPosts
+  .map(p => {
+    const postTags = (p.data.tags || []).map((t: string) => t.toLowerCase());
+    let score = 0;
+    for (const pt of postTags) {
+      score += tagWeights.get(pt) || 0;
+    }
+    // Small recency bonus (0-0.5) to break ties
+    const daysSincePublish = (Date.now() - new Date(p.data.publishDate).valueOf()) / 86400000;
+    const recencyBonus = Math.max(0, 0.5 - daysSincePublish / 365);
+    return { post: p, score: score + recencyBonus };
+  })
+  .filter(s => s.score > 0)
+  .sort((a, b) => b.score - a.score)
   .slice(0, limit);
 
 function formatShortDate(date: Date) {
@@ -50,14 +64,14 @@ function formatShortDate(date: Date) {
 }
 ---
 
-{relatedPosts.length > 0 && (
+{scored.length > 0 && (
   <div class="mt-12 border-t border-dashed border-gray-200 pt-8 dark:border-gray-700">
     <p class="mb-4 font-serif text-xs font-bold tracking-widest text-gray-400 uppercase dark:text-gray-500">
       <span class="lang-en">Related Essays</span>
       <span class="lang-zh">相关文章</span>
     </p>
     <div class="space-y-3">
-      {relatedPosts.map((p) => (
+      {scored.map(({ post: p }) => (
         <a href={`/posts/${p.id}/`} class="group flex items-baseline justify-between gap-4 font-serif text-sm transition-colors">
           <span class="text-gray-600 group-hover:text-[#8953d1] dark:text-gray-400 dark:group-hover:text-[#a175e8]">{p.data.title}</span>
           <time datetime={p.data.publishDate.toISOString()} class="shrink-0 text-xs text-gray-400 dark:text-gray-500">{formatShortDate(p.data.publishDate)}</time>

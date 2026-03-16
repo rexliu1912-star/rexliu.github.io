@@ -8,16 +8,33 @@ const sortedPosts = allPosts.sort(
   (a, b) => new Date(b.data.publishDate).valueOf() - new Date(a.data.publishDate).valueOf(),
 );
 
-// Helper: get recent posts by tag(s)
-function getPostsByTags(tags: string[], limit = 3) {
-  const tagSet = new Set(tags.map(t => t.toLowerCase()));
-  return sortedPosts
-    .filter(p => p.data.tags?.some((t: string) => tagSet.has(t.toLowerCase())))
-    .slice(0, limit);
-}
+// Investment essays: must have a "hard" investment tag, exclude pure-life posts
+const investmentHardTags = new Set(["investment", "wealth", "framework", "alpha", "evergreen"]);
+const investmentSoftTags = new Set(["crypto", "macro"]);
+const lifePureTags = new Set(["life", "reflection", "family", "people", "mental health", "entertainment", "travel"]);
 
-const investmentEssays = getPostsByTags(["Crypto", "Investment", "Wealth", "Evergreen"], 3);
-const lifeEssays = getPostsByTags(["Life", "Reflection", "Family", "People"], 3);
+const investmentEssays = sortedPosts
+  .filter(p => {
+    const tags = (p.data.tags || []).map((t: string) => t.toLowerCase());
+    const hasHard = tags.some(t => investmentHardTags.has(t));
+    const hasSoft = tags.some(t => investmentSoftTags.has(t));
+    const isOnlyLife = tags.every(t => lifePureTags.has(t));
+    return (hasHard || (hasSoft && !isOnlyLife)) && !isOnlyLife;
+  })
+  .slice(0, 3);
+
+// Life essays: primarily about life, exclude investment-heavy posts
+const lifeHardTags = new Set(["life", "reflection", "family", "people", "mental health"]);
+const investmentExclude = new Set(["investment", "wealth", "framework", "alpha", "evergreen"]);
+
+const lifeEssays = sortedPosts
+  .filter(p => {
+    const tags = (p.data.tags || []).map((t: string) => t.toLowerCase());
+    const hasLife = tags.some(t => lifeHardTags.has(t));
+    const hasInvestment = tags.some(t => investmentExclude.has(t));
+    return hasLife && !hasInvestment;
+  })
+  .slice(0, 3);
 
 function formatShortDate(date: Date) {
   return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
