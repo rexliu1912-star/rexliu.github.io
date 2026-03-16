@@ -2,7 +2,7 @@
 title: "3 年持仓，5 层拆解：我为什么继续定投 SNEK？"
 description: "用李继刚的结构投资思路，把持有三年的 SNEK 做一次五层底层结构分析。框架是借来的，分析是自己的。"
 publishDate: "2026-03-06"
-tags: ["crypto", "investment", "snek", "cardano"]
+tags: ["Crypto", "Investment", "Snek", "Cardano"]
 coverImage:
   src: "./2026-03-06-snek-structure-analysis-cover.png"
   alt: "SNEK 五层底层结构分析封面"

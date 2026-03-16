@@ -5,6 +5,6 @@ title_zh: "书影记录"
 description_zh: "读过的书、看过的片，塑造了现在的我。"
 status: running
 icon: "📚"
-url: "/lab/library"
+url: "/os/library"
 order: 3
 ---

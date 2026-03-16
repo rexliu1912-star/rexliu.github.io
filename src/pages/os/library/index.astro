@@ -138,7 +138,7 @@ const variety = media.filter((item) => item.format === "variety");
 const documentary = media.filter((item) => item.format === "documentary");
 
 const meta = {
-  title: "Library — Lab",
+  title: "Library — OS",
   description: "Books, films, and shows that shaped how Rex thinks.",
 };
 
@@ -1532,6 +1532,10 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
 
   // Run on both initial load and View Transitions navigation
   document.addEventListener('astro:page-load', initLibrary);
+  </script>
+
+</PageLayout>
+dEventListener('astro:page-load', initLibrary);
   </script>
 
 </PageLayout>

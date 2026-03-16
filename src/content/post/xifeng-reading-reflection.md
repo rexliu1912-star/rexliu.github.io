@@ -2,7 +2,7 @@
 title: "一篇两万字读后，我改了四个决策习惯"
 description: "读完西风那篇近两万字的《战争阴霾下的新世界》，安全成本、硬资产、生存逻辑、矫情陷阱——表面上是宏观分析，但真正值钱的东西，今天我试着把它挖出来。"
 publishDate: "2026-03-11"
-tags: ["investment", "life", "macro"]
+tags: ["Investment", "Life", "Macro"]
 coverImage:
   src: "./2026-03-11-xifeng-reading-cover.png"
   alt: "一篇两万字读后，我改了四个决策习惯"
