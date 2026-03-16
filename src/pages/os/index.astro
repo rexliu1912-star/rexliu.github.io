@@ -1,5 +1,27 @@
 ---
+import { getCollection } from "astro:content";
 import PageLayout from "@/layouts/Base.astro";
+
+// Fetch essays for cross-links
+const allPosts = await getCollection("post");
+const sortedPosts = allPosts.sort(
+  (a, b) => new Date(b.data.publishDate).valueOf() - new Date(a.data.publishDate).valueOf(),
+);
+
+// Helper: get recent posts by tag(s)
+function getPostsByTags(tags: string[], limit = 3) {
+  const tagSet = new Set(tags.map(t => t.toLowerCase()));
+  return sortedPosts
+    .filter(p => p.data.tags?.some((t: string) => tagSet.has(t.toLowerCase())))
+    .slice(0, limit);
+}
+
+const investmentEssays = getPostsByTags(["Crypto", "Investment", "Wealth", "Evergreen"], 3);
+const lifeEssays = getPostsByTags(["Life", "Reflection", "Family", "People"], 3);
+
+function formatShortDate(date: Date) {
+  return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
 
 const investmentPhilosophies = [
   {
@@ -71,7 +93,7 @@ const stackGroups = [
   { label_en: "Writing", label_zh: "写作", value_en: "AI Agent team (Loki) + Rex Ink voice system", value_zh: "AI Agent 团队（Loki）+ Rex Ink 系统" },
   { label_en: "Research", label_zh: "研究", value_en: "Alpha Radar + KOL tracking + 6551 API", value_zh: "Alpha Radar + KOL 追踪 + 6551 API" },
   { label_en: "Building", label_zh: "架构", value_en: "Astro + Tailwind + Cloudflare (Pages, R2, Workers)", value_zh: "Astro + Tailwind + Cloudflare（Pages, R2, Workers）" },
-  { label_en: "Operations", label_zh: "运营", value_en: "OpenClaw + 30+ automated cron jobs", value_zh: "OpenClaw + 30+ 自动化定时任务" },
+  { label_en: "Operations", label_zh: "运营", value_en: "OpenClaw + 30+ automated cron jobs", value_zh: "OpenClaw + 30+ 自动化定时任务", link: "/lab/builder-log/", linkEn: "See the build log →", linkZh: "查看构建日志 →" },
   { label_en: "Finance", label_zh: "理财", value_en: "Multi-exchange portfolio sync", value_zh: "多交易所组合同步" },
 ];
 
@@ -128,6 +150,23 @@ const meta = {
         </details>
       ))}
     </div>
+
+    {investmentEssays.length > 0 && (
+      <div class="fade-in-up mt-10 border-t border-gray-200/60 pt-6 dark:border-gray-700/40" style="--delay: 500ms">
+        <p class="mb-4 font-serif text-xs font-bold tracking-widest text-gray-400 uppercase dark:text-gray-500">
+          <span class="lang-en">These ideas in practice</span>
+          <span class="lang-zh">这些理念的实践</span>
+        </p>
+        <div class="space-y-3">
+          {investmentEssays.map((p) => (
+            <a href={`/posts/${p.id}/`} class="group flex items-baseline justify-between gap-4 font-serif text-sm transition-colors">
+              <span class="text-gray-600 group-hover:text-[#8953d1] dark:text-gray-400 dark:group-hover:text-[#a175e8]">{p.data.title}</span>
+              <time datetime={p.data.publishDate.toISOString()} class="shrink-0 text-xs text-gray-400 dark:text-gray-500">{formatShortDate(p.data.publishDate)}</time>
+            </a>
+          ))}
+        </div>
+      </div>
+    )}
   </section>
 
   <!-- Content OS -->
@@ -202,6 +241,12 @@ const meta = {
           <span class="lang-en">I make the decisions. They do the work.</span>
           <span class="lang-zh">我做决策，他们干活。</span>
         </p>
+        <p class="mt-4">
+          <a href="/lab/agents/" class="font-serif text-sm text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]">
+            <span class="lang-en">Watch them work →</span>
+            <span class="lang-zh">看他们工作 →</span>
+          </a>
+        </p>
       </div>
     </div>
   </section>
@@ -264,6 +309,23 @@ const meta = {
         ))}
       </ul>
     </div>
+
+    {lifeEssays.length > 0 && (
+      <div class="fade-in-up mt-10 border-t border-gray-200/60 pt-6 dark:border-gray-700/40" style="--delay: 320ms">
+        <p class="mb-4 font-serif text-xs font-bold tracking-widest text-gray-400 uppercase dark:text-gray-500">
+          <span class="lang-en">From the essays</span>
+          <span class="lang-zh">相关文章</span>
+        </p>
+        <div class="space-y-3">
+          {lifeEssays.map((p) => (
+            <a href={`/posts/${p.id}/`} class="group flex items-baseline justify-between gap-4 font-serif text-sm transition-colors">
+              <span class="text-gray-600 group-hover:text-[#8953d1] dark:text-gray-400 dark:group-hover:text-[#a175e8]">{p.data.title}</span>
+              <time datetime={p.data.publishDate.toISOString()} class="shrink-0 text-xs text-gray-400 dark:text-gray-500">{formatShortDate(p.data.publishDate)}</time>
+            </a>
+          ))}
+        </div>
+      </div>
+    )}
   </section>
 
   <!-- Stack -->
@@ -287,6 +349,12 @@ const meta = {
           <span class="text-base text-gray-600 dark:text-gray-400">
             <span class="lang-en">{item.value_en}</span>
             <span class="lang-zh">{item.value_zh}</span>
+            {item.link && (
+              <a href={item.link} class="ml-3 text-sm text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]">
+                <span class="lang-en">{item.linkEn}</span>
+                <span class="lang-zh">{item.linkZh}</span>
+              </a>
+            )}
           </span>
         </div>
       ))}

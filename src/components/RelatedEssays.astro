@@ -1,0 +1,68 @@
+---
+import { getCollection } from "astro:content";
+
+interface Props {
+  tags: string[];
+  limit?: number;
+}
+
+const { tags, limit = 3 } = Astro.props;
+
+const allPosts = await getCollection("post");
+const sortedPosts = allPosts.sort(
+  (a, b) => new Date(b.data.publishDate).valueOf() - new Date(a.data.publishDate).valueOf(),
+);
+
+// Map digest/builder-log tags to essay tags (case-insensitive fuzzy match)
+const TAG_MAP: Record<string, string[]> = {
+  crypto: ["Crypto"],
+  bitcoin: ["Crypto"],
+  btc: ["Crypto"],
+  stablecoin: ["Crypto", "Wealth"],
+  defi: ["Crypto"],
+  macro: ["Macro", "Investment"],
+  "onchain": ["Crypto"],
+  "market-structure": ["Crypto", "Investment"],
+  ai: ["AI"],
+  life: ["Life"],
+  investment: ["Investment"],
+  wealth: ["Wealth"],
+  evergreen: ["Evergreen"],
+};
+
+// Build set of essay tags from input tags
+const essayTagSet = new Set<string>();
+for (const tag of tags) {
+  const mapped = TAG_MAP[tag.toLowerCase()];
+  if (mapped) {
+    mapped.forEach(t => essayTagSet.add(t.toLowerCase()));
+  } else {
+    essayTagSet.add(tag.toLowerCase());
+  }
+}
+
+const relatedPosts = sortedPosts
+  .filter(p => p.data.tags?.some((t: string) => essayTagSet.has(t.toLowerCase())))
+  .slice(0, limit);
+
+function formatShortDate(date: Date) {
+  return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+---
+
+{relatedPosts.length > 0 && (
+  <div class="mt-12 border-t border-dashed border-gray-200 pt-8 dark:border-gray-700">
+    <p class="mb-4 font-serif text-xs font-bold tracking-widest text-gray-400 uppercase dark:text-gray-500">
+      <span class="lang-en">Related Essays</span>
+      <span class="lang-zh">相关文章</span>
+    </p>
+    <div class="space-y-3">
+      {relatedPosts.map((p) => (
+        <a href={`/posts/${p.id}/`} class="group flex items-baseline justify-between gap-4 font-serif text-sm transition-colors">
+          <span class="text-gray-600 group-hover:text-[#8953d1] dark:text-gray-400 dark:group-hover:text-[#a175e8]">{p.data.title}</span>
+          <time datetime={p.data.publishDate.toISOString()} class="shrink-0 text-xs text-gray-400 dark:text-gray-500">{formatShortDate(p.data.publishDate)}</time>
+        </a>
+      ))}
+    </div>
+  </div>
+)}
