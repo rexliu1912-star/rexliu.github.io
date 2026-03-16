@@ -170,7 +170,7 @@ const totalGithubCommits = Object.values(githubContributions).reduce((sum, c) =>
 				<span><span class="lang-en">Last 365 Days</span><span class="lang-zh">过去 365 天</span></span>
 				<span><span class="count">{totalGithubCommits}</span> <span class="lang-en">commits</span><span class="lang-zh">次提交</span></span>
 				<span><span class="count">{totalPosts}</span> <span class="lang-en">posts</span><span class="lang-zh">篇文章</span></span>
-				<span class="nudge-stat" data-nudge-stat role="button" tabindex="0" title="点一下催 Rex 干活">
+				<span class="nudge-stat nudge-loading" data-nudge-stat role="button" tabindex="0" title="点一下催 Rex 干活">
 					<span class="count" data-nudge-count>0</span> <span class="lang-en">nudges</span><span class="lang-zh">次催更</span>
 				</span>
 			</div>
@@ -310,6 +310,14 @@ const totalGithubCommits = Object.values(githubContributions).reduce((sum, c) =>
 		cursor: default;
 	}
 
+	.nudge-stat.nudge-loading {
+		opacity: 0;
+		transition: opacity 0.4s ease;
+	}
+	.nudge-stat.nudge-loaded {
+		opacity: 1;
+		transition: opacity 0.4s ease;
+	}
 	.nudge-stat {
 		cursor: pointer;
 		transition: color 0.2s;
@@ -483,6 +491,9 @@ function initNudge() {
     } catch (e) {
       console.warn('nudge loadCount failed', e);
     }
+    // Fade in after data loaded (or failed)
+    stat.classList.remove('nudge-loading');
+    stat.classList.add('nudge-loaded');
   }
 
   async function handleClick() {
