@@ -456,34 +456,52 @@ function initNudge() {
     setTimeout(() => stat.classList.remove('is-clicked'), 400);
   }
 
+  async function convexRetry(path, args, retries = 3) {
+    for (let i = 0; i < retries; i++) {
+      try {
+        const r = await fetch('https://shiny-butterfly-744.convex.cloud/api/' + (args ? 'mutation' : 'query'), {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({path, args: args || {}, format: 'json'}),
+        });
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        const d = await r.json();
+        if (d.status === 'success') return d.value;
+        throw new Error(d.errorMessage || 'failed');
+      } catch (e) {
+        if (i < retries - 1) await new Promise(r => setTimeout(r, 1000 * Math.pow(2, i)));
+        else throw e;
+      }
+    }
+  }
+
   async function loadCount() {
     try {
-      const r = await fetch('https://shiny-butterfly-744.convex.cloud/api/query', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({path: 'nudge:getNudgeCount', args: {}, format: 'json'}),
-      });
-      const d = await r.json();
-      currentCount = Number(d.value) || 0;
+      const val = await convexRetry('nudge:getNudgeCount');
+      currentCount = Number(val) || 0;
       if (countEl) countEl.textContent = fmt(currentCount);
-    } catch {}
+    } catch (e) {
+      console.warn('nudge loadCount failed', e);
+    }
   }
 
   async function handleClick() {
     if (clicking) return;
     clicking = true;
     wiggle();
+    // Optimistic update
+    animateCount(currentCount + 1);
+    showQuote();
     try {
-      const r = await fetch('https://shiny-butterfly-744.convex.cloud/api/mutation', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({path: 'nudge:incrementNudge', args: {}, format: 'json'}),
-      });
-      const d = await r.json();
-      animateCount(Number(d.value) || currentCount + 1);
-      showQuote();
-      checkMilestone(Number(d.value) || currentCount);
-    } catch {}
+      const val = await convexRetry('nudge:incrementNudge', {});
+      const newCount = Number(val) || currentCount;
+      animateCount(newCount);
+      checkMilestone(newCount);
+    } catch (e) {
+      // Rollback optimistic update
+      console.warn('nudge increment failed', e);
+      animateCount(currentCount);
+    }
     setTimeout(() => { clicking = false; }, 500);
   }
 
