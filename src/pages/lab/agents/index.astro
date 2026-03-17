@@ -2113,5 +2113,11 @@ const meta = {
 
 		fetchActivity();
 		setInterval(fetchActivity, 30000); // refresh every 30s
+
+		// Re-fetch on Astro View Transitions navigation
+		document.addEventListener('astro:page-load', function() {
+			fetchActivity();
+			pollAgents();
+		});
 	})();
 </script>
