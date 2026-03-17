@@ -1517,6 +1517,67 @@ const meta = {
 		to { opacity: 1; transform: translateX(-50%) translateY(0); }
 	}
 
+	/* ── Ambient room effects ──────────────────────────────────── */
+	.room-interior::after {
+		content: '';
+		position: absolute;
+		top: 0; left: 0; right: 0; bottom: 0;
+		pointer-events: none;
+		z-index: 1;
+	}
+
+	/* Floating particles per room */
+	.room-samantha .room-interior::after {
+		background: radial-gradient(1px 1px at 20% 30%, #ff6b3522, transparent),
+		            radial-gradient(1px 1px at 70% 60%, #ff6b3518, transparent),
+		            radial-gradient(1px 1px at 40% 80%, #ff6b3510, transparent);
+		animation: ambient-drift 8s ease-in-out infinite alternate;
+	}
+	.room-loki .room-interior::after {
+		background: radial-gradient(1px 1px at 15% 40%, #4a9e4a22, transparent),
+		            radial-gradient(1px 1px at 60% 20%, #4a9e4a18, transparent),
+		            radial-gradient(1px 1px at 80% 70%, #4a9e4a10, transparent);
+		animation: ambient-drift 9s ease-in-out infinite alternate-reverse;
+	}
+	.room-vision .room-interior::after {
+		background: radial-gradient(1px 1px at 25% 20%, #4a8ab522, transparent),
+		            radial-gradient(1px 1px at 50% 50%, #4a8ab518, transparent),
+		            radial-gradient(1px 1px at 75% 75%, #4a8ab510, transparent);
+		animation: ambient-drift 7s ease-in-out infinite alternate;
+	}
+	.room-jarvis .room-interior::after {
+		background: radial-gradient(1px 1px at 10% 60%, #4ade8022, transparent),
+		            radial-gradient(1px 1px at 45% 30%, #0f03, transparent),
+		            radial-gradient(1px 1px at 85% 50%, #4ade8010, transparent);
+		animation: ambient-drift 6s ease-in-out infinite alternate-reverse;
+	}
+	.room-shuri .room-interior::after {
+		background: radial-gradient(1.5px 1.5px at 30% 40%, #e74c3c22, transparent),
+		            radial-gradient(1.5px 1.5px at 60% 25%, #3498db18, transparent),
+		            radial-gradient(1.5px 1.5px at 50% 70%, #f39c1210, transparent);
+		animation: ambient-drift 10s ease-in-out infinite alternate;
+	}
+	.room-friday .room-interior::after {
+		background: radial-gradient(1px 1px at 20% 25%, #4ac5c522, transparent),
+		            radial-gradient(1px 1px at 55% 55%, #4ac5c518, transparent),
+		            radial-gradient(1px 1px at 80% 40%, #4ac5c510, transparent);
+		animation: ambient-drift 8s ease-in-out infinite alternate-reverse;
+	}
+	@keyframes ambient-drift {
+		0% { transform: translateY(0) translateX(0); opacity: 0.6; }
+		50% { opacity: 1; }
+		100% { transform: translateY(-4px) translateX(2px); opacity: 0.6; }
+	}
+
+	/* Monitor/screen subtle glow pulse */
+	.monitor::after, .data-screen::after, .terminal::after {
+		animation: screen-glow 3s ease-in-out infinite alternate !important;
+	}
+	@keyframes screen-glow {
+		0% { opacity: 0.6; box-shadow: none; }
+		100% { opacity: 1; box-shadow: 0 0 6px currentColor; }
+	}
+
 	/* ── Room label upgrade ────────────────────────────────────── */
 	.room-label {
 		display: flex;
@@ -1794,14 +1855,14 @@ const meta = {
 		};
 		IdleController.prototype.scheduleTick = function() {
 			var self = this;
-			var delay = 8000 + Math.random() * 7000;
+			var delay = 3000 + Math.random() * 4000; // more frequent: 3-7s
 			this.timer = setTimeout(function() { self.tick(); }, delay);
 		};
 		IdleController.prototype.tick = function() {
 			var state = this.sprite.getAttribute('data-state');
 			if (state !== 'idle') { this.scheduleTick(); return; }
 
-			if (Math.random() < 0.4 && this.variants.length > 0) {
+			if (Math.random() < 0.7 && this.variants.length > 0) { // 70% chance
 				var v = this.variants[Math.floor(Math.random() * this.variants.length)];
 				var dur = VARIANT_DURATIONS[v] || 1500;
 				var self = this;
