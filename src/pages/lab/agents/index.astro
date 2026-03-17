@@ -1808,6 +1808,16 @@ const meta = {
 
 <script is:inline>
 	(function() {
+		var _intervals = [];
+		var _controllers = {};
+
+		function initAgentPage() {
+		// Clean up previous intervals (View Transitions re-entry)
+		_intervals.forEach(function(id) { clearInterval(id); });
+		_intervals = [];
+		Object.values(_controllers).forEach(function(c) { if (c.stop) c.stop(); });
+		_controllers = {};
+
 		var CONVEX_URL = 'https://fleet-heron-880.convex.cloud';
 		var statusEl = document.getElementById('connection-status');
 
@@ -1829,7 +1839,7 @@ const meta = {
 			'idle-data': 1000, 'idle-stretch': 1000
 		};
 
-		var controllers = {};
+		var controllers = _controllers;
 
 		function IdleController(room, agentId) {
 			this.room = room;
@@ -1972,7 +1982,7 @@ const meta = {
 		}
 
 		pollAgents();
-		setInterval(pollAgents, 10000);
+		_intervals.push(setInterval(pollAgents, 10000));
 
 		/* ── Agent Detail Panel ───────────────────────────────── */
 		var AGENT_DATA = {
@@ -2186,12 +2196,18 @@ const meta = {
 		}
 
 		fetchActivity();
-		setInterval(fetchActivity, 30000); // refresh every 30s
+		_intervals.push(setInterval(fetchActivity, 30000));
 
-		// Re-fetch on Astro View Transitions navigation
+		} // end initAgentPage
+
+		// Run on first load
+		initAgentPage();
+
+		// Re-run on Astro View Transitions navigation
 		document.addEventListener('astro:page-load', function() {
-			fetchActivity();
-			pollAgents();
+			if (document.querySelector('.agent-grid')) {
+				initAgentPage();
+			}
 		});
 	})();
 </script>
