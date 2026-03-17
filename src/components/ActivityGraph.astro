@@ -313,34 +313,6 @@ const totalGithubCommits = Object.values(githubContributions).reduce((sum, c) =>
 		cursor: default;
 	}
 
-	/* Custom tooltip for activity cells */
-	.activity-tooltip {
-		position: fixed;
-		z-index: 100;
-		padding: 4px 8px;
-		border-radius: 4px;
-		font-size: 11px;
-		font-family: var(--font-serif);
-		line-height: 1.4;
-		white-space: nowrap;
-		pointer-events: none;
-		opacity: 0;
-		transition: opacity 0.15s ease;
-		background: #2d2d2d;
-		color: #e0e0e0;
-		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
-	}
-
-	.activity-tooltip.is-visible {
-		opacity: 1;
-	}
-
-	:global([data-theme="light"]) .activity-tooltip {
-		background: #fff;
-		color: #333;
-		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
-	}
-
 	.nudge-stat.nudge-loading {
 		opacity: 0;
 		transition: opacity 0.4s ease;
@@ -554,13 +526,36 @@ function initNudge() {
 
 // --- Activity cell tooltip ---
 function initActivityTooltip() {
-  // Create or reuse tooltip element
+  // Create or reuse tooltip element (inline styles to avoid Astro scoping issues)
   let tip = document.getElementById('activity-tooltip');
   if (!tip) {
     tip = document.createElement('div');
     tip.id = 'activity-tooltip';
-    tip.className = 'activity-tooltip';
+    Object.assign(tip.style, {
+      position: 'fixed',
+      zIndex: '100',
+      padding: '4px 8px',
+      borderRadius: '4px',
+      fontSize: '11px',
+      lineHeight: '1.4',
+      whiteSpace: 'nowrap',
+      pointerEvents: 'none',
+      opacity: '0',
+      transition: 'opacity 0.15s ease',
+      background: '#2d2d2d',
+      color: '#e0e0e0',
+      boxShadow: '0 2px 6px rgba(0,0,0,0.25)',
+    });
     document.body.appendChild(tip);
+    // Light theme support
+    const updateTheme = () => {
+      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+      tip.style.background = isLight ? '#fff' : '#2d2d2d';
+      tip.style.color = isLight ? '#333' : '#e0e0e0';
+      tip.style.boxShadow = isLight ? '0 2px 8px rgba(0,0,0,0.12)' : '0 2px 6px rgba(0,0,0,0.25)';
+    };
+    updateTheme();
+    new MutationObserver(updateTheme).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
   }
 
   let hideTimer;
@@ -569,7 +564,7 @@ function initActivityTooltip() {
     const text = el.dataset.tip;
     if (!text) return;
     tip.textContent = text;
-    tip.classList.add('is-visible');
+    tip.style.opacity = '1';
     positionTip(e);
   }
 
@@ -589,7 +584,7 @@ function initActivityTooltip() {
   }
 
   function hideTip() {
-    tip.classList.remove('is-visible');
+    tip.style.opacity = '0';
   }
 
   // Delegate events on the contribution grid
@@ -604,7 +599,7 @@ function initActivityTooltip() {
   });
 
   grid.addEventListener('mousemove', (e) => {
-    if (tip.classList.contains('is-visible')) positionTip(e);
+    if (tip.style.opacity === '1') positionTip(e);
   });
 
   grid.addEventListener('mouseleave', () => {
