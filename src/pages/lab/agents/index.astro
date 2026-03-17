@@ -302,6 +302,12 @@ for (const entry of recentActivity) {
 				<span class="lang-en">What the team shipped today.</span>
 				<span class="lang-zh">今天团队干了什么。</span>
 			</p>
+			<div class="feed-header-row">
+				<a href="/lab/builder-log/" class="feed-link font-serif text-sm text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]">
+					<span class="lang-en">Full build history →</span>
+					<span class="lang-zh">完整构建日志 →</span>
+				</a>
+			</div>
 			<div class="feed-list">
 				{recentActivity.map((entry) => (
 					<div class="feed-item">
@@ -1728,6 +1734,11 @@ for (const entry of recentActivity) {
 	}
 
 	/* ── Activity Feed ───────────────────────────────────────────── */
+	.feed-header-row {
+		display: flex;
+		justify-content: flex-end;
+		margin-bottom: 0.75rem;
+	}
 	.feed-list {
 		display: flex;
 		flex-direction: column;
