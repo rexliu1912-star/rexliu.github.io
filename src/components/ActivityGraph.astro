@@ -148,7 +148,7 @@ const totalGithubCommits = Object.values(githubContributions).reduce((sum, c) =>
 ---
 
 <div class="fade-in activity-wrapper" style="--delay: 200ms">
-	<div class="activity-graph">
+	<div class="activity-graph" style="position: relative;">
 		<div class="graph-scroll">
 			<div class="contribution-grid">
 				{
@@ -526,13 +526,16 @@ function initNudge() {
 
 // --- Activity cell tooltip ---
 function initActivityTooltip() {
-  // Create or reuse tooltip element (inline styles to avoid Astro scoping issues)
-  let tip = document.getElementById('activity-tooltip');
+  const container = document.querySelector('.activity-graph');
+  if (!container) return;
+
+  // Create tooltip inside the activity-graph container (avoids transform/contain breaking fixed positioning)
+  let tip = container.querySelector('#activity-tooltip');
   if (!tip) {
     tip = document.createElement('div');
     tip.id = 'activity-tooltip';
     Object.assign(tip.style, {
-      position: 'fixed',
+      position: 'absolute',
       zIndex: '100',
       padding: '4px 8px',
       borderRadius: '4px',
@@ -546,7 +549,7 @@ function initActivityTooltip() {
       color: '#e0e0e0',
       boxShadow: '0 2px 6px rgba(0,0,0,0.25)',
     });
-    document.body.appendChild(tip);
+    container.appendChild(tip);
     // Light theme support
     const updateTheme = () => {
       const isLight = document.documentElement.getAttribute('data-theme') === 'light';
@@ -559,26 +562,29 @@ function initActivityTooltip() {
   }
 
   let hideTimer;
+  const containerRect = () => container.getBoundingClientRect();
 
   function showTip(el, e) {
     const text = el.dataset.tip;
     if (!text) return;
     tip.textContent = text;
     tip.style.opacity = '1';
-    positionTip(e);
+    positionTip(el);
   }
 
-  function positionTip(e) {
-    const x = e.clientX;
-    const y = e.clientY;
+  function positionTip(el) {
+    const cr = containerRect();
+    const er = el.getBoundingClientRect();
     const tw = tip.offsetWidth;
     const th = tip.offsetHeight;
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
-    let left = x + 12;
-    let top = y - th - 8;
-    if (left + tw > vw - 8) left = x - tw - 12;
-    if (top < 8) top = y + 16;
+    // Center tooltip above the cell
+    let left = (er.left + er.width / 2) - cr.left - tw / 2;
+    let top = er.top - cr.top - th - 6;
+    // Clamp horizontal
+    if (left < 0) left = 0;
+    if (left + tw > cr.width) left = cr.width - tw;
+    // If above overflows, show below
+    if (top < 0) top = er.bottom - cr.top + 6;
     tip.style.left = left + 'px';
     tip.style.top = top + 'px';
   }
@@ -588,21 +594,19 @@ function initActivityTooltip() {
   }
 
   // Delegate events on the contribution grid
-  const grid = document.querySelector('.contribution-grid');
+  const grid = container.querySelector('.contribution-grid');
   if (!grid) return;
 
+  let activeCell = null;
   grid.addEventListener('mouseover', (e) => {
     const cell = e.target.closest('[data-tip]');
     clearTimeout(hideTimer);
-    if (cell) showTip(cell, e);
-    else hideTip();
-  });
-
-  grid.addEventListener('mousemove', (e) => {
-    if (tip.style.opacity === '1') positionTip(e);
+    if (cell) { activeCell = cell; showTip(cell, e); }
+    else { activeCell = null; hideTip(); }
   });
 
   grid.addEventListener('mouseleave', () => {
+    activeCell = null;
     hideTimer = setTimeout(hideTip, 100);
   });
 }
