@@ -1,28 +1,221 @@
 ---
 import PageLayout from "@/layouts/Base.astro";
+import { readFileSync } from "fs";
+import { resolve } from "path";
 
 const meta = {
 	title: "Agent Activity — Rex's Lab",
 	description: "Live pixel office — 6 AI agents working in real-time",
 };
+
+// ── Agent definitions ──────────────────────────────────────────────────────
+const AGENT_INFO: Record<string, {
+	nameEn: string; nameZh: string;
+	roleEn: string; roleZh: string;
+	descEn: string; descZh: string;
+	color: string;
+	examplesEn: string[]; examplesZh: string[];
+}> = {
+	main: {
+		nameEn: "Samantha", nameZh: "Samantha",
+		roleEn: "Mastermind", roleZh: "主脑",
+		descEn: "Coordinates the team, routes tasks, delivers daily briefings and market reports. I make sure nothing falls through the cracks.",
+		descZh: "团队协调、任务分配、每日早晚报和市场快报。确保每件事都有人负责。",
+		color: "#ff6b35",
+		examplesEn: ["Morning / evening briefings", "Market pulse reports", "Task routing & escalation", "Team health monitoring"],
+		examplesZh: ["每日早晚报", "市场快报", "任务路由与升级", "团队健康监控"],
+	},
+	writer: {
+		nameEn: "Loki", nameZh: "Loki",
+		roleEn: "Writer", roleZh: "写手",
+		descEn: "Writes tweet drafts, translates crypto/AI signals into Rex's voice, produces content that bridges English and Chinese audiences.",
+		descZh: "撰写推文草稿，将加密/AI 信号转化为 Rex 的语气，制作中英双语内容。",
+		color: "#4a9e4a",
+		examplesEn: ["2× daily tweet drafts", "CN/EN content translation", "Signal-to-draft pipeline", "Builder's log entries"],
+		examplesZh: ["每日 2 条推文草稿", "中英内容转化", "信号→草稿流水线", "构建日志"],
+	},
+	researcher: {
+		nameEn: "Vision", nameZh: "Vision",
+		roleEn: "Researcher", roleZh: "研究员",
+		descEn: "Scans 16+ KOLs daily, tracks crypto/AI/Robotics projects, surfaces alpha signals before they go mainstream.",
+		descZh: "每日扫描 16+ KOL，追踪加密/AI/机器人项目，在信息大众化前发现 Alpha 信号。",
+		color: "#4a8ab5",
+		examplesEn: ["Daily KOL intelligence scan", "Deep-dive research reports", "Alpha Radar feed", "Project tracking"],
+		examplesZh: ["每日 KOL 情报扫描", "深度研究报告", "Alpha Radar 推送", "项目追踪"],
+	},
+	coder: {
+		nameEn: "Jarvis", nameZh: "Jarvis",
+		roleEn: "Coder", roleZh: "工程师",
+		descEn: "Builds and maintains all automation: cron jobs, data pipelines, website features, and internal tools. The backbone of the system.",
+		descZh: "构建和维护所有自动化：定时任务、数据管道、网站功能和内部工具。系统的骨架。",
+		color: "#7a7a8a",
+		examplesEn: ["30+ automated cron jobs", "This website", "Portfolio sync tools", "Content pipeline scripts"],
+		examplesZh: ["30+ 自动化定时任务", "本站", "投资组合同步工具", "内容管道脚本"],
+	},
+	designer: {
+		nameEn: "Shuri", nameZh: "Shuri",
+		roleEn: "Designer", roleZh: "设计师",
+		descEn: "Creates visuals for tweets, research covers, and brand assets. Every image that ships has passed through her.",
+		descZh: "为推文、研究封面和品牌资产创作视觉设计。每张发出去的图都经过她的手。",
+		color: "#c54ab5",
+		examplesEn: ["Tweet cover images", "Research report covers", "Brand asset design", "16-bit pixel art"],
+		examplesZh: ["推文配图", "研究报告封面", "品牌视觉", "16-bit 像素艺术"],
+	},
+	analyst: {
+		nameEn: "Friday", nameZh: "Friday",
+		roleEn: "Analyst", roleZh: "分析师",
+		descEn: "Tracks Rex's portfolio, produces SNEK daily briefings, monitors market data and financial metrics.",
+		descZh: "追踪 Rex 的投资组合，每日 SNEK 简报，监控市场数据和财务指标。",
+		color: "#4ac5c5",
+		examplesEn: ["Daily SNEK briefing", "Portfolio sync & tracking", "Market data monitoring", "Financial analysis"],
+		examplesZh: ["每日 SNEK 简报", "投资组合同步追踪", "市场数据监控", "财务分析"],
+	},
+};
+
+// ── Parse sync.md for recent activity feed ────────────────────────────────
+interface ActivityEntry {
+	time: string; timeRaw: string;
+	agentId: string; agentName: string;
+	descEn: string; descZh: string;
+	color: string;
+}
+
+// Blacklist: internal ops terms to filter out
+const OPS_BLACKLIST = [
+	'token', 'auth', 'error', 'failed', 'restart', 'sync-auth',
+	'heartbeat', 'gc', 'cron-health', 'ops', 'gateway', 'missing scope',
+	'google auth', '失效', 'kol-stance-eval', 'morning-prep-batch',
+];
+
+function isOutputEntry(line: string): boolean {
+	const lower = line.toLowerCase();
+	return !OPS_BLACKLIST.some(kw => lower.includes(kw));
+}
+
+function agentIdFromTag(tag: string): string {
+	const map: Record<string, string> = {
+		samantha: 'main', vision: 'researcher', loki: 'writer',
+		jarvis: 'coder', shuri: 'designer', friday: 'analyst',
+	};
+	return map[tag.toLowerCase()] || tag;
+}
+
+// Human-readable English summaries for known job names
+function makeEnglishDesc(raw: string, agentId: string): string {
+	const r = raw.trim();
+	if (agentId === 'writer' && r.includes('content-draft')) {
+		const m = r.match(/(\d+)条草稿/);
+		return m ? `${m[1]} tweet drafts published` : 'Tweet drafts published';
+	}
+	if (agentId === 'researcher' && r.includes('intel-scan-daily')) {
+		const m = r.match(/KOL (\d+)人/);
+		return m ? `Intel scan complete — ${m[1]} KOLs scanned` : 'Daily KOL intel scan complete';
+	}
+	if (agentId === 'researcher' && r.includes('深度调研')) {
+		const m = r.match(/完成 (.+?)[\s。]/);
+		return m ? `Deep-dive research: ${m[1]}` : 'Research report published';
+	}
+	if (agentId === 'analyst' && r.includes('snek-daily')) {
+		return 'SNEK daily briefing sent';
+	}
+	if (agentId === 'main' && r.includes('morning-delivery')) {
+		return 'Morning briefing delivered';
+	}
+	if (agentId === 'main' && r.includes('daily-reading')) {
+		return 'Daily reading scan complete';
+	}
+	if (agentId === 'main' && r.includes('daily-content-sync')) {
+		const m = r.match(/digest 发布 (.+?)；/);
+		return m ? `Digest published: ${m[1]}` : 'Daily content sync done';
+	}
+	if (r.includes('提案') || r.includes('proposal')) {
+		return 'New proposal submitted';
+	}
+	// Generic: strip Chinese job prefix, truncate
+	const clean = r.replace(/^[\w\-:：]+[\s]*/, '').replace(/。.*/, '').trim();
+	return clean.length > 60 ? clean.slice(0, 57) + '…' : clean;
+}
+
+function parseTimeAgo(dateStr: string): string {
+	try {
+		const d = new Date(dateStr.replace(' ', 'T') + '+08:00');
+		const diff = Date.now() - d.getTime();
+		const h = Math.floor(diff / 3600000);
+		const m = Math.floor(diff / 60000);
+		if (m < 2) return 'just now';
+		if (m < 60) return `${m}m ago`;
+		if (h < 24) return `${h}h ago`;
+		return `${Math.floor(h / 24)}d ago`;
+	} catch { return ''; }
+}
+
+let recentActivity: ActivityEntry[] = [];
+let perAgentLatest: Record<string, string> = {};
+
+try {
+	const syncPath = resolve('/Users/samantha/clawd/memory/sync.md');
+	const lines = readFileSync(syncPath, 'utf-8').split('\n').filter(l => l.startsWith('['));
+
+	// Parse lines oldest-first, reverse so newest is first
+	const parsed = lines.map(line => {
+		const m = line.match(/^\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2})\] \[(\w+)\] (.+)$/);
+		if (!m) return null;
+		const [, ts, agentTag, rest] = m;
+		const agentId = agentIdFromTag(agentTag);
+		const info = AGENT_INFO[agentId];
+		if (!info) return null;
+		if (!isOutputEntry(rest)) return null;
+		const descEn = makeEnglishDesc(rest, agentId);
+		const descZh = rest.replace(/^[\w\-：:]+\s*/, '').trim().slice(0, 60) + (rest.length > 60 ? '…' : '');
+		return { time: parseTimeAgo(ts), timeRaw: ts, agentId, agentName: info.nameEn, descEn, descZh, color: info.color };
+	}).filter(Boolean) as ActivityEntry[];
+
+	recentActivity = parsed.slice(-10).reverse();
+
+	// Get latest entry per agent for room label
+	for (const entry of parsed) {
+		perAgentLatest[entry.agentId] = entry.descEn;
+	}
+} catch (e) {
+	// sync.md may not exist in CI/prod build — graceful degradation
+}
 ---
 
 <PageLayout meta={meta}>
-	<section class="mb-8">
+	<section class="mb-10">
 		<a href="/lab/" class="fade-in-up font-serif text-sm text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]" style="--delay: 50ms">
 			<span class="lang-en">← Back to Lab</span><span class="lang-zh">← 返回 Lab</span>
 		</a>
-		<h1 class="hero-reveal-text mt-4 mb-2 font-serif text-4xl font-bold dark:text-white">
+		<h1 class="hero-reveal-text mt-4 mb-3 font-serif text-4xl font-bold dark:text-white">
 			<span class="lang-en">Agent Activity</span><span class="lang-zh">Agent 工作室</span>
 		</h1>
-		<p class="hero-reveal-subtitle max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">
-			<span class="lang-en">The pixel office — watch our AI agents work in real-time.</span>
-			<span class="lang-zh">像素办公室 — 实时观察 AI Agent 的工作状态。</span>
+		<p class="hero-reveal-subtitle max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300" style="--delay: 80ms">
+			<span class="lang-en">I run a 6-person AI team. They write, research, code, design, and analyze — 24/7, while I focus on decisions.</span>
+			<span class="lang-zh">我有一支 6 人 AI 团队：写作、研究、开发、设计、分析，全天候运转，我只负责决策。</span>
 		</p>
-		<div id="connection-status" class="mt-2 font-serif text-xs text-gray-400">
+		<p class="hero-reveal-subtitle max-w-2xl mt-2 font-serif text-base leading-relaxed text-gray-500 dark:text-gray-400" style="--delay: 120ms">
+			<span class="lang-en">Each agent has a role, a personality, and a live status. Click any room to learn more.</span>
+			<span class="lang-zh">每个 Agent 有独立角色和个性。点击格子查看详情。</span>
+		</p>
+		<div id="connection-status" class="mt-3 font-serif text-xs text-gray-400">
 			<span class="lang-en">Connecting...</span><span class="lang-zh">连接中...</span>
 		</div>
 	</section>
+
+	<!-- Detail overlay panel -->
+	<div id="agent-detail" class="agent-detail-overlay" aria-hidden="true">
+		<div class="agent-detail-card">
+			<button class="detail-close" id="detail-close" aria-label="Close">×</button>
+			<div class="detail-header">
+				<span class="detail-dot" id="detail-dot"></span>
+				<span class="detail-name font-serif" id="detail-name"></span>
+				<span class="detail-role font-serif" id="detail-role"></span>
+			</div>
+			<p class="detail-desc font-serif" id="detail-desc"></p>
+			<ul class="detail-examples" id="detail-examples"></ul>
+			<div class="detail-latest font-serif" id="detail-latest"></div>
+		</div>
+	</div>
 
 	<section class="agent-grid mb-16">
 		<!-- Samantha -->
@@ -48,11 +241,16 @@ const meta = {
 				<div class="task-bubble" style="display:none"></div>
 			</div>
 			<div class="room-label">
-				<span class="agent-name">Samantha</span>
-				<span class="agent-title font-serif text-xs text-gray-400">
-					<span class="lang-en">Mastermind</span><span class="lang-zh">主脑</span>
-				</span>
-				<span class="agent-status-dot"></span>
+				<div class="room-label-top">
+					<span class="agent-name">Samantha</span>
+					<span class="agent-title font-serif text-xs text-gray-400">
+						<span class="lang-en">Mastermind</span><span class="lang-zh">主脑</span>
+					</span>
+					<span class="agent-status-dot"></span>
+				</div>
+				{perAgentLatest['main'] && (
+					<span class="agent-latest font-serif text-xs text-gray-500 truncate">{perAgentLatest['main']}</span>
+				)}
 			</div>
 		</div>
 
@@ -79,11 +277,16 @@ const meta = {
 				<div class="task-bubble" style="display:none"></div>
 			</div>
 			<div class="room-label">
-				<span class="agent-name">Loki</span>
-				<span class="agent-title font-serif text-xs text-gray-400">
-					<span class="lang-en">Writer</span><span class="lang-zh">写手</span>
-				</span>
-				<span class="agent-status-dot"></span>
+				<div class="room-label-top">
+					<span class="agent-name">Loki</span>
+					<span class="agent-title font-serif text-xs text-gray-400">
+						<span class="lang-en">Writer</span><span class="lang-zh">写手</span>
+					</span>
+					<span class="agent-status-dot"></span>
+				</div>
+				{perAgentLatest['writer'] && (
+					<span class="agent-latest font-serif text-xs text-gray-500 truncate">{perAgentLatest['writer']}</span>
+				)}
 			</div>
 		</div>
 
@@ -109,11 +312,16 @@ const meta = {
 				<div class="task-bubble" style="display:none"></div>
 			</div>
 			<div class="room-label">
-				<span class="agent-name">Vision</span>
-				<span class="agent-title font-serif text-xs text-gray-400">
-					<span class="lang-en">Researcher</span><span class="lang-zh">研究员</span>
-				</span>
-				<span class="agent-status-dot"></span>
+				<div class="room-label-top">
+					<span class="agent-name">Vision</span>
+					<span class="agent-title font-serif text-xs text-gray-400">
+						<span class="lang-en">Researcher</span><span class="lang-zh">研究员</span>
+					</span>
+					<span class="agent-status-dot"></span>
+				</div>
+				{perAgentLatest['researcher'] && (
+					<span class="agent-latest font-serif text-xs text-gray-500 truncate">{perAgentLatest['researcher']}</span>
+				)}
 			</div>
 		</div>
 
@@ -140,11 +348,16 @@ const meta = {
 				<div class="task-bubble" style="display:none"></div>
 			</div>
 			<div class="room-label">
-				<span class="agent-name">Jarvis</span>
-				<span class="agent-title font-serif text-xs text-gray-400">
-					<span class="lang-en">Coder</span><span class="lang-zh">工程师</span>
-				</span>
-				<span class="agent-status-dot"></span>
+				<div class="room-label-top">
+					<span class="agent-name">Jarvis</span>
+					<span class="agent-title font-serif text-xs text-gray-400">
+						<span class="lang-en">Coder</span><span class="lang-zh">工程师</span>
+					</span>
+					<span class="agent-status-dot"></span>
+				</div>
+				{perAgentLatest['coder'] && (
+					<span class="agent-latest font-serif text-xs text-gray-500 truncate">{perAgentLatest['coder']}</span>
+				)}
 			</div>
 		</div>
 
@@ -170,11 +383,16 @@ const meta = {
 				<div class="task-bubble" style="display:none"></div>
 			</div>
 			<div class="room-label">
-				<span class="agent-name">Shuri</span>
-				<span class="agent-title font-serif text-xs text-gray-400">
-					<span class="lang-en">Designer</span><span class="lang-zh">设计师</span>
-				</span>
-				<span class="agent-status-dot"></span>
+				<div class="room-label-top">
+					<span class="agent-name">Shuri</span>
+					<span class="agent-title font-serif text-xs text-gray-400">
+						<span class="lang-en">Designer</span><span class="lang-zh">设计师</span>
+					</span>
+					<span class="agent-status-dot"></span>
+				</div>
+				{perAgentLatest['designer'] && (
+					<span class="agent-latest font-serif text-xs text-gray-500 truncate">{perAgentLatest['designer']}</span>
+				)}
 			</div>
 		</div>
 
@@ -200,14 +418,45 @@ const meta = {
 				<div class="task-bubble" style="display:none"></div>
 			</div>
 			<div class="room-label">
-				<span class="agent-name">Friday</span>
-				<span class="agent-title font-serif text-xs text-gray-400">
-					<span class="lang-en">Analyst</span><span class="lang-zh">分析师</span>
-				</span>
-				<span class="agent-status-dot"></span>
+				<div class="room-label-top">
+					<span class="agent-name">Friday</span>
+					<span class="agent-title font-serif text-xs text-gray-400">
+						<span class="lang-en">Analyst</span><span class="lang-zh">分析师</span>
+					</span>
+					<span class="agent-status-dot"></span>
+				</div>
+				{perAgentLatest['analyst'] && (
+					<span class="agent-latest font-serif text-xs text-gray-500 truncate">{perAgentLatest['analyst']}</span>
+				)}
 			</div>
 		</div>
 	</section>
+
+	<!-- Activity Feed -->
+	{recentActivity.length > 0 && (
+		<section class="activity-feed mb-16 fade-in-up" style="--delay: 500ms">
+			<h2 class="mb-2 font-serif text-xs font-bold tracking-widest text-gray-400 uppercase dark:text-gray-500">
+				<span class="lang-en">Recent Activity</span><span class="lang-zh">团队动态</span>
+			</h2>
+			<p class="mb-6 font-serif text-2xl font-semibold dark:text-white">
+				<span class="lang-en">What the team shipped today.</span>
+				<span class="lang-zh">今天团队干了什么。</span>
+			</p>
+			<div class="feed-list">
+				{recentActivity.map((entry) => (
+					<div class="feed-item">
+						<div class="feed-dot" style={`background: ${entry.color}; box-shadow: 0 0 6px ${entry.color}66`}></div>
+						<div class="feed-content">
+							<span class="feed-agent font-serif text-xs font-bold" style={`color: ${entry.color}`}>{entry.agentName}</span>
+							<span class="feed-desc font-serif text-sm text-gray-600 dark:text-gray-400 lang-en">{entry.descEn}</span>
+							<span class="feed-desc font-serif text-sm text-gray-600 dark:text-gray-400 lang-zh">{entry.descZh}</span>
+						</div>
+						<span class="feed-time font-serif text-xs text-gray-400 dark:text-gray-500 shrink-0">{entry.time}</span>
+					</div>
+				))}
+			</div>
+		</section>
+	)}
 </PageLayout>
 
 <style is:global>
@@ -1452,6 +1701,191 @@ const meta = {
 		to { opacity: 1; transform: translateX(-50%) translateY(0); }
 	}
 
+	/* ── Room label upgrade ────────────────────────────────────── */
+	.room-label {
+		display: flex;
+		flex-direction: column;
+		padding: 0.5rem 0.75rem 0.6rem;
+		gap: 0.2rem;
+	}
+	.room-label-top {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+	.agent-latest {
+		display: block;
+		max-width: 100%;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		opacity: 0.7;
+		letter-spacing: 0.01em;
+	}
+
+	/* ── Clickable rooms ────────────────────────────────────────── */
+	.agent-room { cursor: pointer; }
+
+	/* ── Detail overlay ─────────────────────────────────────────── */
+	.agent-detail-overlay {
+		display: none;
+		position: fixed;
+		inset: 0;
+		z-index: 1000;
+		background: rgba(0, 0, 0, 0.6);
+		align-items: center;
+		justify-content: center;
+		padding: 1rem;
+		backdrop-filter: blur(4px);
+	}
+	.agent-detail-overlay.is-open {
+		display: flex;
+		animation: overlay-in 0.2s ease-out;
+	}
+	@keyframes overlay-in {
+		from { opacity: 0; }
+		to { opacity: 1; }
+	}
+	.agent-detail-card {
+		background: #12122a;
+		border: 2px solid #2a2a3a;
+		border-radius: 8px;
+		padding: 1.75rem;
+		max-width: 480px;
+		width: 100%;
+		position: relative;
+		animation: card-in 0.25s ease-out;
+		box-shadow: 0 0 40px rgba(137, 83, 209, 0.2);
+	}
+	:global([data-theme="light"]) .agent-detail-card {
+		background: #fffaef;
+		border-color: #e5e7eb;
+		box-shadow: 0 4px 32px rgba(0,0,0,0.10);
+	}
+	@keyframes card-in {
+		from { opacity: 0; transform: translateY(12px) scale(0.97); }
+		to { opacity: 1; transform: translateY(0) scale(1); }
+	}
+	.detail-close {
+		position: absolute;
+		top: 1rem; right: 1rem;
+		background: none; border: none;
+		color: #888; font-size: 1.5rem;
+		cursor: pointer; line-height: 1;
+		transition: color 0.15s;
+		padding: 0 0.25rem;
+	}
+	.detail-close:hover { color: white; }
+	:global([data-theme="light"]) .detail-close:hover { color: #111; }
+	.detail-header {
+		display: flex;
+		align-items: center;
+		gap: 0.6rem;
+		margin-bottom: 0.85rem;
+	}
+	.detail-dot {
+		width: 10px; height: 10px;
+		border-radius: 50%;
+		flex-shrink: 0;
+	}
+	.detail-name {
+		font-size: 1.2rem;
+		font-weight: 700;
+		color: white;
+	}
+	:global([data-theme="light"]) .detail-name { color: #111; }
+	.detail-role {
+		font-size: 0.75rem;
+		color: #888;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+	}
+	.detail-desc {
+		font-size: 0.95rem;
+		line-height: 1.65;
+		color: #aaa;
+		margin-bottom: 1.1rem;
+	}
+	:global([data-theme="light"]) .detail-desc { color: #555; }
+	.detail-examples {
+		list-style: none;
+		margin: 0 0 1.1rem;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0.35rem;
+	}
+	.detail-examples li {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		font-family: serif;
+		font-size: 0.85rem;
+		color: #ccc;
+	}
+	:global([data-theme="light"]) .detail-examples li { color: #444; }
+	.detail-examples li::before {
+		content: '';
+		width: 4px; height: 4px;
+		border-radius: 50%;
+		background: #8953d1;
+		flex-shrink: 0;
+	}
+	.detail-latest {
+		border-top: 1px solid #2a2a3a;
+		padding-top: 0.75rem;
+		font-size: 0.8rem;
+		color: #666;
+	}
+	:global([data-theme="light"]) .detail-latest {
+		border-top-color: #e5e7eb;
+		color: #888;
+	}
+	.detail-latest strong { color: #8953d1; }
+
+	/* ── Activity Feed ───────────────────────────────────────────── */
+	.feed-list {
+		display: flex;
+		flex-direction: column;
+		gap: 0;
+	}
+	.feed-item {
+		display: flex;
+		align-items: flex-start;
+		gap: 0.85rem;
+		padding: 0.7rem 0;
+		border-bottom: 1px solid #1f1f30;
+	}
+	:global([data-theme="light"]) .feed-item {
+		border-bottom-color: #e5e7eb;
+	}
+	.feed-dot {
+		width: 8px; height: 8px;
+		border-radius: 50%;
+		flex-shrink: 0;
+		margin-top: 5px;
+	}
+	.feed-content {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		gap: 0.15rem;
+		min-width: 0;
+	}
+	.feed-agent {
+		font-size: 0.7rem;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+	}
+	.feed-desc {
+		line-height: 1.5;
+	}
+	.feed-time {
+		font-size: 0.7rem;
+		white-space: nowrap;
+		margin-top: 4px;
+	}
+
 	/* ── Animation pause for off-screen (via JS class) ────────── */
 	.agent-room.paused .agent-sprite,
 	.agent-room.paused .agent-sprite *,
@@ -1627,5 +2061,108 @@ const meta = {
 
 		pollAgents();
 		setInterval(pollAgents, 10000);
+
+		/* ── Agent Detail Panel ───────────────────────────────── */
+		var AGENT_DATA = {
+			main: {
+				name: 'Samantha', role: 'Mastermind', color: '#ff6b35',
+				descEn: 'Coordinates the team, routes tasks, delivers daily briefings and market reports. Makes sure nothing falls through the cracks.',
+				descZh: '团队协调、任务分配、每日早晚报和市场快报。确保每件事都有人负责。',
+				examplesEn: ['Morning / evening briefings', 'Market pulse reports', 'Task routing & escalation', 'Team health monitoring'],
+				examplesZh: ['每日早晚报', '市场快报', '任务路由与升级', '团队健康监控'],
+			},
+			writer: {
+				name: 'Loki', role: 'Writer', color: '#4a9e4a',
+				descEn: 'Writes tweet drafts, translates crypto/AI signals into Rex\'s voice, produces content that bridges English and Chinese audiences.',
+				descZh: '撰写推文草稿，将加密/AI 信号转化为 Rex 的语气，制作中英双语内容。',
+				examplesEn: ['2× daily tweet drafts', 'CN/EN content translation', 'Signal-to-draft pipeline', 'Builder\'s log entries'],
+				examplesZh: ['每日 2 条推文草稿', '中英内容转化', '信号→草稿流水线', '构建日志'],
+			},
+			researcher: {
+				name: 'Vision', role: 'Researcher', color: '#4a8ab5',
+				descEn: 'Scans 16+ KOLs daily, tracks crypto/AI/Robotics projects, surfaces alpha signals before they go mainstream.',
+				descZh: '每日扫描 16+ KOL，追踪加密/AI/机器人项目，在信息大众化前发现 Alpha 信号。',
+				examplesEn: ['Daily KOL intelligence scan', 'Deep-dive research reports', 'Alpha Radar feed', 'Project tracking'],
+				examplesZh: ['每日 KOL 情报扫描', '深度研究报告', 'Alpha Radar 推送', '项目追踪'],
+			},
+			coder: {
+				name: 'Jarvis', role: 'Coder', color: '#7a7a8a',
+				descEn: 'Builds and maintains all automation: cron jobs, data pipelines, website features, and internal tools. The backbone of the system.',
+				descZh: '构建和维护所有自动化：定时任务、数据管道、网站功能和内部工具。系统的骨架。',
+				examplesEn: ['30+ automated cron jobs', 'This website', 'Portfolio sync tools', 'Content pipeline scripts'],
+				examplesZh: ['30+ 自动化定时任务', '本站', '投资组合同步工具', '内容管道脚本'],
+			},
+			designer: {
+				name: 'Shuri', role: 'Designer', color: '#c54ab5',
+				descEn: 'Creates visuals for tweets, research covers, and brand assets. Every image that ships has passed through her.',
+				descZh: '为推文、研究封面和品牌资产创作视觉设计。每张发出去的图都经过她的手。',
+				examplesEn: ['Tweet cover images', 'Research report covers', 'Brand asset design', '16-bit pixel art'],
+				examplesZh: ['推文配图', '研究报告封面', '品牌视觉', '16-bit 像素艺术'],
+			},
+			analyst: {
+				name: 'Friday', role: 'Analyst', color: '#4ac5c5',
+				descEn: 'Tracks Rex\'s portfolio, produces SNEK daily briefings, monitors market data and financial metrics.',
+				descZh: '追踪 Rex 的投资组合，每日 SNEK 简报，监控市场数据和财务指标。',
+				examplesEn: ['Daily SNEK briefing', 'Portfolio sync & tracking', 'Market data monitoring', 'Financial analysis'],
+				examplesZh: ['每日 SNEK 简报', '投资组合同步追踪', '市场数据监控', '财务分析'],
+			},
+		};
+
+		var overlay = document.getElementById('agent-detail');
+		var closeBtn = document.getElementById('detail-close');
+		var isZh = document.documentElement.getAttribute('data-lang') === 'zh';
+
+		function openDetail(agentId) {
+			var d = AGENT_DATA[agentId];
+			if (!d || !overlay) return;
+			isZh = document.documentElement.getAttribute('data-lang') === 'zh';
+			document.getElementById('detail-dot').style.background = d.color;
+			document.getElementById('detail-dot').style.boxShadow = '0 0 8px ' + d.color + '88';
+			document.getElementById('detail-name').textContent = d.name;
+			document.getElementById('detail-role').textContent = d.role;
+			document.getElementById('detail-desc').textContent = isZh ? d.descZh : d.descEn;
+			var ul = document.getElementById('detail-examples');
+			ul.innerHTML = '';
+			var examples = isZh ? d.examplesZh : d.examplesEn;
+			examples.forEach(function(ex) {
+				var li = document.createElement('li'); li.textContent = ex; ul.appendChild(li);
+			});
+			// latest activity from label
+			var room = document.querySelector('[data-agent="' + agentId + '"]');
+			var latest = room ? room.querySelector('.agent-latest') : null;
+			var latestEl = document.getElementById('detail-latest');
+			if (latest && latest.textContent.trim()) {
+				latestEl.innerHTML = '<strong>Latest:</strong> ' + latest.textContent.trim();
+				latestEl.style.display = 'block';
+			} else {
+				latestEl.style.display = 'none';
+			}
+			overlay.classList.add('is-open');
+			overlay.setAttribute('aria-hidden', 'false');
+			document.body.style.overflow = 'hidden';
+		}
+
+		function closeDetail() {
+			if (!overlay) return;
+			overlay.classList.remove('is-open');
+			overlay.setAttribute('aria-hidden', 'true');
+			document.body.style.overflow = '';
+		}
+
+		document.querySelectorAll('.agent-room').forEach(function(room) {
+			room.addEventListener('click', function(e) {
+				// Don't intercept if clicking task bubble or status dot
+				if (e.target.closest('.task-bubble') || e.target.closest('.agent-status-dot')) return;
+				openDetail(room.getAttribute('data-agent'));
+			});
+		});
+
+		if (closeBtn) closeBtn.addEventListener('click', closeDetail);
+		if (overlay) overlay.addEventListener('click', function(e) {
+			if (e.target === overlay) closeDetail();
+		});
+		document.addEventListener('keydown', function(e) {
+			if (e.key === 'Escape') closeDetail();
+		});
 	})();
 </script>
