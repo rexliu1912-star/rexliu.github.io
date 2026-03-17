@@ -23,7 +23,7 @@ const meta = {
 			<span class="lang-zh">每个 Agent 有独立角色和个性。点击格子查看详情。</span>
 		</p>
 		<div id="connection-status" class="mt-3 font-serif text-xs text-gray-400">
-			<span class="lang-en">Connecting...</span><span class="lang-zh">连接中...</span>
+			<span class="lang-en">● Live</span><span class="lang-zh">● 实时</span>
 		</div>
 	</section>
 
@@ -1887,11 +1887,15 @@ const meta = {
 
 		async function pollAgents() {
 			try {
+				var controller = new AbortController();
+				var timeout = setTimeout(function() { controller.abort(); }, 5000);
 				var resp = await fetch(CONVEX_URL + '/api/query', {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({ path: 'agents:list', args: {} })
+					body: JSON.stringify({ path: 'agents:list', args: {} }),
+					signal: controller.signal
 				});
+				clearTimeout(timeout);
 				var data = await resp.json();
 				var agents = data.value || [];
 				if (statusEl) {
@@ -1900,7 +1904,9 @@ const meta = {
 				agents.forEach(updateRoom);
 			} catch (e) {
 				console.error('Convex poll failed:', e);
-				setOffline();
+				if (statusEl) {
+					statusEl.innerHTML = '<span class="lang-en" style="color:#888">\u25cb Cached</span><span class="lang-zh" style="color:#888">\u25cb 缓存</span>';
+				}
 			}
 		}
 
@@ -2097,17 +2103,24 @@ const meta = {
 
 		async function fetchActivity() {
 			try {
+				var controller = new AbortController();
+				var timeout = setTimeout(function() { controller.abort(); }, 5000);
 				var resp = await fetch(CONVEX_ACTIVITY_URL + '/api/query', {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({ path: 'activity:recent', args: { limit: 10 }, format: 'json' })
+					body: JSON.stringify({ path: 'activity:recent', args: { limit: 10 }, format: 'json' }),
+					signal: controller.signal
 				});
+				clearTimeout(timeout);
 				var data = await resp.json();
 				if (data.status === 'success' && data.value) {
 					renderFeed(data.value);
 				}
 			} catch (e) {
 				console.error('Activity feed fetch failed:', e);
+				if (feedList && feedList.querySelector('.feed-loading')) {
+					feedList.innerHTML = '<div class="feed-empty font-serif text-xs text-gray-500"><span class="lang-en">Unable to load — will retry</span><span class="lang-zh">加载失败，稍后重试</span></div>';
+				}
 			}
 		}
 
