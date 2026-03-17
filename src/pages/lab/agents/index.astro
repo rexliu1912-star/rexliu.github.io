@@ -122,6 +122,9 @@ for (const entry of recentActivity) {
 		</div>
 	</section>
 
+	<!-- Activity feed data for JS -->
+	<script id="activity-feed-data" type="application/json" set:html={JSON.stringify(recentActivity)}></script>
+
 	<!-- Detail overlay panel -->
 	<div id="agent-detail" class="agent-detail-overlay" aria-hidden="true">
 		<div class="agent-detail-card">
@@ -131,6 +134,7 @@ for (const entry of recentActivity) {
 				<span class="detail-name font-serif" id="detail-name"></span>
 				<span class="detail-role font-serif" id="detail-role"></span>
 			</div>
+			<p class="detail-stats font-serif" id="detail-stats"></p>
 			<p class="detail-desc font-serif" id="detail-desc"></p>
 			<ul class="detail-examples" id="detail-examples"></ul>
 			<div class="detail-latest font-serif" id="detail-latest"></div>
@@ -1720,6 +1724,12 @@ for (const entry of recentActivity) {
 		text-transform: uppercase;
 		letter-spacing: 0.08em;
 	}
+	.detail-stats {
+		font-size: 0.8rem;
+		font-weight: 600;
+		letter-spacing: 0.02em;
+		margin-bottom: 0.6rem;
+	}
 	.detail-desc {
 		font-size: 0.95rem;
 		line-height: 1.65;
@@ -1762,6 +1772,24 @@ for (const entry of recentActivity) {
 		color: #888;
 	}
 	.detail-latest strong { color: #8953d1; }
+	.detail-recent-list {
+		list-style: none;
+		padding: 0;
+		margin: 0.4rem 0 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+	}
+	.detail-recent-list li {
+		font-size: 0.8rem;
+		color: #888;
+	}
+	:global([data-theme="light"]) .detail-recent-list li { color: #666; }
+	.detail-recent-time {
+		color: #8953d1;
+		font-weight: 600;
+		margin-right: 0.3rem;
+	}
 
 	/* ── Activity Feed ───────────────────────────────────────────── */
 	.feed-list {
@@ -1988,6 +2016,8 @@ for (const entry of recentActivity) {
 				name: 'Samantha', role: 'Mastermind', color: '#ff6b35',
 				descEn: 'Coordinates the team, routes tasks, delivers daily briefings and market reports. Makes sure nothing falls through the cracks.',
 				descZh: '团队协调、任务分配、每日早晚报和市场快报。确保每件事都有人负责。',
+				statsEn: '57 proposals routed · 30+ cron jobs · daily briefings',
+				statsZh: '已路由 57 个提案 · 30+ 定时任务 · 每日早晚报',
 				examplesEn: ['Morning / evening briefings', 'Market pulse reports', 'Task routing & escalation', 'Team health monitoring'],
 				examplesZh: ['每日早晚报', '市场快报', '任务路由与升级', '团队健康监控'],
 			},
@@ -1995,6 +2025,8 @@ for (const entry of recentActivity) {
 				name: 'Loki', role: 'Writer', color: '#4a9e4a',
 				descEn: 'Writes tweet drafts, translates crypto/AI signals into Rex\'s voice, produces content that bridges English and Chinese audiences.',
 				descZh: '撰写推文草稿，将加密/AI 信号转化为 Rex 的语气，制作中英双语内容。',
+				statsEn: '122 drafts written · 65 blog posts · 2× daily',
+				statsZh: '已写 122 篇草稿 · 65 篇博客 · 每日 2 条',
 				examplesEn: ['2× daily tweet drafts', 'CN/EN content translation', 'Signal-to-draft pipeline', 'Builder\'s log entries'],
 				examplesZh: ['每日 2 条推文草稿', '中英内容转化', '信号→草稿流水线', '构建日志'],
 			},
@@ -2002,6 +2034,8 @@ for (const entry of recentActivity) {
 				name: 'Vision', role: 'Researcher', color: '#4a8ab5',
 				descEn: 'Scans 16+ KOLs daily, tracks crypto/AI/Robotics projects, surfaces alpha signals before they go mainstream.',
 				descZh: '每日扫描 16+ KOL，追踪加密/AI/机器人项目，在信息大众化前发现 Alpha 信号。',
+				statsEn: '33 research reports · 16 KOLs tracked daily · Alpha Radar',
+				statsZh: '33 份研究报告 · 每日追踪 16 位 KOL · Alpha Radar',
 				examplesEn: ['Daily KOL intelligence scan', 'Deep-dive research reports', 'Alpha Radar feed', 'Project tracking'],
 				examplesZh: ['每日 KOL 情报扫描', '深度研究报告', 'Alpha Radar 推送', '项目追踪'],
 			},
@@ -2009,13 +2043,17 @@ for (const entry of recentActivity) {
 				name: 'Jarvis', role: 'Coder', color: '#7a7a8a',
 				descEn: 'Builds and maintains all automation: cron jobs, data pipelines, website features, and internal tools. The backbone of the system.',
 				descZh: '构建和维护所有自动化：定时任务、数据管道、网站功能和内部工具。系统的骨架。',
-				examplesEn: ['30+ automated cron jobs', 'This website', 'Portfolio sync tools', 'Content pipeline scripts'],
-				examplesZh: ['30+ 自动化定时任务', '本站', '投资组合同步工具', '内容管道脚本'],
+				statsEn: '280 commits · 30+ cron jobs · this entire website',
+				statsZh: '280 次提交 · 30+ 定时任务 · 本站全部代码',
+				examplesEn: ['30+ automated cron jobs', 'This website (280 commits)', 'Portfolio sync tools', 'Content pipeline scripts'],
+				examplesZh: ['30+ 自动化定时任务', '本站（280 次提交）', '投资组合同步工具', '内容管道脚本'],
 			},
 			designer: {
 				name: 'Shuri', role: 'Designer', color: '#c54ab5',
 				descEn: 'Creates visuals for tweets, research covers, and brand assets. Every image that ships has passed through her.',
 				descZh: '为推文、研究封面和品牌资产创作视觉设计。每张发出去的图都经过她的手。',
+				statsEn: '14 design assets · tweet covers · 16-bit pixel art',
+				statsZh: '14 份设计资产 · 推文配图 · 16-bit 像素艺术',
 				examplesEn: ['Tweet cover images', 'Research report covers', 'Brand asset design', '16-bit pixel art'],
 				examplesZh: ['推文配图', '研究报告封面', '品牌视觉', '16-bit 像素艺术'],
 			},
@@ -2023,10 +2061,15 @@ for (const entry of recentActivity) {
 				name: 'Friday', role: 'Analyst', color: '#4ac5c5',
 				descEn: 'Tracks Rex\'s portfolio, produces SNEK daily briefings, monitors market data and financial metrics.',
 				descZh: '追踪 Rex 的投资组合，每日 SNEK 简报，监控市场数据和财务指标。',
+				statsEn: 'Daily SNEK briefing · portfolio sync · market monitoring',
+				statsZh: '每日 SNEK 简报 · 投资组合同步 · 市场监控',
 				examplesEn: ['Daily SNEK briefing', 'Portfolio sync & tracking', 'Market data monitoring', 'Financial analysis'],
 				examplesZh: ['每日 SNEK 简报', '投资组合同步追踪', '市场数据监控', '财务分析'],
 			},
 		};
+
+		// Activity feed data for "recent 3" per agent
+		var ACTIVITY_FEED = JSON.parse(document.getElementById('activity-feed-data')?.textContent || '[]');
 
 		var overlay = document.getElementById('agent-detail');
 		var closeBtn = document.getElementById('detail-close');
@@ -2041,22 +2084,37 @@ for (const entry of recentActivity) {
 			document.getElementById('detail-name').textContent = d.name;
 			document.getElementById('detail-role').textContent = d.role;
 			document.getElementById('detail-desc').textContent = isZh ? d.descZh : d.descEn;
+
+			// Stats line
+			var statsEl = document.getElementById('detail-stats');
+			if (statsEl) {
+				statsEl.textContent = isZh ? (d.statsZh || '') : (d.statsEn || '');
+				statsEl.style.color = d.color;
+			}
+
+			// What they do (examples)
 			var ul = document.getElementById('detail-examples');
 			ul.innerHTML = '';
 			var examples = isZh ? d.examplesZh : d.examplesEn;
 			examples.forEach(function(ex) {
 				var li = document.createElement('li'); li.textContent = ex; ul.appendChild(li);
 			});
-			// latest activity from label
-			var room = document.querySelector('[data-agent="' + agentId + '"]');
-			var latest = room ? room.querySelector('.agent-latest') : null;
+
+			// Recent 3 activities for this agent from feed
 			var latestEl = document.getElementById('detail-latest');
-			if (latest && latest.textContent.trim()) {
-				latestEl.innerHTML = '<strong>Latest:</strong> ' + latest.textContent.trim();
+			var agentActivities = ACTIVITY_FEED.filter(function(e) { return e.agentId === agentId; }).slice(0, 3);
+			if (agentActivities.length > 0) {
+				var heading = isZh ? '<strong>最近动态</strong>' : '<strong>Recent</strong>';
+				latestEl.innerHTML = heading + '<ul class="detail-recent-list">' +
+					agentActivities.map(function(a) {
+						var text = isZh ? a.descZh : a.descEn;
+						return '<li><span class="detail-recent-time">' + a.time + '</span> ' + text + '</li>';
+					}).join('') + '</ul>';
 				latestEl.style.display = 'block';
 			} else {
 				latestEl.style.display = 'none';
 			}
+
 			overlay.classList.add('is-open');
 			overlay.setAttribute('aria-hidden', 'false');
 			document.body.style.overflow = 'hidden';
