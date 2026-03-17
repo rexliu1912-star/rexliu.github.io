@@ -2,8 +2,8 @@
 import { getCollection } from "astro:content";
 import { env } from "@/env";
 
-// 获取 GitHub 用户名
-const GITHUB_USERNAME = "rexliu1912-star";
+// 获取 GitHub 用户名（合并两个账号的贡献）
+const GITHUB_USERNAMES = ["rexliu1912-star", "samantha-ai-agent"];
 
 // 获取所有文章的发布日期
 const allPosts = await getCollection("post");
@@ -49,8 +49,8 @@ interface ContributionData {
 	level: number;
 }
 
-// 使用 GitHub GraphQL API 获取贡献数据
-async function fetchGitHubContributions(): Promise<Record<string, number>> {
+// 使用 GitHub GraphQL API 获取贡献数据（支持合并多个账号）
+async function fetchGitHubContributions(usernames: string[]): Promise<Record<string, number>> {
 	const token = env.GITHUB_TOKEN;
 
 	if (!token) {
@@ -58,57 +58,60 @@ async function fetchGitHubContributions(): Promise<Record<string, number>> {
 		return {};
 	}
 
-	const query = `
-		query($username: String!) {
-			user(login: $username) {
-				contributionsCollection {
-					contributionCalendar {
-						weeks {
-							contributionDays {
-								date
-								contributionCount
+	const merged: Record<string, number> = {};
+
+	for (const username of usernames) {
+		const query = `
+			query($username: String!) {
+				user(login: $username) {
+					contributionsCollection {
+						contributionCalendar {
+							weeks {
+								contributionDays {
+									date
+									contributionCount
+								}
 							}
 						}
 					}
 				}
 			}
-		}
-	`;
+		`;
 
-	try {
-		const response = await fetch("https://api.github.com/graphql", {
-			method: "POST",
-			headers: {
-				Authorization: `Bearer ${token}`,
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				query,
-				variables: { username: GITHUB_USERNAME },
-			}),
-		});
+		try {
+			const response = await fetch("https://api.github.com/graphql", {
+				method: "POST",
+				headers: {
+					Authorization: `Bearer ${token}`,
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					query,
+					variables: { username },
+				}),
+			});
 
-		if (response.ok) {
-			const data = await response.json();
-			const contributions: Record<string, number> = {};
-			const weeks = data?.data?.user?.contributionsCollection?.contributionCalendar?.weeks;
+			if (response.ok) {
+				const data = await response.json();
+				const weeks = data?.data?.user?.contributionsCollection?.contributionCalendar?.weeks;
 
-			if (weeks) {
-				for (const week of weeks) {
-					for (const day of week.contributionDays) {
-						contributions[day.date] = day.contributionCount;
+				if (weeks) {
+					for (const week of weeks) {
+						for (const day of week.contributionDays) {
+							merged[day.date] = (merged[day.date] || 0) + day.contributionCount;
+						}
 					}
 				}
 			}
-			return contributions;
+		} catch (e) {
+			console.error(`GitHub GraphQL API error for ${username}:`, e);
 		}
-	} catch (e) {
-		console.error("GitHub GraphQL API error:", e);
 	}
-	return {};
+
+	return merged;
 }
 
-const githubContributions = await fetchGitHubContributions();
+const githubContributions = await fetchGitHubContributions(GITHUB_USERNAMES);
 const yearDates = generateYearDates();
 
 // 计算活动级别 (0-4) - 根据实际数据分布调整阈值
@@ -156,7 +159,7 @@ const totalGithubCommits = Object.values(githubContributions).reduce((sum, c) =>
 									class={`day level-${day.level}`}
 									data-date={day.date}
 									data-count={day.count}
-									title={`${day.count} contribution${day.count !== 1 ? "s" : ""} on ${day.date}`}
+									data-tip={`${day.count} contribution${day.count !== 1 ? "s" : ""} on ${day.date}`}
 								/>
 							))}
 						</div>
@@ -308,6 +311,34 @@ const totalGithubCommits = Object.values(githubContributions).reduce((sum, c) =>
 	.legend .day:hover {
 		transform: none;
 		cursor: default;
+	}
+
+	/* Custom tooltip for activity cells */
+	.activity-tooltip {
+		position: fixed;
+		z-index: 100;
+		padding: 4px 8px;
+		border-radius: 4px;
+		font-size: 11px;
+		font-family: var(--font-serif);
+		line-height: 1.4;
+		white-space: nowrap;
+		pointer-events: none;
+		opacity: 0;
+		transition: opacity 0.15s ease;
+		background: #2d2d2d;
+		color: #e0e0e0;
+		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+	}
+
+	.activity-tooltip.is-visible {
+		opacity: 1;
+	}
+
+	:global([data-theme="light"]) .activity-tooltip {
+		background: #fff;
+		color: #333;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
 	}
 
 	.nudge-stat.nudge-loading {
@@ -521,11 +552,76 @@ function initNudge() {
   loadCount();
 }
 
-// 多种方式确保初始化
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initNudge);
-} else {
-  initNudge();
+// --- Activity cell tooltip ---
+function initActivityTooltip() {
+  // Create or reuse tooltip element
+  let tip = document.getElementById('activity-tooltip');
+  if (!tip) {
+    tip = document.createElement('div');
+    tip.id = 'activity-tooltip';
+    tip.className = 'activity-tooltip';
+    document.body.appendChild(tip);
+  }
+
+  let hideTimer;
+
+  function showTip(el, e) {
+    const text = el.dataset.tip;
+    if (!text) return;
+    tip.textContent = text;
+    tip.classList.add('is-visible');
+    positionTip(e);
+  }
+
+  function positionTip(e) {
+    const x = e.clientX;
+    const y = e.clientY;
+    const tw = tip.offsetWidth;
+    const th = tip.offsetHeight;
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    let left = x + 12;
+    let top = y - th - 8;
+    if (left + tw > vw - 8) left = x - tw - 12;
+    if (top < 8) top = y + 16;
+    tip.style.left = left + 'px';
+    tip.style.top = top + 'px';
+  }
+
+  function hideTip() {
+    tip.classList.remove('is-visible');
+  }
+
+  // Delegate events on the contribution grid
+  const grid = document.querySelector('.contribution-grid');
+  if (!grid) return;
+
+  grid.addEventListener('mouseover', (e) => {
+    const cell = e.target.closest('[data-tip]');
+    clearTimeout(hideTimer);
+    if (cell) showTip(cell, e);
+    else hideTip();
+  });
+
+  grid.addEventListener('mousemove', (e) => {
+    if (tip.classList.contains('is-visible')) positionTip(e);
+  });
+
+  grid.addEventListener('mouseleave', () => {
+    hideTimer = setTimeout(hideTip, 100);
+  });
 }
-document.addEventListener('astro:page-load', initNudge);
+
+// 多种方式确保初始化
+function initAll() {
+  initNudge();
+  initActivityTooltip();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initAll);
+} else {
+  initAll();
+}
+document.addEventListener('astro:page-load', initAll);
 </script>
