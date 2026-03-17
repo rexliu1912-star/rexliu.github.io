@@ -160,7 +160,10 @@ try {
 	const parsed = lines.map(line => {
 		const m = line.match(/^\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2})\] \[(\w+)\] (.+)$/);
 		if (!m) return null;
-		const [, ts, agentTag, rest] = m;
+		const ts = m[1] ?? '';
+		const agentTag = m[2] ?? '';
+		const rest = m[3] ?? '';
+		if (!ts || !agentTag || !rest) return null;
 		const agentId = agentIdFromTag(agentTag);
 		const info = AGENT_INFO[agentId];
 		if (!info) return null;
