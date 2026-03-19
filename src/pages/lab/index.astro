@@ -154,9 +154,9 @@ const meta = {
 						<h3 class="font-serif text-xl font-bold text-black group-hover:text-[#8953d1] dark:text-white dark:group-hover:text-[#a175e8] sm:text-2xl">
 							Rex AI HQ
 						</h3>
-						<span class="ml-2 inline-flex items-center gap-1 rounded-full bg-green-500/10 px-2 py-0.5 text-xs font-medium text-green-500">
+						<span class="ml-2 inline-flex items-center gap-1 rounded-full bg-green-500/10 px-2 py-0.5 font-serif text-xs font-medium text-green-500">
 							<span class="inline-block h-1.5 w-1.5 rounded-full bg-green-500"></span>
-							running
+							<span class="lang-en">running</span><span class="lang-zh">运行中</span>
 						</span>
 					</div>
 					<p class="lang-en font-serif text-base leading-relaxed text-gray-500 dark:text-gray-400">
@@ -193,7 +193,7 @@ const meta = {
 							<h3 class={`font-serif text-base font-medium text-black dark:text-white ${hasUrl ? "group-hover:text-[#8953d1] dark:group-hover:text-[#a175e8]" : ""}`}>
 								<span class="lang-en">{p.data.title}</span><span class="lang-zh">{p.data.title_zh || p.data.title}</span>
 							</h3>
-							<span class={`ml-auto inline-flex items-center gap-1 text-xs ${statusColors[p.data.status] || "text-gray-400"}`}>
+							<span class={`ml-auto inline-flex items-center gap-1 font-serif text-xs ${statusColors[p.data.status] || "text-gray-400"}`}>
 								<span class={`inline-block h-1.5 w-1.5 rounded-full ${statusDots[p.data.status] || "bg-gray-400"}`}></span>
 								<span class="lang-en">{statusLabels[p.data.status]?.en || p.data.status}</span><span class="lang-zh">{statusLabels[p.data.status]?.zh || p.data.status}</span>
 							</span>
@@ -392,32 +392,36 @@ const meta = {
 		overflow: hidden;
 	}
 
-	/* Hero Card — base shadow + hover glow */
+	/* Hero Card — card bg + shadow + hover glow */
 	.lab-hero-card {
+		background: #fffaef;
 		box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
-		transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+		transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, background 0.4s ease;
 	}
 	.lab-hero-card:hover {
 		box-shadow: 0 4px 16px rgba(137, 83, 209, 0.15);
 		transform: translateY(-2px);
 	}
 	[data-theme="dark"] .lab-hero-card {
+		background: #181818;
 		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
 	}
 	[data-theme="dark"] .lab-hero-card:hover {
 		box-shadow: 0 4px 20px rgba(161, 117, 232, 0.2);
 	}
 
-	/* Product card — base shadow + hover glow (matches Related Posts) */
+	/* Product card — card bg + shadow + hover glow (matches Related Posts) */
 	.lab-product-card {
+		background: #fffaef;
 		box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
-		transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+		transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, background 0.4s ease;
 	}
 	.lab-product-card:hover {
 		transform: translateY(-2px);
 		box-shadow: 0 4px 12px rgba(137, 83, 209, 0.15);
 	}
 	[data-theme="dark"] .lab-product-card {
+		background: #181818;
 		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
 	}
 	[data-theme="dark"] .lab-product-card:hover {
@@ -436,14 +440,16 @@ const meta = {
 	.lab-curated-card {
 		scroll-snap-align: start;
 		min-height: 200px;
+		background: #fffaef;
 		box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
-		transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+		transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, background 0.4s ease;
 	}
 	.lab-curated-card:hover {
 		transform: scale(1.02);
 		box-shadow: 0 4px 12px rgba(137, 83, 209, 0.15);
 	}
 	[data-theme="dark"] .lab-curated-card {
+		background: #181818;
 		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
 	}
 	[data-theme="dark"] .lab-curated-card:hover {

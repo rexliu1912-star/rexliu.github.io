@@ -147,6 +147,20 @@ function formatShortDate(date: Date) {
 		-webkit-box-orient: vertical;
 		overflow: hidden;
 	}
+	.bookmark-card {
+		background: #fffaef;
+		box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
+	}
+	.bookmark-card:hover {
+		box-shadow: 0 4px 12px rgba(137, 83, 209, 0.15);
+	}
+	:global([data-theme="dark"]) .bookmark-card {
+		background: #181818;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+	}
+	:global([data-theme="dark"]) .bookmark-card:hover {
+		box-shadow: 0 4px 16px rgba(161, 117, 232, 0.2);
+	}
 </style>
 
 <script>
