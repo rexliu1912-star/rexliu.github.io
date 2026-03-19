@@ -20,14 +20,16 @@ const builderLogCount = allBuilderLogs.length;
 const sortByDate = <T extends { data: { date: Date } }>(arr: T[]) =>
 	arr.sort((a, b) => new Date(b.data.date).valueOf() - new Date(a.data.date).valueOf());
 
+const sortByCreatedAt = <T extends { data: { created_at: Date } }>(arr: T[]) =>
+	arr.sort((a, b) => new Date(b.data.created_at).valueOf() - new Date(a.data.created_at).valueOf());
+
 // Latest items for previews
-const latestBookmark = sortByDate([...allBookmarks])[0];
+const latestBookmark = sortByCreatedAt([...allBookmarks])[0];
 const latestDigest = sortByDate([...allDigests])[0];
 const latestBuilderLog = sortByDate([...allBuilderLogs])[0];
 
 // Products: exclude Bookmarks and Library (they go in Curated)
 const excludeFromProducts = ["bookmarks", "library"];
-const heroProject = allProjects.find(p => p.id === "rex-ai-hq");
 const otherProjects = allProjects
 	.filter(p => p.id !== "rex-ai-hq" && !excludeFromProducts.includes(p.id))
 	.sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
