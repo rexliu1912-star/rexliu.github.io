@@ -76,12 +76,20 @@ def parse_twitter_date(date_str: str) -> str:
 
 
 def main():
-    # Fetch bookmarks
-    print("Fetching bookmarks from Twitter...")
+    # Fetch bookmarks with full data (avatar, card_title)
+    print("Fetching bookmarks from Twitter (full data)...")
+    fetch_script = os.path.join(os.path.dirname(__file__), "..", "..", "scripts", "fetch-bookmarks-full.js")
+    # Resolve the path
+    fetch_script = os.path.abspath(fetch_script)
+    if not os.path.exists(fetch_script):
+        # Fallback: try ~/clawd/scripts/
+        fetch_script = os.path.expanduser("~/clawd/scripts/fetch-bookmarks-full.js")
+
     result = subprocess.run(
-        ["opencli", "twitter", "bookmarks", "--limit", "100", "--format", "json"],
+        ["node", fetch_script, "--limit", "100"],
         capture_output=True,
         text=True,
+        timeout=120,
     )
     if result.returncode != 0:
         print(f"Error fetching bookmarks: {result.stderr}", file=sys.stderr)
@@ -107,19 +115,23 @@ def main():
             continue
 
         text = bm.get("text", "")
-        categories = classify(text)
+        card_title = bm.get("card_title", "")
+        avatar = bm.get("avatar", "")
+        author_name = bm.get("author_name", bm.get("name", ""))
+        categories = classify(text + " " + card_title)
         created = parse_twitter_date(bm.get("created_at", ""))
 
         frontmatter = f"""---
 tweet_id: "{tweet_id}"
 author: "{escape_yaml_string(bm.get('author', ''))}"
-author_name: "{escape_yaml_string(bm.get('name', ''))}"
+author_name: "{escape_yaml_string(author_name)}"
+avatar: "{escape_yaml_string(avatar)}"
 text: "{escape_yaml_string(text)}"
+card_title: "{escape_yaml_string(card_title)}"
 likes: {bm.get('likes', 0)}
 retweets: {bm.get('retweets', 0)}
 url: "{bm.get('url', '')}"
 created_at: "{created}"
-bookmarked_at: "{today}"
 categories: {json.dumps(categories)}
 ---
 """

@@ -72,17 +72,48 @@ function formatShortDate(date: Date) {
 					data-categories={JSON.stringify(bm.data.categories)}
 					style={`--delay: ${100 + Math.min(i, 20) * 40}ms`}
 				>
-					<div class="mb-2 flex items-center justify-between gap-2">
-						<span class="font-serif text-sm font-medium text-[#8953d1] dark:text-[#a175e8]">
-							@{bm.data.author}
-						</span>
-						<time class="shrink-0 font-serif text-xs text-gray-400 dark:text-gray-500" datetime={bm.data.created_at.toISOString()}>
-							{formatShortDate(bm.data.created_at)}
-						</time>
+					{/* Author row: avatar + name + handle + date */}
+					<div class="mb-3 flex items-center gap-3">
+						{bm.data.avatar ? (
+							<img
+								src={bm.data.avatar}
+								alt={bm.data.author_name || bm.data.author}
+								class="h-10 w-10 shrink-0 rounded-full"
+								loading="lazy"
+							/>
+						) : (
+							<div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-200 font-serif text-sm font-medium text-gray-500 dark:bg-gray-700 dark:text-gray-400">
+								{(bm.data.author_name || bm.data.author).charAt(0).toUpperCase()}
+							</div>
+						)}
+						<div class="min-w-0 flex-1">
+							<div class="flex items-baseline gap-1.5">
+								<span class="truncate font-serif text-sm font-medium text-black dark:text-white">
+									{bm.data.author_name || bm.data.author}
+								</span>
+								<span class="shrink-0 font-serif text-xs text-gray-400 dark:text-gray-500">
+									@{bm.data.author}
+								</span>
+							</div>
+							<time class="font-serif text-xs text-gray-400 dark:text-gray-500" datetime={bm.data.created_at.toISOString()}>
+								{formatShortDate(bm.data.created_at)}
+							</time>
+						</div>
 					</div>
-					<p class="bookmark-text mb-3 font-serif text-sm leading-relaxed text-gray-700 dark:text-gray-300">
+
+					{/* Card/article title if present */}
+					{bm.data.card_title && (
+						<p class="mb-2 font-serif text-base font-medium leading-snug text-black dark:text-white">
+							{bm.data.card_title}
+						</p>
+					)}
+
+					{/* Tweet text */}
+					<p class="bookmark-text mb-3 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-400">
 						{bm.data.text}
 					</p>
+
+					{/* Footer: categories + likes */}
 					<div class="flex items-center justify-between">
 						<div class="flex flex-wrap gap-1.5">
 							{bm.data.categories.map((cat: string) => (
@@ -92,7 +123,7 @@ function formatShortDate(date: Date) {
 							))}
 						</div>
 						<span class="flex items-center gap-1 font-serif text-xs text-gray-400 dark:text-gray-500">
-							<span>❤️</span> {bm.data.likes.toLocaleString()}
+							❤️ {bm.data.likes.toLocaleString()}
 						</span>
 					</div>
 				</a>
