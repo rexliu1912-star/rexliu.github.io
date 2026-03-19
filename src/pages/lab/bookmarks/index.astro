@@ -1,0 +1,165 @@
+---
+import { getCollection } from "astro:content";
+import PageLayout from "@/layouts/Base.astro";
+
+const allBookmarks = await getCollection("bookmarks");
+const sortedBookmarks = allBookmarks.sort(
+	(a, b) => new Date(b.data.bookmarked_at).valueOf() - new Date(a.data.bookmarked_at).valueOf()
+		|| new Date(b.data.created_at).valueOf() - new Date(a.data.created_at).valueOf(),
+);
+
+const categories = ["all", "ai", "crypto", "macro", "builder", "life"] as const;
+const categoryLabels: Record<string, { en: string; zh: string }> = {
+	all: { en: "All", zh: "全部" },
+	ai: { en: "AI", zh: "AI" },
+	crypto: { en: "Crypto", zh: "加密" },
+	macro: { en: "Macro", zh: "宏观" },
+	builder: { en: "Builder", zh: "Builder" },
+	life: { en: "Life", zh: "生活" },
+};
+
+const meta = {
+	title: "Bookmarks — Lab",
+	description: "Curated tweets worth revisiting — AI, Crypto, Macro and more.",
+};
+
+function formatShortDate(date: Date) {
+	return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+
+function truncateText(text: string, maxLen = 200): string {
+	if (text.length <= maxLen) return text;
+	return text.slice(0, maxLen).trimEnd() + "…";
+}
+---
+
+<PageLayout meta={meta}>
+	<section class="mb-12">
+		<a href="/lab/" class="font-serif text-sm text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]">
+			← Lab
+		</a>
+		<h1 class="hero-reveal-text mt-4 mb-4 font-serif text-4xl font-bold dark:text-white">
+			<span class="lang-en">Bookmarks</span><span class="lang-zh">收藏夹</span>
+		</h1>
+		<p class="hero-reveal-subtitle lang-en max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">
+			Curated tweets worth revisiting.
+		</p>
+		<p class="hero-reveal-subtitle lang-zh max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">
+			值得反复看的推文。
+		</p>
+	</section>
+
+	<!-- Category Filter Tabs -->
+	<section class="mb-8">
+		<div class="flex flex-wrap gap-2" id="bookmark-filters">
+			{categories.map((cat) => (
+				<button
+					data-filter={cat}
+					class:list={[
+						"bookmark-filter-btn rounded-full px-4 py-1.5 font-serif text-sm transition-all",
+						cat === "all"
+							? "bg-[#8953d1] text-white"
+							: "bg-gray-100 text-gray-500 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700",
+					]}
+				>
+					<span class="lang-en">{categoryLabels[cat]?.en || cat}</span><span class="lang-zh">{categoryLabels[cat]?.zh || cat}</span>
+				</button>
+			))}
+		</div>
+	</section>
+
+	<!-- Bookmarks Grid -->
+	<section>
+		<div class="space-y-4" id="bookmarks-list">
+			{sortedBookmarks.map((bm, i) => (
+				<a
+					href={bm.data.url}
+					target="_blank"
+					rel="noopener noreferrer"
+					class="glow-card fade-in-up bookmark-card group block"
+					data-categories={JSON.stringify(bm.data.categories)}
+					style={`--delay: ${150 + i * 40}ms`}
+				>
+					<div class="mb-2 flex items-baseline justify-between gap-2">
+						<span
+							class="shrink-0 font-serif text-sm font-medium text-[#8953d1] dark:text-[#a175e8]"
+							onclick={`event.preventDefault(); event.stopPropagation(); window.open('https://x.com/${bm.data.author}', '_blank');`}
+						>
+							@{bm.data.author}
+						</span>
+						<time class="shrink-0 font-serif text-xs text-gray-400 dark:text-gray-500" datetime={bm.data.bookmarked_at.toISOString()}>
+							{formatShortDate(bm.data.bookmarked_at)}
+						</time>
+					</div>
+					<p class="line-clamp-3 font-serif text-sm leading-relaxed text-gray-700 dark:text-gray-300">
+						{truncateText(bm.data.text)}
+					</p>
+					<div class="mt-2 flex items-center justify-between">
+						<div class="flex flex-wrap gap-1.5">
+							{bm.data.categories.map((cat: string) => (
+								<span class="rounded-sm bg-gray-100 px-1.5 py-0.5 font-serif text-[10px] font-medium uppercase text-gray-500 dark:bg-gray-800 dark:text-gray-400">
+									{cat}
+								</span>
+							))}
+						</div>
+						<span class="font-serif text-xs text-gray-400 dark:text-gray-500">
+							❤️ {bm.data.likes.toLocaleString()}
+						</span>
+					</div>
+				</a>
+			))}
+		</div>
+
+		<!-- Empty state -->
+		<div id="bookmarks-empty" class="hidden py-12 text-center">
+			<p class="font-serif text-gray-400 dark:text-gray-500">
+				<span class="lang-en">No bookmarks in this category yet.</span>
+				<span class="lang-zh">该分类暂无收藏。</span>
+			</p>
+		</div>
+	</section>
+</PageLayout>
+
+<style>
+	.line-clamp-3 {
+		display: -webkit-box;
+		-webkit-line-clamp: 3;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+</style>
+
+<script>
+	document.addEventListener("astro:page-load", () => {
+		const filters = document.querySelectorAll<HTMLButtonElement>(".bookmark-filter-btn");
+		const cards = document.querySelectorAll<HTMLElement>(".bookmark-card");
+		const emptyState = document.getElementById("bookmarks-empty");
+
+		filters.forEach((btn) => {
+			btn.addEventListener("click", () => {
+				const filter = btn.dataset.filter || "all";
+
+				// Update active state
+				filters.forEach((b) => {
+					b.classList.remove("bg-[#8953d1]", "text-white");
+					b.classList.add("bg-gray-100", "text-gray-500", "dark:bg-gray-800", "dark:text-gray-400");
+				});
+				btn.classList.remove("bg-gray-100", "text-gray-500", "dark:bg-gray-800", "dark:text-gray-400");
+				btn.classList.add("bg-[#8953d1]", "text-white");
+
+				// Filter cards
+				let visibleCount = 0;
+				cards.forEach((card) => {
+					const cats: string[] = JSON.parse(card.dataset.categories || "[]");
+					const show = filter === "all" || cats.includes(filter);
+					card.style.display = show ? "" : "none";
+					if (show) visibleCount++;
+				});
+
+				if (emptyState) {
+					emptyState.classList.toggle("hidden", visibleCount > 0);
+				}
+			});
+		});
+	});
+</script>

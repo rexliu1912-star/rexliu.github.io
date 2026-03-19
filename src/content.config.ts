@@ -138,5 +138,22 @@ const snekDaily = defineCollection({
 	}),
 });
 
-// 9. 统一导出
-export const collections = { post, note, tag, digest, projects, "builder-log": builderLog, "ai-timeline": aiTimeline, "snek-daily": snekDaily };
+// 9. Bookmarks 集合
+const bookmarks = defineCollection({
+	loader: glob({ base: "./src/content/bookmarks", pattern: "**/*.{md,mdx}" }),
+	schema: z.object({
+		tweet_id: z.string(),
+		author: z.string(),
+		author_name: z.string(),
+		text: z.string(),
+		likes: z.number().default(0),
+		retweets: z.number().default(0),
+		url: z.string().url(),
+		created_at: z.coerce.date(),
+		bookmarked_at: z.coerce.date(),
+		categories: z.array(z.string()).default(["general"]),
+	}),
+});
+
+// 10. 统一导出
+export const collections = { post, note, tag, digest, projects, "builder-log": builderLog, "ai-timeline": aiTimeline, "snek-daily": snekDaily, bookmarks };
