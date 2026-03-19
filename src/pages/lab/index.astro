@@ -40,10 +40,6 @@ const latestLogs = allBuilderLogs
 	.sort((a, b) => new Date(b.data.date).valueOf() - new Date(a.data.date).valueOf())
 	.slice(0, 3);
 
-const allBookmarks = await getCollection("bookmarks");
-const latestBookmarks = allBookmarks
-	.sort((a, b) => new Date(b.data.created_at).valueOf() - new Date(a.data.created_at).valueOf())
-	.slice(0, 5);
 
 const allProjects = await getCollection("projects");
 const sortedProjects = allProjects.sort((a, b) => (a.data.order ?? 0) - (b.data.order ?? 0));
@@ -239,41 +235,6 @@ const statusLabels: Record<string, { en: string; zh: string }> = {
 		<div class="mt-6">
 			<a href="/lab/builder-log/" class="font-serif text-sm text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]">
 				<span class="lang-en">View all logs →</span><span class="lang-zh">查看全部日志 →</span>
-			</a>
-		</div>
-	</section>
-
-	<!-- Bookmarks -->
-	<section class="mb-16">
-		<h2 class="fade-in-up mb-8 font-serif text-xs font-bold tracking-widest text-gray-400 uppercase dark:text-gray-500" style="--delay: 200ms">
-			<span class="lang-en">Bookmarks</span><span class="lang-zh">收藏夹</span>
-		</h2>
-		<div class="space-y-6">
-			{latestBookmarks.map((bm, i) => (
-				<article class="glow-card fade-in-up" style={`--delay: ${300 + i * 60}ms`}>
-					<div class="mb-1 flex items-baseline justify-between gap-2">
-						<a href={bm.data.url} target="_blank" rel="noopener noreferrer" class="font-serif text-base font-medium text-black transition-colors hover:text-[#8953d1] dark:text-white dark:hover:text-[#a175e8]">
-							@{bm.data.author}
-						</a>
-						<time class="shrink-0 font-serif text-sm text-gray-400 dark:text-gray-500" datetime={bm.data.created_at.toISOString()}>
-							{formatShortDate(bm.data.created_at)}
-						</time>
-					</div>
-					<p class="line-clamp-2 font-serif text-sm leading-relaxed text-gray-500 dark:text-gray-400">
-						{bm.data.text.length > 150 ? bm.data.text.slice(0, 150).trimEnd() + "…" : bm.data.text}
-					</p>
-					<div class="mt-1.5 flex flex-wrap items-center gap-2 font-serif text-sm text-gray-400">
-						{bm.data.categories.map((cat: string) => (
-							<span class="rounded-sm bg-gray-100 px-1.5 py-0.5 text-[10px] font-medium uppercase dark:bg-gray-800">{cat}</span>
-						))}
-						<span class="ml-auto text-xs">❤️ {bm.data.likes.toLocaleString()}</span>
-					</div>
-				</article>
-			))}
-		</div>
-		<div class="mt-6">
-			<a href="/lab/bookmarks/" class="font-serif text-sm text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]">
-				<span class="lang-en">View all bookmarks →</span><span class="lang-zh">查看全部收藏 →</span>
 			</a>
 		</div>
 	</section>

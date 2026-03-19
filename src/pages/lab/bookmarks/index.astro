@@ -48,10 +48,10 @@ function formatShortDate(date: Date) {
 				<button
 					data-filter={cat}
 					class:list={[
-						"bookmark-filter-btn rounded-full px-4 py-1.5 font-serif text-sm transition-all cursor-pointer",
+						"bookmark-filter-btn rounded-full border px-3 py-1 font-serif text-xs transition-all cursor-pointer",
 						cat === "all"
-							? "bg-[#8953d1] text-white"
-							: "bg-gray-100 text-gray-500 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700",
+							? "border-[#8953d1] bg-[#8953d1]/10 text-[#8953d1] dark:border-[#a175e8] dark:bg-[#a175e8]/10 dark:text-[#a175e8]"
+							: "border-gray-200 text-gray-500 hover:border-[#8953d1] hover:text-[#8953d1] dark:border-gray-700 dark:text-gray-400 dark:hover:border-[#a175e8] dark:hover:text-[#a175e8]",
 					]}
 				>
 					<span class="lang-en">{categoryLabels[cat]?.en || cat}</span><span class="lang-zh">{categoryLabels[cat]?.zh || cat}</span>
@@ -128,13 +128,13 @@ function formatShortDate(date: Date) {
 			btn.addEventListener("click", () => {
 				const filter = btn.dataset.filter || "all";
 
-				// Update active state
+				// Update active state (match AI Timeline style)
 				filters.forEach((b) => {
-					b.classList.remove("bg-[#8953d1]", "text-white");
-					b.classList.add("bg-gray-100", "text-gray-500", "dark:bg-gray-800", "dark:text-gray-400");
+					b.classList.remove("border-[#8953d1]", "bg-[#8953d1]/10", "text-[#8953d1]", "dark:border-[#a175e8]", "dark:bg-[#a175e8]/10", "dark:text-[#a175e8]");
+					b.classList.add("border-gray-200", "text-gray-500", "dark:border-gray-700", "dark:text-gray-400");
 				});
-				btn.classList.remove("bg-gray-100", "text-gray-500", "dark:bg-gray-800", "dark:text-gray-400");
-				btn.classList.add("bg-[#8953d1]", "text-white");
+				btn.classList.remove("border-gray-200", "text-gray-500", "dark:border-gray-700", "dark:text-gray-400");
+				btn.classList.add("border-[#8953d1]", "bg-[#8953d1]/10", "text-[#8953d1]", "dark:border-[#a175e8]", "dark:bg-[#a175e8]/10", "dark:text-[#a175e8]");
 
 				// Filter cards
 				let visibleCount = 0;
