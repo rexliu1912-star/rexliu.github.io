@@ -4,8 +4,7 @@ import PageLayout from "@/layouts/Base.astro";
 
 const allBookmarks = await getCollection("bookmarks");
 const sortedBookmarks = allBookmarks.sort(
-	(a, b) => new Date(b.data.bookmarked_at).valueOf() - new Date(a.data.bookmarked_at).valueOf()
-		|| new Date(b.data.created_at).valueOf() - new Date(a.data.created_at).valueOf(),
+	(a, b) => new Date(b.data.created_at).valueOf() - new Date(a.data.created_at).valueOf(),
 );
 
 const categories = ["all", "ai", "crypto", "macro", "builder", "life"] as const;
@@ -26,11 +25,6 @@ const meta = {
 function formatShortDate(date: Date) {
 	return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
-
-function truncateText(text: string, maxLen = 200): string {
-	if (text.length <= maxLen) return text;
-	return text.slice(0, maxLen).trimEnd() + "…";
-}
 ---
 
 <PageLayout meta={meta}>
@@ -41,11 +35,9 @@ function truncateText(text: string, maxLen = 200): string {
 		<h1 class="hero-reveal-text mt-4 mb-4 font-serif text-4xl font-bold dark:text-white">
 			<span class="lang-en">Bookmarks</span><span class="lang-zh">收藏夹</span>
 		</h1>
-		<p class="hero-reveal-subtitle lang-en max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">
-			Curated tweets worth revisiting.
-		</p>
-		<p class="hero-reveal-subtitle lang-zh max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">
-			值得反复看的推文。
+		<p class="hero-reveal-subtitle max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">
+			<span class="lang-en">Curated tweets worth revisiting.</span>
+			<span class="lang-zh">值得反复看的推文。</span>
 		</p>
 	</section>
 
@@ -56,7 +48,7 @@ function truncateText(text: string, maxLen = 200): string {
 				<button
 					data-filter={cat}
 					class:list={[
-						"bookmark-filter-btn rounded-full px-4 py-1.5 font-serif text-sm transition-all",
+						"bookmark-filter-btn rounded-full px-4 py-1.5 font-serif text-sm transition-all cursor-pointer",
 						cat === "all"
 							? "bg-[#8953d1] text-white"
 							: "bg-gray-100 text-gray-500 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700",
@@ -68,7 +60,7 @@ function truncateText(text: string, maxLen = 200): string {
 		</div>
 	</section>
 
-	<!-- Bookmarks Grid -->
+	<!-- Bookmarks List -->
 	<section>
 		<div class="space-y-4" id="bookmarks-list">
 			{sortedBookmarks.map((bm, i) => (
@@ -76,34 +68,31 @@ function truncateText(text: string, maxLen = 200): string {
 					href={bm.data.url}
 					target="_blank"
 					rel="noopener noreferrer"
-					class="glow-card fade-in-up bookmark-card group block"
+					class="glow-card fade-in-up bookmark-card group block rounded-lg border border-gray-200 p-5 transition-all hover:border-purple-500/40 hover:shadow-[0_0_20px_#8953d122] dark:border-gray-800 dark:hover:border-purple-500/30"
 					data-categories={JSON.stringify(bm.data.categories)}
-					style={`--delay: ${150 + i * 40}ms`}
+					style={`--delay: ${100 + Math.min(i, 20) * 40}ms`}
 				>
-					<div class="mb-2 flex items-baseline justify-between gap-2">
-						<span
-							class="shrink-0 font-serif text-sm font-medium text-[#8953d1] dark:text-[#a175e8]"
-							onclick={`event.preventDefault(); event.stopPropagation(); window.open('https://x.com/${bm.data.author}', '_blank');`}
-						>
+					<div class="mb-2 flex items-center justify-between gap-2">
+						<span class="font-serif text-sm font-medium text-[#8953d1] dark:text-[#a175e8]">
 							@{bm.data.author}
 						</span>
-						<time class="shrink-0 font-serif text-xs text-gray-400 dark:text-gray-500" datetime={bm.data.bookmarked_at.toISOString()}>
-							{formatShortDate(bm.data.bookmarked_at)}
+						<time class="shrink-0 font-serif text-xs text-gray-400 dark:text-gray-500" datetime={bm.data.created_at.toISOString()}>
+							{formatShortDate(bm.data.created_at)}
 						</time>
 					</div>
-					<p class="line-clamp-3 font-serif text-sm leading-relaxed text-gray-700 dark:text-gray-300">
-						{truncateText(bm.data.text)}
+					<p class="bookmark-text mb-3 font-serif text-sm leading-relaxed text-gray-700 dark:text-gray-300">
+						{bm.data.text}
 					</p>
-					<div class="mt-2 flex items-center justify-between">
+					<div class="flex items-center justify-between">
 						<div class="flex flex-wrap gap-1.5">
 							{bm.data.categories.map((cat: string) => (
 								<span class="rounded-sm bg-gray-100 px-1.5 py-0.5 font-serif text-[10px] font-medium uppercase text-gray-500 dark:bg-gray-800 dark:text-gray-400">
-									{cat}
+									<span class="lang-en">{categoryLabels[cat]?.en || cat}</span><span class="lang-zh">{categoryLabels[cat]?.zh || cat}</span>
 								</span>
 							))}
 						</div>
-						<span class="font-serif text-xs text-gray-400 dark:text-gray-500">
-							❤️ {bm.data.likes.toLocaleString()}
+						<span class="flex items-center gap-1 font-serif text-xs text-gray-400 dark:text-gray-500">
+							<span>❤️</span> {bm.data.likes.toLocaleString()}
 						</span>
 					</div>
 				</a>
@@ -121,7 +110,7 @@ function truncateText(text: string, maxLen = 200): string {
 </PageLayout>
 
 <style>
-	.line-clamp-3 {
+	.bookmark-text {
 		display: -webkit-box;
 		-webkit-line-clamp: 3;
 		-webkit-box-orient: vertical;

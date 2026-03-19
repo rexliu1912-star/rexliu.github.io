@@ -150,7 +150,7 @@ const bookmarks = defineCollection({
 		retweets: z.number().default(0),
 		url: z.string().url(),
 		created_at: z.coerce.date(),
-		bookmarked_at: z.coerce.date(),
+		bookmarked_at: z.coerce.date().optional(),
 		categories: z.array(z.string()).default(["general"]),
 	}),
 });

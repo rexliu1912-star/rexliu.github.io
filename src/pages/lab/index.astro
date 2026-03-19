@@ -42,8 +42,7 @@ const latestLogs = allBuilderLogs
 
 const allBookmarks = await getCollection("bookmarks");
 const latestBookmarks = allBookmarks
-	.sort((a, b) => new Date(b.data.bookmarked_at).valueOf() - new Date(a.data.bookmarked_at).valueOf()
-		|| new Date(b.data.created_at).valueOf() - new Date(a.data.created_at).valueOf())
+	.sort((a, b) => new Date(b.data.created_at).valueOf() - new Date(a.data.created_at).valueOf())
 	.slice(0, 5);
 
 const allProjects = await getCollection("projects");
@@ -256,8 +255,8 @@ const statusLabels: Record<string, { en: string; zh: string }> = {
 						<a href={bm.data.url} target="_blank" rel="noopener noreferrer" class="font-serif text-base font-medium text-black transition-colors hover:text-[#8953d1] dark:text-white dark:hover:text-[#a175e8]">
 							@{bm.data.author}
 						</a>
-						<time class="shrink-0 font-serif text-sm text-gray-400 dark:text-gray-500" datetime={bm.data.bookmarked_at.toISOString()}>
-							{formatShortDate(bm.data.bookmarked_at)}
+						<time class="shrink-0 font-serif text-sm text-gray-400 dark:text-gray-500" datetime={bm.data.created_at.toISOString()}>
+							{formatShortDate(bm.data.created_at)}
 						</time>
 					</div>
 					<p class="line-clamp-2 font-serif text-sm leading-relaxed text-gray-500 dark:text-gray-400">
