@@ -2,11 +2,43 @@
 import { getCollection } from "astro:content";
 import PageLayout from "@/layouts/Base.astro";
 
+// Fetch all collections for counts & previews
 const allTimelineEvents = await getCollection("ai-timeline");
-const latestEvents = allTimelineEvents
-	.sort((a, b) => new Date(b.data.date).valueOf() - new Date(a.data.date).valueOf())
-	.slice(0, 8);
+const allBookmarks = await getCollection("bookmarks");
+const allDigests = await getCollection("digest");
+const allBuilderLogs = await getCollection("builder-log");
+const allSnekDaily = await getCollection("snek-daily");
+const allProjects = await getCollection("projects");
 
+// Counts for stat bar
+const timelineCount = allTimelineEvents.length;
+const bookmarkCount = allBookmarks.length;
+const digestCount = allDigests.length;
+const builderLogCount = allBuilderLogs.length;
+
+// Sort helpers
+const sortByDate = <T extends { data: { date: Date } }>(arr: T[]) =>
+	arr.sort((a, b) => new Date(b.data.date).valueOf() - new Date(a.data.date).valueOf());
+
+// Latest items for previews
+const latestBookmark = sortByDate([...allBookmarks])[0];
+const latestDigest = sortByDate([...allDigests])[0];
+const latestBuilderLog = sortByDate([...allBuilderLogs])[0];
+
+// Products: exclude Bookmarks and Library (they go in Curated)
+const excludeFromProducts = ["bookmarks", "library"];
+const heroProject = allProjects.find(p => p.id === "rex-ai-hq");
+const otherProjects = allProjects
+	.filter(p => p.id !== "rex-ai-hq" && !excludeFromProducts.includes(p.id))
+	.sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
+
+// Timeline: latest 5
+const latestEvents = sortByDate([...allTimelineEvents]).slice(0, 5);
+
+// SNEK Daily: latest 3
+const latestSnek = sortByDate([...allSnekDaily]).slice(0, 3);
+
+// Category helpers for timeline
 const timelineCategoryColors: Record<string, string> = {
 	model: "text-purple-500",
 	funding: "text-green-500",
@@ -15,7 +47,6 @@ const timelineCategoryColors: Record<string, string> = {
 	"crypto-ai": "text-yellow-500",
 	product: "text-cyan-500",
 };
-
 const timelineCategoryLabels: Record<string, { en: string; zh: string }> = {
 	model: { en: "Model", zh: "模型" },
 	funding: { en: "Funding", zh: "融资" },
@@ -25,49 +56,37 @@ const timelineCategoryLabels: Record<string, { en: string; zh: string }> = {
 	product: { en: "Product", zh: "产品" },
 };
 
-const allDigests = await getCollection("digest");
-const sortedDigests = allDigests
-	.sort((a, b) => new Date(b.data.date).valueOf() - new Date(a.data.date).valueOf())
-	.slice(0, 3);
-
-const allSnekDaily = await getCollection("snek-daily");
-const latestSnek = allSnekDaily
-	.sort((a, b) => new Date(b.data.date).valueOf() - new Date(a.data.date).valueOf())
-	.slice(0, 3);
-
-const allBuilderLogs = await getCollection("builder-log");
-const latestLogs = allBuilderLogs
-	.sort((a, b) => new Date(b.data.date).valueOf() - new Date(a.data.date).valueOf())
-	.slice(0, 3);
-
-
-const allProjects = await getCollection("projects");
-const sortedProjects = allProjects.sort((a, b) => (a.data.order ?? 0) - (b.data.order ?? 0));
-
-const meta = {
-	title: "Rex's Lab",
-	description: "Rex's Lab — AI Timeline, Digest, SNEK Daily, Builder's Log & Projects",
+const statusColors: Record<string, string> = {
+	running: "text-green-500",
+	building: "text-yellow-500",
+	planning: "text-gray-400",
+};
+const statusDots: Record<string, string> = {
+	running: "bg-green-500",
+	building: "bg-yellow-500",
+	planning: "bg-gray-400",
+};
+const statusLabels: Record<string, { en: string; zh: string }> = {
+	running: { en: "running", zh: "运行中" },
+	building: { en: "building", zh: "开发中" },
+	planning: { en: "planning", zh: "规划中" },
 };
 
 function formatShortDate(date: Date) {
 	return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
-const statusColors: Record<string, string> = {
-	running: "text-green-500",
-	building: "text-yellow-500",
-	planning: "text-gray-400",
-};
+const agentEmojis = ["🧡", "🐍", "👁️", "⚙️", "🎨", "📊"];
 
-const statusLabels: Record<string, { en: string; zh: string }> = {
-	running: { en: "running", zh: "运行中" },
-	building: { en: "building", zh: "开发中" },
-	planning: { en: "planning", zh: "规划中" },
+const meta = {
+	title: "Rex's Lab",
+	description: "Rex's Lab — AI Timeline, Digest, SNEK Daily, Builder's Log & Projects",
 };
 ---
 
 <PageLayout meta={meta}>
-	<section class="mb-12">
+	<!-- ====== HERO ====== -->
+	<section class="mb-16">
 		<h1 class="hero-reveal-text mb-4 font-serif text-4xl font-bold dark:text-white">
 			Rex's Lab
 		</h1>
@@ -77,99 +96,257 @@ const statusLabels: Record<string, { en: string; zh: string }> = {
 		<p class="hero-reveal-subtitle lang-zh max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">
 			AI 时代的每个瞬间，精选阅读，以及加密与 AI 的实验。
 		</p>
+
+		<!-- Stat Bar -->
+		<div class="lab-stat-bar mt-6 flex flex-wrap items-center gap-x-4 gap-y-1 font-serif text-sm">
+			<span class="lang-en">
+				<span class="lab-counter font-bold" style="color:#8953d1" data-target={timelineCount}>0</span>
+				<span class="text-gray-400"> AI events</span>
+			</span>
+			<span class="lang-zh">
+				<span class="lab-counter font-bold" style="color:#8953d1" data-target={timelineCount}>0</span>
+				<span class="text-gray-400"> 条 AI 事件</span>
+			</span>
+			<span class="text-gray-300 dark:text-gray-600">·</span>
+			<span class="lang-en">
+				<span class="lab-counter font-bold" style="color:#8953d1" data-target={bookmarkCount}>0</span>
+				<span class="text-gray-400"> tweets curated</span>
+			</span>
+			<span class="lang-zh">
+				<span class="lab-counter font-bold" style="color:#8953d1" data-target={bookmarkCount}>0</span>
+				<span class="text-gray-400"> 条精选推文</span>
+			</span>
+			<span class="text-gray-300 dark:text-gray-600">·</span>
+			<span class="lang-en">
+				<span class="lab-counter font-bold" style="color:#8953d1" data-target="6">0</span>
+				<span class="text-gray-400"> agents</span>
+			</span>
+			<span class="lang-zh">
+				<span class="lab-counter font-bold" style="color:#8953d1" data-target="6">0</span>
+				<span class="text-gray-400"> 个 Agent</span>
+			</span>
+			<span class="text-gray-300 dark:text-gray-600">·</span>
+			<span class="lang-en">
+				<span class="lab-counter font-bold" style="color:#8953d1" data-target={builderLogCount}>0</span>
+				<span class="text-gray-400"> builder logs</span>
+			</span>
+			<span class="lang-zh">
+				<span class="lab-counter font-bold" style="color:#8953d1" data-target={builderLogCount}>0</span>
+				<span class="text-gray-400"> 篇 Builder Log</span>
+			</span>
+		</div>
 	</section>
 
-	<!-- AI Timeline — Hero Section -->
-	<section class="mb-16">
+	<!-- ====== SECTION 1: PRODUCTS ====== -->
+	<section class="mb-20">
 		<h2 class="fade-in-up mb-8 font-serif text-xs font-bold tracking-widest text-gray-400 uppercase dark:text-gray-500" style="--delay: 100ms">
-			<span class="lang-en">AI Timeline</span><span class="lang-zh">AI 大事记</span>
+			<span class="lang-en">Products</span><span class="lang-zh">产品</span>
 		</h2>
-		<div class="relative border-l-2 border-gray-200 pl-6 dark:border-gray-700">
-			{latestEvents.map((ev, i) => (
-				<div class="fade-in-up relative mb-6 last:mb-0" style={`--delay: ${150 + i * 60}ms`}>
-					<div class="absolute -left-[31px] top-1.5 h-3 w-3 rounded-full border-2 border-gray-200 bg-[var(--color-global-bg)] dark:border-gray-700" />
-					<div class="flex flex-wrap items-baseline gap-2">
-						<time class="shrink-0 font-serif text-sm text-gray-400 dark:text-gray-500" datetime={ev.data.date.toISOString()}>
-							{formatShortDate(ev.data.date)}
-						</time>
-						<span class={`shrink-0 rounded-sm px-1.5 py-0.5 font-serif text-[10px] font-medium uppercase ${timelineCategoryColors[ev.data.category] || "text-gray-400"} bg-gray-100 dark:bg-gray-800`}>
-							<span class="lang-en">{timelineCategoryLabels[ev.data.category]?.en || ev.data.category}</span><span class="lang-zh">{timelineCategoryLabels[ev.data.category]?.zh || ev.data.category}</span>
+
+		<!-- Hero Card: Rex AI HQ -->
+		<a href="/lab/agents/" class="lab-hero-card glow-card fade-in-up group mb-8 block rounded-xl border border-purple-500/20 p-6 transition-all hover:border-purple-500/40 sm:p-8" style="--delay: 150ms">
+			<div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+				<div class="flex-1">
+					<div class="mb-2 flex items-center gap-2">
+						<span class="text-2xl">🏠</span>
+						<h3 class="font-serif text-xl font-bold text-black group-hover:text-[#8953d1] dark:text-white dark:group-hover:text-[#a175e8] sm:text-2xl">
+							Rex AI HQ
+						</h3>
+						<span class="ml-2 inline-flex items-center gap-1 rounded-full bg-green-500/10 px-2 py-0.5 text-xs font-medium text-green-500">
+							<span class="inline-block h-1.5 w-1.5 rounded-full bg-green-500"></span>
+							running
 						</span>
 					</div>
-					{ev.data.source ? (
-						<a href={ev.data.source} target="_blank" rel="noopener noreferrer" class="mt-1 block font-serif text-base leading-relaxed text-black transition-colors hover:text-[#8953d1] dark:text-white dark:hover:text-[#a175e8]">
-							<span class="lang-en">{ev.data.title}</span><span class="lang-zh">{ev.data.title_zh || ev.data.title}</span> ↗
-						</a>
-					) : (
-						<p class="mt-1 font-serif text-base leading-relaxed text-black dark:text-white">
-							<span class="lang-en">{ev.data.title}</span><span class="lang-zh">{ev.data.title_zh || ev.data.title}</span>
-						</p>
-					)}
-					{ev.body && ev.body.trim() && (
-						<p class="mt-0.5 font-serif text-sm leading-relaxed text-gray-500 dark:text-gray-400">
-							<span class="lang-en">{ev.body.trim().slice(0, 120)}{ev.body.trim().length > 120 ? "…" : ""}</span>
-							<span class="lang-zh">{(ev.data.body_zh || ev.body).trim().slice(0, 120)}{(ev.data.body_zh || ev.body).trim().length > 120 ? "…" : ""}</span>
-						</p>
-					)}
+					<p class="lang-en font-serif text-base leading-relaxed text-gray-500 dark:text-gray-400">
+						6 AI agents working 24/7 — writing, researching, coding, designing, analyzing.
+					</p>
+					<p class="lang-zh font-serif text-base leading-relaxed text-gray-500 dark:text-gray-400">
+						6 个 AI Agent 全天候运转：写作、研究、开发、设计、分析。
+					</p>
 				</div>
-			))}
+				<div class="flex items-center gap-2">
+					{agentEmojis.map(emoji => (
+						<span class="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-lg dark:bg-gray-800">{emoji}</span>
+					))}
+					<span class="ml-2 font-serif text-sm text-purple-400 opacity-0 transition-opacity group-hover:opacity-100">→</span>
+				</div>
+			</div>
+		</a>
+
+		<!-- Product Grid -->
+		<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+			{otherProjects.map((p, i) => {
+				const hasUrl = !!p.data.url;
+				const isExternal = hasUrl && p.data.url!.startsWith("http");
+				const Tag = hasUrl ? "a" : "div";
+				const linkProps = hasUrl
+					? isExternal
+						? { href: p.data.url, target: "_blank", rel: "noopener noreferrer" }
+						: { href: p.data.url }
+					: {};
+				return (
+					<Tag {...linkProps} class={`lab-product-card glow-card fade-in-up rounded-xl border p-5 transition-all ${hasUrl ? "group block cursor-pointer border-gray-200 hover:border-[#8953d1]/40 dark:border-gray-800 dark:hover:border-[#a175e8]/40" : "border-gray-200 dark:border-gray-800"}`} style={`--delay: ${200 + i * 80}ms`}>
+						<div class="mb-2 flex items-center gap-2">
+							{p.data.icon && <span class="text-lg">{p.data.icon}</span>}
+							<h3 class={`font-serif text-base font-medium text-black dark:text-white ${hasUrl ? "group-hover:text-[#8953d1] dark:group-hover:text-[#a175e8]" : ""}`}>
+								<span class="lang-en">{p.data.title}</span><span class="lang-zh">{p.data.title_zh || p.data.title}</span>
+							</h3>
+							<span class={`ml-auto inline-flex items-center gap-1 text-xs ${statusColors[p.data.status] || "text-gray-400"}`}>
+								<span class={`inline-block h-1.5 w-1.5 rounded-full ${statusDots[p.data.status] || "bg-gray-400"}`}></span>
+								<span class="lang-en">{statusLabels[p.data.status]?.en || p.data.status}</span><span class="lang-zh">{statusLabels[p.data.status]?.zh || p.data.status}</span>
+							</span>
+						</div>
+						<p class="font-serif text-sm leading-relaxed text-gray-500 dark:text-gray-400">
+							<span class="lang-en">{p.data.description}</span><span class="lang-zh">{p.data.description_zh || p.data.description}</span>
+						</p>
+						{hasUrl && (
+							<span class="mt-2 block font-serif text-xs text-purple-400 opacity-0 transition-opacity group-hover:opacity-100">
+								{isExternal ? "↗" : "→"}
+							</span>
+						)}
+					</Tag>
+				);
+			})}
 		</div>
-		<div class="mt-8">
-			<a href="/lab/ai-timeline/" class="font-serif text-sm text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]">
-				<span class="lang-en">View full timeline →</span><span class="lang-zh">查看完整时间线 →</span>
+	</section>
+
+	<!-- ====== SECTION 2: CURATED ====== -->
+	<section class="mb-20">
+		<h2 class="fade-in-up mb-8 font-serif text-xs font-bold tracking-widest text-gray-400 uppercase dark:text-gray-500" style="--delay: 100ms">
+			<span class="lang-en">Curated</span><span class="lang-zh">精选</span>
+		</h2>
+
+		<div class="lab-curated-scroll flex gap-4 overflow-x-auto pb-4 lg:grid lg:grid-cols-4 lg:overflow-visible lg:pb-0">
+			<!-- Bookmarks -->
+			<a href="/lab/bookmarks/" class="lab-curated-card lab-slide-in fade-in-up group flex w-[280px] shrink-0 flex-col rounded-xl border border-gray-200 p-5 transition-all hover:border-[#8953d1]/40 dark:border-gray-800 dark:hover:border-[#a175e8]/40 lg:w-auto" style="--delay: 150ms">
+				<span class="mb-3 text-2xl">🔖</span>
+				<h3 class="mb-1 font-serif text-base font-medium text-black group-hover:text-[#8953d1] dark:text-white dark:group-hover:text-[#a175e8]">
+					Bookmarks
+				</h3>
+				<p class="font-serif text-sm text-gray-400">
+					<span class="lang-en">{bookmarkCount} curated tweets</span>
+					<span class="lang-zh">{bookmarkCount} 条精选推文</span>
+				</p>
+				{latestBookmark && (
+					<p class="mt-2 line-clamp-1 font-serif text-xs text-gray-400 dark:text-gray-500">
+						Latest: @{latestBookmark.data.author}
+					</p>
+				)}
+				<span class="mt-auto pt-3 font-serif text-sm text-purple-400 opacity-0 transition-opacity group-hover:opacity-100">→</span>
+			</a>
+
+			<!-- Digest -->
+			<a href="/lab/digest/" class="lab-curated-card lab-slide-in fade-in-up group flex w-[280px] shrink-0 flex-col rounded-xl border border-gray-200 p-5 transition-all hover:border-[#8953d1]/40 dark:border-gray-800 dark:hover:border-[#a175e8]/40 lg:w-auto" style="--delay: 230ms">
+				<span class="mb-3 text-2xl">📖</span>
+				<h3 class="mb-1 font-serif text-base font-medium text-black group-hover:text-[#8953d1] dark:text-white dark:group-hover:text-[#a175e8]">
+					Digest
+				</h3>
+				<p class="font-serif text-sm text-gray-400">
+					<span class="lang-en">{digestCount} curated reads</span>
+					<span class="lang-zh">{digestCount} 篇精选阅读</span>
+				</p>
+				{latestDigest && (
+					<p class="mt-2 line-clamp-1 font-serif text-xs text-gray-400 dark:text-gray-500">
+						<span class="lang-en">Latest: {latestDigest.data.title.slice(0, 40)}{latestDigest.data.title.length > 40 ? "…" : ""}</span>
+						<span class="lang-zh">最新: {(latestDigest.data.title_zh || latestDigest.data.title).slice(0, 30)}{(latestDigest.data.title_zh || latestDigest.data.title).length > 30 ? "…" : ""}</span>
+					</p>
+				)}
+				<span class="mt-auto pt-3 font-serif text-sm text-purple-400 opacity-0 transition-opacity group-hover:opacity-100">→</span>
+			</a>
+
+			<!-- Builder's Log -->
+			<a href="/lab/builder-log/" class="lab-curated-card lab-slide-in fade-in-up group flex w-[280px] shrink-0 flex-col rounded-xl border border-gray-200 p-5 transition-all hover:border-[#8953d1]/40 dark:border-gray-800 dark:hover:border-[#a175e8]/40 lg:w-auto" style="--delay: 310ms">
+				<span class="mb-3 text-2xl">🔨</span>
+				<h3 class="mb-1 font-serif text-base font-medium text-black group-hover:text-[#8953d1] dark:text-white dark:group-hover:text-[#a175e8]">
+					Builder's Log
+				</h3>
+				<p class="font-serif text-sm text-gray-400">
+					<span class="lang-en">{builderLogCount} build logs</span>
+					<span class="lang-zh">{builderLogCount} 篇造物日志</span>
+				</p>
+				{latestBuilderLog && (
+					<p class="mt-2 line-clamp-1 font-serif text-xs text-gray-400 dark:text-gray-500">
+						<span class="lang-en">Latest: {latestBuilderLog.data.title.slice(0, 40)}{latestBuilderLog.data.title.length > 40 ? "…" : ""}</span>
+						<span class="lang-zh">最新: {(latestBuilderLog.data.title_zh || latestBuilderLog.data.title).slice(0, 30)}{(latestBuilderLog.data.title_zh || latestBuilderLog.data.title).length > 30 ? "…" : ""}</span>
+					</p>
+				)}
+				<span class="mt-auto pt-3 font-serif text-sm text-purple-400 opacity-0 transition-opacity group-hover:opacity-100">→</span>
+			</a>
+
+			<!-- Library -->
+			<a href="/os/library" class="lab-curated-card lab-slide-in fade-in-up group flex w-[280px] shrink-0 flex-col rounded-xl border border-gray-200 p-5 transition-all hover:border-[#8953d1]/40 dark:border-gray-800 dark:hover:border-[#a175e8]/40 lg:w-auto" style="--delay: 390ms">
+				<span class="mb-3 text-2xl">📚</span>
+				<h3 class="mb-1 font-serif text-base font-medium text-black group-hover:text-[#8953d1] dark:text-white dark:group-hover:text-[#a175e8]">
+					Library
+				</h3>
+				<p class="font-serif text-sm text-gray-400">
+					<span class="lang-en">Books, films & shows</span>
+					<span class="lang-zh">书影记录</span>
+				</p>
+				<p class="mt-2 font-serif text-xs text-gray-400 dark:text-gray-500">
+					<span class="lang-en">What shaped how I think</span>
+					<span class="lang-zh">塑造思维的书与片</span>
+				</p>
+				<span class="mt-auto pt-3 font-serif text-sm text-purple-400 opacity-0 transition-opacity group-hover:opacity-100">→</span>
 			</a>
 		</div>
 	</section>
 
-	<!-- Daily Section: Digest + SNEK Daily -->
+	<!-- ====== SECTION 3: DATA STREAMS ====== -->
 	<section class="mb-16">
-		<h2 class="fade-in-up mb-8 font-serif text-xs font-bold tracking-widest text-gray-400 uppercase dark:text-gray-500" style="--delay: 200ms">
-			<span class="lang-en">Daily</span><span class="lang-zh">每日更新</span>
+		<h2 class="fade-in-up mb-2 font-serif text-xs font-bold tracking-widest text-gray-400 uppercase dark:text-gray-500" style="--delay: 100ms">
+			<span class="lang-en">Data Streams</span><span class="lang-zh">数据流</span>
 		</h2>
+		<p class="fade-in-up mb-8 font-serif text-sm text-gray-400 dark:text-gray-500" style="--delay: 150ms">
+			<span class="lang-en">Automated feeds running 24/7.</span>
+			<span class="lang-zh">全天候自动化数据。</span>
+		</p>
 
 		<div class="grid gap-8 lg:grid-cols-2">
-			<!-- Digest Column -->
-			<div>
-				<h3 class="mb-4 font-serif text-base font-medium tracking-wide text-gray-500 dark:text-gray-400"><span class="lang-en">Digest</span><span class="lang-zh">精选阅读</span></h3>
-				<div class="space-y-6">
-					{sortedDigests.map((d, i) => (
-						<article class="glow-card fade-in-up" style={`--delay: ${250 + i * 60}ms`}>
-							<div class="mb-1 flex items-baseline justify-between gap-2">
-								<a href={`/lab/digest/${d.id}/`} class="font-serif text-base font-medium text-black transition-colors hover:text-[#8953d1] dark:text-white dark:hover:text-[#a175e8]">
-									<span class="lang-en">{d.data.title}</span><span class="lang-zh">{d.data.title_zh || d.data.title}</span>
-								</a>
-								<time class="shrink-0 font-serif text-sm text-gray-400 dark:text-gray-500" datetime={d.data.date.toISOString()}>
-									{formatShortDate(d.data.date)}
+			<!-- Left: AI Timeline -->
+			<div class="fade-in-up" style="--delay: 200ms">
+				<h3 class="mb-4 font-serif text-base font-medium tracking-wide text-gray-500 dark:text-gray-400">
+					<span class="lang-en">AI Timeline</span><span class="lang-zh">AI 大事记</span>
+				</h3>
+				<div class="relative border-l-2 border-gray-200 pl-6 dark:border-gray-700">
+					{latestEvents.map((ev, i) => (
+						<div class="fade-in-up relative mb-6 last:mb-0" style={`--delay: ${250 + i * 60}ms`}>
+							<div class="absolute -left-[31px] top-1.5 h-3 w-3 rounded-full border-2 border-gray-200 bg-[var(--color-global-bg)] dark:border-gray-700" />
+							<div class="flex flex-wrap items-baseline gap-2">
+								<time class="shrink-0 font-serif text-sm text-gray-400 dark:text-gray-500" datetime={ev.data.date.toISOString()}>
+									{formatShortDate(ev.data.date)}
 								</time>
+								<span class={`shrink-0 rounded-sm px-1.5 py-0.5 font-serif text-[10px] font-medium uppercase ${timelineCategoryColors[ev.data.category] || "text-gray-400"} bg-gray-100 dark:bg-gray-800`}>
+									<span class="lang-en">{timelineCategoryLabels[ev.data.category]?.en || ev.data.category}</span><span class="lang-zh">{timelineCategoryLabels[ev.data.category]?.zh || ev.data.category}</span>
+								</span>
 							</div>
-							{d.data.summary && (
-								<p class="font-serif text-sm leading-relaxed text-gray-500 dark:text-gray-400">
-									<span class="lang-en">{d.data.summary}</span><span class="lang-zh">{d.data.summary_zh || d.data.summary}</span>
+							{ev.data.source ? (
+								<a href={ev.data.source} target="_blank" rel="noopener noreferrer" class="mt-1 block font-serif text-base leading-relaxed text-black transition-colors hover:text-[#8953d1] dark:text-white dark:hover:text-[#a175e8]">
+									<span class="lang-en">{ev.data.title}</span><span class="lang-zh">{ev.data.title_zh || ev.data.title}</span> ↗
+								</a>
+							) : (
+								<p class="mt-1 font-serif text-base leading-relaxed text-black dark:text-white">
+									<span class="lang-en">{ev.data.title}</span><span class="lang-zh">{ev.data.title_zh || ev.data.title}</span>
 								</p>
 							)}
-							{d.data.tags.length > 0 && (
-								<div class="mt-1.5 flex flex-wrap items-center gap-2 font-serif text-sm text-gray-400">
-									{d.data.tags.map((tag: string) => (
-										<span class="capitalize before:content-['#']">{tag}</span>
-									))}
-								</div>
-							)}
-						</article>
+						</div>
 					))}
 				</div>
-				<div class="mt-4">
-					<a href="/lab/digest/" class="font-serif text-sm text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]">
-						<span class="lang-en">View all digests →</span><span class="lang-zh">查看全部精选 →</span>
+				<div class="mt-6">
+					<a href="/lab/ai-timeline/" class="font-serif text-sm text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]">
+						<span class="lang-en">View full timeline →</span><span class="lang-zh">查看完整时间线 →</span>
 					</a>
 				</div>
 			</div>
 
-			<!-- SNEK Daily Column -->
-			<div>
-				<h3 class="mb-4 font-serif text-base font-medium tracking-wide text-gray-500 dark:text-gray-400"><span class="lang-en">SNEK Daily</span><span class="lang-zh">SNEK 日报</span></h3>
+			<!-- Right: SNEK Daily -->
+			<div class="fade-in-up" style="--delay: 250ms">
+				<h3 class="mb-4 font-serif text-base font-medium tracking-wide text-gray-500 dark:text-gray-400">
+					<span class="lang-en">SNEK Daily</span><span class="lang-zh">SNEK 日报</span>
+				</h3>
 				<div class="space-y-6">
 					{latestSnek.map((d, i) => (
-						<article class="glow-card fade-in-up" style={`--delay: ${250 + i * 60}ms`}>
+						<article class="glow-card fade-in-up" style={`--delay: ${300 + i * 60}ms`}>
 							<div class="mb-1 flex items-baseline justify-between gap-2">
 								{d.data.btc_price && (
 									<a href={`/lab/snek-daily/${d.id}/`} class="font-serif text-base font-medium text-black transition-colors hover:text-[#8953d1] dark:text-white dark:hover:text-[#a175e8]">
@@ -194,7 +371,7 @@ const statusLabels: Record<string, { en: string; zh: string }> = {
 						</article>
 					))}
 				</div>
-				<div class="mt-4">
+				<div class="mt-6">
 					<a href="/lab/snek-daily/" class="font-serif text-sm text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]">
 						<span class="lang-en">View all dailies →</span><span class="lang-zh">查看全部日报 →</span>
 					</a>
@@ -202,76 +379,180 @@ const statusLabels: Record<string, { en: string; zh: string }> = {
 			</div>
 		</div>
 	</section>
-
-	<!-- Builder's Log -->
-	<section class="mb-16">
-		<h2 class="fade-in-up mb-8 font-serif text-xs font-bold tracking-widest text-gray-400 uppercase dark:text-gray-500" style="--delay: 200ms">
-			<span class="lang-en">Builder's Log</span><span class="lang-zh">Builder's Log</span>
-		</h2>
-		<div class="space-y-6">
-			{latestLogs.map((log, i) => (
-				<article class="glow-card fade-in-up" style={`--delay: ${300 + i * 80}ms`}>
-					<div class="mb-1 flex items-baseline justify-between gap-2">
-						<a href={`/lab/builder-log/${log.id}/`} class="font-serif text-base font-medium text-black transition-colors hover:text-[#8953d1] dark:text-white dark:hover:text-[#a175e8]">
-							<span class="lang-en">{log.data.title}</span><span class="lang-zh">{log.data.title_zh || log.data.title}</span>
-						</a>
-						<time class="shrink-0 font-serif text-sm text-gray-400 dark:text-gray-500" datetime={log.data.date.toISOString()}>
-							{formatShortDate(log.data.date)}
-						</time>
-					</div>
-					<p class="font-serif text-sm leading-relaxed text-gray-500 dark:text-gray-400">
-						<span class="lang-en">{log.data.summary}</span><span class="lang-zh">{log.data.summary_zh || log.data.summary}</span>
-					</p>
-					{log.data.agents.length > 0 && (
-						<div class="mt-1.5 flex flex-wrap items-center gap-2 font-serif text-sm text-gray-400">
-							{log.data.agents.map((agent: string) => (
-								<span class="capitalize before:content-['@']">{agent}</span>
-							))}
-						</div>
-					)}
-				</article>
-			))}
-		</div>
-		<div class="mt-6">
-			<a href="/lab/builder-log/" class="font-serif text-sm text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]">
-				<span class="lang-en">View all logs →</span><span class="lang-zh">查看全部日志 →</span>
-			</a>
-		</div>
-	</section>
-
-	<!-- Projects -->
-	<section class="mb-16">
-		<h2 class="fade-in-up mb-8 font-serif text-xs font-bold tracking-widest text-gray-400 uppercase dark:text-gray-500" style="--delay: 200ms">
-			<span class="lang-en">Projects</span><span class="lang-zh">项目</span>
-		</h2>
-		<div class="grid gap-4 sm:grid-cols-2">
-			{sortedProjects.map((p, i) => {
-				const hasUrl = !!p.data.url;
-				const isExternal = hasUrl && p.data.url!.startsWith("http");
-				const Tag = hasUrl ? "a" : "div";
-				const linkProps = hasUrl
-					? isExternal
-						? { href: p.data.url, target: "_blank", rel: "noopener noreferrer" }
-						: { href: p.data.url }
-					: {};
-				return (
-				<Tag {...linkProps} class={`glow-card fade-in-up rounded-lg border p-5 transition-all ${hasUrl ? "group block cursor-pointer border-purple-500/20 hover:border-purple-500/40 hover:shadow-[0_0_20px_#8953d122]" : "border-gray-200 dark:border-gray-800"}`} style={`--delay: ${300 + i * 80}ms`}>
-					<div class="mb-2 flex items-center gap-2">
-						{p.data.icon && <span class="text-lg">{p.data.icon}</span>}
-						<h3 class={`font-serif text-lg font-medium text-black dark:text-white ${hasUrl ? "group-hover:text-[#8953d1] dark:group-hover:text-[#a175e8]" : ""}`}>
-							<span class="lang-en">{p.data.title}</span><span class="lang-zh">{p.data.title_zh || p.data.title}</span>
-						</h3>
-						<span class={`ml-auto font-serif text-sm ${statusColors[p.data.status] || "text-gray-400"}`}>
-							<span class="lang-en">{statusLabels[p.data.status]?.en || p.data.status}</span><span class="lang-zh">{statusLabels[p.data.status]?.zh || p.data.status}</span>
-						</span>
-						{hasUrl && <span class="font-serif text-xs text-purple-400 transition-opacity group-hover:opacity-100">{isExternal ? "↗" : "→"}</span>}
-					</div>
-					<p class="font-serif text-base text-gray-500 dark:text-gray-400">
-						<span class="lang-en">{p.data.description}</span><span class="lang-zh">{p.data.description_zh || p.data.description}</span>
-					</p>
-				</Tag>
-				);
-			})}
-		</div>
-	</section>
 </PageLayout>
+
+<style>
+	/* Hero Card glow on hover */
+	.lab-hero-card {
+		transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+	}
+	.lab-hero-card:hover {
+		box-shadow: 0 0 30px rgba(137, 83, 209, 0.12);
+		transform: translateY(-2px);
+	}
+	[data-theme="dark"] .lab-hero-card:hover {
+		box-shadow: 0 0 30px rgba(161, 117, 232, 0.15);
+	}
+
+	/* Product card hover */
+	.lab-product-card {
+		transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+	}
+	.lab-product-card:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 0 20px rgba(137, 83, 209, 0.08);
+	}
+	[data-theme="dark"] .lab-product-card:hover {
+		box-shadow: 0 0 20px rgba(161, 117, 232, 0.1);
+	}
+
+	/* Curated horizontal scroll */
+	.lab-curated-scroll {
+		scroll-snap-type: x mandatory;
+		-webkit-overflow-scrolling: touch;
+		scrollbar-width: none;
+	}
+	.lab-curated-scroll::-webkit-scrollbar {
+		display: none;
+	}
+	.lab-curated-card {
+		scroll-snap-align: start;
+		min-height: 200px;
+		transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+	}
+	.lab-curated-card:hover {
+		transform: scale(1.02);
+		box-shadow: 0 4px 20px rgba(137, 83, 209, 0.1);
+	}
+	[data-theme="dark"] .lab-curated-card:hover {
+		box-shadow: 0 4px 20px rgba(161, 117, 232, 0.12);
+	}
+
+	/* Slide-in animation */
+	.lab-slide-in {
+		opacity: 0;
+		transform: translateX(40px) translateY(16px);
+		transition: opacity 400ms cubic-bezier(0.4, 0, 0.2, 1),
+			transform 400ms cubic-bezier(0.4, 0, 0.2, 1);
+		transition-delay: var(--delay, 0ms);
+	}
+	.lab-slide-in.visible {
+		opacity: 1;
+		transform: translateX(0) translateY(0);
+	}
+
+	/* Reduced motion */
+	@media (prefers-reduced-motion: reduce) {
+		.lab-hero-card:hover,
+		.lab-product-card:hover,
+		.lab-curated-card:hover {
+			transform: none !important;
+		}
+		.lab-slide-in {
+			opacity: 1 !important;
+			transform: none !important;
+			transition: none !important;
+		}
+		.lab-counter {
+			animation: none !important;
+		}
+	}
+</style>
+
+<script>
+	// Counter animation — easeOutExpo from 0 to target
+	function animateCounter(el: HTMLElement) {
+		const target = parseInt(el.dataset.target || "0", 10);
+		if (target === 0) return;
+		const duration = 1500;
+		const startTime = performance.now();
+
+		function easeOutExpo(t: number): number {
+			return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+		}
+
+		function update(now: number) {
+			const elapsed = now - startTime;
+			const progress = Math.min(elapsed / duration, 1);
+			const value = Math.round(easeOutExpo(progress) * target);
+			el.textContent = value.toLocaleString();
+			if (progress < 1) {
+				requestAnimationFrame(update);
+			}
+		}
+		requestAnimationFrame(update);
+	}
+
+	// Observe counters
+	function initCounters() {
+		if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+			document.querySelectorAll<HTMLElement>(".lab-counter").forEach((el) => {
+				el.textContent = parseInt(el.dataset.target || "0", 10).toLocaleString();
+			});
+			return;
+		}
+
+		const observer = new IntersectionObserver(
+			(entries) => {
+				entries.forEach((entry) => {
+					if (entry.isIntersecting) {
+						animateCounter(entry.target as HTMLElement);
+						observer.unobserve(entry.target);
+					}
+				});
+			},
+			{ threshold: 0.5 }
+		);
+
+		document.querySelectorAll<HTMLElement>(".lab-counter").forEach((el) => {
+			observer.observe(el);
+		});
+	}
+
+	// Observe slide-in elements (separate from global fade-in-up observer)
+	function initSlideIn() {
+		if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+			document.querySelectorAll(".lab-slide-in").forEach((el) => {
+				el.classList.add("visible");
+			});
+			return;
+		}
+
+		const observer = new IntersectionObserver(
+			(entries) => {
+				entries.forEach((entry) => {
+					if (entry.isIntersecting) {
+						const el = entry.target as HTMLElement;
+						const delay = el.style.getPropertyValue("--delay") || "0ms";
+						setTimeout(() => {
+							el.classList.add("visible");
+						}, parseInt(delay));
+						observer.unobserve(el);
+					}
+				});
+			},
+			{ threshold: 0.15 }
+		);
+
+		document.querySelectorAll(".lab-slide-in").forEach((el) => {
+			observer.observe(el);
+		});
+	}
+
+	// Init on load and Astro page transitions
+	document.addEventListener("astro:page-load", () => {
+		initCounters();
+		initSlideIn();
+	});
+
+	// Also run on initial load if astro:page-load doesn't fire
+	if (document.readyState === "loading") {
+		document.addEventListener("DOMContentLoaded", () => {
+			initCounters();
+			initSlideIn();
+		});
+	} else {
+		initCounters();
+		initSlideIn();
+	}
+</script>
