@@ -79,8 +79,8 @@ function formatShortDate(date: Date) {
 const agentEmojis = ["🧡", "🐍", "👁️", "⚙️", "🎨", "📊"];
 
 const meta = {
-	title: "Rex's Lab",
-	description: "Rex's Lab — AI Timeline, Digest, SNEK Daily, Builder's Log & Projects",
+	title: "Lab",
+	description: "Lab — Products, curated content, and live data streams powered by AI.",
 };
 ---
 
@@ -88,7 +88,7 @@ const meta = {
 	<!-- ====== HERO ====== -->
 	<section class="mb-16">
 		<h1 class="hero-reveal-text mb-4 font-serif text-4xl font-bold dark:text-white">
-			Rex's Lab
+			Lab
 		</h1>
 		<p class="hero-reveal-subtitle lang-en max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">
 			Every moment of the AI era, curated readings, and experiments in crypto & AI.
@@ -196,7 +196,7 @@ const meta = {
 								<span class="lang-en">{statusLabels[p.data.status]?.en || p.data.status}</span><span class="lang-zh">{statusLabels[p.data.status]?.zh || p.data.status}</span>
 							</span>
 						</div>
-						<p class="font-serif text-sm leading-relaxed text-gray-500 dark:text-gray-400">
+						<p class="lab-desc-clamp font-serif text-sm leading-relaxed text-gray-500 dark:text-gray-400">
 							<span class="lang-en">{p.data.description}</span><span class="lang-zh">{p.data.description_zh || p.data.description}</span>
 						</p>
 						{hasUrl && (
@@ -382,28 +382,44 @@ const meta = {
 </PageLayout>
 
 <style>
-	/* Hero Card glow on hover */
+	/* Description 3-line clamp for uniform card height */
+	.lab-desc-clamp {
+		display: -webkit-box;
+		-webkit-line-clamp: 3;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+
+	/* Hero Card — base shadow + hover glow */
 	.lab-hero-card {
+		box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
 		transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
 	}
 	.lab-hero-card:hover {
-		box-shadow: 0 0 30px rgba(137, 83, 209, 0.12);
+		box-shadow: 0 4px 16px rgba(137, 83, 209, 0.15);
 		transform: translateY(-2px);
 	}
+	[data-theme="dark"] .lab-hero-card {
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+	}
 	[data-theme="dark"] .lab-hero-card:hover {
-		box-shadow: 0 0 30px rgba(161, 117, 232, 0.15);
+		box-shadow: 0 4px 20px rgba(161, 117, 232, 0.2);
 	}
 
-	/* Product card hover */
+	/* Product card — base shadow + hover glow (matches Related Posts) */
 	.lab-product-card {
+		box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
 		transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
 	}
 	.lab-product-card:hover {
 		transform: translateY(-2px);
-		box-shadow: 0 0 20px rgba(137, 83, 209, 0.08);
+		box-shadow: 0 4px 12px rgba(137, 83, 209, 0.15);
+	}
+	[data-theme="dark"] .lab-product-card {
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
 	}
 	[data-theme="dark"] .lab-product-card:hover {
-		box-shadow: 0 0 20px rgba(161, 117, 232, 0.1);
+		box-shadow: 0 4px 16px rgba(161, 117, 232, 0.2);
 	}
 
 	/* Curated horizontal scroll */
@@ -418,14 +434,18 @@ const meta = {
 	.lab-curated-card {
 		scroll-snap-align: start;
 		min-height: 200px;
+		box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
 		transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
 	}
 	.lab-curated-card:hover {
 		transform: scale(1.02);
-		box-shadow: 0 4px 20px rgba(137, 83, 209, 0.1);
+		box-shadow: 0 4px 12px rgba(137, 83, 209, 0.15);
+	}
+	[data-theme="dark"] .lab-curated-card {
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
 	}
 	[data-theme="dark"] .lab-curated-card:hover {
-		box-shadow: 0 4px 20px rgba(161, 117, 232, 0.12);
+		box-shadow: 0 4px 20px rgba(161, 117, 232, 0.2);
 	}
 
 	/* Slide-in animation */
