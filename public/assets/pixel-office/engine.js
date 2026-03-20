@@ -164,7 +164,8 @@
     this.spriteKey = 'char_' + AGENTS_CFG.indexOf(cfg);
     this.hc = cfg.hc; this.hr = cfg.hr;
     this.col = cfg.hc; this.row = cfg.hr;
-    this.px = cfg.hc * T; this.py = cfg.hr * T;
+    // Pixel Agents anchors characters at the CENTER of the tile, not top-left
+    this.px = cfg.hc * T + T / 2; this.py = cfg.hr * T + T / 2;
     this.dir = cfg.dir;
     this.status = 'idle'; this.task = '';
     this.path = []; this.moving = false;
@@ -190,7 +191,7 @@
     var next = this.path.shift();
     var dx = next[0] - this.col, dy = next[1] - this.row;
     this.col = next[0]; this.row = next[1];
-    this.targetX = next[0] * T; this.targetY = next[1] * T;
+    this.targetX = next[0] * T + T / 2; this.targetY = next[1] * T + T / 2;
     this.moving = true;
     // set direction
     if (dx > 0) this.dir = DIR_RIGHT;
@@ -280,7 +281,8 @@
   function drawAgent(a) {
     var img = images[a.spriteKey]; if (!img) return;
     var dw = CHAR_FW * ZOOM, dh = CHAR_FH * ZOOM; // 48 x 96
-    var drawX = a.px, drawY = a.py + T - dh; // feet align to tile bottom
+    // Pixel Agents anchor: character bottom-center sits on tile center point
+    var drawX = a.px - dw / 2, drawY = a.py - dh;
 
     ctx.save();
 
@@ -344,7 +346,7 @@
       var oy = -i * 14 - Math.sin(phase) * 6;
       var alpha = 0.4 + 0.6 * Math.abs(Math.sin(phase));
       ctx.globalAlpha = alpha;
-      ctx.fillText('z', bx + ox, a.py + T - CHAR_FH * ZOOM + oy);
+      ctx.fillText('z', bx + ox, a.py - CHAR_FH * ZOOM + oy);
     }
     ctx.restore();
   }
@@ -425,7 +427,7 @@
       for (var i = agents.length - 1; i >= 0; i--) {
         var a = agents[i];
         var dw = CHAR_FW * ZOOM, dh = CHAR_FH * ZOOM;
-        var ax = a.px, ay = a.py + T - dh;
+        var ax = a.px - dw / 2, ay = a.py - dh;
         if (cx >= ax && cx <= ax + dw && cy >= ay && cy <= ay + dh + 14) {
           return a.id;
         }
