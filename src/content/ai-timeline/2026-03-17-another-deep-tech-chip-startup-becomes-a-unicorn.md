@@ -11,4 +11,8 @@ significance: medium
 body_zh: "在 NVIDIA CEO 黄仁勋的推动下，芯片散热初创公司 Frore 从固态散热转向液冷技术，完成 1.43 亿美元融资，估值达到 16.4 亿美元。AI 芯片功耗飙升带动散热基础设施需求，Frore 成为最新一家跨入独角兽行列的深科技公司。"
 ---
 
-在 NVIDIA CEO 黄仁勋的推动下，芯片散热初创公司 Frore 从固态散热转向液冷技术，完成 1.43 亿美元融资，估值达到 16.4 亿美元。
+Under the guidance of NVIDIA CEO Jensen Huang, chip cooling startup Frore pivoted from solid-state cooling to liquid cooling technology, raising $143 million at a $1.64 billion valuation. Surging AI chip power consumption is driving demand for cooling infrastructure, making Frore the latest deep tech company to reach unicorn status.
+
+<!-- zh -->
+
+在 NVIDIA CEO 黄仁勋的推动下，芯片散热初创公司 Frore 从固态散热转向液冷技术，完成 1.43 亿美元融资，估值达到 16.4 亿美元。AI 芯片功耗飙升带动散热基础设施需求，Frore 成为最新一家跨入独角兽行列的深科技公司。
