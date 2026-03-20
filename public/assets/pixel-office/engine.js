@@ -333,45 +333,51 @@
     ctx.drawImage(img, x, y, dw, dh);
   }
 
+  // Offscreen canvas for per-character tint compositing
+  var _tintCanvas = null, _tintCtx = null;
+  function getTintCanvas(w, h) {
+    if (!_tintCanvas) { _tintCanvas = document.createElement('canvas'); _tintCtx = _tintCanvas.getContext('2d'); }
+    _tintCanvas.width = w; _tintCanvas.height = h;
+    return { cv: _tintCanvas, cx: _tintCtx };
+  }
+
   function drawAgent(a) {
     var img = images[a.spriteKey]; if (!img) return;
-    var dw = CHAR_FW * ZOOM, dh = CHAR_FH * ZOOM; // 48 x 96
-    // Pixel Agents anchor: character bottom-center sits on tile center point
+    var dw = CHAR_FW * ZOOM, dh = CHAR_FH * ZOOM;
     var drawX = a.px - dw / 2, drawY = a.py - dh;
 
     ctx.save();
-
-    // offline: translucent
     if (a.status === 'offline') ctx.globalAlpha = 0.35;
-    // error: flicker
     if (a.status === 'error') ctx.globalAlpha = 0.3 + 0.7 * Math.abs(Math.sin(a.animTick * 0.15));
 
-    // Sprite rows: 0=DOWN, 1=UP, 2=RIGHT. LEFT = flip RIGHT.
     var dirRow = a.dir;
     var flip = false;
     if (a.dir === DIR_LEFT) { dirRow = DIR_RIGHT; flip = true; }
-
     var sx = a.frame * CHAR_FW, sy = dirRow * CHAR_FH;
 
-    if (flip) {
-      ctx.translate(drawX + dw, drawY);
-      ctx.scale(-1, 1);
-      ctx.drawImage(img, sx, sy, CHAR_FW, CHAR_FH, 0, 0, dw, dh);
-      // Color tint overlay (flip coords)
-      if (a.tint) {
-        ctx.globalCompositeOperation = 'source-atop';
-        ctx.fillStyle = a.tint;
-        ctx.fillRect(0, 0, dw, dh);
-        ctx.globalCompositeOperation = 'source-over';
+    if (a.tint) {
+      // Draw sprite + tint on offscreen canvas, then stamp onto main canvas
+      var tc = getTintCanvas(dw, dh);
+      tc.cx.clearRect(0, 0, dw, dh);
+      tc.cx.imageSmoothingEnabled = false;
+      if (flip) {
+        tc.cx.save(); tc.cx.translate(dw, 0); tc.cx.scale(-1, 1);
+        tc.cx.drawImage(img, sx, sy, CHAR_FW, CHAR_FH, 0, 0, dw, dh);
+        tc.cx.restore();
+      } else {
+        tc.cx.drawImage(img, sx, sy, CHAR_FW, CHAR_FH, 0, 0, dw, dh);
       }
+      tc.cx.globalCompositeOperation = 'source-atop';
+      tc.cx.fillStyle = a.tint;
+      tc.cx.fillRect(0, 0, dw, dh);
+      tc.cx.globalCompositeOperation = 'source-over';
+      ctx.drawImage(tc.cv, drawX, drawY);
     } else {
-      ctx.drawImage(img, sx, sy, CHAR_FW, CHAR_FH, drawX, drawY, dw, dh);
-      // Color tint overlay
-      if (a.tint) {
-        ctx.globalCompositeOperation = 'source-atop';
-        ctx.fillStyle = a.tint;
-        ctx.fillRect(drawX, drawY, dw, dh);
-        ctx.globalCompositeOperation = 'source-over';
+      if (flip) {
+        ctx.translate(drawX + dw, drawY); ctx.scale(-1, 1);
+        ctx.drawImage(img, sx, sy, CHAR_FW, CHAR_FH, 0, 0, dw, dh);
+      } else {
+        ctx.drawImage(img, sx, sy, CHAR_FW, CHAR_FH, drawX, drawY, dw, dh);
       }
     }
     ctx.restore();

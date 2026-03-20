@@ -311,7 +311,7 @@ const meta = {
 	}
 </style>
 
-<script is:inline src="/assets/pixel-office/engine.js?v=7b11d59"></script>
+<script is:inline src="/assets/pixel-office/engine.js?v=0b1c3f2"></script>
 <script is:inline>
 (function() {
 	'use strict';
@@ -548,9 +548,25 @@ const meta = {
 				feedList.innerHTML = '<div class="feed-empty font-serif text-xs text-gray-500"><span class="lang-en">No recent activity</span><span class="lang-zh">\u6682\u65e0\u52a8\u6001</span></div>';
 				return;
 			}
+			// Deduplicate: if two entries from same agent within 10s, keep the one with distinct EN/ZH
+			var deduped = [];
+			for (var i = 0; i < entries.length; i++) {
+				var e = entries[i];
+				var dominated = false;
+				for (var j = 0; j < deduped.length; j++) {
+					var d = deduped[j];
+					if (d.agentId === e.agentId && Math.abs(new Date(d.timestamp) - new Date(e.timestamp)) < 10000) {
+						// Keep the one where descEn != descZh (properly translated)
+						if (d.descEn === d.descZh && e.descEn !== e.descZh) { deduped[j] = e; }
+						dominated = true; break;
+					}
+				}
+				if (!dominated) deduped.push(e);
+			}
+			entries = deduped;
 			var isZh = document.documentElement.getAttribute('data-lang') === 'zh';
 			feedList.innerHTML = entries.map(function(e) {
-				var desc = isZh ? e.descZh : e.descEn;
+				var desc = isZh ? (e.descZh || e.descEn) : (e.descEn || e.descZh);
 				return '<div class="feed-item">' +
 					'<div class="feed-dot" style="background:' + e.color + ';box-shadow:0 0 6px ' + e.color + '66"></div>' +
 					'<div class="feed-content">' +
