@@ -79,6 +79,7 @@ function formatShortDate(date: Date) {
 }
 
 const agentEmojis = ["🧡", "🐍", "👁️", "⚙️", "🎨", "📊"];
+const agentAvatars = ['samantha', 'loki', 'vision', 'jarvis', 'shuri', 'friday'];
 
 const meta = {
 	title: "Lab",
@@ -167,8 +168,8 @@ const meta = {
 					</p>
 				</div>
 				<div class="flex items-center gap-2">
-					{agentEmojis.map(emoji => (
-						<span class="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-lg dark:bg-gray-800">{emoji}</span>
+					{agentAvatars.map(avatar => (
+						<img src={`/avatars/${avatar}.png`} alt={avatar} class="h-9 w-9 rounded-full object-cover border border-purple-500/20" />
 					))}
 					<span class="ml-2 font-serif text-sm text-purple-400 opacity-0 transition-opacity group-hover:opacity-100">→</span>
 				</div>
