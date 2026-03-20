@@ -112,7 +112,7 @@ const aiTimeline = defineCollection({
 		title: z.string(),
 		title_zh: z.string().optional(),
 		date: z.coerce.date(),
-		category: z.enum(["model", "funding", "industry", "robotics", "crypto-ai", "product"]),
+		category: z.enum(["model", "funding", "industry", "robotics", "crypto-ai", "product", "acquisition"]),
 		tags: z.array(z.string()).default([]),
 		source: z.string().url().optional(),
 		source_name: z.string().optional(),
