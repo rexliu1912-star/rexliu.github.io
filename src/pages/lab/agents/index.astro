@@ -47,7 +47,7 @@ const meta = {
 	<section class="office-wrapper mb-16 fade-in-up" style="--delay: 100ms">
 		<div class="pixel-office-scale-wrapper" id="pixel-office-wrapper">
 			<div class="pixel-office" id="pixel-office">
-				<canvas id="office-canvas" width="960" height="520"></canvas>
+				<canvas id="office-canvas" width="960" height="528"></canvas>
 			</div>
 		</div>
 	</section>
@@ -91,7 +91,7 @@ const meta = {
 	.pixel-office {
 		position: relative;
 		width: 960px;
-		height: 520px;
+		height: 528px;
 		margin: 0 auto;
 		border: 3px solid #2a2a3a;
 		border-radius: 6px;
@@ -109,7 +109,7 @@ const meta = {
 		image-rendering: crisp-edges;
 		cursor: default;
 		width: 960px;
-		height: 520px;
+		height: 528px;
 	}
 
 	/* ── Responsive scale wrapper ─────────────────────────────── */
@@ -311,434 +311,38 @@ const meta = {
 	}
 </style>
 
+<script is:inline src="/assets/pixel-office/engine.js"></script>
 <script is:inline>
 (function() {
 	'use strict';
 
 	var _intervals = [];
-	var _animRunning = false;
-	var _rafId = null;
-
-	/* ══════════════════════════════════════════════════════════════
-	   Canvas 2D Polyfill — roundRect
-	   ══════════════════════════════════════════════════════════════ */
-	if (typeof CanvasRenderingContext2D !== 'undefined' && !CanvasRenderingContext2D.prototype.roundRect) {
-		CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
-			if (r > w / 2) r = w / 2;
-			if (r > h / 2) r = h / 2;
-			this.beginPath();
-			this.moveTo(x + r, y);
-			this.lineTo(x + w - r, y);
-			this.arcTo(x + w, y, x + w, y + r, r);
-			this.lineTo(x + w, y + h - r);
-			this.arcTo(x + w, y + h, x + w - r, y + h, r);
-			this.lineTo(x + r, y + h);
-			this.arcTo(x, y + h, x, y + h - r, r);
-			this.lineTo(x, y + r);
-			this.arcTo(x, y, x + r, y, r);
-			this.closePath();
-			return this;
-		};
-	}
 
 	function initAgentPage() {
 		/* ── Clean up previous run ── */
 		_intervals.forEach(function(id) { clearInterval(id); });
 		_intervals = [];
-		_animRunning = false;
-		if (_rafId) { cancelAnimationFrame(_rafId); _rafId = null; }
+		if (window.PixelOffice) window.PixelOffice.destroy();
 
 		var CONVEX_URL = 'https://fleet-heron-880.convex.cloud';
 		var CONVEX_ACTIVITY_URL = 'https://shiny-butterfly-744.convex.cloud';
 		var statusEl = document.getElementById('connection-status');
+
+		/* ── 初始化 Pixel Office 引擎 ── */
 		var canvas = document.getElementById('office-canvas');
-		if (!canvas) return;
-		var ctx = canvas.getContext('2d');
-		if (!ctx) return;
-		ctx.imageSmoothingEnabled = false;
-
-		/* ══════════════════════════════════════════════════════════════
-		   SPRITE SHEET LAYOUT
-		   Each sheet: 1408×768, 4 cols × 2 rows = 8 slots (6 used)
-		   Frame size: 352×384
-		   ══════════════════════════════════════════════════════════════ */
-		var FRAME_W = 352;
-		var FRAME_H = 384;
-		var FRAME_COLS = 4;
-		var DRAW_W = 58;  /* rendered width on canvas */
-		var DRAW_H = 64;  /* rendered height on canvas */
-
-		function getFrameCoords(frameIndex) {
-			var col = frameIndex % FRAME_COLS;
-			var row = Math.floor(frameIndex / FRAME_COLS);
-			return { sx: col * FRAME_W, sy: row * FRAME_H };
+		if (canvas && window.PixelOffice) {
+			window.PixelOffice.init(canvas);
 		}
-
-		/* Frame semantics (best-guess, visually tweak if wrong):
-		   Grid: 4 cols × 2 rows (352×384 each)
-		   0 = idle stand (front)   1 = walk step A (side)
-		   2 = walk step B (side)   3 = (mostly empty)
-		   4 = (empty)              5 = busy/sitting
-		   6 = special/coffee       7 = (empty)
-		*/
-		var STATE_FRAME = {
-			idle:    [0],      /* front-facing idle */
-			busy:    [5],      /* sitting at desk */
-			error:   [6],      /* special action (playing!) */
-			offline: [0],      /* idle frame but with alpha */
-			walk:    [1, 2],   /* alternate walk frames */
-		};
-
-		/* ══════════════════════════════════════════════════════════════
-		   POSITIONS — (x = center-x, y = feet-y) in 960×520 canvas
-		   ══════════════════════════════════════════════════════════════ */
-		var POSITIONS = {
-			main: {
-				busy:    { x: 762, y: 194 },   /* command center chair */
-				idle:    { x: 200, y: 170 },   /* near coffee table */
-				error:   { x: 148, y: 430 },   /* arcade cabinet */
-				offline: { x: 58,  y: 175 },   /* sofa left */
-			},
-			writer: {
-				busy:    { x: 254, y: 304 },   /* desk 1 */
-				idle:    { x: 60,  y: 200 },   /* sofa area left */
-				error:   { x: 280, y: 450 },   /* pingpong table */
-				offline: { x: 100, y: 175 },   /* sofa middle */
-			},
-			researcher: {
-				busy:    { x: 394, y: 304 },   /* desk 2 */
-				idle:    { x: 310, y: 170 },   /* near whiteboard */
-				error:   { x: 200, y: 460 },   /* between arcade & pingpong */
-				offline: { x: 140, y: 180 },   /* sofa right */
-			},
-			coder: {
-				busy:    { x: 534, y: 304 },   /* desk 3 */
-				idle:    { x: 140, y: 230 },   /* in front of coffee table */
-				error:   { x: 100, y: 470 },   /* near arcade */
-				offline: { x: 60,  y: 210 },   /* sofa floor */
-			},
-			designer: {
-				busy:    { x: 314, y: 384 },   /* desk 4 */
-				idle:    { x: 420, y: 175 },   /* near clock/whiteboard */
-				error:   { x: 330, y: 440 },   /* pingpong right */
-				offline: { x: 120, y: 210 },   /* sofa area */
-			},
-			analyst: {
-				busy:    { x: 474, y: 384 },   /* desk 5 */
-				idle:    { x: 260, y: 220 },   /* center open area */
-				error:   { x: 80,  y: 445 },   /* arcade left */
-				offline: { x: 80,  y: 195 },   /* sofa area */
-			},
-		};
-
-		/* ══════════════════════════════════════════════════════════════
-		   AGENT DEFINITIONS
-		   ══════════════════════════════════════════════════════════════ */
-		var AGENT_DEFS = [
-			{ id: 'main',       name: 'Samantha', src: '/sprites/samantha-sprite.png', color: '#ff6b35' },
-			{ id: 'writer',     name: 'Loki',     src: '/sprites/loki-sprite.png',     color: '#4a9e4a' },
-			{ id: 'researcher', name: 'Vision',   src: '/sprites/vision-sprite.png',   color: '#4a8ab5' },
-			{ id: 'coder',      name: 'Jarvis',   src: '/sprites/jarvis-sprite.png',   color: '#7a7a8a' },
-			{ id: 'designer',   name: 'Shuri',    src: '/sprites/shuri-sprite.png',    color: '#c54ab5' },
-			{ id: 'analyst',    name: 'Friday',   src: '/sprites/friday-sprite.png',   color: '#4ac5c5' },
-		];
-
-		/* ══════════════════════════════════════════════════════════════
-		   LOAD IMAGES
-		   ══════════════════════════════════════════════════════════════ */
-		var bgImage = new Image();
-		bgImage.src = '/sprites/office-background.png';
-
-		var characters = {};
-		AGENT_DEFS.forEach(function(def) {
-			var startPos = (POSITIONS[def.id] && POSITIONS[def.id].offline) || { x: 60, y: 200 };
-			var img = new Image();
-			img.src = def.src;
-			characters[def.id] = {
-				id:          def.id,
-				name:        def.name,
-				color:       def.color,
-				img:         img,
-				x:           startPos.x,
-				y:           startPos.y,
-				targetX:     startPos.x,
-				targetY:     startPos.y,
-				state:       'offline',
-				frame:       5,
-				frameTick:   Math.floor(Math.random() * 60),  /* stagger phase */
-				walkStep:    0,
-				currentTask: '',
-				zzzOffset:   Math.random() * Math.PI * 2,     /* zzz phase randomise */
-			};
-		});
-
-		/* ══════════════════════════════════════════════════════════════
-		   GAME LOOP
-		   ══════════════════════════════════════════════════════════════ */
-		var WALK_SPEED = 2.0;  /* px / frame at 60fps */
-		var frameCount = 0;
-		_animRunning = true;
-
-		function gameLoop() {
-			if (!_animRunning) return;
-			_rafId = requestAnimationFrame(gameLoop);
-			frameCount++;
-
-			/* Clear */
-			ctx.clearRect(0, 0, 960, 520);
-			ctx.imageSmoothingEnabled = false;
-
-			/* Background */
-			if (bgImage.complete && bgImage.naturalWidth > 0) {
-				ctx.drawImage(bgImage, 0, 0, 960, 520);
-			} else {
-				ctx.fillStyle = '#0d0d1a';
-				ctx.fillRect(0, 0, 960, 520);
-				/* Simple grid lines as fallback */
-				ctx.strokeStyle = '#1a1a2e';
-				ctx.lineWidth = 1;
-				for (var gx = 0; gx < 960; gx += 32) {
-					ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, 520); ctx.stroke();
-				}
-				for (var gy = 0; gy < 520; gy += 32) {
-					ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(960, gy); ctx.stroke();
-				}
-			}
-
-			/* Sort by Y so lower characters render on top */
-			var charList = Object.values(characters).sort(function(a, b) { return a.y - b.y; });
-
-			charList.forEach(function(ch) {
-				updateCharacter(ch);
-				drawCharacter(ch);
-			});
-		}
-
-		/* ── Per-frame character update ── */
-		function updateCharacter(ch) {
-			var dx = ch.targetX - ch.x;
-			var dy = ch.targetY - ch.y;
-			var dist = Math.sqrt(dx * dx + dy * dy);
-			var isMoving = dist > 1.5;
-
-			ch.frameTick++;
-
-			if (isMoving) {
-				/* Move toward target */
-				var speed = Math.min(WALK_SPEED, dist);
-				ch.x += (dx / dist) * speed;
-				ch.y += (dy / dist) * speed;
-				/* Walk frame: alternate 2↔3 every 8 frames */
-				ch.frame = 2 + (Math.floor(ch.frameTick / 8) % 2);
-			} else {
-				/* Snap to target */
-				ch.x = ch.targetX;
-				ch.y = ch.targetY;
-
-				/* State-appropriate frame */
-				switch (ch.state) {
-					case 'busy':
-						ch.frame = 4;
-						break;
-					case 'offline':
-						ch.frame = 5;
-						break;
-					case 'idle':
-					case 'error':
-					default:
-						/* Breathe: alternate 0↔1 every 30 frames */
-						ch.frame = Math.floor(ch.frameTick / 30) % 2 === 0 ? 0 : 1;
-						break;
-				}
-			}
-		}
-
-		/* ── Draw one character ── */
-		function drawCharacter(ch) {
-			var f = getFrameCoords(ch.frame);
-			var drawX = Math.round(ch.x - DRAW_W / 2);
-			var drawY = Math.round(ch.y - DRAW_H);
-
-			ctx.save();
-			ctx.imageSmoothingEnabled = false;
-
-			/* Offline: semi-transparent */
-			ctx.globalAlpha = ch.state === 'offline' ? 0.45 : 1.0;
-
-			/* Draw sprite frame */
-			if (ch.img && ch.img.complete && ch.img.naturalWidth > 0) {
-				ctx.drawImage(ch.img, f.sx, f.sy, FRAME_W, FRAME_H, drawX, drawY, DRAW_W, DRAW_H);
-			} else {
-				/* Fallback: colored dot */
-				ctx.globalAlpha = ch.state === 'offline' ? 0.45 : 0.85;
-				ctx.fillStyle = ch.color;
-				ctx.beginPath();
-				ctx.arc(ch.x, ch.y - DRAW_H / 2, 14, 0, Math.PI * 2);
-				ctx.fill();
-			}
-
-			ctx.globalAlpha = 1.0;
-			ctx.restore();
-
-			/* Effects drawn at full alpha (own save/restore) */
-			if (ch.state === 'offline') {
-				drawZzz(ch, drawX, drawY);
-			}
-			if (ch.state === 'busy' && ch.currentTask) {
-				drawTaskBubble(ch, drawX, drawY);
-			}
-
-			/* Name label always full alpha */
-			drawLabel(ch);
-		}
-
-		/* ── ZZZ floating animation ── */
-		function drawZzz(ch, drawX, drawY) {
-			ctx.save();
-			ctx.imageSmoothingEnabled = false;
-			var t = (frameCount * 0.025) + ch.zzzOffset;
-			/* Two zzz letters floating with offset phases */
-			var yOff1 = (t % (Math.PI * 2)) * 2.5;
-			var yOff2 = ((t + 1.2) % (Math.PI * 2)) * 2.5;
-			var a1 = Math.max(0, Math.sin(t) * 0.7);
-			var a2 = Math.max(0, Math.sin(t + 1.5) * 0.6);
-
-			ctx.textAlign = 'left';
-
-			/* small z */
-			ctx.font = 'bold 7px monospace';
-			ctx.globalAlpha = a1;
-			ctx.fillStyle = '#4a8ab5';
-			ctx.fillText('z', ch.x + DRAW_W / 2 - 2, drawY + 4 - yOff1);
-
-			/* big Z */
-			ctx.font = 'bold 10px monospace';
-			ctx.globalAlpha = a2;
-			ctx.fillStyle = '#4a8ab5';
-			ctx.fillText('Z', ch.x + DRAW_W / 2 + 3, drawY - 3 - yOff2);
-
-			ctx.globalAlpha = 1.0;
-			ctx.restore();
-		}
-
-		/* ── Busy task bubble ── */
-		function drawTaskBubble(ch, drawX, drawY) {
-			if (!ch.currentTask) return;
-			ctx.save();
-			ctx.imageSmoothingEnabled = false;
-
-			var maxLen = 20;
-			var text = ch.currentTask.length > maxLen
-				? ch.currentTask.slice(0, maxLen) + '\u2026'
-				: ch.currentTask;
-
-			ctx.font = '7px sans-serif';
-			var tw = ctx.measureText(text).width;
-			var padX = 5, padY = 3;
-			var bw = tw + padX * 2;
-			var bh = 14;
-			var bx = Math.round(ch.x - bw / 2);
-			var by = drawY - bh - 5;
-
-			/* Bubble body */
-			ctx.fillStyle = 'rgba(10,10,20,0.8)';
-			ctx.roundRect(bx, by, bw, bh, 3);
-			ctx.fill();
-
-			/* Bubble border */
-			ctx.strokeStyle = ch.color + 'aa';
-			ctx.lineWidth = 0.75;
-			ctx.stroke();
-
-			/* Tail triangle */
-			ctx.fillStyle = 'rgba(10,10,20,0.8)';
-			ctx.beginPath();
-			ctx.moveTo(ch.x - 3, by + bh);
-			ctx.lineTo(ch.x + 3, by + bh);
-			ctx.lineTo(ch.x, by + bh + 4);
-			ctx.closePath();
-			ctx.fill();
-
-			/* Text */
-			ctx.fillStyle = 'rgba(255,255,255,0.9)';
-			ctx.textAlign = 'center';
-			ctx.fillText(text, ch.x, by + bh - padY);
-
-			ctx.restore();
-		}
-
-		/* ── Name label + status dot ── */
-		function drawLabel(ch) {
-			ctx.save();
-			ctx.imageSmoothingEnabled = false;
-			ctx.textAlign = 'center';
-
-			var labelX = ch.x;
-			var labelY = ch.y + 10;
-
-			/* Status dot color */
-			var dotColor;
-			switch (ch.state) {
-				case 'idle':    dotColor = '#4ade80'; break;
-				case 'busy':    dotColor = '#f59e0b'; break;
-				case 'offline': dotColor = '#555';    break;
-				case 'error':   dotColor = '#a78bfa'; break;
-				default:        dotColor = '#555';
-			}
-
-			/* Name shadow */
-			ctx.font = '8px serif';
-			ctx.fillStyle = 'rgba(0,0,0,0.7)';
-			ctx.fillText(ch.name, labelX + 1, labelY + 1);
-
-			/* Name */
-			ctx.fillStyle = ch.state === 'offline' ? '#888888' : '#cccccc';
-			ctx.fillText(ch.name, labelX, labelY);
-
-			/* Status dot */
-			var nameW = ctx.measureText(ch.name).width;
-			var dotX = labelX + nameW / 2 + 5;
-			var dotY = labelY - 3;
-			var dotR = 2.5;
-
-			/* Busy: pulsing dot */
-			if (ch.state === 'busy') {
-				var pulse = 0.45 + 0.55 * (Math.sin(frameCount * 0.1) * 0.5 + 0.5);
-				ctx.globalAlpha = pulse;
-				ctx.fillStyle = dotColor;
-				ctx.beginPath();
-				ctx.arc(dotX, dotY, dotR + 1.5, 0, Math.PI * 2);
-				ctx.fill();
-				ctx.globalAlpha = 1.0;
-			}
-
-			ctx.fillStyle = dotColor;
-			ctx.beginPath();
-			ctx.arc(dotX, dotY, dotR, 0, Math.PI * 2);
-			ctx.fill();
-
-			ctx.restore();
-		}
-
-		/* Start the loop */
-		_rafId = requestAnimationFrame(gameLoop);
 
 		/* ══════════════════════════════════════════════════════════════
 		   CONVEX POLLING — drive character state + position
 		   ══════════════════════════════════════════════════════════════ */
 		function updateAgent(agent) {
-			var ch = characters[agent.agentId];
-			if (!ch) return;
 			var status = agent.status || 'offline';
-			var pos = POSITIONS[agent.agentId];
-			if (!pos) return;
-			var targetPos = pos[status] || pos.offline;
-
-			ch.state = status;
-			ch.targetX = targetPos.x;
-			ch.targetY = targetPos.y;
-			ch.currentTask = agent.currentTask || '';
-			/* Reset frameTick so state frame starts fresh after arrival */
+			var task = agent.currentTask || '';
+			if (window.PixelOffice) {
+				window.PixelOffice.updateAgent(agent.agentId, status, task);
+			}
 		}
 
 		async function pollAgents() {
@@ -770,7 +374,7 @@ const meta = {
 		_intervals.push(setInterval(pollAgents, 10000));
 
 		/* ══════════════════════════════════════════════════════════════
-		   CLICK + HOVER — canvas hit detection
+		   CLICK + HOVER — canvas hit detection via engine
 		   ══════════════════════════════════════════════════════════════ */
 		function getCanvasCoords(e) {
 			var rect = canvas.getBoundingClientRect();
@@ -782,31 +386,19 @@ const meta = {
 			};
 		}
 
-		function hitTest(cx, cy) {
-			var charList = Object.values(characters);
-			for (var i = 0; i < charList.length; i++) {
-				var ch = charList[i];
-				var hx = ch.x - DRAW_W / 2 - 4;
-				var hy = ch.y - DRAW_H - 4;
-				var hw = DRAW_W + 8;
-				var hh = DRAW_H + 20; /* include label area */
-				if (cx >= hx && cx <= hx + hw && cy >= hy && cy <= hy + hh) {
-					return ch.id;
-				}
-			}
-			return null;
+		if (canvas) {
+			canvas.addEventListener('click', function(e) {
+				var c = getCanvasCoords(e);
+				var hit = window.PixelOffice && window.PixelOffice.getAgentAt(c.x, c.y);
+				if (hit) openDetail(hit);
+			});
+
+			canvas.addEventListener('mousemove', function(e) {
+				var c = getCanvasCoords(e);
+				var hit = window.PixelOffice && window.PixelOffice.getAgentAt(c.x, c.y);
+				canvas.style.cursor = hit ? 'pointer' : 'default';
+			});
 		}
-
-		canvas.addEventListener('click', function(e) {
-			var c = getCanvasCoords(e);
-			var hit = hitTest(c.x, c.y);
-			if (hit) openDetail(hit);
-		});
-
-		canvas.addEventListener('mousemove', function(e) {
-			var c = getCanvasCoords(e);
-			canvas.style.cursor = hitTest(c.x, c.y) ? 'pointer' : 'default';
-		});
 
 		/* ══════════════════════════════════════════════════════════════
 		   AGENT DETAIL PANEL
@@ -1018,7 +610,7 @@ const meta = {
 			var officeWidth = 960;
 			var scale = Math.min(1, containerWidth / officeWidth);
 			office.style.transform = scale < 1 ? 'scale(' + scale + ')' : '';
-			var officeHeight = 520;
+			var officeHeight = 528;
 			wrapper.style.height = scale < 1 ? Math.round(officeHeight * scale) + 'px' : '';
 		}
 
