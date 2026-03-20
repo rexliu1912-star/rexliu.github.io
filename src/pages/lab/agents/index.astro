@@ -45,6 +45,7 @@ const meta = {
 
 	<!-- ═══ SHARED PIXEL OFFICE ═══ -->
 	<section class="office-wrapper mb-16 fade-in-up" style="--delay: 100ms">
+		<div class="pixel-office-scale-wrapper" id="pixel-office-wrapper">
 		<div class="pixel-office" id="pixel-office">
 			<!-- ── Wall decorations ── -->
 			<div class="wall-layer">
@@ -201,6 +202,7 @@ const meta = {
 				<div class="sprite-label"><span class="sprite-name">Friday</span><span class="sprite-status-dot"></span></div>
 			</div>
 		</div>
+		</div><!-- end pixel-office-scale-wrapper -->
 	</section>
 
 	<!-- Activity Feed -->
@@ -236,13 +238,13 @@ const meta = {
 	   PIXEL OFFICE — Shared workspace container
 	   ══════════════════════════════════════════════════════════════ */
 	.office-wrapper {
-		overflow-x: auto;
+		overflow: hidden;
 		-webkit-overflow-scrolling: touch;
 	}
 	.pixel-office {
 		position: relative;
 		width: 960px;
-		height: 380px;
+		height: 520px;
 		margin: 0 auto;
 		image-rendering: pixelated;
 		border: 3px solid #2a2a3a;
@@ -298,8 +300,8 @@ const meta = {
 	:global([data-theme="light"]) .zone-label { color: #00000022; }
 	.zone-label-lounge { top: 20%; left: 30px; }
 	.zone-label-command { top: 20%; right: 180px; }
-	.zone-label-arcade { bottom: 16px; left: 30px; }
-	.zone-label-desks { top: 52%; left: 50%; transform: translateX(-50%); }
+	.zone-label-arcade { bottom: 30px; left: 30px; }
+	.zone-label-desks { top: 54%; left: 50%; transform: translateX(-50%); }
 
 	/* ══════════════════════════════════════════════════════════════
 	   WALL DECORATIONS
@@ -308,7 +310,7 @@ const meta = {
 	.wall-deco { position: absolute; }
 	/* Whiteboard */
 	.whiteboard {
-		top: 10px; left: 60px;
+		top: 16px; left: 60px;
 		width: 80px; height: 44px;
 		background: #f0f0e8;
 		border: 3px solid #ccc;
@@ -334,7 +336,7 @@ const meta = {
 	:global([data-theme="light"]) .whiteboard { background: #fff; border-color: #aaa; }
 	/* Clock */
 	.wall-clock {
-		top: 12px; left: 360px;
+		top: 20px; left: 360px;
 		width: 28px; height: 28px;
 		background: #2a2a4a;
 		border: 2px solid #555;
@@ -365,7 +367,7 @@ const meta = {
 	:global([data-theme="light"]) .wall-clock::after { background: #333; }
 	/* Poster */
 	.poster {
-		top: 10px; right: 100px;
+		top: 18px; right: 100px;
 		width: 36px; height: 48px;
 		background: linear-gradient(135deg, #8953d1, #c54ab5);
 		border: 2px solid #6a3da0;
@@ -380,7 +382,7 @@ const meta = {
 	}
 	/* Bulletin board */
 	.bulletin {
-		top: 12px; right: 260px;
+		top: 22px; right: 260px;
 		width: 50px; height: 36px;
 		background: #5c3d2e;
 		border: 2px solid #7a5640;
@@ -721,36 +723,36 @@ const meta = {
 	   ══════════════════════════════════════════════════════════════ */
 
 	/* ── Default / idle: Lounge area (top-left) ── */
-	#sprite-main[data-pos="idle"]        { top: 82px; left: 100px; }
-	#sprite-writer[data-pos="idle"]      { top: 98px; left: 60px; }
-	#sprite-researcher[data-pos="idle"]  { top: 80px; left: 148px; }
-	#sprite-coder[data-pos="idle"]       { top: 110px; left: 115px; }
-	#sprite-designer[data-pos="idle"]    { top: 88px; left: 170px; }
-	#sprite-analyst[data-pos="idle"]     { top: 108px; left: 50px; }
+	#sprite-main[data-pos="idle"]        { top: 120px; left: 100px; }
+	#sprite-writer[data-pos="idle"]      { top: 140px; left: 60px; }
+	#sprite-researcher[data-pos="idle"]  { top: 118px; left: 148px; }
+	#sprite-coder[data-pos="idle"]       { top: 155px; left: 115px; }
+	#sprite-designer[data-pos="idle"]    { top: 128px; left: 170px; }
+	#sprite-analyst[data-pos="idle"]     { top: 152px; left: 50px; }
 
 	/* ── Busy: Workstations / Command ── */
-	#sprite-main[data-pos="busy"]        { top: 102px; right: 148px; left: auto; }   /* Command center */
-	#sprite-writer[data-pos="busy"]      { top: 172px; left: 226px; }   /* Desk 1 */
-	#sprite-researcher[data-pos="busy"]  { top: 172px; left: 366px; }   /* Desk 2 */
-	#sprite-coder[data-pos="busy"]       { top: 172px; left: 506px; }   /* Desk 3 */
-	#sprite-designer[data-pos="busy"]    { top: 237px; left: 286px; }   /* Desk 4 */
-	#sprite-analyst[data-pos="busy"]     { top: 237px; left: 446px; }   /* Desk 5 */
+	#sprite-main[data-pos="busy"]        { top: 138px; right: 148px; left: auto; }   /* Command center */
+	#sprite-writer[data-pos="busy"]      { top: 248px; left: 226px; }   /* Desk 1 */
+	#sprite-researcher[data-pos="busy"]  { top: 248px; left: 366px; }   /* Desk 2 */
+	#sprite-coder[data-pos="busy"]       { top: 248px; left: 506px; }   /* Desk 3 */
+	#sprite-designer[data-pos="busy"]    { top: 328px; left: 286px; }   /* Desk 4 */
+	#sprite-analyst[data-pos="busy"]     { top: 328px; left: 446px; }   /* Desk 5 */
 
 	/* ── Error: Arcade area (bottom-left), vacation mode ── */
-	#sprite-main[data-pos="error"]       { top: 286px; left: 120px; }
-	#sprite-writer[data-pos="error"]     { top: 298px; left: 60px; }
-	#sprite-researcher[data-pos="error"] { top: 278px; left: 145px; }
-	#sprite-coder[data-pos="error"]      { top: 292px; left: 90px; }
-	#sprite-designer[data-pos="error"]   { top: 282px; left: 165px; }
-	#sprite-analyst[data-pos="error"]    { top: 302px; left: 40px; }
+	#sprite-main[data-pos="error"]       { top: 400px; left: 120px; }
+	#sprite-writer[data-pos="error"]     { top: 415px; left: 60px; }
+	#sprite-researcher[data-pos="error"] { top: 390px; left: 145px; }
+	#sprite-coder[data-pos="error"]      { top: 410px; left: 90px; }
+	#sprite-designer[data-pos="error"]   { top: 395px; left: 165px; }
+	#sprite-analyst[data-pos="error"]    { top: 420px; left: 40px; }
 
 	/* ── Offline: Sofa area, semi-transparent ── */
-	#sprite-main[data-pos="offline"]        { top: 84px; left: 30px; }
-	#sprite-writer[data-pos="offline"]      { top: 87px; left: 55px; }
-	#sprite-researcher[data-pos="offline"]  { top: 90px; left: 80px; }
-	#sprite-coder[data-pos="offline"]       { top: 114px; left: 38px; }
-	#sprite-designer[data-pos="offline"]    { top: 117px; left: 62px; }
-	#sprite-analyst[data-pos="offline"]     { top: 114px; left: 86px; }
+	#sprite-main[data-pos="offline"]        { top: 122px; left: 30px; }
+	#sprite-writer[data-pos="offline"]      { top: 125px; left: 55px; }
+	#sprite-researcher[data-pos="offline"]  { top: 128px; left: 80px; }
+	#sprite-coder[data-pos="offline"]       { top: 160px; left: 38px; }
+	#sprite-designer[data-pos="offline"]    { top: 163px; left: 62px; }
+	#sprite-analyst[data-pos="offline"]     { top: 160px; left: 86px; }
 
 	/* ══════════════════════════════════════════════════════════════
 	   PIXEL CHARACTER SYSTEM (unchanged from original)
@@ -1825,20 +1827,14 @@ const meta = {
 		margin-top: 4px;
 	}
 
-	/* ── Mobile responsive ─────────────────────────────────────── */
-	@media (max-width: 1024px) {
-		.pixel-office {
-			transform: scale(0.85);
-			transform-origin: top left;
-			margin-bottom: -57px;
-		}
+	/* ── Responsive: JS-driven scale (see initPixelOfficeScale) ── */
+	.pixel-office-scale-wrapper {
+		width: 100%;
+		overflow: hidden;
 	}
-	@media (max-width: 640px) {
-		.pixel-office {
-			transform: scale(0.5);
-			transform-origin: top left;
-			margin-bottom: -190px;
-		}
+	.pixel-office {
+		transform-origin: top left;
+		/* scale set dynamically by JS */
 	}
 </style>
 
@@ -2211,6 +2207,22 @@ const meta = {
 		_intervals.push(setInterval(fetchActivity, 30000));
 
 		} // end initAgentPage
+
+		// ── Pixel Office responsive scaling ──────────────────────────
+		function scalePixelOffice() {
+			var wrapper = document.getElementById('pixel-office-wrapper');
+			var office = document.getElementById('pixel-office');
+			if (!wrapper || !office) return;
+			var containerWidth = wrapper.clientWidth;
+			var officeWidth = 960;
+			var scale = Math.min(1, containerWidth / officeWidth);
+			office.style.transform = scale < 1 ? 'scale(' + scale + ')' : '';
+			// Adjust wrapper height so it doesn't leave empty space
+			var officeHeight = 520;
+			wrapper.style.height = scale < 1 ? Math.round(officeHeight * scale) + 'px' : '';
+		}
+		scalePixelOffice();
+		window.addEventListener('resize', scalePixelOffice);
 
 		// Run on first load
 		initAgentPage();
