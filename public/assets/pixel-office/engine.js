@@ -86,8 +86,8 @@
     { type:'CLOCK',           col:10, row:1, file:'CLOCK/CLOCK.png',                   w:1, h:1 },
     { type:'SMALL_TABLE',     col:6,  row:5, file:'SMALL_TABLE/SMALL_TABLE_FRONT.png', w:1, h:1 },
     // Meeting area — center
-    { type:'WOODEN_CHAIR', col:7,  row:5, file:'WOODEN_CHAIR/WOODEN_CHAIR.png', w:1, h:1 },
-    { type:'WOODEN_CHAIR', col:11, row:5, file:'WOODEN_CHAIR/WOODEN_CHAIR.png', w:1, h:1 },
+    { type:'WOODEN_CHAIR', col:7,  row:5, file:'WOODEN_CHAIR/WOODEN_CHAIR_FRONT.png', w:1, h:1 },
+    { type:'WOODEN_CHAIR', col:11, row:5, file:'WOODEN_CHAIR/WOODEN_CHAIR_FRONT.png', w:1, h:1 },
   ];
 
   // ── State ──────────────────────────────────────────────────
