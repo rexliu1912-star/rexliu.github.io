@@ -8,7 +8,6 @@ source: "https://techcrunch.com/2026/03/19/jeff-bezos-reportedly-wants-100-billi
 source_name: "Techcrunch"
 company: "Amazon"
 significance: medium
-title_zh: "贝索斯据报希望筹集 1000 亿美元收购并用 AI 改造传统制造企业"
 body_zh: "亚马逊创始人 Jeff Bezos 正在推进一个新项目：收购传统工业企业，并用 AI 技术对其进行全面改造。该计划据报融资目标高达 1000 亿美元，标志着 AI 从软件领域向重工业渗透的重要信号。"
 ---
 
