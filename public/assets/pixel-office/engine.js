@@ -40,11 +40,11 @@
   // ── Agents ─────────────────────────────────────────────────
   var AGENTS_CFG = [
     { id:'main',       name:'Samantha', sprite:'char_0.png', hc:9,  hr:3,  dir:DIR_DOWN  },
-    { id:'writer',     name:'Loki',     sprite:'char_1.png', hc:3,  hr:2,  dir:DIR_RIGHT },
-    { id:'researcher', name:'Vision',   sprite:'char_2.png', hc:16, hr:2,  dir:DIR_LEFT  },
-    { id:'coder',      name:'Jarvis',   sprite:'char_3.png', hc:3,  hr:7,  dir:DIR_RIGHT },
-    { id:'designer',   name:'Shuri',    sprite:'char_4.png', hc:16, hr:7,  dir:DIR_LEFT  },
-    { id:'analyst',    name:'Friday',   sprite:'char_5.png', hc:9,  hr:8,  dir:DIR_UP    },
+    { id:'writer',     name:'Loki',     sprite:'char_1.png', hc:3,  hr:3,  dir:DIR_RIGHT },
+    { id:'researcher', name:'Vision',   sprite:'char_2.png', hc:16, hr:3,  dir:DIR_LEFT  },
+    { id:'coder',      name:'Jarvis',   sprite:'char_3.png', hc:3,  hr:8,  dir:DIR_RIGHT },
+    { id:'designer',   name:'Shuri',    sprite:'char_4.png', hc:16, hr:8,  dir:DIR_LEFT  },
+    { id:'analyst',    name:'Friday',   sprite:'char_5.png', hc:9,  hr:9,  dir:DIR_UP    },
   ];
 
   // ── Furniture layout ───────────────────────────────────────
@@ -141,7 +141,6 @@
       var blocks = /DESK|PC|BOOKSHELF|WHITEBOARD|SOFA|COFFEE_TABLE|SMALL_TABLE|PLANT|CACTUS/i.test(f.type);
       if (!blocks) continue;
       if (c >= f.col && c < f.col + (f.w || 1) && r >= f.row && r < f.row + (f.h || 1)) {
-        if (isHomeTile(c, r)) continue; // allow agent home seat tiles
         return true;
       }
     }
@@ -243,7 +242,7 @@
 
     // Smooth movement
     if (this.moving) {
-      var speed = 2 * ZOOM; // pixels per frame
+      var speed = 0.9 * ZOOM; // slower, more natural movement
       var dx = this.targetX - this.px, dy = this.targetY - this.py;
       var dist = Math.sqrt(dx * dx + dy * dy);
       if (dist <= speed) {
