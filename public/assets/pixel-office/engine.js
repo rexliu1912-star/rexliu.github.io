@@ -127,12 +127,45 @@
     }));
   }
 
-  // ── BFS Pathfinding ────────────────────────────────────────
-  function isWalkable(c, r) {
-    return c >= 0 && c < COLS && r >= 0 && r < ROWS && MAP[r][c] !== 0;
+  // ── Occupancy + BFS Pathfinding ────────────────────────────
+  function isHomeTile(c, r) {
+    for (var i = 0; i < AGENTS_CFG.length; i++) {
+      if (AGENTS_CFG[i].hc === c && AGENTS_CFG[i].hr === r) return true;
+    }
+    return false;
   }
 
-  function bfs(sc, sr, ec, er) {
+  function furnitureBlocksTile(c, r) {
+    for (var i = 0; i < FURNITURE.length; i++) {
+      var f = FURNITURE[i];
+      var blocks = /DESK|PC|BOOKSHELF|WHITEBOARD|SOFA|COFFEE_TABLE|SMALL_TABLE|PLANT|CACTUS/i.test(f.type);
+      if (!blocks) continue;
+      if (c >= f.col && c < f.col + (f.w || 1) && r >= f.row && r < f.row + (f.h || 1)) {
+        if (isHomeTile(c, r)) continue; // allow agent home seat tiles
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function agentBlocksTile(c, r, selfId) {
+    if (!agents) return false;
+    for (var i = 0; i < agents.length; i++) {
+      var a = agents[i];
+      if (a.id === selfId || a.status === 'offline') continue;
+      if ((a.col === c && a.row === r) || (a.targetCol === c && a.targetRow === r)) return true;
+    }
+    return false;
+  }
+
+  function isWalkable(c, r, selfId, allowTarget) {
+    if (!(c >= 0 && c < COLS && r >= 0 && r < ROWS) || MAP[r][c] === 0) return false;
+    if (!allowTarget && furnitureBlocksTile(c, r)) return false;
+    if (!allowTarget && agentBlocksTile(c, r, selfId)) return false;
+    return true;
+  }
+
+  function bfs(sc, sr, ec, er, selfId) {
     if (sc === ec && sr === er) return [];
     var key = function (c, r) { return c + ',' + r; };
     var visited = {}, queue = [[sc, sr]], prev = {};
@@ -142,15 +175,16 @@
       var cur = queue.shift(), cc = cur[0], cr = cur[1];
       for (var d = 0; d < 4; d++) {
         var nc = cc + dirs[d][0], nr = cr + dirs[d][1];
-        if (!isWalkable(nc, nr)) continue;
+        var isTarget = (nc === ec && nr === er);
+        if (!isWalkable(nc, nr, selfId, isTarget)) continue;
         var nk = key(nc, nr);
         if (visited[nk]) continue;
         visited[nk] = true;
         prev[nk] = [cc, cr];
-        if (nc === ec && nr === er) {
+        if (isTarget) {
           var path = [[ec, er]], p = prev[key(ec, er)];
           while (p) { path.unshift(p); p = prev[key(p[0], p[1])]; }
-          return path.slice(1); // exclude start
+          return path.slice(1);
         }
         queue.push([nc, nr]);
       }
@@ -170,8 +204,10 @@
     this.status = 'idle'; this.task = '';
     this.path = []; this.moving = false;
     this.targetX = this.px; this.targetY = this.py;
+    this.targetCol = this.col; this.targetRow = this.row;
     this.frame = 0; this.animTick = 0;
-    this.nextWander = randInt(180, 480); // frames until next wander
+    this.nextWander = randInt(45, 220); // stagger movement timings for more natural behavior
+    this.idleTurnTick = randInt(20, 90);
     this.zzzPhase = 0;
   }
 
@@ -181,7 +217,7 @@
     if (this.status === s) { this.task = task || ''; return; }
     this.status = s; this.task = task || '';
     if (s === 'busy') {
-      this.path = bfs(this.col, this.row, this.hc, this.hr);
+      this.path = bfs(this.col, this.row, this.hc, this.hr, this.id);
       if (this.path.length) this.startMove();
     }
   };
@@ -190,7 +226,7 @@
     if (!this.path.length) { this.moving = false; return; }
     var next = this.path.shift();
     var dx = next[0] - this.col, dy = next[1] - this.row;
-    this.col = next[0]; this.row = next[1];
+    this.targetCol = next[0]; this.targetRow = next[1];
     this.targetX = next[0] * T + T / 2; this.targetY = next[1] * T + T / 2;
     this.moving = true;
     // set direction
@@ -212,6 +248,7 @@
       var dist = Math.sqrt(dx * dx + dy * dy);
       if (dist <= speed) {
         this.px = this.targetX; this.py = this.targetY;
+        this.col = this.targetCol; this.row = this.targetRow;
         this.moving = false;
         if (this.path.length) this.startMove();
       } else {
@@ -230,24 +267,36 @@
       return;
     }
 
-    // idle: 站立不动，用 frame 0
-    this.frame = 0;
+    // idle: subtle breathing / look-alive animation
+    this.frame = (Math.floor(this.animTick / 28) % 2 === 0) ? 0 : 1;
 
     if (this.status === 'idle') {
+      this.idleTurnTick--;
+      if (this.idleTurnTick <= 0) {
+        this.idleTurnTick = randInt(40, 120);
+        if (Math.random() < 0.35) {
+          var dirs = [DIR_DOWN, DIR_UP, DIR_LEFT, DIR_RIGHT];
+          this.dir = dirs[randInt(0, dirs.length - 1)];
+        }
+      }
+
       this.nextWander--;
       if (this.nextWander <= 0) {
-        this.nextWander = randInt(180, 480);
-        // pick a random walkable neighbor within 2 tiles of home
+        this.nextWander = randInt(60, 260);
+        // sometimes just linger/turn instead of always moving, to avoid feeling scripted
+        if (Math.random() < 0.35) return;
         var choices = [];
         for (var dc = -2; dc <= 2; dc++) {
           for (var dr = -2; dr <= 2; dr++) {
             var nc = this.hc + dc, nr = this.hr + dr;
-            if (isWalkable(nc, nr) && !(nc === this.col && nr === this.row)) choices.push([nc, nr]);
+            if ((Math.abs(dc) + Math.abs(dr)) === 0) continue;
+            if (Math.abs(dc) + Math.abs(dr) > 3) continue;
+            if (isWalkable(nc, nr, this.id, false)) choices.push([nc, nr]);
           }
         }
         if (choices.length) {
           var t = choices[randInt(0, choices.length - 1)];
-          this.path = bfs(this.col, this.row, t[0], t[1]);
+          this.path = bfs(this.col, this.row, t[0], t[1], this.id);
           if (this.path.length) this.startMove();
         }
       }
