@@ -51,17 +51,17 @@
     { type:'DESK',  col:10, row:2, file:'DESK/DESK_FRONT.png',  w:1, h:1 },
     { type:'PC',    col:9,  row:2, file:'PC/PC_FRONT_ON_1.png', w:1, h:1 },
     // Loki — left
-    { type:'DESK',  col:2,  row:2, file:'DESK/DESK_SIDE.png',   w:1, h:1 },
-    { type:'PC',    col:2,  row:2, file:'PC/PC_SIDE.png',        w:1, h:1 },
+    { type:'DESK',  col:2,  row:2, file:'DESK/DESK_FRONT.png',  w:1, h:1 },
+    { type:'PC',    col:2,  row:2, file:'PC/PC_FRONT_ON_1.png', w:1, h:1 },
     // Vision — right
-    { type:'DESK',  col:17, row:2, file:'DESK/DESK_SIDE.png',   w:1, h:1 },
-    { type:'PC',    col:17, row:2, file:'PC/PC_SIDE.png',        w:1, h:1 },
+    { type:'DESK',  col:17, row:2, file:'DESK/DESK_FRONT.png',  w:1, h:1 },
+    { type:'PC',    col:17, row:2, file:'PC/PC_FRONT_ON_1.png', w:1, h:1 },
     // Jarvis — bottom-left
-    { type:'DESK',  col:2,  row:7, file:'DESK/DESK_SIDE.png',   w:1, h:1 },
-    { type:'PC',    col:2,  row:7, file:'PC/PC_SIDE.png',        w:1, h:1 },
+    { type:'DESK',  col:2,  row:7, file:'DESK/DESK_FRONT.png',  w:1, h:1 },
+    { type:'PC',    col:2,  row:7, file:'PC/PC_FRONT_ON_1.png', w:1, h:1 },
     // Shuri — bottom-right
-    { type:'DESK',  col:17, row:7, file:'DESK/DESK_SIDE.png',   w:1, h:1 },
-    { type:'PC',    col:17, row:7, file:'PC/PC_SIDE.png',        w:1, h:1 },
+    { type:'DESK',  col:17, row:7, file:'DESK/DESK_FRONT.png',  w:1, h:1 },
+    { type:'PC',    col:17, row:7, file:'PC/PC_FRONT_ON_1.png', w:1, h:1 },
     // Friday — bottom centre
     { type:'DESK',  col:8,  row:8, file:'DESK/DESK_FRONT.png',  w:1, h:1 },
     { type:'DESK',  col:9,  row:8, file:'DESK/DESK_FRONT.png',  w:1, h:1 },
@@ -366,7 +366,7 @@
     // 家具 sort key：底部行 + 家具高度（tile 单位），让高家具按其底边排序
     FURNITURE.forEach(function (f) {
       var img = images['fur_' + f.file];
-      var furH = img ? (img.height / 16) : 1;
+      var furH = img ? Math.min(img.height / 16, 2) : 1; // cap at 2 tiles to avoid tall sprites occluding characters
       drawables.push({ sort: f.row + furH, type: 'fur', data: f });
     });
     // 角色 sort key：脚底 Y（tile 单位）+ 0.5 偏移，确保同行角色在家具前面
