@@ -19,8 +19,8 @@ const meta = {
 			<span class="lang-zh">我有一支 6 人 AI 团队：写作、研究、开发、设计、分析，全天候运转，我只负责决策。</span>
 		</p>
 		<p class="hero-reveal-subtitle max-w-2xl mt-2 font-serif text-base leading-relaxed text-gray-500 dark:text-gray-400" style="--delay: 120ms">
-			<span class="lang-en">Each agent has a role, a personality, and a live status. Click any room to learn more.</span>
-			<span class="lang-zh">每个 Agent 有独立角色和个性。点击格子查看详情。</span>
+			<span class="lang-en">Each agent has a role, a personality, and a live status. Click any character to learn more.</span>
+			<span class="lang-zh">每个 Agent 有独立角色和个性。点击角色查看详情。</span>
 		</p>
 		<div id="connection-status" class="mt-3 font-serif text-xs text-gray-400">
 			<span class="lang-en">● Live</span><span class="lang-zh">● 实时</span>
@@ -43,13 +43,61 @@ const meta = {
 		</div>
 	</div>
 
-	<section class="agent-grid mb-16">
-		<!-- Samantha -->
-		<div class="agent-room room-samantha glow-card fade-in-up" data-agent="main" style="--delay: 100ms">
-			<div class="room-interior">
-				<div class="room-furniture desk"></div>
-				<div class="room-furniture monitor"></div>
-				<div class="room-furniture sofa"></div>
+	<!-- ═══ SHARED PIXEL OFFICE ═══ -->
+	<section class="office-wrapper mb-16 fade-in-up" style="--delay: 100ms">
+		<div class="pixel-office" id="pixel-office">
+			<!-- ── Wall decorations ── -->
+			<div class="wall-layer">
+				<div class="wall-deco whiteboard"></div>
+				<div class="wall-deco wall-clock"></div>
+				<div class="wall-deco poster"></div>
+				<div class="wall-deco bulletin"></div>
+			</div>
+
+			<!-- ── Zone labels ── -->
+			<div class="zone-label zone-label-lounge"><span class="lang-en">☕ Lounge</span><span class="lang-zh">☕ 休息区</span></div>
+			<div class="zone-label zone-label-command"><span class="lang-en">🎯 Command</span><span class="lang-zh">🎯 指挥台</span></div>
+			<div class="zone-label zone-label-arcade"><span class="lang-en">🎮 Arcade</span><span class="lang-zh">🎮 娱乐区</span></div>
+			<div class="zone-label zone-label-desks"><span class="lang-en">💻 Workstations</span><span class="lang-zh">💻 工位区</span></div>
+
+			<!-- ── Lounge furniture (top-left) ── -->
+			<div class="office-furniture lounge-sofa"></div>
+			<div class="office-furniture lounge-sofa2"></div>
+			<div class="office-furniture coffee-table"></div>
+			<div class="office-furniture coffee-machine"></div>
+			<div class="office-furniture plant plant-1"></div>
+
+			<!-- ── Command center (top-center-right) ── -->
+			<div class="office-furniture cmd-desk"></div>
+			<div class="office-furniture cmd-monitor"></div>
+			<div class="office-furniture cmd-monitor2"></div>
+			<div class="office-furniture cmd-chair"></div>
+
+			<!-- ── Workstation desks (middle band) ── -->
+			<div class="office-furniture ws-desk ws-desk-1"></div>
+			<div class="office-furniture ws-monitor ws-mon-1"></div>
+			<div class="office-furniture ws-desk ws-desk-2"></div>
+			<div class="office-furniture ws-monitor ws-mon-2"></div>
+			<div class="office-furniture ws-desk ws-desk-3"></div>
+			<div class="office-furniture ws-monitor ws-mon-3"></div>
+			<div class="office-furniture ws-desk ws-desk-4"></div>
+			<div class="office-furniture ws-monitor ws-mon-4"></div>
+			<div class="office-furniture ws-desk ws-desk-5"></div>
+			<div class="office-furniture ws-monitor ws-mon-5"></div>
+			<div class="office-furniture plant plant-2"></div>
+			<div class="office-furniture plant plant-3"></div>
+
+			<!-- ── Arcade zone (bottom-left) ── -->
+			<div class="office-furniture arcade-cabinet"></div>
+			<div class="office-furniture pingpong-table"></div>
+			<div class="office-furniture plant plant-4"></div>
+
+			<!-- ── Floor pattern overlay ── -->
+			<div class="floor-pattern"></div>
+
+			<!-- ═══ AGENT SPRITES ═══ -->
+			<!-- Samantha -->
+			<div class="agent-sprite-wrap" data-agent="main" id="sprite-main">
 				<div class="agent-sprite" data-state="idle">
 					<div class="pixel-char char-samantha">
 						<div class="px-hair"></div>
@@ -63,29 +111,11 @@ const meta = {
 					<div class="state-overlay"></div>
 				</div>
 				<div class="zzz-bubble"></div>
-				<div class="error-particles"></div>
-				<div class="task-bubble" style="display:none"></div>
+				<div class="sprite-label"><span class="sprite-name">Samantha</span><span class="sprite-status-dot"></span></div>
 			</div>
-			<div class="room-label">
-				<div class="room-label-top">
-					<img src="/avatars/samantha.png" alt="" class="h-6 w-6 rounded-full object-cover" />
-					<span class="agent-name">Samantha</span>
-					<span class="agent-title font-serif text-xs text-gray-400">
-						<span class="lang-en">Mastermind</span><span class="lang-zh">主脑</span>
-					</span>
-					<span class="agent-status-dot"></span>
-				</div>
-				
-					<span class="agent-latest font-serif text-xs text-gray-500 truncate"></span>
-			</div>
-		</div>
 
-		<!-- Loki -->
-		<div class="agent-room room-loki glow-card fade-in-up" data-agent="writer" style="--delay: 160ms">
-			<div class="room-interior">
-				<div class="room-furniture desk typewriter"></div>
-				<div class="room-furniture bookshelf"></div>
-				<div class="room-furniture sofa"></div>
+			<!-- Loki -->
+			<div class="agent-sprite-wrap" data-agent="writer" id="sprite-writer">
 				<div class="agent-sprite" data-state="idle">
 					<div class="pixel-char char-loki">
 						<div class="px-hair"></div>
@@ -99,29 +129,11 @@ const meta = {
 					<div class="state-overlay"></div>
 				</div>
 				<div class="zzz-bubble"></div>
-				<div class="error-particles"></div>
-				<div class="task-bubble" style="display:none"></div>
+				<div class="sprite-label"><span class="sprite-name">Loki</span><span class="sprite-status-dot"></span></div>
 			</div>
-			<div class="room-label">
-				<div class="room-label-top">
-					<img src="/avatars/loki.png" alt="" class="h-6 w-6 rounded-full object-cover" />
-					<span class="agent-name">Loki</span>
-					<span class="agent-title font-serif text-xs text-gray-400">
-						<span class="lang-en">Writer</span><span class="lang-zh">写手</span>
-					</span>
-					<span class="agent-status-dot"></span>
-				</div>
-				
-					<span class="agent-latest font-serif text-xs text-gray-500 truncate"></span>
-			</div>
-		</div>
 
-		<!-- Vision -->
-		<div class="agent-room room-vision glow-card fade-in-up" data-agent="researcher" style="--delay: 220ms">
-			<div class="room-interior">
-				<div class="room-furniture desk telescope"></div>
-				<div class="room-furniture lab-shelf"></div>
-				<div class="room-furniture sofa"></div>
+			<!-- Vision -->
+			<div class="agent-sprite-wrap" data-agent="researcher" id="sprite-researcher">
 				<div class="agent-sprite" data-state="idle">
 					<div class="pixel-char char-vision">
 						<div class="px-head-glow"></div>
@@ -134,29 +146,11 @@ const meta = {
 					<div class="state-overlay"></div>
 				</div>
 				<div class="zzz-bubble"></div>
-				<div class="error-particles"></div>
-				<div class="task-bubble" style="display:none"></div>
+				<div class="sprite-label"><span class="sprite-name">Vision</span><span class="sprite-status-dot"></span></div>
 			</div>
-			<div class="room-label">
-				<div class="room-label-top">
-					<img src="/avatars/vision.png" alt="" class="h-6 w-6 rounded-full object-cover" />
-					<span class="agent-name">Vision</span>
-					<span class="agent-title font-serif text-xs text-gray-400">
-						<span class="lang-en">Researcher</span><span class="lang-zh">研究员</span>
-					</span>
-					<span class="agent-status-dot"></span>
-				</div>
-				
-					<span class="agent-latest font-serif text-xs text-gray-500 truncate"></span>
-			</div>
-		</div>
 
-		<!-- Jarvis -->
-		<div class="agent-room room-jarvis glow-card fade-in-up" data-agent="coder" style="--delay: 280ms">
-			<div class="room-interior">
-				<div class="room-furniture desk terminal"></div>
-				<div class="room-furniture server-rack"></div>
-				<div class="room-furniture sofa"></div>
+			<!-- Jarvis -->
+			<div class="agent-sprite-wrap" data-agent="coder" id="sprite-coder">
 				<div class="agent-sprite" data-state="idle">
 					<div class="pixel-char char-jarvis">
 						<div class="px-hair"></div>
@@ -170,29 +164,11 @@ const meta = {
 					<div class="state-overlay"></div>
 				</div>
 				<div class="zzz-bubble"></div>
-				<div class="error-particles"></div>
-				<div class="task-bubble" style="display:none"></div>
+				<div class="sprite-label"><span class="sprite-name">Jarvis</span><span class="sprite-status-dot"></span></div>
 			</div>
-			<div class="room-label">
-				<div class="room-label-top">
-					<img src="/avatars/jarvis.png" alt="" class="h-6 w-6 rounded-full object-cover" />
-					<span class="agent-name">Jarvis</span>
-					<span class="agent-title font-serif text-xs text-gray-400">
-						<span class="lang-en">Coder</span><span class="lang-zh">工程师</span>
-					</span>
-					<span class="agent-status-dot"></span>
-				</div>
-				
-					<span class="agent-latest font-serif text-xs text-gray-500 truncate"></span>
-			</div>
-		</div>
 
-		<!-- Shuri -->
-		<div class="agent-room room-shuri glow-card fade-in-up" data-agent="designer" style="--delay: 340ms">
-			<div class="room-interior">
-				<div class="room-furniture desk easel"></div>
-				<div class="room-furniture palette"></div>
-				<div class="room-furniture sofa"></div>
+			<!-- Shuri -->
+			<div class="agent-sprite-wrap" data-agent="designer" id="sprite-designer">
 				<div class="agent-sprite" data-state="idle">
 					<div class="pixel-char char-shuri">
 						<div class="px-buns"></div>
@@ -205,29 +181,11 @@ const meta = {
 					<div class="state-overlay"></div>
 				</div>
 				<div class="zzz-bubble"></div>
-				<div class="error-particles"></div>
-				<div class="task-bubble" style="display:none"></div>
+				<div class="sprite-label"><span class="sprite-name">Shuri</span><span class="sprite-status-dot"></span></div>
 			</div>
-			<div class="room-label">
-				<div class="room-label-top">
-					<img src="/avatars/shuri.png" alt="" class="h-6 w-6 rounded-full object-cover" />
-					<span class="agent-name">Shuri</span>
-					<span class="agent-title font-serif text-xs text-gray-400">
-						<span class="lang-en">Designer</span><span class="lang-zh">设计师</span>
-					</span>
-					<span class="agent-status-dot"></span>
-				</div>
-				
-					<span class="agent-latest font-serif text-xs text-gray-500 truncate"></span>
-			</div>
-		</div>
 
-		<!-- Friday -->
-		<div class="agent-room room-friday glow-card fade-in-up" data-agent="analyst" style="--delay: 400ms">
-			<div class="room-interior">
-				<div class="room-furniture desk data-screen"></div>
-				<div class="room-furniture chart-wall"></div>
-				<div class="room-furniture sofa"></div>
+			<!-- Friday -->
+			<div class="agent-sprite-wrap" data-agent="analyst" id="sprite-analyst">
 				<div class="agent-sprite" data-state="idle">
 					<div class="pixel-char char-friday">
 						<div class="px-hair"></div>
@@ -240,20 +198,7 @@ const meta = {
 					<div class="state-overlay"></div>
 				</div>
 				<div class="zzz-bubble"></div>
-				<div class="error-particles"></div>
-				<div class="task-bubble" style="display:none"></div>
-			</div>
-			<div class="room-label">
-				<div class="room-label-top">
-					<img src="/avatars/friday.png" alt="" class="h-6 w-6 rounded-full object-cover" />
-					<span class="agent-name">Friday</span>
-					<span class="agent-title font-serif text-xs text-gray-400">
-						<span class="lang-en">Analyst</span><span class="lang-zh">分析师</span>
-					</span>
-					<span class="agent-status-dot"></span>
-				</div>
-				
-					<span class="agent-latest font-serif text-xs text-gray-500 truncate"></span>
+				<div class="sprite-label"><span class="sprite-name">Friday</span><span class="sprite-status-dot"></span></div>
 			</div>
 		</div>
 	</section>
@@ -287,290 +232,536 @@ const meta = {
 	html:not([data-lang]) .lang-zh,
 	html[data-lang="zh"] .lang-en { display: none !important; }
 
-	/* ── Pixel Art Foundation ─────────────────────────────────── */
-	.agent-grid, .agent-grid * { image-rendering: pixelated; }
-
-	.agent-grid {
-		display: grid;
-		grid-template-columns: repeat(3, 1fr);
-		gap: 1.25rem;
+	/* ══════════════════════════════════════════════════════════════
+	   PIXEL OFFICE — Shared workspace container
+	   ══════════════════════════════════════════════════════════════ */
+	.office-wrapper {
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
 	}
-	@media (max-width: 1024px) {
-		.agent-grid { grid-template-columns: repeat(2, 1fr); }
-	}
-	@media (max-width: 640px) {
-		.agent-grid { grid-template-columns: 1fr; }
-	}
-
-	/* ── Room Base ────────────────────────────────────────────── */
-	.agent-room {
-		border: 3px solid #2a2a3a;
-		border-radius: 4px;
-		overflow: hidden;
-		background: #1a1a2e;
-		box-shadow: 0 0 0 1px #8953d133;
-		transition: box-shadow 0.3s, filter 0.3s, border-color 0.3s;
-	}
-	.agent-room:hover {
-		box-shadow: 0 0 20px #8953d144, 0 0 0 1px #8953d155;
-		filter: brightness(1.15);
-	}
-	/* P1: Hover border color per agent */
-	.room-samantha:hover { border-color: #ff6b35; }
-	.room-loki:hover { border-color: #4a9e4a; }
-	.room-vision:hover { border-color: #4a8ab5; }
-	.room-jarvis:hover { border-color: #7a7a8a; }
-	.room-shuri:hover { border-color: #c54ab5; }
-	.room-friday:hover { border-color: #4ac5c5; }
-
-	.room-interior {
+	.pixel-office {
 		position: relative;
-		height: 180px;
+		width: 960px;
+		height: 520px;
+		margin: 0 auto;
+		image-rendering: pixelated;
+		border: 3px solid #2a2a3a;
+		border-radius: 6px;
 		overflow: hidden;
+		box-shadow: 0 0 30px #8953d122, 0 0 0 1px #8953d133;
+		/* Wall + floor background */
 		background:
-			repeating-linear-gradient(90deg, transparent 0 15px, #ffffff06 15px 16px),
-			repeating-linear-gradient(0deg, transparent 0 15px, #ffffff06 15px 16px),
-			linear-gradient(180deg, #12122a 0%, #1a1a2e 60%, #222240 100%);
+			linear-gradient(180deg,
+				#1e1e3a 0%, #1e1e3a 15%,   /* wall */
+				#2a2a4a 15%, #2a2a4a 16%,   /* baseboard */
+				#1a1a2e 16%, #181828 100%    /* floor */
+			);
+	}
+	/* Grid pattern on floor only */
+	.floor-pattern {
+		position: absolute;
+		top: 16%; left: 0; right: 0; bottom: 0;
+		background:
+			repeating-linear-gradient(90deg, transparent 0 31px, #ffffff04 31px 32px),
+			repeating-linear-gradient(0deg, transparent 0 31px, #ffffff04 31px 32px);
+		pointer-events: none;
+		z-index: 0;
+	}
+	/* Light theme */
+	:global([data-theme="light"]) .pixel-office {
+		background:
+			linear-gradient(180deg,
+				#e8e4dc 0%, #e8e4dc 15%,
+				#bbb 15%, #bbb 16%,
+				#d4cfc4 16%, #c8c0b0 100%
+			);
+		border-color: #ccc;
+		box-shadow: 0 4px 32px rgba(0,0,0,0.08);
+	}
+	:global([data-theme="light"]) .floor-pattern {
+		background:
+			repeating-linear-gradient(90deg, transparent 0 31px, #00000008 31px 32px),
+			repeating-linear-gradient(0deg, transparent 0 31px, #00000008 31px 32px);
 	}
 
-	.room-label {
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-		padding: 0.5rem 0.75rem;
-		background: #12122a;
-		border-top: 2px solid #2a2a3a;
-	}
-	.agent-name {
+	/* ── Zone Labels ── */
+	.zone-label {
+		position: absolute;
 		font-family: serif;
-		font-weight: 600;
-		font-size: 0.9rem;
-		color: white;
+		font-size: 9px;
+		letter-spacing: 0.06em;
+		color: #ffffff22;
+		z-index: 1;
+		pointer-events: none;
+		text-transform: uppercase;
 	}
-	.agent-title { flex: 1; }
+	:global([data-theme="light"]) .zone-label { color: #00000022; }
+	.zone-label-lounge { top: 20%; left: 30px; }
+	.zone-label-command { top: 20%; right: 180px; }
+	.zone-label-arcade { bottom: 30px; left: 30px; }
+	.zone-label-desks { top: 54%; left: 50%; transform: translateX(-50%); }
 
-	/* ── Status Dot ───────────────────────────────────────────── */
-	.agent-status-dot {
-		width: 8px; height: 8px;
-		border-radius: 50%;
-		background: #666;
-		flex-shrink: 0;
+	/* ══════════════════════════════════════════════════════════════
+	   WALL DECORATIONS
+	   ══════════════════════════════════════════════════════════════ */
+	.wall-layer { position: absolute; top: 0; left: 0; right: 0; height: 15%; z-index: 1; pointer-events: none; }
+	.wall-deco { position: absolute; }
+	/* Whiteboard */
+	.whiteboard {
+		top: 16px; left: 60px;
+		width: 80px; height: 44px;
+		background: #f0f0e8;
+		border: 3px solid #ccc;
+		border-radius: 2px;
+		box-shadow: 0 2px 4px #0004;
 	}
-	.agent-status-dot.idle { background: #4ade80; }
-	.agent-status-dot.busy { background: #f59e0b; animation: pulse-dot 1.5s infinite; }
-	.agent-status-dot.error { background: #ef4444; animation: blink-dot 0.5s infinite; }
-	.agent-status-dot.offline { background: #666; }
-
-	@keyframes pulse-dot {
-		0%, 100% { opacity: 1; }
-		50% { opacity: 0.4; }
+	.whiteboard::before {
+		content: '';
+		position: absolute;
+		top: 6px; left: 8px;
+		width: 40px; height: 2px;
+		background: #e74c3c;
+		box-shadow: 0 8px 0 #3498db, 0 16px 0 #2ecc71, 20px 4px 0 #f39c12;
 	}
-	@keyframes blink-dot {
-		0%, 100% { opacity: 1; }
-		50% { opacity: 0.2; }
+	.whiteboard::after {
+		content: '';
+		position: absolute;
+		bottom: 4px; right: 6px;
+		width: 8px; height: 4px;
+		background: #e74c3c;
+		border-radius: 1px;
 	}
-
-	/* ── Furniture (pixel blocks) ─────────────────────────────── */
-	.room-furniture { position: absolute; }
-	.desk {
-		bottom: 0; left: 50%; transform: translateX(-50%);
-		width: 64px; height: 32px;
-		background: #5c3d2e;
-		border-top: 3px solid #7a5640;
-		border-radius: 2px 2px 0 0;
-	}
-	.monitor {
-		bottom: 32px; left: 50%; transform: translateX(-50%);
-		width: 32px; height: 24px;
+	:global([data-theme="light"]) .whiteboard { background: #fff; border-color: #aaa; }
+	/* Clock */
+	.wall-clock {
+		top: 20px; left: 360px;
+		width: 28px; height: 28px;
 		background: #2a2a4a;
-		border: 2px solid #8953d1;
+		border: 2px solid #555;
+		border-radius: 50%;
+	}
+	.wall-clock::before {
+		content: '';
+		position: absolute;
+		top: 50%; left: 50%;
+		width: 1px; height: 8px;
+		background: #8953d1;
+		transform-origin: bottom center;
+		transform: translate(-50%, -100%) rotate(30deg);
+		animation: clock-tick 10s steps(60) infinite;
+	}
+	.wall-clock::after {
+		content: '';
+		position: absolute;
+		top: 50%; left: 50%;
+		width: 1px; height: 5px;
+		background: #fff;
+		transform-origin: bottom center;
+		transform: translate(-50%, -100%) rotate(180deg);
+		animation: clock-tick 120s steps(60) infinite;
+	}
+	@keyframes clock-tick { to { transform: translate(-50%, -100%) rotate(390deg); } }
+	:global([data-theme="light"]) .wall-clock { background: #f5f5f0; border-color: #999; }
+	:global([data-theme="light"]) .wall-clock::after { background: #333; }
+	/* Poster */
+	.poster {
+		top: 18px; right: 100px;
+		width: 36px; height: 48px;
+		background: linear-gradient(135deg, #8953d1, #c54ab5);
+		border: 2px solid #6a3da0;
 		border-radius: 2px;
 	}
-	.monitor::after {
-		content: ''; position: absolute;
-		top: 3px; left: 3px; right: 3px; bottom: 3px;
-		background: #8953d133;
-		animation: screen-flicker 3s infinite;
+	.poster::before {
+		content: '⚡';
+		position: absolute;
+		top: 50%; left: 50%;
+		transform: translate(-50%, -50%);
+		font-size: 14px;
 	}
-	.sofa {
-		bottom: 0; right: 12px;
-		width: 40px; height: 20px;
-		background: #3a3a5a;
-		border-radius: 4px 4px 0 0;
-		border-top: 3px solid #4a4a6a;
-	}
-
-	/* Room-specific furniture */
-	.typewriter { background: #4a3a2e; }
-	.typewriter::after {
-		content: ''; position: absolute;
-		top: -8px; left: 50%; transform: translateX(-50%);
-		width: 24px; height: 8px; background: #333;
-		border-radius: 2px;
-	}
-	.bookshelf {
-		top: 10px; left: 8px;
-		width: 20px; height: 60px;
+	/* Bulletin board */
+	.bulletin {
+		top: 22px; right: 260px;
+		width: 50px; height: 36px;
 		background: #5c3d2e;
 		border: 2px solid #7a5640;
-	}
-	.bookshelf::before {
-		content: ''; position: absolute;
-		top: 5px; left: 2px;
-		width: 12px; height: 48px;
-		background: repeating-linear-gradient(
-			180deg,
-			#e74c3c 0 6px, #3498db 6px 12px,
-			#f39c12 12px 18px, #2ecc71 18px 24px,
-			#8953d1 24px 30px, #ff6b35 30px 36px
-		);
-	}
-	.telescope { background: #3a3a5a; }
-	.telescope::after {
-		content: ''; position: absolute;
-		top: -20px; left: 50%; transform: translateX(-50%) rotate(-30deg);
-		width: 8px; height: 28px;
-		background: linear-gradient(#888, #aaa);
 		border-radius: 2px;
 	}
-	.lab-shelf {
-		top: 8px; right: 8px;
-		width: 24px; height: 50px;
-		background: #2a4a3a;
-		border: 2px solid #3a6a4a;
+	.bulletin::before {
+		content: '';
+		position: absolute;
+		top: 6px; left: 6px;
+		width: 10px; height: 8px;
+		background: #f39c12;
+		box-shadow: 14px 0 0 #4ade80, 28px 0 0 #ef4444, 0 12px 0 #3498db, 14px 12px 0 #c54ab5;
 	}
-	.lab-shelf::before {
-		content: ''; position: absolute;
-		top: 4px; left: 3px;
-		width: 16px; height: 40px;
-		background: repeating-linear-gradient(
-			180deg,
-			#00ff8844 0 8px, transparent 8px 12px
-		);
+	:global([data-theme="light"]) .bulletin { background: #c4a882; border-color: #b09070; }
+
+	/* ══════════════════════════════════════════════════════════════
+	   OFFICE FURNITURE — CSS pixel art
+	   ══════════════════════════════════════════════════════════════ */
+	.office-furniture { position: absolute; z-index: 2; image-rendering: pixelated; }
+
+	/* ── Lounge ── */
+	.lounge-sofa {
+		top: 130px; left: 20px;
+		width: 80px; height: 28px;
+		background: #3a3a5a;
+		border-radius: 6px 6px 2px 2px;
+		border-top: 4px solid #4a4a6a;
+		box-shadow: 0 2px 0 #2a2a3a;
 	}
-	.terminal { background: #1a1a1a; border-top-color: #0f0; }
-	.terminal::after {
-		content: '>_'; position: absolute;
-		top: -20px; left: 50%; transform: translateX(-50%);
-		width: 32px; height: 20px;
-		background: #111;
-		border: 2px solid #0f0;
-		color: #0f0;
-		font-size: 8px;
-		font-family: monospace;
-		display: flex; align-items: center; justify-content: center;
+	.lounge-sofa::before {
+		content: '';
+		position: absolute;
+		top: -2px; left: 4px;
+		width: 16px; height: 24px;
+		background: #4a4a6a;
+		border-radius: 4px 0 0 4px;
+	}
+	.lounge-sofa::after {
+		content: '';
+		position: absolute;
+		top: -2px; right: 4px;
+		width: 16px; height: 24px;
+		background: #4a4a6a;
+		border-radius: 0 4px 4px 0;
+	}
+	:global([data-theme="light"]) .lounge-sofa { background: #8b8ba0; border-top-color: #9a9ab0; }
+	:global([data-theme="light"]) .lounge-sofa::before, :global([data-theme="light"]) .lounge-sofa::after { background: #9a9ab0; }
+
+	.lounge-sofa2 {
+		top: 168px; left: 30px;
+		width: 60px; height: 20px;
+		background: #3a3a5a;
+		border-radius: 4px 4px 2px 2px;
+		border-top: 3px solid #4a4a6a;
+	}
+	:global([data-theme="light"]) .lounge-sofa2 { background: #8b8ba0; border-top-color: #9a9ab0; }
+
+	.coffee-table {
+		top: 148px; left: 110px;
+		width: 40px; height: 24px;
+		background: #5c3d2e;
+		border-top: 3px solid #7a5640;
 		border-radius: 2px;
-		animation: terminal-blink 0.6s steps(2) infinite;
-		text-shadow: 0 0 3px #0f0;
 	}
-	.server-rack {
-		top: 8px; left: 6px;
-		width: 18px; height: 70px;
-		background: #1a1a2e;
-		border: 2px solid #333;
+	.coffee-table::before {
+		content: '';
+		position: absolute;
+		top: -8px; left: 8px;
+		width: 8px; height: 6px;
+		background: #5c3d2e;
+		border: 1px solid #3a2518;
+		border-radius: 0 0 1px 1px;
 	}
-	.server-rack::before {
-		content: ''; position: absolute;
-		top: 4px; left: 3px;
-		width: 8px; height: 58px;
-		background: repeating-linear-gradient(
-			180deg,
-			#0f0 0 2px, transparent 2px 8px
-		);
-		animation: server-lights 2s steps(3) infinite;
+	.coffee-table::before {
+		/* coffee cup on table */
+		top: -10px; left: 10px;
+		width: 8px; height: 8px;
+		background: #5c3d2e;
+		border: 1px solid #3a2518;
+		border-radius: 0 0 2px 2px;
 	}
-	.easel { background: #f5f5dc33; border-top-color: #8953d1; }
-	.easel::after {
-		content: ''; position: absolute;
-		top: -28px; left: 50%; transform: translateX(-50%);
-		width: 28px; height: 28px;
-		background: linear-gradient(135deg, #e74c3c, #8953d1, #3498db, #2ecc71);
-		border: 2px solid #5c3d2e;
+	:global([data-theme="light"]) .coffee-table { background: #a07050; border-top-color: #c09070; }
+
+	.coffee-machine {
+		top: 110px; left: 170px;
+		width: 24px; height: 32px;
+		background: #2a2a3a;
+		border: 2px solid #444;
 		border-radius: 2px;
 	}
-	.palette {
-		top: 15px; right: 10px;
-		width: 24px; height: 16px;
-		border-radius: 50%;
-		background: #f5deb3;
-		border: 2px solid #d2b48c;
+	.coffee-machine::before {
+		content: '';
+		position: absolute;
+		top: 4px; left: 4px;
+		width: 14px; height: 8px;
+		background: #5c3d2e;
+		border-radius: 2px;
 	}
-	.palette::before {
-		content: ''; position: absolute;
-		top: 2px; left: 3px;
+	.coffee-machine::after {
+		content: '';
+		position: absolute;
+		bottom: 4px; left: 50%; transform: translateX(-50%);
 		width: 4px; height: 4px;
+		background: #ef4444;
 		border-radius: 50%;
-		background: #e74c3c;
-		box-shadow: 6px 0 0 #3498db, 3px 6px 0 #f39c12, 10px 5px 0 #2ecc71;
+		animation: coffee-light 2s ease-in-out infinite;
 	}
-	.data-screen { background: #1a1a2e; border-top-color: #00d4ff; }
-	.data-screen::after {
-		content: ''; position: absolute;
-		top: -24px; left: 50%; transform: translateX(-50%);
-		width: 36px; height: 24px;
-		background: #0a0a1e;
-		border: 2px solid #00d4ff;
+	@keyframes coffee-light { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+	:global([data-theme="light"]) .coffee-machine { background: #bbb; border-color: #999; }
+
+	/* ── Command Center ── */
+	.cmd-desk {
+		top: 128px; right: 100px;
+		width: 120px; height: 36px;
+		background: #5c3d2e;
+		border-top: 4px solid #7a5640;
 		border-radius: 2px;
 	}
-	.chart-wall {
-		top: 10px; left: 8px;
-		width: 28px; height: 40px;
+	:global([data-theme="light"]) .cmd-desk { background: #a07050; border-top-color: #c09070; }
+	.cmd-monitor {
+		top: 100px; right: 140px;
+		width: 40px; height: 28px;
+		background: #1a1a2e;
+		border: 2px solid #8953d1;
+		border-radius: 3px;
+	}
+	.cmd-monitor::after {
+		content: '';
+		position: absolute;
+		top: 3px; left: 3px; right: 3px; bottom: 3px;
+		background: #8953d122;
+		animation: screen-flicker 3s infinite;
+	}
+	.cmd-monitor2 {
+		top: 104px; right: 106px;
+		width: 32px; height: 24px;
+		background: #1a1a2e;
+		border: 2px solid #ff6b35;
+		border-radius: 3px;
+	}
+	.cmd-monitor2::after {
+		content: '';
+		position: absolute;
+		top: 3px; left: 3px; right: 3px; bottom: 3px;
+		background: #ff6b3522;
+		animation: screen-flicker 4s infinite;
+	}
+	:global([data-theme="light"]) .cmd-monitor, :global([data-theme="light"]) .cmd-monitor2 { background: #e0e0e0; }
+	.cmd-chair {
+		top: 166px; right: 140px;
+		width: 28px; height: 16px;
+		background: #333;
+		border-radius: 50%;
+		border-top: 2px solid #444;
+	}
+
+	/* ── Workstation desks (5 desks in a row) ── */
+	.ws-desk {
+		width: 80px; height: 28px;
+		background: #5c3d2e;
+		border-top: 3px solid #7a5640;
+		border-radius: 2px;
+	}
+	:global([data-theme="light"]) .ws-desk { background: #a07050; border-top-color: #c09070; }
+	.ws-monitor {
+		width: 28px; height: 20px;
+		background: #1a1a2e;
+		border: 2px solid #555;
+		border-radius: 2px;
+	}
+	.ws-monitor::after {
+		content: '';
+		position: absolute;
+		top: 2px; left: 2px; right: 2px; bottom: 2px;
+		background: #ffffff08;
+		animation: screen-flicker 3s infinite;
+	}
+	:global([data-theme="light"]) .ws-monitor { background: #ddd; border-color: #999; }
+
+	/* Position each desk — two rows */
+	.ws-desk-1 { top: 280px; left: 200px; }
+	.ws-mon-1  { top: 260px; left: 226px; border-color: #4a9e4a; }
+	.ws-mon-1::after { background: #4a9e4a11; }
+	.ws-desk-2 { top: 280px; left: 340px; }
+	.ws-mon-2  { top: 260px; left: 366px; border-color: #4a8ab5; }
+	.ws-mon-2::after { background: #4a8ab511; }
+	.ws-desk-3 { top: 280px; left: 480px; }
+	.ws-mon-3  { top: 260px; left: 506px; border-color: #7a7a8a; }
+	.ws-mon-3::after { background: #7a7a8a11; }
+	.ws-desk-4 { top: 360px; left: 260px; }
+	.ws-mon-4  { top: 340px; left: 286px; border-color: #c54ab5; }
+	.ws-mon-4::after { background: #c54ab511; }
+	.ws-desk-5 { top: 360px; left: 420px; }
+	.ws-mon-5  { top: 340px; left: 446px; border-color: #4ac5c5; }
+	.ws-mon-5::after { background: #4ac5c511; }
+
+	/* ── Plants ── */
+	.plant {
+		width: 16px; height: 24px;
+		background: #5c3d2e;
+		border-radius: 0 0 4px 4px;
+		border-top: 3px solid #7a5640;
+	}
+	.plant::before {
+		content: '';
+		position: absolute;
+		top: -12px; left: 50%; transform: translateX(-50%);
+		width: 18px; height: 14px;
+		background: radial-gradient(circle at 50% 80%, #2d6a2d 30%, #4a9e4a 70%, transparent 100%);
+		border-radius: 50% 50% 30% 30%;
+	}
+	.plant-1 { top: 104px; left: 210px; }
+	.plant-2 { top: 272px; left: 310px; }
+	.plant-3 { top: 352px; left: 560px; }
+	.plant-4 { bottom: 40px; left: 190px; }
+
+	/* ── Arcade zone ── */
+	.arcade-cabinet {
+		bottom: 50px; left: 30px;
+		width: 32px; height: 48px;
+		background: linear-gradient(180deg, #2a2a4a 60%, #1a1a2e);
+		border: 2px solid #8953d1;
+		border-radius: 3px 3px 0 0;
+	}
+	.arcade-cabinet::before {
+		content: '';
+		position: absolute;
+		top: 4px; left: 4px;
+		width: 22px; height: 16px;
 		background: #0a0a1e;
-		border: 1px solid #00d4ff44;
+		border: 1px solid #4ade80;
+		border-radius: 2px;
+		animation: arcade-screen 1.5s steps(3) infinite;
 	}
-	.chart-wall::before {
-		content: ''; position: absolute;
-		bottom: 2px; left: 2px;
-		width: 22px; height: 32px;
-		background: repeating-linear-gradient(
-			90deg,
-			#00d4ff44 0 3px, transparent 3px 5px
-		);
-		mask-image: linear-gradient(0deg, white 20%, white 40%, transparent 40%, white 55%, white 80%, transparent 80%, white 90%, white 100%);
-		-webkit-mask-image: linear-gradient(0deg, white 20%, white 40%, transparent 40%, white 55%, white 80%, transparent 80%, white 90%, white 100%);
+	.arcade-cabinet::after {
+		content: '';
+		position: absolute;
+		bottom: 8px; left: 50%; transform: translateX(-50%);
+		width: 6px; height: 6px;
+		background: #ef4444;
+		border-radius: 50%;
+		box-shadow: 8px 0 0 #4ade80, -8px 0 0 #3498db;
 	}
+	@keyframes arcade-screen {
+		0% { background: #0a0a1e; box-shadow: inset 0 0 4px #4ade8044; }
+		33% { background: #0a1a0a; box-shadow: inset 0 0 6px #4ade8066; }
+		66% { background: #0a0a1e; box-shadow: inset 0 0 4px #8953d144; }
+	}
+	:global([data-theme="light"]) .arcade-cabinet { background: linear-gradient(180deg, #888 60%, #777); border-color: #8953d1; }
+
+	.pingpong-table {
+		bottom: 60px; left: 80px;
+		width: 80px; height: 40px;
+		background: #1a5a3a;
+		border: 2px solid #2a7a4a;
+		border-radius: 2px;
+	}
+	.pingpong-table::before {
+		/* net */
+		content: '';
+		position: absolute;
+		top: 0; left: 50%; transform: translateX(-50%);
+		width: 2px; height: 100%;
+		background: #ffffff44;
+	}
+	.pingpong-table::after {
+		/* ball */
+		content: '';
+		position: absolute;
+		top: 10px; right: 12px;
+		width: 4px; height: 4px;
+		background: #fff;
+		border-radius: 50%;
+		animation: pp-ball 2s ease-in-out infinite;
+	}
+	@keyframes pp-ball {
+		0%, 100% { transform: translate(0, 0); }
+		50% { transform: translate(-40px, 8px); }
+	}
+	:global([data-theme="light"]) .pingpong-table { background: #2a8a5a; border-color: #3aaa6a; }
 
 	@keyframes screen-flicker {
 		0%, 90%, 100% { opacity: 1; }
 		92% { opacity: 0.6; }
 	}
-	@keyframes terminal-blink {
-		0%, 100% { opacity: 1; }
-		50% { opacity: 0; }
+
+	/* ══════════════════════════════════════════════════════════════
+	   AGENT SPRITE WRAPPERS — positioned in the office
+	   ══════════════════════════════════════════════════════════════ */
+	.agent-sprite-wrap {
+		position: absolute;
+		z-index: 10;
+		cursor: pointer;
+		transition: left 0.5s ease, top 0.5s ease, opacity 0.4s ease;
 	}
-	@keyframes server-lights {
-		0% { opacity: 1; }
-		33% { opacity: 0.5; }
-		66% { opacity: 0.8; }
+	.agent-sprite-wrap:hover { z-index: 20; }
+	.agent-sprite-wrap:hover .sprite-label { opacity: 1; }
+
+	/* Sprite label (name + dot) */
+	.sprite-label {
+		position: absolute;
+		bottom: -16px; left: 50%;
+		transform: translateX(-50%);
+		display: flex;
+		align-items: center;
+		gap: 3px;
+		white-space: nowrap;
+		opacity: 0.7;
+		transition: opacity 0.2s;
+		pointer-events: none;
+	}
+	.sprite-name {
+		font-family: serif;
+		font-size: 8px;
+		color: #ccc;
+		letter-spacing: 0.02em;
+	}
+	:global([data-theme="light"]) .sprite-name { color: #555; }
+	.sprite-status-dot {
+		width: 5px; height: 5px;
+		border-radius: 50%;
+		background: #666;
+		flex-shrink: 0;
+	}
+	.sprite-status-dot.idle { background: #4ade80; }
+	.sprite-status-dot.busy { background: #f59e0b; animation: pulse-dot 1.5s infinite; }
+	.sprite-status-dot.error { background: #a78bfa; }
+	.sprite-status-dot.offline { background: #666; }
+
+	@keyframes pulse-dot {
+		0%, 100% { opacity: 1; }
+		50% { opacity: 0.4; }
 	}
 
 	/* ══════════════════════════════════════════════════════════════
-	   PIXEL CHARACTER SYSTEM
+	   SPRITE POSITIONS BY STATE
+	   Each agent gets specific coordinates per state
+	   ══════════════════════════════════════════════════════════════ */
+
+	/* ── Default / idle: Lounge area (top-left) ── */
+	#sprite-main[data-pos="idle"]        { top: 120px; left: 100px; }
+	#sprite-writer[data-pos="idle"]      { top: 140px; left: 60px; }
+	#sprite-researcher[data-pos="idle"]  { top: 118px; left: 148px; }
+	#sprite-coder[data-pos="idle"]       { top: 155px; left: 115px; }
+	#sprite-designer[data-pos="idle"]    { top: 128px; left: 170px; }
+	#sprite-analyst[data-pos="idle"]     { top: 152px; left: 50px; }
+
+	/* ── Busy: Workstations / Command ── */
+	#sprite-main[data-pos="busy"]        { top: 138px; right: 148px; left: auto; }   /* Command center */
+	#sprite-writer[data-pos="busy"]      { top: 248px; left: 226px; }   /* Desk 1 */
+	#sprite-researcher[data-pos="busy"]  { top: 248px; left: 366px; }   /* Desk 2 */
+	#sprite-coder[data-pos="busy"]       { top: 248px; left: 506px; }   /* Desk 3 */
+	#sprite-designer[data-pos="busy"]    { top: 328px; left: 286px; }   /* Desk 4 */
+	#sprite-analyst[data-pos="busy"]     { top: 328px; left: 446px; }   /* Desk 5 */
+
+	/* ── Error: Arcade area (bottom-left), vacation mode ── */
+	#sprite-main[data-pos="error"]       { top: 400px; left: 120px; }
+	#sprite-writer[data-pos="error"]     { top: 415px; left: 60px; }
+	#sprite-researcher[data-pos="error"] { top: 390px; left: 145px; }
+	#sprite-coder[data-pos="error"]      { top: 410px; left: 90px; }
+	#sprite-designer[data-pos="error"]   { top: 395px; left: 165px; }
+	#sprite-analyst[data-pos="error"]    { top: 420px; left: 40px; }
+
+	/* ── Offline: Sofa area, semi-transparent ── */
+	#sprite-main[data-pos="offline"]        { top: 122px; left: 30px; }
+	#sprite-writer[data-pos="offline"]      { top: 125px; left: 55px; }
+	#sprite-researcher[data-pos="offline"]  { top: 128px; left: 80px; }
+	#sprite-coder[data-pos="offline"]       { top: 160px; left: 38px; }
+	#sprite-designer[data-pos="offline"]    { top: 163px; left: 62px; }
+	#sprite-analyst[data-pos="offline"]     { top: 160px; left: 86px; }
+
+	/* ══════════════════════════════════════════════════════════════
+	   PIXEL CHARACTER SYSTEM (unchanged from original)
 	   ══════════════════════════════════════════════════════════════ */
 
 	.agent-sprite {
-		position: absolute;
+		position: relative;
 		width: 32px; height: 32px;
 		transform: scale(2);
 		transform-origin: bottom center;
-		transition: left 0.5s steps(6), bottom 0.3s steps(4), right 0.5s steps(6);
 		z-index: 5;
-	}
-	/* idle = near sofa */
-	.agent-sprite[data-state="idle"] {
-		right: 18px; bottom: 22px; left: auto;
-	}
-	/* busy = at desk */
-	.agent-sprite[data-state="busy"] {
-		left: calc(50% - 16px); bottom: 34px; right: auto;
-	}
-	/* error = center */
-	.agent-sprite[data-state="error"] {
-		right: 18px; bottom: 22px; left: auto;
-	}
-	/* offline = on sofa */
-	.agent-sprite[data-state="offline"] {
-		right: 18px; bottom: 22px; left: auto;
 	}
 
 	.pixel-char {
@@ -640,7 +831,6 @@ const meta = {
 		border-radius: 5px 5px 0 0;
 		z-index: 4;
 	}
-	/* Side hair strands — enhanced wave */
 	.char-samantha .px-hair::before {
 		content: '';
 		position: absolute;
@@ -675,7 +865,6 @@ const meta = {
 		background: #ffffff;
 		border: 1px solid #ddd;
 	}
-	/* Coffee cup */
 	.char-samantha .px-accessory {
 		position: absolute;
 		top: 18px; right: 4px;
@@ -694,7 +883,6 @@ const meta = {
 		border-radius: 50%;
 		animation: steam 0.8s ease-in-out infinite alternate;
 	}
-	/* Earring */
 	.char-samantha .px-head::after {
 		content: '';
 		position: absolute;
@@ -715,7 +903,6 @@ const meta = {
 		border-radius: 4px 4px 0 0;
 		z-index: 4;
 	}
-	/* Green-tipped long hair back */
 	.char-loki .px-hair::after {
 		content: '';
 		position: absolute;
@@ -742,7 +929,6 @@ const meta = {
 		background: #2a5a2a;
 		border: 1px solid #1a3a1a;
 	}
-	/* High collar */
 	.char-loki .px-body::before {
 		content: '';
 		position: absolute;
@@ -751,7 +937,6 @@ const meta = {
 		background: #111;
 		border-radius: 1px 1px 0 0;
 	}
-	/* Snake brooch */
 	.char-loki .px-brooch {
 		position: absolute;
 		top: 4px; left: 6px;
@@ -760,7 +945,6 @@ const meta = {
 		border-radius: 50%;
 		box-shadow: 0 0 2px #4a9e4a;
 	}
-	/* Quill pen (idle) */
 	.char-loki .px-accessory {
 		position: absolute;
 		top: 16px; right: 2px;
@@ -809,7 +993,6 @@ const meta = {
 	}
 	.char-vision .px-glasses::before { left: 0; }
 	.char-vision .px-glasses::after { right: 0; }
-	/* Bridge */
 	.char-vision .px-gem {
 		position: absolute;
 		top: 1px; left: 50%; transform: translateX(-50%);
@@ -823,7 +1006,6 @@ const meta = {
 		background: #f0f0f0;
 		border: 1px solid #ccc;
 	}
-	/* Blue cuffs */
 	.char-vision .px-body::after {
 		content: '';
 		position: absolute;
@@ -831,7 +1013,6 @@ const meta = {
 		width: 100%; height: 3px;
 		background: #4a8ab5;
 	}
-	/* Notebook */
 	.char-vision .px-accessory {
 		position: absolute;
 		top: 20px; right: 3px;
@@ -855,7 +1036,6 @@ const meta = {
 	.char-jarvis .px-head {
 		border: 1px solid #555;
 	}
-	/* Headphones around neck */
 	.char-jarvis .px-headphones {
 		position: absolute;
 		top: 13px; left: 6px;
@@ -881,7 +1061,6 @@ const meta = {
 		border: 1px solid #555;
 		border-radius: 3px 3px 0 0;
 	}
-	/* Hood shape */
 	.char-jarvis .px-body::before {
 		content: '';
 		position: absolute;
@@ -890,7 +1069,6 @@ const meta = {
 		background: #6a6a7a;
 		border-radius: 2px 2px 0 0;
 	}
-	/* >_ terminal icon on chest */
 	.char-jarvis .px-terminal-icon {
 		position: absolute;
 		top: 4px; left: 50%; transform: translateX(-50%);
@@ -898,7 +1076,6 @@ const meta = {
 		border-left: 2px solid #0f0;
 		border-bottom: 2px solid #0f0;
 	}
-	/* Smart watch */
 	.char-jarvis .px-accessory {
 		position: absolute;
 		top: 22px; left: 5px;
@@ -936,7 +1113,6 @@ const meta = {
 		background: #222;
 		border: 1px solid #111;
 	}
-	/* Purple apron */
 	.char-shuri .px-apron {
 		position: absolute;
 		top: 2px; left: 1px;
@@ -945,7 +1121,6 @@ const meta = {
 		border-radius: 0 0 2px 2px;
 		z-index: 1;
 	}
-	/* Paint spots on apron */
 	.char-shuri .px-paint-spots {
 		position: absolute;
 		top: 3px; left: 3px;
@@ -954,7 +1129,6 @@ const meta = {
 		box-shadow: 4px 2px 0 #3498db, 2px 5px 0 #f39c12, 7px 4px 0 #2ecc71;
 		z-index: 2;
 	}
-	/* Brush behind ear */
 	.char-shuri .px-accessory {
 		position: absolute;
 		top: 3px; right: 6px;
@@ -983,7 +1157,6 @@ const meta = {
 		border-radius: 4px 4px 2px 2px;
 		z-index: 4;
 	}
-	/* Bob cut sides */
 	.char-friday .px-hair::before {
 		content: '';
 		position: absolute;
@@ -1007,7 +1180,6 @@ const meta = {
 		background: #2a2a3a;
 		border: 1px solid #1a1a2a;
 	}
-	/* Teal collar */
 	.char-friday .px-body::before {
 		content: '';
 		position: absolute;
@@ -1015,7 +1187,6 @@ const meta = {
 		width: 10px; height: 2px;
 		background: #4ac5c5;
 	}
-	/* Tablet */
 	.char-friday .px-accessory {
 		position: absolute;
 		top: 17px; right: 3px;
@@ -1033,7 +1204,6 @@ const meta = {
 		background: #4ac5c522;
 		animation: data-flow 1.5s steps(3) infinite;
 	}
-	/* Data bracelet */
 	.char-friday .px-body::after {
 		content: '';
 		position: absolute;
@@ -1059,7 +1229,7 @@ const meta = {
 
 	/* ── Personalized Idle Animations ─────────────────────────── */
 
-	/* Samantha: idle-coffee — cup lifts up, steam puffs */
+	/* Samantha: idle-coffee */
 	@keyframes anim-coffee {
 		0%, 12% { transform: translateY(0); }
 		25%, 37% { transform: translateY(-2px); }
@@ -1077,7 +1247,7 @@ const meta = {
 		animation: steam-puff 0.5s steps(2) infinite;
 	}
 
-	/* Samantha: idle-phone — head tilts down */
+	/* Samantha: idle-phone */
 	@keyframes anim-phone-head {
 		0%, 100% { transform: rotate(0); }
 		20%, 80% { transform: rotate(5deg); }
@@ -1101,7 +1271,7 @@ const meta = {
 		animation: phone-blink 0.4s steps(2) infinite;
 	}
 
-	/* Loki: idle-read — book opens */
+	/* Loki: idle-read */
 	@keyframes anim-read-body {
 		0%, 100% { transform: none; }
 		33%, 66% { transform: rotate(-3deg); }
@@ -1120,7 +1290,7 @@ const meta = {
 		animation: book-open 1.5s steps(3) 1;
 	}
 
-	/* Loki: idle-plot — crossed arms + lightbulb */
+	/* Loki: idle-plot */
 	.agent-sprite.playing-idle-plot .idle-effect::before {
 		content: '💡';
 		position: absolute;
@@ -1140,7 +1310,7 @@ const meta = {
 		background: #c8887a;
 	}
 
-	/* Vision: idle-telescope — lean forward */
+	/* Vision: idle-telescope */
 	@keyframes anim-telescope {
 		0%, 100% { transform: translateX(0) rotate(0); }
 		25%, 62% { transform: translateX(-2px) rotate(-5deg); }
@@ -1157,7 +1327,7 @@ const meta = {
 		animation: sparkle 0.6s steps(2) infinite;
 	}
 
-	/* Vision: idle-think — ? → ! bubble */
+	/* Vision: idle-think */
 	.agent-sprite.playing-idle-think .idle-effect::before {
 		content: '?';
 		position: absolute;
@@ -1174,7 +1344,7 @@ const meta = {
 		100% { opacity: 0; }
 	}
 
-	/* Jarvis: idle-tinker — hands fiddle with part */
+	/* Jarvis: idle-tinker */
 	@keyframes anim-tinker {
 		0%, 100% { transform: translateY(0); }
 		16%, 50% { transform: translateY(-1px) rotate(10deg); }
@@ -1199,7 +1369,7 @@ const meta = {
 		animation: spark-flash 0.3s steps(2) infinite;
 	}
 
-	/* Jarvis: idle-headbang — head sways */
+	/* Jarvis: idle-headbang */
 	@keyframes anim-headbang {
 		0%, 100% { transform: translateX(0); }
 		25% { transform: translateX(-1px); }
@@ -1209,7 +1379,7 @@ const meta = {
 		animation: anim-headbang 0.5s steps(2) 2;
 	}
 	.agent-sprite.playing-idle-headbang .px-headphones {
-		top: 6px; /* headphones on head */
+		top: 6px;
 	}
 	.agent-sprite.playing-idle-headbang .idle-effect::before {
 		content: '♪';
@@ -1220,7 +1390,7 @@ const meta = {
 		animation: note-float 1s ease-out 1;
 	}
 
-	/* Shuri: idle-doodle — colorful trail */
+	/* Shuri: idle-doodle */
 	.agent-sprite.playing-idle-doodle .idle-effect::before {
 		content: '';
 		position: absolute;
@@ -1244,7 +1414,7 @@ const meta = {
 		100% { opacity: 0; }
 	}
 
-	/* Shuri: idle-palette — mix and flick */
+	/* Shuri: idle-palette */
 	@keyframes anim-palette-mix {
 		0%, 100% { transform: rotate(0); }
 		25% { transform: rotate(10deg); }
@@ -1269,7 +1439,7 @@ const meta = {
 		100% { opacity: 0; transform: translate(4px, -4px); }
 	}
 
-	/* Friday: idle-data — tablet lights up, data scroll */
+	/* Friday: idle-data */
 	.agent-sprite.playing-idle-data .px-accessory {
 		background: #0a1a2e;
 		border-color: #4ac5c5;
@@ -1286,7 +1456,7 @@ const meta = {
 		100% { transform: translateY(-3px); opacity: 0; }
 	}
 
-	/* Friday: idle-stretch — body stretches up */
+	/* Friday: idle-stretch */
 	@keyframes anim-stretch {
 		0%, 100% { transform: scaleY(1) translateY(0); }
 		30%, 60% { transform: scaleY(1.05) translateY(-2px); }
@@ -1321,8 +1491,8 @@ const meta = {
 		50% { transform: translateY(-2px); }
 	}
 
-	/* Busy: Samantha — coordinating, typing */
-	.room-samantha .agent-sprite[data-state="busy"] .idle-effect::before {
+	/* Busy per-agent effects — using sprite-wrap data-agent */
+	[data-agent="main"] .agent-sprite[data-state="busy"] .idle-effect::before {
 		content: '';
 		position: absolute;
 		bottom: 8px; left: 4px;
@@ -1332,8 +1502,7 @@ const meta = {
 	}
 	@keyframes type-hands { 0% { transform: translateX(0); } 100% { transform: translateX(2px); } }
 
-	/* Busy: Loki — typing on typewriter */
-	.room-loki .agent-sprite[data-state="busy"] .idle-effect::before {
+	[data-agent="writer"] .agent-sprite[data-state="busy"] .idle-effect::before {
 		content: '';
 		position: absolute;
 		top: 4px; left: 0;
@@ -1346,8 +1515,7 @@ const meta = {
 		100% { transform: translateY(-10px); opacity: 0; }
 	}
 
-	/* Busy: Vision — dual screen browsing */
-	.room-vision .agent-sprite[data-state="busy"] .idle-effect::before {
+	[data-agent="researcher"] .agent-sprite[data-state="busy"] .idle-effect::before {
 		content: '';
 		position: absolute;
 		top: 8px; right: 2px;
@@ -1358,8 +1526,7 @@ const meta = {
 	}
 	@keyframes magnify-pulse { 0% { transform: scale(1); } 100% { transform: scale(1.3); opacity: 0.5; } }
 
-	/* Busy: Jarvis — keyboard mashing, green code rain */
-	.room-jarvis .agent-sprite[data-state="busy"] .idle-effect::before {
+	[data-agent="coder"] .agent-sprite[data-state="busy"] .idle-effect::before {
 		content: '';
 		position: absolute;
 		top: 2px; left: 8px;
@@ -1370,8 +1537,7 @@ const meta = {
 	}
 	@keyframes code-rain { 0% { transform: translateY(-4px); opacity: 0; } 50% { opacity: 1; } 100% { transform: translateY(4px); opacity: 0; } }
 
-	/* Busy: Shuri — brush strokes on canvas */
-	.room-shuri .agent-sprite[data-state="busy"] .idle-effect::before {
+	[data-agent="designer"] .agent-sprite[data-state="busy"] .idle-effect::before {
 		content: '';
 		position: absolute;
 		top: 10px; left: 2px;
@@ -1381,8 +1547,7 @@ const meta = {
 	}
 	@keyframes brush-stroke { 0% { width: 2px; } 100% { width: 10px; } }
 
-	/* Busy: Friday — chart bars growing */
-	.room-friday .agent-sprite[data-state="busy"] .idle-effect::before {
+	[data-agent="analyst"] .agent-sprite[data-state="busy"] .idle-effect::before {
 		content: '';
 		position: absolute;
 		bottom: 8px; left: 4px;
@@ -1405,10 +1570,15 @@ const meta = {
 		animation: none;
 		transform: translateY(1px);
 	}
+	/* Semi-transparent wrapper for offline */
+	.agent-sprite-wrap[data-pos="offline"] {
+		opacity: 0.6;
+	}
+
 	.zzz-bubble {
 		display: none;
 		position: absolute;
-		right: 20px; bottom: 60px;
+		top: -10px; right: -8px;
 		z-index: 15;
 		font-family: monospace;
 		font-weight: bold;
@@ -1438,181 +1608,33 @@ const meta = {
 	}
 
 	/* ══════════════════════════════════════════════════════════════
-	   ERROR STATE — blink + confusion + red particles
+	   ERROR STATE — vacation mode, NO blink, NO !, just chill
 	   ══════════════════════════════════════════════════════════════ */
-	.agent-sprite[data-state="error"] .pixel-char {
-		animation: error-blink 0.5s steps(2) infinite !important;
-	}
-	@keyframes error-blink {
-		0%, 100% { filter: none; }
-		50% { filter: brightness(1.3) hue-rotate(-20deg); }
-	}
-	/* Confused face overlay */
-	.agent-sprite[data-state="error"] .state-overlay::before {
-		content: '!';
-		position: absolute;
-		top: -2px; left: 50%; transform: translateX(-50%);
-		font-size: 8px;
-		font-weight: bold;
-		font-family: monospace;
-		color: #ef4444;
-		animation: error-mark 1s steps(2) infinite;
-	}
-	@keyframes error-mark {
-		0%, 49% { content: '!'; }
-		50%, 99% { content: '?'; }
-	}
-	/* Red particles */
-	.error-particles {
-		display: none;
-		position: absolute;
-		right: 10px; bottom: 30px;
-		z-index: 15;
-	}
-	.agent-sprite[data-state="error"] ~ .error-particles {
-		display: block;
-	}
-	.error-particles::before, .error-particles::after {
-		content: '';
-		position: absolute;
-		width: 2px; height: 2px;
-		background: #ef4444;
-		border-radius: 50%;
-	}
-	.error-particles::before {
-		animation: err-particle-1 1.2s steps(3) infinite;
-	}
-	.error-particles::after {
-		animation: err-particle-2 1.5s steps(3) infinite 0.3s;
-	}
-	@keyframes err-particle-1 {
-		0% { transform: translate(0, 0); opacity: 1; }
-		100% { transform: translate(-6px, -12px); opacity: 0; }
-	}
-	@keyframes err-particle-2 {
-		0% { transform: translate(8px, 0); opacity: 1; }
-		100% { transform: translate(14px, -10px); opacity: 0; }
-	}
+	/* error uses idle-breathe (already assigned above), no extra styling */
 
 	/* ══════════════════════════════════════════════════════════════
-	   TASK BUBBLE
+	   AMBIENT GLOW per agent zone (subtle)
 	   ══════════════════════════════════════════════════════════════ */
-	.task-bubble {
-		position: absolute;
-		top: 8px; left: 50%; transform: translateX(-50%);
-		max-width: 90%;
-		padding: 4px 8px;
-		background: #8953d1dd;
-		color: white;
-		font-family: serif;
-		font-size: 10px;
-		line-height: 1.3;
-		border-radius: 4px;
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		z-index: 20;
-		animation: bubble-in 0.3s ease-out;
-	}
-	.task-bubble::after {
-		content: '';
-		position: absolute;
-		bottom: -4px; left: 50%; transform: translateX(-50%);
-		width: 0; height: 0;
-		border-left: 4px solid transparent;
-		border-right: 4px solid transparent;
-		border-top: 4px solid #8953d1dd;
-	}
-	@keyframes bubble-in {
-		from { opacity: 0; transform: translateX(-50%) translateY(-4px); }
-		to { opacity: 1; transform: translateX(-50%) translateY(0); }
-	}
-
-	/* ── Ambient room effects ──────────────────────────────────── */
-	.room-interior::after {
+	.pixel-office::after {
 		content: '';
 		position: absolute;
 		top: 0; left: 0; right: 0; bottom: 0;
 		pointer-events: none;
 		z-index: 1;
+		background:
+			radial-gradient(120px 80px at 20% 30%, #ff6b3508, transparent),
+			radial-gradient(100px 100px at 80% 28%, #8953d108, transparent),
+			radial-gradient(80px 60px at 10% 80%, #4ade8008, transparent);
 	}
 
-	/* Floating particles per room */
-	.room-samantha .room-interior::after {
-		background: radial-gradient(1px 1px at 20% 30%, #ff6b3533, transparent),
-		            radial-gradient(1px 1px at 70% 60%, #ff6b3522, transparent),
-		            radial-gradient(1px 1px at 40% 80%, #ff6b3518, transparent);
-		animation: ambient-drift 8s ease-in-out infinite alternate;
-	}
-	.room-loki .room-interior::after {
-		background: radial-gradient(1px 1px at 15% 40%, #4a9e4a33, transparent),
-		            radial-gradient(1px 1px at 60% 20%, #4a9e4a22, transparent),
-		            radial-gradient(1px 1px at 80% 70%, #4a9e4a18, transparent);
-		animation: ambient-drift 9s ease-in-out infinite alternate-reverse;
-	}
-	.room-vision .room-interior::after {
-		background: radial-gradient(1px 1px at 25% 20%, #4a8ab533, transparent),
-		            radial-gradient(1px 1px at 50% 50%, #4a8ab522, transparent),
-		            radial-gradient(1px 1px at 75% 75%, #4a8ab518, transparent);
-		animation: ambient-drift 7s ease-in-out infinite alternate;
-	}
-	.room-jarvis .room-interior::after {
-		background: radial-gradient(1px 1px at 10% 60%, #4ade8033, transparent),
-		            radial-gradient(1px 1px at 45% 30%, #0f04, transparent),
-		            radial-gradient(1px 1px at 85% 50%, #4ade8018, transparent);
-		animation: ambient-drift 6s ease-in-out infinite alternate-reverse;
-	}
-	.room-shuri .room-interior::after {
-		background: radial-gradient(1.5px 1.5px at 30% 40%, #e74c3c33, transparent),
-		            radial-gradient(1.5px 1.5px at 60% 25%, #3498db22, transparent),
-		            radial-gradient(1.5px 1.5px at 50% 70%, #f39c1218, transparent);
-		animation: ambient-drift 10s ease-in-out infinite alternate;
-	}
-	.room-friday .room-interior::after {
-		background: radial-gradient(1px 1px at 20% 25%, #4ac5c533, transparent),
-		            radial-gradient(1px 1px at 55% 55%, #4ac5c522, transparent),
-		            radial-gradient(1px 1px at 80% 40%, #4ac5c518, transparent);
-		animation: ambient-drift 8s ease-in-out infinite alternate-reverse;
-	}
-	@keyframes ambient-drift {
-		0% { transform: translateY(0) translateX(0); opacity: 0.6; }
-		50% { opacity: 1; }
-		100% { transform: translateY(-4px) translateX(2px); opacity: 0.6; }
-	}
-
-	/* Monitor/screen subtle glow pulse */
-	.monitor::after, .data-screen::after, .terminal::after {
+	/* Monitor glow pulse */
+	.cmd-monitor::after, .cmd-monitor2::after, .ws-monitor::after {
 		animation: screen-glow 3s ease-in-out infinite alternate !important;
 	}
 	@keyframes screen-glow {
 		0% { opacity: 0.6; box-shadow: none; }
 		100% { opacity: 1; box-shadow: 0 0 6px currentColor; }
 	}
-
-	/* ── Room label upgrade ────────────────────────────────────── */
-	.room-label {
-		display: flex;
-		flex-direction: column;
-		padding: 0.5rem 0.75rem 0.6rem;
-		gap: 0.2rem;
-	}
-	.room-label-top {
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-	}
-	.agent-latest {
-		display: block;
-		max-width: 100%;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-		opacity: 0.7;
-		letter-spacing: 0.01em;
-	}
-
-	/* ── Clickable rooms ────────────────────────────────────────── */
-	.agent-room { cursor: pointer; }
 
 	/* ── Detail overlay ─────────────────────────────────────────── */
 	.agent-detail-overlay {
@@ -1803,17 +1825,20 @@ const meta = {
 		margin-top: 4px;
 	}
 
-	/* ── Animation pause for off-screen (via JS class) ────────── */
-	.agent-room.paused .agent-sprite,
-	.agent-room.paused .agent-sprite *,
-	.agent-room.paused .zzz-bubble,
-	.agent-room.paused .zzz-bubble *,
-	.agent-room.paused .error-particles,
-	.agent-room.paused .error-particles *,
-	.agent-room.paused .room-furniture *,
-	.agent-room.paused .idle-effect,
-	.agent-room.paused .idle-effect * {
-		animation-play-state: paused !important;
+	/* ── Mobile responsive ─────────────────────────────────────── */
+	@media (max-width: 1024px) {
+		.pixel-office {
+			transform: scale(0.85);
+			transform-origin: top left;
+			margin-bottom: -80px;
+		}
+	}
+	@media (max-width: 640px) {
+		.pixel-office {
+			transform: scale(0.5);
+			transform-origin: top left;
+			margin-bottom: -260px;
+		}
 	}
 </style>
 
@@ -1852,9 +1877,9 @@ const meta = {
 
 		var controllers = _controllers;
 
-		function IdleController(room, agentId) {
-			this.room = room;
-			this.sprite = room.querySelector('.agent-sprite');
+		function IdleController(wrap, agentId) {
+			this.wrap = wrap;
+			this.sprite = wrap.querySelector('.agent-sprite');
 			this.agentId = agentId;
 			this.variants = IDLE_VARIANTS[agentId] || [];
 			this.timer = null;
@@ -1876,14 +1901,14 @@ const meta = {
 		};
 		IdleController.prototype.scheduleTick = function() {
 			var self = this;
-			var delay = 3000 + Math.random() * 4000; // more frequent: 3-7s
+			var delay = 3000 + Math.random() * 4000;
 			this.timer = setTimeout(function() { self.tick(); }, delay);
 		};
 		IdleController.prototype.tick = function() {
 			var state = this.sprite.getAttribute('data-state');
 			if (state !== 'idle') { this.scheduleTick(); return; }
 
-			if (Math.random() < 0.7 && this.variants.length > 0) { // 70% chance
+			if (Math.random() < 0.7 && this.variants.length > 0) {
 				var v = this.variants[Math.floor(Math.random() * this.variants.length)];
 				var dur = VARIANT_DURATIONS[v] || 1500;
 				var self = this;
@@ -1900,41 +1925,45 @@ const meta = {
 			}
 		};
 
-		/* ── Initialize Idle Controllers ──────────────────────── */
-		document.querySelectorAll('.agent-room').forEach(function(room) {
-			var agentId = room.getAttribute('data-agent');
-			var ctrl = new IdleController(room, agentId);
-			controllers[agentId] = ctrl;
-			ctrl.start();
-		});
-
-		/* ── Intersection Observer for perf ───────────────────── */
-		if ('IntersectionObserver' in window) {
-			var io = new IntersectionObserver(function(entries) {
-				entries.forEach(function(entry) {
-					if (entry.isIntersecting) {
-						entry.target.classList.remove('paused');
-					} else {
-						entry.target.classList.add('paused');
-					}
-				});
-			}, { rootMargin: '100px' });
-			document.querySelectorAll('.agent-room').forEach(function(room) { io.observe(room); });
+		/* ── Random offset for idle/error positions ──────────── */
+		function applyRandomOffset(wrap, status) {
+			if (status === 'idle' || status === 'error') {
+				var ox = Math.floor(Math.random() * 20) - 10;
+				var oy = Math.floor(Math.random() * 12) - 6;
+				wrap.style.marginLeft = ox + 'px';
+				wrap.style.marginTop = oy + 'px';
+			} else {
+				wrap.style.marginLeft = '0';
+				wrap.style.marginTop = '0';
+			}
 		}
 
-		/* ── Convex Polling (unchanged logic) ─────────────────── */
-		function updateRoom(agent) {
-			var room = document.querySelector('[data-agent="' + agent.agentId + '"]');
-			if (!room) return;
+		/* ── Initialize Idle Controllers ──────────────────────── */
+		document.querySelectorAll('.agent-sprite-wrap').forEach(function(wrap) {
+			var agentId = wrap.getAttribute('data-agent');
+			var ctrl = new IdleController(wrap, agentId);
+			controllers[agentId] = ctrl;
+			ctrl.start();
+			// Set initial position
+			wrap.setAttribute('data-pos', 'idle');
+			applyRandomOffset(wrap, 'idle');
+		});
 
-			var sprite = room.querySelector('.agent-sprite');
-			var dot = room.querySelector('.agent-status-dot');
-			var bubble = room.querySelector('.task-bubble');
+		/* ── Convex Polling ───────────────────────────────────── */
+		function updateAgent(agent) {
+			var wrap = document.querySelector('.agent-sprite-wrap[data-agent="' + agent.agentId + '"]');
+			if (!wrap) return;
+
+			var sprite = wrap.querySelector('.agent-sprite');
+			var dot = wrap.querySelector('.sprite-status-dot');
 			var status = agent.status || 'offline';
 
 			if (sprite) {
 				var prev = sprite.getAttribute('data-state');
 				sprite.setAttribute('data-state', status);
+				wrap.setAttribute('data-pos', status);
+				applyRandomOffset(wrap, status);
+
 				// Restart idle controller when transitioning to idle
 				if (status === 'idle' && prev !== 'idle' && controllers[agent.agentId]) {
 					controllers[agent.agentId].start();
@@ -1943,24 +1972,16 @@ const meta = {
 					controllers[agent.agentId].stop();
 				}
 			}
-			if (dot) dot.className = 'agent-status-dot ' + status;
-
-			if (bubble) {
-				if (agent.currentTask && status === 'busy') {
-					bubble.textContent = agent.currentTask;
-					bubble.style.display = 'block';
-				} else {
-					bubble.style.display = 'none';
-				}
-			}
+			if (dot) dot.className = 'sprite-status-dot ' + status;
 		}
 
 		function setOffline() {
-			document.querySelectorAll('.agent-room').forEach(function(room) {
-				var dot = room.querySelector('.agent-status-dot');
-				var sprite = room.querySelector('.agent-sprite');
-				if (dot) dot.className = 'agent-status-dot offline';
+			document.querySelectorAll('.agent-sprite-wrap').forEach(function(wrap) {
+				var dot = wrap.querySelector('.sprite-status-dot');
+				var sprite = wrap.querySelector('.agent-sprite');
+				if (dot) dot.className = 'sprite-status-dot offline';
 				if (sprite) sprite.setAttribute('data-state', 'offline');
+				wrap.setAttribute('data-pos', 'offline');
 			});
 			if (statusEl) {
 				statusEl.innerHTML = '<span class="lang-en" style="color:#ef4444">\u26a0 Offline</span><span class="lang-zh" style="color:#ef4444">\u26a0 离线</span>';
@@ -1983,7 +2004,7 @@ const meta = {
 				if (statusEl) {
 					statusEl.innerHTML = '<span class="lang-en" style="color:#4ade80">\u25cf Live</span><span class="lang-zh" style="color:#4ade80">\u25cf 实时</span>';
 				}
-				agents.forEach(updateRoom);
+				agents.forEach(updateAgent);
 			} catch (e) {
 				console.error('Convex poll failed:', e);
 				if (statusEl) {
@@ -2053,7 +2074,6 @@ const meta = {
 			},
 		};
 
-		// Activity feed data for "recent 3" per agent
 		var ACTIVITY_FEED = [];
 
 		var overlay = document.getElementById('agent-detail');
@@ -2070,14 +2090,12 @@ const meta = {
 			document.getElementById('detail-role').textContent = d.role;
 			document.getElementById('detail-desc').textContent = isZh ? d.descZh : d.descEn;
 
-			// Stats line
 			var statsEl = document.getElementById('detail-stats');
 			if (statsEl) {
 				statsEl.textContent = isZh ? (d.statsZh || '') : (d.statsEn || '');
 				statsEl.style.color = d.color;
 			}
 
-			// What they do (examples)
 			var ul = document.getElementById('detail-examples');
 			ul.innerHTML = '';
 			var examples = isZh ? d.examplesZh : d.examplesEn;
@@ -2085,7 +2103,6 @@ const meta = {
 				var li = document.createElement('li'); li.textContent = ex; ul.appendChild(li);
 			});
 
-			// Recent 3 activities for this agent from feed
 			var latestEl = document.getElementById('detail-latest');
 			var agentActivities = ACTIVITY_FEED.filter(function(e) { return e.agentId === agentId; }).slice(0, 3);
 			if (agentActivities.length > 0) {
@@ -2112,11 +2129,9 @@ const meta = {
 			document.body.style.overflow = '';
 		}
 
-		document.querySelectorAll('.agent-room').forEach(function(room) {
-			room.addEventListener('click', function(e) {
-				// Don't intercept if clicking task bubble or status dot
-				if (e.target.closest('.task-bubble') || e.target.closest('.agent-status-dot')) return;
-				openDetail(room.getAttribute('data-agent'));
+		document.querySelectorAll('.agent-sprite-wrap').forEach(function(wrap) {
+			wrap.addEventListener('click', function(e) {
+				openDetail(wrap.getAttribute('data-agent'));
 			});
 		});
 
@@ -2164,22 +2179,8 @@ const meta = {
 				'</div>';
 			}).join('');
 
-			// Also update ACTIVITY_FEED for detail panels
 			ACTIVITY_FEED = entries.map(function(e) {
 				return { agentId: e.agentId, agentName: e.agentName, descEn: e.descEn, descZh: e.descZh, color: e.color, time: timeAgo(e.timestamp) };
-			});
-
-			// Update per-agent latest labels
-			var seen = {};
-			entries.forEach(function(e) {
-				if (!seen[e.agentId]) {
-					seen[e.agentId] = true;
-					var room = document.querySelector('[data-agent="' + e.agentId + '"]');
-					if (room) {
-						var label = room.querySelector('.agent-latest');
-						if (label) label.textContent = isZh ? e.descZh.slice(0, 40) : e.descEn.slice(0, 40);
-					}
-				}
 			});
 		}
 
@@ -2216,7 +2217,7 @@ const meta = {
 
 		// Re-run on Astro View Transitions navigation
 		document.addEventListener('astro:page-load', function() {
-			if (document.querySelector('.agent-grid')) {
+			if (document.getElementById('pixel-office')) {
 				initAgentPage();
 			}
 		});
