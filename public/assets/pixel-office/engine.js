@@ -363,8 +363,17 @@
 
     // Z-sort: furniture + agents together by row
     var drawables = [];
-    FURNITURE.forEach(function (f) { drawables.push({ sort: f.row, type: 'fur', data: f }); });
-    agents.forEach(function (a) { drawables.push({ sort: a.py / T, type: 'agent', data: a }); });
+    // 家具 sort key：底部行 + 家具高度（tile 单位），让高家具按其底边排序
+    FURNITURE.forEach(function (f) {
+      var img = images['fur_' + f.file];
+      var furH = img ? (img.height / 16) : 1;
+      drawables.push({ sort: f.row + furH, type: 'fur', data: f });
+    });
+    // 角色 sort key：脚底 Y（tile 单位）+ 0.5 偏移，确保同行角色在家具前面
+    agents.forEach(function (a) {
+      var feetY = (a.py + T) / T;
+      drawables.push({ sort: feetY + 0.5, type: 'agent', data: a });
+    });
     drawables.sort(function (a, b) { return a.sort - b.sort; });
     drawables.forEach(function (d) {
       if (d.type === 'fur') drawFurniture(d.data);
