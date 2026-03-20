@@ -275,7 +275,7 @@
 
   function drawAgent(a) {
     var img = images[a.spriteKey]; if (!img) return;
-    var drawX = a.px, drawY = a.py - 8 * ZOOM; // offset up (char is 24px tall, tile 16)
+    var drawX = a.px, drawY = a.py + T - 24 * ZOOM; // feet align to tile bottom
 
     ctx.save();
 
@@ -297,7 +297,7 @@
     ctx.save();
     ctx.font = 'bold 11px "Press Start 2P", monospace';
     ctx.textAlign = 'center';
-    var labelX = a.px + T / 2, labelY = drawY - 10;
+    var labelX = drawX + (16 * ZOOM) / 2, labelY = drawY - 6;
 
     // status dot
     var colors = { idle: '#4ade80', busy: '#f59e0b', offline: '#555555', error: '#a78bfa' };
@@ -332,7 +332,7 @@
       var oy = -i * 14 - Math.sin(phase) * 6;
       var alpha = 0.4 + 0.6 * Math.abs(Math.sin(phase));
       ctx.globalAlpha = alpha;
-      ctx.fillText('z', bx + ox, a.py - 8 * ZOOM + oy);
+      ctx.fillText('z', bx + ox, a.py + T - 24 * ZOOM + oy);
     }
     ctx.restore();
   }
