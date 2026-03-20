@@ -11,3 +11,7 @@ significance: medium
 body_zh: "Agility 扩大 Digit 在仓储物流场景的部署，验证了人形机器人的近期企业应用场景。"
 ---
 Agility scales Digit deployments in warehouse/logistics scenarios, proving near-term enterprise humanoid use cases.
+
+<!-- zh -->
+
+Agility 扩大 Digit 在仓储物流场景的部署，验证了人形机器人的近期企业应用场景。

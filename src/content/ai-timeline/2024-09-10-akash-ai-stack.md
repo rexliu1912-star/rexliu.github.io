@@ -11,3 +11,7 @@ significance: medium
 body_zh: "Akash 扩展面向 AI 的去中心化 GPU 云市场功能和合作伙伴集成，为 AI 团队提供灵活的训练/推理算力，替代中心化云服务商的高价 GPU。"
 ---
 Akash expands AI-focused cloud marketplace features and partner integrations, strengthening decentralized alternatives to hyperscaler GPU pricing.
+
+<!-- zh -->
+
+Akash 扩展面向 AI 的去中心化 GPU 云市场功能和合作伙伴集成，为 AI 团队提供灵活的训练/推理算力，替代中心化云服务商的高价 GPU。

@@ -11,3 +11,7 @@ significance: high
 body_zh: "Google 推出 Gemini 2.0 Flash，针对快速多模态响应和代理式工具调用优化。从聊天模型向行动模型转型。"
 ---
 Google introduces Gemini 2.0 Flash, optimized for fast multimodal responses and agentic tool use. Marks transition from chat model to action model.
+
+<!-- zh -->
+
+Google 推出 Gemini 2.0 Flash，针对快速多模态响应和代理式工具调用优化。从聊天模型向行动模型转型。

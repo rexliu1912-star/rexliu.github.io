@@ -11,3 +11,7 @@ significance: high
 body_zh: "OpenAI 展示 Sora，能从文本生成 60 秒的逼真视频，时序一致性前所未有。暂未公开。"
 ---
 OpenAI reveals Sora, capable of generating 60-second realistic videos from text. Demonstrates unprecedented temporal consistency. Not yet publicly available.
+
+<!-- zh -->
+
+OpenAI 展示 Sora，能从文本生成 60 秒的逼真视频，时序一致性前所未有。暂未公开。

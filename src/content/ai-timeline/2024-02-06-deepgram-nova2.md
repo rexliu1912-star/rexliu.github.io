@@ -13,3 +13,7 @@ body_zh: "Deepgram 发布 Nova-2，实时语音转文字模型，在准确率、
 Deepgram releases Nova-2, its most accurate real-time speech-to-text model, beating competitors on accuracy, speed, and cost across multiple languages and domains.
 
 **So what?** Voice AI finally became a production-grade infrastructure primitive. Nova-2's combination of sub-200ms latency, 40+ language support, and lower price-per-minute than Whisper made it the default choice for developers building conversational AI products. Real-time transcription moved from "technically possible" to "obviously good enough for enterprise."
+
+<!-- zh -->
+
+Deepgram 发布 Nova-2，实时语音转文字模型，在准确率、速度和成本上全面碾压竞品。低于 200ms 延迟、40+ 语言、比 Whisper 更便宜——语音 AI 从「技术上可行」变成了「企业级可用」。

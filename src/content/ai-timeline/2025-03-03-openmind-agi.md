@@ -11,3 +11,7 @@ significance: low
 body_zh: "OpenMind AGI 围绕去中心化代理协调和开放基础设施原则定位，在 AI×Crypto 圈子获得关注。"
 ---
 OpenMind AGI positions itself around decentralized agent coordination and open infrastructure principles, gaining attention in AI×Crypto circles.
+
+<!-- zh -->
+
+OpenMind AGI 围绕去中心化代理协调和开放基础设施原则定位，在 AI×Crypto 圈子获得关注。

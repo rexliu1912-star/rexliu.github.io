@@ -13,3 +13,7 @@ body_zh: "Virtual Protocol TVL 突破 $1B，AI 代理代币获得主流 Crypto �
 Virtual Protocol crosses $1B in total value locked as AI agent tokens gain mainstream crypto attention.
 
 **So what?** Crypto × AI isn't just a narrative anymore — there's real capital flowing. The tokenization of AI agents creates a new asset class worth watching.
+
+<!-- zh -->
+
+Virtual Protocol TVL 突破 $1B，AI 代理代币获得主流 Crypto 关注。Crypto×AI 不再只是叙事——真金白银在涌入。AI 代理的代币化创造了一个值得关注的新资产类别。

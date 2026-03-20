@@ -11,3 +11,7 @@ significance: medium
 body_zh: "Virtuals Protocol 集成 Coinbase 的 x402 微支付协议，让平台上的 AI 代理无需人工干预即可自主收付款。x402 标准（灵感来自 HTTP 402「需要付款」）让 AI 代理在 Base L2 上原生交易，为机器对机器经济奠定基础——AI 代理可以独立变现自己的行为。"
 ---
 Virtuals Protocol integrated Coinbase's x402 micropayment protocol, enabling AI agents on the Virtuals platform to autonomously pay for services and receive payments without human intervention. The x402 standard (inspired by HTTP 402 "Payment Required") allows AI agents to transact natively on Base L2, creating the foundation for a machine-to-machine economy where AI agents can independently monetize their actions.
+
+<!-- zh -->
+
+Virtuals Protocol 集成 Coinbase 的 x402 微支付协议，让平台上的 AI 代理无需人工干预即可自主收付款。x402 标准（灵感来自 HTTP 402「需要付款」）让 AI 代理在 Base L2 上原生交易，为机器对机器经济奠定基础——AI 代理可以独立变现自己的行为。

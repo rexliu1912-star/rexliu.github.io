@@ -10,3 +10,7 @@ significance: high
 body_zh: "拜登总统签署美国最全面的 AI 行政令，要求对强大 AI 系统进行安全测试，通过 NIST 制定 AI 安全标准，覆盖国家安全、隐私、公平和劳动力市场等风险。"
 ---
 President Biden signed the most comprehensive US executive order on AI, requiring safety testing for powerful AI systems, establishing AI safety standards through NIST, and addressing risks across national security, privacy, equity, and labor markets.
+
+<!-- zh -->
+
+拜登总统签署美国最全面的 AI 行政令，要求对强大 AI 系统进行安全测试，通过 NIST 制定 AI 安全标准，覆盖国家安全、隐私、公平和劳动力市场等风险。

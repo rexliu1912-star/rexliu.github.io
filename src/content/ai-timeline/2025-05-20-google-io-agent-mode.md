@@ -11,3 +11,7 @@ significance: high
 body_zh: "Google 将 Gemini 定位为操作层，在 Search、Android 和 Workspace 中引入代理工作流。产品策略从功能导向转为自主完成任务。"
 ---
 Google positions Gemini as an operating layer with agent workflows in Search, Android, and Workspace. Product strategy shifts from features to autonomous completion.
+
+<!-- zh -->
+
+Google 将 Gemini 定位为操作层，在 Search、Android 和 Workspace 中引入代理工作流。产品策略从功能导向转为自主完成任务。
