@@ -375,16 +375,18 @@ const meta = {
 		}
 
 		/* Frame semantics (best-guess, visually tweak if wrong):
-		   0 = idle stand      1 = idle alt / breathe
-		   2 = walk step A     3 = walk step B
-		   4 = busy/sitting    5 = offline/sleep
+		   Grid: 4 cols × 2 rows (352×384 each)
+		   0 = idle stand (front)   1 = walk step A (side)
+		   2 = walk step B (side)   3 = (mostly empty)
+		   4 = (empty)              5 = busy/sitting
+		   6 = special/coffee       7 = (empty)
 		*/
 		var STATE_FRAME = {
-			idle:    [0, 1],   /* alternate every ~30 frames */
-			busy:    [4],
-			error:   [0, 1],
-			offline: [5],
-			walk:    [2, 3],   /* used while moving */
+			idle:    [0],      /* front-facing idle */
+			busy:    [5],      /* sitting at desk */
+			error:   [6],      /* special action (playing!) */
+			offline: [0],      /* idle frame but with alpha */
+			walk:    [1, 2],   /* alternate walk frames */
 		};
 
 		/* ══════════════════════════════════════════════════════════════
