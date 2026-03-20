@@ -39,12 +39,12 @@
 
   // ── Agents ─────────────────────────────────────────────────
   var AGENTS_CFG = [
-    { id:'main',       name:'Samantha', sprite:'char_0.png', hc:9,  hr:3,  dir:DIR_DOWN  },
-    { id:'writer',     name:'Loki',     sprite:'char_1.png', hc:3,  hr:3,  dir:DIR_RIGHT },
-    { id:'researcher', name:'Vision',   sprite:'char_2.png', hc:16, hr:3,  dir:DIR_LEFT  },
-    { id:'coder',      name:'Jarvis',   sprite:'char_3.png', hc:3,  hr:8,  dir:DIR_RIGHT },
-    { id:'designer',   name:'Shuri',    sprite:'char_4.png', hc:16, hr:8,  dir:DIR_LEFT  },
-    { id:'analyst',    name:'Friday',   sprite:'char_5.png', hc:9,  hr:9,  dir:DIR_UP    },
+    { id:'main',       name:'Samantha', sprite:'char_0.png', hc:9,  hr:3,  dir:DIR_DOWN,  tint:'rgba(255,107,53,0.25)' },
+    { id:'writer',     name:'Loki',     sprite:'char_1.png', hc:3,  hr:3,  dir:DIR_RIGHT, tint:'rgba(74,158,74,0.25)' },
+    { id:'researcher', name:'Vision',   sprite:'char_2.png', hc:16, hr:3,  dir:DIR_LEFT,  tint:'rgba(74,138,181,0.25)' },
+    { id:'coder',      name:'Jarvis',   sprite:'char_3.png', hc:3,  hr:8,  dir:DIR_RIGHT, tint:'rgba(122,122,138,0.20)' },
+    { id:'designer',   name:'Shuri',    sprite:'char_4.png', hc:16, hr:8,  dir:DIR_LEFT,  tint:'rgba(197,74,181,0.25)' },
+    { id:'analyst',    name:'Friday',   sprite:'char_5.png', hc:9,  hr:9,  dir:DIR_UP,    tint:'rgba(74,197,197,0.25)' },
   ];
 
   // ── Furniture layout ───────────────────────────────────────
@@ -85,6 +85,9 @@
     // Extra touches
     { type:'CLOCK',           col:10, row:1, file:'CLOCK/CLOCK.png',                   w:1, h:1 },
     { type:'SMALL_TABLE',     col:6,  row:5, file:'SMALL_TABLE/SMALL_TABLE_FRONT.png', w:1, h:1 },
+    // Meeting area — center
+    { type:'WOODEN_CHAIR', col:7,  row:5, file:'WOODEN_CHAIR/WOODEN_CHAIR.png', w:1, h:1 },
+    { type:'WOODEN_CHAIR', col:11, row:5, file:'WOODEN_CHAIR/WOODEN_CHAIR.png', w:1, h:1 },
   ];
 
   // ── State ──────────────────────────────────────────────────
@@ -138,7 +141,7 @@
   function furnitureBlocksTile(c, r) {
     for (var i = 0; i < FURNITURE.length; i++) {
       var f = FURNITURE[i];
-      var blocks = /DESK|PC|BOOKSHELF|WHITEBOARD|SOFA|COFFEE_TABLE|SMALL_TABLE|PLANT|CACTUS/i.test(f.type);
+      var blocks = /DESK|PC|BOOKSHELF|WHITEBOARD|SOFA|COFFEE_TABLE|SMALL_TABLE|PLANT|CACTUS|WOODEN_CHAIR/i.test(f.type);
       if (!blocks) continue;
       if (c >= f.col && c < f.col + (f.w || 1) && r >= f.row && r < f.row + (f.h || 1)) {
         return true;
@@ -200,6 +203,8 @@
     // Pixel Agents anchors characters at the CENTER of the tile, not top-left
     this.px = cfg.hc * T + T / 2; this.py = cfg.hr * T + T / 2;
     this.dir = cfg.dir;
+    this.homeDir = cfg.dir;
+    this.tint = cfg.tint || null;
     this.status = 'idle'; this.task = '';
     this.path = []; this.moving = false;
     this.targetX = this.px; this.targetY = this.py;
@@ -218,6 +223,7 @@
     if (s === 'busy') {
       this.path = bfs(this.col, this.row, this.hc, this.hr, this.id);
       if (this.path.length) this.startMove();
+      else this.dir = this.homeDir;
     }
   };
 
@@ -261,7 +267,8 @@
     }
 
     if (this.status === 'busy' && this.col === this.hc && this.row === this.hr) {
-      // typing frames 3/4
+      // typing frames 3/4, face desk direction
+      this.dir = this.homeDir;
       this.frame = 3 + (Math.floor(this.animTick / 15) % 2);
       return;
     }
@@ -350,8 +357,22 @@
       ctx.translate(drawX + dw, drawY);
       ctx.scale(-1, 1);
       ctx.drawImage(img, sx, sy, CHAR_FW, CHAR_FH, 0, 0, dw, dh);
+      // Color tint overlay (flip coords)
+      if (a.tint) {
+        ctx.globalCompositeOperation = 'source-atop';
+        ctx.fillStyle = a.tint;
+        ctx.fillRect(0, 0, dw, dh);
+        ctx.globalCompositeOperation = 'source-over';
+      }
     } else {
       ctx.drawImage(img, sx, sy, CHAR_FW, CHAR_FH, drawX, drawY, dw, dh);
+      // Color tint overlay
+      if (a.tint) {
+        ctx.globalCompositeOperation = 'source-atop';
+        ctx.fillStyle = a.tint;
+        ctx.fillRect(drawX, drawY, dw, dh);
+        ctx.globalCompositeOperation = 'source-over';
+      }
     }
     ctx.restore();
 
@@ -379,8 +400,46 @@
     ctx.fillText(a.name, labelX, labelY);
     ctx.restore();
 
+    // Task bubble for busy
+    if (a.status === 'busy' && a.task) drawTaskBubble(a, drawX, drawY, dw);
+
     // ZZZ for offline
     if (a.status === 'offline') drawZzz(a);
+  }
+
+  function drawTaskBubble(a, drawX, drawY, dw) {
+    var text = a.task.length > 18 ? a.task.slice(0, 18) + '\u2026' : a.task;
+    ctx.save();
+    ctx.font = '8px sans-serif';
+    var tw = ctx.measureText(text).width;
+    var pad = 4, bh = 14;
+    var bw = tw + pad * 2;
+    var bx = drawX + dw / 2 - bw / 2;
+    var by = drawY - bh - 6;
+    // bubble body
+    ctx.fillStyle = 'rgba(10,10,30,0.85)';
+    ctx.beginPath();
+    ctx.roundRect(bx, by, bw, bh, 3);
+    ctx.fill();
+    // bubble border with agent color
+    var colors = { main:'#ff6b35', writer:'#4a9e4a', researcher:'#4a8ab5', coder:'#7a7a8a', designer:'#c54ab5', analyst:'#4ac5c5' };
+    ctx.strokeStyle = (colors[a.id] || '#8953d1') + 'aa';
+    ctx.lineWidth = 0.75;
+    ctx.stroke();
+    // tail
+    ctx.fillStyle = 'rgba(10,10,30,0.85)';
+    var cx = bx + bw / 2;
+    ctx.beginPath();
+    ctx.moveTo(cx - 3, by + bh);
+    ctx.lineTo(cx + 3, by + bh);
+    ctx.lineTo(cx, by + bh + 4);
+    ctx.closePath();
+    ctx.fill();
+    // text
+    ctx.fillStyle = 'rgba(255,255,255,0.9)';
+    ctx.textAlign = 'center';
+    ctx.fillText(text, bx + bw / 2, by + bh - 3);
+    ctx.restore();
   }
 
   function drawZzz(a) {
