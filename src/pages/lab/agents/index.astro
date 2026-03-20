@@ -43,89 +43,36 @@ const meta = {
 		</div>
 	</div>
 
-	<!-- ═══ SHARED PIXEL OFFICE ═══ -->
+	<!-- ═══ PIXEL OFFICE — Canvas 2D ═══ -->
 	<section class="office-wrapper mb-16 fade-in-up" style="--delay: 100ms">
 		<div class="pixel-office-scale-wrapper" id="pixel-office-wrapper">
-		<div class="pixel-office" id="pixel-office">
-			<!-- ═══ AGENT SPRITES ═══ -->
-			<!-- Samantha -->
-			<div class="agent-sprite-wrap" data-agent="main" id="sprite-main">
-				<div class="agent-sprite" data-state="idle">
-					<div class="sprite-img" style="background-image:url('/sprites/samantha-sprite.png')"></div>
-				</div>
-				<div class="zzz-bubble"></div>
-				<div class="sprite-label"><span class="sprite-name">Samantha</span><span class="sprite-status-dot"></span></div>
-			</div>
-
-			<!-- Loki -->
-			<div class="agent-sprite-wrap" data-agent="writer" id="sprite-writer">
-				<div class="agent-sprite" data-state="idle">
-					<div class="sprite-img" style="background-image:url('/sprites/loki-sprite.png')"></div>
-				</div>
-				<div class="zzz-bubble"></div>
-				<div class="sprite-label"><span class="sprite-name">Loki</span><span class="sprite-status-dot"></span></div>
-			</div>
-
-			<!-- Vision -->
-			<div class="agent-sprite-wrap" data-agent="researcher" id="sprite-researcher">
-				<div class="agent-sprite" data-state="idle">
-					<div class="sprite-img" style="background-image:url('/sprites/vision-sprite.png')"></div>
-				</div>
-				<div class="zzz-bubble"></div>
-				<div class="sprite-label"><span class="sprite-name">Vision</span><span class="sprite-status-dot"></span></div>
-			</div>
-
-			<!-- Jarvis -->
-			<div class="agent-sprite-wrap" data-agent="coder" id="sprite-coder">
-				<div class="agent-sprite" data-state="idle">
-					<div class="sprite-img" style="background-image:url('/sprites/jarvis-sprite.png')"></div>
-				</div>
-				<div class="zzz-bubble"></div>
-				<div class="sprite-label"><span class="sprite-name">Jarvis</span><span class="sprite-status-dot"></span></div>
-			</div>
-
-			<!-- Shuri -->
-			<div class="agent-sprite-wrap" data-agent="designer" id="sprite-designer">
-				<div class="agent-sprite" data-state="idle">
-					<div class="sprite-img" style="background-image:url('/sprites/shuri-sprite.png')"></div>
-				</div>
-				<div class="zzz-bubble"></div>
-				<div class="sprite-label"><span class="sprite-name">Shuri</span><span class="sprite-status-dot"></span></div>
-			</div>
-
-			<!-- Friday -->
-			<div class="agent-sprite-wrap" data-agent="analyst" id="sprite-analyst">
-				<div class="agent-sprite" data-state="idle">
-					<div class="sprite-img" style="background-image:url('/sprites/friday-sprite.png')"></div>
-				</div>
-				<div class="zzz-bubble"></div>
-				<div class="sprite-label"><span class="sprite-name">Friday</span><span class="sprite-status-dot"></span></div>
+			<div class="pixel-office" id="pixel-office">
+				<canvas id="office-canvas" width="960" height="520"></canvas>
 			</div>
 		</div>
-		</div><!-- end pixel-office-scale-wrapper -->
 	</section>
 
 	<!-- Activity Feed -->
 	<section class="activity-feed mb-16 fade-in-up" style="--delay: 500ms">
-			<h2 class="mb-2 font-serif text-xs font-bold tracking-widest text-gray-400 uppercase dark:text-gray-500">
-				<span class="lang-en">Recent Activity</span><span class="lang-zh">团队动态</span>
-			</h2>
-			<p class="mb-6 font-serif text-2xl font-semibold dark:text-white">
-				<span class="lang-en">What the team shipped today.</span>
-				<span class="lang-zh">今天团队干了什么。</span>
-			</p>
-			<div class="feed-header-row">
-				<a href="/lab/builder-log/" class="feed-link font-serif text-sm text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]">
-					<span class="lang-en">Full build history →</span>
-					<span class="lang-zh">完整构建日志 →</span>
-				</a>
+		<h2 class="mb-2 font-serif text-xs font-bold tracking-widest text-gray-400 uppercase dark:text-gray-500">
+			<span class="lang-en">Recent Activity</span><span class="lang-zh">团队动态</span>
+		</h2>
+		<p class="mb-6 font-serif text-2xl font-semibold dark:text-white">
+			<span class="lang-en">What the team shipped today.</span>
+			<span class="lang-zh">今天团队干了什么。</span>
+		</p>
+		<div class="feed-header-row">
+			<a href="/lab/builder-log/" class="feed-link font-serif text-sm text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]">
+				<span class="lang-en">Full build history →</span>
+				<span class="lang-zh">完整构建日志 →</span>
+			</a>
+		</div>
+		<div class="feed-list" id="activity-feed-list">
+			<div class="feed-loading font-serif text-xs text-gray-400">
+				<span class="lang-en">Loading activity...</span><span class="lang-zh">加载中...</span>
 			</div>
-			<div class="feed-list" id="activity-feed-list">
-				<div class="feed-loading font-serif text-xs text-gray-400">
-					<span class="lang-en">Loading activity...</span><span class="lang-zh">加载中...</span>
-				</div>
-			</div>
-		</section>
+		</div>
+	</section>
 </PageLayout>
 
 <style is:global>
@@ -135,7 +82,7 @@ const meta = {
 	html[data-lang="zh"] .lang-en { display: none !important; }
 
 	/* ══════════════════════════════════════════════════════════════
-	   PIXEL OFFICE — Shared workspace container
+	   PIXEL OFFICE — Canvas container
 	   ══════════════════════════════════════════════════════════════ */
 	.office-wrapper {
 		overflow: hidden;
@@ -146,206 +93,33 @@ const meta = {
 		width: 960px;
 		height: 520px;
 		margin: 0 auto;
-		image-rendering: pixelated;
 		border: 3px solid #2a2a3a;
 		border-radius: 6px;
 		overflow: hidden;
 		box-shadow: 0 0 30px #8953d122, 0 0 0 1px #8953d133;
-		/* Pixel art office background */
-		background-image: url('/sprites/office-background.png');
-		background-size: cover;
-		background-position: center;
-		background-repeat: no-repeat;
 	}
-	/* Light theme */
 	:global([data-theme="light"]) .pixel-office {
 		border-color: #ccc;
 		box-shadow: 0 4px 32px rgba(0,0,0,0.08);
 	}
 
-
-
-	/* ══════════════════════════════════════════════════════════════
-	   AGENT SPRITE WRAPPERS — positioned in the office
-	   ══════════════════════════════════════════════════════════════ */
-	.agent-sprite-wrap {
-		position: absolute;
-		z-index: 10;
-		cursor: pointer;
-		transition: left 0.5s ease, top 0.5s ease, opacity 0.4s ease;
-	}
-	.agent-sprite-wrap:hover { z-index: 20; }
-	.agent-sprite-wrap:hover .sprite-label { opacity: 1; }
-
-	/* Sprite label (name + dot) */
-	.sprite-label {
-		position: absolute;
-		bottom: -16px; left: 50%;
-		transform: translateX(-50%);
-		display: flex;
-		align-items: center;
-		gap: 3px;
-		white-space: nowrap;
-		opacity: 0.7;
-		transition: opacity 0.2s;
-		pointer-events: none;
-	}
-	.sprite-name {
-		font-family: serif;
-		font-size: 8px;
-		color: #ccc;
-		letter-spacing: 0.02em;
-	}
-	:global([data-theme="light"]) .sprite-name { color: #555; }
-	.sprite-status-dot {
-		width: 5px; height: 5px;
-		border-radius: 50%;
-		background: #666;
-		flex-shrink: 0;
-	}
-	.sprite-status-dot.idle { background: #4ade80; }
-	.sprite-status-dot.busy { background: #f59e0b; animation: pulse-dot 1.5s infinite; }
-	.sprite-status-dot.error { background: #a78bfa; }
-	.sprite-status-dot.offline { background: #666; }
-
-	@keyframes pulse-dot {
-		0%, 100% { opacity: 1; }
-		50% { opacity: 0.4; }
-	}
-
-	/* ══════════════════════════════════════════════════════════════
-	   SPRITE POSITIONS BY STATE
-	   Each agent gets specific coordinates per state
-	   ══════════════════════════════════════════════════════════════ */
-
-	/* ── Default / idle: Lounge area (top-left) ── */
-	#sprite-main[data-pos="idle"]        { top: 120px; left: 100px; }
-	#sprite-writer[data-pos="idle"]      { top: 140px; left: 60px; }
-	#sprite-researcher[data-pos="idle"]  { top: 118px; left: 148px; }
-	#sprite-coder[data-pos="idle"]       { top: 155px; left: 115px; }
-	#sprite-designer[data-pos="idle"]    { top: 128px; left: 170px; }
-	#sprite-analyst[data-pos="idle"]     { top: 152px; left: 50px; }
-
-	/* ── Busy: Workstations / Command ── */
-	#sprite-main[data-pos="busy"]        { top: 138px; right: 148px; left: auto; }   /* Command center */
-	#sprite-writer[data-pos="busy"]      { top: 248px; left: 226px; }   /* Desk 1 */
-	#sprite-researcher[data-pos="busy"]  { top: 248px; left: 366px; }   /* Desk 2 */
-	#sprite-coder[data-pos="busy"]       { top: 248px; left: 506px; }   /* Desk 3 */
-	#sprite-designer[data-pos="busy"]    { top: 328px; left: 286px; }   /* Desk 4 */
-	#sprite-analyst[data-pos="busy"]     { top: 328px; left: 446px; }   /* Desk 5 */
-
-	/* ── Error: Arcade area (bottom-left), vacation mode ── */
-	#sprite-main[data-pos="error"]       { top: 400px; left: 120px; }
-	#sprite-writer[data-pos="error"]     { top: 415px; left: 60px; }
-	#sprite-researcher[data-pos="error"] { top: 390px; left: 145px; }
-	#sprite-coder[data-pos="error"]      { top: 410px; left: 90px; }
-	#sprite-designer[data-pos="error"]   { top: 395px; left: 165px; }
-	#sprite-analyst[data-pos="error"]    { top: 420px; left: 40px; }
-
-	/* ── Offline: Sofa area, semi-transparent ── */
-	#sprite-main[data-pos="offline"]        { top: 122px; left: 30px; }
-	#sprite-writer[data-pos="offline"]      { top: 125px; left: 55px; }
-	#sprite-researcher[data-pos="offline"]  { top: 128px; left: 80px; }
-	#sprite-coder[data-pos="offline"]       { top: 160px; left: 38px; }
-	#sprite-designer[data-pos="offline"]    { top: 163px; left: 62px; }
-	#sprite-analyst[data-pos="offline"]     { top: 160px; left: 86px; }
-
-	/* ══════════════════════════════════════════════════════════════
-	   SPRITE IMAGE SYSTEM — PNG sprite sheets
-	   ══════════════════════════════════════════════════════════════ */
-
-	.agent-sprite {
-		position: relative;
-		width: 56px; height: 56px;
-		z-index: 5;
-	}
-
-	/* Show first frame (top-left) of 4×2 sprite sheet (1408×768, each frame 352×384) */
-	.sprite-img {
-		width: 56px;
-		height: 56px;
-		background-size: 400% 200%;   /* 4 cols × 2 rows */
-		background-position: 0% 0%;   /* first frame */
-		background-repeat: no-repeat;
-		image-rendering: pixelated;
-		filter: drop-shadow(0 2px 2px rgba(0,0,0,0.35));
-	}
-
-	/* ══════════════════════════════════════════════════════════════
-	   ANIMATIONS — Idle Breathe + State effects
-	   ══════════════════════════════════════════════════════════════ */
-	@keyframes idle-breathe {
-		0%, 100% { transform: translateY(0); }
-		25% { transform: translateY(-1px); }
-		50% { transform: translateY(-1px); }
-		75% { transform: translateY(0); }
-	}
-	.agent-sprite[data-state="idle"] .sprite-img,
-	.agent-sprite[data-state="error"] .sprite-img {
-		animation: idle-breathe 1s steps(4) infinite;
-	}
-
-	/* ══════════════════════════════════════════════════════════════
-	   BUSY STATE — at desk, subtle bob
-	   ══════════════════════════════════════════════════════════════ */
-	.agent-sprite[data-state="busy"] .sprite-img {
-		animation: work-bob 0.8s steps(2) infinite;
-	}
-	@keyframes work-bob {
-		0%, 100% { transform: translateY(0); }
-		50% { transform: translateY(-2px); }
-	}
-
-		/* ══════════════════════════════════════════════════════════════
-	   OFFLINE STATE — grayscale + ZZZ
-	   ══════════════════════════════════════════════════════════════ */
-	.agent-sprite[data-state="offline"] .sprite-img {
-		filter: grayscale(80%) opacity(0.5);
-		animation: none;
-	}
-	/* Semi-transparent wrapper for offline */
-	.agent-sprite-wrap[data-pos="offline"] {
-		opacity: 0.6;
-	}
-
-	.zzz-bubble {
-		display: none;
-		position: absolute;
-		top: -10px; right: -8px;
-		z-index: 15;
-		font-family: monospace;
-		font-weight: bold;
-		color: #4a8ab544;
-	}
-	.agent-sprite[data-state="offline"] ~ .zzz-bubble {
+	#office-canvas {
 		display: block;
-	}
-	.zzz-bubble::before {
-		content: 'z';
-		position: absolute;
-		bottom: 0; right: 0;
-		font-size: 6px;
-		animation: zzz-float 2s steps(3) infinite;
-	}
-	.zzz-bubble::after {
-		content: 'Z';
-		position: absolute;
-		bottom: 6px; right: 4px;
-		font-size: 8px;
-		animation: zzz-float 2s steps(3) infinite 0.5s;
-	}
-	@keyframes zzz-float {
-		0% { opacity: 0; transform: translateY(0); }
-		30% { opacity: 0.6; }
-		100% { opacity: 0; transform: translateY(-8px); }
+		image-rendering: pixelated;
+		image-rendering: crisp-edges;
+		cursor: default;
+		width: 960px;
+		height: 520px;
 	}
 
-	/* ══════════════════════════════════════════════════════════════
-	   ERROR STATE — vacation mode, NO blink, NO !, just chill
-	   ══════════════════════════════════════════════════════════════ */
-	/* error uses idle-breathe (already assigned above), no extra styling */
-
-
+	/* ── Responsive scale wrapper ─────────────────────────────── */
+	.pixel-office-scale-wrapper {
+		width: 100%;
+		overflow: hidden;
+	}
+	.pixel-office {
+		transform-origin: top left;
+	}
 
 	/* ── Detail overlay ─────────────────────────────────────────── */
 	.agent-detail-overlay {
@@ -535,162 +309,434 @@ const meta = {
 		white-space: nowrap;
 		margin-top: 4px;
 	}
-
-	/* ── Responsive: JS-driven scale (see initPixelOfficeScale) ── */
-	.pixel-office-scale-wrapper {
-		width: 100%;
-		overflow: hidden;
-	}
-	.pixel-office {
-		transform-origin: top left;
-		/* scale set dynamically by JS */
-	}
 </style>
 
 <script is:inline>
-	(function() {
-		var _intervals = [];
-		var _controllers = {};
+(function() {
+	'use strict';
 
-		function initAgentPage() {
-		// Clean up previous intervals (View Transitions re-entry)
+	var _intervals = [];
+	var _animRunning = false;
+	var _rafId = null;
+
+	/* ══════════════════════════════════════════════════════════════
+	   Canvas 2D Polyfill — roundRect
+	   ══════════════════════════════════════════════════════════════ */
+	if (typeof CanvasRenderingContext2D !== 'undefined' && !CanvasRenderingContext2D.prototype.roundRect) {
+		CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
+			if (r > w / 2) r = w / 2;
+			if (r > h / 2) r = h / 2;
+			this.beginPath();
+			this.moveTo(x + r, y);
+			this.lineTo(x + w - r, y);
+			this.arcTo(x + w, y, x + w, y + r, r);
+			this.lineTo(x + w, y + h - r);
+			this.arcTo(x + w, y + h, x + w - r, y + h, r);
+			this.lineTo(x + r, y + h);
+			this.arcTo(x, y + h, x, y + h - r, r);
+			this.lineTo(x, y + r);
+			this.arcTo(x, y, x + r, y, r);
+			this.closePath();
+			return this;
+		};
+	}
+
+	function initAgentPage() {
+		/* ── Clean up previous run ── */
 		_intervals.forEach(function(id) { clearInterval(id); });
 		_intervals = [];
-		Object.values(_controllers).forEach(function(c) { if (c.stop) c.stop(); });
-		_controllers = {};
+		_animRunning = false;
+		if (_rafId) { cancelAnimationFrame(_rafId); _rafId = null; }
 
 		var CONVEX_URL = 'https://fleet-heron-880.convex.cloud';
+		var CONVEX_ACTIVITY_URL = 'https://shiny-butterfly-744.convex.cloud';
 		var statusEl = document.getElementById('connection-status');
+		var canvas = document.getElementById('office-canvas');
+		if (!canvas) return;
+		var ctx = canvas.getContext('2d');
+		if (!ctx) return;
+		ctx.imageSmoothingEnabled = false;
 
-		/* ── Idle Animation Controller ────────────────────────── */
-		var IDLE_VARIANTS = {
-			main:       ['idle-coffee', 'idle-phone'],
-			writer:     ['idle-read', 'idle-plot'],
-			researcher: ['idle-telescope', 'idle-think'],
-			coder:      ['idle-tinker', 'idle-headbang'],
-			designer:   ['idle-doodle', 'idle-palette'],
-			analyst:    ['idle-data', 'idle-stretch']
-		};
-		var VARIANT_DURATIONS = {
-			'idle-coffee': 2000, 'idle-phone': 1500,
-			'idle-read': 1500, 'idle-plot': 1500,
-			'idle-telescope': 2000, 'idle-think': 1000,
-			'idle-tinker': 1000, 'idle-headbang': 1000,
-			'idle-doodle': 1300, 'idle-palette': 1000,
-			'idle-data': 1000, 'idle-stretch': 1000
-		};
+		/* ══════════════════════════════════════════════════════════════
+		   SPRITE SHEET LAYOUT
+		   Each sheet: 1408×768, 4 cols × 2 rows = 8 slots (6 used)
+		   Frame size: 352×384
+		   ══════════════════════════════════════════════════════════════ */
+		var FRAME_W = 352;
+		var FRAME_H = 384;
+		var FRAME_COLS = 4;
+		var DRAW_W = 58;  /* rendered width on canvas */
+		var DRAW_H = 64;  /* rendered height on canvas */
 
-		var controllers = _controllers;
-
-		function IdleController(wrap, agentId) {
-			this.wrap = wrap;
-			this.sprite = wrap.querySelector('.agent-sprite');
-			this.agentId = agentId;
-			this.variants = IDLE_VARIANTS[agentId] || [];
-			this.timer = null;
-			this.playing = false;
-		}
-		IdleController.prototype.start = function() {
-			this.stop();
-			this.clearVariantClass();
-			this.scheduleTick();
-		};
-		IdleController.prototype.stop = function() {
-			if (this.timer) { clearTimeout(this.timer); this.timer = null; }
-			this.clearVariantClass();
-			this.playing = false;
-		};
-		IdleController.prototype.clearVariantClass = function() {
-			var sp = this.sprite;
-			this.variants.forEach(function(v) { sp.classList.remove('playing-' + v); });
-		};
-		IdleController.prototype.scheduleTick = function() {
-			var self = this;
-			var delay = 3000 + Math.random() * 4000;
-			this.timer = setTimeout(function() { self.tick(); }, delay);
-		};
-		IdleController.prototype.tick = function() {
-			var state = this.sprite.getAttribute('data-state');
-			if (state !== 'idle') { this.scheduleTick(); return; }
-
-			if (Math.random() < 0.7 && this.variants.length > 0) {
-				var v = this.variants[Math.floor(Math.random() * this.variants.length)];
-				var dur = VARIANT_DURATIONS[v] || 1500;
-				var self = this;
-				this.playing = true;
-				this.sprite.classList.add('playing-' + v);
-
-				this.timer = setTimeout(function() {
-					self.sprite.classList.remove('playing-' + v);
-					self.playing = false;
-					self.scheduleTick();
-				}, dur);
-			} else {
-				this.scheduleTick();
-			}
-		};
-
-		/* ── Random offset for idle/error positions ──────────── */
-		function applyRandomOffset(wrap, status) {
-			if (status === 'idle' || status === 'error') {
-				var ox = Math.floor(Math.random() * 20) - 10;
-				var oy = Math.floor(Math.random() * 12) - 6;
-				wrap.style.marginLeft = ox + 'px';
-				wrap.style.marginTop = oy + 'px';
-			} else {
-				wrap.style.marginLeft = '0';
-				wrap.style.marginTop = '0';
-			}
+		function getFrameCoords(frameIndex) {
+			var col = frameIndex % FRAME_COLS;
+			var row = Math.floor(frameIndex / FRAME_COLS);
+			return { sx: col * FRAME_W, sy: row * FRAME_H };
 		}
 
-		/* ── Initialize Idle Controllers ──────────────────────── */
-		document.querySelectorAll('.agent-sprite-wrap').forEach(function(wrap) {
-			var agentId = wrap.getAttribute('data-agent');
-			var ctrl = new IdleController(wrap, agentId);
-			controllers[agentId] = ctrl;
-			ctrl.start();
-			// Set initial position
-			wrap.setAttribute('data-pos', 'idle');
-			applyRandomOffset(wrap, 'idle');
+		/* Frame semantics (best-guess, visually tweak if wrong):
+		   0 = idle stand      1 = idle alt / breathe
+		   2 = walk step A     3 = walk step B
+		   4 = busy/sitting    5 = offline/sleep
+		*/
+		var STATE_FRAME = {
+			idle:    [0, 1],   /* alternate every ~30 frames */
+			busy:    [4],
+			error:   [0, 1],
+			offline: [5],
+			walk:    [2, 3],   /* used while moving */
+		};
+
+		/* ══════════════════════════════════════════════════════════════
+		   POSITIONS — (x = center-x, y = feet-y) in 960×520 canvas
+		   ══════════════════════════════════════════════════════════════ */
+		var POSITIONS = {
+			main: {
+				busy:    { x: 762, y: 194 },   /* command center right */
+				idle:    { x: 128, y: 184 },   /* lounge */
+				error:   { x: 148, y: 456 },   /* arcade */
+				offline: { x: 58,  y: 180 },   /* sofa */
+			},
+			writer: {
+				busy:    { x: 254, y: 304 },   /* desk 1 */
+				idle:    { x: 88,  y: 196 },
+				error:   { x: 88,  y: 471 },
+				offline: { x: 83,  y: 183 },
+			},
+			researcher: {
+				busy:    { x: 394, y: 304 },   /* desk 2 */
+				idle:    { x: 176, y: 174 },
+				error:   { x: 173, y: 446 },
+				offline: { x: 108, y: 184 },
+			},
+			coder: {
+				busy:    { x: 534, y: 304 },   /* desk 3 */
+				idle:    { x: 143, y: 211 },
+				error:   { x: 118, y: 466 },
+				offline: { x: 66,  y: 216 },
+			},
+			designer: {
+				busy:    { x: 314, y: 384 },   /* desk 4 */
+				idle:    { x: 198, y: 184 },
+				error:   { x: 193, y: 451 },
+				offline: { x: 90,  y: 219 },
+			},
+			analyst: {
+				busy:    { x: 474, y: 384 },   /* desk 5 */
+				idle:    { x: 78,  y: 208 },
+				error:   { x: 68,  y: 476 },
+				offline: { x: 114, y: 216 },
+			},
+		};
+
+		/* ══════════════════════════════════════════════════════════════
+		   AGENT DEFINITIONS
+		   ══════════════════════════════════════════════════════════════ */
+		var AGENT_DEFS = [
+			{ id: 'main',       name: 'Samantha', src: '/sprites/samantha-sprite.png', color: '#ff6b35' },
+			{ id: 'writer',     name: 'Loki',     src: '/sprites/loki-sprite.png',     color: '#4a9e4a' },
+			{ id: 'researcher', name: 'Vision',   src: '/sprites/vision-sprite.png',   color: '#4a8ab5' },
+			{ id: 'coder',      name: 'Jarvis',   src: '/sprites/jarvis-sprite.png',   color: '#7a7a8a' },
+			{ id: 'designer',   name: 'Shuri',    src: '/sprites/shuri-sprite.png',    color: '#c54ab5' },
+			{ id: 'analyst',    name: 'Friday',   src: '/sprites/friday-sprite.png',   color: '#4ac5c5' },
+		];
+
+		/* ══════════════════════════════════════════════════════════════
+		   LOAD IMAGES
+		   ══════════════════════════════════════════════════════════════ */
+		var bgImage = new Image();
+		bgImage.src = '/sprites/office-background.png';
+
+		var characters = {};
+		AGENT_DEFS.forEach(function(def) {
+			var startPos = (POSITIONS[def.id] && POSITIONS[def.id].offline) || { x: 60, y: 200 };
+			var img = new Image();
+			img.src = def.src;
+			characters[def.id] = {
+				id:          def.id,
+				name:        def.name,
+				color:       def.color,
+				img:         img,
+				x:           startPos.x,
+				y:           startPos.y,
+				targetX:     startPos.x,
+				targetY:     startPos.y,
+				state:       'offline',
+				frame:       5,
+				frameTick:   Math.floor(Math.random() * 60),  /* stagger phase */
+				walkStep:    0,
+				currentTask: '',
+				zzzOffset:   Math.random() * Math.PI * 2,     /* zzz phase randomise */
+			};
 		});
 
-		/* ── Convex Polling ───────────────────────────────────── */
-		function updateAgent(agent) {
-			var wrap = document.querySelector('.agent-sprite-wrap[data-agent="' + agent.agentId + '"]');
-			if (!wrap) return;
+		/* ══════════════════════════════════════════════════════════════
+		   GAME LOOP
+		   ══════════════════════════════════════════════════════════════ */
+		var WALK_SPEED = 2.0;  /* px / frame at 60fps */
+		var frameCount = 0;
+		_animRunning = true;
 
-			var sprite = wrap.querySelector('.agent-sprite');
-			var dot = wrap.querySelector('.sprite-status-dot');
-			var status = agent.status || 'offline';
+		function gameLoop() {
+			if (!_animRunning) return;
+			_rafId = requestAnimationFrame(gameLoop);
+			frameCount++;
 
-			if (sprite) {
-				var prev = sprite.getAttribute('data-state');
-				sprite.setAttribute('data-state', status);
-				wrap.setAttribute('data-pos', status);
-				applyRandomOffset(wrap, status);
+			/* Clear */
+			ctx.clearRect(0, 0, 960, 520);
+			ctx.imageSmoothingEnabled = false;
 
-				// Restart idle controller when transitioning to idle
-				if (status === 'idle' && prev !== 'idle' && controllers[agent.agentId]) {
-					controllers[agent.agentId].start();
+			/* Background */
+			if (bgImage.complete && bgImage.naturalWidth > 0) {
+				ctx.drawImage(bgImage, 0, 0, 960, 520);
+			} else {
+				ctx.fillStyle = '#0d0d1a';
+				ctx.fillRect(0, 0, 960, 520);
+				/* Simple grid lines as fallback */
+				ctx.strokeStyle = '#1a1a2e';
+				ctx.lineWidth = 1;
+				for (var gx = 0; gx < 960; gx += 32) {
+					ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, 520); ctx.stroke();
 				}
-				if (status !== 'idle' && controllers[agent.agentId]) {
-					controllers[agent.agentId].stop();
+				for (var gy = 0; gy < 520; gy += 32) {
+					ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(960, gy); ctx.stroke();
 				}
 			}
-			if (dot) dot.className = 'sprite-status-dot ' + status;
+
+			/* Sort by Y so lower characters render on top */
+			var charList = Object.values(characters).sort(function(a, b) { return a.y - b.y; });
+
+			charList.forEach(function(ch) {
+				updateCharacter(ch);
+				drawCharacter(ch);
+			});
 		}
 
-		function setOffline() {
-			document.querySelectorAll('.agent-sprite-wrap').forEach(function(wrap) {
-				var dot = wrap.querySelector('.sprite-status-dot');
-				var sprite = wrap.querySelector('.agent-sprite');
-				if (dot) dot.className = 'sprite-status-dot offline';
-				if (sprite) sprite.setAttribute('data-state', 'offline');
-				wrap.setAttribute('data-pos', 'offline');
-			});
-			if (statusEl) {
-				statusEl.innerHTML = '<span class="lang-en" style="color:#ef4444">\u26a0 Offline</span><span class="lang-zh" style="color:#ef4444">\u26a0 离线</span>';
+		/* ── Per-frame character update ── */
+		function updateCharacter(ch) {
+			var dx = ch.targetX - ch.x;
+			var dy = ch.targetY - ch.y;
+			var dist = Math.sqrt(dx * dx + dy * dy);
+			var isMoving = dist > 1.5;
+
+			ch.frameTick++;
+
+			if (isMoving) {
+				/* Move toward target */
+				var speed = Math.min(WALK_SPEED, dist);
+				ch.x += (dx / dist) * speed;
+				ch.y += (dy / dist) * speed;
+				/* Walk frame: alternate 2↔3 every 8 frames */
+				ch.frame = 2 + (Math.floor(ch.frameTick / 8) % 2);
+			} else {
+				/* Snap to target */
+				ch.x = ch.targetX;
+				ch.y = ch.targetY;
+
+				/* State-appropriate frame */
+				switch (ch.state) {
+					case 'busy':
+						ch.frame = 4;
+						break;
+					case 'offline':
+						ch.frame = 5;
+						break;
+					case 'idle':
+					case 'error':
+					default:
+						/* Breathe: alternate 0↔1 every 30 frames */
+						ch.frame = Math.floor(ch.frameTick / 30) % 2 === 0 ? 0 : 1;
+						break;
+				}
 			}
+		}
+
+		/* ── Draw one character ── */
+		function drawCharacter(ch) {
+			var f = getFrameCoords(ch.frame);
+			var drawX = Math.round(ch.x - DRAW_W / 2);
+			var drawY = Math.round(ch.y - DRAW_H);
+
+			ctx.save();
+			ctx.imageSmoothingEnabled = false;
+
+			/* Offline: semi-transparent */
+			ctx.globalAlpha = ch.state === 'offline' ? 0.45 : 1.0;
+
+			/* Draw sprite frame */
+			if (ch.img && ch.img.complete && ch.img.naturalWidth > 0) {
+				ctx.drawImage(ch.img, f.sx, f.sy, FRAME_W, FRAME_H, drawX, drawY, DRAW_W, DRAW_H);
+			} else {
+				/* Fallback: colored dot */
+				ctx.globalAlpha = ch.state === 'offline' ? 0.45 : 0.85;
+				ctx.fillStyle = ch.color;
+				ctx.beginPath();
+				ctx.arc(ch.x, ch.y - DRAW_H / 2, 14, 0, Math.PI * 2);
+				ctx.fill();
+			}
+
+			ctx.globalAlpha = 1.0;
+			ctx.restore();
+
+			/* Effects drawn at full alpha (own save/restore) */
+			if (ch.state === 'offline') {
+				drawZzz(ch, drawX, drawY);
+			}
+			if (ch.state === 'busy' && ch.currentTask) {
+				drawTaskBubble(ch, drawX, drawY);
+			}
+
+			/* Name label always full alpha */
+			drawLabel(ch);
+		}
+
+		/* ── ZZZ floating animation ── */
+		function drawZzz(ch, drawX, drawY) {
+			ctx.save();
+			ctx.imageSmoothingEnabled = false;
+			var t = (frameCount * 0.025) + ch.zzzOffset;
+			/* Two zzz letters floating with offset phases */
+			var yOff1 = (t % (Math.PI * 2)) * 2.5;
+			var yOff2 = ((t + 1.2) % (Math.PI * 2)) * 2.5;
+			var a1 = Math.max(0, Math.sin(t) * 0.7);
+			var a2 = Math.max(0, Math.sin(t + 1.5) * 0.6);
+
+			ctx.textAlign = 'left';
+
+			/* small z */
+			ctx.font = 'bold 7px monospace';
+			ctx.globalAlpha = a1;
+			ctx.fillStyle = '#4a8ab5';
+			ctx.fillText('z', ch.x + DRAW_W / 2 - 2, drawY + 4 - yOff1);
+
+			/* big Z */
+			ctx.font = 'bold 10px monospace';
+			ctx.globalAlpha = a2;
+			ctx.fillStyle = '#4a8ab5';
+			ctx.fillText('Z', ch.x + DRAW_W / 2 + 3, drawY - 3 - yOff2);
+
+			ctx.globalAlpha = 1.0;
+			ctx.restore();
+		}
+
+		/* ── Busy task bubble ── */
+		function drawTaskBubble(ch, drawX, drawY) {
+			if (!ch.currentTask) return;
+			ctx.save();
+			ctx.imageSmoothingEnabled = false;
+
+			var maxLen = 20;
+			var text = ch.currentTask.length > maxLen
+				? ch.currentTask.slice(0, maxLen) + '\u2026'
+				: ch.currentTask;
+
+			ctx.font = '7px sans-serif';
+			var tw = ctx.measureText(text).width;
+			var padX = 5, padY = 3;
+			var bw = tw + padX * 2;
+			var bh = 14;
+			var bx = Math.round(ch.x - bw / 2);
+			var by = drawY - bh - 5;
+
+			/* Bubble body */
+			ctx.fillStyle = 'rgba(10,10,20,0.8)';
+			ctx.roundRect(bx, by, bw, bh, 3);
+			ctx.fill();
+
+			/* Bubble border */
+			ctx.strokeStyle = ch.color + 'aa';
+			ctx.lineWidth = 0.75;
+			ctx.stroke();
+
+			/* Tail triangle */
+			ctx.fillStyle = 'rgba(10,10,20,0.8)';
+			ctx.beginPath();
+			ctx.moveTo(ch.x - 3, by + bh);
+			ctx.lineTo(ch.x + 3, by + bh);
+			ctx.lineTo(ch.x, by + bh + 4);
+			ctx.closePath();
+			ctx.fill();
+
+			/* Text */
+			ctx.fillStyle = 'rgba(255,255,255,0.9)';
+			ctx.textAlign = 'center';
+			ctx.fillText(text, ch.x, by + bh - padY);
+
+			ctx.restore();
+		}
+
+		/* ── Name label + status dot ── */
+		function drawLabel(ch) {
+			ctx.save();
+			ctx.imageSmoothingEnabled = false;
+			ctx.textAlign = 'center';
+
+			var labelX = ch.x;
+			var labelY = ch.y + 10;
+
+			/* Status dot color */
+			var dotColor;
+			switch (ch.state) {
+				case 'idle':    dotColor = '#4ade80'; break;
+				case 'busy':    dotColor = '#f59e0b'; break;
+				case 'offline': dotColor = '#555';    break;
+				case 'error':   dotColor = '#a78bfa'; break;
+				default:        dotColor = '#555';
+			}
+
+			/* Name shadow */
+			ctx.font = '8px serif';
+			ctx.fillStyle = 'rgba(0,0,0,0.7)';
+			ctx.fillText(ch.name, labelX + 1, labelY + 1);
+
+			/* Name */
+			ctx.fillStyle = ch.state === 'offline' ? '#888888' : '#cccccc';
+			ctx.fillText(ch.name, labelX, labelY);
+
+			/* Status dot */
+			var nameW = ctx.measureText(ch.name).width;
+			var dotX = labelX + nameW / 2 + 5;
+			var dotY = labelY - 3;
+			var dotR = 2.5;
+
+			/* Busy: pulsing dot */
+			if (ch.state === 'busy') {
+				var pulse = 0.45 + 0.55 * (Math.sin(frameCount * 0.1) * 0.5 + 0.5);
+				ctx.globalAlpha = pulse;
+				ctx.fillStyle = dotColor;
+				ctx.beginPath();
+				ctx.arc(dotX, dotY, dotR + 1.5, 0, Math.PI * 2);
+				ctx.fill();
+				ctx.globalAlpha = 1.0;
+			}
+
+			ctx.fillStyle = dotColor;
+			ctx.beginPath();
+			ctx.arc(dotX, dotY, dotR, 0, Math.PI * 2);
+			ctx.fill();
+
+			ctx.restore();
+		}
+
+		/* Start the loop */
+		_rafId = requestAnimationFrame(gameLoop);
+
+		/* ══════════════════════════════════════════════════════════════
+		   CONVEX POLLING — drive character state + position
+		   ══════════════════════════════════════════════════════════════ */
+		function updateAgent(agent) {
+			var ch = characters[agent.agentId];
+			if (!ch) return;
+			var status = agent.status || 'offline';
+			var pos = POSITIONS[agent.agentId];
+			if (!pos) return;
+			var targetPos = pos[status] || pos.offline;
+
+			ch.state = status;
+			ch.targetX = targetPos.x;
+			ch.targetY = targetPos.y;
+			ch.currentTask = agent.currentTask || '';
+			/* Reset frameTick so state frame starts fresh after arrival */
 		}
 
 		async function pollAgents() {
@@ -707,13 +753,13 @@ const meta = {
 				var data = await resp.json();
 				var agents = data.value || [];
 				if (statusEl) {
-					statusEl.innerHTML = '<span class="lang-en" style="color:#4ade80">\u25cf Live</span><span class="lang-zh" style="color:#4ade80">\u25cf 实时</span>';
+					statusEl.innerHTML = '<span class="lang-en" style="color:#4ade80">\u25cf Live</span><span class="lang-zh" style="color:#4ade80">\u25cf \u5b9e\u65f6</span>';
 				}
 				agents.forEach(updateAgent);
 			} catch (e) {
 				console.error('Convex poll failed:', e);
 				if (statusEl) {
-					statusEl.innerHTML = '<span class="lang-en" style="color:#888">\u25cb Cached</span><span class="lang-zh" style="color:#888">\u25cb 缓存</span>';
+					statusEl.innerHTML = '<span class="lang-en" style="color:#888">\u25cb Cached</span><span class="lang-zh" style="color:#888">\u25cb \u7f13\u5b58</span>';
 				}
 			}
 		}
@@ -721,74 +767,114 @@ const meta = {
 		pollAgents();
 		_intervals.push(setInterval(pollAgents, 10000));
 
-		/* ── Agent Detail Panel ───────────────────────────────── */
+		/* ══════════════════════════════════════════════════════════════
+		   CLICK + HOVER — canvas hit detection
+		   ══════════════════════════════════════════════════════════════ */
+		function getCanvasCoords(e) {
+			var rect = canvas.getBoundingClientRect();
+			var scaleX = canvas.width / rect.width;
+			var scaleY = canvas.height / rect.height;
+			return {
+				x: (e.clientX - rect.left) * scaleX,
+				y: (e.clientY - rect.top) * scaleY,
+			};
+		}
+
+		function hitTest(cx, cy) {
+			var charList = Object.values(characters);
+			for (var i = 0; i < charList.length; i++) {
+				var ch = charList[i];
+				var hx = ch.x - DRAW_W / 2 - 4;
+				var hy = ch.y - DRAW_H - 4;
+				var hw = DRAW_W + 8;
+				var hh = DRAW_H + 20; /* include label area */
+				if (cx >= hx && cx <= hx + hw && cy >= hy && cy <= hy + hh) {
+					return ch.id;
+				}
+			}
+			return null;
+		}
+
+		canvas.addEventListener('click', function(e) {
+			var c = getCanvasCoords(e);
+			var hit = hitTest(c.x, c.y);
+			if (hit) openDetail(hit);
+		});
+
+		canvas.addEventListener('mousemove', function(e) {
+			var c = getCanvasCoords(e);
+			canvas.style.cursor = hitTest(c.x, c.y) ? 'pointer' : 'default';
+		});
+
+		/* ══════════════════════════════════════════════════════════════
+		   AGENT DETAIL PANEL
+		   ══════════════════════════════════════════════════════════════ */
 		var AGENT_DATA = {
 			main: {
 				name: 'Samantha', role: 'Mastermind', color: '#ff6b35',
 				descEn: 'Coordinates the team, routes tasks, delivers daily briefings and market reports. Makes sure nothing falls through the cracks.',
-				descZh: '团队协调、任务分配、每日早晚报和市场快报。确保每件事都有人负责。',
-				statsEn: '57 proposals routed · 30+ cron jobs · daily briefings',
-				statsZh: '已路由 57 个提案 · 30+ 定时任务 · 每日早晚报',
+				descZh: '\u56e2\u961f\u534f\u8c03\u3001\u4efb\u52a1\u5206\u914d\u3001\u6bcf\u65e5\u65e9\u665a\u62a5\u548c\u5e02\u573a\u5feb\u62a5\u3002\u786e\u4fdd\u6bcf\u4ef6\u4e8b\u90fd\u6709\u4eba\u8d1f\u8d23\u3002',
+				statsEn: '57 proposals routed \u00b7 30+ cron jobs \u00b7 daily briefings',
+				statsZh: '\u5df2\u8def\u7531 57 \u4e2a\u63d0\u6848 \u00b7 30+ \u5b9a\u65f6\u4efb\u52a1 \u00b7 \u6bcf\u65e5\u65e9\u665a\u62a5',
 				examplesEn: ['Morning / evening briefings', 'Market pulse reports', 'Task routing & escalation', 'Team health monitoring'],
-				examplesZh: ['每日早晚报', '市场快报', '任务路由与升级', '团队健康监控'],
+				examplesZh: ['\u6bcf\u65e5\u65e9\u665a\u62a5', '\u5e02\u573a\u5feb\u62a5', '\u4efb\u52a1\u8def\u7531\u4e0e\u5347\u7ea7', '\u56e2\u961f\u5065\u5eb7\u76d1\u63a7'],
 			},
 			writer: {
 				name: 'Loki', role: 'Writer', color: '#4a9e4a',
 				descEn: 'Writes tweet drafts, translates crypto/AI signals into Rex\'s voice, produces content that bridges English and Chinese audiences.',
-				descZh: '撰写推文草稿，将加密/AI 信号转化为 Rex 的语气，制作中英双语内容。',
-				statsEn: '122 drafts written · 65 blog posts · 2× daily',
-				statsZh: '已写 122 篇草稿 · 65 篇博客 · 每日 2 条',
-				examplesEn: ['2× daily tweet drafts', 'CN/EN content translation', 'Signal-to-draft pipeline', 'Builder\'s log entries'],
-				examplesZh: ['每日 2 条推文草稿', '中英内容转化', '信号→草稿流水线', '构建日志'],
+				descZh: '\u64b0\u5199\u63a8\u6587\u8349\u7a3f\uff0c\u5c06\u52a0\u5bc6/AI \u4fe1\u53f7\u8f6c\u5316\u4e3a Rex \u7684\u8bed\u6c14\uff0c\u5236\u4f5c\u4e2d\u82f1\u53cc\u8bed\u5185\u5bb9\u3002',
+				statsEn: '122 drafts written \u00b7 65 blog posts \u00b7 2\xd7 daily',
+				statsZh: '\u5df2\u5199 122 \u7bc7\u8349\u7a3f \u00b7 65 \u7bc7\u535a\u5ba2 \u00b7 \u6bcf\u65e5 2 \u6761',
+				examplesEn: ['2\xd7 daily tweet drafts', 'CN/EN content translation', 'Signal-to-draft pipeline', 'Builder\'s log entries'],
+				examplesZh: ['\u6bcf\u65e5 2 \u6761\u63a8\u6587\u8349\u7a3f', '\u4e2d\u82f1\u5185\u5bb9\u8f6c\u5316', '\u4fe1\u53f7\u2192\u8349\u7a3f\u6d41\u6c34\u7ebf', '\u6784\u5efa\u65e5\u5fd7'],
 			},
 			researcher: {
 				name: 'Vision', role: 'Researcher', color: '#4a8ab5',
 				descEn: 'Scans 16+ KOLs daily, tracks crypto/AI/Robotics projects, surfaces alpha signals before they go mainstream.',
-				descZh: '每日扫描 16+ KOL，追踪加密/AI/机器人项目，在信息大众化前发现 Alpha 信号。',
-				statsEn: '33 research reports · 16 KOLs tracked daily · Alpha Radar',
-				statsZh: '33 份研究报告 · 每日追踪 16 位 KOL · Alpha Radar',
+				descZh: '\u6bcf\u65e5\u626b\u63cf 16+ KOL\uff0c\u8ffd\u8e2a\u52a0\u5bc6/AI/\u673a\u5668\u4eba\u9879\u76ee\uff0c\u5728\u4fe1\u606f\u5927\u4f17\u5316\u524d\u53d1\u73b0 Alpha \u4fe1\u53f7\u3002',
+				statsEn: '33 research reports \u00b7 16 KOLs tracked daily \u00b7 Alpha Radar',
+				statsZh: '33 \u4efd\u7814\u7a76\u62a5\u544a \u00b7 \u6bcf\u65e5\u8ffd\u8e2a 16 \u4f4d KOL \u00b7 Alpha Radar',
 				examplesEn: ['Daily KOL intelligence scan', 'Deep-dive research reports', 'Alpha Radar feed', 'Project tracking'],
-				examplesZh: ['每日 KOL 情报扫描', '深度研究报告', 'Alpha Radar 推送', '项目追踪'],
+				examplesZh: ['\u6bcf\u65e5 KOL \u60c5\u62a5\u626b\u63cf', '\u6df1\u5ea6\u7814\u7a76\u62a5\u544a', 'Alpha Radar \u63a8\u9001', '\u9879\u76ee\u8ffd\u8e2a'],
 			},
 			coder: {
 				name: 'Jarvis', role: 'Coder', color: '#7a7a8a',
 				descEn: 'Builds and maintains all automation: cron jobs, data pipelines, website features, and internal tools. The backbone of the system.',
-				descZh: '构建和维护所有自动化：定时任务、数据管道、网站功能和内部工具。系统的骨架。',
-				statsEn: '280 commits · 30+ cron jobs · this entire website',
-				statsZh: '280 次提交 · 30+ 定时任务 · 本站全部代码',
+				descZh: '\u6784\u5efa\u548c\u7ef4\u62a4\u6240\u6709\u81ea\u52a8\u5316\uff1a\u5b9a\u65f6\u4efb\u52a1\u3001\u6570\u636e\u7ba1\u9053\u3001\u7f51\u7ad9\u529f\u80fd\u548c\u5185\u90e8\u5de5\u5177\u3002\u7cfb\u7edf\u7684\u9aa8\u67b6\u3002',
+				statsEn: '280 commits \u00b7 30+ cron jobs \u00b7 this entire website',
+				statsZh: '280 \u6b21\u63d0\u4ea4 \u00b7 30+ \u5b9a\u65f6\u4efb\u52a1 \u00b7 \u672c\u7ad9\u5168\u90e8\u4ee3\u7801',
 				examplesEn: ['30+ automated cron jobs', 'This website (280 commits)', 'Portfolio sync tools', 'Content pipeline scripts'],
-				examplesZh: ['30+ 自动化定时任务', '本站（280 次提交）', '投资组合同步工具', '内容管道脚本'],
+				examplesZh: ['30+ \u81ea\u52a8\u5316\u5b9a\u65f6\u4efb\u52a1', '\u672c\u7ad9\uff08280 \u6b21\u63d0\u4ea4\uff09', '\u6295\u8d44\u7ec4\u5408\u540c\u6b65\u5de5\u5177', '\u5185\u5bb9\u7ba1\u9053\u811a\u672c'],
 			},
 			designer: {
 				name: 'Shuri', role: 'Designer', color: '#c54ab5',
 				descEn: 'Creates visuals for tweets, research covers, and brand assets. Every image that ships has passed through her.',
-				descZh: '为推文、研究封面和品牌资产创作视觉设计。每张发出去的图都经过她的手。',
-				statsEn: '14 design assets · tweet covers · 16-bit pixel art',
-				statsZh: '14 份设计资产 · 推文配图 · 16-bit 像素艺术',
+				descZh: '\u4e3a\u63a8\u6587\u3001\u7814\u7a76\u5c01\u9762\u548c\u54c1\u724c\u8d44\u4ea7\u521b\u4f5c\u89c6\u89c9\u8bbe\u8ba1\u3002\u6bcf\u5f20\u53d1\u51fa\u53bb\u7684\u56fe\u90fd\u7ecf\u8fc7\u5979\u7684\u624b\u3002',
+				statsEn: '14 design assets \u00b7 tweet covers \u00b7 16-bit pixel art',
+				statsZh: '14 \u4efd\u8bbe\u8ba1\u8d44\u4ea7 \u00b7 \u63a8\u6587\u914d\u56fe \u00b7 16-bit \u50cf\u7d20\u827a\u672f',
 				examplesEn: ['Tweet cover images', 'Research report covers', 'Brand asset design', '16-bit pixel art'],
-				examplesZh: ['推文配图', '研究报告封面', '品牌视觉', '16-bit 像素艺术'],
+				examplesZh: ['\u63a8\u6587\u914d\u56fe', '\u7814\u7a76\u62a5\u544a\u5c01\u9762', '\u54c1\u724c\u89c6\u89c9', '16-bit \u50cf\u7d20\u827a\u672f'],
 			},
 			analyst: {
 				name: 'Friday', role: 'Analyst', color: '#4ac5c5',
 				descEn: 'Tracks Rex\'s portfolio, produces SNEK daily briefings, monitors market data and financial metrics.',
-				descZh: '追踪 Rex 的投资组合，每日 SNEK 简报，监控市场数据和财务指标。',
-				statsEn: 'Daily SNEK briefing · portfolio sync · market monitoring',
-				statsZh: '每日 SNEK 简报 · 投资组合同步 · 市场监控',
+				descZh: '\u8ffd\u8e2a Rex \u7684\u6295\u8d44\u7ec4\u5408\uff0c\u6bcf\u65e5 SNEK \u7b80\u62a5\uff0c\u76d1\u63a7\u5e02\u573a\u6570\u636e\u548c\u8d22\u52a1\u6307\u6807\u3002',
+				statsEn: 'Daily SNEK briefing \u00b7 portfolio sync \u00b7 market monitoring',
+				statsZh: '\u6bcf\u65e5 SNEK \u7b80\u62a5 \u00b7 \u6295\u8d44\u7ec4\u5408\u540c\u6b65 \u00b7 \u5e02\u573a\u76d1\u63a7',
 				examplesEn: ['Daily SNEK briefing', 'Portfolio sync & tracking', 'Market data monitoring', 'Financial analysis'],
-				examplesZh: ['每日 SNEK 简报', '投资组合同步追踪', '市场数据监控', '财务分析'],
+				examplesZh: ['\u6bcf\u65e5 SNEK \u7b80\u62a5', '\u6295\u8d44\u7ec4\u5408\u540c\u6b65\u8ffd\u8e2a', '\u5e02\u573a\u6570\u636e\u76d1\u63a7', '\u8d22\u52a1\u5206\u6790'],
 			},
 		};
 
 		var ACTIVITY_FEED = [];
-
 		var overlay = document.getElementById('agent-detail');
 		var closeBtn = document.getElementById('detail-close');
-		var isZh = document.documentElement.getAttribute('data-lang') === 'zh';
 
 		function openDetail(agentId) {
 			var d = AGENT_DATA[agentId];
 			if (!d || !overlay) return;
-			isZh = document.documentElement.getAttribute('data-lang') === 'zh';
+			var isZh = document.documentElement.getAttribute('data-lang') === 'zh';
+
 			document.getElementById('detail-dot').style.background = d.color;
 			document.getElementById('detail-dot').style.boxShadow = '0 0 8px ' + d.color + '88';
 			document.getElementById('detail-name').textContent = d.name;
@@ -805,13 +891,15 @@ const meta = {
 			ul.innerHTML = '';
 			var examples = isZh ? d.examplesZh : d.examplesEn;
 			examples.forEach(function(ex) {
-				var li = document.createElement('li'); li.textContent = ex; ul.appendChild(li);
+				var li = document.createElement('li');
+				li.textContent = ex;
+				ul.appendChild(li);
 			});
 
 			var latestEl = document.getElementById('detail-latest');
 			var agentActivities = ACTIVITY_FEED.filter(function(e) { return e.agentId === agentId; }).slice(0, 3);
 			if (agentActivities.length > 0) {
-				var heading = isZh ? '<strong>最近动态</strong>' : '<strong>Recent</strong>';
+				var heading = isZh ? '<strong>\u6700\u8fd1\u52a8\u6001</strong>' : '<strong>Recent</strong>';
 				latestEl.innerHTML = heading + '<ul class="detail-recent-list">' +
 					agentActivities.map(function(a) {
 						var text = isZh ? a.descZh : a.descEn;
@@ -834,22 +922,17 @@ const meta = {
 			document.body.style.overflow = '';
 		}
 
-		document.querySelectorAll('.agent-sprite-wrap').forEach(function(wrap) {
-			wrap.addEventListener('click', function(e) {
-				openDetail(wrap.getAttribute('data-agent'));
-			});
-		});
-
-		if (closeBtn) closeBtn.addEventListener('click', closeDetail);
-		if (overlay) overlay.addEventListener('click', function(e) {
+		closeBtn && closeBtn.addEventListener('click', closeDetail);
+		overlay && overlay.addEventListener('click', function(e) {
 			if (e.target === overlay) closeDetail();
 		});
 		document.addEventListener('keydown', function(e) {
 			if (e.key === 'Escape') closeDetail();
 		});
 
-		/* ── Activity Feed from Convex (real-time) ────────────── */
-		var CONVEX_ACTIVITY_URL = 'https://shiny-butterfly-744.convex.cloud';
+		/* ══════════════════════════════════════════════════════════════
+		   ACTIVITY FEED
+		   ══════════════════════════════════════════════════════════════ */
 		var feedList = document.getElementById('activity-feed-list');
 
 		function timeAgo(isoStr) {
@@ -868,10 +951,10 @@ const meta = {
 		function renderFeed(entries) {
 			if (!feedList) return;
 			if (!entries || entries.length === 0) {
-				feedList.innerHTML = '<div class="feed-empty font-serif text-xs text-gray-500"><span class="lang-en">No recent activity</span><span class="lang-zh">暂无动态</span></div>';
+				feedList.innerHTML = '<div class="feed-empty font-serif text-xs text-gray-500"><span class="lang-en">No recent activity</span><span class="lang-zh">\u6682\u65e0\u52a8\u6001</span></div>';
 				return;
 			}
-			isZh = document.documentElement.getAttribute('data-lang') === 'zh';
+			var isZh = document.documentElement.getAttribute('data-lang') === 'zh';
 			feedList.innerHTML = entries.map(function(e) {
 				var desc = isZh ? e.descZh : e.descEn;
 				return '<div class="feed-item">' +
@@ -885,7 +968,14 @@ const meta = {
 			}).join('');
 
 			ACTIVITY_FEED = entries.map(function(e) {
-				return { agentId: e.agentId, agentName: e.agentName, descEn: e.descEn, descZh: e.descZh, color: e.color, time: timeAgo(e.timestamp) };
+				return {
+					agentId:   e.agentId,
+					agentName: e.agentName,
+					descEn:    e.descEn,
+					descZh:    e.descZh,
+					color:     e.color,
+					time:      timeAgo(e.timestamp)
+				};
 			});
 		}
 
@@ -907,7 +997,7 @@ const meta = {
 			} catch (e) {
 				console.error('Activity feed fetch failed:', e);
 				if (feedList && feedList.querySelector('.feed-loading')) {
-					feedList.innerHTML = '<div class="feed-empty font-serif text-xs text-gray-500"><span class="lang-en">Unable to load — will retry</span><span class="lang-zh">加载失败，稍后重试</span></div>';
+					feedList.innerHTML = '<div class="feed-empty font-serif text-xs text-gray-500"><span class="lang-en">Unable to load \u2014 will retry</span><span class="lang-zh">\u52a0\u8f7d\u5931\u8d25\uff0c\u7a0d\u540e\u91cd\u8bd5</span></div>';
 				}
 			}
 		}
@@ -915,9 +1005,9 @@ const meta = {
 		fetchActivity();
 		_intervals.push(setInterval(fetchActivity, 30000));
 
-		} // end initAgentPage
-
-		// ── Pixel Office responsive scaling ──────────────────────────
+		/* ══════════════════════════════════════════════════════════════
+		   RESPONSIVE SCALE
+		   ══════════════════════════════════════════════════════════════ */
 		function scalePixelOffice() {
 			var wrapper = document.getElementById('pixel-office-wrapper');
 			var office = document.getElementById('pixel-office');
@@ -926,21 +1016,23 @@ const meta = {
 			var officeWidth = 960;
 			var scale = Math.min(1, containerWidth / officeWidth);
 			office.style.transform = scale < 1 ? 'scale(' + scale + ')' : '';
-			// Adjust wrapper height so it doesn't leave empty space
 			var officeHeight = 520;
 			wrapper.style.height = scale < 1 ? Math.round(officeHeight * scale) + 'px' : '';
 		}
+
 		scalePixelOffice();
 		window.addEventListener('resize', scalePixelOffice);
 
-		// Run on first load
-		initAgentPage();
+	} /* end initAgentPage */
 
-		// Re-run on Astro View Transitions navigation
-		document.addEventListener('astro:page-load', function() {
-			if (document.getElementById('pixel-office')) {
-				initAgentPage();
-			}
-		});
-	})();
+	/* ── Bootstrap ── */
+	initAgentPage();
+
+	document.addEventListener('astro:page-load', function() {
+		if (document.getElementById('office-canvas')) {
+			initAgentPage();
+		}
+	});
+
+})();
 </script>
