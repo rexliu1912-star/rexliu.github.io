@@ -14,8 +14,12 @@
   var BASE = '/assets/pixel-office/';
   var FPS = 60, FRAME_MS = 1000 / FPS;
 
-  // Direction rows in sprite sheet: 0=DOWN 1=LEFT 2=RIGHT 3=UP
-  var DIR_DOWN = 0, DIR_LEFT = 1, DIR_RIGHT = 2, DIR_UP = 3;
+  // Sprite sheet: 112x96 PNG = 7 cols × 3 rows of 16×32px frames
+  // Row 0=DOWN, Row 1=UP, Row 2=RIGHT (LEFT = flip RIGHT)
+  var CHAR_FW = 16, CHAR_FH = 32;  // frame size in sprite sheet
+  var DIR_DOWN = 0, DIR_UP = 1, DIR_RIGHT = 2;
+  // LEFT has no own row — we flip RIGHT
+  var DIR_LEFT = 3; // virtual direction, uses RIGHT row + flip
 
   // ── Tile Map (20×11) ──────────────────────────────────────
   // 0=wall  1=floor_0  2=floor_2
@@ -275,7 +279,8 @@
 
   function drawAgent(a) {
     var img = images[a.spriteKey]; if (!img) return;
-    var drawX = a.px, drawY = a.py + T - 24 * ZOOM; // feet align to tile bottom
+    var dw = CHAR_FW * ZOOM, dh = CHAR_FH * ZOOM; // 48 x 96
+    var drawX = a.px, drawY = a.py + T - dh; // feet align to tile bottom
 
     ctx.save();
 
@@ -284,20 +289,27 @@
     // error: flicker
     if (a.status === 'error') ctx.globalAlpha = 0.3 + 0.7 * Math.abs(Math.sin(a.animTick * 0.15));
 
-    // sprite direction row: 0=down, 1=left, 2=right, 3=up — 直接用行号，不需要 flip
+    // Sprite rows: 0=DOWN, 1=UP, 2=RIGHT. LEFT = flip RIGHT.
     var dirRow = a.dir;
+    var flip = false;
+    if (a.dir === DIR_LEFT) { dirRow = DIR_RIGHT; flip = true; }
 
-    var sx = a.frame * 16, sy = dirRow * 24;
-    var dw = 16 * ZOOM, dh = 24 * ZOOM;
+    var sx = a.frame * CHAR_FW, sy = dirRow * CHAR_FH;
 
-    ctx.drawImage(img, sx, sy, 16, 24, drawX, drawY, dw, dh);
+    if (flip) {
+      ctx.translate(drawX + dw, drawY);
+      ctx.scale(-1, 1);
+      ctx.drawImage(img, sx, sy, CHAR_FW, CHAR_FH, 0, 0, dw, dh);
+    } else {
+      ctx.drawImage(img, sx, sy, CHAR_FW, CHAR_FH, drawX, drawY, dw, dh);
+    }
     ctx.restore();
 
     // Name label
     ctx.save();
     ctx.font = 'bold 11px "Press Start 2P", monospace';
     ctx.textAlign = 'center';
-    var labelX = drawX + (16 * ZOOM) / 2, labelY = drawY - 6;
+    var labelX = drawX + dw / 2, labelY = drawY - 6;
 
     // status dot
     var colors = { idle: '#4ade80', busy: '#f59e0b', offline: '#555555', error: '#a78bfa' };
@@ -332,7 +344,7 @@
       var oy = -i * 14 - Math.sin(phase) * 6;
       var alpha = 0.4 + 0.6 * Math.abs(Math.sin(phase));
       ctx.globalAlpha = alpha;
-      ctx.fillText('z', bx + ox, a.py + T - 24 * ZOOM + oy);
+      ctx.fillText('z', bx + ox, a.py + T - CHAR_FH * ZOOM + oy);
     }
     ctx.restore();
   }
@@ -412,9 +424,9 @@
       if (!agents) return null;
       for (var i = agents.length - 1; i >= 0; i--) {
         var a = agents[i];
-        var ax = a.px, ay = a.py - 8 * ZOOM;
-        var aw = T, ah = T + 8 * ZOOM;
-        if (cx >= ax && cx <= ax + aw && cy >= ay && cy <= ay + ah + 14) {
+        var dw = CHAR_FW * ZOOM, dh = CHAR_FH * ZOOM;
+        var ax = a.px, ay = a.py + T - dh;
+        if (cx >= ax && cx <= ax + dw && cy >= ay && cy <= ay + dh + 14) {
           return a.id;
         }
       }
