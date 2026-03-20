@@ -213,19 +213,20 @@
         this.px += (dx / dist) * speed;
         this.py += (dy / dist) * speed;
       }
-      // walk frame: 2/3/4, every 6 ticks
-      this.frame = 2 + (Math.floor(this.animTick / 6) % 3);
+      // walk cycle: frames 0,1,2,1 (4步循环)
+      var walkSeq = [0, 1, 2, 1];
+      this.frame = walkSeq[Math.floor(this.animTick / 6) % 4];
       return;
     }
 
     if (this.status === 'busy' && this.col === this.hc && this.row === this.hr) {
-      // typing frames 5/6
-      this.frame = 5 + (Math.floor(this.animTick / 15) % 2);
+      // typing frames 3/4
+      this.frame = 3 + (Math.floor(this.animTick / 15) % 2);
       return;
     }
 
-    // idle: stand frames 0/1
-    this.frame = Math.floor(this.animTick / 20) % 2;
+    // idle: 站立不动，用 frame 0
+    this.frame = 0;
 
     if (this.status === 'idle') {
       this.nextWander--;
@@ -283,21 +284,13 @@
     // error: flicker
     if (a.status === 'error') ctx.globalAlpha = 0.3 + 0.7 * Math.abs(Math.sin(a.animTick * 0.15));
 
-    // sprite direction row — LEFT uses flipped RIGHT row
+    // sprite direction row: 0=down, 1=left, 2=right, 3=up — 直接用行号，不需要 flip
     var dirRow = a.dir;
-    var flip = false;
-    if (a.dir === DIR_LEFT) { dirRow = DIR_RIGHT; flip = true; }
 
     var sx = a.frame * 16, sy = dirRow * 24;
     var dw = 16 * ZOOM, dh = 24 * ZOOM;
 
-    if (flip) {
-      ctx.translate(drawX + dw, drawY);
-      ctx.scale(-1, 1);
-      ctx.drawImage(img, sx, sy, 16, 24, 0, 0, dw, dh);
-    } else {
-      ctx.drawImage(img, sx, sy, 16, 24, drawX, drawY, dw, dh);
-    }
+    ctx.drawImage(img, sx, sy, 16, 24, drawX, drawY, dw, dh);
     ctx.restore();
 
     // Name label
