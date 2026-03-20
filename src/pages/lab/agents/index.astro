@@ -50,11 +50,15 @@ const meta = {
 				<div class="room-furniture desk"></div>
 				<div class="room-furniture monitor"></div>
 				<div class="room-furniture sofa"></div>
-				<div class="agent-sprite sprite-img" data-state="idle">
-					<img class="sprite-idle" src="/sprites/samantha-idle.png" alt="Samantha idle" />
-					<img class="sprite-busy" src="/sprites/samantha-busy.png" alt="Samantha busy" />
-					<img class="sprite-coffee" src="/sprites/samantha-coffee.png" alt="Samantha coffee" />
-					<div class="px-shadow"></div>
+				<div class="agent-sprite" data-state="idle">
+					<div class="pixel-char char-samantha">
+						<div class="px-hair"></div>
+						<div class="px-head"><div class="px-eyes"></div><div class="px-mouth"></div></div>
+						<div class="px-scarf"></div>
+						<div class="px-body"></div>
+						<div class="px-accessory"></div>
+						<div class="px-shadow"></div>
+					</div>
 					<div class="idle-effect"></div>
 					<div class="state-overlay"></div>
 				</div>
@@ -543,29 +547,6 @@ const meta = {
 	/* ══════════════════════════════════════════════════════════════
 	   PIXEL CHARACTER SYSTEM
 	   ══════════════════════════════════════════════════════════════ */
-
-	/* ── Sprite Image Mode (replaces CSS pixel-char) ─────── */
-	.sprite-img img {
-		position: absolute;
-		bottom: 0; left: 50%; transform: translateX(-50%);
-		height: 100%;
-		width: auto;
-		object-fit: contain;
-		image-rendering: pixelated;
-		transition: opacity 0.3s;
-	}
-	.sprite-img .sprite-idle { opacity: 1; }
-	.sprite-img .sprite-busy { opacity: 0; }
-	.sprite-img .sprite-coffee { opacity: 0; }
-	.sprite-img[data-state="busy"] .sprite-idle { opacity: 0; }
-	.sprite-img[data-state="busy"] .sprite-busy { opacity: 1; }
-	.sprite-img[data-state="idle"] .sprite-idle { opacity: 0; }
-	.sprite-img[data-state="idle"] .sprite-coffee { opacity: 1; }
-	/* offline/error show idle */
-	.sprite-img[data-state="offline"] .sprite-coffee { opacity: 0; }
-	.sprite-img[data-state="offline"] .sprite-idle { opacity: 1; }
-	.sprite-img[data-state="error"] .sprite-coffee { opacity: 0; }
-	.sprite-img[data-state="error"] .sprite-idle { opacity: 1; }
 
 	.agent-sprite {
 		position: absolute;
