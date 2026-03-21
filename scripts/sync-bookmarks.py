@@ -76,26 +76,47 @@ def parse_twitter_date(date_str: str) -> str:
 
 
 def main():
-    # Fetch bookmarks with full data (avatar, card_title)
-    print("Fetching bookmarks from Twitter (full data)...")
-    fetch_script = os.path.join(os.path.dirname(__file__), "..", "..", "scripts", "fetch-bookmarks-full.js")
-    # Resolve the path
-    fetch_script = os.path.abspath(fetch_script)
-    if not os.path.exists(fetch_script):
-        # Fallback: try ~/clawd/scripts/
+    # Fetch bookmarks — try opencli first (no Chrome dependency), fallback to CDP script
+    print("Fetching bookmarks from Twitter...")
+    bookmarks = None
+
+    # Method 1: opencli (works without Chrome tab open)
+    try:
+        result = subprocess.run(
+            ["npx", "opencli", "twitter", "bookmarks", "--limit", "100", "--format", "json"],
+            capture_output=True,
+            text=True,
+            timeout=120,
+            cwd=os.path.expanduser("~/clawd"),
+        )
+        if result.returncode == 0 and result.stdout.strip():
+            bookmarks = json.loads(result.stdout)
+            print(f"  ✅ opencli: fetched {len(bookmarks)} bookmarks")
+    except Exception as e:
+        print(f"  ⚠️ opencli failed: {e}")
+
+    # Method 2: fallback to CDP script (needs Chrome with x.com tab)
+    if not bookmarks:
+        print("  Falling back to CDP script...")
         fetch_script = os.path.expanduser("~/clawd/scripts/fetch-bookmarks-full.js")
+        try:
+            result = subprocess.run(
+                ["node", fetch_script, "--limit", "100"],
+                capture_output=True,
+                text=True,
+                timeout=120,
+            )
+            if result.returncode == 0:
+                bookmarks = json.loads(result.stdout)
+                print(f"  ✅ CDP: fetched {len(bookmarks)} bookmarks")
+            else:
+                print(f"  ❌ CDP failed: {result.stderr}", file=sys.stderr)
+        except Exception as e:
+            print(f"  ❌ CDP failed: {e}", file=sys.stderr)
 
-    result = subprocess.run(
-        ["node", fetch_script, "--limit", "100"],
-        capture_output=True,
-        text=True,
-        timeout=120,
-    )
-    if result.returncode != 0:
-        print(f"Error fetching bookmarks: {result.stderr}", file=sys.stderr)
+    if not bookmarks:
+        print("❌ All methods failed", file=sys.stderr)
         sys.exit(1)
-
-    bookmarks = json.loads(result.stdout)
     print(f"Fetched {len(bookmarks)} bookmarks")
 
     # Ensure output directory exists
