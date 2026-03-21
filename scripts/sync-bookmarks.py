@@ -76,43 +76,41 @@ def parse_twitter_date(date_str: str) -> str:
 
 
 def main():
-    # Fetch bookmarks — try opencli first (no Chrome dependency), fallback to CDP script
+    # Fetch bookmarks — try CDP first (full data: avatar, card_title), fallback to opencli
     print("Fetching bookmarks from Twitter...")
     bookmarks = None
 
-    # Method 1: opencli (works without Chrome tab open)
+    # Method 1: CDP script (needs Chrome running — full data with avatar/card_title)
+    fetch_script = os.path.expanduser("~/clawd/scripts/fetch-bookmarks-full.js")
     try:
         result = subprocess.run(
-            ["npx", "opencli", "twitter", "bookmarks", "--limit", "100", "--format", "json"],
+            ["node", fetch_script, "--limit", "100"],
             capture_output=True,
             text=True,
             timeout=120,
-            cwd=os.path.expanduser("~/clawd"),
         )
         if result.returncode == 0 and result.stdout.strip():
             bookmarks = json.loads(result.stdout)
-            print(f"  ✅ opencli: fetched {len(bookmarks)} bookmarks")
+            print(f"  ✅ CDP: fetched {len(bookmarks)} bookmarks (full data)")
     except Exception as e:
-        print(f"  ⚠️ opencli failed: {e}")
+        print(f"  ⚠️ CDP failed: {e}")
 
-    # Method 2: fallback to CDP script (needs Chrome with x.com tab)
+    # Method 2: fallback to opencli (no Chrome needed, but missing avatar/card_title)
     if not bookmarks:
-        print("  Falling back to CDP script...")
-        fetch_script = os.path.expanduser("~/clawd/scripts/fetch-bookmarks-full.js")
+        print("  Falling back to opencli...")
         try:
             result = subprocess.run(
-                ["node", fetch_script, "--limit", "100"],
+                ["npx", "opencli", "twitter", "bookmarks", "--limit", "100", "--format", "json"],
                 capture_output=True,
                 text=True,
                 timeout=120,
+                cwd=os.path.expanduser("~/clawd"),
             )
-            if result.returncode == 0:
+            if result.returncode == 0 and result.stdout.strip():
                 bookmarks = json.loads(result.stdout)
-                print(f"  ✅ CDP: fetched {len(bookmarks)} bookmarks")
-            else:
-                print(f"  ❌ CDP failed: {result.stderr}", file=sys.stderr)
+                print(f"  ✅ opencli: fetched {len(bookmarks)} bookmarks (basic data)")
         except Exception as e:
-            print(f"  ❌ CDP failed: {e}", file=sys.stderr)
+            print(f"  ❌ opencli failed: {e}", file=sys.stderr)
 
     if not bookmarks:
         print("❌ All methods failed", file=sys.stderr)
