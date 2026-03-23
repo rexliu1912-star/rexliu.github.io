@@ -7,16 +7,16 @@
   'use strict';
 
   // ── Constants ──────────────────────────────────────────────
-  var TILE = 16, ZOOM = 3, COLS = 20, ROWS = 11;
+  var TILE = 16, ZOOM = 2, COLS = 20, ROWS = 11;
   var CANVAS_W = COLS * TILE * ZOOM;   // 960
   var CANVAS_H = ROWS * TILE * ZOOM;   // 528
   var T = TILE * ZOOM;                 // 48 — one tile on screen
   var BASE = '/assets/pixel-office/';
   var FPS = 60, FRAME_MS = 1000 / FPS;
 
-  // Sprite sheet: 112x96 PNG = 7 cols × 3 rows of 16×32px frames
+  // Sprite sheet: 224x144 PNG = 7 cols × 3 rows of 32×48px frames
   // Row 0=DOWN, Row 1=UP, Row 2=RIGHT (LEFT = flip RIGHT)
-  var CHAR_FW = 16, CHAR_FH = 32;  // frame size in sprite sheet
+  var CHAR_FW = 32, CHAR_FH = 48;  // frame size in sprite sheet
   var DIR_DOWN = 0, DIR_UP = 1, DIR_RIGHT = 2;
   // LEFT has no own row — we flip RIGHT
   var DIR_LEFT = 3; // virtual direction, uses RIGHT row + flip
@@ -267,9 +267,9 @@
     }
 
     if (this.status === 'busy' && this.col === this.hc && this.row === this.hr) {
-      // typing frames 3/4, face desk direction
+      // no typing frames in new sprite sheet — idle at frame 0
       this.dir = this.homeDir;
-      this.frame = 3 + (Math.floor(this.animTick / 15) % 2);
+      this.frame = 0;
       return;
     }
 
@@ -386,7 +386,7 @@
     ctx.save();
     ctx.font = 'bold 11px "Press Start 2P", monospace';
     ctx.textAlign = 'center';
-    var labelX = drawX + dw / 2, labelY = drawY - 6;
+    var labelX = drawX + dw / 2, labelY = drawY - 8;
 
     // status dot
     var colors = { idle: '#4ade80', busy: '#f59e0b', offline: '#555555', error: '#a78bfa' };
