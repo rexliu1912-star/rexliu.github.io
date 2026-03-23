@@ -267,9 +267,9 @@
     }
 
     if (this.status === 'busy' && this.col === this.hc && this.row === this.hr) {
-      // no typing frames in new sprite sheet — idle at frame 0
-      this.dir = this.homeDir;
-      this.frame = 0;
+      // typing/working animation: frames 4-5 in row 0 (facing down)
+      this.dir = DIR_DOWN;
+      this.frame = 4 + (Math.floor(this.animTick / 15) % 2);
       return;
     }
 
