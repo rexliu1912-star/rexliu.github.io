@@ -267,9 +267,9 @@
     }
 
     if (this.status === 'busy' && this.col === this.hc && this.row === this.hr) {
-      // typing/working animation: frames 4-5 in row 0 (facing down)
-      this.dir = DIR_DOWN;
-      this.frame = 4 + (Math.floor(this.animTick / 15) % 2);
+      // busy at desk: face home direction, idle frame (work frames TBD Phase 1.5)
+      this.dir = this.homeDir;
+      this.frame = 0;
       return;
     }
 
