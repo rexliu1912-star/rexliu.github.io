@@ -36,14 +36,14 @@
   var MAP = [
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
     [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
-    [0,1,1,1,1,2,1,1,1,1,1,1,1,1,2,1,1,1,1,0],
-    [0,1,1,1,1,2,1,1,1,1,1,1,1,1,2,1,1,1,1,0],
+    [0,1,2,2,2,1,1,1,2,2,2,1,1,1,1,2,2,2,1,0],
+    [0,1,1,2,1,1,1,1,1,2,1,1,1,1,1,1,2,1,1,0],
     [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
-    [0,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,0],
     [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
-    [0,1,1,1,1,2,1,1,1,1,1,1,1,1,2,1,1,1,1,0],
-    [0,1,1,1,1,2,1,1,1,1,1,1,1,1,2,1,1,1,1,0],
     [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
+    [0,1,2,2,2,1,1,1,1,1,1,1,1,1,1,2,2,2,1,0],
+    [0,1,1,2,1,1,1,1,2,2,2,1,1,1,1,1,2,1,1,0],
+    [0,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,0],
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
   ];
 
@@ -58,46 +58,68 @@
   ];
 
   // ── Furniture layout ───────────────────────────────────────
+  // Map: 20×11, walls at row 0/10 col 0/19.  Usable: col 1-18, row 1-9.
+  // w = render width in tiles (source px / 16).  h = collision height in tiles.
+  // Render height is auto-derived from image: (img.height / 16) * T.
   var FURNITURE = [
-    // Samantha — centre top
-    { type:'DESK',  col:8,  row:2, file:'DESK/DESK_FRONT.png',  w:1, h:1 },
-    { type:'DESK',  col:9,  row:2, file:'DESK/DESK_FRONT.png',  w:1, h:1 },
-    { type:'DESK',  col:10, row:2, file:'DESK/DESK_FRONT.png',  w:1, h:1 },
-    { type:'PC',    col:9,  row:2, file:'PC/PC_FRONT_ON_1.png', w:1, h:1 },
-    // Loki — left
-    { type:'DESK',  col:2,  row:2, file:'DESK/DESK_FRONT.png',  w:1, h:1 },
-    { type:'PC',    col:2,  row:2, file:'PC/PC_FRONT_ON_1.png', w:1, h:1 },
-    // Vision — right
-    { type:'DESK',  col:17, row:2, file:'DESK/DESK_FRONT.png',  w:1, h:1 },
-    { type:'PC',    col:17, row:2, file:'PC/PC_FRONT_ON_1.png', w:1, h:1 },
-    // Jarvis — bottom-left
-    { type:'DESK',  col:2,  row:7, file:'DESK/DESK_FRONT.png',  w:1, h:1 },
-    { type:'PC',    col:2,  row:7, file:'PC/PC_FRONT_ON_1.png', w:1, h:1 },
-    // Shuri — bottom-right
-    { type:'DESK',  col:17, row:7, file:'DESK/DESK_FRONT.png',  w:1, h:1 },
-    { type:'PC',    col:17, row:7, file:'PC/PC_FRONT_ON_1.png', w:1, h:1 },
-    // Friday — bottom centre
-    { type:'DESK',  col:8,  row:8, file:'DESK/DESK_FRONT.png',  w:1, h:1 },
-    { type:'DESK',  col:9,  row:8, file:'DESK/DESK_FRONT.png',  w:1, h:1 },
-    { type:'PC',    col:9,  row:8, file:'PC/PC_FRONT_ON_1.png', w:1, h:1 },
-    // Decorations
-    { type:'WHITEBOARD',      col:6,  row:1, file:'WHITEBOARD/WHITEBOARD.png',         w:2, h:1 },
-    { type:'BOOKSHELF',       col:1,  row:1, file:'BOOKSHELF/BOOKSHELF.png',           w:1, h:1 },
-    { type:'DOUBLE_BOOKSHELF',col:18, row:1, file:'DOUBLE_BOOKSHELF/DOUBLE_BOOKSHELF.png', w:1, h:1 },
-    { type:'PLANT',           col:1,  row:5, file:'PLANT/PLANT.png',                   w:1, h:1 },
-    { type:'LARGE_PLANT',     col:18, row:5, file:'LARGE_PLANT/LARGE_PLANT.png',       w:1, h:1 },
-    { type:'CACTUS',          col:12, row:1, file:'CACTUS/CACTUS.png',                 w:1, h:1 },
-    // Coffee corner — bottom-right
-    { type:'SOFA',            col:14, row:9, file:'SOFA/SOFA_FRONT.png',               w:1, h:1 },
-    { type:'SOFA',            col:15, row:9, file:'SOFA/SOFA_FRONT.png',               w:1, h:1 },
-    { type:'COFFEE_TABLE',    col:14, row:8, file:'COFFEE_TABLE/COFFEE_TABLE.png',     w:1, h:1 },
-    { type:'COFFEE',          col:15, row:8, file:'COFFEE/COFFEE.png',                 w:1, h:1 },
-    // Extra touches
-    { type:'CLOCK',           col:10, row:1, file:'CLOCK/CLOCK.png',                   w:1, h:1 },
-    { type:'SMALL_TABLE',     col:6,  row:5, file:'SMALL_TABLE/SMALL_TABLE_FRONT.png', w:1, h:1 },
-    // Meeting area — center
-    { type:'WOODEN_CHAIR', col:7,  row:5, file:'WOODEN_CHAIR/WOODEN_CHAIR_FRONT.png', w:1, h:1 },
-    { type:'WOODEN_CHAIR', col:11, row:5, file:'WOODEN_CHAIR/WOODEN_CHAIR_FRONT.png', w:1, h:1 },
+    // ── Wall decorations (Row 1) ─────────────────────────────
+    { type:'BOOKSHELF',        col:1,  row:1, file:'BOOKSHELF/BOOKSHELF.png',               w:2, h:1 },
+    { type:'SMALL_PAINTING',   col:4,  row:1, file:'SMALL_PAINTING/SMALL_PAINTING.png',     w:1, h:1 },
+    { type:'WHITEBOARD',       col:6,  row:1, file:'WHITEBOARD/WHITEBOARD.png',             w:2, h:1 },
+    { type:'CLOCK',            col:9,  row:1, file:'CLOCK/CLOCK.png',                       w:1, h:1 },
+    { type:'LARGE_PAINTING',   col:11, row:1, file:'LARGE_PAINTING/LARGE_PAINTING.png',     w:2, h:1 },
+    { type:'HANGING_PLANT',    col:14, row:1, file:'HANGING_PLANT/HANGING_PLANT.png',       w:1, h:1 },
+    { type:'SMALL_PAINTING_2', col:16, row:1, file:'SMALL_PAINTING_2/SMALL_PAINTING_2.png', w:1, h:1 },
+    { type:'DOUBLE_BOOKSHELF', col:17, row:1, file:'DOUBLE_BOOKSHELF/DOUBLE_BOOKSHELF.png', w:2, h:1 },
+
+    // ── Loki workstation (hc:3, hr:3 — left-upper) ──────────
+    { type:'DESK',             col:2,  row:2, file:'DESK/DESK_FRONT.png',                          w:3, h:1 },
+    { type:'PC',               col:3,  row:2, file:'PC/PC_FRONT_ON_1.png',                         w:1, h:1 },
+    { type:'CUSHIONED_CHAIR',  col:3,  row:3, file:'CUSHIONED_CHAIR/CUSHIONED_CHAIR_FRONT.png',    w:1, h:1 },
+
+    // ── Samantha command center (hc:9, hr:3 — centre-upper) ──
+    { type:'DESK',             col:8,  row:2, file:'DESK/DESK_FRONT.png',                          w:3, h:1 },
+    { type:'PC',               col:9,  row:2, file:'PC/PC_FRONT_ON_1.png',                         w:1, h:1 },
+    { type:'CUSHIONED_CHAIR',  col:9,  row:3, file:'CUSHIONED_CHAIR/CUSHIONED_CHAIR_FRONT.png',    w:1, h:1 },
+
+    // ── Vision workstation (hc:16, hr:3 — right-upper) ──────
+    { type:'DESK',             col:15, row:2, file:'DESK/DESK_FRONT.png',                          w:3, h:1 },
+    { type:'PC',               col:16, row:2, file:'PC/PC_FRONT_ON_1.png',                         w:1, h:1 },
+    { type:'CUSHIONED_CHAIR',  col:16, row:3, file:'CUSHIONED_CHAIR/CUSHIONED_CHAIR_FRONT.png',    w:1, h:1 },
+
+    // ── Rest area (left, row 5) ──────────────────────────────
+    { type:'SOFA',             col:1,  row:5, file:'SOFA/SOFA_FRONT.png',                          w:2, h:1 },
+    { type:'COFFEE_TABLE',     col:3,  row:5, file:'COFFEE_TABLE/COFFEE_TABLE.png',                w:2, h:1 },
+    { type:'COFFEE',           col:5,  row:5, file:'COFFEE/COFFEE.png',                            w:1, h:1 },
+
+    // ── Entertainment / meeting area (centre-right, row 5) ──
+    { type:'SMALL_TABLE',      col:12, row:5, file:'SMALL_TABLE/SMALL_TABLE_FRONT.png',            w:2, h:1 },
+    { type:'WOODEN_CHAIR',     col:11, row:5, file:'WOODEN_CHAIR/WOODEN_CHAIR_FRONT.png',          w:1, h:1 },
+    { type:'WOODEN_CHAIR',     col:14, row:5, file:'WOODEN_CHAIR/WOODEN_CHAIR_FRONT.png',          w:1, h:1 },
+
+    // ── Jarvis workstation (hc:3, hr:8 — left-lower) ────────
+    { type:'DESK',             col:2,  row:7, file:'DESK/DESK_FRONT.png',                          w:3, h:1 },
+    { type:'PC',               col:3,  row:7, file:'PC/PC_FRONT_ON_1.png',                         w:1, h:1 },
+    { type:'CUSHIONED_CHAIR',  col:3,  row:8, file:'CUSHIONED_CHAIR/CUSHIONED_CHAIR_FRONT.png',    w:1, h:1 },
+
+    // ── Friday workstation (hc:9, hr:9 — centre-lower) ──────
+    { type:'DESK',             col:8,  row:8, file:'DESK/DESK_FRONT.png',                          w:3, h:1 },
+    { type:'PC',               col:9,  row:8, file:'PC/PC_FRONT_ON_1.png',                         w:1, h:1 },
+    { type:'CUSHIONED_CHAIR',  col:9,  row:9, file:'CUSHIONED_CHAIR/CUSHIONED_CHAIR_FRONT.png',    w:1, h:1 },
+
+    // ── Shuri workstation (hc:16, hr:8 — right-lower) ───────
+    { type:'DESK',             col:15, row:7, file:'DESK/DESK_FRONT.png',                          w:3, h:1 },
+    { type:'PC',               col:16, row:7, file:'PC/PC_FRONT_ON_1.png',                         w:1, h:1 },
+    { type:'CUSHIONED_CHAIR',  col:16, row:8, file:'CUSHIONED_CHAIR/CUSHIONED_CHAIR_FRONT.png',    w:1, h:1 },
+
+    // ── Plants & small decorations ───────────────────────────
+    { type:'POT',              col:1,  row:4, file:'POT/POT.png',                                  w:1, h:1 },
+    { type:'PLANT_2',          col:18, row:4, file:'PLANT_2/PLANT_2.png',                          w:1, h:1 },
+    { type:'PLANT',            col:1,  row:9, file:'PLANT/PLANT.png',                              w:1, h:1 },
+    { type:'LARGE_PLANT',      col:6,  row:9, file:'LARGE_PLANT/LARGE_PLANT.png',                  w:2, h:1 },
+    { type:'CACTUS',           col:18, row:9, file:'CACTUS/CACTUS.png',                            w:1, h:1 },
+    { type:'BIN',              col:5,  row:3, file:'BIN/BIN.png',                                  w:1, h:1 },
+    { type:'BIN',              col:14, row:8, file:'BIN/BIN.png',                                  w:1, h:1 },
   ];
 
   // ── State ──────────────────────────────────────────────────
@@ -148,7 +170,7 @@
   function furnitureBlocksTile(c, r) {
     for (var i = 0; i < FURNITURE.length; i++) {
       var f = FURNITURE[i];
-      var blocks = /DESK|PC|BOOKSHELF|WHITEBOARD|SOFA|COFFEE_TABLE|SMALL_TABLE|PLANT|CACTUS|WOODEN_CHAIR/i.test(f.type);
+      var blocks = /DESK|PC|BOOKSHELF|DOUBLE_BOOKSHELF|WHITEBOARD|SOFA|COFFEE_TABLE|SMALL_TABLE|PLANT|LARGE_PLANT|PLANT_2|CACTUS|WOODEN_CHAIR|CUSHIONED_CHAIR|CUSHIONED_BENCH|BIN|POT|TABLE_FRONT/i.test(f.type);
       if (!blocks) continue;
       if (c >= f.col && c < f.col + (f.w || 1) && r >= f.row && r < f.row + (f.h || 1)) {
         return true;
