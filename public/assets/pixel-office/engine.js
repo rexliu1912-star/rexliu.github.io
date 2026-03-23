@@ -20,6 +20,7 @@
   var BASE = '/assets/pixel-office/';
 
   var CHAR_FW = 32, CHAR_FH = 48;  // frame size in sprite sheet
+  var CHAR_SCALE = 1.2;            // character render scale (smaller than ZOOM to match furniture)
   var DIR_DOWN = 0, DIR_UP = 1, DIR_RIGHT = 2;
   var DIR_LEFT = 3; // virtual direction, uses RIGHT row + flip
 
@@ -407,9 +408,9 @@
 
   function drawAgent(a) {
     var img = images[a.spriteKey]; if (!img) return;
-    var dw = CHAR_FW * ZOOM, dh = CHAR_FH * ZOOM;
+    var dw = Math.round(CHAR_FW * CHAR_SCALE), dh = Math.round(CHAR_FH * CHAR_SCALE);
     // Sitting offset: busy at desk, shift down 4px * ZOOM
-    var sittingOffset = (a.status === 'busy' && !a.moving && a.col === a.hc && a.row === a.hr) ? 4 * ZOOM : 0;
+    var sittingOffset = (a.status === 'busy' && !a.moving && a.col === a.hc && a.row === a.hr) ? 4 * CHAR_SCALE : 0;
     var drawX = a.px - dw / 2;
     var drawY = a.py - dh + sittingOffset;
 
@@ -548,7 +549,7 @@
       var oy = -i * 14 - Math.sin(phase) * 6;
       var alpha = 0.4 + 0.6 * Math.abs(Math.sin(phase));
       ctx.globalAlpha = alpha;
-      ctx.fillText('z', bx + ox, a.py - CHAR_FH * ZOOM + oy);
+      ctx.fillText('z', bx + ox, a.py - Math.round(CHAR_FH * CHAR_SCALE) + oy);
     }
     ctx.restore();
   }
@@ -577,7 +578,7 @@
     hoveredAgent = null;
     for (var i = agents.length - 1; i >= 0; i--) {
       var a = agents[i];
-      var dw = CHAR_FW * ZOOM, dh = CHAR_FH * ZOOM;
+      var dw = Math.round(CHAR_FW * CHAR_SCALE), dh = Math.round(CHAR_FH * CHAR_SCALE);
       var ax = a.px - dw / 2, ay = a.py - dh;
       if (mx >= ax && mx <= ax + dw && my >= ay && my <= ay + dh + 14) {
         hoveredAgent = a;
@@ -676,7 +677,7 @@
       if (!agents) return null;
       for (var i = agents.length - 1; i >= 0; i--) {
         var a = agents[i];
-        var dw = CHAR_FW * ZOOM, dh = CHAR_FH * ZOOM;
+        var dw = Math.round(CHAR_FW * CHAR_SCALE), dh = Math.round(CHAR_FH * CHAR_SCALE);
         var ax = a.px - dw / 2, ay = a.py - dh;
         if (cx >= ax && cx <= ax + dw && cy >= ay && cy <= ay + dh + 14) {
           return a.id;
