@@ -14,7 +14,11 @@
   var BASE = '/assets/pixel-office/';
   var FPS = 60, FRAME_MS = 1000 / FPS;
 
-  // Sprite sheet: 224x144 PNG = 7 cols × 3 rows of 32×48px frames
+  // Sprite sheet: 224x192 PNG = 7 cols × 4 rows of 32×48px frames
+  // Row 0=DOWN (front) cols 0-3 walk, cols 4-5 typing/work
+  // Row 1=UP (back) cols 0-3 walk
+  // Row 2=RIGHT (side) cols 0-3 walk (LEFT = flip)
+  // Row 3=WORK poses cols 0-3 (sitting/standing activities)
   // Row 0=DOWN, Row 1=UP, Row 2=RIGHT (LEFT = flip RIGHT)
   var CHAR_FW = 32, CHAR_FH = 48;  // frame size in sprite sheet
   var DIR_DOWN = 0, DIR_UP = 1, DIR_RIGHT = 2;
@@ -267,9 +271,9 @@
     }
 
     if (this.status === 'busy' && this.col === this.hc && this.row === this.hr) {
-      // busy at desk: face home direction, idle frame (work frames TBD Phase 1.5)
-      this.dir = this.homeDir;
-      this.frame = 0;
+      // Working animation: use typing frames (col 4-5 of row 0)
+      this.dir = DIR_DOWN;
+      this.frame = 4 + (Math.floor(this.animTick / 20) % 2);
       return;
     }
 
