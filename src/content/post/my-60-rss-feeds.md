@@ -61,7 +61,7 @@ language: "zh"
 | EigenLayer Blog | 再质押赛道先锋 | `https://www.blog.eigenlayer.xyz/rss/` |
 | Flashbots | MEV 和区块空间 | `https://writings.flashbots.net/rss.xml` |
 | Ethereum Research | ETH 技术前沿 | `https://ethresear.ch/latest.rss` |
-| Cardano Spot | Cardano 生态聚合 | `https://cardanospot.io/rss` |
+| r/cardano | Cardano 社区讨论，治理、技术、生态一手信息 | `https://old.reddit.com/r/cardano/.rss` |
 
 ## 🏦 机构视角（3 个）
 
