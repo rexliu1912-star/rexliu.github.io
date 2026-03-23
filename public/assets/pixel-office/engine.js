@@ -39,12 +39,12 @@
 
   // ── Agents ─────────────────────────────────────────────────
   var AGENTS_CFG = [
-    { id:'main',       name:'Samantha', sprite:'char_0.png', hc:9,  hr:3,  dir:DIR_DOWN,  tint:'rgba(255,107,53,0.25)' },
-    { id:'writer',     name:'Loki',     sprite:'char_1.png', hc:3,  hr:3,  dir:DIR_RIGHT, tint:'rgba(74,158,74,0.25)' },
-    { id:'researcher', name:'Vision',   sprite:'char_2.png', hc:16, hr:3,  dir:DIR_LEFT,  tint:'rgba(74,138,181,0.25)' },
-    { id:'coder',      name:'Jarvis',   sprite:'char_3.png', hc:3,  hr:8,  dir:DIR_RIGHT, tint:'rgba(122,122,138,0.20)' },
-    { id:'designer',   name:'Shuri',    sprite:'char_4.png', hc:16, hr:8,  dir:DIR_LEFT,  tint:'rgba(197,74,181,0.25)' },
-    { id:'analyst',    name:'Friday',   sprite:'char_5.png', hc:9,  hr:9,  dir:DIR_UP,    tint:'rgba(74,197,197,0.25)' },
+    { id:'main',       name:'Samantha', sprite:'char_0.png', hc:9,  hr:3,  dir:DIR_DOWN,  tint:null },
+    { id:'writer',     name:'Loki',     sprite:'char_1.png', hc:3,  hr:3,  dir:DIR_RIGHT, tint:null },
+    { id:'researcher', name:'Vision',   sprite:'char_2.png', hc:16, hr:3,  dir:DIR_LEFT,  tint:null },
+    { id:'coder',      name:'Jarvis',   sprite:'char_3.png', hc:3,  hr:8,  dir:DIR_RIGHT, tint:null },
+    { id:'designer',   name:'Shuri',    sprite:'char_4.png', hc:16, hr:8,  dir:DIR_LEFT,  tint:null },
+    { id:'analyst',    name:'Friday',   sprite:'char_5.png', hc:9,  hr:9,  dir:DIR_UP,    tint:null },
   ];
 
   // ── Furniture layout ───────────────────────────────────────
