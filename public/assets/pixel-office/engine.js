@@ -1,7 +1,13 @@
 /* ============================================================
- *  Pixel Office Engine v2 — Rex AI HQ
+ *  Pixel Office Engine v3 — Rex AI HQ (Phase 2)
  *  Vanilla JS, no dependencies. Loaded via <script src="...">.
  *  Exposes window.PixelOffice = { init, updateAgent, destroy }
+ *
+ *  Sprite sheet: 224x192 PNG = 7 cols × 4 rows of 32×48px frames
+ *  Row 0: DOWN (front) — col 0-3 walk, col 4-5 typing
+ *  Row 1: UP (back)    — col 0-3 walk
+ *  Row 2: RIGHT (side) — col 0-3 walk (LEFT = flip)
+ *  Row 3: WORK poses   — col 0-3 various activities
  * ============================================================ */
 (function () {
   'use strict';
@@ -12,21 +18,21 @@
   var CANVAS_H = ROWS * TILE * ZOOM;   // 528
   var T = TILE * ZOOM;                 // 48 — one tile on screen
   var BASE = '/assets/pixel-office/';
-  var FPS = 60, FRAME_MS = 1000 / FPS;
 
-  // Sprite sheet: 224x192 PNG = 7 cols × 4 rows of 32×48px frames
-  // Row 0=DOWN (front) cols 0-3 walk, cols 4-5 typing/work
-  // Row 1=UP (back) cols 0-3 walk
-  // Row 2=RIGHT (side) cols 0-3 walk (LEFT = flip)
-  // Row 3=WORK poses cols 0-3 (sitting/standing activities)
-  // Row 0=DOWN, Row 1=UP, Row 2=RIGHT (LEFT = flip RIGHT)
   var CHAR_FW = 32, CHAR_FH = 48;  // frame size in sprite sheet
   var DIR_DOWN = 0, DIR_UP = 1, DIR_RIGHT = 2;
-  // LEFT has no own row — we flip RIGHT
   var DIR_LEFT = 3; // virtual direction, uses RIGHT row + flip
 
+  // Delta-time animation constants
+  var MOVE_SPEED = 54;       // pixels per second (at ZOOM=2)
+  var WALK_FRAME_DUR = 0.10; // seconds per walk frame
+  var WORK_FRAME_DUR = 0.33; // seconds per work frame cycle
+  var IDLE_TURN_MIN = 1.5;   // seconds
+  var IDLE_TURN_MAX = 4.0;
+  var WANDER_MIN = 2.0;      // seconds
+  var WANDER_MAX = 8.0;
+
   // ── Tile Map (20×11) ──────────────────────────────────────
-  // 0=wall  1=floor_0  2=floor_2
   var MAP = [
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
     [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
@@ -95,7 +101,8 @@
   ];
 
   // ── State ──────────────────────────────────────────────────
-  var ctx, canvas, rafId, agents, images, tick;
+  var ctx, canvas, rafId, agents, images, tick, lastTime;
+  var hoveredAgent = null;
 
   // ── Image Loader ───────────────────────────────────────────
   function loadImg(src) {
@@ -109,13 +116,9 @@
 
   function loadAllImages(onProgress) {
     var manifest = {};
-    // floors
     for (var i = 0; i <= 8; i++) manifest['floor_' + i] = BASE + 'floors/floor_' + i + '.png';
-    // wall
     manifest['wall_0'] = BASE + 'walls/wall_0.png';
-    // characters
     for (var c = 0; c < 6; c++) manifest['char_' + c] = BASE + 'characters/char_' + c + '.png';
-    // furniture
     var seen = {};
     FURNITURE.forEach(function (f) {
       if (!seen[f.file]) { seen[f.file] = 1; manifest['fur_' + f.file] = BASE + 'furniture/' + f.file; }
@@ -198,13 +201,16 @@
     return [];
   }
 
+  // ── Utility ────────────────────────────────────────────────
+  function randInt(a, b) { return a + Math.floor(Math.random() * (b - a + 1)); }
+  function randFloat(a, b) { return a + Math.random() * (b - a); }
+
   // ── Agent class ────────────────────────────────────────────
   function Agent(cfg) {
     this.id = cfg.id; this.name = cfg.name;
     this.spriteKey = 'char_' + AGENTS_CFG.indexOf(cfg);
     this.hc = cfg.hc; this.hr = cfg.hr;
     this.col = cfg.hc; this.row = cfg.hr;
-    // Pixel Agents anchors characters at the CENTER of the tile, not top-left
     this.px = cfg.hc * T + T / 2; this.py = cfg.hr * T + T / 2;
     this.dir = cfg.dir;
     this.homeDir = cfg.dir;
@@ -213,13 +219,14 @@
     this.path = []; this.moving = false;
     this.targetX = this.px; this.targetY = this.py;
     this.targetCol = this.col; this.targetRow = this.row;
-    this.frame = 0; this.animTick = 0;
-    this.nextWander = randInt(45, 220); // stagger movement timings for more natural behavior
-    this.idleTurnTick = randInt(20, 90);
+    this.frame = 0;
+    this.animTimer = 0;       // dt-based animation accumulator
+    this.workTimer = 0;       // dt-based work animation accumulator
+    this.idleTurnTimer = randFloat(IDLE_TURN_MIN, IDLE_TURN_MAX);
+    this.wanderTimer = randFloat(WANDER_MIN, WANDER_MAX);
     this.zzzPhase = 0;
+    this.errorFlicker = 0;    // for error blink effect
   }
-
-  function randInt(a, b) { return a + Math.floor(Math.random() * (b - a + 1)); }
 
   Agent.prototype.setStatus = function (s, task) {
     if (this.status === s) { this.task = task || ''; return; }
@@ -227,7 +234,11 @@
     if (s === 'busy') {
       this.path = bfs(this.col, this.row, this.hc, this.hr, this.id);
       if (this.path.length) this.startMove();
-      else this.dir = this.homeDir;
+      else this.dir = DIR_DOWN; // face front at desk
+    }
+    if (s === 'offline') {
+      this.dir = DIR_DOWN;
+      this.frame = 0;
     }
   };
 
@@ -238,21 +249,32 @@
     this.targetCol = next[0]; this.targetRow = next[1];
     this.targetX = next[0] * T + T / 2; this.targetY = next[1] * T + T / 2;
     this.moving = true;
-    // set direction
     if (dx > 0) this.dir = DIR_RIGHT;
     else if (dx < 0) this.dir = DIR_LEFT;
     else if (dy > 0) this.dir = DIR_DOWN;
     else if (dy < 0) this.dir = DIR_UP;
   };
 
-  Agent.prototype.update = function () {
-    this.animTick++;
+  Agent.prototype.update = function (dt) {
+    // ── OFFLINE: grey, frame 0 facing down, ZZZ ──
+    if (this.status === 'offline') {
+      this.dir = DIR_DOWN;
+      this.frame = 0;
+      this.zzzPhase += dt * 1.8; // ~0.03 per frame at 60fps
+      return;
+    }
 
-    if (this.status === 'offline') { this.zzzPhase += 0.03; return; }
+    // ── ERROR: frame 0 facing down, flicker ──
+    if (this.status === 'error') {
+      this.dir = DIR_DOWN;
+      this.frame = 0;
+      this.errorFlicker += dt * 9; // for blink calc in drawAgent
+      return;
+    }
 
-    // Smooth movement
+    // ── MOVING (path active, walking to target) ──
     if (this.moving) {
-      var speed = 0.9 * ZOOM; // slower, more natural movement
+      var speed = MOVE_SPEED * dt;
       var dx = this.targetX - this.px, dy = this.targetY - this.py;
       var dist = Math.sqrt(dx * dx + dy * dy);
       if (dist <= speed) {
@@ -264,37 +286,47 @@
         this.px += (dx / dist) * speed;
         this.py += (dy / dist) * speed;
       }
-      // walk cycle: frames 0,1,2,1 (4步循环)
-      var walkSeq = [0, 1, 2, 1];
-      this.frame = walkSeq[Math.floor(this.animTick / 6) % 4];
-      return;
-    }
-
-    if (this.status === 'busy' && this.col === this.hc && this.row === this.hr) {
-      // Working animation: use typing frames (col 4-5 of row 0)
-      this.dir = DIR_DOWN;
-      this.frame = 4 + (Math.floor(this.animTick / 20) % 2);
-      return;
-    }
-
-    // idle: subtle breathing / look-alive animation
-    this.frame = (Math.floor(this.animTick / 28) % 2 === 0) ? 0 : 1;
-
-    if (this.status === 'idle') {
-      this.idleTurnTick--;
-      if (this.idleTurnTick <= 0) {
-        this.idleTurnTick = randInt(40, 120);
-        if (Math.random() < 0.35) {
-          var dirs = [DIR_DOWN, DIR_UP, DIR_LEFT, DIR_RIGHT];
-          this.dir = dirs[randInt(0, dirs.length - 1)];
-        }
+      // Walk cycle: 4 frames [0,1,2,3]
+      this.animTimer += dt;
+      if (this.animTimer >= WALK_FRAME_DUR) {
+        this.animTimer -= WALK_FRAME_DUR;
+        this.frame = (this.frame + 1) % 4;
       }
+      // Keep frame in walk range
+      if (this.frame > 3) this.frame = 0;
+      return;
+    }
 
-      this.nextWander--;
-      if (this.nextWander <= 0) {
-        this.nextWander = randInt(60, 260);
-        // sometimes just linger/turn instead of always moving, to avoid feeling scripted
-        if (Math.random() < 0.35) return;
+    // ── BUSY at home desk: typing animation (col 4-5) ──
+    if (this.status === 'busy' && this.col === this.hc && this.row === this.hr) {
+      this.dir = DIR_DOWN; // face front
+      this.workTimer += dt;
+      if (this.workTimer >= WORK_FRAME_DUR) {
+        this.workTimer -= WORK_FRAME_DUR;
+      }
+      this.frame = 4 + (this.workTimer < WORK_FRAME_DUR / 2 ? 0 : 1);
+      return;
+    }
+
+    // ── IDLE (standing still) ──
+    this.frame = 0; // FIXED frame 0, no breathing animation
+
+    // Occasional direction turn
+    this.idleTurnTimer -= dt;
+    if (this.idleTurnTimer <= 0) {
+      this.idleTurnTimer = randFloat(IDLE_TURN_MIN, IDLE_TURN_MAX);
+      if (Math.random() < 0.35) {
+        var dirs = [DIR_DOWN, DIR_UP, DIR_LEFT, DIR_RIGHT];
+        this.dir = dirs[randInt(0, 3)];
+      }
+    }
+
+    // Idle wander (only when truly idle, not busy-waiting)
+    if (this.status === 'idle') {
+      this.wanderTimer -= dt;
+      if (this.wanderTimer <= 0) {
+        this.wanderTimer = randFloat(WANDER_MIN, WANDER_MAX);
+        if (Math.random() < 0.35) return; // sometimes skip
         var choices = [];
         for (var dc = -2; dc <= 2; dc++) {
           for (var dr = -2; dr <= 2; dr++) {
@@ -333,7 +365,7 @@
   function drawFurniture(f) {
     var img = images['fur_' + f.file]; if (!img) return;
     var dw = f.w * T, dh = (img.height / 16) * T;
-    var x = f.col * T, y = f.row * T + T - dh; // align bottom to tile
+    var x = f.col * T, y = f.row * T + T - dh;
     ctx.drawImage(img, x, y, dw, dh);
   }
 
@@ -348,19 +380,54 @@
   function drawAgent(a) {
     var img = images[a.spriteKey]; if (!img) return;
     var dw = CHAR_FW * ZOOM, dh = CHAR_FH * ZOOM;
-    var drawX = a.px - dw / 2, drawY = a.py - dh;
+    // Sitting offset: busy at desk, shift down 4px * ZOOM
+    var sittingOffset = (a.status === 'busy' && !a.moving && a.col === a.hc && a.row === a.hr) ? 4 * ZOOM : 0;
+    var drawX = a.px - dw / 2;
+    var drawY = a.py - dh + sittingOffset;
 
     ctx.save();
     if (a.status === 'offline') ctx.globalAlpha = 0.35;
-    if (a.status === 'error') ctx.globalAlpha = 0.3 + 0.7 * Math.abs(Math.sin(a.animTick * 0.15));
+    if (a.status === 'error') ctx.globalAlpha = 0.3 + 0.7 * Math.abs(Math.sin(a.errorFlicker));
 
     var dirRow = a.dir;
     var flip = false;
     if (a.dir === DIR_LEFT) { dirRow = DIR_RIGHT; flip = true; }
     var sx = a.frame * CHAR_FW, sy = dirRow * CHAR_FH;
 
+    // ── Hover outline ──
+    if (a === hoveredAgent) {
+      // Draw white outline by rendering sprite offset in 4 directions
+      ctx.globalAlpha = (ctx.globalAlpha || 1) * 0.8;
+      var offsets = [[-1,0],[1,0],[0,-1],[0,1]];
+      ctx.globalCompositeOperation = 'source-over';
+      // Use a temp canvas for the outline
+      var oc = getTintCanvas(dw + 4, dh + 4);
+      oc.cx.clearRect(0, 0, dw + 4, dh + 4);
+      oc.cx.imageSmoothingEnabled = false;
+      for (var oi = 0; oi < offsets.length; oi++) {
+        oc.cx.save();
+        if (flip) {
+          oc.cx.translate(dw + 2, 2);
+          oc.cx.scale(-1, 1);
+          oc.cx.drawImage(img, sx, sy, CHAR_FW, CHAR_FH, offsets[oi][0], offsets[oi][1], dw, dh);
+        } else {
+          oc.cx.drawImage(img, sx, sy, CHAR_FW, CHAR_FH, 2 + offsets[oi][0], 2 + offsets[oi][1], dw, dh);
+        }
+        oc.cx.restore();
+      }
+      // Recolor to white
+      oc.cx.globalCompositeOperation = 'source-atop';
+      oc.cx.fillStyle = '#ffffff';
+      oc.cx.fillRect(0, 0, dw + 4, dh + 4);
+      oc.cx.globalCompositeOperation = 'source-over';
+      ctx.drawImage(oc.cv, drawX - 2, drawY - 2);
+      // Reset alpha for actual sprite
+      if (a.status === 'offline') ctx.globalAlpha = 0.35;
+      else if (a.status === 'error') ctx.globalAlpha = 0.3 + 0.7 * Math.abs(Math.sin(a.errorFlicker));
+      else ctx.globalAlpha = 1;
+    }
+
     if (a.tint) {
-      // Draw sprite + tint on offscreen canvas, then stamp onto main canvas
       var tc = getTintCanvas(dw, dh);
       tc.cx.clearRect(0, 0, dw, dh);
       tc.cx.imageSmoothingEnabled = false;
@@ -392,28 +459,22 @@
     ctx.textAlign = 'center';
     var labelX = drawX + dw / 2, labelY = drawY - 8;
 
-    // status dot
     var colors = { idle: '#4ade80', busy: '#f59e0b', offline: '#555555', error: '#a78bfa' };
     var dotColor = colors[a.status] || '#4ade80';
     var dotR = 4;
-    // pulse for busy
     if (a.status === 'busy') dotR = 3 + 2 * Math.abs(Math.sin(tick * 0.08));
     ctx.fillStyle = dotColor;
     ctx.beginPath();
     ctx.arc(labelX - ctx.measureText(a.name).width / 2 - 8, labelY - 3, dotR, 0, Math.PI * 2);
     ctx.fill();
 
-    // text shadow
     ctx.fillStyle = 'rgba(0,0,0,0.6)';
     ctx.fillText(a.name, labelX + 1, labelY + 1);
     ctx.fillStyle = '#fff';
     ctx.fillText(a.name, labelX, labelY);
     ctx.restore();
 
-    // Task bubble for busy
     if (a.status === 'busy' && a.task) drawTaskBubble(a, drawX, drawY, dw);
-
-    // ZZZ for offline
     if (a.status === 'offline') drawZzz(a);
   }
 
@@ -426,17 +487,14 @@
     var bw = tw + pad * 2;
     var bx = drawX + dw / 2 - bw / 2;
     var by = drawY - bh - 6;
-    // bubble body
     ctx.fillStyle = 'rgba(10,10,30,0.85)';
     ctx.beginPath();
     ctx.roundRect(bx, by, bw, bh, 3);
     ctx.fill();
-    // bubble border with agent color
-    var colors = { main:'#ff6b35', writer:'#4a9e4a', researcher:'#4a8ab5', coder:'#7a7a8a', designer:'#c54ab5', analyst:'#4ac5c5' };
-    ctx.strokeStyle = (colors[a.id] || '#8953d1') + 'aa';
+    var bubbleColors = { main:'#ff6b35', writer:'#4a9e4a', researcher:'#4a8ab5', coder:'#7a7a8a', designer:'#c54ab5', analyst:'#4ac5c5' };
+    ctx.strokeStyle = (bubbleColors[a.id] || '#8953d1') + 'aa';
     ctx.lineWidth = 0.75;
     ctx.stroke();
-    // tail
     ctx.fillStyle = 'rgba(10,10,30,0.85)';
     var cx = bx + bw / 2;
     ctx.beginPath();
@@ -445,7 +503,6 @@
     ctx.lineTo(cx, by + bh + 4);
     ctx.closePath();
     ctx.fill();
-    // text
     ctx.fillStyle = 'rgba(255,255,255,0.9)';
     ctx.textAlign = 'center';
     ctx.fillText(text, bx + bw / 2, by + bh - 3);
@@ -482,23 +539,63 @@
     ctx.fillText('Loading Rex AI HQ... ' + loaded + '/' + total, CANVAS_W / 2, by - 12);
   }
 
-  // ── Main loop ──────────────────────────────────────────────
-  function gameLoop() {
+  // ── Mouse hover tracking ──────────────────────────────────
+  function onMouseMove(e) {
+    if (!agents || !canvas) { hoveredAgent = null; return; }
+    var rect = canvas.getBoundingClientRect();
+    var scaleX = CANVAS_W / rect.width, scaleY = CANVAS_H / rect.height;
+    var mx = (e.clientX - rect.left) * scaleX;
+    var my = (e.clientY - rect.top) * scaleY;
+    hoveredAgent = null;
+    for (var i = agents.length - 1; i >= 0; i--) {
+      var a = agents[i];
+      var dw = CHAR_FW * ZOOM, dh = CHAR_FH * ZOOM;
+      var ax = a.px - dw / 2, ay = a.py - dh;
+      if (mx >= ax && mx <= ax + dw && my >= ay && my <= ay + dh + 14) {
+        hoveredAgent = a;
+        break;
+      }
+    }
+    canvas.style.cursor = hoveredAgent ? 'pointer' : 'default';
+  }
+
+  // ── Main loop (delta-time driven) ──────────────────────────
+  function gameLoop(timestamp) {
+    var dt = lastTime ? Math.min((timestamp - lastTime) / 1000, 0.1) : 0;
+    lastTime = timestamp;
     tick++;
-    // update agents
-    agents.forEach(function (a) { a.update(); });
-    // render
+
+    // Update agents with delta-time
+    agents.forEach(function (a) { a.update(dt); });
+
+    // Render
     ctx.clearRect(0, 0, CANVAS_W, CANVAS_H);
     ctx.imageSmoothingEnabled = false;
     drawFloorAndWalls();
 
-    // Render order: ALL furniture first (sorted by row), then ALL agents (sorted by Y)
-    // This ensures characters are NEVER occluded by furniture
-    var furSorted = FURNITURE.slice().sort(function (a, b) { return a.row - b.row; });
-    furSorted.forEach(function (f) { drawFurniture(f); });
+    // ── Z-Sort: unified furniture + agents, sorted by bottom Y ──
+    var drawables = [];
 
-    var agentsSorted = agents.slice().sort(function (a, b) { return a.py - b.py; });
-    agentsSorted.forEach(function (a) { drawAgent(a); });
+    // Furniture sorted by row
+    var furSorted = FURNITURE.slice().sort(function (a, b) { return a.row - b.row; });
+    furSorted.forEach(function (f) {
+      drawables.push({
+        y: f.row * T + T, // bottom edge of tile
+        draw: function () { drawFurniture(f); }
+      });
+    });
+
+    // Agents
+    agents.forEach(function (a) {
+      drawables.push({
+        y: a.py, // character foot position
+        draw: function () { drawAgent(a); }
+      });
+    });
+
+    // Sort by Y ascending (further back drawn first)
+    drawables.sort(function (a, b) { return a.y - b.y; });
+    drawables.forEach(function (d) { d.draw(); });
 
     rafId = requestAnimationFrame(gameLoop);
   }
@@ -512,6 +609,11 @@
       canvas.style.imageRendering = 'pixelated';
       ctx = canvas.getContext('2d');
       tick = 0;
+      lastTime = 0;
+      hoveredAgent = null;
+
+      // Mouse hover listener
+      canvas.addEventListener('mousemove', onMouseMove);
 
       drawLoading(0, 1);
 
@@ -535,10 +637,11 @@
 
     destroy: function () {
       if (rafId) cancelAnimationFrame(rafId);
+      if (canvas) canvas.removeEventListener('mousemove', onMouseMove);
       rafId = null; agents = null; ctx = null; canvas = null;
+      hoveredAgent = null;
     },
 
-    /** Hit-test: returns agentId at canvas (x,y) or null */
     getAgentAt: function (cx, cy) {
       if (!agents) return null;
       for (var i = agents.length - 1; i >= 0; i--) {
