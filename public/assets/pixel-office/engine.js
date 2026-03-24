@@ -94,8 +94,8 @@
     { type:'COFFEE_TABLE',     col:4,  row:4, file:'COFFEE_TABLE/COFFEE_TABLE.png',         w:2, h:2 },
     { type:'COFFEE',           col:4,  row:4, file:'COFFEE/COFFEE.png',                     w:1, h:1, blocks:false },
     { type:'COFFEE',           col:5,  row:4, file:'COFFEE/COFFEE.png',                     w:1, h:1, blocks:false },
-    { type:'CUSHIONED_BENCH',  col:3,  row:5, file:'CUSHIONED_BENCH/CUSHIONED_BENCH.png',   w:1, h:1, blocks:false },
-    { type:'CUSHIONED_BENCH',  col:4,  row:6, file:'CUSHIONED_BENCH/CUSHIONED_BENCH.png',   w:1, h:1, blocks:false },
+    { type:'CUSHIONED_BENCH',  col:3,  row:5, file:'CUSHIONED_BENCH/CUSHIONED_BENCH.png',   w:1, h:1, blocks:true },
+    { type:'CUSHIONED_BENCH',  col:4,  row:6, file:'CUSHIONED_BENCH/CUSHIONED_BENCH.png',   w:1, h:1, blocks:true },
 
     // Samantha command station (top-center)
     { type:'DESK',             col:10, row:3, file:'DESK/DESK_FRONT.png',                   w:3, h:2 },
@@ -134,8 +134,8 @@
     { type:'PLANT',            col:21, row:8, file:'PLANT/PLANT.png',                       w:1, h:2 },
     { type:'PLANT_2',          col:19, row:10,file:'PLANT_2/PLANT_2.png',                   w:1, h:2 },
     { type:'CACTUS',           col:18, row:11,file:'CACTUS/CACTUS.png',                     w:1, h:2 },
-    { type:'POT',              col:20, row:11,file:'POT/POT.png',                           w:1, h:1, blocks:false },
-    { type:'BIN',              col:22, row:12,file:'BIN/BIN.png',                           w:1, h:1, blocks:false },
+    { type:'POT',              col:20, row:11,file:'POT/POT.png',                           w:1, h:1, blocks:true },
+    { type:'BIN',              col:22, row:12,file:'BIN/BIN.png',                           w:1, h:1, blocks:true },
   ];
 
   // ── State ──────────────────────────────────────────────────
