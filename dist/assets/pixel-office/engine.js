@@ -149,6 +149,11 @@
   var particles = [];
   var audioCtx = null;
   var entryOverlay = null;
+  var bgmCtx = null;
+  var bgmPlaying = false;
+  var bgmGain = null;
+  var bgmMuted = false;
+  var bgmLoopTimer = null;
 
   var SOCIAL_LINES_EN = [
     // Greetings
@@ -359,6 +364,84 @@
     } catch (err) {}
   }
 
+  function clearBGMLoopTimer() {
+    if (bgmLoopTimer) {
+      clearTimeout(bgmLoopTimer);
+      bgmLoopTimer = null;
+    }
+  }
+
+  function setBGMGain(value) {
+    if (!bgmCtx || !bgmGain) return;
+    try {
+      bgmGain.gain.cancelScheduledValues(bgmCtx.currentTime);
+      bgmGain.gain.setValueAtTime(Math.max(0.0001, bgmGain.gain.value || 0.0001), bgmCtx.currentTime);
+      bgmGain.gain.exponentialRampToValueAtTime(Math.max(0.0001, value), bgmCtx.currentTime + 0.12);
+    } catch (err) {
+      bgmGain.gain.value = value;
+    }
+  }
+
+  function startBGM() {
+    if (bgmPlaying && !bgmMuted) {
+      if (bgmCtx && bgmCtx.state === 'suspended') {
+        try { bgmCtx.resume(); } catch (err) {}
+      }
+      return;
+    }
+    try {
+      if (!bgmCtx) {
+        bgmCtx = new (window.AudioContext || window.webkitAudioContext)();
+        bgmGain = bgmCtx.createGain();
+        bgmGain.gain.value = 0.0001;
+        bgmGain.connect(bgmCtx.destination);
+
+        var notes = [262, 330, 392, 523, 392, 330];
+        var noteLen = 0.4;
+        var loopLen = notes.length * noteLen;
+
+        function scheduleLoop(startTime) {
+          if (!bgmCtx || !bgmGain) return;
+          for (var i = 0; i < notes.length; i++) {
+            var osc = bgmCtx.createOscillator();
+            var noteGain = bgmCtx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.value = notes[i];
+            noteGain.gain.setValueAtTime(0.08, startTime + i * noteLen);
+            noteGain.gain.exponentialRampToValueAtTime(0.001, startTime + i * noteLen + noteLen * 0.9);
+            osc.connect(noteGain);
+            noteGain.connect(bgmGain);
+            osc.start(startTime + i * noteLen);
+            osc.stop(startTime + i * noteLen + noteLen);
+          }
+          clearBGMLoopTimer();
+          bgmLoopTimer = setTimeout(function () {
+            if (bgmPlaying && bgmCtx) scheduleLoop(bgmCtx.currentTime + 0.05);
+          }, (loopLen - 0.1) * 1000);
+        }
+
+        scheduleLoop(bgmCtx.currentTime + 0.1);
+      }
+      if (bgmCtx.state === 'suspended') {
+        try { bgmCtx.resume(); } catch (err2) {}
+      }
+      bgmMuted = false;
+      bgmPlaying = true;
+      setBGMGain(0.03);
+    } catch(e) {}
+  }
+
+  function stopBGM() {
+    bgmMuted = true;
+    bgmPlaying = false;
+    if (bgmGain) setBGMGain(0.0001);
+  }
+
+  function toggleBGM() {
+    if (!bgmCtx || !bgmPlaying || bgmMuted) startBGM();
+    else stopBGM();
+  }
+
   function spawnDust(a) {
     if (particles.length >= 30) return;
     var count = randInt(1, 2);
@@ -495,6 +578,7 @@
     this.greetingResumeTargetX = this.targetX;
     this.greetingResumeTargetY = this.targetY;
     this.celebrateTimer = 0;
+    this.matrixEffect = null;
   }
 
   Agent.prototype.resetIdleBehavior = function () {
@@ -535,7 +619,10 @@
     if (prevStatus === s) { this.task = task || ''; return; }
     this.status = s; this.task = task || '';
     if (prevStatus === 'busy' && s === 'idle') this.celebrateTimer = 0.8;
-    if (prevStatus === 'offline' && s !== 'offline') this.fadeAlpha = 0;
+    if (prevStatus === 'offline' && s !== 'offline') {
+      this.fadeAlpha = 0;
+      this.startMatrixEffect();
+    }
     this.fadeTarget = (s === 'offline') ? 0.35 : 1.0;
     if (s !== 'idle') this.resetIdleBehavior();
     if (s === 'busy') {
@@ -551,6 +638,42 @@
       this.dir = DIR_DOWN;
       this.frame = STATE_FRAME.offline;
     }
+  };
+
+  Agent.prototype.startMatrixEffect = function () {
+    var img = images[this.spriteKey];
+    if (!img) return;
+    var tempCanvas = document.createElement('canvas');
+    tempCanvas.width = CHAR_FW;
+    tempCanvas.height = CHAR_FH;
+    var tc = tempCanvas.getContext('2d');
+    if (!tc) return;
+    tc.clearRect(0, 0, CHAR_FW, CHAR_FH);
+    tc.drawImage(img, 0, 0, CHAR_FW, CHAR_FH, 0, 0, CHAR_FW, CHAR_FH);
+    var data = tc.getImageData(0, 0, CHAR_FW, CHAR_FH).data;
+    var particlesLocal = [];
+    var dw = Math.round(CHAR_FW * CHAR_SCALE);
+    var dh = Math.round(CHAR_FH * CHAR_SCALE);
+    var drawX = this.px - dw / 2;
+    var drawY = this.py - dh;
+    for (var y = 0; y < CHAR_FH; y += 2) {
+      for (var x = 0; x < CHAR_FW; x += 2) {
+        var idx = (y * CHAR_FW + x) * 4;
+        if (data[idx + 3] > 30) {
+          particlesLocal.push({
+            x: drawX + (x / CHAR_FW) * dw + randFloat(-80, 80),
+            y: drawY + (y / CHAR_FH) * dh + randFloat(-120, -20),
+            tx: drawX + (x / CHAR_FW) * dw,
+            ty: drawY + (y / CHAR_FH) * dh,
+            r: data[idx],
+            g: data[idx + 1],
+            b: data[idx + 2],
+            size: 2
+          });
+        }
+      }
+    }
+    this.matrixEffect = { particles: particlesLocal, timer: 0, duration: 1.5 };
   };
 
   Agent.prototype.startMove = function () {
@@ -571,6 +694,11 @@
 
   Agent.prototype.update = function (dt) {
     this.fadeAlpha = easeToward(this.fadeAlpha, this.fadeTarget, dt);
+
+    if (this.matrixEffect) {
+      this.matrixEffect.timer += dt;
+      if (this.matrixEffect.timer >= this.matrixEffect.duration) this.matrixEffect = null;
+    }
 
     if (this.celebrateTimer > 0) this.celebrateTimer = Math.max(0, this.celebrateTimer - dt);
 
@@ -758,6 +886,42 @@
     }
   }
 
+  function drawPCScreen(f, agent) {
+    if (!agent || agent.status !== 'busy' || agent.moving) return;
+    var sx = f.col * T + 4;
+    var sy = f.row * T + 6;
+    var sw = T - 8;
+    var sh = T - 12;
+    ctx.save();
+    ctx.fillStyle = '#0a1628';
+    ctx.fillRect(sx, sy, sw, sh);
+    var phase = Math.floor(tick * 0.03) % 4;
+    ctx.fillStyle = '#4ade80';
+    ctx.font = '4px monospace';
+    if (phase === 0) {
+      for (var line = 0; line < 4; line++) {
+        var w = 6 + Math.floor(Math.sin(tick * 0.02 + line) * 4 + 4);
+        ctx.fillRect(sx + 2, sy + 2 + line * 4, w, 2);
+      }
+    } else if (phase === 1) {
+      for (var bar = 0; bar < 5; bar++) {
+        var bh = 3 + Math.floor(Math.abs(Math.sin(tick * 0.04 + bar * 1.2)) * 8);
+        ctx.fillRect(sx + 2 + bar * 4, sy + sh - bh - 2, 3, bh);
+      }
+    } else if (phase === 2) {
+      ctx.fillStyle = '#60a5fa';
+      for (var tl = 0; tl < 5; tl++) {
+        var tw = 4 + Math.floor(Math.sin(tick * 0.01 + tl) * 3 + 5);
+        ctx.fillRect(sx + 2, sy + 2 + tl * 3, tw, 1);
+      }
+    } else {
+      ctx.fillStyle = '#4ade80';
+      ctx.fillText('>', sx + 2, sy + 8);
+      if (Math.floor(tick * 0.06) % 2 === 0) ctx.fillRect(sx + 8, sy + 4, 4, 6);
+    }
+    ctx.restore();
+  }
+
   function drawFurniture(f) {
     var img = images['fur_' + f.file]; if (!img) return;
     var dw = f.w * T;
@@ -765,6 +929,16 @@
     var x = f.col * T;
     var y = (f.row + (f.h || 1)) * T - dh;
     ctx.drawImage(img, x, y, dw, dh);
+    if (f.type === 'PC' && agents) {
+      var pcAgent = null;
+      for (var i = 0; i < agents.length; i++) {
+        if (agents[i].hc === f.col) {
+          pcAgent = agents[i];
+          break;
+        }
+      }
+      drawPCScreen(f, pcAgent);
+    }
   }
 
   function updateDayOverlay(force) {
@@ -1089,6 +1263,26 @@
     var drawX = a.px - dw / 2;
     var drawY = a.py - dh + sittingOffset;
 
+    if (a.matrixEffect) {
+      var progress = clamp(a.matrixEffect.timer / a.matrixEffect.duration, 0, 1);
+      var eased = progress * progress;
+      var effectParticles = a.matrixEffect.particles;
+      ctx.save();
+      ctx.globalAlpha = Math.max(0.2, a.fadeAlpha);
+      for (var pi = 0; pi < effectParticles.length; pi++) {
+        var p = effectParticles[pi];
+        var cx = lerp(p.x, p.tx, eased);
+        var cy = lerp(p.y, p.ty, eased);
+        var r = Math.round(lerp(0, p.r, progress));
+        var g = Math.round(lerp(255, p.g, progress));
+        var b = Math.round(lerp(0, p.b, progress));
+        ctx.fillStyle = 'rgb(' + r + ',' + g + ',' + b + ')';
+        ctx.fillRect(Math.round(cx), Math.round(cy), p.size, p.size);
+      }
+      ctx.restore();
+      return;
+    }
+
     ctx.save();
     ctx.globalAlpha = a.fadeAlpha;
     if (a.status === 'error') ctx.globalAlpha = a.fadeAlpha * (0.3 + 0.7 * Math.abs(Math.sin(a.errorFlicker)));
@@ -1262,28 +1456,65 @@
   }
 
   // ── Mouse hover tracking ──────────────────────────────────
-  function onMouseMove(e) {
-    if (!agents || !canvas) { hoveredAgent = null; return; }
-    var prevHovered = hoveredAgent;
+  function getCanvasPoint(e) {
     var rect = canvas.getBoundingClientRect();
     var scaleX = CANVAS_W / rect.width, scaleY = CANVAS_H / rect.height;
-    var mx = (e.clientX - rect.left) * scaleX;
-    var my = (e.clientY - rect.top) * scaleY;
-    hoveredAgent = null;
+    return {
+      x: (e.clientX - rect.left) * scaleX,
+      y: (e.clientY - rect.top) * scaleY
+    };
+  }
+
+  function getAgentFromCanvasPoint(mx, my) {
+    if (!agents) return null;
     for (var i = agents.length - 1; i >= 0; i--) {
       var a = agents[i];
       var dw = Math.round(CHAR_FW * CHAR_SCALE), dh = Math.round(CHAR_FH * CHAR_SCALE);
       var ax = a.px - dw / 2, ay = a.py - dh;
-      if (mx >= ax && mx <= ax + dw && my >= ay && my <= ay + dh + 14) {
-        hoveredAgent = a;
-        break;
-      }
+      if (mx >= ax && mx <= ax + dw && my >= ay && my <= ay + dh + 14) return a;
     }
+    return null;
+  }
+
+  function onMouseMove(e) {
+    if (!agents || !canvas) { hoveredAgent = null; return; }
+    var prevHovered = hoveredAgent;
+    var point = getCanvasPoint(e);
+    hoveredAgent = getAgentFromCanvasPoint(point.x, point.y);
     if (hoveredAgent && hoveredAgent !== prevHovered) playHoverClick();
     canvas.style.cursor = hoveredAgent ? 'pointer' : 'default';
   }
 
+  function onCanvasClick(e) {
+    if (!canvas) return;
+    var point = getCanvasPoint(e);
+    var clickedAgent = getAgentFromCanvasPoint(point.x, point.y);
+    if (!clickedAgent) toggleBGM();
+  }
+
   // ── Main loop (delta-time driven) ──────────────────────────
+  function drawBGMIcon() {
+    if (!ctx) return;
+    var x = CANVAS_W - 18;
+    var y = CANVAS_H - 18;
+    var color = bgmPlaying && !bgmMuted ? '#4ade80' : '#6b7280';
+    ctx.save();
+    ctx.fillStyle = 'rgba(10,10,18,0.55)';
+    ctx.fillRect(x - 4, y - 4, 16, 16);
+    ctx.fillStyle = color;
+    ctx.fillRect(x + 1, y + 5, 2, 6);
+    ctx.fillRect(x + 3, y + 3, 3, 2);
+    ctx.fillRect(x + 5, y + 1, 2, 2);
+    ctx.fillRect(x + 6, y + 1, 1, 8);
+    ctx.beginPath();
+    ctx.arc(x + 4, y + 12, 2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(x + 9, y + 9, 2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
   function gameLoop(timestamp) {
     var dt = lastTime ? Math.min((timestamp - lastTime) / 1000, 0.1) : 0;
     var nowMs = Date.now();
@@ -1343,6 +1574,7 @@
     drawSocialBubble();
     drawHeadquartersSign();
     drawDayOverlay();
+    drawBGMIcon();
     if (entryOverlay && !entryOverlay.done) {
       entryOverlay.alpha -= dt / 0.8;
       if (entryOverlay.alpha <= 0) { entryOverlay.alpha = 0; entryOverlay.done = true; }
@@ -1374,10 +1606,16 @@
       particles = [];
       audioCtx = null;
       entryOverlay = null;
+      bgmCtx = null;
+      bgmPlaying = false;
+      bgmGain = null;
+      bgmMuted = false;
+      clearBGMLoopTimer();
       updateDayOverlay(true);
 
       // Mouse hover listener
       canvas.addEventListener('mousemove', onMouseMove);
+      canvas.addEventListener('click', onCanvasClick);
 
       drawLoading(0, 1);
 
@@ -1404,6 +1642,10 @@
     destroy: function () {
       if (rafId) cancelAnimationFrame(rafId);
       if (canvas) canvas.removeEventListener('mousemove', onMouseMove);
+      if (canvas) canvas.removeEventListener('click', onCanvasClick);
+      stopBGM();
+      if (bgmCtx) { try { bgmCtx.close(); } catch (err) {} }
+      clearBGMLoopTimer();
       rafId = null; agents = null; ctx = null; canvas = null;
       hoveredAgent = null;
       dayOverlayState = null;
@@ -1414,19 +1656,16 @@
       particles = [];
       audioCtx = null;
       entryOverlay = null;
+      bgmCtx = null;
+      bgmPlaying = false;
+      bgmGain = null;
+      bgmMuted = false;
     },
 
     getAgentAt: function (cx, cy) {
       if (!agents) return null;
-      for (var i = agents.length - 1; i >= 0; i--) {
-        var a = agents[i];
-        var dw = Math.round(CHAR_FW * CHAR_SCALE), dh = Math.round(CHAR_FH * CHAR_SCALE);
-        var ax = a.px - dw / 2, ay = a.py - dh;
-        if (cx >= ax && cx <= ax + dw && cy >= ay && cy <= ay + dh + 14) {
-          return a.id;
-        }
-      }
-      return null;
+      var foundAgent = getAgentFromCanvasPoint(cx, cy);
+      return foundAgent ? foundAgent.id : null;
     }
   };
 })();
