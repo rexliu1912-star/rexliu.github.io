@@ -992,9 +992,17 @@
 
   function drawFurniture(f) {
     var img = images[getFurnitureImageKey(f)]; if (!img) return;
-    var dw = f.w * T;
-    var sourceTile = f.tile || (f.limezu ? 32 : 16);
-    var dh = (img.height / sourceTile) * T;
+    // LimeZu singles are all 64x96px (2×3 tiles at 32px/tile).
+    // Render at actual pixel size for correct proportions.
+    var dw, dh;
+    if (f.limezu) {
+      dw = img.width;   // 64px = 2 tiles
+      dh = img.height;  // 96px = 3 tiles
+    } else {
+      var sourceTile = f.tile || 16;
+      dw = f.w * T;
+      dh = (img.height / sourceTile) * T;
+    }
     var x = f.col * T;
     var y = (f.row + (f.h || 1)) * T - dh;
     ctx.drawImage(img, x, y, dw, dh);
