@@ -25,7 +25,7 @@
   var DIR_DOWN = 0, DIR_UP = 1, DIR_RIGHT = 2;
   var DIR_LEFT = 3; // virtual direction, uses RIGHT row + flip
   var ROW_ACTIVITY = 3;
-  var WALK_SEQUENCE = [1, 2, 3, 2, 1];
+  var WALK_SEQUENCE = [0, 1, 2, 3];
   var WORK_SEQUENCE = [0, 1];
   var STATE_FRAME = {
     idle: 0,
@@ -38,12 +38,14 @@
 
   // Delta-time animation constants
   var MOVE_SPEED = 54;       // pixels per second (at ZOOM=2)
-  var WALK_FRAME_DUR = 0.10; // seconds per walk frame
+  var WALK_FRAME_DUR = 0.18; // seconds per walk frame
   var WORK_FRAME_DUR = 1.2; // seconds per work frame cycle (slow typing)
   var IDLE_TURN_MIN = 1.5;   // seconds
   var IDLE_TURN_MAX = 4.0;
-  var WANDER_MIN = 2.0;      // seconds
-  var WANDER_MAX = 8.0;
+  var IDLE_DESK_MIN = 3.0;
+  var IDLE_DESK_MAX = 8.0;
+  var IDLE_ACTIVITY_MIN = 4.0;
+  var IDLE_ACTIVITY_MAX = 8.0;
 
   // ── Tile Map (24×14) ──────────────────────────────────────
   var MAP = [
@@ -145,6 +147,19 @@
 
   var SOCIAL_LINES_EN = ['Coffee?', 'Ship it!', 'LGTM 👍', 'Nice!', 'Bug?', 'Review?', "Let's go!", 'Almost done', 'Hmm...', '📊'];
   var SOCIAL_LINES_ZH = ['喝杯咖啡？', '发布！', '不错！', '有Bug？', '帮我review？', '冲！', '快好了', '嗯...', '📊'];
+
+  var POI_LIST = [
+    { col:4,  row:4,  type:'coffee' },
+    { col:3,  row:5,  type:'lounge' },
+    { col:5,  row:6,  type:'lounge' },
+    { col:2,  row:10, type:'game' },
+    { col:4,  row:10, type:'game' },
+    { col:20, row:5,  type:'plants' },
+    { col:21, row:9,  type:'plants' },
+    { col:10, row:12, type:'walk' },
+    { col:15, row:12, type:'walk' },
+    { col:19, row:12, type:'walk' }
+  ];
 
   // ── Image Loader ───────────────────────────────────────────
   function loadImg(src) {
@@ -270,18 +285,49 @@
     this.animTimer = 0;       // dt-based animation accumulator
     this.workTimer = 0;       // dt-based work animation accumulator
     this.idleTurnTimer = randFloat(IDLE_TURN_MIN, IDLE_TURN_MAX);
-    this.wanderTimer = randFloat(WANDER_MIN, WANDER_MAX);
+    this.idleState = 'AT_DESK';
+    this.idleActivityTimer = 0;
+    this.idleDeskTimer = randFloat(IDLE_DESK_MIN, IDLE_DESK_MAX);
+    this.activityFrame = 0;
+    this.activityTimer = 0;
+    this.idlePoi = null;
     this.zzzPhase = 0;
     this.errorFlicker = 0;    // for error blink effect
   }
 
+  Agent.prototype.resetIdleBehavior = function () {
+    this.idleState = 'AT_DESK';
+    this.idleActivityTimer = 0;
+    this.idleDeskTimer = randFloat(IDLE_DESK_MIN, IDLE_DESK_MAX);
+    this.activityFrame = 0;
+    this.activityTimer = 0;
+    this.idlePoi = null;
+  };
+
+  Agent.prototype.pickIdlePoi = function () {
+    var options = [];
+    for (var i = 0; i < POI_LIST.length; i++) {
+      var poi = POI_LIST[i];
+      if (!isWalkable(poi.col, poi.row, this.id, false)) continue;
+      var path = bfs(this.col, this.row, poi.col, poi.row, this.id);
+      if (path.length) options.push({ poi: poi, path: path });
+    }
+    if (!options.length) return null;
+    return options[randInt(0, options.length - 1)];
+  };
+
   Agent.prototype.setStatus = function (s, task) {
     if (this.status === s) { this.task = task || ''; return; }
     this.status = s; this.task = task || '';
+    if (s !== 'idle') this.resetIdleBehavior();
     if (s === 'busy') {
       this.path = bfs(this.col, this.row, this.hc, this.hr, this.id);
-      if (this.path.length) this.startMove();
-      else this.dir = DIR_DOWN; // face front at desk
+      if (this.path.length) {
+        this.idleState = 'WALKING_HOME';
+        this.startMove();
+      } else {
+        this.dir = DIR_DOWN; // face front at desk
+      }
     }
     if (s === 'offline') {
       this.dir = DIR_DOWN;
@@ -330,18 +376,30 @@
         this.px = this.targetX; this.py = this.targetY;
         this.col = this.targetCol; this.row = this.targetRow;
         this.moving = false;
-        if (this.path.length) this.startMove();
+        if (this.path.length) {
+          this.startMove();
+        } else if (this.status === 'idle') {
+          if (this.idleState === 'WALKING_TO_POI') {
+            this.idleState = 'AT_POI';
+            this.idleActivityTimer = randFloat(IDLE_ACTIVITY_MIN, IDLE_ACTIVITY_MAX);
+            this.activityFrame = 0;
+            this.activityTimer = 0;
+            this.dir = DIR_DOWN;
+          } else if (this.idleState === 'WALKING_HOME') {
+            this.resetIdleBehavior();
+            this.dir = DIR_DOWN;
+          }
+        }
       } else {
         this.px += (dx / dist) * speed;
         this.py += (dy / dist) * speed;
       }
-      // Walk cycle: 1 → 2 → 3 → 2 → 1
       this.animTimer += dt;
-      if (this.animTimer >= WALK_FRAME_DUR) {
+      while (this.animTimer >= WALK_FRAME_DUR) {
         this.animTimer -= WALK_FRAME_DUR;
         this.walkCycleIndex = (this.walkCycleIndex + 1) % STATE_FRAME.walk.length;
-        this.frame = STATE_FRAME.walk[this.walkCycleIndex];
       }
+      this.frame = STATE_FRAME.walk[this.walkCycleIndex];
       return;
     }
 
@@ -356,39 +414,45 @@
       return;
     }
 
-    // ── IDLE (standing still) ──
-    this.frame = STATE_FRAME.idle; // FIXED frame 0, no breathing animation
-
-    // Occasional direction turn
-    this.idleTurnTimer -= dt;
-    if (this.idleTurnTimer <= 0) {
-      this.idleTurnTimer = randFloat(IDLE_TURN_MIN, IDLE_TURN_MAX);
-      if (Math.random() < 0.35) {
-        var dirs = [DIR_DOWN, DIR_UP, DIR_LEFT, DIR_RIGHT];
-        this.dir = dirs[randInt(0, 3)];
-      }
+    // ── IDLE loop: desk wait → walk to POI → activity → walk home ──
+    this.frame = STATE_FRAME.idle;
+    if (this.status !== 'idle') {
+      this.dir = DIR_DOWN;
+      return;
     }
 
-    // Idle wander (only when truly idle, not busy-waiting)
-    if (this.status === 'idle') {
-      this.wanderTimer -= dt;
-      if (this.wanderTimer <= 0) {
-        this.wanderTimer = randFloat(WANDER_MIN, WANDER_MAX);
-        if (Math.random() < 0.35) return; // sometimes skip
-        var choices = [];
-        for (var dc = -2; dc <= 2; dc++) {
-          for (var dr = -2; dr <= 2; dr++) {
-            var nc = this.hc + dc, nr = this.hr + dr;
-            if ((Math.abs(dc) + Math.abs(dr)) === 0) continue;
-            if (Math.abs(dc) + Math.abs(dr) > 3) continue;
-            if (isWalkable(nc, nr, this.id, false)) choices.push([nc, nr]);
-          }
+    if (this.idleState === 'AT_POI') {
+      this.dir = DIR_DOWN;
+      this.idleActivityTimer -= dt;
+      this.activityTimer += dt;
+      if (this.activityTimer >= WORK_FRAME_DUR) {
+        this.activityTimer -= WORK_FRAME_DUR;
+        this.activityFrame = (this.activityFrame + 1) % STATE_FRAME.activity.length;
+      }
+      if (this.idleActivityTimer <= 0) {
+        this.path = bfs(this.col, this.row, this.hc, this.hr, this.id);
+        this.idlePoi = null;
+        if (this.path.length) {
+          this.idleState = 'WALKING_HOME';
+          this.startMove();
+        } else {
+          this.resetIdleBehavior();
+          this.dir = DIR_DOWN;
         }
-        if (choices.length) {
-          var t = choices[randInt(0, choices.length - 1)];
-          this.path = bfs(this.col, this.row, t[0], t[1], this.id);
-          if (this.path.length) this.startMove();
-        }
+      }
+      return;
+    }
+
+    this.dir = DIR_DOWN;
+    this.idleDeskTimer -= dt;
+    if (this.idleState === 'AT_DESK' && this.idleDeskTimer <= 0) {
+      var nextPoi = this.pickIdlePoi();
+      this.idleDeskTimer = randFloat(IDLE_DESK_MIN, IDLE_DESK_MAX);
+      if (nextPoi) {
+        this.idlePoi = nextPoi.poi;
+        this.path = nextPoi.path;
+        this.idleState = 'WALKING_TO_POI';
+        this.startMove();
       }
     }
   };
@@ -661,10 +725,16 @@
     if (a.status === 'error') ctx.globalAlpha = 0.3 + 0.7 * Math.abs(Math.sin(a.errorFlicker));
 
     var isDeskBusy = a.status === 'busy' && !a.moving && a.col === a.hc && a.row === a.hr;
+    var isPoiActivity = a.status === 'idle' && a.idleState === 'AT_POI';
     var dirRow = isDeskBusy ? ROW_ACTIVITY : a.dir;
     var flip = false;
-    if (!isDeskBusy && a.dir === DIR_LEFT) { dirRow = DIR_RIGHT; flip = true; }
-    var frame = Math.max(0, Math.min(a.frame, CHAR_COLS - 1));
+    if (isPoiActivity) {
+      dirRow = ROW_ACTIVITY;
+    } else if (!isDeskBusy && a.dir === DIR_LEFT) {
+      dirRow = DIR_RIGHT;
+      flip = true;
+    }
+    var frame = isPoiActivity ? STATE_FRAME.activity[a.activityFrame] : Math.max(0, Math.min(a.frame, CHAR_COLS - 1));
     var sx = frame * CHAR_FW, sy = dirRow * CHAR_FH;
 
     // ── Hover outline ──
