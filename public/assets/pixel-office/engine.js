@@ -67,12 +67,12 @@
 
   // ── Agents ─────────────────────────────────────────────────
   var AGENTS_CFG = [
-    { id:'main',       name:'Samantha', sprite:'char_0.png', hc:11, hr:5,  dir:DIR_DOWN,  tint:null },
-    { id:'writer',     name:'Loki',     sprite:'char_1.png', hc:7,  hr:8,  dir:DIR_DOWN,  tint:null },
-    { id:'researcher', name:'Vision',   sprite:'char_2.png', hc:12, hr:8,  dir:DIR_DOWN,  tint:null },
-    { id:'coder',      name:'Jarvis',   sprite:'char_3.png', hc:17, hr:8,  dir:DIR_DOWN,  tint:null },
-    { id:'designer',   name:'Shuri',    sprite:'char_4.png', hc:9,  hr:11, dir:DIR_DOWN,  tint:null },
-    { id:'analyst',    name:'Friday',   sprite:'char_5.png', hc:15, hr:11, dir:DIR_DOWN,  tint:null },
+    { id:'main',       name:'Samantha', emoji:'🧡', sprite:'char_0.png', hc:11, hr:5,  dir:DIR_DOWN,  tint:null },
+    { id:'writer',     name:'Loki',     emoji:'🐍', sprite:'char_1.png', hc:7,  hr:8,  dir:DIR_DOWN,  tint:null },
+    { id:'researcher', name:'Vision',   emoji:'👁️', sprite:'char_2.png', hc:12, hr:8,  dir:DIR_DOWN,  tint:null },
+    { id:'coder',      name:'Jarvis',   emoji:'⚙️', sprite:'char_3.png', hc:17, hr:8,  dir:DIR_DOWN,  tint:null },
+    { id:'designer',   name:'Shuri',    emoji:'🎨', sprite:'char_4.png', hc:9,  hr:11, dir:DIR_DOWN,  tint:null },
+    { id:'analyst',    name:'Friday',   emoji:'📊', sprite:'char_5.png', hc:15, hr:11, dir:DIR_DOWN,  tint:null },
   ];
 
   // ── Furniture layout ───────────────────────────────────────
@@ -144,6 +144,8 @@
   var dayOverlayState = null;
   var socialBubble = null;
   var nextSocialBubbleAt = 0;
+  var particles = [];
+  var audioCtx = null;
 
   var SOCIAL_LINES_EN = ['Coffee?', 'Ship it!', 'LGTM 👍', 'Nice!', 'Bug?', 'Review?', "Let's go!", 'Almost done', 'Hmm...', '📊'];
   var SOCIAL_LINES_ZH = ['喝杯咖啡？', '发布！', '不错！', '有Bug？', '帮我review？', '冲！', '快好了', '嗯...', '📊'];
@@ -265,10 +267,133 @@
   function randFloat(a, b) { return a + Math.random() * (b - a); }
   function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
   function lerp(a, b, t) { return a + (b - a) * t; }
+  function easeToward(value, target, step) {
+    if (value < target) return Math.min(value + step, target);
+    if (value > target) return Math.max(value - step, target);
+    return target;
+  }
+
+  function getTaskIcon(task) {
+    var t = String(task || '').toLowerCase();
+    if (/(code|coding|script|deploy|build|fix|bug)/.test(t)) return '⌨️';
+    if (/(research|scan|intel|alpha|analysis)/.test(t)) return '🔍';
+    if (/(write|draft|content|blog|tweet)/.test(t)) return '✍️';
+    if (/(design|image|sprite|pixel)/.test(t)) return '🎨';
+    if (/(data|portfolio|finance|snek|sync)/.test(t)) return '📊';
+    return '💼';
+  }
+
+  function playHoverClick() {
+    try {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (!audioCtx) return;
+      var osc = audioCtx.createOscillator();
+      var gain = audioCtx.createGain();
+      osc.type = 'square';
+      osc.frequency.value = 800;
+      gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.05);
+    } catch (err) {}
+  }
+
+  function spawnDust(a) {
+    if (particles.length >= 30) return;
+    var count = randInt(1, 2);
+    for (var i = 0; i < count && particles.length < 30; i++) {
+      var life = randFloat(0.3, 0.5);
+      particles.push({
+        x: a.px + randFloat(-4, 4),
+        y: a.py + randFloat(-2, 2),
+        vx: randFloat(-8, 8),
+        vy: randFloat(-15, -5),
+        life: life,
+        maxLife: life,
+        size: randFloat(1, 2),
+        alpha: 1
+      });
+    }
+  }
+
+  function updateParticles(dt) {
+    for (var i = particles.length - 1; i >= 0; i--) {
+      var p = particles[i];
+      p.life -= dt;
+      if (p.life <= 0) {
+        particles.splice(i, 1);
+        continue;
+      }
+      p.x += p.vx * dt;
+      p.y += p.vy * dt;
+      p.alpha = clamp(p.life / p.maxLife, 0, 1);
+    }
+  }
+
+  function drawParticles() {
+    if (!particles.length) return;
+    ctx.save();
+    for (var i = 0; i < particles.length; i++) {
+      var p = particles[i];
+      ctx.fillStyle = 'rgba(180,170,150,' + (p.alpha * 0.7).toFixed(3) + ')';
+      ctx.fillRect(Math.round(p.x), Math.round(p.y), Math.max(1, Math.round(p.size)), Math.max(1, Math.round(p.size)));
+    }
+    ctx.restore();
+  }
+
+  function drawHoverCard(a, drawX, drawY, dw) {
+    if (a !== hoveredAgent) return;
+    var title = (a.emoji || '🙂') + ' ' + a.name;
+    var statusText = 'status: ' + a.status;
+    var taskText = a.status === 'busy' && a.task ? a.task : '';
+    var lines = [title, statusText];
+    if (taskText) lines.push(taskText);
+    ctx.save();
+    ctx.font = 'bold 11px sans-serif';
+    var maxWidth = ctx.measureText(title).width;
+    ctx.font = '10px sans-serif';
+    maxWidth = Math.max(maxWidth, ctx.measureText(statusText).width);
+    if (taskText) maxWidth = Math.max(maxWidth, ctx.measureText(taskText).width);
+    var padX = 10, padY = 8, lineH = 14;
+    var bw = Math.ceil(maxWidth + padX * 2);
+    var bh = padY * 2 + lines.length * lineH - 2;
+    var bx = drawX + dw + 10;
+    if (bx + bw > CANVAS_W - 8) bx = drawX - bw - 10;
+    var by = Math.max(8, drawY - 6);
+    if (by + bh > CANVAS_H - 8) by = CANVAS_H - bh - 8;
+    var colors = { idle: '#4ade80', busy: '#f59e0b', offline: '#9ca3af', error: '#a78bfa' };
+    ctx.shadowColor = 'rgba(0,0,0,0.35)';
+    ctx.shadowBlur = 8;
+    ctx.shadowOffsetY = 3;
+    ctx.fillStyle = 'rgba(10,10,18,0.84)';
+    ctx.beginPath();
+    ctx.roundRect(bx, by, bw, bh, 8);
+    ctx.fill();
+    ctx.shadowColor = 'transparent';
+    ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'top';
+    ctx.font = 'bold 11px sans-serif';
+    ctx.fillStyle = '#ffffff';
+    ctx.fillText(title, bx + padX, by + padY);
+    ctx.font = '10px sans-serif';
+    ctx.fillStyle = colors[a.status] || '#4ade80';
+    ctx.fillText(statusText, bx + padX, by + padY + lineH);
+    if (taskText) {
+      ctx.fillStyle = '#b8bcc8';
+      ctx.fillText(taskText, bx + padX, by + padY + lineH * 2);
+    }
+    ctx.restore();
+  }
 
   // ── Agent class ────────────────────────────────────────────
   function Agent(cfg) {
     this.id = cfg.id; this.name = cfg.name;
+    this.emoji = cfg.emoji || '🙂';
     this.spriteKey = 'char_' + AGENTS_CFG.indexOf(cfg);
     this.hc = cfg.hc; this.hr = cfg.hr;
     this.col = cfg.hc; this.row = cfg.hr;
@@ -293,6 +418,9 @@
     this.idlePoi = null;
     this.zzzPhase = 0;
     this.errorFlicker = 0;    // for error blink effect
+    this.fadeAlpha = (cfg.initialStatus === 'offline') ? 0.35 : 1.0;
+    this.fadeTarget = this.fadeAlpha;
+    this.walkDustTimer = 0;
   }
 
   Agent.prototype.resetIdleBehavior = function () {
@@ -317,8 +445,11 @@
   };
 
   Agent.prototype.setStatus = function (s, task) {
-    if (this.status === s) { this.task = task || ''; return; }
+    var prevStatus = this.status;
+    if (prevStatus === s) { this.task = task || ''; return; }
     this.status = s; this.task = task || '';
+    if (prevStatus === 'offline' && s !== 'offline') this.fadeAlpha = 0;
+    this.fadeTarget = (s === 'offline') ? 0.35 : 1.0;
     if (s !== 'idle') this.resetIdleBehavior();
     if (s === 'busy') {
       this.path = bfs(this.col, this.row, this.hc, this.hr, this.id);
@@ -336,6 +467,7 @@
   };
 
   Agent.prototype.startMove = function () {
+    this.walkDustTimer = 0;
     if (!this.path.length) { this.moving = false; return; }
     var next = this.path.shift();
     var dx = next[0] - this.col, dy = next[1] - this.row;
@@ -351,6 +483,8 @@
   };
 
   Agent.prototype.update = function (dt) {
+    this.fadeAlpha = easeToward(this.fadeAlpha, this.fadeTarget, dt);
+
     // ── OFFLINE: grey, frame 0 facing down, ZZZ ──
     if (this.status === 'offline') {
       this.dir = DIR_DOWN;
@@ -395,6 +529,11 @@
         this.py += (dy / dist) * speed;
       }
       this.animTimer += dt;
+      this.walkDustTimer += dt;
+      while (this.walkDustTimer >= 0.3) {
+        this.walkDustTimer -= 0.3;
+        spawnDust(this);
+      }
       while (this.animTimer >= WALK_FRAME_DUR) {
         this.animTimer -= WALK_FRAME_DUR;
         this.walkCycleIndex = (this.walkCycleIndex + 1) % STATE_FRAME.walk.length;
@@ -405,6 +544,7 @@
 
     // ── BUSY at home desk: typing animation (col 4-5) ──
     if (this.status === 'busy' && this.col === this.hc && this.row === this.hr) {
+      this.walkDustTimer = 0;
       this.dir = DIR_DOWN; // face front
       this.workTimer += dt;
       if (this.workTimer >= WORK_FRAME_DUR) {
@@ -417,6 +557,7 @@
     // ── IDLE loop: desk wait → walk to POI → activity → walk home ──
     this.frame = STATE_FRAME.idle;
     if (this.status !== 'idle') {
+      this.walkDustTimer = 0;
       this.dir = DIR_DOWN;
       return;
     }
@@ -721,8 +862,8 @@
     var drawY = a.py - dh + sittingOffset;
 
     ctx.save();
-    if (a.status === 'offline') ctx.globalAlpha = 0.35;
-    if (a.status === 'error') ctx.globalAlpha = 0.3 + 0.7 * Math.abs(Math.sin(a.errorFlicker));
+    ctx.globalAlpha = a.fadeAlpha;
+    if (a.status === 'error') ctx.globalAlpha = a.fadeAlpha * (0.3 + 0.7 * Math.abs(Math.sin(a.errorFlicker)));
 
     var isDeskBusy = a.status === 'busy' && !a.moving && a.col === a.hc && a.row === a.hr;
     var isPoiActivity = a.status === 'idle' && a.idleState === 'AT_POI';
@@ -765,9 +906,8 @@
       oc.cx.globalCompositeOperation = 'source-over';
       ctx.drawImage(oc.cv, drawX - 2, drawY - 2);
       // Reset alpha for actual sprite
-      if (a.status === 'offline') ctx.globalAlpha = 0.35;
-      else if (a.status === 'error') ctx.globalAlpha = 0.3 + 0.7 * Math.abs(Math.sin(a.errorFlicker));
-      else ctx.globalAlpha = 1;
+      if (a.status === 'error') ctx.globalAlpha = a.fadeAlpha * (0.3 + 0.7 * Math.abs(Math.sin(a.errorFlicker)));
+      else ctx.globalAlpha = a.fadeAlpha;
     }
 
     if (a.tint) {
@@ -798,31 +938,43 @@
 
     // Name label
     ctx.save();
-    ctx.font = 'bold 11px "Press Start 2P", monospace';
     ctx.textAlign = 'center';
-    var labelX = drawX + dw / 2, labelY = drawY - 8;
-
+    ctx.textBaseline = 'middle';
+    var labelX = drawX + dw / 2, labelY = drawY - 9;
     var colors = { idle: '#4ade80', busy: '#f59e0b', offline: '#555555', error: '#a78bfa' };
     var dotColor = colors[a.status] || '#4ade80';
     var dotR = 4;
     if (a.status === 'busy') dotR = 3 + 2 * Math.abs(Math.sin(tick * 0.08));
-    ctx.fillStyle = dotColor;
-    ctx.beginPath();
-    ctx.arc(labelX - ctx.measureText(a.name).width / 2 - 8, labelY - 3, dotR, 0, Math.PI * 2);
-    ctx.fill();
-
-    ctx.fillStyle = 'rgba(0,0,0,0.6)';
-    ctx.fillText(a.name, labelX + 1, labelY + 1);
-    ctx.fillStyle = '#fff';
-    ctx.fillText(a.name, labelX, labelY);
+    if (a === hoveredAgent) {
+      var hoverLabel = (a.emoji || '🙂') + ' ' + a.name;
+      ctx.font = 'bold 11px sans-serif';
+      var hoverWidth = ctx.measureText(hoverLabel).width;
+      ctx.fillStyle = 'rgba(0,0,0,0.62)';
+      ctx.fillText(hoverLabel, labelX + 1, labelY + 1);
+      ctx.fillStyle = '#ffffff';
+      ctx.fillText(hoverLabel, labelX, labelY);
+      ctx.fillStyle = dotColor;
+      ctx.beginPath();
+      ctx.arc(labelX - hoverWidth / 2 - 10, labelY, dotR, 0, Math.PI * 2);
+      ctx.fill();
+    } else {
+      ctx.font = '13px sans-serif';
+      ctx.fillText(a.emoji || '🙂', labelX, labelY);
+      ctx.fillStyle = dotColor;
+      ctx.beginPath();
+      ctx.arc(labelX + 12, labelY, dotR, 0, Math.PI * 2);
+      ctx.fill();
+    }
     ctx.restore();
 
     if (a.status === 'busy' && a.task) drawTaskBubble(a, drawX, drawY, dw);
+    drawHoverCard(a, drawX, drawY, dw);
     if (a.status === 'offline') drawZzz(a);
   }
 
   function drawTaskBubble(a, drawX, drawY, dw) {
-    var text = a.task.length > 18 ? a.task.slice(0, 18) + '\u2026' : a.task;
+    var baseText = a.task.length > 18 ? a.task.slice(0, 18) + '\u2026' : a.task;
+    var text = getTaskIcon(a.task) + ' ' + baseText;
     ctx.save();
     ctx.font = '8px sans-serif';
     var tw = ctx.measureText(text).width;
@@ -885,6 +1037,7 @@
   // ── Mouse hover tracking ──────────────────────────────────
   function onMouseMove(e) {
     if (!agents || !canvas) { hoveredAgent = null; return; }
+    var prevHovered = hoveredAgent;
     var rect = canvas.getBoundingClientRect();
     var scaleX = CANVAS_W / rect.width, scaleY = CANVAS_H / rect.height;
     var mx = (e.clientX - rect.left) * scaleX;
@@ -899,6 +1052,7 @@
         break;
       }
     }
+    if (hoveredAgent && hoveredAgent !== prevHovered) playHoverClick();
     canvas.style.cursor = hoveredAgent ? 'pointer' : 'default';
   }
 
@@ -914,11 +1068,13 @@
 
     // Update agents with delta-time
     agents.forEach(function (a) { a.update(dt); });
+    updateParticles(dt);
 
     // Render
     ctx.clearRect(0, 0, CANVAS_W, CANVAS_H);
     ctx.imageSmoothingEnabled = false;
     drawFloorAndWalls();
+    drawParticles();
 
     // ── Z-Sort: unified furniture + agents, sorted by bottom Y ──
     var drawables = [];
@@ -976,6 +1132,8 @@
       dayOverlayState = null;
       socialBubble = null;
       nextSocialBubbleAt = Date.now() + randInt(4000, 9000);
+      particles = [];
+      audioCtx = null;
       updateDayOverlay(true);
 
       // Mouse hover listener
@@ -1009,6 +1167,8 @@
       dayOverlayState = null;
       socialBubble = null;
       nextSocialBubbleAt = 0;
+      particles = [];
+      audioCtx = null;
     },
 
     getAgentAt: function (cx, cy) {
