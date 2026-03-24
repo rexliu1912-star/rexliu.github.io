@@ -146,6 +146,7 @@
   var nextSocialBubbleAt = 0;
   var particles = [];
   var audioCtx = null;
+  var entryOverlay = null;
 
   var SOCIAL_LINES_EN = ['Coffee?', 'Ship it!', 'LGTM 👍', 'Nice!', 'Bug?', 'Review?', "Let's go!", 'Almost done', 'Hmm...', '📊'];
   var SOCIAL_LINES_ZH = ['喝杯咖啡？', '发布！', '不错！', '有Bug？', '帮我review？', '冲！', '快好了', '嗯...', '📊'];
@@ -283,6 +284,26 @@
     return '💼';
   }
 
+  function playStartupJingle() {
+    try {
+      var ctx8 = new (window.AudioContext || window.webkitAudioContext)();
+      var notes = [523, 659, 784, 1047]; // C5 E5 G5 C6
+      var t = ctx8.currentTime + 0.05;
+      notes.forEach(function(freq, i) {
+        var osc = ctx8.createOscillator();
+        var gain = ctx8.createGain();
+        osc.type = 'square';
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.06, t + i * 0.12);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + i * 0.12 + 0.15);
+        osc.connect(gain);
+        gain.connect(ctx8.destination);
+        osc.start(t + i * 0.12);
+        osc.stop(t + i * 0.12 + 0.15);
+      });
+    } catch(e) {}
+  }
+
   function playHoverClick() {
     try {
       if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -391,13 +412,21 @@
   }
 
   // ── Agent class ────────────────────────────────────────────
+  function getEntryCol(homeCol) {
+    return homeCol <= Math.floor((COLS - 1) / 2) ? 0 : COLS - 1;
+  }
+
   function Agent(cfg) {
     this.id = cfg.id; this.name = cfg.name;
     this.emoji = cfg.emoji || '🙂';
     this.spriteKey = 'char_' + AGENTS_CFG.indexOf(cfg);
     this.hc = cfg.hc; this.hr = cfg.hr;
-    this.col = cfg.hc; this.row = cfg.hr;
-    this.px = cfg.hc * T + T / 2; this.py = cfg.hr * T + T / 2;
+    this.entryCol = getEntryCol(cfg.hc);
+    this.entryDelay = AGENTS_CFG.indexOf(cfg) * 0.3;
+    this.entryDone = false;
+    this.entryStarted = false;
+    this.col = this.entryCol; this.row = cfg.hr;
+    this.px = this.entryCol * T + T / 2; this.py = cfg.hr * T + T / 2;
     this.dir = cfg.dir;
     this.homeDir = cfg.dir;
     this.tint = cfg.tint || null;
@@ -421,6 +450,11 @@
     this.fadeAlpha = (cfg.initialStatus === 'offline') ? 0.35 : 1.0;
     this.fadeTarget = this.fadeAlpha;
     this.walkDustTimer = 0;
+    this.greeting = 0;
+    this.greetingResumeMoving = false;
+    this.greetingResumeTargetX = this.targetX;
+    this.greetingResumeTargetY = this.targetY;
+    this.celebrateTimer = 0;
   }
 
   Agent.prototype.resetIdleBehavior = function () {
@@ -460,6 +494,7 @@
     var prevStatus = this.status;
     if (prevStatus === s) { this.task = task || ''; return; }
     this.status = s; this.task = task || '';
+    if (prevStatus === 'busy' && s === 'idle') this.celebrateTimer = 0.8;
     if (prevStatus === 'offline' && s !== 'offline') this.fadeAlpha = 0;
     this.fadeTarget = (s === 'offline') ? 0.35 : 1.0;
     if (s !== 'idle') this.resetIdleBehavior();
@@ -497,6 +532,51 @@
   Agent.prototype.update = function (dt) {
     this.fadeAlpha = easeToward(this.fadeAlpha, this.fadeTarget, dt);
 
+    if (this.celebrateTimer > 0) this.celebrateTimer = Math.max(0, this.celebrateTimer - dt);
+
+    if (!this.entryDone) {
+      if (!this.entryStarted) {
+        this.entryDelay -= dt;
+        this.frame = STATE_FRAME.idle;
+        if (this.entryDelay > 0) return;
+        this.entryStarted = true;
+        this.path = bfs(this.col, this.row, this.hc, this.hr, this.id);
+        if (this.path.length) this.startMove();
+        else {
+          this.col = this.hc; this.row = this.hr;
+          this.px = this.hc * T + T / 2; this.py = this.hr * T + T / 2;
+          this.targetCol = this.hc; this.targetRow = this.hr;
+          this.targetX = this.px; this.targetY = this.py;
+          this.entryDone = true;
+          this.dir = DIR_DOWN;
+        }
+      }
+      if (!this.entryDone && !this.moving && !this.path.length) {
+        this.entryDone = true;
+        this.col = this.hc; this.row = this.hr;
+        this.px = this.hc * T + T / 2; this.py = this.hr * T + T / 2;
+        this.targetCol = this.hc; this.targetRow = this.hr;
+        this.targetX = this.px; this.targetY = this.py;
+        this.dir = DIR_DOWN;
+      }
+    }
+
+    if (this.greeting > 0) {
+      this.greeting -= dt;
+      this.walkDustTimer = 0;
+      this.frame = STATE_FRAME.idle;
+      if (this.greeting <= 0) {
+        this.greeting = 0;
+        if (this.greetingResumeMoving) {
+          this.moving = true;
+          this.targetX = this.greetingResumeTargetX;
+          this.targetY = this.greetingResumeTargetY;
+          this.greetingResumeMoving = false;
+        }
+      }
+      return;
+    }
+
     // ── OFFLINE: grey, frame 0 facing down, ZZZ ──
     if (this.status === 'offline') {
       this.dir = DIR_DOWN;
@@ -524,6 +604,9 @@
         this.moving = false;
         if (this.path.length) {
           this.startMove();
+        } else if (!this.entryDone) {
+          this.entryDone = true;
+          this.dir = DIR_DOWN;
         } else if (this.status === 'idle') {
           if (this.idleState === 'WALKING_TO_POI') {
             this.idleState = 'AT_POI';
@@ -723,6 +806,45 @@
     return Math.sqrt(dx * dx + dy * dy);
   }
 
+  function triggerGreetingBubble(agent, nowMs) {
+    var lines = getSocialLines();
+    socialBubble = {
+      agentId: agent.id,
+      text: lines[randInt(0, lines.length - 1)],
+      startsAt: nowMs,
+      endsAt: nowMs + 700,
+      fadeMs: 180
+    };
+    nextSocialBubbleAt = socialBubble.endsAt + randInt(6000, 10000);
+  }
+
+  function checkGreetingEncounters(nowMs) {
+    if (!agents) return;
+    for (var i = 0; i < agents.length; i++) {
+      for (var j = i + 1; j < agents.length; j++) {
+        var a1 = agents[i], a2 = agents[j];
+        if (a1.status !== 'idle' || a2.status !== 'idle') continue;
+        if (!a1.entryDone || !a2.entryDone) continue;
+        if (!a1.moving || !a2.moving) continue;
+        if (a1.greeting > 0 || a2.greeting > 0) continue;
+        if (distancePx(a1, a2) >= 48) continue;
+        a1.greeting = 0.5;
+        a2.greeting = 0.5;
+        a1.greetingResumeMoving = true;
+        a2.greetingResumeMoving = true;
+        a1.greetingResumeTargetX = a1.targetX;
+        a1.greetingResumeTargetY = a1.targetY;
+        a2.greetingResumeTargetX = a2.targetX;
+        a2.greetingResumeTargetY = a2.targetY;
+        a1.dir = (a2.px > a1.px) ? DIR_RIGHT : DIR_LEFT;
+        a2.dir = (a1.px > a2.px) ? DIR_RIGHT : DIR_LEFT;
+        a1.moving = false;
+        a2.moving = false;
+        triggerGreetingBubble(Math.random() < 0.5 ? a1 : a2, nowMs);
+      }
+    }
+  }
+
   function updateSocialBubble(nowMs) {
     if (socialBubble && nowMs >= socialBubble.endsAt) socialBubble = null;
     if (socialBubble || !agents || nowMs < nextSocialBubbleAt) return;
@@ -879,7 +1001,8 @@
 
     var isDeskBusy = a.status === 'busy' && !a.moving && a.col === a.hc && a.row === a.hr;
     var isPoiActivity = a.status === 'idle' && a.idleState === 'AT_POI';
-    var dirRow = isDeskBusy ? ROW_ACTIVITY : a.dir;
+    var isCelebrating = a.celebrateTimer > 0 && !a.moving && a.status === 'idle';
+    var dirRow = (isDeskBusy || isCelebrating) ? ROW_ACTIVITY : a.dir;
     var flip = false;
     if (isPoiActivity) {
       dirRow = ROW_ACTIVITY;
@@ -888,6 +1011,10 @@
       flip = true;
     }
     var frame = isPoiActivity ? STATE_FRAME.activity[a.activityFrame] : Math.max(0, Math.min(a.frame, CHAR_COLS - 1));
+    if (isCelebrating) {
+      var celebrateProgress = clamp((0.8 - a.celebrateTimer) / 0.8, 0, 0.999);
+      frame = [2, 3, 2][Math.floor(celebrateProgress * 9) % 3];
+    }
     var sx = frame * CHAR_FW, sy = dirRow * CHAR_FH;
 
     // ── Hover outline ──
@@ -1071,6 +1198,7 @@
 
     updateDayOverlay(false);
     updateSocialBubble(nowMs);
+    checkGreetingEncounters(nowMs);
 
     // Update agents with delta-time
     agents.forEach(function (a) { a.update(dt); });
@@ -1120,6 +1248,14 @@
 
     drawSocialBubble();
     drawDayOverlay();
+    if (entryOverlay && !entryOverlay.done) {
+      entryOverlay.alpha -= dt / 0.8;
+      if (entryOverlay.alpha <= 0) { entryOverlay.alpha = 0; entryOverlay.done = true; }
+      ctx.save();
+      ctx.fillStyle = 'rgba(0,0,0,' + entryOverlay.alpha + ')';
+      ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
+      ctx.restore();
+    }
 
     rafId = requestAnimationFrame(gameLoop);
   }
@@ -1140,6 +1276,7 @@
       nextSocialBubbleAt = Date.now() + randInt(4000, 9000);
       particles = [];
       audioCtx = null;
+      entryOverlay = null;
       updateDayOverlay(true);
 
       // Mouse hover listener
@@ -1151,6 +1288,8 @@
         drawLoading(loaded, total);
       }).then(function () {
         agents = AGENTS_CFG.map(function (cfg) { return new Agent(cfg); });
+        entryOverlay = { alpha: 0.95, done: false };
+        setTimeout(function () { playStartupJingle(); }, 100);
         rafId = requestAnimationFrame(gameLoop);
       }).catch(function (err) {
         console.error('[PixelOffice] Asset load failed:', err);
@@ -1175,6 +1314,7 @@
       nextSocialBubbleAt = 0;
       particles = [];
       audioCtx = null;
+      entryOverlay = null;
     },
 
     getAgentAt: function (cx, cy) {
