@@ -149,16 +149,16 @@
   var SOCIAL_LINES_ZH = ['喝杯咖啡？', '发布！', '不错！', '有Bug？', '帮我review？', '冲！', '快好了', '嗯...', '📊'];
 
   var POI_LIST = [
-    { col:4,  row:4,  type:'coffee' },
-    { col:3,  row:5,  type:'lounge' },
-    { col:5,  row:6,  type:'lounge' },
-    { col:2,  row:10, type:'game' },
-    { col:4,  row:10, type:'game' },
-    { col:20, row:5,  type:'plants' },
-    { col:21, row:9,  type:'plants' },
+    { col:3,  row:3,  type:'coffee' },
+    { col:6,  row:4,  type:'lounge' },
+    { col:6,  row:5,  type:'lounge' },
+    { col:5,  row:10, type:'game' },
+    { col:5,  row:11, type:'game' },
+    { col:19, row:4,  type:'plants' },
+    { col:22, row:9,  type:'plants' },
     { col:10, row:12, type:'walk' },
     { col:15, row:12, type:'walk' },
-    { col:19, row:12, type:'walk' }
+    { col:16, row:12, type:'walk' }
   ];
 
   // ── Image Loader ───────────────────────────────────────────
