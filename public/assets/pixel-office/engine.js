@@ -432,11 +432,23 @@
     this.idlePoi = null;
   };
 
+  function isPoiClaimed(poi) {
+    // Check if any other agent is heading to or sitting at this POI
+    if (!agents) return false;
+    for (var i = 0; i < agents.length; i++) {
+      var a = agents[i];
+      if (a.idleState === 'AT_POI' && a.idlePoi && a.idlePoi.col === poi.col && a.idlePoi.row === poi.row) return true;
+      if ((a.idleState === 'WALKING_TO_POI') && a.idlePoi && a.idlePoi.col === poi.col && a.idlePoi.row === poi.row) return true;
+    }
+    return false;
+  }
+
   Agent.prototype.pickIdlePoi = function () {
     var options = [];
     for (var i = 0; i < POI_LIST.length; i++) {
       var poi = POI_LIST[i];
       if (!isWalkable(poi.col, poi.row, this.id, false)) continue;
+      if (isPoiClaimed(poi)) continue; // skip already-claimed POIs
       var path = bfs(this.col, this.row, poi.col, poi.row, this.id);
       if (path.length) options.push({ poi: poi, path: path });
     }
