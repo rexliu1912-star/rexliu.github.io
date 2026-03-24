@@ -1,0 +1,619 @@
+<!DOCTYPE html><html class="scroll-smooth" lang="zh-CN"> <head><script>
+			(function(){try{var l=localStorage.getItem("rex-lang")||"en";document.documentElement.setAttribute("data-lang",l)}catch(e){document.documentElement.setAttribute("data-lang","en")}})();
+		</script><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><title>Agent Activity — Rex&#39;s Lab - Rex Liu</title><meta name="theme-color" content="#8953d1"><link rel="icon" href="/favicon-32x32.png" type="image/png"><link href="/icons/apple-touch-icon.png" rel="apple-touch-icon"><link href="/manifest.webmanifest" rel="manifest"><link href="https://rexliu.io/lab/agents/" rel="canonical"><meta content="Agent Activity — Rex's Lab - Rex Liu" name="title"><meta content="Live pixel office — 6 AI agents working in real-time" name="description"><meta content="Rex Liu" name="author"><meta content="website" property="og:type"><meta content="Agent Activity — Rex's Lab - Rex Liu" property="og:title"><meta content="Live pixel office — 6 AI agents working in real-time" property="og:description"><meta content="https://rexliu.io/lab/agents/" property="og:url"><meta content="Rex Liu" property="og:site_name"><meta content="zh_CN" property="og:locale"><meta content="https://rexliu.io/social-card-v2.png?v=20260323" property="og:image"><meta content="1200" property="og:image:width"><meta content="630" property="og:image:height"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:url" content="https://rexliu.io/lab/agents/"><meta name="twitter:title" content="Agent Activity — Rex's Lab - Rex Liu"><meta name="twitter:description" content="Live pixel office — 6 AI agents working in real-time"><meta name="twitter:image" content="https://rexliu.io/social-card-v2.png?v=20260323"><meta name="twitter:site" content="@rexliu"><meta name="twitter:creator" content="@rexliu"><link href="/sitemap-index.xml" rel="sitemap"><link href="/rss.xml" title="Blog" rel="alternate" type="application/rss+xml"><meta content="Astro v5.16.3" name="generator"><script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Rex Liu","description":"Be The Sovereign Individual You Want To See In The World","url":"https://rexliu.io/","author":{"@type":"Person","name":"Rex Liu","url":"https://rexliu.io/"}}</script><link rel="icon" href="/avatar.png" type="image/png"><link rel="apple-touch-icon" href="/avatar.png"><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="animate"><script type="module" src="/_astro/ClientRouter.astro_astro_type_script_index_0_lang.QW52Ox2j.js"></script><!-- Defer GA to after page load --><script>(function(){const GA_ID = "G-1EC76EZ517";
+
+			window.addEventListener('load', function() {
+				var s = document.createElement('script');
+				s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+				s.async = true;
+				document.head.appendChild(s);
+				s.onload = function() {
+					window.dataLayer = window.dataLayer || [];
+					function gtag() { dataLayer.push(arguments); }
+					gtag('js', new Date());
+					gtag('config', GA_ID);
+				};
+			});
+		})();</script><!-- Prevent transition flash on initial load --><script>
+			(function() {
+				document.documentElement.classList.add('theme-loaded');
+				setTimeout(() => {
+					document.documentElement.classList.remove('theme-loaded');
+				}, 100);
+			})();
+		</script><style>html[data-lang=en] .lang-zh,html:not([data-lang]) .lang-zh,html[data-lang=zh] .lang-en{display:none!important}.office-wrapper{overflow:hidden;-webkit-overflow-scrolling:touch}.pixel-office{position:relative;width:768px;height:448px;margin:0 auto;border:3px solid #2a2a3a;border-radius:6px;overflow:hidden;box-shadow:0 0 30px #8953d122,0 0 0 1px #8953d133}:global([data-theme=light]) .pixel-office{border-color:#ccc;box-shadow:0 4px 32px #00000014}#office-canvas{display:block;image-rendering:pixelated;image-rendering:crisp-edges;cursor:default;width:768px;height:448px}.pixel-office-scale-wrapper{width:100%;overflow:hidden}.pixel-office{transform-origin:top left}.agent-detail-overlay{display:none;position:fixed;inset:0;z-index:1000;background:#0009;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(4px)}.agent-detail-overlay.is-open{display:flex;animation:overlay-in .2s ease-out}@keyframes overlay-in{0%{opacity:0}to{opacity:1}}.agent-detail-card{background:#12122a;border:2px solid #2a2a3a;border-radius:8px;padding:1.75rem;max-width:480px;width:100%;position:relative;animation:card-in .25s ease-out;box-shadow:0 0 40px #8953d133}:global([data-theme=light]) .agent-detail-card{background:#fffaef;border-color:#e5e7eb;box-shadow:0 4px 32px #0000001a}@keyframes card-in{0%{opacity:0;transform:translateY(12px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}.detail-close{position:absolute;top:1rem;right:1rem;background:none;border:none;color:#888;font-size:1.5rem;cursor:pointer;line-height:1;transition:color .15s;padding:0 .25rem}.detail-close:hover{color:#fff}:global([data-theme=light]) .detail-close:hover{color:#111}.detail-header{display:flex;align-items:center;gap:.6rem;margin-bottom:.85rem}.detail-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}.detail-name{font-size:1.2rem;font-weight:700;color:#fff}:global([data-theme=light]) .detail-name{color:#111}.detail-role{font-size:.75rem;color:#888;text-transform:uppercase;letter-spacing:.08em}.detail-stats{font-size:.8rem;font-weight:600;letter-spacing:.02em;margin-bottom:.6rem}.detail-desc{font-size:.95rem;line-height:1.65;color:#aaa;margin-bottom:1.1rem}:global([data-theme=light]) .detail-desc{color:#555}.detail-examples{list-style:none;margin:0 0 1.1rem;padding:0;display:flex;flex-direction:column;gap:.35rem}.detail-examples li{display:flex;align-items:center;gap:.5rem;font-family:serif;font-size:.85rem;color:#ccc}:global([data-theme=light]) .detail-examples li{color:#444}.detail-examples li:before{content:"";width:4px;height:4px;border-radius:50%;background:#8953d1;flex-shrink:0}.detail-latest{border-top:1px solid #2a2a3a;padding-top:.75rem;font-size:.8rem;color:#666}:global([data-theme=light]) .detail-latest{border-top-color:#e5e7eb;color:#888}.detail-latest strong{color:#8953d1}.detail-recent-list{list-style:none;padding:0;margin:.4rem 0 0;display:flex;flex-direction:column;gap:.25rem}.detail-recent-list li{font-size:.8rem;color:#888}:global([data-theme=light]) .detail-recent-list li{color:#666}.detail-recent-time{color:#8953d1;font-weight:600;margin-right:.3rem}.feed-header-row{display:flex;justify-content:flex-end;margin-bottom:.75rem}.feed-list{display:flex;flex-direction:column;gap:0}.feed-item{display:flex;align-items:flex-start;gap:.85rem;padding:.7rem 0;border-bottom:1px solid #1f1f30}:global([data-theme=light]) .feed-item{border-bottom-color:#e5e7eb}.feed-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px}.feed-content{flex:1;display:flex;flex-direction:column;gap:.15rem;min-width:0}.feed-agent{font-size:.7rem;text-transform:uppercase;letter-spacing:.08em}.feed-desc{line-height:1.5}.feed-time{font-size:.7rem;white-space:nowrap;margin-top:4px}
+</style>
+<link rel="stylesheet" href="/_astro/_slug_.Cx2egYLk.css"></head> <body class="bg-global-bg text-global-text mx-auto flex min-h-screen max-w-4xl flex-col px-4 pt-8 font-mono text-sm font-normal antialiased sm:px-8"> <script>
+	const lightModePref = window.matchMedia("(prefers-color-scheme: light)");
+
+	function getUserPref() {
+		const storedTheme = typeof localStorage !== "undefined" && localStorage.getItem("theme");
+		return storedTheme || (lightModePref.matches ? "light" : "dark");
+	}
+
+	function setTheme(newTheme) {
+		if (newTheme !== "light" && newTheme !== "dark") {
+			return console.warn(
+				`Invalid theme value '${newTheme}' received. Expected 'light' or 'dark'.`,
+			);
+		}
+
+		const root = document.documentElement;
+
+		// root already set to newTheme, exit early
+		if (newTheme === root.getAttribute("data-theme")) {
+			return;
+		}
+
+		root.setAttribute("data-theme", newTheme);
+
+		if (typeof localStorage !== "undefined") {
+			localStorage.setItem("theme", newTheme);
+		}
+	}
+
+	// initial setup
+	setTheme(getUserPref());
+
+	// View Transitions hook to restore theme
+	document.addEventListener("astro:after-swap", () => setTheme(getUserPref()));
+
+	// listen for theme-change custom event, fired in src/components/ThemeToggle.astro
+	document.addEventListener("theme-change", (e) => {
+		setTheme(e.detail.theme);
+	});
+
+	// listen for prefers-color-scheme change.
+	lightModePref.addEventListener("change", (e) => setTheme(e.matches ? "light" : "dark"));
+</script> <a class="sr-only focus:not-sr-only focus:fixed focus:start-1 focus:top-1.5" href="#main">skip to content
+</a> <header class="sticky top-0 z-50 mb-16 flex items-center justify-between bg-[var(--color-global-bg)] pt-2 pb-2" id="main-header" data-pagefind-ignore> <nav class="flex items-center gap-6 font-serif text-sm text-black dark:text-white"> <a href="/" class="transition-colors hover:text-[#8953d1] hover:underline hover:decoration-[#8953d1] hover:decoration-1 hover:underline-offset-4 dark:hover:text-[#a175e8] dark:hover:decoration-[#a175e8]">
+Home
+</a> <a href="/lab/" class="transition-colors hover:text-[#8953d1] hover:underline hover:decoration-[#8953d1] hover:decoration-1 hover:underline-offset-4 dark:hover:text-[#a175e8] dark:hover:decoration-[#a175e8]">
+Lab
+</a> <a href="/os/" class="transition-colors hover:text-[#8953d1] hover:underline hover:decoration-[#8953d1] hover:decoration-1 hover:underline-offset-4 dark:hover:text-[#a175e8] dark:hover:decoration-[#a175e8]">
+OS
+</a> </nav> <div class="flex items-center gap-1"> <!-- Twitter/X icon --> <a href="https://twitter.com/rexliu" target="_blank" rel="noopener noreferrer" class="relative h-9 w-9 cursor-pointer rounded-md p-2 transition-colors hover:text-[#8953d1] dark:hover:text-[#a175e8]" title="Twitter / X" aria-label="Twitter / X"> <svg aria-hidden="true" class="absolute start-1/2 top-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"> <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path> </svg> </a> <!-- GitHub icon --> <a href="https://github.com/rexliu1912-star" target="_blank" rel="noopener noreferrer" class="relative h-9 w-9 cursor-pointer rounded-md p-2 transition-colors hover:text-[#8953d1] dark:hover:text-[#a175e8]" title="GitHub" aria-label="GitHub"> <svg aria-hidden="true" class="absolute start-1/2 top-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"> <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"></path> </svg> </a> <!-- Telegram --> <a href="https://t.me/rexlab2026" target="_blank" rel="noopener noreferrer" class="relative h-9 w-9 cursor-pointer rounded-md p-2 transition-colors hover:text-[#8953d1] dark:hover:text-[#a175e8]" title="Telegram" aria-label="Telegram"> <svg aria-hidden="true" class="absolute start-1/2 top-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"> <path d="M21.198 2.433a2.242 2.242 0 0 0-1.022.215l-16.5 7.5a.75.75 0 0 0 .044 1.389l4.78 1.593 1.5 5.25a.75.75 0 0 0 1.26.333l2.197-2.197 4.032 3.024a1.5 1.5 0 0 0 2.34-.795l3.75-15a1.5 1.5 0 0 0-2.381-1.312z"></path> <path d="M10.5 13.5l8.25-7.5"></path> </svg> </a> <!-- RSS --> <a href="/rss.xml" class="relative h-9 w-9 cursor-pointer rounded-md p-2 transition-colors hover:text-[#8953d1] dark:hover:text-[#a175e8]" title="Subscribe to RSS Feed" aria-label="Subscribe to RSS Feed"> <svg aria-hidden="true" class="absolute start-1/2 top-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"> <path d="M4 11a9 9 0 0 1 9 9" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M4 4a16 16 0 0 1 16 16" stroke-linecap="round" stroke-linejoin="round"></path> <circle cx="5" cy="19" r="1"></circle> </svg> </a> <site-search class="ms-auto" id="search"> <button class="relative h-9 w-9 cursor-pointer rounded-md p-2 transition-colors hover:text-[#8953d1] dark:hover:text-[#a175e8]" aria-keyshortcuts="Control+K Meta+K" data-open-modal disabled title="Search" aria-label="Search"> <svg aria-hidden="true" class="absolute start-1/2 top-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2" fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"> <path d="M0 0h24v24H0z" stroke="none"></path> <path d="M3 10a7 7 0 1 0 14 0 7 7 0 1 0-14 0M21 21l-6-6"></path> </svg> <span class="sr-only">Open Search</span> </button> <dialog aria-label="search" class="bg-global-bg h-full max-h-full w-full max-w-full border border-gray-200 shadow-sm backdrop:backdrop-blur-sm open:flex dark:border-gray-700 sm:mx-auto sm:mt-16 sm:mb-auto sm:h-max sm:max-h-[calc(100%-8rem)] sm:min-h-[15rem] sm:w-5/6 sm:max-w-[48rem] sm:rounded-md"> <div class="dialog-frame flex grow flex-col gap-4 p-6 pt-12 sm:pt-6"> <button class="ms-auto cursor-pointer rounded-md px-2 py-1 font-serif text-sm text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]" data-close-modal>Close</button> <div class="search-container"> <div id="cactus__search"></div> </div> </div> </dialog> </site-search> <script type="module" src="/_astro/Search.astro_astro_type_script_index_0_lang.BEKf41Rm.js"></script> <button id="lang-toggle" class="relative h-9 w-9 cursor-pointer rounded-md p-2 transition-colors hover:text-[#8953d1] dark:hover:text-[#a175e8]" aria-label="Switch language" title="EN / 中文"> <!-- EN icon (visible when current lang is EN, click to switch to ZH) --> <svg id="lang-icon-en" class="absolute start-1/2 top-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"> <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 0 1 7.843 4.582M12 3a8.997 8.997 0 0 0-7.843 4.582m15.686 0A11.953 11.953 0 0 1 12 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0 1 21 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0 1 12 16.5a17.92 17.92 0 0 1-8.716-2.247m0 0A8.966 8.966 0 0 1 3 12c0-1.97.633-3.793 1.708-5.276"></path> </svg> <!-- ZH icon (visible when current lang is ZH, click to switch to EN) --> <svg id="lang-icon-zh" class="absolute start-1/2 top-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2" style="display:none" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"> <path stroke-linecap="round" stroke-linejoin="round" d="m10.5 21 5.25-11.25L21 21m-9-3h7.5M3 5.621a48.474 48.474 0 0 1 6-.371m0 0c1.12 0 2.233.038 3.334.114M9 5.25V3m3.334 2.364V3m0 2.364a48.016 48.016 0 0 1 3.573.286M6.75 11.5A2.25 2.25 0 0 1 9 9.25h.941a1.5 1.5 0 0 0 1.06-.44l.544-.543a2.25 2.25 0 0 1 3.182 0l.544.543a1.5 1.5 0 0 0 1.06.44H17.25a2.25 2.25 0 0 1 2.25 2.25v.394"></path> </svg> </button> <script>
+(function () {
+	var KEY = "rex-lang";
+	function getLang() {
+		try { return localStorage.getItem(KEY) || "en"; } catch(e) { return "en"; }
+	}
+	function apply(lang) {
+		try { localStorage.setItem(KEY, lang); } catch(e) {}
+		document.documentElement.setAttribute("data-lang", lang);
+		var en = document.getElementById("lang-icon-en");
+		var zh = document.getElementById("lang-icon-zh");
+		if (en) en.style.display = lang === "en" ? "" : "none";
+		if (zh) zh.style.display = lang === "zh" ? "" : "none";
+	}
+	apply(getLang());
+	document.addEventListener("click", function (e) {
+		if (e.target.closest("#lang-toggle")) apply(getLang() === "en" ? "zh" : "en");
+	});
+	document.addEventListener("astro:after-swap", function () { apply(getLang()); });
+})();
+</script> <theme-toggle class="ms-0"> <button class="relative h-9 w-9 cursor-pointer rounded-md p-2 transition-colors hover:text-[#8953d1] dark:hover:text-[#a175e8]" type="button"> <span class="sr-only">Dark Theme</span> <svg aria-hidden="true" class="absolute start-1/2 top-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2 scale-100 opacity-100 transition-all dark:scale-0 dark:opacity-0" fill="none" focusable="false" id="sun-svg" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"> <path d="M12 18C15.3137 18 18 15.3137 18 12C18 8.68629 15.3137 6 12 6C8.68629 6 6 8.68629 6 12C6 15.3137 8.68629 18 12 18Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M22 12L23 12" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M12 2V1" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M12 23V22" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M20 20L19 19" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M20 4L19 5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M4 20L5 19" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M4 4L5 5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M1 12L2 12" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"></path> </svg> <svg aria-hidden="true" class="absolute start-1/2 top-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2 scale-0 opacity-0 transition-all dark:scale-100 dark:opacity-100" fill="none" focusable="false" id="moon-svg" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"> <path d="M0 0h24v24H0z" fill="none" stroke="none"></path> <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z"></path> <path d="M17 4a2 2 0 0 0 2 2a2 2 0 0 0 -2 2a2 2 0 0 0 -2 -2a2 2 0 0 0 2 -2"></path> <path d="M19 11h2m-1 -1v2"></path> </svg> </button> </theme-toggle> <script type="module">function t(){return document.documentElement.getAttribute("data-theme")==="dark"}class o extends HTMLElement{constructor(){super();const e=this.querySelector("button");e?(e.setAttribute("role","switch"),e.setAttribute("aria-checked",String(t())),e.addEventListener("click",()=>{let n=new CustomEvent("theme-change",{detail:{theme:t()?"light":"dark"}});document.dispatchEvent(n),e.setAttribute("aria-checked",String(t()))})):console.warn("Theme Toggle: No button found")}}customElements.define("theme-toggle",o);</script> </div> </header> <main id="main" data-pagefind-body>  <section class="mb-10"> <a href="/lab/" class="fade-in-up font-serif text-sm text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]" style="--delay: 50ms"> <span class="lang-en">← Back to Lab</span><span class="lang-zh" data-pagefind-ignore>← 返回 Lab</span> </a> <h1 class="hero-reveal-text mt-4 mb-3 font-serif text-4xl font-bold dark:text-white"> <span class="lang-en">Agent Activity</span><span class="lang-zh" data-pagefind-ignore>Agent 工作室</span> </h1> <p class="hero-reveal-subtitle max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300" style="--delay: 80ms"> <span class="lang-en">I run a 6-person AI team. They write, research, code, design, and analyze — 24/7, while I focus on decisions.</span> <span class="lang-zh" data-pagefind-ignore>我有一支 6 人 AI 团队：写作、研究、开发、设计、分析，全天候运转，我只负责决策。</span> </p> <p class="hero-reveal-subtitle max-w-2xl mt-2 font-serif text-base leading-relaxed text-gray-500 dark:text-gray-400" style="--delay: 120ms"> <span class="lang-en">Each agent has a role, a personality, and a live status. Click any character to learn more.</span> <span class="lang-zh" data-pagefind-ignore>每个 Agent 有独立角色和个性。点击角色查看详情。</span> </p> <div id="connection-status" class="mt-3 font-serif text-xs text-gray-400"> <span class="lang-en">● Live</span><span class="lang-zh" data-pagefind-ignore>● 实时</span> </div> </section>  <div id="agent-detail" class="agent-detail-overlay" aria-hidden="true"> <div class="agent-detail-card"> <button class="detail-close" id="detail-close" aria-label="Close">×</button> <div class="detail-header"> <span class="detail-dot" id="detail-dot"></span> <span class="detail-name font-serif" id="detail-name"></span> <span class="detail-role font-serif" id="detail-role"></span> </div> <p class="detail-stats font-serif" id="detail-stats"></p> <p class="detail-desc font-serif" id="detail-desc"></p> <ul class="detail-examples" id="detail-examples"></ul> <div class="detail-latest font-serif" id="detail-latest"></div> </div> </div>  <section class="office-wrapper mb-16 fade-in-up" style="--delay: 100ms"> <div class="pixel-office-scale-wrapper" id="pixel-office-wrapper"> <div class="pixel-office" id="pixel-office"> <canvas id="office-canvas" width="768" height="448"></canvas> </div> </div> </section>  <section class="activity-feed mb-16 fade-in-up" style="--delay: 500ms"> <h2 class="mb-2 font-serif text-xs font-bold tracking-widest text-gray-400 uppercase dark:text-gray-500"> <span class="lang-en">Recent Activity</span><span class="lang-zh" data-pagefind-ignore>团队动态</span> </h2> <p class="mb-6 font-serif text-2xl font-semibold dark:text-white"> <span class="lang-en">What the team shipped today.</span> <span class="lang-zh" data-pagefind-ignore>今天团队干了什么。</span> </p> <div class="feed-header-row"> <a href="/lab/builder-log/" class="feed-link font-serif text-sm text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]"> <span class="lang-en">Full build history →</span> <span class="lang-zh" data-pagefind-ignore>完整构建日志 →</span> </a> </div> <div class="feed-list" id="activity-feed-list"> <div class="feed-loading font-serif text-xs text-gray-400"> <span class="lang-en">Loading activity...</span><span class="lang-zh" data-pagefind-ignore>加载中...</span> </div> </div> </section>  </main> <footer class="mt-auto flex w-full flex-col items-center justify-center gap-y-2 pt-20 pb-8 text-center align-middle font-serif text-sm text-gray-500 dark:text-gray-400" data-astro-cid-35ed7um5> <div class="rex-quote" data-rex-quote data-astro-cid-35ed7um5> <span class="quote-text font-serif" data-quote-text data-astro-cid-35ed7um5></span> <button type="button" class="quote-refresh" data-quote-refresh title="换一条" aria-label="Refresh quote" data-astro-cid-35ed7um5>↻</button> </div> <div class="mb-1" data-astro-cid-35ed7um5>
+&copy; 2026 <span style="color: #8953d1; font-weight: 500;" data-astro-cid-35ed7um5>Rex Liu</span> </div> <div class="flex items-center gap-x-3 text-xs opacity-80" data-astro-cid-35ed7um5> <a href="/" class="transition-colors hover:text-[#8953d1] hover:underline hover:underline-offset-4" data-astro-cid-35ed7um5>
+rexliu.io
+</a> <span class="text-gray-300 dark:text-gray-600" data-astro-cid-35ed7um5>|</span> <span class="tracking-wider" data-astro-cid-35ed7um5>Sovereign Individual</span> </div> </footer>  <script>
+function initRexQuote() {
+  const root = document.querySelector('[data-rex-quote]');
+  if (!root) return;
+
+  const textEl = root.querySelector('[data-quote-text]');
+  const refreshBtn = root.querySelector('[data-quote-refresh]');
+  if (!textEl || !refreshBtn) return;
+
+  const rexQuotes = [
+    // 中文
+    '买预期，卖事实',
+    '研究对手盘——知道赚的是谁的钱',
+    '复杂问题简单化，简单事情重复做',
+    '信心就是黄金',
+    '含苞待放，始终留有底牌',
+    '死要面子活受罪，想明白后心里舒坦',
+    '矛盾源于期待，失望才会改变',
+    '做好自己的事是本分，其他都是福分',
+    '学会晚表态，在可以打明牌时再出手',
+    '盈亏同源，追求大赚小赔',
+    '手心微出汗，晚上睡得香',
+    '人生关系的交集是时间段的重合',
+    '珍惜当下每一天',
+    '老婆第一位，沟通交流满足都不可少',
+    '凡事要对着干是最难改的脾气',
+    // 英文
+    'Stay Invested in the Game',
+    'Be the sovereign individual',
+    'Patience is the real alpha',
+    'Buy expectations, sell facts',
+    'Confidence is gold',
+    'Ship first, perfect later',
+    'Simple systems beat complex ones',
+    'The game rewards those who stay',
+    'Know whose money you are making',
+    'Show your hand only when you can play it openly',
+    'Win big, lose small — that is the framework',
+    'Every relationship is an intersection of timelines',
+    'Build in public, learn in private',
+    'Palms slightly sweaty, sleep soundly at night',
+    'Do your part — everything else is a bonus',
+  ];
+
+  let lastIndex = -1;
+
+  function pickQuote() {
+    if (rexQuotes.length === 1) return 0;
+    let index = Math.floor(Math.random() * rexQuotes.length);
+    while (index === lastIndex) {
+      index = Math.floor(Math.random() * rexQuotes.length);
+    }
+    return index;
+  }
+
+  function renderQuote() {
+    const nextIndex = pickQuote();
+    lastIndex = nextIndex;
+    textEl.classList.remove('is-visible');
+    window.setTimeout(() => {
+      textEl.textContent = rexQuotes[nextIndex];
+      textEl.classList.add('is-visible');
+    }, 40);
+  }
+
+  if (refreshBtn.dataset.bound !== 'true') {
+    refreshBtn.dataset.bound = 'true';
+    refreshBtn.addEventListener('click', renderQuote);
+  }
+
+  renderQuote();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initRexQuote);
+} else {
+  initRexQuote();
+}
+document.addEventListener('astro:page-load', initRexQuote);
+</script> <button id="back-to-top" aria-label="Back to top" class="back-to-top" title="Back to top" data-astro-cid-wlspcwf4> <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-wlspcwf4> <polyline points="18 15 12 9 6 15" data-astro-cid-wlspcwf4></polyline> </svg> </button>  <script type="module">function o(){const t=document.getElementById("back-to-top");if(!t)return;const e=()=>{window.scrollY>300?t.classList.add("visible"):t.classList.remove("visible")};t.addEventListener("click",()=>{window.scrollTo({top:0,behavior:"smooth"})}),window.addEventListener("scroll",e,{passive:!0}),e()}o();document.addEventListener("astro:after-swap",o);document.addEventListener("astro:before-preparation",()=>{const t=document.getElementById("back-to-top");t&&t.removeEventListener("click",()=>{})});</script>  <div id="minimal-player" data-pagefind-ignore class="fixed bottom-12 left-6 z-50 flex items-center sm:bottom-8 sm:left-8" data-astro-transition-persist="astro-2uanmam4-1"> <div id="player-container" class="custom-glow flex h-10 w-10 items-center justify-start overflow-hidden rounded-full border border-[#8953d1]/40 bg-white/70 backdrop-blur-md transition-all duration-500 ease-in-out dark:border-[#8953d1]/30 dark:bg-[#1a1a1a]/70"> <button id="play-button" class="relative ml-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-transparent transition-transform active:scale-95"> <svg id="music-icon" class="text-[#8953d1] transition-opacity duration-300" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"> <path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle> </svg> <div id="visualizer" class="absolute inset-0 flex items-center justify-center gap-[2px] opacity-0 transition-opacity duration-300"> <div class="bar h-1 w-[2px] rounded-full bg-[#8953d1]"></div> <div class="bar h-3 w-[2px] rounded-full bg-[#8953d1]"></div> <div class="bar h-2 w-[2px] rounded-full bg-[#8953d1]"></div> </div> </button> <div id="expanded-controls" class="pointer-events-none flex items-center pl-2 opacity-0 transition-opacity duration-300"> <div class="flex w-28 flex-col overflow-hidden whitespace-nowrap"> <span class="font-serif text-[8px] font-bold tracking-wider text-[#8953d1]/80 italic">Now Playing</span> <div id="current-song-container"> <span id="current-song-name" class="inline-block font-serif text-[12px] leading-tight font-medium text-gray-600 dark:text-gray-300" style="white-space: nowrap;">
+Ready
+</span> </div> </div> <button id="next-button" class="ml-1 p-1 text-gray-400 transition-colors hover:text-[#8953d1]" title="Next"> <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19"></line></svg> </button> <button id="collapse-button" class="ml-1 p-1 text-gray-400 transition-colors hover:text-red-400" title="Collapse"> <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 003e<path d="M18 6L6 18M6 6l12 12"></svg> </button> </div> </div>  <audio id="main-audio" preload="none"></audio> </div>  <script>
+			(function () {
+				const CDN = "https://cdn.rexliu.io";
+				const playlist = [
+					{ name: "I Will Fight For You - Voyageur", url: CDN + "/music/i-will-fight-for-you.mp3" },
+					{ name: "Still Moving On - Luminar", url: CDN + "/music/still-moving-on.mp3" },
+					{ name: "一舞倾城 - 魏小涵", url: CDN + "/music/yiwuqingcheng.mp3" },
+					{ name: "捣衣 - 古琴龚一", url: CDN + "/music/daoyi.mp3" },
+					{ name: "穿越时空的思念 - 古琴梅旸", url: CDN + "/music/chuanyueshikong.mp3" },
+					{ name: "美人兮 - 古琴赵晓霞", url: CDN + "/music/meirenxi.mp3" },
+					{ name: "Angel - Cathartic Fall", url: CDN + "/music/angel.mp3" },
+					{ name: "Head In The Clouds - Hayd", url: CDN + "/music/head-in-the-clouds.mp3" },
+					{ name: "夢灯籠 - RADWIMPS", url: CDN + "/music/mengdenglong.mp3" },
+					{ name: "三葉のテーマ - RADWIMPS", url: CDN + "/music/sanye.mp3" },
+					{ name: "The Story Never Ends (Piano) - Lauv", url: CDN + "/music/lauv---the-story-never-ends-(piano-version).mp3" },
+					{ name: "One Day - Matisyahu", url: CDN + "/music/matisyahu---one-day.mp3" },
+					{ name: "Missin' You Like Crazy - Michael Alvarado & Carissa Rae", url: CDN + "/music/michael-alvarado,carissa-rae---missin'-you-like-crazy-(feat.-carissa-rae).mp3" },
+					{ name: "落ちるパズルゲーム - 神前暁", url: CDN + "/music/神前暁---落ちるパズルゲーム.mp3" },
+					{ name: "你愿意吗 - 何立", url: CDN + "/music/ni-yuan-yi-ma.mp3" },
+					{ name: "Last Dance - 伍佰 & China Blue", url: CDN + "/music/last-dance.mp3" },
+					{ name: "Viva La Vida - Coldplay", url: CDN + "/music/viva-la-vida.mp3" },
+					{ name: "Don't Waste My Time - Dayon", url: CDN + "/music/dont-waste-my-time.mp3" },
+					{ name: "Coming Home - Diddy & Skylar Grey", url: CDN + "/music/coming-home.mp3" },
+				];
+				let currentIndex = Math.floor(Math.random() * playlist.length);
+				const state = { isPlaying: false, isExpanded: false };
+				function updateUI() {
+					const player = document.getElementById("minimal-player");
+					const songName = document.getElementById("current-song-name");
+					const container = document.getElementById("current-song-container");
+					if (!player) return;
+
+					state.isPlaying
+						? player.classList.add("is-playing")
+						: player.classList.remove("is-playing");
+					state.isExpanded
+						? player.classList.add("player-expanded")
+						: player.classList.remove("player-expanded");
+
+					if (songName && playlist[currentIndex]) {
+						const name = playlist[currentIndex].name;
+						songName.innerText = name;
+						setTimeout(() => {
+							if (songName.offsetWidth > container.offsetWidth) {
+								songName.innerHTML = `${name} &nbsp;&nbsp;&nbsp;&nbsp; ${name} &nbsp;&nbsp;&nbsp;&nbsp;`;
+								songName.style.animation = "marquee 8s linear infinite";
+							} else {
+								songName.style.animation = "none";
+							}
+						}, 50);
+					}
+				}
+				function initPlayer() {
+					const playBtn = document.getElementById("play-button");
+					const nextBtn = document.getElementById("next-button");
+					const collapseBtn = document.getElementById("collapse-button");
+					const audio = document.getElementById("main-audio");
+					if (!playBtn || !audio) return;
+
+					const playNext = () => {
+						currentIndex = (currentIndex + 1) % playlist.length;
+						audio.src = playlist[currentIndex].url;
+						audio.play().catch(() => {});
+						state.isPlaying = true;
+						updateUI();
+					};
+
+					playBtn.onclick = () => {
+						if (!state.isExpanded) state.isExpanded = true;
+						if (state.isPlaying) {
+							audio.pause();
+							state.isPlaying = false;
+						} else {
+							if (!audio.src) audio.src = playlist[currentIndex].url;
+							audio.play().catch((e) => {
+								console.error("Playback failed", e);
+							});
+							state.isPlaying = true;
+						}
+						updateUI();
+					};
+
+					nextBtn.onclick = (e) => {
+						e.stopPropagation();
+						playNext();
+					};
+					collapseBtn.onclick = (e) => {
+						e.stopPropagation();
+						state.isExpanded = false;
+						updateUI();
+					};
+
+					// 自动播放下一首
+					audio.onended = playNext;
+
+					// 🟢 容错处理：如果当前歌曲加载失败（如 404），自动跳到下一首
+					audio.onerror = () => {
+						console.warn("Audio file failed to load, skipping...");
+						playNext();
+					};
+
+					updateUI();
+				}
+				initPlayer();
+				document.addEventListener("astro:after-swap", initPlayer);
+				document.addEventListener("astro:page-load", updateUI);
+			})();
+		</script> <script type="module">function m(){const o=document.querySelector(".hero-reveal-text"),n=document.querySelector(".hero-reveal-subtitle");if(o){const e=o.querySelectorAll(".lang-en, .lang-zh");if(e.length>0){let t=0;e.forEach(s=>{const a=s.textContent||"";s.innerHTML=a.split("").map(r=>r===" "?" ":`<span class="char-reveal" style="--char-index: ${t++}">${r}</span>`).join("")})}else{const t=o.textContent||"";o.innerHTML=t.split("").map((s,a)=>s===" "?" ":`<span class="char-reveal" style="--char-index: ${a}">${s}</span>`).join("")}setTimeout(()=>{o.classList.add("revealed")},100)}if(n){const e=n.innerHTML||"",t=document.createElement("div");t.innerHTML=e;const s=(r,l)=>{if(r.nodeType===Node.TEXT_NODE)return r.textContent?.split(/(\s+)/).map(i=>i.trim()===""?i:`<span class="word-reveal" style="--word-index: ${(l.value++*.03).toFixed(3)}">${i}</span>`).join("")||"";if(r.nodeType===Node.ELEMENT_NODE){const i=r,d=Array.from(i.childNodes).map(c=>s(c,l)).join("");return`<${i.tagName.toLowerCase()}${Array.from(i.attributes).map(c=>` ${c.name}="${c.value}"`).join("")}>${d}</${i.tagName.toLowerCase()}>`}return""},a={value:0};n.innerHTML=Array.from(t.childNodes).map(r=>s(r,a)).join(""),setTimeout(()=>{n.classList.add("revealed")},400)}}function p(){document.querySelectorAll(".post-card-hover").forEach(n=>{const e=n;e.addEventListener("mouseenter",()=>{e.style.transform="translateY(-4px)",e.style.boxShadow="0 12px 40px -12px rgba(137, 83, 209, 0.25)"}),e.addEventListener("mouseleave",()=>{e.style.transform="translateY(0)",e.style.boxShadow=""})})}function f(){if(!("IntersectionObserver"in window)){document.querySelectorAll(".fade-in-up, .fade-in, .stagger-fade").forEach(n=>{n.classList.add("visible")});return}const o=new IntersectionObserver(n=>{n.forEach(e=>{if(e.isIntersecting){const t=e.target,s=t.style.getPropertyValue("--delay")||"0ms";setTimeout(()=>{t.classList.add("visible")},parseInt(s)),o.unobserve(t)}})},{threshold:.15,rootMargin:"0px 0px -30px 0px"});document.querySelectorAll(".fade-in-up, .fade-in, .stagger-fade").forEach(n=>{o.observe(n)})}function y(){document.querySelectorAll(".animated-link").forEach(n=>{const e=n;getComputedStyle(e).position==="static"&&(e.style.position="relative")})}function v(){const o=document.documentElement;new MutationObserver(e=>{e.forEach(t=>{t.attributeName==="data-theme"&&(o.classList.add("theme-transitioning"),setTimeout(()=>{o.classList.remove("theme-transitioning")},500))})}).observe(o,{attributes:!0})}function h(){if(!window.matchMedia("(pointer: fine)").matches)return;document.querySelectorAll(".glow-card").forEach(e=>{const t=e;t.addEventListener("mousemove",s=>{const a=t.getBoundingClientRect(),r=s.clientX-a.left,l=s.clientY-a.top;t.style.setProperty("--mouse-x",`${r}px`),t.style.setProperty("--mouse-y",`${l}px`)}),t.addEventListener("mouseleave",()=>{t.style.setProperty("--mouse-x","-999px"),t.style.setProperty("--mouse-y","-999px")})})}function u(){m(),p(),f(),y(),v(),h()}u();document.addEventListener("astro:page-load",()=>{u()});</script> </body> </html>  <script src="/assets/pixel-office/engine.js?v=14scale"></script> <script>
+(function() {
+	'use strict';
+
+	var _intervals = [];
+
+	function initAgentPage() {
+		/* ── Clean up previous run ── */
+		_intervals.forEach(function(id) { clearInterval(id); });
+		_intervals = [];
+		if (window.PixelOffice) window.PixelOffice.destroy();
+
+		var CONVEX_URL = 'https://fleet-heron-880.convex.cloud';
+		var CONVEX_ACTIVITY_URL = 'https://shiny-butterfly-744.convex.cloud';
+		var statusEl = document.getElementById('connection-status');
+
+		/* ── 初始化 Pixel Office 引擎 ── */
+		var canvas = document.getElementById('office-canvas');
+		if (canvas && window.PixelOffice) {
+			window.PixelOffice.init(canvas);
+		}
+
+		/* ══════════════════════════════════════════════════════════════
+		   CONVEX POLLING — drive character state + position
+		   ══════════════════════════════════════════════════════════════ */
+		function updateAgent(agent) {
+			var status = agent.status || 'offline';
+			var task = agent.currentTask || '';
+			if (window.PixelOffice) {
+				window.PixelOffice.updateAgent(agent.agentId, status, task);
+			}
+		}
+
+		async function pollAgents() {
+			try {
+				var controller = new AbortController();
+				var timeout = setTimeout(function() { controller.abort(); }, 5000);
+				var resp = await fetch(CONVEX_URL + '/api/query', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ path: 'agents:list', args: {} }),
+					signal: controller.signal
+				});
+				clearTimeout(timeout);
+				var data = await resp.json();
+				var agents = data.value || [];
+				if (statusEl) {
+					statusEl.innerHTML = '<span class="lang-en" style="color:#4ade80">\u25cf Live</span><span class="lang-zh" data-pagefind-ignore style="color:#4ade80">\u25cf \u5b9e\u65f6</span>';
+				}
+				agents.forEach(updateAgent);
+			} catch (e) {
+				console.error('Convex poll failed:', e);
+				if (statusEl) {
+					statusEl.innerHTML = '<span class="lang-en" style="color:#888">\u25cb Cached</span><span class="lang-zh" data-pagefind-ignore style="color:#888">\u25cb \u7f13\u5b58</span>';
+				}
+			}
+		}
+
+		pollAgents();
+		_intervals.push(setInterval(pollAgents, 10000));
+
+		/* ══════════════════════════════════════════════════════════════
+		   CLICK + HOVER — canvas hit detection via engine
+		   ══════════════════════════════════════════════════════════════ */
+		function getCanvasCoords(e) {
+			var rect = canvas.getBoundingClientRect();
+			var scaleX = canvas.width / rect.width;
+			var scaleY = canvas.height / rect.height;
+			return {
+				x: (e.clientX - rect.left) * scaleX,
+				y: (e.clientY - rect.top) * scaleY,
+			};
+		}
+
+		if (canvas) {
+			canvas.addEventListener('click', function(e) {
+				var c = getCanvasCoords(e);
+				var hit = window.PixelOffice && window.PixelOffice.getAgentAt(c.x, c.y);
+				if (hit) openDetail(hit);
+			});
+
+			canvas.addEventListener('mousemove', function(e) {
+				var c = getCanvasCoords(e);
+				var hit = window.PixelOffice && window.PixelOffice.getAgentAt(c.x, c.y);
+				canvas.style.cursor = hit ? 'pointer' : 'default';
+			});
+		}
+
+		/* ══════════════════════════════════════════════════════════════
+		   AGENT DETAIL PANEL
+		   ══════════════════════════════════════════════════════════════ */
+		var AGENT_DATA = {
+			main: {
+				name: 'Samantha', role: 'Mastermind', color: '#ff6b35',
+				descEn: 'Coordinates the team, routes tasks, delivers daily briefings and market reports. Makes sure nothing falls through the cracks.',
+				descZh: '\u56e2\u961f\u534f\u8c03\u3001\u4efb\u52a1\u5206\u914d\u3001\u6bcf\u65e5\u65e9\u665a\u62a5\u548c\u5e02\u573a\u5feb\u62a5\u3002\u786e\u4fdd\u6bcf\u4ef6\u4e8b\u90fd\u6709\u4eba\u8d1f\u8d23\u3002',
+				statsEn: '57 proposals routed \u00b7 30+ cron jobs \u00b7 daily briefings',
+				statsZh: '\u5df2\u8def\u7531 57 \u4e2a\u63d0\u6848 \u00b7 30+ \u5b9a\u65f6\u4efb\u52a1 \u00b7 \u6bcf\u65e5\u65e9\u665a\u62a5',
+				examplesEn: ['Morning / evening briefings', 'Market pulse reports', 'Task routing & escalation', 'Team health monitoring'],
+				examplesZh: ['\u6bcf\u65e5\u65e9\u665a\u62a5', '\u5e02\u573a\u5feb\u62a5', '\u4efb\u52a1\u8def\u7531\u4e0e\u5347\u7ea7', '\u56e2\u961f\u5065\u5eb7\u76d1\u63a7'],
+			},
+			writer: {
+				name: 'Loki', role: 'Writer', color: '#4a9e4a',
+				descEn: 'Writes tweet drafts, translates crypto/AI signals into Rex\'s voice, produces content that bridges English and Chinese audiences.',
+				descZh: '\u64b0\u5199\u63a8\u6587\u8349\u7a3f\uff0c\u5c06\u52a0\u5bc6/AI \u4fe1\u53f7\u8f6c\u5316\u4e3a Rex \u7684\u8bed\u6c14\uff0c\u5236\u4f5c\u4e2d\u82f1\u53cc\u8bed\u5185\u5bb9\u3002',
+				statsEn: '122 drafts written \u00b7 65 blog posts \u00b7 2\xd7 daily',
+				statsZh: '\u5df2\u5199 122 \u7bc7\u8349\u7a3f \u00b7 65 \u7bc7\u535a\u5ba2 \u00b7 \u6bcf\u65e5 2 \u6761',
+				examplesEn: ['2\xd7 daily tweet drafts', 'CN/EN content translation', 'Signal-to-draft pipeline', 'Builder\'s log entries'],
+				examplesZh: ['\u6bcf\u65e5 2 \u6761\u63a8\u6587\u8349\u7a3f', '\u4e2d\u82f1\u5185\u5bb9\u8f6c\u5316', '\u4fe1\u53f7\u2192\u8349\u7a3f\u6d41\u6c34\u7ebf', '\u6784\u5efa\u65e5\u5fd7'],
+			},
+			researcher: {
+				name: 'Vision', role: 'Researcher', color: '#4a8ab5',
+				descEn: 'Scans 16+ KOLs daily, tracks crypto/AI/Robotics projects, surfaces alpha signals before they go mainstream.',
+				descZh: '\u6bcf\u65e5\u626b\u63cf 16+ KOL\uff0c\u8ffd\u8e2a\u52a0\u5bc6/AI/\u673a\u5668\u4eba\u9879\u76ee\uff0c\u5728\u4fe1\u606f\u5927\u4f17\u5316\u524d\u53d1\u73b0 Alpha \u4fe1\u53f7\u3002',
+				statsEn: '33 research reports \u00b7 16 KOLs tracked daily \u00b7 Alpha Radar',
+				statsZh: '33 \u4efd\u7814\u7a76\u62a5\u544a \u00b7 \u6bcf\u65e5\u8ffd\u8e2a 16 \u4f4d KOL \u00b7 Alpha Radar',
+				examplesEn: ['Daily KOL intelligence scan', 'Deep-dive research reports', 'Alpha Radar feed', 'Project tracking'],
+				examplesZh: ['\u6bcf\u65e5 KOL \u60c5\u62a5\u626b\u63cf', '\u6df1\u5ea6\u7814\u7a76\u62a5\u544a', 'Alpha Radar \u63a8\u9001', '\u9879\u76ee\u8ffd\u8e2a'],
+			},
+			coder: {
+				name: 'Jarvis', role: 'Coder', color: '#7a7a8a',
+				descEn: 'Builds and maintains all automation: cron jobs, data pipelines, website features, and internal tools. The backbone of the system.',
+				descZh: '\u6784\u5efa\u548c\u7ef4\u62a4\u6240\u6709\u81ea\u52a8\u5316\uff1a\u5b9a\u65f6\u4efb\u52a1\u3001\u6570\u636e\u7ba1\u9053\u3001\u7f51\u7ad9\u529f\u80fd\u548c\u5185\u90e8\u5de5\u5177\u3002\u7cfb\u7edf\u7684\u9aa8\u67b6\u3002',
+				statsEn: '280 commits \u00b7 30+ cron jobs \u00b7 this entire website',
+				statsZh: '280 \u6b21\u63d0\u4ea4 \u00b7 30+ \u5b9a\u65f6\u4efb\u52a1 \u00b7 \u672c\u7ad9\u5168\u90e8\u4ee3\u7801',
+				examplesEn: ['30+ automated cron jobs', 'This website (280 commits)', 'Portfolio sync tools', 'Content pipeline scripts'],
+				examplesZh: ['30+ \u81ea\u52a8\u5316\u5b9a\u65f6\u4efb\u52a1', '\u672c\u7ad9\uff08280 \u6b21\u63d0\u4ea4\uff09', '\u6295\u8d44\u7ec4\u5408\u540c\u6b65\u5de5\u5177', '\u5185\u5bb9\u7ba1\u9053\u811a\u672c'],
+			},
+			designer: {
+				name: 'Shuri', role: 'Designer', color: '#c54ab5',
+				descEn: 'Creates visuals for tweets, research covers, and brand assets. Every image that ships has passed through her.',
+				descZh: '\u4e3a\u63a8\u6587\u3001\u7814\u7a76\u5c01\u9762\u548c\u54c1\u724c\u8d44\u4ea7\u521b\u4f5c\u89c6\u89c9\u8bbe\u8ba1\u3002\u6bcf\u5f20\u53d1\u51fa\u53bb\u7684\u56fe\u90fd\u7ecf\u8fc7\u5979\u7684\u624b\u3002',
+				statsEn: '14 design assets \u00b7 tweet covers \u00b7 16-bit pixel art',
+				statsZh: '14 \u4efd\u8bbe\u8ba1\u8d44\u4ea7 \u00b7 \u63a8\u6587\u914d\u56fe \u00b7 16-bit \u50cf\u7d20\u827a\u672f',
+				examplesEn: ['Tweet cover images', 'Research report covers', 'Brand asset design', '16-bit pixel art'],
+				examplesZh: ['\u63a8\u6587\u914d\u56fe', '\u7814\u7a76\u62a5\u544a\u5c01\u9762', '\u54c1\u724c\u89c6\u89c9', '16-bit \u50cf\u7d20\u827a\u672f'],
+			},
+			analyst: {
+				name: 'Friday', role: 'Analyst', color: '#4ac5c5',
+				descEn: 'Tracks Rex\'s portfolio, produces SNEK daily briefings, monitors market data and financial metrics.',
+				descZh: '\u8ffd\u8e2a Rex \u7684\u6295\u8d44\u7ec4\u5408\uff0c\u6bcf\u65e5 SNEK \u7b80\u62a5\uff0c\u76d1\u63a7\u5e02\u573a\u6570\u636e\u548c\u8d22\u52a1\u6307\u6807\u3002',
+				statsEn: 'Daily SNEK briefing \u00b7 portfolio sync \u00b7 market monitoring',
+				statsZh: '\u6bcf\u65e5 SNEK \u7b80\u62a5 \u00b7 \u6295\u8d44\u7ec4\u5408\u540c\u6b65 \u00b7 \u5e02\u573a\u76d1\u63a7',
+				examplesEn: ['Daily SNEK briefing', 'Portfolio sync & tracking', 'Market data monitoring', 'Financial analysis'],
+				examplesZh: ['\u6bcf\u65e5 SNEK \u7b80\u62a5', '\u6295\u8d44\u7ec4\u5408\u540c\u6b65\u8ffd\u8e2a', '\u5e02\u573a\u6570\u636e\u76d1\u63a7', '\u8d22\u52a1\u5206\u6790'],
+			},
+		};
+
+		var ACTIVITY_FEED = [];
+		var overlay = document.getElementById('agent-detail');
+		var closeBtn = document.getElementById('detail-close');
+
+		function openDetail(agentId) {
+			var d = AGENT_DATA[agentId];
+			if (!d || !overlay) return;
+			var isZh = document.documentElement.getAttribute('data-lang') === 'zh';
+
+			document.getElementById('detail-dot').style.background = d.color;
+			document.getElementById('detail-dot').style.boxShadow = '0 0 8px ' + d.color + '88';
+			document.getElementById('detail-name').textContent = d.name;
+			document.getElementById('detail-role').textContent = d.role;
+			document.getElementById('detail-desc').textContent = isZh ? d.descZh : d.descEn;
+
+			var statsEl = document.getElementById('detail-stats');
+			if (statsEl) {
+				statsEl.textContent = isZh ? (d.statsZh || '') : (d.statsEn || '');
+				statsEl.style.color = d.color;
+			}
+
+			var ul = document.getElementById('detail-examples');
+			ul.innerHTML = '';
+			var examples = isZh ? d.examplesZh : d.examplesEn;
+			examples.forEach(function(ex) {
+				var li = document.createElement('li');
+				li.textContent = ex;
+				ul.appendChild(li);
+			});
+
+			var latestEl = document.getElementById('detail-latest');
+			var agentActivities = ACTIVITY_FEED.filter(function(e) { return e.agentId === agentId; }).slice(0, 3);
+			if (agentActivities.length > 0) {
+				var heading = isZh ? '<strong>\u6700\u8fd1\u52a8\u6001</strong>' : '<strong>Recent</strong>';
+				latestEl.innerHTML = heading + '<ul class="detail-recent-list">' +
+					agentActivities.map(function(a) {
+						var text = isZh ? a.descZh : a.descEn;
+						return '<li><span class="detail-recent-time">' + a.time + '</span> ' + text + '</li>';
+					}).join('') + '</ul>';
+				latestEl.style.display = 'block';
+			} else {
+				latestEl.style.display = 'none';
+			}
+
+			overlay.classList.add('is-open');
+			overlay.setAttribute('aria-hidden', 'false');
+			document.body.style.overflow = 'hidden';
+		}
+
+		function closeDetail() {
+			if (!overlay) return;
+			overlay.classList.remove('is-open');
+			overlay.setAttribute('aria-hidden', 'true');
+			document.body.style.overflow = '';
+		}
+
+		closeBtn && closeBtn.addEventListener('click', closeDetail);
+		overlay && overlay.addEventListener('click', function(e) {
+			if (e.target === overlay) closeDetail();
+		});
+		document.addEventListener('keydown', function(e) {
+			if (e.key === 'Escape') closeDetail();
+		});
+
+		/* ══════════════════════════════════════════════════════════════
+		   ACTIVITY FEED
+		   ══════════════════════════════════════════════════════════════ */
+		var feedList = document.getElementById('activity-feed-list');
+
+		function timeAgo(isoStr) {
+			try {
+				var d = new Date(isoStr);
+				var diff = Date.now() - d.getTime();
+				var m = Math.floor(diff / 60000);
+				if (m < 2) return 'just now';
+				if (m < 60) return m + 'm ago';
+				var h = Math.floor(diff / 3600000);
+				if (h < 24) return h + 'h ago';
+				return Math.floor(h / 24) + 'd ago';
+			} catch (e) { return ''; }
+		}
+
+		function renderFeed(entries) {
+			if (!feedList) return;
+			if (!entries || entries.length === 0) {
+				feedList.innerHTML = '<div class="feed-empty font-serif text-xs text-gray-500"><span class="lang-en">No recent activity</span><span class="lang-zh" data-pagefind-ignore>\u6682\u65e0\u52a8\u6001</span></div>';
+				return;
+			}
+			// Deduplicate: if two entries from same agent within 10s, keep the one with distinct EN/ZH
+			var deduped = [];
+			for (var i = 0; i < entries.length; i++) {
+				var e = entries[i];
+				var dominated = false;
+				for (var j = 0; j < deduped.length; j++) {
+					var d = deduped[j];
+					if (d.agentId === e.agentId && Math.abs(new Date(d.timestamp) - new Date(e.timestamp)) < 10000) {
+						// Keep the one where descEn != descZh (properly translated)
+						if (d.descEn === d.descZh && e.descEn !== e.descZh) { deduped[j] = e; }
+						dominated = true; break;
+					}
+				}
+				if (!dominated) deduped.push(e);
+			}
+			entries = deduped;
+			var isZh = document.documentElement.getAttribute('data-lang') === 'zh';
+			feedList.innerHTML = entries.map(function(e) {
+				var desc = isZh ? (e.descZh || e.descEn) : (e.descEn || e.descZh);
+				return '<div class="feed-item">' +
+					'<div class="feed-dot" style="background:' + e.color + ';box-shadow:0 0 6px ' + e.color + '66"></div>' +
+					'<div class="feed-content">' +
+						'<span class="feed-agent font-serif text-xs font-bold" style="color:' + e.color + '">' + e.agentName + '</span>' +
+						'<span class="feed-desc font-serif text-sm text-gray-600 dark:text-gray-400">' + desc + '</span>' +
+					'</div>' +
+					'<span class="feed-time font-serif text-xs text-gray-400 shrink-0">' + timeAgo(e.timestamp) + '</span>' +
+				'</div>';
+			}).join('');
+
+			ACTIVITY_FEED = entries.map(function(e) {
+				return {
+					agentId:   e.agentId,
+					agentName: e.agentName,
+					descEn:    e.descEn,
+					descZh:    e.descZh,
+					color:     e.color,
+					time:      timeAgo(e.timestamp)
+				};
+			});
+		}
+
+		async function fetchActivity() {
+			try {
+				var controller = new AbortController();
+				var timeout = setTimeout(function() { controller.abort(); }, 5000);
+				var resp = await fetch(CONVEX_ACTIVITY_URL + '/api/query', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ path: 'activity:recent', args: { limit: 10 }, format: 'json' }),
+					signal: controller.signal
+				});
+				clearTimeout(timeout);
+				var data = await resp.json();
+				if (data.status === 'success' && data.value) {
+					renderFeed(data.value);
+				}
+			} catch (e) {
+				console.error('Activity feed fetch failed:', e);
+				if (feedList && feedList.querySelector('.feed-loading')) {
+					feedList.innerHTML = '<div class="feed-empty font-serif text-xs text-gray-500"><span class="lang-en">Unable to load \u2014 will retry</span><span class="lang-zh" data-pagefind-ignore>\u52a0\u8f7d\u5931\u8d25\uff0c\u7a0d\u540e\u91cd\u8bd5</span></div>';
+				}
+			}
+		}
+
+		fetchActivity();
+		_intervals.push(setInterval(fetchActivity, 30000));
+
+		/* ══════════════════════════════════════════════════════════════
+		   RESPONSIVE SCALE
+		   ══════════════════════════════════════════════════════════════ */
+		function scalePixelOffice() {
+			var wrapper = document.getElementById('pixel-office-wrapper');
+			var office = document.getElementById('pixel-office');
+			if (!wrapper || !office) return;
+			var containerWidth = wrapper.clientWidth;
+			var officeWidth = 768;
+			var scale = Math.min(1, containerWidth / officeWidth);
+			office.style.transform = scale < 1 ? 'scale(' + scale + ')' : '';
+			var officeHeight = 448;
+			wrapper.style.height = scale < 1 ? Math.round(officeHeight * scale) + 'px' : '';
+		}
+
+		scalePixelOffice();
+		window.addEventListener('resize', scalePixelOffice);
+
+	} /* end initAgentPage */
+
+	/* ── Bootstrap ── */
+	initAgentPage();
+
+	document.addEventListener('astro:page-load', function() {
+		if (document.getElementById('office-canvas')) {
+			initAgentPage();
+		}
+	});
+
+})();
+</script>

@@ -962,7 +962,7 @@
     ctx.restore();
 
     if (a.status === 'busy' && a.task) drawTaskBubble(a, drawX, drawY, dw);
-    drawHoverCard(a, drawX, drawY, dw);
+    // drawHoverCard(a, drawX, drawY, dw); // disabled per Rex
     if (a.status === 'offline') drawZzz(a);
   }
 
