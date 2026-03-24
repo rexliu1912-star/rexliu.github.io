@@ -39,7 +39,7 @@
   // Delta-time animation constants
   var MOVE_SPEED = 54;       // pixels per second (at ZOOM=2)
   var WALK_FRAME_DUR = 0.10; // seconds per walk frame
-  var WORK_FRAME_DUR = 1.2; // seconds per work frame cycle (slow typing)
+  var WORK_FRAME_DUR = 0.33; // seconds per work frame cycle
   var IDLE_TURN_MIN = 1.5;   // seconds
   var IDLE_TURN_MAX = 4.0;
   var WANDER_MIN = 2.0;      // seconds
