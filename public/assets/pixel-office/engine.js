@@ -606,10 +606,17 @@
       if (this.greeting <= 0) {
         this.greeting = 0;
         if (this.greetingResumeMoving) {
-          this.moving = true;
+          this.greetingResumeMoving = false;
+          // Resume: restore target and restart movement
           this.targetX = this.greetingResumeTargetX;
           this.targetY = this.greetingResumeTargetY;
-          this.greetingResumeMoving = false;
+          this.moving = true;
+          this.walkCycleIndex = 0;
+          this.animTimer = 0;
+          // Recalculate direction toward target
+          var gdx = this.targetX - this.px, gdy = this.targetY - this.py;
+          if (Math.abs(gdx) > Math.abs(gdy)) this.dir = gdx > 0 ? DIR_RIGHT : DIR_LEFT;
+          else if (gdy !== 0) this.dir = gdy > 0 ? DIR_DOWN : DIR_UP;
         }
       }
       return;
@@ -830,9 +837,9 @@
   }
 
   function drawHeadquartersSign() {
-    // Draw on top of everything — full-width banner at very top
-    var x = 7 * T, y = 0;
-    var w = 10 * T, h = T * 1.6;
+    // Fits within wall row (row 0, height = 1 tile = T)
+    var x = 8 * T, y = 4;
+    var w = 8 * T, h = T - 6;
     ctx.save();
     // Background - dark with gradient
     var bg = ctx.createLinearGradient(x, y, x + w, y);
@@ -858,7 +865,7 @@
     ctx.shadowBlur = 0;
     // Main text
     ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 14px "Press Start 2P", monospace';
+    ctx.font = 'bold 10px "Press Start 2P", monospace';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText('REX AI HQ', x + w / 2, y + h / 2 + 1);
@@ -894,7 +901,7 @@
       agentId: agent.id,
       text: lines[randInt(0, lines.length - 1)],
       startsAt: nowMs,
-      endsAt: nowMs + 7000,
+      endsAt: nowMs + 2800,
       fadeMs: 220
     };
     nextGreetingAt = nowMs + 30000;
@@ -910,8 +917,8 @@
         if (!a1.moving || !a2.moving) continue;
         if (a1.greeting > 0 || a2.greeting > 0) continue;
         if (distancePx(a1, a2) >= 48) continue;
-        a1.greeting = 8.0;
-        a2.greeting = 8.0;
+        a1.greeting = 3.0;
+        a2.greeting = 3.0;
         a1.greetingResumeMoving = true;
         a2.greetingResumeMoving = true;
         a1.greetingResumeTargetX = a1.targetX;
@@ -962,7 +969,7 @@
     var pair = nearbyPairs[randInt(0, nearbyPairs.length - 1)];
     var speaker = pair[randInt(0, 1)];
     var lines = getSocialLines();
-    var duration = randInt(4000, 6000);
+    var duration = randInt(3000, 4500);
     socialBubble = {
       agentId: speaker.id,
       text: lines[randInt(0, lines.length - 1)],
@@ -970,7 +977,7 @@
       endsAt: nowMs + duration,
       fadeMs: 280
     };
-    nextSocialBubbleAt = socialBubble.endsAt + randInt(12000, 20000);
+    nextSocialBubbleAt = socialBubble.endsAt + randInt(10000, 18000);
   }
 
   function drawRoundRect(x, y, w, h, radius) {
