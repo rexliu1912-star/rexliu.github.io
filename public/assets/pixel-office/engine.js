@@ -151,19 +151,42 @@
   var entryOverlay = null;
 
   var SOCIAL_LINES_EN = [
-    'Coffee?', 'Ship it!', 'LGTM 👍', 'Nice!', 'Bug?', 'Review?', "Let's go!",
-    'Almost done', 'Hmm...', '📊', 'Gm!', 'Wagmi 🚀', 'Any alpha?',
-    'PR ready?', 'Merge it!', 'Quick sync?', 'On it!', 'Blocked?',
-    'New task!', 'Sick design 🎨', 'Bullish 📈', 'Build time!', "What's the plan?",
-    'Stack overflow 😅', 'Deploying...', 'Tests pass ✅', 'Refactor?', 'Tech debt...',
-    'Deploy today?', 'Code review?', 'Standup?', 'Deadline?', 'Hot fix 🔥'
+    // Greetings
+    'Hey!', 'Gm!', "What's up?", 'Yo!', 'Hi there 👋',
+    // Work
+    'Ship it!', 'LGTM 👍', 'PR ready?', 'Merge it!', 'On it!',
+    'Almost done', 'Quick sync?', 'Blocked?', 'New task!', 'Build time!',
+    'Deploying...', 'Tests pass ✅', 'Refactor?', 'Hot fix 🔥', 'Code review?',
+    "What's the plan?", 'Standup?', 'Deadline?', 'Deploy today?', 'Tech debt...',
+    // Crypto/Alpha
+    'Any alpha?', 'Wagmi 🚀', 'Bullish 📈', 'DYOR!', 'NFA but...',
+    'Wen moon?', 'Stack sats!', 'On-chain 👀', 'Bearish?', 'Pump it!',
+    // Social
+    'Coffee? ☕', 'Nice!', 'Hmm...', 'Sick design 🎨', 'Stack overflow 😅',
+    'Touch grass?', 'Break time!', 'Lunch?', 'Need help?', 'Great work!',
+    'Focus mode', 'In the zone 🎯', 'Pair up?', 'Brainstorm?', 'Whiteboard?',
+    // Fun
+    'GG 🎮', 'Vibes ✨', '1000x incoming', 'Wen lambo?', 'Stay humble',
+    'Pixel perfect!', 'Clean code!', 'Zero bugs!', 'Ship > perfect', '📊'
   ];
   var SOCIAL_LINES_ZH = [
-    '喝杯咖啡？', '发布！', '不错！', '有Bug？', '帮我review？', '冲！', '快好了',
-    '嗯...', '📊', '早安！', '有Alpha吗？', 'PR写完了？', '合进去！',
-    '开个会？', '搞定了！', '卡住了？', '新任务！', '设计很棒 🎨', '很牛 📈',
-    '开发时间！', '计划是啥？', '部署中...', '测试通过 ✅', '要重构吗？',
-    '今天上线？', 'Code review一下？', '站会？', '截止日期？', '紧急修复 🔥'
+    // 问候
+    '嘿！', '早安！', '在忙啥？', 'Yo！', '你好 👋',
+    // 工作
+    '发布！', '不错 👍', 'PR写完了？', '合进去！', '搞定了！',
+    '快好了', '开个会？', '卡住了？', '新任务！', '开干！',
+    '部署中...', '测试通过 ✅', '要重构吗？', '紧急修复 🔥', 'Review一下？',
+    '计划是啥？', '站会？', '截止日期？', '今天上线？', '技术债...',
+    // 加密/Alpha
+    '有Alpha吗？', '冲 🚀', '看涨 📈', 'DYOR！', '不构成建议...',
+    '啥时候起飞？', '囤币！', '链上数据 👀', '看跌？', '拉盘！',
+    // 社交
+    '喝杯咖啡 ☕', '不错！', '嗯...', '设计很棒 🎨', '脑子烧了 😅',
+    '出去走走？', '休息一下！', '吃饭？', '需要帮忙吗？', '干得漂亮！',
+    '专注模式', '在状态 🎯', '结对？', '头脑风暴？', '画白板？',
+    // 有趣
+    'GG 🎮', '氛围到了 ✨', '千倍在路上', '啥时候买兰博基尼？', '保持谦逊',
+    '像素完美！', '代码很干净！', '零Bug！', '先发 > 完美', '📊'
   ];
 
   var POI_LIST = [
@@ -807,37 +830,49 @@
   }
 
   function drawHeadquartersSign() {
-    var x = 10 * T, y = 1 * T;
-    var w = 4 * T, h = T * 1.2;
+    // Draw on top of everything — full-width banner at very top
+    var x = 7 * T, y = 0;
+    var w = 10 * T, h = T * 1.6;
     ctx.save();
-    ctx.fillStyle = '#1a1a2e';
-    ctx.strokeStyle = '#8953d1';
-    ctx.lineWidth = 2;
+    // Background - dark with gradient
+    var bg = ctx.createLinearGradient(x, y, x + w, y);
+    bg.addColorStop(0, '#12122a');
+    bg.addColorStop(0.5, '#1a1a3a');
+    bg.addColorStop(1, '#12122a');
+    ctx.fillStyle = bg;
     if (ctx.roundRect) {
       ctx.beginPath();
-      ctx.roundRect(x, y + 4, w, h - 2, 4);
+      ctx.roundRect(x, y + 2, w, h - 2, 6);
     } else {
       ctx.beginPath();
-      ctx.rect(x, y + 4, w, h - 2);
+      ctx.rect(x, y + 2, w, h - 2);
     }
     ctx.fill();
+    // Purple border + glow
+    ctx.strokeStyle = '#8953d1';
+    ctx.lineWidth = 2;
     ctx.stroke();
     ctx.shadowColor = '#8953d1';
-    ctx.shadowBlur = 8;
+    ctx.shadowBlur = 12;
     ctx.stroke();
     ctx.shadowBlur = 0;
+    // Main text
     ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 10px "Press Start 2P", monospace';
+    ctx.font = 'bold 14px "Press Start 2P", monospace';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText('REX AI HQ', x + w / 2, y + h / 2 + 2);
+    ctx.fillText('REX AI HQ', x + w / 2, y + h / 2 + 1);
+    // Decorative dots on each side
     ctx.fillStyle = '#8953d1';
+    ctx.beginPath(); ctx.arc(x + 12, y + h / 2 + 1, 3, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(x + w - 12, y + h / 2 + 1, 3, 0, Math.PI * 2); ctx.fill();
+    // Subtle underline glow
+    ctx.strokeStyle = 'rgba(137,83,209,0.3)';
+    ctx.lineWidth = 1;
     ctx.beginPath();
-    ctx.arc(x + 8, y + h / 2 + 2, 2, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.beginPath();
-    ctx.arc(x + w - 8, y + h / 2 + 2, 2, 0, Math.PI * 2);
-    ctx.fill();
+    ctx.moveTo(x + 20, y + h);
+    ctx.lineTo(x + w - 20, y + h);
+    ctx.stroke();
     ctx.restore();
   }
 
@@ -1258,7 +1293,6 @@
     ctx.clearRect(0, 0, CANVAS_W, CANVAS_H);
     ctx.imageSmoothingEnabled = false;
     drawFloorAndWalls();
-    drawHeadquartersSign();
     drawParticles();
 
     // ── Z-Sort: unified furniture + agents, sorted by bottom Y ──
@@ -1298,6 +1332,7 @@
     drawables.forEach(function (d) { d.draw(); });
 
     drawSocialBubble();
+    drawHeadquartersSign();
     drawDayOverlay();
     if (entryOverlay && !entryOverlay.done) {
       entryOverlay.alpha -= dt / 0.8;
