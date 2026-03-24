@@ -25,7 +25,7 @@
   var DIR_DOWN = 0, DIR_UP = 1, DIR_RIGHT = 2;
   var DIR_LEFT = 3; // virtual direction, uses RIGHT row + flip
   var ROW_ACTIVITY = 3;
-  var WALK_SEQUENCE = [1, 2, 3, 2, 1];
+  var WALK_SEQUENCE = [0, 1, 0, 3];
   var WORK_SEQUENCE = [0, 1];
   var STATE_FRAME = {
     idle: 0,
