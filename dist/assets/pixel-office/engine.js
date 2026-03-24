@@ -13,9 +13,9 @@
   'use strict';
 
   // ── Constants ──────────────────────────────────────────────
-  var TILE = 16, ZOOM = 2, COLS = 24, ROWS = 14;
-  var CANVAS_W = COLS * TILE * ZOOM;   // 768
-  var CANVAS_H = ROWS * TILE * ZOOM;   // 448
+  var TILE = 16, ZOOM = 2, COLS = 48, ROWS = 28;
+  var CANVAS_W = COLS * TILE * ZOOM;   // 1536
+  var CANVAS_H = ROWS * TILE * ZOOM;   // 896
   var T = TILE * ZOOM;                 // 32 — one tile on screen
   var BASE = '/assets/pixel-office/';
   var LIMEZU_BASE = BASE + 'limezu/';
@@ -48,126 +48,136 @@
   var IDLE_ACTIVITY_MIN = 4.0;
   var IDLE_ACTIVITY_MAX = 8.0;
 
-  // ── Tile Map (24×14) ──────────────────────────────────────
+  // ── Tile Map (48×28) ──────────────────────────────────────
   var MAP = [
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
-    [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
-    [0,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
-    [0,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
-    [0,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
-    [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
-    [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
-    [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
-    [0,3,3,3,3,3,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
-    [0,3,3,3,3,3,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
-    [0,3,3,3,3,3,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
-    [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
+    [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
+    [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
+    [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
+    [0,2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
+    [0,2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
+    [0,2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
+    [0,2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
+    [0,2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
+    [0,2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
+    [0,2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
+    [0,2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
+    [0,2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
+    [0,2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
+    [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
+    [0,3,3,3,3,3,3,3,3,3,3,3,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
+    [0,3,3,3,3,3,3,3,3,3,3,3,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
+    [0,3,3,3,3,3,3,3,3,3,3,3,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
+    [0,3,3,3,3,3,3,3,3,3,3,3,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
+    [0,3,3,3,3,3,3,3,3,3,3,3,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
+    [0,3,3,3,3,3,3,3,3,3,3,3,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
+    [0,3,3,3,3,3,3,3,3,3,3,3,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
+    [0,3,3,3,3,3,3,3,3,3,3,3,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
+    [0,3,3,3,3,3,3,3,3,3,3,3,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
+    [0,3,3,3,3,3,3,3,3,3,3,3,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
+    [0,3,3,3,3,3,3,3,3,3,3,3,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
   ];
 
   // ── Agents ─────────────────────────────────────────────────
   var AGENTS_CFG = [
-    { id:'main',       name:'Samantha', emoji:'🧡', sprite:'char_0.png', hc:11, hr:4,  ic:4, ir:5,  ec:20, er:10, oc:3, or:10, dir:DIR_DOWN, tint:null },
-    { id:'writer',     name:'Loki',     emoji:'🐍', sprite:'char_1.png', hc:9,  hr:7,  ic:2, ir:5,  ec:19, er:11, oc:4, or:10, dir:DIR_DOWN, tint:null },
-    { id:'researcher', name:'Vision',   emoji:'👁️', sprite:'char_2.png', hc:13, hr:7,  ic:5, ir:5,  ec:20, er:11, oc:5, or:10, dir:DIR_DOWN, tint:null },
-    { id:'coder',      name:'Jarvis',   emoji:'⚙️', sprite:'char_3.png', hc:17, hr:7,  ic:3, ir:4,  ec:21, er:10, oc:2, or:10, dir:DIR_DOWN, tint:null },
-    { id:'designer',   name:'Shuri',    emoji:'🎨', sprite:'char_4.png', hc:10, hr:10, ic:4, ir:4,  ec:21, er:11, oc:3, or:11, dir:DIR_DOWN, tint:null },
-    { id:'analyst',    name:'Friday',   emoji:'📊', sprite:'char_5.png', hc:15, hr:10, ic:2, ir:4,  ec:22, er:10, oc:4, or:11, dir:DIR_DOWN, tint:null },
+    { id:'main',       name:'Samantha', emoji:'🧡', sprite:'char_0.png', hc:28, hr:9,  ic:6, ir:10, ec:40, er:22, oc:6, or:20, dir:DIR_DOWN, tint:null },
+    { id:'writer',     name:'Loki',     emoji:'🐍', sprite:'char_1.png', hc:16, hr:14, ic:4, ir:10, ec:38, er:24, oc:8, or:20, dir:DIR_DOWN, tint:null },
+    { id:'researcher', name:'Vision',   emoji:'👁️', sprite:'char_2.png', hc:24, hr:14, ic:8, ir:10, ec:40, er:22, oc:4, or:22, dir:DIR_DOWN, tint:null },
+    { id:'coder',      name:'Jarvis',   emoji:'⚙️', sprite:'char_3.png', hc:32, hr:14, ic:6, ir:8,  ec:42, er:22, oc:4, or:22, dir:DIR_DOWN, tint:null },
+    { id:'designer',   name:'Shuri',    emoji:'🎨', sprite:'char_4.png', hc:20, hr:21, ic:8, ir:8,  ec:42, er:24, oc:6, or:24, dir:DIR_DOWN, tint:null },
+    { id:'analyst',    name:'Friday',   emoji:'📊', sprite:'char_5.png', hc:30, hr:21, ic:4, ir:8,  ec:44, er:22, oc:8, or:24, dir:DIR_DOWN, tint:null },
   ];
 
   // ── Furniture layout ───────────────────────────────────────
   var FURNITURE = [
     // Wall decor strip
-    { type:'BOOKSHELF_TALL',  col:1,  row:1, limezu:213, w:2, h:2, blocks:false },
-    { type:'WHITEBOARD',      col:4,  row:1, limezu:131, w:2, h:2, blocks:false },
-    { type:'CLOCK',           col:7,  row:1, limezu:137, w:1, h:1, blocks:false },
-    { type:'PAINTING_LARGE',  col:9,  row:1, limezu:139, w:2, h:2, blocks:false },
-    { type:'CHART',           col:12, row:1, limezu:227, w:2, h:2, blocks:false },
-    { type:'PAINTING_SMALL',  col:15, row:1, limezu:225, w:1, h:2, blocks:false },
-    { type:'BOOKSHELF_LOW',   col:17, row:1, limezu:221, w:2, h:1, blocks:false },
-    { type:'HANGING_PLANT',   col:20, row:1, limezu:338, w:1, h:2, blocks:false },
-    { type:'BOOKSHELF_TALL',  col:21, row:1, limezu:215, w:2, h:2, blocks:false },
+    { type:'BOOKSHELF_TALL',  col:1,  row:1,  limezu:213, w:2, h:3, blocks:false },
+    { type:'WHITEBOARD',      col:6,  row:1,  limezu:131, w:2, h:3, blocks:false },
+    { type:'CLOCK',           col:12, row:1,  limezu:137, w:2, h:3, blocks:false },
+    { type:'PAINTING_LARGE',  col:16, row:1,  limezu:139, w:2, h:3, blocks:false },
+    { type:'CHART',           col:22, row:1,  limezu:227, w:2, h:3, blocks:false },
+    { type:'PAINTING_SMALL',  col:28, row:1,  limezu:225, w:2, h:3, blocks:false },
+    { type:'BOOKSHELF_LOW',   col:32, row:1,  limezu:221, w:2, h:3, blocks:false },
+    { type:'HANGING_PLANT',   col:38, row:1,  limezu:338, w:2, h:3, blocks:false },
+    { type:'BOOKSHELF_TALL',  col:42, row:1,  limezu:215, w:2, h:3, blocks:false },
 
     // Lounge
-    { type:'SOFA_BACK',       col:1,  row:3, limezu:183, w:2, h:1, blocks:true },
-    { type:'SOFA_FRONT',      col:1,  row:4, limezu:185, w:2, h:1, blocks:true },
-    { type:'COFFEE_TABLE',    col:3,  row:3, limezu:283, w:2, h:2, blocks:true },
-    { type:'COFFEE',          col:3,  row:3, limezu:179, w:1, h:1, blocks:false },
-    { type:'COFFEE',          col:4,  row:3, limezu:180, w:1, h:1, blocks:false },
-    { type:'COFFEE_MACHINE',  col:5,  row:2, limezu:177, w:1, h:2, blocks:true },
-    { type:'FLOOR_LAMP',      col:6,  row:2, limezu:173, w:1, h:2, blocks:false },
-    { type:'PLANT',           col:1,  row:6, limezu:97,  w:1, h:2, blocks:true },
-    { type:'RUG',             col:2,  row:4, limezu:81,  w:3, h:2, blocks:false },
+    { type:'BOOKSHELF_TALL',  col:1,  row:5,  limezu:213, w:2, h:3, blocks:true },
+    { type:'SOFA_BACK',       col:1,  row:8,  limezu:183, w:2, h:3, blocks:true },
+    { type:'SOFA_FRONT',      col:1,  row:10, limezu:185, w:2, h:3, blocks:true },
+    { type:'COFFEE_TABLE',    col:4,  row:8,  limezu:283, w:2, h:3, blocks:true },
+    { type:'COFFEE',          col:4,  row:8,  limezu:179, w:2, h:3, blocks:false },
+    { type:'COFFEE',          col:6,  row:8,  limezu:180, w:2, h:3, blocks:false },
+    { type:'COFFEE_MACHINE',  col:8,  row:5,  limezu:177, w:2, h:3, blocks:true },
+    { type:'FLOOR_LAMP',      col:10, row:5,  limezu:173, w:2, h:3, blocks:false },
+    { type:'PLANT',           col:1,  row:12, limezu:97,  w:2, h:3, blocks:true },
+    { type:'RUG',             col:3,  row:9,  limezu:81,  w:2, h:3, blocks:false },
 
     // Samantha command station
-    { type:'DESK_LEFT',       col:10, row:2, limezu:7,   w:1, h:2, blocks:true },
-    { type:'DESK_MID',        col:11, row:2, limezu:8,   w:1, h:2, blocks:true },
-    { type:'DESK_RIGHT',      col:12, row:2, limezu:9,   w:1, h:2, blocks:true },
-    { type:'MONITOR',         col:11, row:2, limezu:117, w:1, h:1, blocks:false },
-    { type:'KEYBOARD',        col:11, row:3, limezu:161, w:1, h:1, blocks:false },
-    { type:'CHAIR',           col:11, row:4, limezu:101, w:1, h:1, blocks:false },
-    { type:'DESK_LAMP',       col:10, row:2, limezu:169, w:1, h:1, blocks:false },
+    { type:'DESK_LEFT',       col:26, row:5,  limezu:7,   w:2, h:3, blocks:true },
+    { type:'DESK_MID',        col:28, row:5,  limezu:8,   w:2, h:3, blocks:true },
+    { type:'DESK_RIGHT',      col:30, row:5,  limezu:9,   w:2, h:3, blocks:true },
+    { type:'MONITOR',         col:28, row:5,  limezu:117, w:2, h:3, blocks:false },
+    { type:'CHAIR',           col:28, row:9,  limezu:101, w:2, h:3, blocks:false },
+    { type:'DESK_LAMP',       col:26, row:5,  limezu:169, w:2, h:3, blocks:false },
 
     // Work zone row 1
-    { type:'PARTITION',       col:7,  row:5, limezu:207, w:1, h:2, blocks:true },
+    { type:'DESK_LEFT',       col:14, row:10, limezu:7,   w:2, h:3, blocks:true },
+    { type:'DESK_MID',        col:16, row:10, limezu:8,   w:2, h:3, blocks:true },
+    { type:'DESK_RIGHT',      col:18, row:10, limezu:9,   w:2, h:3, blocks:true },
+    { type:'MONITOR',         col:16, row:10, limezu:118, w:2, h:3, blocks:false },
+    { type:'CHAIR',           col:16, row:14, limezu:103, w:2, h:3, blocks:false },
+    { type:'DESK_LAMP',       col:14, row:10, limezu:169, w:2, h:3, blocks:false },
 
-    { type:'DESK_LEFT',       col:8,  row:5, limezu:7,   w:1, h:2, blocks:true },
-    { type:'DESK_MID',        col:9,  row:5, limezu:8,   w:1, h:2, blocks:true },
-    { type:'DESK_RIGHT',      col:10, row:5, limezu:9,   w:1, h:2, blocks:true },
-    { type:'MONITOR',         col:9,  row:5, limezu:118, w:1, h:1, blocks:false },
-    { type:'CHAIR',           col:9,  row:7, limezu:103, w:1, h:1, blocks:false },
-    { type:'DESK_LAMP',       col:8,  row:5, limezu:169, w:1, h:1, blocks:false },
+    { type:'DESK_LEFT',       col:22, row:10, limezu:7,   w:2, h:3, blocks:true },
+    { type:'DESK_MID',        col:24, row:10, limezu:8,   w:2, h:3, blocks:true },
+    { type:'DESK_RIGHT',      col:26, row:10, limezu:9,   w:2, h:3, blocks:true },
+    { type:'MONITOR',         col:24, row:10, limezu:119, w:2, h:3, blocks:false },
+    { type:'CHAIR',           col:24, row:14, limezu:105, w:2, h:3, blocks:false },
+    { type:'DESK_LAMP',       col:22, row:10, limezu:169, w:2, h:3, blocks:false },
 
-    { type:'DESK_LEFT',       col:12, row:5, limezu:7,   w:1, h:2, blocks:true },
-    { type:'DESK_MID',        col:13, row:5, limezu:8,   w:1, h:2, blocks:true },
-    { type:'DESK_RIGHT',      col:14, row:5, limezu:9,   w:1, h:2, blocks:true },
-    { type:'MONITOR',         col:13, row:5, limezu:119, w:1, h:1, blocks:false },
-    { type:'CHAIR',           col:13, row:7, limezu:105, w:1, h:1, blocks:false },
-    { type:'DESK_LAMP',       col:12, row:5, limezu:169, w:1, h:1, blocks:false },
-
-    { type:'DESK_LEFT',       col:16, row:5, limezu:7,   w:1, h:2, blocks:true },
-    { type:'DESK_MID',        col:17, row:5, limezu:8,   w:1, h:2, blocks:true },
-    { type:'DESK_RIGHT',      col:18, row:5, limezu:9,   w:1, h:2, blocks:true },
-    { type:'MONITOR',         col:17, row:5, limezu:120, w:1, h:1, blocks:false },
-    { type:'CHAIR',           col:17, row:7, limezu:107, w:1, h:1, blocks:false },
-    { type:'DESK_LAMP',       col:16, row:5, limezu:169, w:1, h:1, blocks:false },
+    { type:'DESK_LEFT',       col:30, row:10, limezu:7,   w:2, h:3, blocks:true },
+    { type:'DESK_MID',        col:32, row:10, limezu:8,   w:2, h:3, blocks:true },
+    { type:'DESK_RIGHT',      col:34, row:10, limezu:9,   w:2, h:3, blocks:true },
+    { type:'MONITOR',         col:32, row:10, limezu:120, w:2, h:3, blocks:false },
+    { type:'CHAIR',           col:32, row:14, limezu:107, w:2, h:3, blocks:false },
+    { type:'DESK_LAMP',       col:30, row:10, limezu:169, w:2, h:3, blocks:false },
 
     // Work zone row 2
-    { type:'DESK_LEFT',       col:9,  row:8, limezu:7,   w:1, h:2, blocks:true },
-    { type:'DESK_MID',        col:10, row:8, limezu:8,   w:1, h:2, blocks:true },
-    { type:'DESK_RIGHT',      col:11, row:8, limezu:9,   w:1, h:2, blocks:true },
-    { type:'MONITOR',         col:10, row:8, limezu:117, w:1, h:1, blocks:false },
-    { type:'CHAIR',           col:10, row:10,limezu:109, w:1, h:1, blocks:false },
-    { type:'DESK_LAMP',       col:9,  row:8, limezu:169, w:1, h:1, blocks:false },
+    { type:'DESK_LEFT',       col:18, row:17, limezu:7,   w:2, h:3, blocks:true },
+    { type:'DESK_MID',        col:20, row:17, limezu:8,   w:2, h:3, blocks:true },
+    { type:'DESK_RIGHT',      col:22, row:17, limezu:9,   w:2, h:3, blocks:true },
+    { type:'MONITOR',         col:20, row:17, limezu:117, w:2, h:3, blocks:false },
+    { type:'CHAIR',           col:20, row:21, limezu:109, w:2, h:3, blocks:false },
+    { type:'DESK_LAMP',       col:18, row:17, limezu:169, w:2, h:3, blocks:false },
 
-    { type:'DESK_LEFT',       col:14, row:8, limezu:7,   w:1, h:2, blocks:true },
-    { type:'DESK_MID',        col:15, row:8, limezu:8,   w:1, h:2, blocks:true },
-    { type:'DESK_RIGHT',      col:16, row:8, limezu:9,   w:1, h:2, blocks:true },
-    { type:'MONITOR',         col:15, row:8, limezu:118, w:1, h:1, blocks:false },
-    { type:'CHAIR',           col:15, row:10,limezu:111, w:1, h:1, blocks:false },
-    { type:'DESK_LAMP',       col:14, row:8, limezu:169, w:1, h:1, blocks:false },
-
-    { type:'PRINTER',         col:20, row:6, limezu:164, w:1, h:2, blocks:true },
-    { type:'BIN',             col:19, row:7, limezu:121, w:1, h:1, blocks:true },
+    { type:'DESK_LEFT',       col:28, row:17, limezu:7,   w:2, h:3, blocks:true },
+    { type:'DESK_MID',        col:30, row:17, limezu:8,   w:2, h:3, blocks:true },
+    { type:'DESK_RIGHT',      col:32, row:17, limezu:9,   w:2, h:3, blocks:true },
+    { type:'MONITOR',         col:30, row:17, limezu:118, w:2, h:3, blocks:false },
+    { type:'CHAIR',           col:30, row:21, limezu:111, w:2, h:3, blocks:false },
+    { type:'DESK_LAMP',       col:28, row:17, limezu:169, w:2, h:3, blocks:false },
 
     // Break room
-    { type:'VENDING',         col:1,  row:8, limezu:307, w:1, h:2, blocks:true },
-    { type:'WATER',           col:2,  row:8, limezu:277, w:1, h:2, blocks:true },
-    { type:'RUG',             col:2,  row:9, limezu:83,  w:4, h:3, blocks:false },
-    { type:'SMALL_TABLE',     col:3,  row:9, limezu:283, w:2, h:2, blocks:true },
-    { type:'CHAIR',           col:2,  row:10,limezu:113, w:1, h:1, blocks:false },
-    { type:'CHAIR',           col:5,  row:10,limezu:114, w:1, h:1, blocks:false },
-    { type:'PLANT',           col:6,  row:8, limezu:99,  w:1, h:2, blocks:true },
-    { type:'MICROWAVE',       col:1,  row:11,limezu:309, w:1, h:1, blocks:true },
+    { type:'VENDING',         col:1,  row:16, limezu:307, w:2, h:3, blocks:true },
+    { type:'WATER',           col:3,  row:16, limezu:277, w:2, h:3, blocks:true },
+    { type:'SMALL_TABLE',     col:5,  row:18, limezu:283, w:2, h:3, blocks:true },
+    { type:'CHAIR',           col:3,  row:20, limezu:113, w:2, h:3, blocks:false },
+    { type:'CHAIR',           col:8,  row:20, limezu:114, w:2, h:3, blocks:false },
+    { type:'PLANT',           col:10, row:16, limezu:99,  w:2, h:3, blocks:true },
+    { type:'MICROWAVE',       col:1,  row:22, limezu:309, w:2, h:3, blocks:true },
+    { type:'RUG',             col:3,  row:19, limezu:83,  w:2, h:3, blocks:false },
 
     // Tech corner
-    { type:'CABINET',         col:20, row:9, limezu:251, w:1, h:2, blocks:true },
-    { type:'CABINET',         col:21, row:9, limezu:253, w:1, h:2, blocks:true },
-    { type:'PRINTER_LARGE',   col:22, row:9, limezu:273, w:1, h:2, blocks:true },
-    { type:'PLANT',           col:19, row:10,limezu:100, w:1, h:2, blocks:true },
-    { type:'COAT_RACK',       col:19, row:12,limezu:231, w:1, h:1, blocks:true },
-    { type:'BIN',             col:22, row:12,limezu:123, w:1, h:1, blocks:true },
+    { type:'CABINET',         col:38, row:18, limezu:251, w:2, h:3, blocks:true },
+    { type:'CABINET',         col:40, row:18, limezu:253, w:2, h:3, blocks:true },
+    { type:'PRINTER_LARGE',   col:42, row:18, limezu:273, w:2, h:3, blocks:true },
+    { type:'PRINTER',         col:44, row:20, limezu:164, w:2, h:3, blocks:true },
+    { type:'PLANT',           col:36, row:20, limezu:100, w:2, h:3, blocks:true },
+    { type:'COAT_RACK',       col:36, row:24, limezu:231, w:2, h:3, blocks:true },
+    { type:'BIN',             col:44, row:24, limezu:123, w:2, h:3, blocks:true },
   ];
 
 
@@ -228,18 +238,18 @@
   ];
 
   var POI_LIST = [
-    { col:2, row:5, type:'lounge' },
-    { col:3, row:5, type:'lounge' },
-    { col:4, row:5, type:'lounge' },
-    { col:5, row:4, type:'lounge' },
-    { col:2, row:6, type:'lounge' },
-    { col:5, row:6, type:'lounge' }
+    { col:4,  row:10, type:'lounge' },
+    { col:6,  row:10, type:'lounge' },
+    { col:8,  row:10, type:'lounge' },
+    { col:4,  row:12, type:'lounge' },
+    { col:8,  row:12, type:'lounge' },
+    { col:10, row:10, type:'lounge' }
   ];
 
   var ZONE_TINTS = [
-    { x:1,  y:2, w:6, h:5, fill:'rgba(180,140,100,0.07)', stroke:'rgba(180,140,100,0.22)' },
-    { x:1,  y:8, w:6, h:5, fill:'rgba(140,100,160,0.06)', stroke:'rgba(140,100,160,0.20)' },
-    { x:19, y:9, w:4, h:4, fill:'rgba(100,120,160,0.06)', stroke:'rgba(100,120,160,0.20)' }
+    { x:1,  y:5,  w:12, h:10, fill:'rgba(180,140,100,0.07)', stroke:'rgba(180,140,100,0.22)' },
+    { x:1,  y:16, w:12, h:11, fill:'rgba(140,100,160,0.06)', stroke:'rgba(140,100,160,0.20)' },
+    { x:36, y:18, w:11, h:9,  fill:'rgba(100,120,160,0.06)', stroke:'rgba(100,120,160,0.20)' }
   ];
 
   // ── Image Loader ───────────────────────────────────────────
