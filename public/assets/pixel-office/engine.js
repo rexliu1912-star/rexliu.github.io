@@ -42,10 +42,10 @@
   var WORK_FRAME_DUR = 1.2; // seconds per work frame cycle (slow typing)
   var IDLE_TURN_MIN = 1.5;   // seconds
   var IDLE_TURN_MAX = 4.0;
-  var IDLE_DESK_MIN = 3.0;
-  var IDLE_DESK_MAX = 8.0;
-  var IDLE_ACTIVITY_MIN = 4.0;
-  var IDLE_ACTIVITY_MAX = 8.0;
+  var IDLE_DESK_MIN = 2.0;
+  var IDLE_DESK_MAX = 5.0;
+  var IDLE_ACTIVITY_MIN = 8.0;
+  var IDLE_ACTIVITY_MAX = 15.0;
 
   // ── Tile Map (24×14) ──────────────────────────────────────
   var MAP = [
@@ -195,16 +195,30 @@
   ];
 
   var POI_LIST = [
+    // Lounge area
     { col:3,  row:3,  type:'coffee' },
+    { col:2,  row:5,  type:'sofa' },
+    { col:3,  row:5,  type:'sofa' },
     { col:6,  row:4,  type:'lounge' },
     { col:6,  row:5,  type:'lounge' },
+    // Near wall decor
+    { col:4,  row:2,  type:'whiteboard' },
+    { col:1,  row:2,  type:'bookshelf' },
+    { col:9,  row:2,  type:'painting' },
+    // Entertainment / lower left
+    { col:2,  row:10, type:'sofa' },
     { col:5,  row:10, type:'game' },
     { col:5,  row:11, type:'game' },
+    // Right side greenery
     { col:19, row:4,  type:'plants' },
     { col:22, row:9,  type:'plants' },
+    { col:20, row:11, type:'plants' },
+    // Corridor walk
     { col:10, row:12, type:'walk' },
     { col:15, row:12, type:'walk' },
-    { col:16, row:12, type:'walk' }
+    { col:16, row:12, type:'walk' },
+    { col:8,  row:4,  type:'walk' },
+    { col:14, row:4,  type:'walk' },
   ];
 
   // ── Image Loader ───────────────────────────────────────────
@@ -788,6 +802,8 @@
             this.idleActivityTimer = randFloat(IDLE_ACTIVITY_MIN, IDLE_ACTIVITY_MAX);
             this.activityFrame = 0;
             this.activityTimer = 0;
+            // Sofa POIs use seated work frames (col 0-1), others use standing activity (col 2-3)
+            this.poiUseSeated = this.idlePoi && this.idlePoi.type === 'sofa';
             this.dir = DIR_DOWN;
           } else if (this.idleState === 'WALKING_HOME') {
             this.resetIdleBehavior();
@@ -838,7 +854,8 @@
       this.activityTimer += dt;
       if (this.activityTimer >= WORK_FRAME_DUR) {
         this.activityTimer -= WORK_FRAME_DUR;
-        this.activityFrame = (this.activityFrame + 1) % STATE_FRAME.activity.length;
+        var poiFrameSeq = this.poiUseSeated ? WORK_SEQUENCE : STATE_FRAME.activity;
+        this.activityFrame = (this.activityFrame + 1) % poiFrameSeq.length;
       }
       if (this.idleActivityTimer <= 0) {
         this.path = bfs(this.col, this.row, this.hc, this.hr, this.id);
@@ -1298,7 +1315,9 @@
       dirRow = DIR_RIGHT;
       flip = true;
     }
-    var frame = isPoiActivity ? STATE_FRAME.activity[a.activityFrame] : Math.max(0, Math.min(a.frame, CHAR_COLS - 1));
+    // Sofa POIs use seated work frames (col 0-1), others use standing activity (col 2-3)
+    var poiFrames = (isPoiActivity && a.poiUseSeated) ? WORK_SEQUENCE : STATE_FRAME.activity;
+    var frame = isPoiActivity ? poiFrames[a.activityFrame % poiFrames.length] : Math.max(0, Math.min(a.frame, CHAR_COLS - 1));
     if (isCelebrating) {
       var celebrateProgress = clamp((0.8 - a.celebrateTimer) / 0.8, 0, 0.999);
       frame = [2, 3, 2][Math.floor(celebrateProgress * 9) % 3];
