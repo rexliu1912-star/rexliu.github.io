@@ -655,18 +655,18 @@
       alpha = 0;
     } else if (hm >= 17 && hm < 19) {
       var sunsetT = clamp((hm - 17) / 2, 0, 1);
-      alpha = lerp(0, 0.12, sunsetT);
-      top = [255, 150, 50];
-      bottom = [255, 200, 120];
+      alpha = lerp(0.05, 0.25, sunsetT);
+      top = [255, 130, 40];
+      bottom = [255, 180, 100];
     } else if (hm >= 19 && hm < 22) {
       var duskT = clamp((hm - 19) / 3, 0, 1);
-      alpha = lerp(0.12, 0.15, duskT);
-      top = [lerp(255, 30, duskT), lerp(150, 40, duskT), lerp(50, 80, duskT)];
-      bottom = [lerp(255, 70, duskT), lerp(200, 90, duskT), lerp(120, 130, duskT)];
+      alpha = lerp(0.25, 0.45, duskT);
+      top = [lerp(200, 15, duskT), lerp(120, 20, duskT), lerp(40, 60, duskT)];
+      bottom = [lerp(200, 30, duskT), lerp(150, 40, duskT), lerp(80, 90, duskT)];
     } else {
-      alpha = 0.25;
-      top = [15, 20, 50];
-      bottom = [30, 40, 80];
+      alpha = 0.50;
+      top = [10, 15, 40];
+      bottom = [20, 25, 60];
     }
 
     dayOverlayState = {
@@ -957,14 +957,8 @@
       ctx.beginPath();
       ctx.arc(labelX - hoverWidth / 2 - 10, labelY, dotR, 0, Math.PI * 2);
       ctx.fill();
-    } else {
-      ctx.font = '13px sans-serif';
-      ctx.fillText(a.emoji || '🙂', labelX, labelY);
-      ctx.fillStyle = dotColor;
-      ctx.beginPath();
-      ctx.arc(labelX + 12, labelY, dotR, 0, Math.PI * 2);
-      ctx.fill();
     }
+    // Non-hover: show nothing (clean view)
     ctx.restore();
 
     if (a.status === 'busy' && a.task) drawTaskBubble(a, drawX, drawY, dw);
