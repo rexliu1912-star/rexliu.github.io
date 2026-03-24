@@ -21,7 +21,7 @@
 
   var CHAR_FW = 32, CHAR_FH = 48;  // frame size in sprite sheet
   var CHAR_COLS = 4;
-  var CHAR_SCALE = 1.2;            // character render scale (smaller than ZOOM to match furniture)
+  var CHAR_SCALE = 0.9;            // character render scale (smaller to fit inside furniture)
   var DIR_DOWN = 0, DIR_UP = 1, DIR_RIGHT = 2;
   var DIR_LEFT = 3; // virtual direction, uses RIGHT row + flip
   var ROW_ACTIVITY = 3;
