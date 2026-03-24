@@ -382,7 +382,7 @@
     }
   }
 
-  function startBGM() {
+  function startBGM() { return; /* BGM disabled */
     if (bgmPlaying && !bgmMuted) {
       if (bgmCtx && bgmCtx.state === 'suspended') {
         try { bgmCtx.resume(); } catch (err) {}
@@ -437,7 +437,7 @@
     if (bgmGain) setBGMGain(0.0001);
   }
 
-  function toggleBGM() {
+  function toggleBGM() { return; /* BGM disabled */
     if (!bgmCtx || !bgmPlaying || bgmMuted) startBGM();
     else stopBGM();
   }
