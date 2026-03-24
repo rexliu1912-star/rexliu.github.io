@@ -3,11 +3,11 @@
  *  Vanilla JS, no dependencies. Loaded via <script src="...">.
  *  Exposes window.PixelOffice = { init, updateAgent, destroy }
  *
- *  Sprite sheet: 224x192 PNG = 7 cols × 4 rows of 32×48px frames
- *  Row 0: DOWN (front) — col 0-3 walk, col 4-5 typing
+ *  Sprite sheet: 128x192 PNG = 4 cols × 4 rows of 32×48px frames
+ *  Row 0: DOWN (front) — col 0-3 walk
  *  Row 1: UP (back)    — col 0-3 walk
  *  Row 2: RIGHT (side) — col 0-3 walk (LEFT = flip)
- *  Row 3: WORK poses   — col 0-3 various activities
+ *  Row 3: ACTIVITY     — col 0-1 seated work loop, col 2-3 standing activities
  * ============================================================ */
 (function () {
   'use strict';
@@ -20,9 +20,21 @@
   var BASE = '/assets/pixel-office/';
 
   var CHAR_FW = 32, CHAR_FH = 48;  // frame size in sprite sheet
+  var CHAR_COLS = 4;
   var CHAR_SCALE = 1.2;            // character render scale (smaller than ZOOM to match furniture)
   var DIR_DOWN = 0, DIR_UP = 1, DIR_RIGHT = 2;
   var DIR_LEFT = 3; // virtual direction, uses RIGHT row + flip
+  var ROW_ACTIVITY = 3;
+  var WALK_SEQUENCE = [1, 2, 3, 2, 1];
+  var WORK_SEQUENCE = [0, 1];
+  var STATE_FRAME = {
+    idle: 0,
+    offline: 0,
+    error: 0,
+    walk: WALK_SEQUENCE,
+    busy: WORK_SEQUENCE,
+    activity: [2, 3]
+  };
 
   // Delta-time animation constants
   var MOVE_SPEED = 54;       // pixels per second (at ZOOM=2)
@@ -245,7 +257,8 @@
     this.path = []; this.moving = false;
     this.targetX = this.px; this.targetY = this.py;
     this.targetCol = this.col; this.targetRow = this.row;
-    this.frame = 0;
+    this.frame = STATE_FRAME.idle;
+    this.walkCycleIndex = 0;
     this.animTimer = 0;       // dt-based animation accumulator
     this.workTimer = 0;       // dt-based work animation accumulator
     this.idleTurnTimer = randFloat(IDLE_TURN_MIN, IDLE_TURN_MAX);
@@ -264,7 +277,7 @@
     }
     if (s === 'offline') {
       this.dir = DIR_DOWN;
-      this.frame = 0;
+      this.frame = STATE_FRAME.offline;
     }
   };
 
@@ -275,6 +288,8 @@
     this.targetCol = next[0]; this.targetRow = next[1];
     this.targetX = next[0] * T + T / 2; this.targetY = next[1] * T + T / 2;
     this.moving = true;
+    this.walkCycleIndex = 0;
+    this.frame = STATE_FRAME.walk[this.walkCycleIndex];
     if (dx > 0) this.dir = DIR_RIGHT;
     else if (dx < 0) this.dir = DIR_LEFT;
     else if (dy > 0) this.dir = DIR_DOWN;
@@ -285,7 +300,7 @@
     // ── OFFLINE: grey, frame 0 facing down, ZZZ ──
     if (this.status === 'offline') {
       this.dir = DIR_DOWN;
-      this.frame = 0;
+      this.frame = STATE_FRAME.error;
       this.zzzPhase += dt * 1.8; // ~0.03 per frame at 60fps
       return;
     }
@@ -312,14 +327,13 @@
         this.px += (dx / dist) * speed;
         this.py += (dy / dist) * speed;
       }
-      // Walk cycle: 4 frames [0,1,2,3]
+      // Walk cycle: 1 → 2 → 3 → 2 → 1
       this.animTimer += dt;
       if (this.animTimer >= WALK_FRAME_DUR) {
         this.animTimer -= WALK_FRAME_DUR;
-        this.frame = (this.frame + 1) % 4;
+        this.walkCycleIndex = (this.walkCycleIndex + 1) % STATE_FRAME.walk.length;
+        this.frame = STATE_FRAME.walk[this.walkCycleIndex];
       }
-      // Keep frame in walk range
-      if (this.frame > 3) this.frame = 0;
       return;
     }
 
@@ -330,12 +344,12 @@
       if (this.workTimer >= WORK_FRAME_DUR) {
         this.workTimer -= WORK_FRAME_DUR;
       }
-      this.frame = 4 + (this.workTimer < WORK_FRAME_DUR / 2 ? 0 : 1);
+      this.frame = this.workTimer < WORK_FRAME_DUR / 2 ? STATE_FRAME.busy[0] : STATE_FRAME.busy[1];
       return;
     }
 
     // ── IDLE (standing still) ──
-    this.frame = 0; // FIXED frame 0, no breathing animation
+    this.frame = STATE_FRAME.idle; // FIXED frame 0, no breathing animation
 
     // Occasional direction turn
     this.idleTurnTimer -= dt;
@@ -418,10 +432,12 @@
     if (a.status === 'offline') ctx.globalAlpha = 0.35;
     if (a.status === 'error') ctx.globalAlpha = 0.3 + 0.7 * Math.abs(Math.sin(a.errorFlicker));
 
-    var dirRow = a.dir;
+    var isDeskBusy = a.status === 'busy' && !a.moving && a.col === a.hc && a.row === a.hr;
+    var dirRow = isDeskBusy ? ROW_ACTIVITY : a.dir;
     var flip = false;
-    if (a.dir === DIR_LEFT) { dirRow = DIR_RIGHT; flip = true; }
-    var sx = a.frame * CHAR_FW, sy = dirRow * CHAR_FH;
+    if (!isDeskBusy && a.dir === DIR_LEFT) { dirRow = DIR_RIGHT; flip = true; }
+    var frame = Math.max(0, Math.min(a.frame, CHAR_COLS - 1));
+    var sx = frame * CHAR_FW, sy = dirRow * CHAR_FH;
 
     // ── Hover outline ──
     if (a === hoveredAgent) {
