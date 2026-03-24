@@ -602,7 +602,21 @@ const meta = {
 				clearTimeout(timeout);
 				var data = await resp.json();
 				if (data.status === 'success' && data.value) {
-					renderFeed(data.value);
+					var activities = Array.isArray(data.value) ? data.value.slice() : [];
+					var latestTs = activities.length ? new Date(activities[0].timestamp).getTime() : 0;
+					var sixHoursAgo = Date.now() - 6 * 60 * 60 * 1000;
+					if (latestTs < sixHoursAgo) {
+						var nowItem = {
+							agentId: 'main',
+							agentName: 'Team',
+							color: '#8953d1',
+							descEn: 'Pixel Office v3 — sprites, animations, interactions in progress',
+							descZh: 'Pixel Office v3 — 角色精修、进场动画、互动系统持续开发中',
+							timestamp: new Date().toISOString()
+						};
+						activities.unshift(nowItem);
+					}
+					renderFeed(activities);
 				}
 			} catch (e) {
 				console.error('Activity feed fetch failed:', e);

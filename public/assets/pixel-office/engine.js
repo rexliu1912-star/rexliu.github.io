@@ -143,13 +143,28 @@
   var hoveredAgent = null;
   var dayOverlayState = null;
   var socialBubble = null;
+  var greetingBubble = null;
   var nextSocialBubbleAt = 0;
+  var nextGreetingAt = 0;
   var particles = [];
   var audioCtx = null;
   var entryOverlay = null;
 
-  var SOCIAL_LINES_EN = ['Coffee?', 'Ship it!', 'LGTM 👍', 'Nice!', 'Bug?', 'Review?', "Let's go!", 'Almost done', 'Hmm...', '📊'];
-  var SOCIAL_LINES_ZH = ['喝杯咖啡？', '发布！', '不错！', '有Bug？', '帮我review？', '冲！', '快好了', '嗯...', '📊'];
+  var SOCIAL_LINES_EN = [
+    'Coffee?', 'Ship it!', 'LGTM 👍', 'Nice!', 'Bug?', 'Review?', "Let's go!",
+    'Almost done', 'Hmm...', '📊', 'Gm!', 'Wagmi 🚀', 'Any alpha?',
+    'PR ready?', 'Merge it!', 'Quick sync?', 'On it!', 'Blocked?',
+    'New task!', 'Sick design 🎨', 'Bullish 📈', 'Build time!', "What's the plan?",
+    'Stack overflow 😅', 'Deploying...', 'Tests pass ✅', 'Refactor?', 'Tech debt...',
+    'Deploy today?', 'Code review?', 'Standup?', 'Deadline?', 'Hot fix 🔥'
+  ];
+  var SOCIAL_LINES_ZH = [
+    '喝杯咖啡？', '发布！', '不错！', '有Bug？', '帮我review？', '冲！', '快好了',
+    '嗯...', '📊', '早安！', '有Alpha吗？', 'PR写完了？', '合进去！',
+    '开个会？', '搞定了！', '卡住了？', '新任务！', '设计很棒 🎨', '很牛 📈',
+    '开发时间！', '计划是啥？', '部署中...', '测试通过 ✅', '要重构吗？',
+    '今天上线？', 'Code review一下？', '站会？', '截止日期？', '紧急修复 🔥'
+  ];
 
   var POI_LIST = [
     { col:3,  row:3,  type:'coffee' },
@@ -774,23 +789,54 @@
 
   function drawDeskGlow(a) {
     if (!a || a.status !== 'busy' || a.moving || a.col !== a.hc || a.row !== a.hr) return;
-    var pulse = 0.5 + 0.3 * Math.sin(tick * 0.05);
-    var color = a.tint || '#4a9eff';
+    var pulse = 0.4 + 0.15 * Math.sin(tick * 0.04);
     var centerX = a.hc * T + T * 1.5;
-    var centerY = a.hr * T - T * 0.35;
-    var radius = T * 1.5;
-    var gradient = ctx.createRadialGradient(centerX, centerY, T * 0.15, centerX, centerY, radius);
-
+    var centerY = a.hr * T - T * 0.5;
+    var radius = T * 1.2;
+    var gradient = ctx.createRadialGradient(centerX, centerY, 2, centerX, centerY, radius);
     ctx.save();
-    ctx.globalAlpha = clamp(pulse, 0, 1);
-    ctx.shadowBlur = 16 + pulse * 18;
-    ctx.shadowColor = color;
-    gradient.addColorStop(0, 'rgba(255,255,255,0.22)');
-    gradient.addColorStop(0.35, color);
+    ctx.globalAlpha = pulse * 0.45;
+    gradient.addColorStop(0, 'rgba(200,230,255,0.6)');
+    gradient.addColorStop(0.5, 'rgba(100,180,255,0.2)');
     gradient.addColorStop(1, 'rgba(74,158,255,0)');
     ctx.fillStyle = gradient;
     ctx.beginPath();
-    ctx.ellipse(centerX, centerY, radius, T * 0.95, 0, 0, Math.PI * 2);
+    ctx.ellipse(centerX, centerY, radius, T * 0.7, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function drawHeadquartersSign() {
+    var x = 10 * T, y = 1 * T;
+    var w = 4 * T, h = T * 1.2;
+    ctx.save();
+    ctx.fillStyle = '#1a1a2e';
+    ctx.strokeStyle = '#8953d1';
+    ctx.lineWidth = 2;
+    if (ctx.roundRect) {
+      ctx.beginPath();
+      ctx.roundRect(x, y + 4, w, h - 2, 4);
+    } else {
+      ctx.beginPath();
+      ctx.rect(x, y + 4, w, h - 2);
+    }
+    ctx.fill();
+    ctx.stroke();
+    ctx.shadowColor = '#8953d1';
+    ctx.shadowBlur = 8;
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 10px "Press Start 2P", monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('REX AI HQ', x + w / 2, y + h / 2 + 2);
+    ctx.fillStyle = '#8953d1';
+    ctx.beginPath();
+    ctx.arc(x + 8, y + h / 2 + 2, 2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(x + w - 8, y + h / 2 + 2, 2, 0, Math.PI * 2);
     ctx.fill();
     ctx.restore();
   }
@@ -807,15 +853,16 @@
   }
 
   function triggerGreetingBubble(agent, nowMs) {
+    if (nowMs < nextGreetingAt) return;
     var lines = getSocialLines();
-    socialBubble = {
+    greetingBubble = {
       agentId: agent.id,
       text: lines[randInt(0, lines.length - 1)],
       startsAt: nowMs,
-      endsAt: nowMs + 700,
-      fadeMs: 180
+      endsAt: nowMs + 2500,
+      fadeMs: 220
     };
-    nextSocialBubbleAt = socialBubble.endsAt + randInt(6000, 10000);
+    nextGreetingAt = nowMs + 30000;
   }
 
   function checkGreetingEncounters(nowMs) {
@@ -846,6 +893,7 @@
   }
 
   function updateSocialBubble(nowMs) {
+    if (greetingBubble && nowMs >= greetingBubble.endsAt) greetingBubble = null;
     if (socialBubble && nowMs >= socialBubble.endsAt) socialBubble = null;
     if (socialBubble || !agents || nowMs < nextSocialBubbleAt) return;
 
@@ -910,10 +958,12 @@
   }
 
   function drawSocialBubble() {
-    if (!socialBubble || !agents) return;
+    if (!agents) return;
+    var bubble = greetingBubble || socialBubble;
+    if (!bubble) return;
     var speaker = null;
     for (var i = 0; i < agents.length; i++) {
-      if (agents[i].id === socialBubble.agentId) {
+      if (agents[i].id === bubble.agentId) {
         speaker = agents[i];
         break;
       }
@@ -921,14 +971,14 @@
     if (!speaker) return;
 
     var nowMs = Date.now();
-    var fadeMs = socialBubble.fadeMs;
+    var fadeMs = bubble.fadeMs;
     var opacity = 1;
-    if (nowMs < socialBubble.startsAt + fadeMs) opacity = clamp((nowMs - socialBubble.startsAt) / fadeMs, 0, 1);
-    else if (nowMs > socialBubble.endsAt - fadeMs) opacity = clamp((socialBubble.endsAt - nowMs) / fadeMs, 0, 1);
+    if (nowMs < bubble.startsAt + fadeMs) opacity = clamp((nowMs - bubble.startsAt) / fadeMs, 0, 1);
+    else if (nowMs > bubble.endsAt - fadeMs) opacity = clamp((bubble.endsAt - nowMs) / fadeMs, 0, 1);
 
     var dw = Math.round(CHAR_FW * CHAR_SCALE);
     var dh = Math.round(CHAR_FH * CHAR_SCALE);
-    var bubbleText = socialBubble.text;
+    var bubbleText = bubble.text;
     var bubbleX = speaker.px + dw * 0.15;
     var bubbleY = speaker.py - dh - 20;
 
@@ -1208,6 +1258,7 @@
     ctx.clearRect(0, 0, CANVAS_W, CANVAS_H);
     ctx.imageSmoothingEnabled = false;
     drawFloorAndWalls();
+    drawHeadquartersSign();
     drawParticles();
 
     // ── Z-Sort: unified furniture + agents, sorted by bottom Y ──
@@ -1273,7 +1324,9 @@
       hoveredAgent = null;
       dayOverlayState = null;
       socialBubble = null;
+      greetingBubble = null;
       nextSocialBubbleAt = Date.now() + randInt(4000, 9000);
+      nextGreetingAt = 0;
       particles = [];
       audioCtx = null;
       entryOverlay = null;
@@ -1311,7 +1364,9 @@
       hoveredAgent = null;
       dayOverlayState = null;
       socialBubble = null;
+      greetingBubble = null;
       nextSocialBubbleAt = 0;
+      nextGreetingAt = 0;
       particles = [];
       audioCtx = null;
       entryOverlay = null;
