@@ -18,6 +18,7 @@
   var CANVAS_H = ROWS * TILE * ZOOM;   // 448
   var T = TILE * ZOOM;                 // 32 — one tile on screen
   var BASE = '/assets/pixel-office/';
+  var LIMEZU_BASE = BASE + 'limezu/';
 
   var CHAR_FW = 32, CHAR_FH = 48;  // frame size in sprite sheet
   var CHAR_COLS = 4;
@@ -67,76 +68,108 @@
 
   // ── Agents ─────────────────────────────────────────────────
   var AGENTS_CFG = [
-    { id:'main',       name:'Samantha', emoji:'🧡', sprite:'char_0.png', hc:11, hr:5,  dir:DIR_DOWN,  tint:null },
-    { id:'writer',     name:'Loki',     emoji:'🐍', sprite:'char_1.png', hc:7,  hr:8,  dir:DIR_DOWN,  tint:null },
-    { id:'researcher', name:'Vision',   emoji:'👁️', sprite:'char_2.png', hc:12, hr:8,  dir:DIR_DOWN,  tint:null },
-    { id:'coder',      name:'Jarvis',   emoji:'⚙️', sprite:'char_3.png', hc:17, hr:8,  dir:DIR_DOWN,  tint:null },
-    { id:'designer',   name:'Shuri',    emoji:'🎨', sprite:'char_4.png', hc:9,  hr:11, dir:DIR_DOWN,  tint:null },
-    { id:'analyst',    name:'Friday',   emoji:'📊', sprite:'char_5.png', hc:15, hr:11, dir:DIR_DOWN,  tint:null },
+    { id:'main',       name:'Samantha', emoji:'🧡', sprite:'char_0.png', hc:11, hr:4,  ic:4, ir:5,  ec:20, er:10, oc:3, or:10, dir:DIR_DOWN, tint:null },
+    { id:'writer',     name:'Loki',     emoji:'🐍', sprite:'char_1.png', hc:9,  hr:7,  ic:2, ir:5,  ec:19, er:11, oc:4, or:10, dir:DIR_DOWN, tint:null },
+    { id:'researcher', name:'Vision',   emoji:'👁️', sprite:'char_2.png', hc:13, hr:7,  ic:5, ir:5,  ec:20, er:11, oc:5, or:10, dir:DIR_DOWN, tint:null },
+    { id:'coder',      name:'Jarvis',   emoji:'⚙️', sprite:'char_3.png', hc:17, hr:7,  ic:3, ir:4,  ec:21, er:10, oc:2, or:10, dir:DIR_DOWN, tint:null },
+    { id:'designer',   name:'Shuri',    emoji:'🎨', sprite:'char_4.png', hc:10, hr:10, ic:4, ir:4,  ec:21, er:11, oc:3, or:11, dir:DIR_DOWN, tint:null },
+    { id:'analyst',    name:'Friday',   emoji:'📊', sprite:'char_5.png', hc:15, hr:10, ic:2, ir:4,  ec:22, er:10, oc:4, or:11, dir:DIR_DOWN, tint:null },
   ];
 
   // ── Furniture layout ───────────────────────────────────────
   var FURNITURE = [
     // Wall decor strip
-    { type:'DOUBLE_BOOKSHELF', col:1,  row:1, file:'DOUBLE_BOOKSHELF/DOUBLE_BOOKSHELF.png', w:2, h:2, blocks:false },
-    { type:'WHITEBOARD',       col:4,  row:1, file:'WHITEBOARD/WHITEBOARD.png',             w:2, h:2, blocks:false },
-    { type:'CLOCK',            col:7,  row:1, file:'CLOCK/CLOCK.png',                       w:1, h:2, blocks:false },
-    { type:'LARGE_PAINTING',   col:9,  row:1, file:'LARGE_PAINTING/LARGE_PAINTING.png',     w:2, h:2, blocks:false },
-    { type:'SMALL_PAINTING',   col:12, row:1, file:'SMALL_PAINTING/SMALL_PAINTING.png',     w:1, h:2, blocks:false },
-    { type:'SMALL_PAINTING_2', col:14, row:1, file:'SMALL_PAINTING_2/SMALL_PAINTING_2.png', w:1, h:2, blocks:false },
-    { type:'BOOKSHELF',        col:16, row:1, file:'BOOKSHELF/BOOKSHELF.png',               w:2, h:1, blocks:false },
-    { type:'HANGING_PLANT',    col:19, row:1, file:'HANGING_PLANT/HANGING_PLANT.png',       w:1, h:2, blocks:false },
-    { type:'BOOKSHELF',        col:20, row:1, file:'BOOKSHELF/BOOKSHELF.png',               w:2, h:1, blocks:false },
+    { type:'BOOKSHELF_TALL',  col:1,  row:1, limezu:213, w:2, h:2, blocks:false },
+    { type:'WHITEBOARD',      col:4,  row:1, limezu:131, w:2, h:2, blocks:false },
+    { type:'CLOCK',           col:7,  row:1, limezu:137, w:1, h:1, blocks:false },
+    { type:'PAINTING_LARGE',  col:9,  row:1, limezu:139, w:2, h:2, blocks:false },
+    { type:'CHART',           col:12, row:1, limezu:227, w:2, h:2, blocks:false },
+    { type:'PAINTING_SMALL',  col:15, row:1, limezu:225, w:1, h:2, blocks:false },
+    { type:'BOOKSHELF_LOW',   col:17, row:1, limezu:221, w:2, h:1, blocks:false },
+    { type:'HANGING_PLANT',   col:20, row:1, limezu:338, w:1, h:2, blocks:false },
+    { type:'BOOKSHELF_TALL',  col:21, row:1, limezu:215, w:2, h:2, blocks:false },
 
-    // Lounge / rest area (upper-left)
-    { type:'SOFA',             col:1,  row:4, file:'SOFA/SOFA_BACK.png',                    w:2, h:1 },
-    { type:'SOFA',             col:1,  row:5, file:'SOFA/SOFA_FRONT.png',                   w:2, h:1 },
-    { type:'COFFEE_TABLE',     col:4,  row:4, file:'COFFEE_TABLE/COFFEE_TABLE.png',         w:2, h:2 },
-    { type:'COFFEE',           col:4,  row:4, file:'COFFEE/COFFEE.png',                     w:1, h:1, blocks:false },
-    { type:'COFFEE',           col:5,  row:4, file:'COFFEE/COFFEE.png',                     w:1, h:1, blocks:false },
-    { type:'CUSHIONED_BENCH',  col:3,  row:5, file:'CUSHIONED_BENCH/CUSHIONED_BENCH.png',   w:1, h:1, blocks:true },
-    { type:'CUSHIONED_BENCH',  col:4,  row:6, file:'CUSHIONED_BENCH/CUSHIONED_BENCH.png',   w:1, h:1, blocks:true },
+    // Lounge
+    { type:'SOFA_BACK',       col:1,  row:3, limezu:183, w:2, h:1, blocks:true },
+    { type:'SOFA_FRONT',      col:1,  row:4, limezu:185, w:2, h:1, blocks:true },
+    { type:'COFFEE_TABLE',    col:3,  row:3, limezu:283, w:2, h:2, blocks:true },
+    { type:'COFFEE',          col:3,  row:3, limezu:179, w:1, h:1, blocks:false },
+    { type:'COFFEE',          col:4,  row:3, limezu:180, w:1, h:1, blocks:false },
+    { type:'COFFEE_MACHINE',  col:5,  row:2, limezu:177, w:1, h:2, blocks:true },
+    { type:'FLOOR_LAMP',      col:6,  row:2, limezu:173, w:1, h:2, blocks:false },
+    { type:'PLANT',           col:1,  row:6, limezu:97,  w:1, h:2, blocks:true },
+    { type:'RUG',             col:2,  row:4, limezu:81,  w:3, h:2, blocks:false },
 
-    // Samantha command station (top-center)
-    { type:'DESK',             col:10, row:3, file:'DESK/DESK_FRONT.png',                   w:3, h:2 },
-    { type:'PC',               col:11, row:3, file:'PC/PC_FRONT_ON_1.png',                  w:1, h:2, blocks:false },
-    { type:'CUSHIONED_CHAIR',  col:11, row:4, file:'CUSHIONED_CHAIR/CUSHIONED_CHAIR_FRONT.png', w:1, h:1, blocks:false },
+    // Samantha command station
+    { type:'DESK_LEFT',       col:10, row:2, limezu:7,   w:1, h:2, blocks:true },
+    { type:'DESK_MID',        col:11, row:2, limezu:8,   w:1, h:2, blocks:true },
+    { type:'DESK_RIGHT',      col:12, row:2, limezu:9,   w:1, h:2, blocks:true },
+    { type:'MONITOR',         col:11, row:2, limezu:117, w:1, h:1, blocks:false },
+    { type:'KEYBOARD',        col:11, row:3, limezu:161, w:1, h:1, blocks:false },
+    { type:'CHAIR',           col:11, row:4, limezu:101, w:1, h:1, blocks:false },
+    { type:'DESK_LAMP',       col:10, row:2, limezu:169, w:1, h:1, blocks:false },
 
-    // Workstation row 1: Loki / Vision / Jarvis
-    { type:'DESK',             col:6,  row:6, file:'DESK/DESK_FRONT.png',                   w:3, h:2 },
-    { type:'PC',               col:7,  row:6, file:'PC/PC_FRONT_ON_1.png',                  w:1, h:2, blocks:false },
-    { type:'CUSHIONED_CHAIR',  col:7,  row:7, file:'CUSHIONED_CHAIR/CUSHIONED_CHAIR_FRONT.png', w:1, h:1, blocks:false },
+    // Work zone row 1
+    { type:'PARTITION',       col:7,  row:5, limezu:207, w:1, h:2, blocks:true },
 
-    { type:'DESK',             col:11, row:6, file:'DESK/DESK_FRONT.png',                   w:3, h:2 },
-    { type:'PC',               col:12, row:6, file:'PC/PC_FRONT_ON_1.png',                  w:1, h:2, blocks:false },
-    { type:'CUSHIONED_CHAIR',  col:12, row:7, file:'CUSHIONED_CHAIR/CUSHIONED_CHAIR_FRONT.png', w:1, h:1, blocks:false },
+    { type:'DESK_LEFT',       col:8,  row:5, limezu:7,   w:1, h:2, blocks:true },
+    { type:'DESK_MID',        col:9,  row:5, limezu:8,   w:1, h:2, blocks:true },
+    { type:'DESK_RIGHT',      col:10, row:5, limezu:9,   w:1, h:2, blocks:true },
+    { type:'MONITOR',         col:9,  row:5, limezu:118, w:1, h:1, blocks:false },
+    { type:'CHAIR',           col:9,  row:7, limezu:103, w:1, h:1, blocks:false },
+    { type:'DESK_LAMP',       col:8,  row:5, limezu:169, w:1, h:1, blocks:false },
 
-    { type:'DESK',             col:16, row:6, file:'DESK/DESK_FRONT.png',                   w:3, h:2 },
-    { type:'PC',               col:17, row:6, file:'PC/PC_FRONT_ON_1.png',                  w:1, h:2, blocks:false },
-    { type:'CUSHIONED_CHAIR',  col:17, row:7, file:'CUSHIONED_CHAIR/CUSHIONED_CHAIR_FRONT.png', w:1, h:1, blocks:false },
+    { type:'DESK_LEFT',       col:12, row:5, limezu:7,   w:1, h:2, blocks:true },
+    { type:'DESK_MID',        col:13, row:5, limezu:8,   w:1, h:2, blocks:true },
+    { type:'DESK_RIGHT',      col:14, row:5, limezu:9,   w:1, h:2, blocks:true },
+    { type:'MONITOR',         col:13, row:5, limezu:119, w:1, h:1, blocks:false },
+    { type:'CHAIR',           col:13, row:7, limezu:105, w:1, h:1, blocks:false },
+    { type:'DESK_LAMP',       col:12, row:5, limezu:169, w:1, h:1, blocks:false },
 
-    // Workstation row 2: Shuri / Friday
-    { type:'DESK',             col:8,  row:9, file:'DESK/DESK_FRONT.png',                   w:3, h:2 },
-    { type:'PC',               col:9,  row:9, file:'PC/PC_FRONT_ON_1.png',                  w:1, h:2, blocks:false },
-    { type:'CUSHIONED_CHAIR',  col:9,  row:10, file:'CUSHIONED_CHAIR/CUSHIONED_CHAIR_FRONT.png', w:1, h:1, blocks:false },
+    { type:'DESK_LEFT',       col:16, row:5, limezu:7,   w:1, h:2, blocks:true },
+    { type:'DESK_MID',        col:17, row:5, limezu:8,   w:1, h:2, blocks:true },
+    { type:'DESK_RIGHT',      col:18, row:5, limezu:9,   w:1, h:2, blocks:true },
+    { type:'MONITOR',         col:17, row:5, limezu:120, w:1, h:1, blocks:false },
+    { type:'CHAIR',           col:17, row:7, limezu:107, w:1, h:1, blocks:false },
+    { type:'DESK_LAMP',       col:16, row:5, limezu:169, w:1, h:1, blocks:false },
 
-    { type:'DESK',             col:14, row:9, file:'DESK/DESK_FRONT.png',                   w:3, h:2 },
-    { type:'PC',               col:15, row:9, file:'PC/PC_FRONT_ON_1.png',                  w:1, h:2, blocks:false },
-    { type:'CUSHIONED_CHAIR',  col:15, row:10, file:'CUSHIONED_CHAIR/CUSHIONED_CHAIR_FRONT.png', w:1, h:1, blocks:false },
+    // Work zone row 2
+    { type:'DESK_LEFT',       col:9,  row:8, limezu:7,   w:1, h:2, blocks:true },
+    { type:'DESK_MID',        col:10, row:8, limezu:8,   w:1, h:2, blocks:true },
+    { type:'DESK_RIGHT',      col:11, row:8, limezu:9,   w:1, h:2, blocks:true },
+    { type:'MONITOR',         col:10, row:8, limezu:117, w:1, h:1, blocks:false },
+    { type:'CHAIR',           col:10, row:10,limezu:109, w:1, h:1, blocks:false },
+    { type:'DESK_LAMP',       col:9,  row:8, limezu:169, w:1, h:1, blocks:false },
 
-    // Entertainment zone (lower-left)
-    { type:'SMALL_TABLE',      col:2,  row:9, file:'SMALL_TABLE/SMALL_TABLE_FRONT.png',     w:2, h:2 },
-    { type:'WOODEN_CHAIR',     col:1,  row:10, file:'WOODEN_CHAIR/WOODEN_CHAIR_FRONT.png',  w:1, h:2 },
-    { type:'WOODEN_CHAIR',     col:4,  row:10, file:'WOODEN_CHAIR/WOODEN_CHAIR_FRONT.png',  w:1, h:2 },
+    { type:'DESK_LEFT',       col:14, row:8, limezu:7,   w:1, h:2, blocks:true },
+    { type:'DESK_MID',        col:15, row:8, limezu:8,   w:1, h:2, blocks:true },
+    { type:'DESK_RIGHT',      col:16, row:8, limezu:9,   w:1, h:2, blocks:true },
+    { type:'MONITOR',         col:15, row:8, limezu:118, w:1, h:1, blocks:false },
+    { type:'CHAIR',           col:15, row:10,limezu:111, w:1, h:1, blocks:false },
+    { type:'DESK_LAMP',       col:14, row:8, limezu:169, w:1, h:1, blocks:false },
 
-    // Greenery / decor accents
-    { type:'LARGE_PLANT',      col:20, row:4, file:'LARGE_PLANT/LARGE_PLANT.png',           w:2, h:3 },
-    { type:'PLANT',            col:21, row:8, file:'PLANT/PLANT.png',                       w:1, h:2 },
-    { type:'PLANT_2',          col:19, row:10,file:'PLANT_2/PLANT_2.png',                   w:1, h:2 },
-    { type:'CACTUS',           col:18, row:11,file:'CACTUS/CACTUS.png',                     w:1, h:2 },
-    { type:'POT',              col:20, row:11,file:'POT/POT.png',                           w:1, h:1, blocks:true },
-    { type:'BIN',              col:22, row:12,file:'BIN/BIN.png',                           w:1, h:1, blocks:true },
+    { type:'PRINTER',         col:20, row:6, limezu:164, w:1, h:2, blocks:true },
+    { type:'BIN',             col:19, row:7, limezu:121, w:1, h:1, blocks:true },
+
+    // Break room
+    { type:'VENDING',         col:1,  row:8, limezu:307, w:1, h:2, blocks:true },
+    { type:'WATER',           col:2,  row:8, limezu:277, w:1, h:2, blocks:true },
+    { type:'RUG',             col:2,  row:9, limezu:83,  w:4, h:3, blocks:false },
+    { type:'SMALL_TABLE',     col:3,  row:9, limezu:283, w:2, h:2, blocks:true },
+    { type:'CHAIR',           col:2,  row:10,limezu:113, w:1, h:1, blocks:false },
+    { type:'CHAIR',           col:5,  row:10,limezu:114, w:1, h:1, blocks:false },
+    { type:'PLANT',           col:6,  row:8, limezu:99,  w:1, h:2, blocks:true },
+    { type:'MICROWAVE',       col:1,  row:11,limezu:309, w:1, h:1, blocks:true },
+
+    // Tech corner
+    { type:'CABINET',         col:20, row:9, limezu:251, w:1, h:2, blocks:true },
+    { type:'CABINET',         col:21, row:9, limezu:253, w:1, h:2, blocks:true },
+    { type:'PRINTER_LARGE',   col:22, row:9, limezu:273, w:1, h:2, blocks:true },
+    { type:'PLANT',           col:19, row:10,limezu:100, w:1, h:2, blocks:true },
+    { type:'COAT_RACK',       col:19, row:12,limezu:231, w:1, h:1, blocks:true },
+    { type:'BIN',             col:22, row:12,limezu:123, w:1, h:1, blocks:true },
   ];
+
 
   // ── State ──────────────────────────────────────────────────
   var ctx, canvas, rafId, agents, images, tick, lastTime;
@@ -195,16 +228,18 @@
   ];
 
   var POI_LIST = [
-    { col:3,  row:3,  type:'coffee' },
-    { col:6,  row:4,  type:'lounge' },
-    { col:6,  row:5,  type:'lounge' },
-    { col:5,  row:10, type:'game' },
-    { col:5,  row:11, type:'game' },
-    { col:19, row:4,  type:'plants' },
-    { col:22, row:9,  type:'plants' },
-    { col:10, row:12, type:'walk' },
-    { col:15, row:12, type:'walk' },
-    { col:16, row:12, type:'walk' }
+    { col:2, row:5, type:'lounge' },
+    { col:3, row:5, type:'lounge' },
+    { col:4, row:5, type:'lounge' },
+    { col:5, row:4, type:'lounge' },
+    { col:2, row:6, type:'lounge' },
+    { col:5, row:6, type:'lounge' }
+  ];
+
+  var ZONE_TINTS = [
+    { x:1,  y:2, w:6, h:5, fill:'rgba(180,140,100,0.07)', stroke:'rgba(180,140,100,0.22)' },
+    { x:1,  y:8, w:6, h:5, fill:'rgba(140,100,160,0.06)', stroke:'rgba(140,100,160,0.20)' },
+    { x:19, y:9, w:4, h:4, fill:'rgba(100,120,160,0.06)', stroke:'rgba(100,120,160,0.20)' }
   ];
 
   // ── Image Loader ───────────────────────────────────────────
@@ -217,6 +252,10 @@
     });
   }
 
+  function getFurnitureImageKey(f) {
+    return f.limezu ? ('fur_limezu_' + f.limezu) : ('fur_' + f.file);
+  }
+
   function loadAllImages(onProgress) {
     var manifest = {};
     for (var i = 0; i <= 8; i++) manifest['floor_' + i] = BASE + 'floors/floor_' + i + '.png';
@@ -224,7 +263,10 @@
     for (var c = 0; c < 6; c++) manifest['char_' + c] = BASE + 'characters/char_' + c + '.png';
     var seen = {};
     FURNITURE.forEach(function (f) {
-      if (!seen[f.file]) { seen[f.file] = 1; manifest['fur_' + f.file] = BASE + 'furniture/' + f.file; }
+      var key = getFurnitureImageKey(f);
+      if (seen[key]) return;
+      seen[key] = 1;
+      manifest[key] = f.limezu ? (LIMEZU_BASE + f.limezu + '.png') : (BASE + 'furniture/' + f.file);
     });
 
     var keys = Object.keys(manifest);
@@ -251,9 +293,7 @@
   function furnitureBlocksTile(c, r) {
     for (var i = 0; i < FURNITURE.length; i++) {
       var f = FURNITURE[i];
-      var blocks = (typeof f.blocks === 'boolean')
-        ? f.blocks
-        : /DESK|PC|BOOKSHELF|WHITEBOARD|SOFA|COFFEE_TABLE|SMALL_TABLE|PLANT|CACTUS|WOODEN_CHAIR/i.test(f.type);
+      var blocks = !!f.blocks;
       if (!blocks) continue;
       if (c >= f.col && c < f.col + (f.w || 1) && r >= f.row && r < f.row + (f.h || 1)) {
         return true;
@@ -543,6 +583,9 @@
     this.emoji = cfg.emoji || '🙂';
     this.spriteKey = 'char_' + AGENTS_CFG.indexOf(cfg);
     this.hc = cfg.hc; this.hr = cfg.hr;
+    this.ic = cfg.ic || cfg.hc; this.ir = cfg.ir || cfg.hr;
+    this.ec = cfg.ec || cfg.hc; this.er = cfg.er || cfg.hr;
+    this.oc = cfg.oc || cfg.hc; this.or = cfg.or || cfg.hr;
     this.entryCol = getEntryCol(cfg.hc);
     this.entryDelay = AGENTS_CFG.indexOf(cfg) * 0.3;
     this.entryDone = false;
@@ -581,6 +624,13 @@
     this.matrixEffect = null;
   }
 
+  Agent.prototype.getBaseTarget = function (status) {
+    if (status === 'busy') return { col: this.hc, row: this.hr };
+    if (status === 'error') return { col: this.ec, row: this.er };
+    if (status === 'offline') return { col: this.oc, row: this.or };
+    return { col: this.ic, row: this.ir };
+  };
+
   Agent.prototype.resetIdleBehavior = function () {
     this.idleState = 'AT_DESK';
     this.idleActivityTimer = 0;
@@ -616,7 +666,6 @@
 
   Agent.prototype.setStatus = function (s, task) {
     var prevStatus = this.status;
-    if (prevStatus === s) { this.task = task || ''; return; }
     this.status = s; this.task = task || '';
     if (prevStatus === 'busy' && s === 'idle') this.celebrateTimer = 0.8;
     if (prevStatus === 'offline' && s !== 'offline') {
@@ -625,19 +674,22 @@
     }
     this.fadeTarget = (s === 'offline') ? 0.35 : 1.0;
     if (s !== 'idle') this.resetIdleBehavior();
-    if (s === 'busy') {
-      this.path = bfs(this.col, this.row, this.hc, this.hr, this.id);
-      if (this.path.length) {
-        this.idleState = 'WALKING_HOME';
-        this.startMove();
-      } else {
-        this.dir = DIR_DOWN; // face front at desk
-      }
-    }
-    if (s === 'offline') {
+
+    var target = this.getBaseTarget(s);
+    this.path = bfs(this.col, this.row, target.col, target.row, this.id);
+    if (this.path.length) {
+      this.idleState = (s === 'idle') ? 'WALKING_HOME' : this.idleState;
+      this.startMove();
+    } else {
+      this.col = target.col; this.row = target.row;
+      this.px = target.col * T + T / 2; this.py = target.row * T + T / 2;
+      this.targetCol = target.col; this.targetRow = target.row;
+      this.targetX = this.px; this.targetY = this.py;
+      this.moving = false;
       this.dir = DIR_DOWN;
-      this.frame = STATE_FRAME.offline;
     }
+
+    if (s === 'offline') this.frame = STATE_FRAME.offline;
   };
 
   Agent.prototype.startMatrixEffect = function () {
@@ -708,12 +760,14 @@
         this.frame = STATE_FRAME.idle;
         if (this.entryDelay > 0) return;
         this.entryStarted = true;
-        this.path = bfs(this.col, this.row, this.hc, this.hr, this.id);
+        var entryTarget = this.getBaseTarget(this.status);
+        this.path = bfs(this.col, this.row, entryTarget.col, entryTarget.row, this.id);
         if (this.path.length) this.startMove();
         else {
-          this.col = this.hc; this.row = this.hr;
-          this.px = this.hc * T + T / 2; this.py = this.hr * T + T / 2;
-          this.targetCol = this.hc; this.targetRow = this.hr;
+          var entryFallback = this.getBaseTarget(this.status);
+          this.col = entryFallback.col; this.row = entryFallback.row;
+          this.px = entryFallback.col * T + T / 2; this.py = entryFallback.row * T + T / 2;
+          this.targetCol = entryFallback.col; this.targetRow = entryFallback.row;
           this.targetX = this.px; this.targetY = this.py;
           this.entryDone = true;
           this.dir = DIR_DOWN;
@@ -721,9 +775,10 @@
       }
       if (!this.entryDone && !this.moving && !this.path.length) {
         this.entryDone = true;
-        this.col = this.hc; this.row = this.hr;
-        this.px = this.hc * T + T / 2; this.py = this.hr * T + T / 2;
-        this.targetCol = this.hc; this.targetRow = this.hr;
+        var settled = this.getBaseTarget(this.status);
+        this.col = settled.col; this.row = settled.row;
+        this.px = settled.col * T + T / 2; this.py = settled.row * T + T / 2;
+        this.targetCol = settled.col; this.targetRow = settled.row;
         this.targetX = this.px; this.targetY = this.py;
         this.dir = DIR_DOWN;
       }
@@ -749,22 +804,6 @@
           else if (gdy !== 0) this.dir = gdy > 0 ? DIR_DOWN : DIR_UP;
         }
       }
-      return;
-    }
-
-    // ── OFFLINE: grey, frame 0 facing down, ZZZ ──
-    if (this.status === 'offline') {
-      this.dir = DIR_DOWN;
-      this.frame = STATE_FRAME.error;
-      this.zzzPhase += dt * 1.8; // ~0.03 per frame at 60fps
-      return;
-    }
-
-    // ── ERROR: frame 0 facing down, flicker ──
-    if (this.status === 'error') {
-      this.dir = DIR_DOWN;
-      this.frame = 0;
-      this.errorFlicker += dt * 9; // for blink calc in drawAgent
       return;
     }
 
@@ -812,7 +851,23 @@
       return;
     }
 
-    // ── BUSY at home desk: typing animation (col 4-5) ──
+    // ── OFFLINE: grey, frame 0 facing down, ZZZ ──
+    if (this.status === 'offline') {
+      this.dir = DIR_DOWN;
+      this.frame = STATE_FRAME.error;
+      this.zzzPhase += dt * 1.8;
+      return;
+    }
+
+    // ── ERROR: frame 0 facing down, flicker ──
+    if (this.status === 'error') {
+      this.dir = DIR_DOWN;
+      this.frame = 0;
+      this.errorFlicker += dt * 9;
+      return;
+    }
+
+    // ── BUSY at home desk: typing animation ──
     if (this.status === 'busy' && this.col === this.hc && this.row === this.hr) {
       this.walkDustTimer = 0;
       this.dir = DIR_DOWN; // face front
@@ -841,7 +896,7 @@
         this.activityFrame = (this.activityFrame + 1) % STATE_FRAME.activity.length;
       }
       if (this.idleActivityTimer <= 0) {
-        this.path = bfs(this.col, this.row, this.hc, this.hr, this.id);
+        this.path = bfs(this.col, this.row, this.ic, this.ir, this.id);
         this.idlePoi = null;
         if (this.path.length) {
           this.idleState = 'WALKING_HOME';
@@ -869,6 +924,19 @@
   };
 
   // ── Render helpers ─────────────────────────────────────────
+  function drawZoneTints() {
+    for (var i = 0; i < ZONE_TINTS.length; i++) {
+      var z = ZONE_TINTS[i];
+      ctx.save();
+      ctx.fillStyle = z.fill;
+      ctx.fillRect(z.x * T, z.y * T, z.w * T, z.h * T);
+      ctx.strokeStyle = z.stroke;
+      ctx.lineWidth = 1;
+      ctx.strokeRect(z.x * T + 0.5, z.y * T + 0.5, z.w * T - 1, z.h * T - 1);
+      ctx.restore();
+    }
+  }
+
   function drawFloorAndWalls() {
     for (var r = 0; r < ROWS; r++) {
       for (var c = 0; c < COLS; c++) {
@@ -923,9 +991,10 @@
   }
 
   function drawFurniture(f) {
-    var img = images['fur_' + f.file]; if (!img) return;
+    var img = images[getFurnitureImageKey(f)]; if (!img) return;
     var dw = f.w * T;
-    var dh = (img.height / 16) * T;
+    var sourceTile = f.tile || (f.limezu ? 32 : 16);
+    var dh = (img.height / sourceTile) * T;
     var x = f.col * T;
     var y = (f.row + (f.h || 1)) * T - dh;
     ctx.drawImage(img, x, y, dw, dh);
@@ -1533,6 +1602,7 @@
     ctx.clearRect(0, 0, CANVAS_W, CANVAS_H);
     ctx.imageSmoothingEnabled = false;
     drawFloorAndWalls();
+    drawZoneTints();
     drawParticles();
 
     // ── Z-Sort: unified furniture + agents, sorted by bottom Y ──
