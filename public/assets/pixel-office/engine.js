@@ -39,7 +39,7 @@
   // Delta-time animation constants
   var MOVE_SPEED = 54;       // pixels per second (at ZOOM=2)
   var WALK_FRAME_DUR = 0.10; // seconds per walk frame
-  var WORK_FRAME_DUR = 0.33; // seconds per work frame cycle
+  var WORK_FRAME_DUR = 1.2; // seconds per work frame cycle (slow typing)
   var IDLE_TURN_MIN = 1.5;   // seconds
   var IDLE_TURN_MAX = 4.0;
   var WANDER_MIN = 2.0;      // seconds
@@ -139,6 +139,12 @@
   // ── State ──────────────────────────────────────────────────
   var ctx, canvas, rafId, agents, images, tick, lastTime;
   var hoveredAgent = null;
+  var dayOverlayState = null;
+  var socialBubble = null;
+  var nextSocialBubbleAt = 0;
+
+  var SOCIAL_LINES_EN = ['Coffee?', 'Ship it!', 'LGTM 👍', 'Nice!', 'Bug?', 'Review?', "Let's go!", 'Almost done', 'Hmm...', '📊'];
+  var SOCIAL_LINES_ZH = ['喝杯咖啡？', '发布！', '不错！', '有Bug？', '帮我review？', '冲！', '快好了', '嗯...', '📊'];
 
   // ── Image Loader ───────────────────────────────────────────
   function loadImg(src) {
@@ -242,6 +248,8 @@
   // ── Utility ────────────────────────────────────────────────
   function randInt(a, b) { return a + Math.floor(Math.random() * (b - a + 1)); }
   function randFloat(a, b) { return a + Math.random() * (b - a); }
+  function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+  function lerp(a, b, t) { return a + (b - a) * t; }
 
   // ── Agent class ────────────────────────────────────────────
   function Agent(cfg) {
@@ -412,6 +420,226 @@
     ctx.drawImage(img, x, y, dw, dh);
   }
 
+  function updateDayOverlay(force) {
+    var now = Date.now();
+    if (!force && dayOverlayState && now - dayOverlayState.updatedAt < 60000) return;
+
+    var parts = new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Asia/Singapore',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    }).formatToParts(new Date(now));
+    var hour = 0, minute = 0;
+    for (var i = 0; i < parts.length; i++) {
+      if (parts[i].type === 'hour') hour = parseInt(parts[i].value, 10) || 0;
+      if (parts[i].type === 'minute') minute = parseInt(parts[i].value, 10) || 0;
+    }
+
+    var hm = hour + minute / 60;
+    var alpha = 0;
+    var top = null;
+    var bottom = null;
+
+    if (hm >= 6 && hm < 8) {
+      var morningT = clamp((hm - 6) / 2, 0, 1);
+      alpha = lerp(0.08, 0, morningT);
+      top = [255, 200, 100];
+      bottom = [255, 225, 170];
+    } else if (hm >= 8 && hm < 17) {
+      alpha = 0;
+    } else if (hm >= 17 && hm < 19) {
+      var sunsetT = clamp((hm - 17) / 2, 0, 1);
+      alpha = lerp(0, 0.12, sunsetT);
+      top = [255, 150, 50];
+      bottom = [255, 200, 120];
+    } else if (hm >= 19 && hm < 22) {
+      var duskT = clamp((hm - 19) / 3, 0, 1);
+      alpha = lerp(0.12, 0.15, duskT);
+      top = [lerp(255, 30, duskT), lerp(150, 40, duskT), lerp(50, 80, duskT)];
+      bottom = [lerp(255, 70, duskT), lerp(200, 90, duskT), lerp(120, 130, duskT)];
+    } else {
+      alpha = 0.25;
+      top = [15, 20, 50];
+      bottom = [30, 40, 80];
+    }
+
+    dayOverlayState = {
+      updatedAt: now,
+      alpha: alpha,
+      top: top,
+      bottom: bottom
+    };
+  }
+
+  function drawDeskGlow(a) {
+    if (!a || a.status !== 'busy' || a.moving || a.col !== a.hc || a.row !== a.hr) return;
+    var pulse = 0.5 + 0.3 * Math.sin(tick * 0.05);
+    var color = a.tint || '#4a9eff';
+    var centerX = a.hc * T + T * 1.5;
+    var centerY = a.hr * T - T * 0.35;
+    var radius = T * 1.5;
+    var gradient = ctx.createRadialGradient(centerX, centerY, T * 0.15, centerX, centerY, radius);
+
+    ctx.save();
+    ctx.globalAlpha = clamp(pulse, 0, 1);
+    ctx.shadowBlur = 16 + pulse * 18;
+    ctx.shadowColor = color;
+    gradient.addColorStop(0, 'rgba(255,255,255,0.22)');
+    gradient.addColorStop(0.35, color);
+    gradient.addColorStop(1, 'rgba(74,158,255,0)');
+    ctx.fillStyle = gradient;
+    ctx.beginPath();
+    ctx.ellipse(centerX, centerY, radius, T * 0.95, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function getSocialLines() {
+    var lang = document && document.documentElement ? document.documentElement.lang : '';
+    return lang === 'zh' ? SOCIAL_LINES_ZH : SOCIAL_LINES_EN;
+  }
+
+  function distancePx(a, b) {
+    var dx = a.px - b.px;
+    var dy = a.py - b.py;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+
+  function updateSocialBubble(nowMs) {
+    if (socialBubble && nowMs >= socialBubble.endsAt) socialBubble = null;
+    if (socialBubble || !agents || nowMs < nextSocialBubbleAt) return;
+
+    var idleAgents = [];
+    for (var i = 0; i < agents.length; i++) {
+      var agent = agents[i];
+      if (agent.status === 'idle' && !agent.moving) idleAgents.push(agent);
+    }
+
+    if (idleAgents.length < 2) return;
+
+    var nearbyPairs = [];
+    for (var a = 0; a < idleAgents.length; a++) {
+      for (var b = a + 1; b < idleAgents.length; b++) {
+        if (distancePx(idleAgents[a], idleAgents[b]) < T * 3) {
+          nearbyPairs.push([idleAgents[a], idleAgents[b]]);
+        }
+      }
+    }
+
+    if (!nearbyPairs.length) {
+      nextSocialBubbleAt = nowMs + randInt(2000, 5000);
+      return;
+    }
+
+    if (Math.random() >= 0.3) {
+      nextSocialBubbleAt = nowMs + randInt(8000, 15000);
+      return;
+    }
+
+    var pair = nearbyPairs[randInt(0, nearbyPairs.length - 1)];
+    var speaker = pair[randInt(0, 1)];
+    var lines = getSocialLines();
+    var duration = randInt(2000, 3000);
+    socialBubble = {
+      agentId: speaker.id,
+      text: lines[randInt(0, lines.length - 1)],
+      startsAt: nowMs,
+      endsAt: nowMs + duration,
+      fadeMs: 280
+    };
+    nextSocialBubbleAt = socialBubble.endsAt + randInt(8000, 15000);
+  }
+
+  function drawRoundRect(x, y, w, h, radius) {
+    if (ctx.roundRect) {
+      ctx.beginPath();
+      ctx.roundRect(x, y, w, h, radius);
+      return;
+    }
+    var r = Math.min(radius, w / 2, h / 2);
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+  }
+
+  function drawSocialBubble() {
+    if (!socialBubble || !agents) return;
+    var speaker = null;
+    for (var i = 0; i < agents.length; i++) {
+      if (agents[i].id === socialBubble.agentId) {
+        speaker = agents[i];
+        break;
+      }
+    }
+    if (!speaker) return;
+
+    var nowMs = Date.now();
+    var fadeMs = socialBubble.fadeMs;
+    var opacity = 1;
+    if (nowMs < socialBubble.startsAt + fadeMs) opacity = clamp((nowMs - socialBubble.startsAt) / fadeMs, 0, 1);
+    else if (nowMs > socialBubble.endsAt - fadeMs) opacity = clamp((socialBubble.endsAt - nowMs) / fadeMs, 0, 1);
+
+    var dw = Math.round(CHAR_FW * CHAR_SCALE);
+    var dh = Math.round(CHAR_FH * CHAR_SCALE);
+    var bubbleText = socialBubble.text;
+    var bubbleX = speaker.px + dw * 0.15;
+    var bubbleY = speaker.py - dh - 20;
+
+    ctx.save();
+    ctx.globalAlpha = opacity;
+    ctx.font = '10px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    var padX = 8;
+    var padY = 6;
+    var textW = ctx.measureText(bubbleText).width;
+    var bubbleW = Math.max(36, textW + padX * 2);
+    var bubbleH = 24;
+    var bx = clamp(bubbleX - bubbleW / 2, 8, CANVAS_W - bubbleW - 8);
+    var by = Math.max(8, bubbleY - bubbleH);
+    var tailX = clamp(speaker.px, bx + 10, bx + bubbleW - 10);
+
+    ctx.fillStyle = 'rgba(255,255,255,0.96)';
+    ctx.strokeStyle = 'rgba(0,0,0,0.12)';
+    ctx.lineWidth = 1;
+    drawRoundRect(bx, by, bubbleW, bubbleH, 8);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(tailX - 6, by + bubbleH - 1);
+    ctx.lineTo(tailX + 2, by + bubbleH - 1);
+    ctx.lineTo(tailX - 2, by + bubbleH + 7);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.fillStyle = '#111';
+    ctx.fillText(bubbleText, bx + bubbleW / 2, by + bubbleH / 2 + 1);
+    ctx.restore();
+  }
+
+  function drawDayOverlay() {
+    if (!dayOverlayState || !dayOverlayState.alpha || !dayOverlayState.top) return;
+    var top = dayOverlayState.top;
+    var bottom = dayOverlayState.bottom || top;
+    var gradient = ctx.createLinearGradient(0, 0, 0, CANVAS_H);
+    gradient.addColorStop(0, 'rgba(' + Math.round(top[0]) + ',' + Math.round(top[1]) + ',' + Math.round(top[2]) + ',' + dayOverlayState.alpha.toFixed(3) + ')');
+    gradient.addColorStop(1, 'rgba(' + Math.round(bottom[0]) + ',' + Math.round(bottom[1]) + ',' + Math.round(bottom[2]) + ',0)');
+    ctx.save();
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
+    ctx.restore();
+  }
+
   // Offscreen canvas for per-character tint compositing
   var _tintCanvas = null, _tintCtx = null;
   function getTintCanvas(w, h) {
@@ -424,7 +652,7 @@
     var img = images[a.spriteKey]; if (!img) return;
     var dw = Math.round(CHAR_FW * CHAR_SCALE), dh = Math.round(CHAR_FH * CHAR_SCALE);
     // Sitting offset: busy at desk, shift down 4px * ZOOM
-    var sittingOffset = (a.status === 'busy' && !a.moving && a.col === a.hc && a.row === a.hr) ? 4 * CHAR_SCALE : 0;
+    var sittingOffset = (a.status === 'busy' && !a.moving && a.col === a.hc && a.row === a.hr) ? 8 * CHAR_SCALE : 0;
     var drawX = a.px - dw / 2;
     var drawY = a.py - dh + sittingOffset;
 
@@ -607,8 +835,12 @@
   // ── Main loop (delta-time driven) ──────────────────────────
   function gameLoop(timestamp) {
     var dt = lastTime ? Math.min((timestamp - lastTime) / 1000, 0.1) : 0;
+    var nowMs = Date.now();
     lastTime = timestamp;
     tick++;
+
+    updateDayOverlay(false);
+    updateSocialBubble(nowMs);
 
     // Update agents with delta-time
     agents.forEach(function (a) { a.update(dt); });
@@ -632,6 +864,16 @@
       });
     });
 
+    // Busy desk screen glows between furniture and agents
+    agents.forEach(function (a) {
+      if (a.status === 'busy' && !a.moving && a.col === a.hc && a.row === a.hr) {
+        drawables.push({
+          y: a.hr * T + T * 0.5,
+          draw: function () { drawDeskGlow(a); }
+        });
+      }
+    });
+
     // Agents
     agents.forEach(function (a) {
       drawables.push({
@@ -643,6 +885,9 @@
     // Sort by Y ascending (further back drawn first)
     drawables.sort(function (a, b) { return a.y - b.y; });
     drawables.forEach(function (d) { d.draw(); });
+
+    drawSocialBubble();
+    drawDayOverlay();
 
     rafId = requestAnimationFrame(gameLoop);
   }
@@ -658,6 +903,10 @@
       tick = 0;
       lastTime = 0;
       hoveredAgent = null;
+      dayOverlayState = null;
+      socialBubble = null;
+      nextSocialBubbleAt = Date.now() + randInt(4000, 9000);
+      updateDayOverlay(true);
 
       // Mouse hover listener
       canvas.addEventListener('mousemove', onMouseMove);
@@ -687,6 +936,9 @@
       if (canvas) canvas.removeEventListener('mousemove', onMouseMove);
       rafId = null; agents = null; ctx = null; canvas = null;
       hoveredAgent = null;
+      dayOverlayState = null;
+      socialBubble = null;
+      nextSocialBubbleAt = 0;
     },
 
     getAgentAt: function (cx, cy) {
