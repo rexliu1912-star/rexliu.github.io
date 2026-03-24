@@ -451,7 +451,8 @@
 
   // ── Agent class ────────────────────────────────────────────
   function getEntryCol(homeCol) {
-    return homeCol <= Math.floor((COLS - 1) / 2) ? 0 : COLS - 1;
+    // col 0 and COLS-1 are walls, so use col 1 or COLS-2 as entry points
+    return homeCol <= Math.floor((COLS - 1) / 2) ? 1 : COLS - 2;
   }
 
   function Agent(cfg) {
@@ -463,8 +464,9 @@
     this.entryDelay = AGENTS_CFG.indexOf(cfg) * 0.3;
     this.entryDone = false;
     this.entryStarted = false;
-    this.col = this.entryCol; this.row = cfg.hr;
-    this.px = this.entryCol * T + T / 2; this.py = cfg.hr * T + T / 2;
+    // Entry from bottom walkway (row 12) at left or right edge
+    this.col = this.entryCol; this.row = 12;
+    this.px = this.entryCol * T + T / 2; this.py = 12 * T + T / 2;
     this.dir = cfg.dir;
     this.homeDir = cfg.dir;
     this.tint = cfg.tint || null;
