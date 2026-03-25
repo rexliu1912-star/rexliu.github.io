@@ -52,6 +52,23 @@ const meta = {
 		</div>
 	</section>
 
+	<!-- Team Workload -->
+	<section class="team-workload mb-16 fade-in-up" style="--delay: 400ms" id="team-workload-section">
+		<h2 class="mb-2 font-serif text-xs font-bold tracking-widest text-gray-400 uppercase dark:text-gray-500">
+			<span class="lang-en">Team Workload</span><span class="lang-zh">团队工作量</span>
+		</h2>
+		<p class="mb-6 font-serif text-2xl font-semibold dark:text-white">
+			<span class="lang-en">Token usage by agent.</span>
+			<span class="lang-zh">各 Agent 的 Token 使用量。</span>
+		</p>
+		<div id="workload-chart" class="workload-chart">
+			<div class="workload-loading font-serif text-xs text-gray-400">
+				<span class="lang-en">Loading workload data...</span><span class="lang-zh">加载中...</span>
+			</div>
+		</div>
+		<p id="workload-footer" class="workload-footer font-serif text-xs text-gray-400 dark:text-gray-500 mt-4" style="display:none"></p>
+	</section>
+
 	<!-- Activity Feed -->
 	<section class="activity-feed mb-16 fade-in-up" style="--delay: 500ms">
 		<h2 class="mb-2 font-serif text-xs font-bold tracking-widest text-gray-400 uppercase dark:text-gray-500">
@@ -260,6 +277,72 @@ const meta = {
 		color: #8953d1;
 		font-weight: 600;
 		margin-right: 0.3rem;
+	}
+
+	/* ── Team Workload ──────────────────────────────────────────── */
+	.workload-chart {
+		display: flex;
+		flex-direction: column;
+		gap: 0.6rem;
+	}
+	.workload-row {
+		display: grid;
+		grid-template-columns: 130px 1fr 80px;
+		align-items: center;
+		gap: 0.75rem;
+	}
+	.workload-label {
+		display: flex;
+		flex-direction: column;
+		gap: 0.1rem;
+		min-width: 0;
+	}
+	.workload-name {
+		font-size: 0.85rem;
+		font-weight: 600;
+		color: #ddd;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	:global([data-theme="light"]) .workload-name { color: #222; }
+	.workload-sessions {
+		font-size: 0.65rem;
+		color: #666;
+		letter-spacing: 0.04em;
+	}
+	:global([data-theme="light"]) .workload-sessions { color: #999; }
+	.workload-bar-track {
+		background: #1f1f30;
+		border-radius: 4px;
+		height: 30px;
+		overflow: hidden;
+		position: relative;
+	}
+	:global([data-theme="light"]) .workload-bar-track { background: #ebedf0; }
+	.workload-bar-fill {
+		height: 100%;
+		border-radius: 4px;
+		width: 0;
+		transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+		position: relative;
+	}
+	.workload-bar-fill:hover {
+		filter: brightness(1.15);
+	}
+	.workload-tokens {
+		font-size: 0.8rem;
+		color: #aaa;
+		text-align: right;
+		white-space: nowrap;
+		font-variant-numeric: tabular-nums;
+	}
+	:global([data-theme="light"]) .workload-tokens { color: #555; }
+	.workload-footer {
+		margin-top: 0.5rem;
+	}
+	.workload-loading {
+		padding: 0.5rem 0;
 	}
 
 	/* ── Activity Feed ───────────────────────────────────────────── */
@@ -625,6 +708,106 @@ const meta = {
 				}
 			}
 		}
+
+		/* ══════════════════════════════════════════════════════════════
+		   TEAM WORKLOAD
+		   ══════════════════════════════════════════════════════════════ */
+		function formatTokens(n) {
+			if (n >= 1000000) return (n / 1000000).toFixed(2) + 'M';
+			if (n >= 1000) return Math.round(n / 1000) + 'K';
+			return String(n);
+		}
+
+		function timeAgoWorkload(isoStr) {
+			try {
+				var diff = Date.now() - new Date(isoStr).getTime();
+				var m = Math.floor(diff / 60000);
+				if (m < 2) return 'just now';
+				if (m < 60) return m + 'm ago';
+				var h = Math.floor(diff / 3600000);
+				if (h < 24) return h + 'h ago';
+				return Math.floor(h / 24) + 'd ago';
+			} catch (e) { return ''; }
+		}
+
+		function renderWorkload(data) {
+			var chart = document.getElementById('workload-chart');
+			var footer = document.getElementById('workload-footer');
+			if (!chart) return;
+
+			var agents = data.agents || [];
+			if (agents.length === 0) {
+				chart.innerHTML = '<div class="workload-loading font-serif text-xs text-gray-400"><span class="lang-en">No data</span><span class="lang-zh">暂无数据</span></div>';
+				return;
+			}
+
+			var maxTokens = Math.max.apply(null, agents.map(function(a) { return a.tokens; }));
+			var isZh = document.documentElement.getAttribute('data-lang') === 'zh';
+
+			chart.innerHTML = agents.map(function(agent) {
+				var color = (AGENT_DATA[agent.id] || {}).color || '#8953d1';
+				var pct = maxTokens > 0 ? (agent.tokens / maxTokens * 100).toFixed(1) : 0;
+				var sessionsLabel = isZh
+					? agent.sessions + ' 个会话'
+					: agent.sessions + ' session' + (agent.sessions !== 1 ? 's' : '');
+				return '<div class="workload-row">' +
+					'<div class="workload-label">' +
+						'<span class="workload-name font-serif">' + agent.name + '</span>' +
+						'<span class="workload-sessions font-serif">' + sessionsLabel + '</span>' +
+					'</div>' +
+					'<div class="workload-bar-track" title="' + agent.name + ': ' + formatTokens(agent.tokens) + ' tokens">' +
+						'<div class="workload-bar-fill" data-pct="' + pct + '" style="background:' + color + ';box-shadow:0 0 0px ' + color + '44"></div>' +
+					'</div>' +
+					'<span class="workload-tokens font-serif">' + formatTokens(agent.tokens) + '</span>' +
+				'</div>';
+			}).join('');
+
+			// Animate bars after render
+			requestAnimationFrame(function() {
+				requestAnimationFrame(function() {
+					var bars = chart.querySelectorAll('.workload-bar-fill');
+					bars.forEach(function(bar) {
+						var pct = bar.getAttribute('data-pct');
+						bar.style.width = pct + '%';
+						bar.addEventListener('mouseenter', function() {
+							bar.style.boxShadow = '0 0 12px ' + bar.style.background + '44';
+						});
+						bar.addEventListener('mouseleave', function() {
+							bar.style.boxShadow = '0 0 0px ' + bar.style.background + '44';
+						});
+					});
+				});
+			});
+
+			// Footer
+			if (footer) {
+				var totalFmt = formatTokens(data.total || 0);
+				var updAgo = timeAgoWorkload(data.updatedAt);
+				if (isZh) {
+					footer.textContent = '总计：' + totalFmt + ' tokens · ' + (data.totalSessions || 0) + ' 个会话 · 更新于 ' + updAgo;
+				} else {
+					footer.textContent = 'Total: ' + totalFmt + ' tokens · ' + (data.totalSessions || 0) + ' sessions · Updated ' + updAgo;
+				}
+				footer.style.display = '';
+			}
+		}
+
+		async function fetchWorkload() {
+			try {
+				var resp = await fetch('/data/agent-workload.json');
+				if (!resp.ok) throw new Error('HTTP ' + resp.status);
+				var data = await resp.json();
+				renderWorkload(data);
+			} catch (e) {
+				console.error('Workload fetch failed:', e);
+				var chart = document.getElementById('workload-chart');
+				if (chart) {
+					chart.innerHTML = '<div class="workload-loading font-serif text-xs text-gray-400"><span class="lang-en">Unable to load workload data</span><span class="lang-zh">加载失败</span></div>';
+				}
+			}
+		}
+
+		fetchWorkload();
 
 		fetchActivity();
 		_intervals.push(setInterval(fetchActivity, 30000));
