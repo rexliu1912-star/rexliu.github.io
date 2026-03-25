@@ -52,6 +52,47 @@ const meta = {
 		</div>
 	</section>
 
+	<!-- Team Impact -->
+	<section class="team-impact mb-16 fade-in-up" style="--delay: 350ms" id="team-impact-section">
+		<h2 class="mb-2 font-serif text-xs font-bold tracking-widest text-gray-400 uppercase dark:text-gray-500">
+			<span class="lang-en">Team Impact</span><span class="lang-zh">团队效能</span>
+		</h2>
+		<p class="mb-6 font-serif text-2xl font-semibold dark:text-white" id="impact-subtitle">
+			<span class="lang-en">What 6 AI agents accomplished.</span>
+			<span class="lang-zh">6 个 AI Agent 的成果。</span>
+		</p>
+		<div class="impact-grid" id="impact-grid">
+			<div class="impact-card fade-in-up" style="--delay: 370ms">
+				<div class="impact-number font-serif" id="impact-tokens" data-target="0" data-suffix="M" data-decimals="1">—</div>
+				<div class="impact-label font-serif">
+					<span class="lang-en">tokens processed</span>
+					<span class="lang-zh">tokens 已处理</span>
+				</div>
+			</div>
+			<div class="impact-card fade-in-up" style="--delay: 390ms">
+				<div class="impact-number font-serif" id="impact-sessions" data-target="0">—</div>
+				<div class="impact-label font-serif">
+					<span class="lang-en">sessions completed</span>
+					<span class="lang-zh">会话已完成</span>
+				</div>
+			</div>
+			<div class="impact-card fade-in-up" style="--delay: 410ms">
+				<div class="impact-number font-serif" id="impact-hours" data-target="0" data-prefix="~" data-suffix="h">—</div>
+				<div class="impact-label font-serif">
+					<span class="lang-en">hours saved (est.)</span>
+					<span class="lang-zh">节省工时（估算）</span>
+				</div>
+			</div>
+			<div class="impact-card fade-in-up" style="--delay: 430ms">
+				<div class="impact-number font-serif" id="impact-cost" data-target="0" data-prefix="$" data-decimals="0">—</div>
+				<div class="impact-label font-serif">
+					<span class="lang-en">API cost (est.)</span>
+					<span class="lang-zh">API 费用（估算）</span>
+				</div>
+			</div>
+		</div>
+	</section>
+
 	<!-- Team Workload -->
 	<section class="team-workload mb-16 fade-in-up" style="--delay: 400ms" id="team-workload-section">
 		<h2 class="mb-2 font-serif text-xs font-bold tracking-widest text-gray-400 uppercase dark:text-gray-500">
@@ -279,22 +320,78 @@ const meta = {
 		margin-right: 0.3rem;
 	}
 
+	/* ── Team Impact ────────────────────────────────────────────── */
+	.impact-grid {
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		gap: 0.75rem;
+	}
+	@media (max-width: 640px) {
+		.impact-grid {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+	.impact-card {
+		background: #1a1a2e;
+		border: 1px solid #2a2a3a;
+		border-radius: 8px;
+		padding: 1rem 1.25rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.4rem;
+		transition: border-color 0.2s, box-shadow 0.2s;
+	}
+	.impact-card:hover {
+		border-color: #8953d133;
+		box-shadow: 0 0 16px #8953d115;
+	}
+	:global([data-theme="light"]) .impact-card {
+		background: #f8f5ef;
+		border-color: #e5e7eb;
+	}
+	:global([data-theme="light"]) .impact-card:hover {
+		border-color: #6b3fa055;
+		box-shadow: 0 0 16px #6b3fa010;
+	}
+	.impact-number {
+		font-size: 1.5rem;
+		font-weight: 700;
+		color: #8953d1;
+		font-variant-numeric: tabular-nums;
+		line-height: 1.1;
+	}
+	:global([data-theme="light"]) .impact-number { color: #6b3fa0; }
+	.impact-label {
+		font-size: 0.7rem;
+		color: #888;
+		letter-spacing: 0.03em;
+		line-height: 1.3;
+	}
+
 	/* ── Team Workload ──────────────────────────────────────────── */
 	.workload-chart {
 		display: flex;
 		flex-direction: column;
-		gap: 0.6rem;
+		gap: 0.5rem;
 	}
 	.workload-row {
 		display: grid;
-		grid-template-columns: 130px 1fr 80px;
+		grid-template-columns: 140px 1fr 80px;
 		align-items: center;
 		gap: 0.75rem;
+		transition: transform 0.15s;
+	}
+	.workload-row:hover {
+		transform: scale(1.015);
+	}
+	.workload-row:hover .workload-bar-fill {
+		filter: brightness(1.15);
+		box-shadow: 0 0 14px var(--bar-color, #8953d1)66 !important;
 	}
 	.workload-label {
 		display: flex;
 		flex-direction: column;
-		gap: 0.1rem;
+		gap: 0.15rem;
 		min-width: 0;
 	}
 	.workload-name {
@@ -306,6 +403,15 @@ const meta = {
 		text-overflow: ellipsis;
 	}
 	:global([data-theme="light"]) .workload-name { color: #222; }
+	.workload-model-tag {
+		font-size: 0.6rem;
+		color: #555;
+		letter-spacing: 0.03em;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	:global([data-theme="light"]) .workload-model-tag { color: #aaa; }
 	.workload-sessions {
 		font-size: 0.65rem;
 		color: #666;
@@ -313,22 +419,19 @@ const meta = {
 	}
 	:global([data-theme="light"]) .workload-sessions { color: #999; }
 	.workload-bar-track {
-		background: #1f1f30;
-		border-radius: 4px;
-		height: 30px;
+		background: #16162a;
+		border-radius: 8px;
+		height: 16px;
 		overflow: hidden;
 		position: relative;
 	}
-	:global([data-theme="light"]) .workload-bar-track { background: #ebedf0; }
+	:global([data-theme="light"]) .workload-bar-track { background: #f0f0f0; }
 	.workload-bar-fill {
 		height: 100%;
-		border-radius: 4px;
+		border-radius: 8px;
 		width: 0;
 		transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 		position: relative;
-	}
-	.workload-bar-fill:hover {
-		filter: brightness(1.15);
 	}
 	.workload-tokens {
 		font-size: 0.8rem;
@@ -730,6 +833,70 @@ const meta = {
 			} catch (e) { return ''; }
 		}
 
+		/* ── Count-up animation ── */
+		function countUp(el, target, opts) {
+			opts = opts || {};
+			var prefix = opts.prefix || '';
+			var suffix = opts.suffix || '';
+			var decimals = opts.decimals || 0;
+			var duration = opts.duration || 1200;
+			var start = 0;
+			var startTime = null;
+			function step(ts) {
+				if (!startTime) startTime = ts;
+				var progress = Math.min((ts - startTime) / duration, 1);
+				// easeOutCubic
+				var eased = 1 - Math.pow(1 - progress, 3);
+				var current = start + (target - start) * eased;
+				el.textContent = prefix + current.toFixed(decimals) + suffix;
+				if (progress < 1) requestAnimationFrame(step);
+			}
+			requestAnimationFrame(step);
+		}
+
+		function renderTeamImpact(data) {
+			var isZh = document.documentElement.getAttribute('data-lang') === 'zh';
+			var days = data.daysActive || 0;
+			var agents = (data.agents || []).length;
+
+			// Update subtitle with dynamic days
+			var subtitleEl = document.getElementById('impact-subtitle');
+			if (subtitleEl) {
+				subtitleEl.innerHTML = '<span class="lang-en">What ' + agents + ' AI agents accomplished in ' + days + ' days.</span>' +
+					'<span class="lang-zh">' + agents + ' 个 AI Agent 在 ' + days + ' 天内的成果。</span>';
+				// Re-apply lang visibility
+				var currentLang = document.documentElement.getAttribute('data-lang') || 'en';
+				subtitleEl.querySelectorAll('.lang-en, .lang-zh').forEach(function(el) {
+					el.style.display = '';
+				});
+			}
+
+			// Tokens card
+			var tokensEl = document.getElementById('impact-tokens');
+			if (tokensEl) {
+				var tokenM = (data.total || 0) / 1000000;
+				countUp(tokensEl, tokenM, { decimals: 1, suffix: 'M', duration: 1400 });
+			}
+
+			// Sessions card
+			var sessionsEl = document.getElementById('impact-sessions');
+			if (sessionsEl) {
+				countUp(sessionsEl, data.totalSessions || 0, { decimals: 0, duration: 1200 });
+			}
+
+			// Hours saved card
+			var hoursEl = document.getElementById('impact-hours');
+			if (hoursEl) {
+				countUp(hoursEl, data.estimatedHoursSaved || 0, { prefix: '~', suffix: 'h', decimals: 0, duration: 1300 });
+			}
+
+			// Cost card
+			var costEl = document.getElementById('impact-cost');
+			if (costEl) {
+				countUp(costEl, data.estimatedCostUSD || 0, { prefix: '$', decimals: 0, duration: 1100 });
+			}
+		}
+
 		function renderWorkload(data) {
 			var chart = document.getElementById('workload-chart');
 			var footer = document.getElementById('workload-footer');
@@ -750,31 +917,30 @@ const meta = {
 				var sessionsLabel = isZh
 					? agent.sessions + ' 个会话'
 					: agent.sessions + ' session' + (agent.sessions !== 1 ? 's' : '');
-				return '<div class="workload-row">' +
+				var modelLabel = agent.model || '';
+				// Gradient: use CSS via inline style
+				var gradientBg = 'linear-gradient(to right, ' + color + 'ff, ' + color + 'd9)';
+				return '<div class="workload-row" style="--bar-color:' + color + '">' +
 					'<div class="workload-label">' +
-						'<span class="workload-name font-serif">' + agent.name + '</span>' +
+						'<span class="workload-name font-serif">' + agent.name + (modelLabel ? ' <span class="workload-model-tag">' + modelLabel + '</span>' : '') + '</span>' +
 						'<span class="workload-sessions font-serif">' + sessionsLabel + '</span>' +
 					'</div>' +
 					'<div class="workload-bar-track" title="' + agent.name + ': ' + formatTokens(agent.tokens) + ' tokens">' +
-						'<div class="workload-bar-fill" data-pct="' + pct + '" style="background:' + color + ';box-shadow:0 0 0px ' + color + '44"></div>' +
+						'<div class="workload-bar-fill" data-pct="' + pct + '" data-color="' + color + '" style="background:' + gradientBg + '"></div>' +
 					'</div>' +
 					'<span class="workload-tokens font-serif">' + formatTokens(agent.tokens) + '</span>' +
 				'</div>';
 			}).join('');
 
-			// Animate bars after render
+			// Staggered bar animations (100ms delay each)
 			requestAnimationFrame(function() {
 				requestAnimationFrame(function() {
 					var bars = chart.querySelectorAll('.workload-bar-fill');
-					bars.forEach(function(bar) {
+					bars.forEach(function(bar, idx) {
 						var pct = bar.getAttribute('data-pct');
-						bar.style.width = pct + '%';
-						bar.addEventListener('mouseenter', function() {
-							bar.style.boxShadow = '0 0 12px ' + bar.style.background + '44';
-						});
-						bar.addEventListener('mouseleave', function() {
-							bar.style.boxShadow = '0 0 0px ' + bar.style.background + '44';
-						});
+						setTimeout(function() {
+							bar.style.width = pct + '%';
+						}, idx * 100);
 					});
 				});
 			});
@@ -797,6 +963,7 @@ const meta = {
 				var resp = await fetch('/data/agent-workload.json');
 				if (!resp.ok) throw new Error('HTTP ' + resp.status);
 				var data = await resp.json();
+				renderTeamImpact(data);
 				renderWorkload(data);
 			} catch (e) {
 				console.error('Workload fetch failed:', e);
