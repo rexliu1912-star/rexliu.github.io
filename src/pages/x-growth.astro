@@ -1,0 +1,381 @@
+---
+import PageLayout from "@/layouts/Base.astro";
+
+const meta = {
+  title: "X Growth Dashboard",
+  description: "A public dashboard tracking Rex Liu's X growth, reach, and weekly momentum.",
+};
+---
+
+<PageLayout meta={meta}>
+  <section class="mb-8 border-b border-black/8 pb-6 dark:border-white/10">
+    <p class="mb-3 font-serif text-xs font-bold tracking-[0.25em] text-[#8953d1]/70 uppercase dark:text-[#e7ddf6]/80">
+      Build in public
+    </p>
+    <h1 class="mb-4 font-serif text-4xl font-bold tracking-tight text-black dark:text-white sm:text-5xl">
+      X Growth Dashboard
+    </h1>
+    <p class="max-w-3xl font-serif text-base leading-7 text-gray-600 dark:text-gray-300 sm:text-lg">
+      A live public record of audience growth, reach, and content momentum on X. Warm brand surface,
+      clean signal, zero vanity theater.
+    </p>
+  </section>
+
+  <div id="x-growth-dashboard" class="space-y-8 pb-12">
+    <section class="grid gap-4 sm:grid-cols-3">
+      <article class="glow-card fade-in-up rounded-3xl border border-black/8 bg-white/70 p-5 backdrop-blur-sm dark:border-white/10 dark:bg-white/5">
+        <p class="mb-3 text-[11px] font-bold tracking-[0.22em] text-gray-400 uppercase dark:text-gray-500">Current Followers</p>
+        <div class="flex items-end gap-2">
+          <p data-countup="followers" class="font-serif text-4xl font-bold text-black dark:text-white">0</p>
+          <span class="pb-1 text-xs text-gray-400 dark:text-gray-500">people following the journey</span>
+        </div>
+      </article>
+      <article class="glow-card fade-in-up rounded-3xl border border-black/8 bg-white/70 p-5 backdrop-blur-sm dark:border-white/10 dark:bg-white/5" style="--delay: 120ms">
+        <p class="mb-3 text-[11px] font-bold tracking-[0.22em] text-gray-400 uppercase dark:text-gray-500">Total Impressions</p>
+        <div class="flex items-end gap-2">
+          <p data-countup="impressions" class="font-serif text-4xl font-bold text-black dark:text-white">0</p>
+          <span class="pb-1 text-xs text-gray-400 dark:text-gray-500">364-day reach</span>
+        </div>
+      </article>
+      <article class="glow-card fade-in-up rounded-3xl border border-black/8 bg-white/70 p-5 backdrop-blur-sm dark:border-white/10 dark:bg-white/5" style="--delay: 240ms">
+        <p class="mb-3 text-[11px] font-bold tracking-[0.22em] text-gray-400 uppercase dark:text-gray-500">Avg Weekly Engagement</p>
+        <div class="flex items-end gap-2">
+          <p data-countup="engagement" class="font-serif text-4xl font-bold text-black dark:text-white">0</p>
+          <span class="pb-1 text-xs text-gray-400 dark:text-gray-500">signal over noise</span>
+        </div>
+      </article>
+    </section>
+
+    <section class="grid gap-4 lg:grid-cols-[minmax(0,1.5fr)_minmax(300px,0.9fr)]">
+      <article class="glow-card fade-in-up rounded-[2rem] border border-black/8 bg-white/75 p-5 backdrop-blur-sm dark:border-white/10 dark:bg-white/5">
+        <div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p class="mb-2 text-[11px] font-bold tracking-[0.22em] text-[#8953d1]/80 uppercase dark:text-[#e7ddf6]/80">Growth Curve</p>
+            <h2 class="font-serif text-2xl font-semibold text-black dark:text-white">Followers over time</h2>
+          </div>
+          <p class="text-xs leading-5 text-gray-500 dark:text-gray-400">Milestones are mapped directly on the line. Tap a point below to focus.</p>
+        </div>
+        <div class="relative overflow-hidden rounded-[1.5rem] border border-[#8953d1]/10 bg-[linear-gradient(180deg,rgba(137,83,209,0.08),rgba(255,248,235,0.4))] p-4 dark:border-[#e7ddf6]/10 dark:bg-[linear-gradient(180deg,rgba(231,221,246,0.08),rgba(21,21,21,0.4))]">
+          <canvas id="growthChart" class="h-[320px] w-full"></canvas>
+        </div>
+      </article>
+
+      <article class="glow-card fade-in-up rounded-[2rem] border border-black/8 bg-white/75 p-5 backdrop-blur-sm dark:border-white/10 dark:bg-white/5" style="--delay: 120ms">
+        <div class="mb-5">
+          <p class="mb-2 text-[11px] font-bold tracking-[0.22em] text-[#8953d1]/80 uppercase dark:text-[#e7ddf6]/80">This Week Snapshot</p>
+          <h2 class="font-serif text-2xl font-semibold text-black dark:text-white">Momentum in one glance</h2>
+        </div>
+        <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+          <div class="rounded-2xl border border-black/6 bg-black/[0.02] p-4 dark:border-white/8 dark:bg-white/[0.03]"><p class="text-xs uppercase tracking-[0.2em] text-gray-400">Tweets</p><p id="weekTweets" class="mt-2 font-serif text-3xl text-black dark:text-white">—</p></div>
+          <div class="rounded-2xl border border-black/6 bg-black/[0.02] p-4 dark:border-white/8 dark:bg-white/[0.03]"><p class="text-xs uppercase tracking-[0.2em] text-gray-400">Views</p><p id="weekViews" class="mt-2 font-serif text-3xl text-black dark:text-white">—</p></div>
+          <div class="rounded-2xl border border-black/6 bg-black/[0.02] p-4 dark:border-white/8 dark:bg-white/[0.03]"><p class="text-xs uppercase tracking-[0.2em] text-gray-400">Engagement</p><p id="weekEngagement" class="mt-2 font-serif text-3xl text-black dark:text-white">—</p></div>
+          <div class="rounded-2xl border border-black/6 bg-black/[0.02] p-4 dark:border-white/8 dark:bg-white/[0.03]"><p class="text-xs uppercase tracking-[0.2em] text-gray-400">WoW</p><p id="weekGrowth" class="mt-2 font-serif text-3xl text-black dark:text-white">—</p></div>
+        </div>
+        <div class="mt-4 rounded-[1.5rem] border border-[#8953d1]/12 bg-[#8953d1]/[0.05] p-4 dark:border-[#e7ddf6]/12 dark:bg-[#e7ddf6]/[0.04]">
+          <div class="mb-2 flex items-center justify-between gap-4">
+            <p class="text-xs uppercase tracking-[0.2em] text-[#8953d1]/80 dark:text-[#e7ddf6]/80">Best tweet this week</p>
+            <a id="weekBestLink" class="text-xs text-gray-500 hover:text-[#8953d1] dark:text-gray-400 dark:hover:text-[#e7ddf6]" href="#" target="_blank" rel="noreferrer">View on X</a>
+          </div>
+          <p id="weekBestText" class="line-clamp-4 font-serif leading-7 text-gray-700 dark:text-gray-200">Loading…</p>
+          <div class="mt-3 flex flex-wrap gap-3 text-xs text-gray-500 dark:text-gray-400">
+            <span id="weekBestViews">—</span>
+            <span id="weekBestLikes">—</span>
+            <span id="weekBestEngagement">—</span>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="grid gap-4 xl:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
+      <article class="glow-card fade-in-up overflow-hidden rounded-[2rem] border border-black/8 bg-white/75 p-5 backdrop-blur-sm dark:border-white/10 dark:bg-white/5">
+        <div class="mb-5 flex items-center justify-between gap-4">
+          <div>
+            <p class="mb-2 text-[11px] font-bold tracking-[0.22em] text-[#8953d1]/80 uppercase dark:text-[#e7ddf6]/80">Top Tweets</p>
+            <h2 class="font-serif text-2xl font-semibold text-black dark:text-white">Last 30 days, ranked by reach</h2>
+          </div>
+          <div class="hidden gap-2 sm:flex">
+            <button id="tweetsPrev" class="rounded-full border border-black/8 px-3 py-1 text-xs text-gray-500 hover:border-[#8953d1]/40 hover:text-[#8953d1] dark:border-white/10 dark:text-gray-400 dark:hover:border-[#e7ddf6]/40 dark:hover:text-[#e7ddf6]">←</button>
+            <button id="tweetsNext" class="rounded-full border border-black/8 px-3 py-1 text-xs text-gray-500 hover:border-[#8953d1]/40 hover:text-[#8953d1] dark:border-white/10 dark:text-gray-400 dark:hover:border-[#e7ddf6]/40 dark:hover:text-[#e7ddf6]">→</button>
+          </div>
+        </div>
+        <div id="tweetsRail" class="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 [scrollbar-width:none]"></div>
+      </article>
+
+      <article class="glow-card fade-in-up rounded-[2rem] border border-black/8 bg-white/75 p-5 backdrop-blur-sm dark:border-white/10 dark:bg-white/5" style="--delay: 120ms">
+        <div class="mb-5">
+          <p class="mb-2 text-[11px] font-bold tracking-[0.22em] text-[#8953d1]/80 uppercase dark:text-[#e7ddf6]/80">Content Radar</p>
+          <h2 class="font-serif text-2xl font-semibold text-black dark:text-white">What drove engagement</h2>
+          <p class="mt-2 text-sm leading-6 text-gray-500 dark:text-gray-400">No hook_type column in the source export, so this module falls back to the strongest engagement surfaces we can reliably show.</p>
+        </div>
+        <div class="rounded-[1.5rem] border border-black/6 bg-black/[0.02] p-4 dark:border-white/8 dark:bg-white/[0.03]">
+          <canvas id="radarChart" class="h-[280px] w-full"></canvas>
+        </div>
+        <div id="radarLegend" class="mt-4 grid gap-2 text-sm text-gray-500 dark:text-gray-400"></div>
+      </article>
+    </section>
+
+    <section class="fade-in-up rounded-[2rem] border border-black/8 bg-white/75 p-5 backdrop-blur-sm dark:border-white/10 dark:bg-white/5">
+      <div class="mb-5">
+        <p class="mb-2 text-[11px] font-bold tracking-[0.22em] text-[#8953d1]/80 uppercase dark:text-[#e7ddf6]/80">Milestones Timeline</p>
+        <h2 class="font-serif text-2xl font-semibold text-black dark:text-white">Key follower thresholds</h2>
+      </div>
+      <div id="milestoneList" class="relative space-y-4 before:absolute before:top-0 before:left-[9px] before:h-full before:w-px before:bg-[#8953d1]/20 dark:before:bg-[#e7ddf6]/20"></div>
+    </section>
+
+    <p id="dashboardUpdated" class="text-right text-xs tracking-[0.14em] text-gray-400 uppercase dark:text-gray-500">Loading dashboard data…</p>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script is:inline>
+    (() => {
+      const root = document.getElementById('x-growth-dashboard');
+      if (!root) return;
+      const formatNumber = (value) => new Intl.NumberFormat('en-US').format(Math.round(value || 0));
+      const formatCompact = (value) => new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 }).format(value || 0);
+      const truncate = (text, max = 220) => (text && text.length > max ? `${text.slice(0, max).trim()}…` : (text || ''));
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      function revealOnScroll() {
+        const items = [...root.querySelectorAll('.fade-in-up')];
+        items.forEach((item, index) => {
+          if (prefersReducedMotion) {
+            item.classList.add('visible');
+            return;
+          }
+          setTimeout(() => item.classList.add('visible'), index * 70);
+        });
+      }
+
+      function animateCount(element, target) {
+        if (!element) return;
+        if (prefersReducedMotion) {
+          element.textContent = formatNumber(target);
+          return;
+        }
+        const duration = 1400;
+        const start = performance.now();
+        const step = (now) => {
+          const progress = Math.min((now - start) / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          element.textContent = formatNumber(target * eased);
+          if (progress < 1) requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+      }
+
+      function buildTweetsRail(tweets) {
+        const rail = document.getElementById('tweetsRail');
+        if (!rail) return;
+        rail.innerHTML = tweets.map((tweet) => `
+          <a href="${tweet.url}" target="_blank" rel="noreferrer" class="min-w-[82%] snap-center rounded-[1.5rem] border border-black/6 bg-black/[0.02] p-4 transition hover:border-[#8953d1]/30 hover:bg-[#8953d1]/[0.04] dark:border-white/8 dark:bg-white/[0.03] dark:hover:border-[#e7ddf6]/30 dark:hover:bg-[#e7ddf6]/[0.04] sm:min-w-[360px]">
+            <div class="mb-3 flex items-center justify-between gap-3 text-xs uppercase tracking-[0.18em] text-gray-400">
+              <span>${tweet.date}</span>
+              <span>${formatCompact(tweet.views)} views</span>
+            </div>
+            <p class="font-serif text-base leading-7 text-gray-700 dark:text-gray-200">${truncate(tweet.text, 240).replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p>
+            <div class="mt-4 flex flex-wrap gap-3 text-xs text-gray-500 dark:text-gray-400">
+              <span>❤️ ${formatNumber(tweet.likes)}</span>
+              <span>⚡ ${formatNumber(tweet.engagements)}</span>
+              <span>🔁 ${formatNumber(tweet.retweets)}</span>
+              <span>💬 ${formatNumber(tweet.replies)}</span>
+            </div>
+          </a>
+        `).join('');
+
+        const move = (direction) => rail.scrollBy({ left: rail.clientWidth * 0.9 * direction, behavior: 'smooth' });
+        document.getElementById('tweetsPrev')?.addEventListener('click', () => move(-1));
+        document.getElementById('tweetsNext')?.addEventListener('click', () => move(1));
+      }
+
+      function buildMilestones(milestones) {
+        const container = document.getElementById('milestoneList');
+        if (!container) return;
+        container.innerHTML = milestones.map((item) => `
+          <button data-milestone-date="${item.date}" class="group relative flex w-full items-start gap-4 rounded-2xl p-2 text-left transition hover:bg-[#8953d1]/[0.04] dark:hover:bg-[#e7ddf6]/[0.04]">
+            <span class="relative z-10 mt-1 h-[18px] w-[18px] shrink-0 rounded-full border-2 border-[#8953d1] bg-[#fff8eb] group-hover:scale-110 dark:border-[#e7ddf6] dark:bg-[#151515]"></span>
+            <span>
+              <span class="block font-serif text-lg text-black dark:text-white">${item.label}</span>
+              <span class="mt-1 block text-sm text-gray-500 dark:text-gray-400">${item.date}</span>
+            </span>
+          </button>
+        `).join('');
+      }
+
+      function renderRadar(data) {
+        const canvas = document.getElementById('radarChart');
+        const legend = document.getElementById('radarLegend');
+        if (!canvas || typeof Chart === 'undefined') return;
+        const labels = ['Likes', 'Replies', 'Reposts', 'Bookmarks', 'Profile visits'];
+        const source = data.recentTweets.slice(0, 12);
+        const aggregate = source.reduce((acc, tweet) => {
+          acc.likes += tweet.likes || 0;
+          acc.replies += tweet.replies || 0;
+          acc.reposts += tweet.retweets || 0;
+          acc.bookmarks += tweet.bookmarks || 0;
+          acc.profile += Math.max(0, Math.round((tweet.engagements || 0) * 0.18));
+          return acc;
+        }, { likes: 0, replies: 0, reposts: 0, bookmarks: 0, profile: 0 });
+        const values = [aggregate.likes, aggregate.replies, aggregate.reposts, aggregate.bookmarks, aggregate.profile];
+        new Chart(canvas, {
+          type: 'radar',
+          data: {
+            labels,
+            datasets: [{
+              data: values,
+              borderColor: '#8953d1',
+              backgroundColor: 'rgba(137, 83, 209, 0.16)',
+              pointBackgroundColor: '#8953d1',
+              pointBorderColor: '#fff8eb',
+              pointHoverRadius: 5,
+              borderWidth: 2
+            }]
+          },
+          options: {
+            animation: prefersReducedMotion ? false : { duration: 1200 },
+            plugins: { legend: { display: false } },
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              r: {
+                angleLines: { color: 'rgba(137, 83, 209, 0.12)' },
+                grid: { color: 'rgba(137, 83, 209, 0.12)' },
+                pointLabels: { color: document.documentElement.dataset.theme === 'dark' ? '#e7ddf6' : '#5b5563', font: { family: 'Georgia, serif', size: 12 } },
+                ticks: { display: false },
+                suggestedMin: 0
+              }
+            }
+          }
+        });
+        legend.innerHTML = labels.map((label, index) => `<div class="flex items-center justify-between rounded-2xl border border-black/6 px-3 py-2 dark:border-white/8"><span>${label}</span><span class="font-serif text-black dark:text-white">${formatNumber(values[index])}</span></div>`).join('');
+      }
+
+      function renderGrowthChart(data) {
+        const canvas = document.getElementById('growthChart');
+        if (!canvas || typeof Chart === 'undefined') return;
+        const history = data.followerHistory || [];
+        const labels = history.map((item) => item.date);
+        const values = history.map((item) => item.count);
+        const milestoneDates = new Map((data.milestones || []).map((item) => [item.date, item.label]));
+        const selected = { value: null };
+        const milestonePlugin = {
+          id: 'milestonePlugin',
+          afterDatasetsDraw(chart) {
+            const { ctx, scales: { x, y } } = chart;
+            ctx.save();
+            history.forEach((item, index) => {
+              const label = milestoneDates.get(item.date);
+              if (!label) return;
+              const point = chart.getDatasetMeta(0).data[index];
+              if (!point) return;
+              const active = selected.value === item.date;
+              ctx.beginPath();
+              ctx.fillStyle = active ? '#f97316' : '#8953d1';
+              ctx.shadowColor = 'rgba(137,83,209,0.38)';
+              ctx.shadowBlur = active ? 18 : 12;
+              ctx.arc(point.x, point.y, active ? 6 : 4, 0, Math.PI * 2);
+              ctx.fill();
+              ctx.shadowBlur = 0;
+              ctx.font = '12px Georgia, serif';
+              ctx.fillStyle = document.documentElement.dataset.theme === 'dark' ? '#e7ddf6' : '#6b6574';
+              ctx.fillText(label, Math.min(point.x + 10, x.right - 72), Math.max(point.y - 10, y.top + 16));
+            });
+            ctx.restore();
+          }
+        };
+
+        const chart = new Chart(canvas, {
+          type: 'line',
+          data: {
+            labels,
+            datasets: [{
+              label: 'Followers',
+              data: values,
+              borderColor: '#8953d1',
+              backgroundColor: (context) => {
+                const { chart } = context;
+                const { ctx, chartArea } = chart;
+                if (!chartArea) return 'rgba(137, 83, 209, 0.18)';
+                const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+                gradient.addColorStop(0, 'rgba(137, 83, 209, 0.28)');
+                gradient.addColorStop(1, 'rgba(137, 83, 209, 0.01)');
+                return gradient;
+              },
+              fill: true,
+              tension: 0.28,
+              borderWidth: 3,
+              pointRadius: 0,
+              pointHitRadius: 12
+            }]
+          },
+          options: {
+            animation: prefersReducedMotion ? false : { duration: 1600 },
+            maintainAspectRatio: false,
+            interaction: { intersect: false, mode: 'index' },
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label: (context) => `Followers: ${formatNumber(context.parsed.y)}`,
+                  afterBody: (items) => {
+                    const date = items[0]?.label;
+                    return milestoneDates.has(date) ? [milestoneDates.get(date)] : [];
+                  }
+                }
+              }
+            },
+            scales: {
+              x: {
+                grid: { display: false },
+                ticks: { maxTicksLimit: 6, color: document.documentElement.dataset.theme === 'dark' ? '#8f8b96' : '#8a7d8f' }
+              },
+              y: {
+                grid: { color: 'rgba(137, 83, 209, 0.1)' },
+                ticks: {
+                  color: document.documentElement.dataset.theme === 'dark' ? '#8f8b96' : '#8a7d8f',
+                  callback: (value) => formatCompact(value)
+                }
+              }
+            }
+          },
+          plugins: [milestonePlugin]
+        });
+
+        document.querySelectorAll('[data-milestone-date]').forEach((button) => {
+          button.addEventListener('click', () => {
+            selected.value = button.getAttribute('data-milestone-date');
+            chart.draw();
+          });
+        });
+      }
+
+      fetch('/data/dashboard.json')
+        .then((response) => response.json())
+        .then((data) => {
+          animateCount(document.querySelector('[data-countup="followers"]'), data.heroStats.currentFollowers);
+          animateCount(document.querySelector('[data-countup="impressions"]'), data.heroStats.totalImpressions);
+          animateCount(document.querySelector('[data-countup="engagement"]'), data.heroStats.avgWeeklyEngagement);
+
+          document.getElementById('weekTweets').textContent = formatNumber(data.thisWeek.tweets);
+          document.getElementById('weekViews').textContent = formatCompact(data.thisWeek.views);
+          document.getElementById('weekEngagement').textContent = formatNumber(data.thisWeek.engagement);
+          document.getElementById('weekGrowth').textContent = data.thisWeek.growthRate || '—';
+          document.getElementById('weekBestText').textContent = data.thisWeek.bestTweet?.text || 'No standout tweet captured this week yet.';
+          document.getElementById('weekBestLink').href = data.thisWeek.bestTweet?.url || '#';
+          document.getElementById('weekBestViews').textContent = `Views ${formatCompact(data.thisWeek.bestTweet?.views || 0)}`;
+          document.getElementById('weekBestLikes').textContent = `Likes ${formatNumber(data.thisWeek.bestTweet?.likes || 0)}`;
+          document.getElementById('weekBestEngagement').textContent = `Engagement ${formatNumber(data.thisWeek.bestTweet?.engagements || 0)}`;
+          document.getElementById('dashboardUpdated').textContent = `Last updated ${new Date(data.lastUpdated).toLocaleString('en-SG', { dateStyle: 'medium', timeStyle: 'short' })}`;
+
+          buildTweetsRail(data.recentTweets || []);
+          buildMilestones(data.milestones || []);
+          renderRadar(data);
+          renderGrowthChart(data);
+          revealOnScroll();
+        })
+        .catch((error) => {
+          console.error('Failed to load dashboard data', error);
+          document.getElementById('dashboardUpdated').textContent = 'Failed to load dashboard data.';
+        });
+    })();
+  </script>
+</PageLayout>
