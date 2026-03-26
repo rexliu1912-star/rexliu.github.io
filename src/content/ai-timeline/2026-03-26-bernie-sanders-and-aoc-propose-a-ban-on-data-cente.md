@@ -2,7 +2,7 @@
 title: "Sanders and AOC propose legislation to ban new data center construction until AI regulation passes"
 title_zh: "桑德斯与 AOC 提案：在国会通过 AI 监管法案前，暂停新数据中心建设"
 date: 2026-03-26
-category: policy
+category: industry
 tags: ["ai-regulation", "data-center", "us-policy"]
 source: "https://techcrunch.com/2026/03/25/bernie-sanders-and-aoc-propose-a-ban-on-data-center-construction/"
 source_name: "TechCrunch"
