@@ -27,27 +27,26 @@ const meta = {
   </section>
 
   <div id="x-growth-dashboard" class="space-y-8 pb-12">
-    <section class="grid gap-4 sm:grid-cols-3">
+    <section class="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
       <article class="glow-card fade-in-up rounded-3xl border border-black/8 bg-white/70 p-5 backdrop-blur-sm dark:border-white/10 dark:bg-white/5">
         <p data-i18n="stats.followers.label" class="mb-3 text-[11px] font-bold tracking-[0.22em] text-gray-400 uppercase dark:text-gray-500">Current Followers</p>
-        <div class="flex items-end gap-2">
-          <p data-countup="followers" class="font-serif text-4xl font-bold text-black dark:text-white">0</p>
-          <span data-i18n="stats.followers.note" class="pb-1 text-xs text-gray-400 dark:text-gray-500">people following the journey</span>
-        </div>
+        <p data-countup="followers" class="font-serif text-4xl font-bold text-black dark:text-white">0</p>
+      </article>
+      <article class="glow-card fade-in-up rounded-3xl border border-black/8 bg-white/70 p-5 backdrop-blur-sm dark:border-white/10 dark:bg-white/5" style="--delay: 60ms">
+        <p data-i18n="stats.daysWriting.label" class="mb-3 text-[11px] font-bold tracking-[0.22em] text-gray-400 uppercase dark:text-gray-500">Days Writing</p>
+        <p data-countup="daysWriting" class="font-serif text-4xl font-bold text-black dark:text-white">0</p>
       </article>
       <article class="glow-card fade-in-up rounded-3xl border border-black/8 bg-white/70 p-5 backdrop-blur-sm dark:border-white/10 dark:bg-white/5" style="--delay: 120ms">
-        <p data-i18n="stats.impressions.label" class="mb-3 text-[11px] font-bold tracking-[0.22em] text-gray-400 uppercase dark:text-gray-500">Total Impressions</p>
-        <div class="flex items-end gap-2">
-          <p data-countup="impressions" class="font-serif text-4xl font-bold text-black dark:text-white">0</p>
-          <span data-i18n="stats.impressions.note" class="pb-1 text-xs text-gray-400 dark:text-gray-500">364-day reach</span>
-        </div>
+        <p data-i18n="stats.totalTweets.label" class="mb-3 text-[11px] font-bold tracking-[0.22em] text-gray-400 uppercase dark:text-gray-500">Total Tweets</p>
+        <p data-countup="totalTweets" class="font-serif text-4xl font-bold text-black dark:text-white">0</p>
       </article>
-      <article class="glow-card fade-in-up rounded-3xl border border-black/8 bg-white/70 p-5 backdrop-blur-sm dark:border-white/10 dark:bg-white/5" style="--delay: 240ms">
+      <article class="glow-card fade-in-up rounded-3xl border border-black/8 bg-white/70 p-5 backdrop-blur-sm dark:border-white/10 dark:bg-white/5" style="--delay: 180ms">
+        <p data-i18n="stats.impressions.label" class="mb-3 text-[11px] font-bold tracking-[0.22em] text-gray-400 uppercase dark:text-gray-500">Total Impressions</p>
+        <p data-countup="impressions" class="font-serif text-4xl font-bold text-black dark:text-white">0</p>
+      </article>
+      <article class="glow-card fade-in-up rounded-3xl border border-black/8 bg-white/70 p-5 backdrop-blur-sm dark:border-white/10 dark:bg-white/5 col-span-2 sm:col-span-1" style="--delay: 240ms">
         <p data-i18n="stats.engagement.label" class="mb-3 text-[11px] font-bold tracking-[0.22em] text-gray-400 uppercase dark:text-gray-500">Avg Weekly Engagement</p>
-        <div class="flex items-end gap-2">
-          <p data-countup="engagement" class="font-serif text-4xl font-bold text-black dark:text-white">0</p>
-          <span data-i18n="stats.engagement.note" class="pb-1 text-xs text-gray-400 dark:text-gray-500">signal over noise</span>
-        </div>
+        <p data-countup="engagement" class="font-serif text-4xl font-bold text-black dark:text-white">0</p>
       </article>
     </section>
 
@@ -149,9 +148,11 @@ const meta = {
           heroTitle: 'X Growth Dashboard',
           heroDescription: 'A live public record of audience growth, reach, and content momentum on X. Warm brand surface, clean signal, zero vanity theater.',
           stats: {
-            followers: { label: 'Current Followers', note: 'people following the journey' },
-            impressions: { label: 'Total Impressions', note: '364-day reach' },
-            engagement: { label: 'Avg Weekly Engagement', note: 'signal over noise' }
+            followers: { label: 'Current Followers' },
+            daysWriting: { label: 'Days Writing' },
+            totalTweets: { label: 'Total Tweets' },
+            impressions: { label: 'Total Impressions' },
+            engagement: { label: 'Avg Weekly Engagement' }
           },
           growth: { eyebrow: 'Growth Curve', title: 'Followers over time', tooltipFollowers: 'Followers' },
           week: {
@@ -186,9 +187,11 @@ const meta = {
           heroTitle: 'X 增长看板',
           heroDescription: '公开记录 Rex 在 X 上的增长轨迹：关注增长、曝光表现，以及内容 momentum。保留温度，但只看真信号。',
           stats: {
-            followers: { label: '当前关注数', note: '一路同行的人正在增加' },
-            impressions: { label: '总曝光量', note: '近 364 天累计触达' },
-            engagement: { label: '周均互动', note: '看信号，不看虚荣指标' }
+            followers: { label: '当前关注数' },
+            daysWriting: { label: '写作天数' },
+            totalTweets: { label: '推文总数' },
+            impressions: { label: '总曝光量' },
+            engagement: { label: '周均互动' }
           },
           growth: { eyebrow: '增长曲线', title: '关注数随时间变化', tooltipFollowers: '关注数' },
           week: {
@@ -509,6 +512,8 @@ const meta = {
       function renderDashboard(data) {
         dashboardData = data;
         animateCount(document.querySelector('[data-countup="followers"]'), data.heroStats.currentFollowers);
+        animateCount(document.querySelector('[data-countup="daysWriting"]'), data.profile?.daysWriting || 1456);
+        animateCount(document.querySelector('[data-countup="totalTweets"]'), data.profile?.totalTweets || 27066);
         animateCount(document.querySelector('[data-countup="impressions"]'), data.heroStats.totalImpressions);
         animateCount(document.querySelector('[data-countup="engagement"]'), data.heroStats.avgWeeklyEngagement);
 
