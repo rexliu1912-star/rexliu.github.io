@@ -60,9 +60,6 @@ const meta = {
 				<span class="text-gray-400"> API 费用</span>
 			</span>
 		</div>
-		<div id="connection-status" class="mt-3 font-serif text-xs text-gray-400">
-			<span class="lang-en">● Live</span><span class="lang-zh">● 实时</span>
-		</div>
 	</section>
 
 	<!-- Detail overlay panel -->
@@ -86,6 +83,10 @@ const meta = {
 		<div class="pixel-office-scale-wrapper" id="pixel-office-wrapper">
 			<div class="pixel-office" id="pixel-office">
 				<canvas id="office-canvas" width="768" height="448"></canvas>
+				<div id="connection-status" class="office-live-badge font-serif">
+					<span class="live-dot"></span>
+					<span class="lang-en">Live</span><span class="lang-zh">实时</span>
+				</div>
 			</div>
 		</div>
 	</section>
@@ -165,6 +166,33 @@ const meta = {
 		cursor: default;
 		width: 768px;
 		height: 448px;
+	}
+
+	/* Live badge inside Pixel Office */
+	.office-live-badge {
+		position: absolute;
+		top: 8px;
+		left: 10px;
+		display: flex;
+		align-items: center;
+		gap: 5px;
+		font-size: 10px;
+		color: #4ade80;
+		letter-spacing: 0.05em;
+		pointer-events: none;
+		opacity: 0.85;
+	}
+	.live-dot {
+		width: 6px;
+		height: 6px;
+		border-radius: 50%;
+		background: #4ade80;
+		box-shadow: 0 0 6px #4ade8088;
+		animation: live-pulse 2s ease-in-out infinite;
+	}
+	@keyframes live-pulse {
+		0%, 100% { opacity: 1; }
+		50% { opacity: 0.4; }
 	}
 
 	/* ── Responsive scale wrapper ─────────────────────────────── */
@@ -494,13 +522,19 @@ const meta = {
 				var data = await resp.json();
 				var agents = data.value || [];
 				if (statusEl) {
-					statusEl.innerHTML = '<span class="lang-en" style="color:#4ade80">\u25cf Live</span><span class="lang-zh" style="color:#4ade80">\u25cf \u5b9e\u65f6</span>';
+					statusEl.style.color = '#4ade80';
+					var dot = statusEl.querySelector('.live-dot');
+					if (dot) { dot.style.background = '#4ade80'; dot.style.boxShadow = '0 0 6px #4ade8088'; }
 				}
 				agents.forEach(updateAgent);
 			} catch (e) {
 				console.error('Convex poll failed:', e);
 				if (statusEl) {
-					statusEl.innerHTML = '<span class="lang-en" style="color:#888">\u25cb Cached</span><span class="lang-zh" style="color:#888">\u25cb \u7f13\u5b58</span>';
+					statusEl.style.color = '#888';
+					var dot = statusEl.querySelector('.live-dot');
+					if (dot) { dot.style.background = '#888'; dot.style.boxShadow = 'none'; }
+					statusEl.querySelectorAll('.lang-en').forEach(function(el) { el.textContent = 'Cached'; });
+					statusEl.querySelectorAll('.lang-zh').forEach(function(el) { el.textContent = '缓存'; });
 				}
 			}
 		}
@@ -803,24 +837,43 @@ const meta = {
 			requestAnimationFrame(step);
 		}
 
+		function animateStatCounter(el, text, duration) {
+			// For simple numeric values, animate from 0
+			var match = text.match(/^([~$]?)(\d+\.?\d*)(.*)/);
+			if (!match) { el.textContent = text; return; }
+			var prefix = match[1] || '';
+			var target = parseFloat(match[2]);
+			var suffix = match[3] || '';
+			var decimals = match[2].indexOf('.') >= 0 ? match[2].split('.')[1].length : 0;
+			var startTime = null;
+			function easeOutExpo(t) { return t === 1 ? 1 : 1 - Math.pow(2, -10 * t); }
+			function step(ts) {
+				if (!startTime) startTime = ts;
+				var progress = Math.min((ts - startTime) / (duration || 1500), 1);
+				var val = easeOutExpo(progress) * target;
+				el.textContent = prefix + val.toFixed(decimals) + suffix;
+				if (progress < 1) requestAnimationFrame(step);
+			}
+			requestAnimationFrame(step);
+		}
+
 		function renderTeamImpact(data) {
 			var tokenM = ((data.total || 0) / 1000000).toFixed(1) + 'M';
 			var sessions = String(data.totalSessions || 0);
 			var hours = '~' + (data.estimatedHoursSaved || 0);
 			var cost = '$' + Math.round(data.estimatedCostUSD || 0);
 
-			// Set both EN and ZH stat elements
 			var pairs = [
-				['stat-tokens', 'stat-tokens-zh', tokenM],
-				['stat-sessions', 'stat-sessions-zh', sessions],
-				['stat-hours', 'stat-hours-zh', hours],
-				['stat-cost', 'stat-cost-zh', cost],
+				['stat-tokens', 'stat-tokens-zh', tokenM, 1500],
+				['stat-sessions', 'stat-sessions-zh', sessions, 1200],
+				['stat-hours', 'stat-hours-zh', hours, 1300],
+				['stat-cost', 'stat-cost-zh', cost, 1100],
 			];
 			pairs.forEach(function(p) {
 				var en = document.getElementById(p[0]);
 				var zh = document.getElementById(p[1]);
-				if (en) en.textContent = p[2];
-				if (zh) zh.textContent = p[2];
+				if (en) animateStatCounter(en, p[2], p[3]);
+				if (zh) animateStatCounter(zh, p[2], p[3]);
 			});
 
 			// Fade in the stat bar
