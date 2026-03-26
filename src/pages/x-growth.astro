@@ -18,10 +18,7 @@ const meta = {
           X Growth Dashboard
         </h1>
       </div>
-      <div class="inline-flex w-fit items-center rounded-full border border-black/8 bg-white/70 p-1 text-xs font-semibold dark:border-white/10 dark:bg-white/5">
-        <button type="button" data-lang-toggle="en" class="lang-toggle-btn rounded-full px-3 py-1.5 text-black transition dark:text-white">EN</button>
-        <button type="button" data-lang-toggle="zh" class="lang-toggle-btn rounded-full px-3 py-1.5 text-gray-500 transition dark:text-gray-400">中文</button>
-      </div>
+
     </div>
     <p id="heroDescription" class="max-w-3xl font-serif text-base leading-7 text-gray-600 dark:text-gray-300 sm:text-lg">
       A live public record of audience growth, reach, and content momentum on X. Warm brand surface,
@@ -223,7 +220,7 @@ const meta = {
         }
       };
 
-      let currentLang = 'en';
+      let currentLang = document.documentElement.getAttribute('data-lang') || 'en';
       let dashboardData = null;
       let radarChart = null;
       let growthChart = null;
@@ -534,15 +531,15 @@ const meta = {
         renderGrowthChart(data);
       }
 
-      document.querySelectorAll('[data-lang-toggle]').forEach((button) => {
-        button.addEventListener('click', () => {
-          const lang = button.getAttribute('data-lang-toggle');
-          if (!lang || lang === currentLang) return;
+      // Listen for global language toggle (LanguageToggle.astro sets data-lang on <html>)
+      new MutationObserver(() => {
+        const lang = document.documentElement.getAttribute('data-lang') || 'en';
+        if (lang !== currentLang) {
           currentLang = lang;
           updateStaticCopy();
           if (dashboardData) renderDashboard(dashboardData);
-        });
-      });
+        }
+      }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-lang'] });
 
       updateStaticCopy();
       attachRailControls('recentTweetsRail', 'recentTweetsPrev', 'recentTweetsNext');
