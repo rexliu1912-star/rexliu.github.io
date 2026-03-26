@@ -107,7 +107,7 @@ const meta = {
 				<span class="lang-en">Loading workload data...</span><span class="lang-zh">加载中...</span>
 			</div>
 		</div>
-		<p id="workload-footer" class="workload-footer font-serif text-xs text-gray-400 dark:text-gray-500 mt-4" style="display:none"></p>
+
 	</section>
 
 	<!-- Activity Feed -->
@@ -741,7 +741,7 @@ const meta = {
 				var dominated = false;
 				for (var j = 0; j < deduped.length; j++) {
 					var d = deduped[j];
-					if (d.agentId === e.agentId && Math.abs(new Date(d.timestamp) - new Date(e.timestamp)) < 10000) {
+					if (d.agentId === e.agentId && Math.abs(new Date(d.timestamp) - new Date(e.timestamp)) < 120000) {
 						// Keep the one where descEn != descZh (properly translated)
 						if (d.descEn === d.descZh && e.descEn !== e.descZh) { deduped[j] = e; }
 						dominated = true; break;
@@ -922,8 +922,8 @@ const meta = {
 				var gradientBg = 'linear-gradient(to right, ' + color + 'ff, ' + color + 'd9)';
 				return '<div class="workload-row" style="--bar-color:' + color + '">' +
 					'<div class="workload-label">' +
-						'<span class="workload-name font-serif">' + agent.name + (modelLabel ? ' <span class="workload-model-tag">' + modelLabel + '</span>' : '') + '</span>' +
-						'<span class="workload-sessions font-serif">' + sessionsLabel + '</span>' +
+						'<span class="workload-name font-serif">' + agent.name + '</span>' +
+						'<span class="workload-sessions font-serif">' + (modelLabel ? modelLabel + ' · ' : '') + sessionsLabel + '</span>' +
 					'</div>' +
 					'<div class="workload-bar-track" title="' + agent.name + ': ' + formatTokens(agent.tokens) + ' tokens">' +
 						'<div class="workload-bar-fill" data-pct="' + pct + '" data-color="' + color + '" style="background:' + gradientBg + '"></div>' +
@@ -945,17 +945,7 @@ const meta = {
 				});
 			});
 
-			// Footer
-			if (footer) {
-				var totalFmt = formatTokens(data.total || 0);
-				var updAgo = timeAgoWorkload(data.updatedAt);
-				if (isZh) {
-					footer.textContent = '总计：' + totalFmt + ' tokens · ' + (data.totalSessions || 0) + ' 个会话 · 更新于 ' + updAgo;
-				} else {
-					footer.textContent = 'Total: ' + totalFmt + ' tokens · ' + (data.totalSessions || 0) + ' sessions · Updated ' + updAgo;
-				}
-				footer.style.display = '';
-			}
+			// Footer removed — data already shown in Team Impact section
 		}
 
 		async function fetchWorkload() {
