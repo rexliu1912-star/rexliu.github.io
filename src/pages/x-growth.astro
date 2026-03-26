@@ -9,13 +9,21 @@ const meta = {
 
 <PageLayout meta={meta}>
   <section class="mb-8 border-b border-black/8 pb-6 dark:border-white/10">
-    <p class="mb-3 font-serif text-xs font-bold tracking-[0.25em] text-[#8953d1]/70 uppercase dark:text-[#e7ddf6]/80">
-      Build in public
-    </p>
-    <h1 class="mb-4 font-serif text-4xl font-bold tracking-tight text-black dark:text-white sm:text-5xl">
-      X Growth Dashboard
-    </h1>
-    <p class="max-w-3xl font-serif text-base leading-7 text-gray-600 dark:text-gray-300 sm:text-lg">
+    <div class="mb-4 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+      <div>
+        <p id="heroEyebrow" class="mb-3 font-serif text-xs font-bold tracking-[0.25em] text-[#8953d1]/70 uppercase dark:text-[#e7ddf6]/80">
+          Build in public
+        </p>
+        <h1 id="heroTitle" class="font-serif text-4xl font-bold tracking-tight text-black dark:text-white sm:text-5xl">
+          X Growth Dashboard
+        </h1>
+      </div>
+      <div class="inline-flex w-fit items-center rounded-full border border-black/8 bg-white/70 p-1 text-xs font-semibold dark:border-white/10 dark:bg-white/5">
+        <button type="button" data-lang-toggle="en" class="lang-toggle-btn rounded-full px-3 py-1.5 text-black transition dark:text-white">EN</button>
+        <button type="button" data-lang-toggle="zh" class="lang-toggle-btn rounded-full px-3 py-1.5 text-gray-500 transition dark:text-gray-400">中文</button>
+      </div>
+    </div>
+    <p id="heroDescription" class="max-w-3xl font-serif text-base leading-7 text-gray-600 dark:text-gray-300 sm:text-lg">
       A live public record of audience growth, reach, and content momentum on X. Warm brand surface,
       clean signal, zero vanity theater.
     </p>
@@ -24,57 +32,58 @@ const meta = {
   <div id="x-growth-dashboard" class="space-y-8 pb-12">
     <section class="grid gap-4 sm:grid-cols-3">
       <article class="glow-card fade-in-up rounded-3xl border border-black/8 bg-white/70 p-5 backdrop-blur-sm dark:border-white/10 dark:bg-white/5">
-        <p class="mb-3 text-[11px] font-bold tracking-[0.22em] text-gray-400 uppercase dark:text-gray-500">Current Followers</p>
+        <p data-i18n="stats.followers.label" class="mb-3 text-[11px] font-bold tracking-[0.22em] text-gray-400 uppercase dark:text-gray-500">Current Followers</p>
         <div class="flex items-end gap-2">
           <p data-countup="followers" class="font-serif text-4xl font-bold text-black dark:text-white">0</p>
-          <span class="pb-1 text-xs text-gray-400 dark:text-gray-500">people following the journey</span>
+          <span data-i18n="stats.followers.note" class="pb-1 text-xs text-gray-400 dark:text-gray-500">people following the journey</span>
         </div>
       </article>
       <article class="glow-card fade-in-up rounded-3xl border border-black/8 bg-white/70 p-5 backdrop-blur-sm dark:border-white/10 dark:bg-white/5" style="--delay: 120ms">
-        <p class="mb-3 text-[11px] font-bold tracking-[0.22em] text-gray-400 uppercase dark:text-gray-500">Total Impressions</p>
+        <p data-i18n="stats.impressions.label" class="mb-3 text-[11px] font-bold tracking-[0.22em] text-gray-400 uppercase dark:text-gray-500">Total Impressions</p>
         <div class="flex items-end gap-2">
           <p data-countup="impressions" class="font-serif text-4xl font-bold text-black dark:text-white">0</p>
-          <span class="pb-1 text-xs text-gray-400 dark:text-gray-500">364-day reach</span>
+          <span data-i18n="stats.impressions.note" class="pb-1 text-xs text-gray-400 dark:text-gray-500">364-day reach</span>
         </div>
       </article>
       <article class="glow-card fade-in-up rounded-3xl border border-black/8 bg-white/70 p-5 backdrop-blur-sm dark:border-white/10 dark:bg-white/5" style="--delay: 240ms">
-        <p class="mb-3 text-[11px] font-bold tracking-[0.22em] text-gray-400 uppercase dark:text-gray-500">Avg Weekly Engagement</p>
+        <p data-i18n="stats.engagement.label" class="mb-3 text-[11px] font-bold tracking-[0.22em] text-gray-400 uppercase dark:text-gray-500">Avg Weekly Engagement</p>
         <div class="flex items-end gap-2">
           <p data-countup="engagement" class="font-serif text-4xl font-bold text-black dark:text-white">0</p>
-          <span class="pb-1 text-xs text-gray-400 dark:text-gray-500">signal over noise</span>
+          <span data-i18n="stats.engagement.note" class="pb-1 text-xs text-gray-400 dark:text-gray-500">signal over noise</span>
         </div>
       </article>
     </section>
 
-    <section class="grid gap-4 lg:grid-cols-[minmax(0,1.5fr)_minmax(300px,0.9fr)]">
+    <section>
       <article class="glow-card fade-in-up rounded-[2rem] border border-black/8 bg-white/75 p-5 backdrop-blur-sm dark:border-white/10 dark:bg-white/5">
         <div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p class="mb-2 text-[11px] font-bold tracking-[0.22em] text-[#8953d1]/80 uppercase dark:text-[#e7ddf6]/80">Growth Curve</p>
-            <h2 class="font-serif text-2xl font-semibold text-black dark:text-white">Followers over time</h2>
+            <p data-i18n="growth.eyebrow" class="mb-2 text-[11px] font-bold tracking-[0.22em] text-[#8953d1]/80 uppercase dark:text-[#e7ddf6]/80">Growth Curve</p>
+            <h2 data-i18n="growth.title" class="font-serif text-2xl font-semibold text-black dark:text-white">Followers over time</h2>
           </div>
-          <p class="text-xs leading-5 text-gray-500 dark:text-gray-400">Milestones are mapped directly on the line. Tap a point below to focus.</p>
         </div>
         <div class="relative overflow-hidden rounded-[1.5rem] border border-[#8953d1]/10 bg-[linear-gradient(180deg,rgba(137,83,209,0.08),rgba(255,248,235,0.4))] p-4 dark:border-[#e7ddf6]/10 dark:bg-[linear-gradient(180deg,rgba(231,221,246,0.08),rgba(21,21,21,0.4))]">
           <canvas id="growthChart" class="h-[320px] w-full"></canvas>
         </div>
       </article>
+    </section>
 
+    <section class="grid gap-4 lg:grid-cols-[minmax(300px,0.95fr)_minmax(0,1.05fr)]">
       <article class="glow-card fade-in-up rounded-[2rem] border border-black/8 bg-white/75 p-5 backdrop-blur-sm dark:border-white/10 dark:bg-white/5" style="--delay: 120ms">
         <div class="mb-5">
-          <p class="mb-2 text-[11px] font-bold tracking-[0.22em] text-[#8953d1]/80 uppercase dark:text-[#e7ddf6]/80">This Week Snapshot</p>
-          <h2 class="font-serif text-2xl font-semibold text-black dark:text-white">Momentum in one glance</h2>
+          <p data-i18n="week.eyebrow" class="mb-2 text-[11px] font-bold tracking-[0.22em] text-[#8953d1]/80 uppercase dark:text-[#e7ddf6]/80">This Week Snapshot</p>
+          <h2 data-i18n="week.title" class="font-serif text-2xl font-semibold text-black dark:text-white">Momentum in one glance</h2>
         </div>
         <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
-          <div class="rounded-2xl border border-black/6 bg-black/[0.02] p-4 dark:border-white/8 dark:bg-white/[0.03]"><p class="text-xs uppercase tracking-[0.2em] text-gray-400">Tweets</p><p id="weekTweets" class="mt-2 font-serif text-3xl text-black dark:text-white">—</p></div>
-          <div class="rounded-2xl border border-black/6 bg-black/[0.02] p-4 dark:border-white/8 dark:bg-white/[0.03]"><p class="text-xs uppercase tracking-[0.2em] text-gray-400">Views</p><p id="weekViews" class="mt-2 font-serif text-3xl text-black dark:text-white">—</p></div>
-          <div class="rounded-2xl border border-black/6 bg-black/[0.02] p-4 dark:border-white/8 dark:bg-white/[0.03]"><p class="text-xs uppercase tracking-[0.2em] text-gray-400">Engagement</p><p id="weekEngagement" class="mt-2 font-serif text-3xl text-black dark:text-white">—</p></div>
-          <div class="rounded-2xl border border-black/6 bg-black/[0.02] p-4 dark:border-white/8 dark:bg-white/[0.03]"><p class="text-xs uppercase tracking-[0.2em] text-gray-400">WoW</p><p id="weekGrowth" class="mt-2 font-serif text-3xl text-black dark:text-white">—</p></div>
+          <div class="rounded-2xl border border-black/6 bg-black/[0.02] p-4 dark:border-white/8 dark:bg-white/[0.03]"><p data-i18n="week.cards.tweets" class="text-xs uppercase tracking-[0.2em] text-gray-400">Tweets</p><p id="weekTweets" class="mt-2 font-serif text-3xl text-black dark:text-white">—</p></div>
+          <div class="rounded-2xl border border-black/6 bg-black/[0.02] p-4 dark:border-white/8 dark:bg-white/[0.03]"><p data-i18n="week.cards.views" class="text-xs uppercase tracking-[0.2em] text-gray-400">Views</p><p id="weekViews" class="mt-2 font-serif text-3xl text-black dark:text-white">—</p></div>
+          <div class="rounded-2xl border border-black/6 bg-black/[0.02] p-4 dark:border-white/8 dark:bg-white/[0.03]"><p data-i18n="week.cards.engagement" class="text-xs uppercase tracking-[0.2em] text-gray-400">Engagement</p><p id="weekEngagement" class="mt-2 font-serif text-3xl text-black dark:text-white">—</p></div>
+          <div class="rounded-2xl border border-black/6 bg-black/[0.02] p-4 dark:border-white/8 dark:bg-white/[0.03]"><p data-i18n="week.cards.wow" class="text-xs uppercase tracking-[0.2em] text-gray-400">WoW</p><p id="weekGrowth" class="mt-2 font-serif text-3xl text-black dark:text-white">—</p></div>
         </div>
         <div class="mt-4 rounded-[1.5rem] border border-[#8953d1]/12 bg-[#8953d1]/[0.05] p-4 dark:border-[#e7ddf6]/12 dark:bg-[#e7ddf6]/[0.04]">
           <div class="mb-2 flex items-center justify-between gap-4">
-            <p class="text-xs uppercase tracking-[0.2em] text-[#8953d1]/80 dark:text-[#e7ddf6]/80">Best tweet this week</p>
-            <a id="weekBestLink" class="text-xs text-gray-500 hover:text-[#8953d1] dark:text-gray-400 dark:hover:text-[#e7ddf6]" href="#" target="_blank" rel="noreferrer">View on X</a>
+            <p data-i18n="week.best.label" class="text-xs uppercase tracking-[0.2em] text-[#8953d1]/80 dark:text-[#e7ddf6]/80">Best tweet this week</p>
+            <a id="weekBestLink" data-i18n="week.best.link" class="text-xs text-gray-500 hover:text-[#8953d1] dark:text-gray-400 dark:hover:text-[#e7ddf6]" href="#" target="_blank" rel="noreferrer">View on X</a>
           </div>
           <p id="weekBestText" class="line-clamp-4 font-serif leading-7 text-gray-700 dark:text-gray-200">Loading…</p>
           <div class="mt-3 flex flex-wrap gap-3 text-xs text-gray-500 dark:text-gray-400">
@@ -84,28 +93,12 @@ const meta = {
           </div>
         </div>
       </article>
-    </section>
 
-    <section class="grid gap-4 xl:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
-      <article class="glow-card fade-in-up overflow-hidden rounded-[2rem] border border-black/8 bg-white/75 p-5 backdrop-blur-sm dark:border-white/10 dark:bg-white/5">
-        <div class="mb-5 flex items-center justify-between gap-4">
-          <div>
-            <p class="mb-2 text-[11px] font-bold tracking-[0.22em] text-[#8953d1]/80 uppercase dark:text-[#e7ddf6]/80">Top Tweets</p>
-            <h2 class="font-serif text-2xl font-semibold text-black dark:text-white">Last 30 days, ranked by reach</h2>
-          </div>
-          <div class="hidden gap-2 sm:flex">
-            <button id="tweetsPrev" class="rounded-full border border-black/8 px-3 py-1 text-xs text-gray-500 hover:border-[#8953d1]/40 hover:text-[#8953d1] dark:border-white/10 dark:text-gray-400 dark:hover:border-[#e7ddf6]/40 dark:hover:text-[#e7ddf6]">←</button>
-            <button id="tweetsNext" class="rounded-full border border-black/8 px-3 py-1 text-xs text-gray-500 hover:border-[#8953d1]/40 hover:text-[#8953d1] dark:border-white/10 dark:text-gray-400 dark:hover:border-[#e7ddf6]/40 dark:hover:text-[#e7ddf6]">→</button>
-          </div>
-        </div>
-        <div id="tweetsRail" class="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 [scrollbar-width:none]"></div>
-      </article>
-
-      <article class="glow-card fade-in-up rounded-[2rem] border border-black/8 bg-white/75 p-5 backdrop-blur-sm dark:border-white/10 dark:bg-white/5" style="--delay: 120ms">
+      <article class="glow-card fade-in-up rounded-[2rem] border border-black/8 bg-white/75 p-5 backdrop-blur-sm dark:border-white/10 dark:bg-white/5">
         <div class="mb-5">
-          <p class="mb-2 text-[11px] font-bold tracking-[0.22em] text-[#8953d1]/80 uppercase dark:text-[#e7ddf6]/80">Content Radar</p>
-          <h2 class="font-serif text-2xl font-semibold text-black dark:text-white">What drove engagement</h2>
-          <p class="mt-2 text-sm leading-6 text-gray-500 dark:text-gray-400">No hook_type column in the source export, so this module falls back to the strongest engagement surfaces we can reliably show.</p>
+          <p data-i18n="radar.eyebrow" class="mb-2 text-[11px] font-bold tracking-[0.22em] text-[#8953d1]/80 uppercase dark:text-[#e7ddf6]/80">Content Radar</p>
+          <h2 data-i18n="radar.title" class="font-serif text-2xl font-semibold text-black dark:text-white">Average impressions by content pillar</h2>
+          <p data-i18n="radar.description" class="mt-2 text-sm leading-6 text-gray-500 dark:text-gray-400">Grounded in baseline pillar analysis, so the chart reflects what actually earns attention instead of proxy metrics.</p>
         </div>
         <div class="rounded-[1.5rem] border border-black/6 bg-black/[0.02] p-4 dark:border-white/8 dark:bg-white/[0.03]">
           <canvas id="radarChart" class="h-[280px] w-full"></canvas>
@@ -114,12 +107,34 @@ const meta = {
       </article>
     </section>
 
-    <section class="fade-in-up rounded-[2rem] border border-black/8 bg-white/75 p-5 backdrop-blur-sm dark:border-white/10 dark:bg-white/5">
-      <div class="mb-5">
-        <p class="mb-2 text-[11px] font-bold tracking-[0.22em] text-[#8953d1]/80 uppercase dark:text-[#e7ddf6]/80">Milestones Timeline</p>
-        <h2 class="font-serif text-2xl font-semibold text-black dark:text-white">Key follower thresholds</h2>
-      </div>
-      <div id="milestoneList" class="relative space-y-4 before:absolute before:top-0 before:left-[9px] before:h-full before:w-px before:bg-[#8953d1]/20 dark:before:bg-[#e7ddf6]/20"></div>
+    <section class="grid gap-4 xl:grid-cols-2">
+      <article class="glow-card fade-in-up overflow-hidden rounded-[2rem] border border-black/8 bg-white/75 p-5 backdrop-blur-sm dark:border-white/10 dark:bg-white/5">
+        <div class="mb-5 flex items-center justify-between gap-4">
+          <div>
+            <p data-i18n="tweets.recent.eyebrow" class="mb-2 text-[11px] font-bold tracking-[0.22em] text-[#8953d1]/80 uppercase dark:text-[#e7ddf6]/80">Top Tweets</p>
+            <h2 data-i18n="tweets.recent.title" class="font-serif text-2xl font-semibold text-black dark:text-white">Last 7 Days</h2>
+          </div>
+          <div class="hidden gap-2 sm:flex">
+            <button id="recentTweetsPrev" class="rounded-full border border-black/8 px-3 py-1 text-xs text-gray-500 hover:border-[#8953d1]/40 hover:text-[#8953d1] dark:border-white/10 dark:text-gray-400 dark:hover:border-[#e7ddf6]/40 dark:hover:text-[#e7ddf6]">←</button>
+            <button id="recentTweetsNext" class="rounded-full border border-black/8 px-3 py-1 text-xs text-gray-500 hover:border-[#8953d1]/40 hover:text-[#8953d1] dark:border-white/10 dark:text-gray-400 dark:hover:border-[#e7ddf6]/40 dark:hover:text-[#e7ddf6]">→</button>
+          </div>
+        </div>
+        <div id="recentTweetsRail" class="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 [scrollbar-width:none]"></div>
+      </article>
+
+      <article class="glow-card fade-in-up overflow-hidden rounded-[2rem] border border-black/8 bg-white/75 p-5 backdrop-blur-sm dark:border-white/10 dark:bg-white/5" style="--delay: 120ms">
+        <div class="mb-5 flex items-center justify-between gap-4">
+          <div>
+            <p data-i18n="tweets.allTime.eyebrow" class="mb-2 text-[11px] font-bold tracking-[0.22em] text-[#8953d1]/80 uppercase dark:text-[#e7ddf6]/80">Top Tweets</p>
+            <h2 data-i18n="tweets.allTime.title" class="font-serif text-2xl font-semibold text-black dark:text-white">All-Time Best</h2>
+          </div>
+          <div class="hidden gap-2 sm:flex">
+            <button id="allTimeTweetsPrev" class="rounded-full border border-black/8 px-3 py-1 text-xs text-gray-500 hover:border-[#8953d1]/40 hover:text-[#8953d1] dark:border-white/10 dark:text-gray-400 dark:hover:border-[#e7ddf6]/40 dark:hover:text-[#e7ddf6]">←</button>
+            <button id="allTimeTweetsNext" class="rounded-full border border-black/8 px-3 py-1 text-xs text-gray-500 hover:border-[#8953d1]/40 hover:text-[#8953d1] dark:border-white/10 dark:text-gray-400 dark:hover:border-[#e7ddf6]/40 dark:hover:text-[#e7ddf6]">→</button>
+          </div>
+        </div>
+        <div id="allTimeTweetsRail" class="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 [scrollbar-width:none]"></div>
+      </article>
     </section>
 
     <p id="dashboardUpdated" class="text-right text-xs tracking-[0.14em] text-gray-400 uppercase dark:text-gray-500">Loading dashboard data…</p>
@@ -130,10 +145,94 @@ const meta = {
     (() => {
       const root = document.getElementById('x-growth-dashboard');
       if (!root) return;
-      const formatNumber = (value) => new Intl.NumberFormat('en-US').format(Math.round(value || 0));
-      const formatCompact = (value) => new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 }).format(value || 0);
-      const truncate = (text, max = 220) => (text && text.length > max ? `${text.slice(0, max).trim()}…` : (text || ''));
+
+      const copy = {
+        en: {
+          heroEyebrow: 'Build in public',
+          heroTitle: 'X Growth Dashboard',
+          heroDescription: 'A live public record of audience growth, reach, and content momentum on X. Warm brand surface, clean signal, zero vanity theater.',
+          stats: {
+            followers: { label: 'Current Followers', note: 'people following the journey' },
+            impressions: { label: 'Total Impressions', note: '364-day reach' },
+            engagement: { label: 'Avg Weekly Engagement', note: 'signal over noise' }
+          },
+          growth: { eyebrow: 'Growth Curve', title: 'Followers over time', tooltipFollowers: 'Followers' },
+          week: {
+            eyebrow: 'This Week Snapshot',
+            title: 'Momentum in one glance',
+            cards: { tweets: 'Tweets', views: 'Views', engagement: 'Engagement', wow: 'WoW' },
+            best: { label: 'Best tweet this week', link: 'View on X' },
+            empty: 'No standout tweet captured this week yet.',
+            metrics: { views: 'Views', likes: 'Likes', engagement: 'Engagement' }
+          },
+          radar: {
+            eyebrow: 'Content Radar',
+            title: 'Average impressions by content pillar',
+            description: 'Grounded in baseline pillar analysis, so the chart reflects what actually earns attention instead of proxy metrics.'
+          },
+          tweets: {
+            recent: { eyebrow: 'Top Tweets', title: 'Last 7 Days' },
+            allTime: { eyebrow: 'Top Tweets', title: 'All-Time Best' },
+            views: 'views',
+            metrics: { engagement: 'Engagement', replies: 'Replies' },
+            openFallback: 'https://x.com/rexliu'
+          },
+          footer: {
+            updated: 'Last updated {value}',
+            loading: 'Loading dashboard data…',
+            failed: 'Failed to load dashboard data.'
+          },
+          dates: { locale: 'en-SG' }
+        },
+        zh: {
+          heroEyebrow: '公开构建中',
+          heroTitle: 'X 增长看板',
+          heroDescription: '公开记录 Rex 在 X 上的增长轨迹：关注增长、曝光表现，以及内容 momentum。保留温度，但只看真信号。',
+          stats: {
+            followers: { label: '当前关注数', note: '一路同行的人正在增加' },
+            impressions: { label: '总曝光量', note: '近 364 天累计触达' },
+            engagement: { label: '周均互动', note: '看信号，不看虚荣指标' }
+          },
+          growth: { eyebrow: '增长曲线', title: '关注数随时间变化', tooltipFollowers: '关注数' },
+          week: {
+            eyebrow: '本周快照',
+            title: '一眼看清本周状态',
+            cards: { tweets: '发文数', views: '浏览量', engagement: '互动量', wow: '周环比' },
+            best: { label: '本周最佳推文', link: '去 X 查看' },
+            empty: '本周暂时还没有特别突出的推文。',
+            metrics: { views: '浏览', likes: '点赞', engagement: '互动' }
+          },
+          radar: {
+            eyebrow: '内容雷达',
+            title: '不同内容支柱的平均曝光',
+            description: '这里直接使用 baseline 的内容支柱数据，看到的是真实平均曝光，而不是用点赞等代理指标去猜。'
+          },
+          tweets: {
+            recent: { eyebrow: '高表现推文', title: '最近 7 天' },
+            allTime: { eyebrow: '高表现推文', title: '历史最佳' },
+            views: '曝光',
+            metrics: { engagement: '互动', replies: '回复' },
+            openFallback: 'https://x.com/rexliu'
+          },
+          footer: {
+            updated: '最近更新 {value}',
+            loading: '正在载入看板数据…',
+            failed: '看板数据加载失败。'
+          },
+          dates: { locale: 'zh-CN' }
+        }
+      };
+
+      let currentLang = 'en';
+      let dashboardData = null;
+      let radarChart = null;
+      let growthChart = null;
       const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const escapeHtml = (value = '') => value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+      const t = (path) => path.split('.').reduce((acc, key) => acc?.[key], copy[currentLang]);
+      const formatNumber = (value) => new Intl.NumberFormat(currentLang === 'zh' ? 'zh-CN' : 'en-US').format(Math.round(value || 0));
+      const formatCompact = (value) => new Intl.NumberFormat(currentLang === 'zh' ? 'zh-CN' : 'en-US', { notation: 'compact', maximumFractionDigits: 1 }).format(value || 0);
+      const truncate = (text, max = 220) => (text && text.length > max ? `${text.slice(0, max).trim()}…` : (text || ''));
 
       function revealOnScroll() {
         const items = [...root.querySelectorAll('.fade-in-up')];
@@ -163,60 +262,82 @@ const meta = {
         requestAnimationFrame(step);
       }
 
-      function buildTweetsRail(tweets) {
-        const rail = document.getElementById('tweetsRail');
-        if (!rail) return;
-        rail.innerHTML = tweets.map((tweet) => `
-          <a href="${tweet.url}" target="_blank" rel="noreferrer" class="min-w-[82%] snap-center rounded-[1.5rem] border border-black/6 bg-black/[0.02] p-4 transition hover:border-[#8953d1]/30 hover:bg-[#8953d1]/[0.04] dark:border-white/8 dark:bg-white/[0.03] dark:hover:border-[#e7ddf6]/30 dark:hover:bg-[#e7ddf6]/[0.04] sm:min-w-[360px]">
-            <div class="mb-3 flex items-center justify-between gap-3 text-xs uppercase tracking-[0.18em] text-gray-400">
-              <span>${tweet.date}</span>
-              <span>${formatCompact(tweet.views)} views</span>
-            </div>
-            <p class="font-serif text-base leading-7 text-gray-700 dark:text-gray-200">${truncate(tweet.text, 240).replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p>
-            <div class="mt-4 flex flex-wrap gap-3 text-xs text-gray-500 dark:text-gray-400">
-              <span>❤️ ${formatNumber(tweet.likes)}</span>
-              <span>⚡ ${formatNumber(tweet.engagements)}</span>
-              <span>🔁 ${formatNumber(tweet.retweets)}</span>
-              <span>💬 ${formatNumber(tweet.replies)}</span>
-            </div>
-          </a>
-        `).join('');
+      function updateStaticCopy() {
+        document.documentElement.lang = currentLang === 'zh' ? 'zh-CN' : 'en';
+        document.getElementById('heroEyebrow').textContent = copy[currentLang].heroEyebrow;
+        document.getElementById('heroTitle').textContent = copy[currentLang].heroTitle;
+        document.getElementById('heroDescription').textContent = copy[currentLang].heroDescription;
 
-        const move = (direction) => rail.scrollBy({ left: rail.clientWidth * 0.9 * direction, behavior: 'smooth' });
-        document.getElementById('tweetsPrev')?.addEventListener('click', () => move(-1));
-        document.getElementById('tweetsNext')?.addEventListener('click', () => move(1));
+        document.querySelectorAll('[data-i18n]').forEach((node) => {
+          const key = node.getAttribute('data-i18n');
+          const value = t(key);
+          if (typeof value === 'string') node.textContent = value;
+        });
+
+        document.querySelectorAll('[data-lang-toggle]').forEach((button) => {
+          const active = button.getAttribute('data-lang-toggle') === currentLang;
+          button.classList.toggle('bg-[#8953d1]', active);
+          button.classList.toggle('text-white', active);
+          button.classList.toggle('dark:bg-[#e7ddf6]', active);
+          button.classList.toggle('dark:text-[#151515]', active);
+          button.classList.toggle('text-gray-500', !active);
+          button.classList.toggle('dark:text-gray-400', !active);
+        });
       }
 
-      function buildMilestones(milestones) {
-        const container = document.getElementById('milestoneList');
-        if (!container) return;
-        container.innerHTML = milestones.map((item) => `
-          <button data-milestone-date="${item.date}" class="group relative flex w-full items-start gap-4 rounded-2xl p-2 text-left transition hover:bg-[#8953d1]/[0.04] dark:hover:bg-[#e7ddf6]/[0.04]">
-            <span class="relative z-10 mt-1 h-[18px] w-[18px] shrink-0 rounded-full border-2 border-[#8953d1] bg-[#fff8eb] group-hover:scale-110 dark:border-[#e7ddf6] dark:bg-[#151515]"></span>
-            <span>
-              <span class="block font-serif text-lg text-black dark:text-white">${item.label}</span>
-              <span class="mt-1 block text-sm text-gray-500 dark:text-gray-400">${item.date}</span>
-            </span>
-          </button>
-        `).join('');
+      function attachRailControls(railId, prevId, nextId) {
+        const rail = document.getElementById(railId);
+        if (!rail) return;
+        const move = (direction) => rail.scrollBy({ left: rail.clientWidth * 0.9 * direction, behavior: 'smooth' });
+        document.getElementById(prevId)?.addEventListener('click', () => move(-1));
+        document.getElementById(nextId)?.addEventListener('click', () => move(1));
+      }
+
+      function buildTweetsRail(railId, tweets) {
+        const rail = document.getElementById(railId);
+        if (!rail) return;
+        rail.innerHTML = tweets.map((tweet) => {
+          const href = tweet.url || t('tweets.openFallback');
+          return `
+            <a href="${href}" target="_blank" rel="noreferrer" class="min-w-[82%] snap-center rounded-[1.5rem] border border-black/6 bg-black/[0.02] p-4 transition hover:border-[#8953d1]/30 hover:bg-[#8953d1]/[0.04] dark:border-white/8 dark:bg-white/[0.03] dark:hover:border-[#e7ddf6]/30 dark:hover:bg-[#e7ddf6]/[0.04] sm:min-w-[360px]">
+              <div class="mb-3 flex items-center justify-between gap-3 text-xs uppercase tracking-[0.18em] text-gray-400">
+                <span>${escapeHtml(tweet.date || '')}</span>
+                <span>${formatCompact(tweet.views)} ${t('tweets.views')}</span>
+              </div>
+              <p class="font-serif text-base leading-7 text-gray-700 dark:text-gray-200">${escapeHtml(truncate(tweet.text, 240))}</p>
+              <div class="mt-4 flex flex-wrap gap-3 text-xs text-gray-500 dark:text-gray-400">
+                <span>❤️ ${formatNumber(tweet.likes)}</span>
+                <span>⚡ ${formatNumber(tweet.engagements)} ${t('tweets.metrics.engagement')}</span>
+                <span>🔁 ${formatNumber(tweet.retweets)}</span>
+                <span>💬 ${formatNumber(tweet.replies)} ${t('tweets.metrics.replies')}</span>
+              </div>
+            </a>
+          `;
+        }).join('');
+      }
+
+      function getRecentSevenDaysTweets(tweets = []) {
+        if (!tweets.length) return [];
+        const stamped = tweets
+          .map((tweet) => ({ ...tweet, parsedDate: new Date(`${tweet.date}T00:00:00Z`) }))
+          .filter((tweet) => !Number.isNaN(tweet.parsedDate.getTime()));
+        const maxTime = Math.max(...stamped.map((tweet) => tweet.parsedDate.getTime()));
+        const windowStart = maxTime - (6 * 24 * 60 * 60 * 1000);
+        return stamped
+          .filter((tweet) => tweet.parsedDate.getTime() >= windowStart)
+          .sort((a, b) => (b.engagements || 0) - (a.engagements || 0));
       }
 
       function renderRadar(data) {
         const canvas = document.getElementById('radarChart');
         const legend = document.getElementById('radarLegend');
         if (!canvas || typeof Chart === 'undefined') return;
-        const labels = ['Likes', 'Replies', 'Reposts', 'Bookmarks', 'Profile visits'];
-        const source = data.recentTweets.slice(0, 12);
-        const aggregate = source.reduce((acc, tweet) => {
-          acc.likes += tweet.likes || 0;
-          acc.replies += tweet.replies || 0;
-          acc.reposts += tweet.retweets || 0;
-          acc.bookmarks += tweet.bookmarks || 0;
-          acc.profile += Math.max(0, Math.round((tweet.engagements || 0) * 0.18));
-          return acc;
-        }, { likes: 0, replies: 0, reposts: 0, bookmarks: 0, profile: 0 });
-        const values = [aggregate.likes, aggregate.replies, aggregate.reposts, aggregate.bookmarks, aggregate.profile];
-        new Chart(canvas, {
+
+        const labels = Object.keys(data.contentRadar || {});
+        const values = labels.map((label) => data.contentRadar[label] || 0);
+
+        radarChart?.destroy();
+        radarChart = new Chart(canvas, {
           type: 'radar',
           data: {
             labels,
@@ -246,7 +367,8 @@ const meta = {
             }
           }
         });
-        legend.innerHTML = labels.map((label, index) => `<div class="flex items-center justify-between rounded-2xl border border-black/6 px-3 py-2 dark:border-white/8"><span>${label}</span><span class="font-serif text-black dark:text-white">${formatNumber(values[index])}</span></div>`).join('');
+
+        legend.innerHTML = labels.map((label, index) => `<div class="flex items-center justify-between rounded-2xl border border-black/6 px-3 py-2 dark:border-white/8"><span>${escapeHtml(label)}</span><span class="font-serif text-black dark:text-white">${formatNumber(values[index])}</span></div>`).join('');
       }
 
       function renderGrowthChart(data) {
@@ -255,40 +377,68 @@ const meta = {
         const history = data.followerHistory || [];
         const labels = history.map((item) => item.date);
         const values = history.map((item) => item.count);
-        const milestoneDates = new Map((data.milestones || []).map((item) => [item.date, item.label]));
-        const selected = { value: null };
+        const milestones = new Map((data.milestones || []).map((item) => [item.date, item.label]));
+        const hoveredMilestone = { value: null };
+
         const milestonePlugin = {
           id: 'milestonePlugin',
           afterDatasetsDraw(chart) {
-            const { ctx, scales: { x, y } } = chart;
+            const { ctx, chartArea, scales: { x, y } } = chart;
             ctx.save();
             history.forEach((item, index) => {
-              const label = milestoneDates.get(item.date);
+              const label = milestones.get(item.date);
               if (!label) return;
               const point = chart.getDatasetMeta(0).data[index];
               if (!point) return;
-              const active = selected.value === item.date;
+              const active = hoveredMilestone.value === item.date;
               ctx.beginPath();
-              ctx.fillStyle = active ? '#f97316' : '#8953d1';
-              ctx.shadowColor = 'rgba(137,83,209,0.38)';
+              ctx.fillStyle = '#8953d1';
+              ctx.shadowColor = 'rgba(137,83,209,0.35)';
               ctx.shadowBlur = active ? 18 : 12;
               ctx.arc(point.x, point.y, active ? 6 : 4, 0, Math.PI * 2);
               ctx.fill();
               ctx.shadowBlur = 0;
-              ctx.font = '12px Georgia, serif';
-              ctx.fillStyle = document.documentElement.dataset.theme === 'dark' ? '#e7ddf6' : '#6b6574';
-              ctx.fillText(label, Math.min(point.x + 10, x.right - 72), Math.max(point.y - 10, y.top + 16));
+
+              if (active) {
+                ctx.font = '12px Georgia, serif';
+                const text = label;
+                const textWidth = ctx.measureText(text).width;
+                const boxWidth = textWidth + 16;
+                const boxHeight = 28;
+                const boxX = Math.min(Math.max(point.x - boxWidth / 2, chartArea.left + 4), chartArea.right - boxWidth - 4);
+                const boxY = Math.max(point.y - 42, y.top + 6);
+                ctx.fillStyle = document.documentElement.dataset.theme === 'dark' ? 'rgba(21,21,21,0.95)' : 'rgba(255,248,235,0.96)';
+                ctx.strokeStyle = document.documentElement.dataset.theme === 'dark' ? 'rgba(231,221,246,0.26)' : 'rgba(137,83,209,0.18)';
+                ctx.lineWidth = 1;
+                const radius = 12;
+                ctx.beginPath();
+                ctx.moveTo(boxX + radius, boxY);
+                ctx.lineTo(boxX + boxWidth - radius, boxY);
+                ctx.quadraticCurveTo(boxX + boxWidth, boxY, boxX + boxWidth, boxY + radius);
+                ctx.lineTo(boxX + boxWidth, boxY + boxHeight - radius);
+                ctx.quadraticCurveTo(boxX + boxWidth, boxY + boxHeight, boxX + boxWidth - radius, boxY + boxHeight);
+                ctx.lineTo(boxX + radius, boxY + boxHeight);
+                ctx.quadraticCurveTo(boxX, boxY + boxHeight, boxX, boxY + boxHeight - radius);
+                ctx.lineTo(boxX, boxY + radius);
+                ctx.quadraticCurveTo(boxX, boxY, boxX + radius, boxY);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+                ctx.fillStyle = document.documentElement.dataset.theme === 'dark' ? '#e7ddf6' : '#6b6574';
+                ctx.fillText(text, boxX + 8, boxY + 18);
+              }
             });
             ctx.restore();
           }
         };
 
-        const chart = new Chart(canvas, {
+        growthChart?.destroy();
+        growthChart = new Chart(canvas, {
           type: 'line',
           data: {
             labels,
             datasets: [{
-              label: 'Followers',
+              label: t('growth.tooltipFollowers'),
               data: values,
               borderColor: '#8953d1',
               backgroundColor: (context) => {
@@ -304,21 +454,39 @@ const meta = {
               tension: 0.28,
               borderWidth: 3,
               pointRadius: 0,
-              pointHitRadius: 12
+              pointHitRadius: 16
             }]
           },
           options: {
             animation: prefersReducedMotion ? false : { duration: 1600 },
             maintainAspectRatio: false,
             interaction: { intersect: false, mode: 'index' },
+            onHover(event, elements, chart) {
+              if (!elements.length) {
+                hoveredMilestone.value = null;
+                chart.draw();
+                chart.canvas.style.cursor = 'default';
+                return;
+              }
+              const index = elements[0].index;
+              hoveredMilestone.value = milestones.has(history[index]?.date) ? history[index].date : null;
+              chart.canvas.style.cursor = hoveredMilestone.value ? 'pointer' : 'default';
+              chart.draw();
+            },
+            onClick(event, elements, chart) {
+              if (!elements.length) return;
+              const index = elements[0].index;
+              hoveredMilestone.value = milestones.has(history[index]?.date) ? history[index].date : null;
+              chart.draw();
+            },
             plugins: {
               legend: { display: false },
               tooltip: {
                 callbacks: {
-                  label: (context) => `Followers: ${formatNumber(context.parsed.y)}`,
+                  label: (context) => `${t('growth.tooltipFollowers')}: ${formatNumber(context.parsed.y)}`,
                   afterBody: (items) => {
                     const date = items[0]?.label;
-                    return milestoneDates.has(date) ? [milestoneDates.get(date)] : [];
+                    return milestones.has(date) ? [milestones.get(date)] : [];
                   }
                 }
               }
@@ -339,42 +507,56 @@ const meta = {
           },
           plugins: [milestonePlugin]
         });
-
-        document.querySelectorAll('[data-milestone-date]').forEach((button) => {
-          button.addEventListener('click', () => {
-            selected.value = button.getAttribute('data-milestone-date');
-            chart.draw();
-          });
-        });
       }
+
+      function renderDashboard(data) {
+        dashboardData = data;
+        animateCount(document.querySelector('[data-countup="followers"]'), data.heroStats.currentFollowers);
+        animateCount(document.querySelector('[data-countup="impressions"]'), data.heroStats.totalImpressions);
+        animateCount(document.querySelector('[data-countup="engagement"]'), data.heroStats.avgWeeklyEngagement);
+
+        document.getElementById('weekTweets').textContent = formatNumber(data.thisWeek.tweets);
+        document.getElementById('weekViews').textContent = formatCompact(data.thisWeek.views);
+        document.getElementById('weekEngagement').textContent = formatNumber(data.thisWeek.engagement);
+        document.getElementById('weekGrowth').textContent = data.thisWeek.growthRate || '—';
+        document.getElementById('weekBestText').textContent = data.thisWeek.bestTweet?.text || t('week.empty');
+        document.getElementById('weekBestLink').href = data.thisWeek.bestTweet?.url || t('tweets.openFallback');
+        document.getElementById('weekBestViews').textContent = `${t('week.metrics.views')} ${formatCompact(data.thisWeek.bestTweet?.views || 0)}`;
+        document.getElementById('weekBestLikes').textContent = `${t('week.metrics.likes')} ${formatNumber(data.thisWeek.bestTweet?.likes || 0)}`;
+        document.getElementById('weekBestEngagement').textContent = `${t('week.metrics.engagement')} ${formatNumber(data.thisWeek.bestTweet?.engagements || 0)}`;
+
+        const updated = new Date(data.lastUpdated).toLocaleString(copy[currentLang].dates.locale, { dateStyle: 'medium', timeStyle: 'short' });
+        document.getElementById('dashboardUpdated').textContent = t('footer.updated').replace('{value}', updated);
+
+        buildTweetsRail('recentTweetsRail', getRecentSevenDaysTweets(data.recentTweets || []));
+        buildTweetsRail('allTimeTweetsRail', data.allTimeTweets || []);
+        renderRadar(data);
+        renderGrowthChart(data);
+      }
+
+      document.querySelectorAll('[data-lang-toggle]').forEach((button) => {
+        button.addEventListener('click', () => {
+          const lang = button.getAttribute('data-lang-toggle');
+          if (!lang || lang === currentLang) return;
+          currentLang = lang;
+          updateStaticCopy();
+          if (dashboardData) renderDashboard(dashboardData);
+        });
+      });
+
+      updateStaticCopy();
+      attachRailControls('recentTweetsRail', 'recentTweetsPrev', 'recentTweetsNext');
+      attachRailControls('allTimeTweetsRail', 'allTimeTweetsPrev', 'allTimeTweetsNext');
 
       fetch('/data/dashboard.json')
         .then((response) => response.json())
         .then((data) => {
-          animateCount(document.querySelector('[data-countup="followers"]'), data.heroStats.currentFollowers);
-          animateCount(document.querySelector('[data-countup="impressions"]'), data.heroStats.totalImpressions);
-          animateCount(document.querySelector('[data-countup="engagement"]'), data.heroStats.avgWeeklyEngagement);
-
-          document.getElementById('weekTweets').textContent = formatNumber(data.thisWeek.tweets);
-          document.getElementById('weekViews').textContent = formatCompact(data.thisWeek.views);
-          document.getElementById('weekEngagement').textContent = formatNumber(data.thisWeek.engagement);
-          document.getElementById('weekGrowth').textContent = data.thisWeek.growthRate || '—';
-          document.getElementById('weekBestText').textContent = data.thisWeek.bestTweet?.text || 'No standout tweet captured this week yet.';
-          document.getElementById('weekBestLink').href = data.thisWeek.bestTweet?.url || '#';
-          document.getElementById('weekBestViews').textContent = `Views ${formatCompact(data.thisWeek.bestTweet?.views || 0)}`;
-          document.getElementById('weekBestLikes').textContent = `Likes ${formatNumber(data.thisWeek.bestTweet?.likes || 0)}`;
-          document.getElementById('weekBestEngagement').textContent = `Engagement ${formatNumber(data.thisWeek.bestTweet?.engagements || 0)}`;
-          document.getElementById('dashboardUpdated').textContent = `Last updated ${new Date(data.lastUpdated).toLocaleString('en-SG', { dateStyle: 'medium', timeStyle: 'short' })}`;
-
-          buildTweetsRail(data.recentTweets || []);
-          buildMilestones(data.milestones || []);
-          renderRadar(data);
-          renderGrowthChart(data);
+          renderDashboard(data);
           revealOnScroll();
         })
         .catch((error) => {
           console.error('Failed to load dashboard data', error);
-          document.getElementById('dashboardUpdated').textContent = 'Failed to load dashboard data.';
+          document.getElementById('dashboardUpdated').textContent = t('footer.failed');
         });
     })();
   </script>
