@@ -960,7 +960,7 @@ const meta = {
 
 		async function fetchWorkload() {
 			try {
-				var resp = await fetch('/data/agent-workload.json');
+				var resp = await fetch('/data/agent-workload.json?_=' + Math.floor(Date.now() / 60000));
 				if (!resp.ok) throw new Error('HTTP ' + resp.status);
 				var data = await resp.json();
 				renderTeamImpact(data);
