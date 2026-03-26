@@ -25,6 +25,15 @@ const meta = {
 		<!-- Stat Bar -->
 		<div class="mt-6 flex flex-wrap items-center gap-x-4 gap-y-1 font-serif text-sm" id="impact-stat-bar" style="opacity:0;transition:opacity 0.4s ease">
 			<span class="lang-en">
+				<span class="impact-counter font-bold" style="color:#8953d1" id="stat-days">—</span>
+				<span class="text-gray-400"> days</span>
+			</span>
+			<span class="lang-zh">
+				<span class="impact-counter font-bold" style="color:#8953d1" id="stat-days-zh">—</span>
+				<span class="text-gray-400"> 天</span>
+			</span>
+			<span class="text-gray-300 dark:text-gray-600">·</span>
+			<span class="lang-en">
 				<span class="impact-counter font-bold" style="color:#8953d1" id="stat-tokens">—</span>
 				<span class="text-gray-400"> tokens</span>
 			</span>
@@ -858,12 +867,14 @@ const meta = {
 		}
 
 		function renderTeamImpact(data) {
+			var days = String(data.daysActive || 0);
 			var tokenM = ((data.total || 0) / 1000000).toFixed(1) + 'M';
 			var sessions = String(data.totalSessions || 0);
 			var hours = '~' + (data.estimatedHoursSaved || 0);
 			var cost = '$' + Math.round(data.estimatedCostUSD || 0);
 
 			var pairs = [
+				['stat-days', 'stat-days-zh', days, 1000],
 				['stat-tokens', 'stat-tokens-zh', tokenM, 1500],
 				['stat-sessions', 'stat-sessions-zh', sessions, 1200],
 				['stat-hours', 'stat-hours-zh', hours, 1300],
@@ -907,12 +918,12 @@ const meta = {
 				return '<div class="workload-row" style="--bar-color:' + color + '">' +
 					'<div class="workload-label">' +
 						'<span class="workload-name font-serif">' + agent.name + '</span>' +
-						'<span class="workload-sessions font-serif">' + (modelLabel ? modelLabel + ' · ' : '') + sessionsLabel + '</span>' +
+						(modelLabel ? '<span class="workload-sessions font-serif">' + modelLabel + '</span>' : '') +
 					'</div>' +
-					'<div class="workload-bar-track" title="' + agent.name + ': ' + formatTokens(agent.tokens) + ' tokens">' +
+					'<div class="workload-bar-track" title="' + agent.name + ': ' + sessionsLabel + '">' +
 						'<div class="workload-bar-fill" data-pct="' + pct + '" data-color="' + color + '" style="background:' + gradientBg + '"></div>' +
 					'</div>' +
-					'<span class="workload-tokens font-serif">' + formatTokens(agent.tokens) + '</span>' +
+					'<span class="workload-tokens font-serif">' + sessionsLabel + '</span>' +
 				'</div>';
 			}).join('');
 
