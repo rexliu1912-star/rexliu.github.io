@@ -1076,11 +1076,36 @@ const meta = {
       const bounds = L.latLngBounds([]);
       _markerRefs = new Map();
 
-      // Prior city markers
+      // Province lookup for prior cities (no province field in data)
+      const PRIOR_PROVINCE = {
+        "nanchang": "Jiangxi", "shangrao": "Jiangxi", "wuyuan": "Jiangxi", "ganzhou": "Jiangxi", "jian": "Jiangxi",
+        "dongguan": "Guangdong", "humen": "Guangdong", "shenzhen": "Guangdong",
+        "shanghai-life": "Shanghai", "shanghai-lucky": "Shanghai",
+        "suzhou-2014": "Jiangsu", "suzhou-2023": "Jiangsu",
+        "nanjing": "Jiangsu", "wuxi": "Jiangsu",
+        "hongkong-macau": "Guangdong", "xiamen": "Fujian",
+        "kunming": "Yunnan", "dali-first": "Yunnan",
+        "yunhe": "Zhejiang", "sanya": "Hainan",
+      };
+
+      // Prior city markers — colored by region, not grey
       priorCities.forEach(city => {
         bounds.extend([city.lat, city.lng]);
-        const icon = L.divIcon({ html: markerSvg(false, true), className: "", iconSize: [44,44], iconAnchor: [22,22] });
+        const province = PRIOR_PROVINCE[city.id] || "default";
+        const rc = getRegionColor(province);
+        const icon = L.divIcon({
+          html: markerSvg(false, false, rc.main),
+          className: "", iconSize: [44,44], iconAnchor: [22,22]
+        });
         const m = L.marker([city.lat, city.lng], { icon, keyboard: false }).addTo(priorLayer);
+        m.on("mouseover", () => {
+          const el = m.getElement();
+          if (el) { el.style.transform = "scale(1.18)"; el.style.transition = "transform 0.2s ease"; }
+        });
+        m.on("mouseout", () => {
+          const el = m.getElement();
+          if (el) { el.style.transform = "scale(1)"; }
+        });
         m.on("click", () => {
           const yr = extractYear(city.year);
           if (_activeYear !== yr) {
@@ -1237,13 +1262,35 @@ const meta = {
         if (replayProgress) replayProgress.classList.remove("is-active");
       };
 
+      // Build full chronological list: prior cities + nomad cities
+      // Prior cities: extract start year from year string for sorting
+      const parsePriorDate = (yearStr) => {
+        if (!yearStr) return new Date(0);
+        const m = yearStr.match(/(\d{4})-?(\d{2})?-?(\d{2})?/);
+        if (!m) return new Date(0);
+        return new Date(`${m[1]}-${m[2]||"01"}-${m[3]||"01"}`);
+      };
+      const allCitiesChron = [
+        ...priorCities.map(c => ({ ...c, _isPrior: true, _sortDate: parsePriorDate(c.year) })),
+        ...cities.map(c => ({ ...c, _isPrior: false, _sortDate: new Date(c.arrival) }))
+      ].sort((a, b) => a._sortDate - b._sortDate);
+
       const replayStep = (idx, sorted) => {
         if (idx >= sorted.length) { stopReplay(); return; }
         const city = sorted[idx];
         const pct = Math.round(((idx + 1) / sorted.length) * 100);
         if (replayFill) replayFill.style.width = `${pct}%`;
         if (replayLabel) replayLabel.textContent = getLang() === "zh" ? city.nameCN : city.name;
-        selectCity(city.id, false);
+
+        // Switch year tab to match
+        if (city._isPrior) {
+          const yr = extractYear(city.year);
+          if (_activeYear !== yr) switchYear(yr);
+          setTimeout(() => selectCity(city.id, true), _activeYear !== extractYear(city.year) ? 150 : 0);
+        } else {
+          if (_activeYear !== "now") switchYear("now");
+          setTimeout(() => selectCity(city.id, false), 0);
+        }
         _replayTimer = setTimeout(() => replayStep(idx + 1, sorted), REPLAY_DELAY);
       };
 
@@ -1255,9 +1302,7 @@ const meta = {
           replayBtn.classList.add("is-active");
           replayProgress.classList.add("is-active");
           replayFill.style.width = "0%";
-          if (_activeYear !== "now") { switchYear("now"); }
-          const sorted = [...cities].sort((a, b) => new Date(a.arrival) - new Date(b.arrival));
-          replayStep(0, sorted);
+          replayStep(0, allCitiesChron);
         });
       }
 
