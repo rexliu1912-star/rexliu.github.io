@@ -97,7 +97,7 @@ X Growth Dashboard
 </h1> </div> </div> <p id="heroDescription" class="max-w-3xl font-serif text-base leading-7 text-gray-600 dark:text-gray-300 sm:text-lg">
 A live public record of audience growth, reach, and content momentum on X. Warm brand surface,
       clean signal, zero vanity theater.
-</p> </section> <div id="x-growth-dashboard" class="space-y-8 pb-12"> <section class="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5"> <article class="glow-card fade-in-up rounded-3xl border border-black/8 bg-white/70 p-5 backdrop-blur-sm dark:border-white/10 dark:bg-white/5"> <p data-i18n="stats.followers.label" class="mb-3 text-[11px] font-bold tracking-[0.22em] text-gray-400 uppercase dark:text-gray-500">Current Followers</p> <p data-countup="followers" class="font-serif text-4xl font-bold text-black dark:text-white">0</p> </article> <article class="glow-card fade-in-up rounded-3xl border border-black/8 bg-white/70 p-5 backdrop-blur-sm dark:border-white/10 dark:bg-white/5" style="--delay: 60ms"> <p data-i18n="stats.daysWriting.label" class="mb-3 text-[11px] font-bold tracking-[0.22em] text-gray-400 uppercase dark:text-gray-500">Days Writing</p> <p data-countup="daysWriting" class="font-serif text-4xl font-bold text-black dark:text-white">0</p> </article> <article class="glow-card fade-in-up rounded-3xl border border-black/8 bg-white/70 p-5 backdrop-blur-sm dark:border-white/10 dark:bg-white/5" style="--delay: 120ms"> <p data-i18n="stats.totalTweets.label" class="mb-3 text-[11px] font-bold tracking-[0.22em] text-gray-400 uppercase dark:text-gray-500">Total Tweets</p> <p data-countup="totalTweets" class="font-serif text-4xl font-bold text-black dark:text-white">0</p> </article> <article class="glow-card fade-in-up rounded-3xl border border-black/8 bg-white/70 p-5 backdrop-blur-sm dark:border-white/10 dark:bg-white/5" style="--delay: 180ms"> <p data-i18n="stats.impressions.label" class="mb-3 text-[11px] font-bold tracking-[0.22em] text-gray-400 uppercase dark:text-gray-500">Total Impressions</p> <p data-countup="impressions" class="font-serif text-4xl font-bold text-black dark:text-white">0</p> </article> <article class="glow-card fade-in-up rounded-3xl border border-black/8 bg-white/70 p-5 backdrop-blur-sm dark:border-white/10 dark:bg-white/5 col-span-2 sm:col-span-1" style="--delay: 240ms"> <p data-i18n="stats.engagement.label" class="mb-3 text-[11px] font-bold tracking-[0.22em] text-gray-400 uppercase dark:text-gray-500">Avg Weekly Engagement</p> <p data-countup="engagement" class="font-serif text-4xl font-bold text-black dark:text-white">0</p> </article> </section> <section> <article class="glow-card fade-in-up rounded-[2rem] border border-black/8 bg-white/75 p-5 backdrop-blur-sm dark:border-white/10 dark:bg-white/5"> <div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between"> <div> <p data-i18n="growth.eyebrow" class="mb-2 text-[11px] font-bold tracking-[0.22em] text-[#8953d1]/80 uppercase dark:text-[#e7ddf6]/80">Growth Curve</p> <h2 data-i18n="growth.title" class="font-serif text-2xl font-semibold text-black dark:text-white">Followers over time</h2> </div> </div> <div class="relative overflow-hidden rounded-[1.5rem] border border-[#8953d1]/10 bg-[linear-gradient(180deg,rgba(137,83,209,0.08),rgba(255,248,235,0.4))] p-4 dark:border-[#e7ddf6]/10 dark:bg-[linear-gradient(180deg,rgba(231,221,246,0.08),rgba(21,21,21,0.4))]"> <canvas id="growthChart" class="h-[320px] w-full"></canvas> </div> </article> </section> <section class="grid gap-4 lg:grid-cols-[minmax(300px,0.95fr)_minmax(0,1.05fr)]"> <article class="glow-card fade-in-up rounded-[2rem] border border-black/8 bg-white/75 p-5 backdrop-blur-sm dark:border-white/10 dark:bg-white/5" style="--delay: 120ms"> <div class="mb-5"> <p data-i18n="week.eyebrow" class="mb-2 text-[11px] font-bold tracking-[0.22em] text-[#8953d1]/80 uppercase dark:text-[#e7ddf6]/80">This Week Snapshot</p> <h2 data-i18n="week.title" class="font-serif text-2xl font-semibold text-black dark:text-white">Momentum in one glance</h2> </div> <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2"> <div class="rounded-2xl border border-black/6 bg-black/[0.02] p-4 dark:border-white/8 dark:bg-white/[0.03]"><p data-i18n="week.cards.tweets" class="text-xs uppercase tracking-[0.2em] text-gray-400">Tweets</p><p id="weekTweets" class="mt-2 font-serif text-3xl text-black dark:text-white">—</p></div> <div class="rounded-2xl border border-black/6 bg-black/[0.02] p-4 dark:border-white/8 dark:bg-white/[0.03]"><p data-i18n="week.cards.views" class="text-xs uppercase tracking-[0.2em] text-gray-400">Views</p><p id="weekViews" class="mt-2 font-serif text-3xl text-black dark:text-white">—</p></div> <div class="rounded-2xl border border-black/6 bg-black/[0.02] p-4 dark:border-white/8 dark:bg-white/[0.03]"><p data-i18n="week.cards.engagement" class="text-xs uppercase tracking-[0.2em] text-gray-400">Engagement</p><p id="weekEngagement" class="mt-2 font-serif text-3xl text-black dark:text-white">—</p></div> <div class="rounded-2xl border border-black/6 bg-black/[0.02] p-4 dark:border-white/8 dark:bg-white/[0.03]"><p data-i18n="week.cards.wow" class="text-xs uppercase tracking-[0.2em] text-gray-400">WoW</p><p id="weekGrowth" class="mt-2 font-serif text-3xl text-black dark:text-white">—</p></div> </div> <div class="mt-4 rounded-[1.5rem] border border-[#8953d1]/12 bg-[#8953d1]/[0.05] p-4 dark:border-[#e7ddf6]/12 dark:bg-[#e7ddf6]/[0.04]"> <div class="mb-2 flex items-center justify-between gap-4"> <p data-i18n="week.best.label" class="text-xs uppercase tracking-[0.2em] text-[#8953d1]/80 dark:text-[#e7ddf6]/80">Best tweet this week</p> <a id="weekBestLink" data-i18n="week.best.link" class="text-xs text-gray-500 hover:text-[#8953d1] dark:text-gray-400 dark:hover:text-[#e7ddf6]" href="#" target="_blank" rel="noreferrer">View on X</a> </div> <p id="weekBestText" class="line-clamp-4 font-serif leading-7 text-gray-700 dark:text-gray-200">Loading…</p> <div class="mt-3 flex flex-wrap gap-3 text-xs text-gray-500 dark:text-gray-400"> <span id="weekBestViews">—</span> <span id="weekBestLikes">—</span> <span id="weekBestEngagement">—</span> </div> </div> </article> <article class="glow-card fade-in-up rounded-[2rem] border border-black/8 bg-white/75 p-5 backdrop-blur-sm dark:border-white/10 dark:bg-white/5"> <div class="mb-5"> <p data-i18n="radar.eyebrow" class="mb-2 text-[11px] font-bold tracking-[0.22em] text-[#8953d1]/80 uppercase dark:text-[#e7ddf6]/80">Content Radar</p> <h2 data-i18n="radar.title" class="font-serif text-2xl font-semibold text-black dark:text-white">Average impressions by content pillar</h2> <p data-i18n="radar.description" class="mt-2 text-sm leading-6 text-gray-500 dark:text-gray-400">Grounded in baseline pillar analysis, so the chart reflects what actually earns attention instead of proxy metrics.</p> </div> <div class="rounded-[1.5rem] border border-black/6 bg-black/[0.02] p-4 dark:border-white/8 dark:bg-white/[0.03]"> <canvas id="radarChart" class="h-[280px] w-full"></canvas> </div> <div id="radarLegend" class="mt-4 grid gap-2 text-sm text-gray-500 dark:text-gray-400"></div> </article> </section> <section class="grid gap-4 xl:grid-cols-2"> <article class="glow-card fade-in-up overflow-hidden rounded-[2rem] border border-black/8 bg-white/75 p-5 backdrop-blur-sm dark:border-white/10 dark:bg-white/5"> <div class="mb-5 flex items-center justify-between gap-4"> <div> <p data-i18n="tweets.recent.eyebrow" class="mb-2 text-[11px] font-bold tracking-[0.22em] text-[#8953d1]/80 uppercase dark:text-[#e7ddf6]/80">Top Tweets</p> <h2 data-i18n="tweets.recent.title" class="font-serif text-2xl font-semibold text-black dark:text-white">Last 7 Days</h2> </div> <div class="hidden gap-2 sm:flex"> <button id="recentTweetsPrev" class="rounded-full border border-black/8 px-3 py-1 text-xs text-gray-500 hover:border-[#8953d1]/40 hover:text-[#8953d1] dark:border-white/10 dark:text-gray-400 dark:hover:border-[#e7ddf6]/40 dark:hover:text-[#e7ddf6]">←</button> <button id="recentTweetsNext" class="rounded-full border border-black/8 px-3 py-1 text-xs text-gray-500 hover:border-[#8953d1]/40 hover:text-[#8953d1] dark:border-white/10 dark:text-gray-400 dark:hover:border-[#e7ddf6]/40 dark:hover:text-[#e7ddf6]">→</button> </div> </div> <div id="recentTweetsRail" class="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 [scrollbar-width:none]"></div> </article> <article class="glow-card fade-in-up overflow-hidden rounded-[2rem] border border-black/8 bg-white/75 p-5 backdrop-blur-sm dark:border-white/10 dark:bg-white/5" style="--delay: 120ms"> <div class="mb-5 flex items-center justify-between gap-4"> <div> <p data-i18n="tweets.allTime.eyebrow" class="mb-2 text-[11px] font-bold tracking-[0.22em] text-[#8953d1]/80 uppercase dark:text-[#e7ddf6]/80">Top Tweets</p> <h2 data-i18n="tweets.allTime.title" class="font-serif text-2xl font-semibold text-black dark:text-white">All-Time Best</h2> </div> <div class="hidden gap-2 sm:flex"> <button id="allTimeTweetsPrev" class="rounded-full border border-black/8 px-3 py-1 text-xs text-gray-500 hover:border-[#8953d1]/40 hover:text-[#8953d1] dark:border-white/10 dark:text-gray-400 dark:hover:border-[#e7ddf6]/40 dark:hover:text-[#e7ddf6]">←</button> <button id="allTimeTweetsNext" class="rounded-full border border-black/8 px-3 py-1 text-xs text-gray-500 hover:border-[#8953d1]/40 hover:text-[#8953d1] dark:border-white/10 dark:text-gray-400 dark:hover:border-[#e7ddf6]/40 dark:hover:text-[#e7ddf6]">→</button> </div> </div> <div id="allTimeTweetsRail" class="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 [scrollbar-width:none]"></div> </article> </section> <p id="dashboardUpdated" class="text-right text-xs tracking-[0.14em] text-gray-400 uppercase dark:text-gray-500">Loading dashboard data…</p> </div> <script type="module" src="/_astro/x-growth.astro_astro_type_script_index_0_lang.a9juqwXc.js"></script> <script>
+</p> </section> <div id="x-growth-dashboard" class="space-y-8 pb-12"> <section class="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5"> <article class="glow-card fade-in-up rounded-3xl border border-black/8 bg-white/70 p-5 backdrop-blur-sm dark:border-white/10 dark:bg-white/5"> <p data-i18n="stats.followers.label" class="mb-3 text-[11px] font-bold tracking-[0.22em] text-gray-400 uppercase dark:text-gray-500">Current Followers</p> <p data-countup="followers" class="font-serif text-4xl font-bold text-black dark:text-white">0</p> </article> <article class="glow-card fade-in-up rounded-3xl border border-black/8 bg-white/70 p-5 backdrop-blur-sm dark:border-white/10 dark:bg-white/5" style="--delay: 60ms"> <p data-i18n="stats.daysWriting.label" class="mb-3 text-[11px] font-bold tracking-[0.22em] text-gray-400 uppercase dark:text-gray-500">Days Writing</p> <p data-countup="daysWriting" class="font-serif text-4xl font-bold text-black dark:text-white">0</p> </article> <article class="glow-card fade-in-up rounded-3xl border border-black/8 bg-white/70 p-5 backdrop-blur-sm dark:border-white/10 dark:bg-white/5" style="--delay: 120ms"> <p data-i18n="stats.totalTweets.label" class="mb-3 text-[11px] font-bold tracking-[0.22em] text-gray-400 uppercase dark:text-gray-500">Total Tweets</p> <p data-countup="totalTweets" class="font-serif text-4xl font-bold text-black dark:text-white">0</p> </article> <article class="glow-card fade-in-up rounded-3xl border border-black/8 bg-white/70 p-5 backdrop-blur-sm dark:border-white/10 dark:bg-white/5" style="--delay: 180ms"> <p data-i18n="stats.impressions.label" class="mb-3 text-[11px] font-bold tracking-[0.22em] text-gray-400 uppercase dark:text-gray-500">Total Impressions</p> <p data-countup="impressions" class="font-serif text-4xl font-bold text-black dark:text-white">0</p> </article> <article class="glow-card fade-in-up rounded-3xl border border-black/8 bg-white/70 p-5 backdrop-blur-sm dark:border-white/10 dark:bg-white/5 col-span-2 sm:col-span-1" style="--delay: 240ms"> <p data-i18n="stats.engagement.label" class="mb-3 text-[11px] font-bold tracking-[0.22em] text-gray-400 uppercase dark:text-gray-500">Avg Weekly Engagement</p> <p data-countup="engagement" class="font-serif text-4xl font-bold text-black dark:text-white">0</p> </article> </section> <section class="space-y-4"> <article class="glow-card fade-in-up rounded-[2rem] border border-black/8 bg-white/75 p-5 backdrop-blur-sm dark:border-white/10 dark:bg-white/5"> <div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between"> <div> <p data-i18n="growth.eyebrow" class="mb-2 text-[11px] font-bold tracking-[0.22em] text-[#8953d1]/80 uppercase dark:text-[#e7ddf6]/80">Growth Curve</p> <h2 data-i18n="growth.title" class="font-serif text-2xl font-semibold text-black dark:text-white">Followers over time</h2> </div> </div> <div class="relative overflow-hidden rounded-[1.5rem] border border-[#8953d1]/10 bg-[linear-gradient(180deg,rgba(137,83,209,0.08),rgba(255,248,235,0.4))] p-4 dark:border-[#e7ddf6]/10 dark:bg-[linear-gradient(180deg,rgba(231,221,246,0.08),rgba(21,21,21,0.4))]"> <canvas id="growthChart" class="h-[320px] w-full"></canvas> </div> </article> <article class="glow-card fade-in-up rounded-[2rem] border border-black/8 bg-white/75 p-5 backdrop-blur-sm dark:border-white/10 dark:bg-white/5" style="--delay: 60ms"> <div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between"> <div> <p data-i18n="impressionsChart.eyebrow" class="mb-2 text-[11px] font-bold tracking-[0.22em] text-[#8953d1]/80 uppercase dark:text-[#e7ddf6]/80">Reach Curve</p> <h2 data-i18n="impressionsChart.title" class="font-serif text-2xl font-semibold text-black dark:text-white">Weekly Impressions</h2> </div> </div> <div class="relative overflow-hidden rounded-[1.5rem] border border-[#8953d1]/10 bg-[linear-gradient(180deg,rgba(137,83,209,0.08),rgba(255,248,235,0.4))] p-4 dark:border-[#e7ddf6]/10 dark:bg-[linear-gradient(180deg,rgba(231,221,246,0.08),rgba(21,21,21,0.4))]"> <canvas id="impressionsChart" class="h-[320px] w-full"></canvas> </div> </article> </section> <section class="grid gap-4 lg:grid-cols-[minmax(300px,0.95fr)_minmax(0,1.05fr)]"> <article class="glow-card fade-in-up rounded-[2rem] border border-black/8 bg-white/75 p-5 backdrop-blur-sm dark:border-white/10 dark:bg-white/5" style="--delay: 120ms"> <div class="mb-5"> <p data-i18n="week.eyebrow" class="mb-2 text-[11px] font-bold tracking-[0.22em] text-[#8953d1]/80 uppercase dark:text-[#e7ddf6]/80">This Week Snapshot</p> <h2 data-i18n="week.title" class="font-serif text-2xl font-semibold text-black dark:text-white">Momentum in one glance</h2> </div> <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2"> <div class="rounded-2xl border border-black/6 bg-black/[0.02] p-4 dark:border-white/8 dark:bg-white/[0.03]"><p data-i18n="week.cards.tweets" class="text-xs uppercase tracking-[0.2em] text-gray-400">Tweets</p><p id="weekTweets" class="mt-2 font-serif text-3xl text-black dark:text-white">—</p></div> <div class="rounded-2xl border border-black/6 bg-black/[0.02] p-4 dark:border-white/8 dark:bg-white/[0.03]"><p data-i18n="week.cards.views" class="text-xs uppercase tracking-[0.2em] text-gray-400">Views</p><p id="weekViews" class="mt-2 font-serif text-3xl text-black dark:text-white">—</p></div> <div class="rounded-2xl border border-black/6 bg-black/[0.02] p-4 dark:border-white/8 dark:bg-white/[0.03]"><p data-i18n="week.cards.engagement" class="text-xs uppercase tracking-[0.2em] text-gray-400">Engagement</p><p id="weekEngagement" class="mt-2 font-serif text-3xl text-black dark:text-white">—</p></div> <div class="rounded-2xl border border-black/6 bg-black/[0.02] p-4 dark:border-white/8 dark:bg-white/[0.03]"><p data-i18n="week.cards.wow" class="text-xs uppercase tracking-[0.2em] text-gray-400">WoW</p><p id="weekGrowth" class="mt-2 font-serif text-3xl text-black dark:text-white">—</p></div> </div> <div class="mt-4 rounded-[1.5rem] border border-[#8953d1]/12 bg-[#8953d1]/[0.05] p-4 dark:border-[#e7ddf6]/12 dark:bg-[#e7ddf6]/[0.04]"> <div class="mb-2 flex items-center justify-between gap-4"> <p data-i18n="week.best.label" class="text-xs uppercase tracking-[0.2em] text-[#8953d1]/80 dark:text-[#e7ddf6]/80">Best tweet this week</p> <a id="weekBestLink" data-i18n="week.best.link" class="text-xs text-gray-500 hover:text-[#8953d1] dark:text-gray-400 dark:hover:text-[#e7ddf6]" href="#" target="_blank" rel="noreferrer">View on X</a> </div> <p id="weekBestText" class="line-clamp-4 font-serif leading-7 text-gray-700 dark:text-gray-200">Loading…</p> <div class="mt-3 flex flex-wrap gap-3 text-xs text-gray-500 dark:text-gray-400"> <span id="weekBestViews">—</span> <span id="weekBestLikes">—</span> <span id="weekBestEngagement">—</span> </div> </div> </article> <article class="glow-card fade-in-up rounded-[2rem] border border-black/8 bg-white/75 p-5 backdrop-blur-sm dark:border-white/10 dark:bg-white/5"> <div class="mb-5"> <p data-i18n="radar.eyebrow" class="mb-2 text-[11px] font-bold tracking-[0.22em] text-[#8953d1]/80 uppercase dark:text-[#e7ddf6]/80">Content Radar</p> <h2 data-i18n="radar.title" class="font-serif text-2xl font-semibold text-black dark:text-white">Average impressions by content pillar</h2> <p data-i18n="radar.description" class="mt-2 text-sm leading-6 text-gray-500 dark:text-gray-400">Grounded in baseline pillar analysis, so the chart reflects what actually earns attention instead of proxy metrics.</p> </div> <div class="rounded-[1.5rem] border border-black/6 bg-black/[0.02] p-4 dark:border-white/8 dark:bg-white/[0.03]"> <canvas id="radarChart" class="h-[280px] w-full"></canvas> </div> <div id="radarLegend" class="mt-4 grid gap-2 text-sm text-gray-500 dark:text-gray-400"></div> </article> </section> <section class="grid gap-4 xl:grid-cols-2"> <article class="glow-card fade-in-up overflow-hidden rounded-[2rem] border border-black/8 bg-white/75 p-5 backdrop-blur-sm dark:border-white/10 dark:bg-white/5"> <div class="mb-5 flex items-center justify-between gap-4"> <div> <p data-i18n="tweets.recent.eyebrow" class="mb-2 text-[11px] font-bold tracking-[0.22em] text-[#8953d1]/80 uppercase dark:text-[#e7ddf6]/80">Top Tweets</p> <h2 data-i18n="tweets.recent.title" class="font-serif text-2xl font-semibold text-black dark:text-white">Last 7 Days</h2> </div> <div class="hidden gap-2 sm:flex"> <button id="recentTweetsPrev" class="rounded-full border border-black/8 px-3 py-1 text-xs text-gray-500 hover:border-[#8953d1]/40 hover:text-[#8953d1] dark:border-white/10 dark:text-gray-400 dark:hover:border-[#e7ddf6]/40 dark:hover:text-[#e7ddf6]">←</button> <button id="recentTweetsNext" class="rounded-full border border-black/8 px-3 py-1 text-xs text-gray-500 hover:border-[#8953d1]/40 hover:text-[#8953d1] dark:border-white/10 dark:text-gray-400 dark:hover:border-[#e7ddf6]/40 dark:hover:text-[#e7ddf6]">→</button> </div> </div> <div id="recentTweetsRail" class="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 [scrollbar-width:none]"></div> </article> <article class="glow-card fade-in-up overflow-hidden rounded-[2rem] border border-black/8 bg-white/75 p-5 backdrop-blur-sm dark:border-white/10 dark:bg-white/5" style="--delay: 120ms"> <div class="mb-5 flex items-center justify-between gap-4"> <div> <p data-i18n="tweets.allTime.eyebrow" class="mb-2 text-[11px] font-bold tracking-[0.22em] text-[#8953d1]/80 uppercase dark:text-[#e7ddf6]/80">Top Tweets</p> <h2 data-i18n="tweets.allTime.title" class="font-serif text-2xl font-semibold text-black dark:text-white">All-Time Best</h2> </div> <div class="hidden gap-2 sm:flex"> <button id="allTimeTweetsPrev" class="rounded-full border border-black/8 px-3 py-1 text-xs text-gray-500 hover:border-[#8953d1]/40 hover:text-[#8953d1] dark:border-white/10 dark:text-gray-400 dark:hover:border-[#e7ddf6]/40 dark:hover:text-[#e7ddf6]">←</button> <button id="allTimeTweetsNext" class="rounded-full border border-black/8 px-3 py-1 text-xs text-gray-500 hover:border-[#8953d1]/40 hover:text-[#8953d1] dark:border-white/10 dark:text-gray-400 dark:hover:border-[#e7ddf6]/40 dark:hover:text-[#e7ddf6]">→</button> </div> </div> <div id="allTimeTweetsRail" class="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 [scrollbar-width:none]"></div> </article> </section> <p id="dashboardUpdated" class="text-right text-xs tracking-[0.14em] text-gray-400 uppercase dark:text-gray-500">Loading dashboard data…</p> </div> <script type="module" src="/_astro/x-growth.astro_astro_type_script_index_0_lang.a9juqwXc.js"></script> <script>
     (() => {
       const root = document.getElementById('x-growth-dashboard');
       if (!root) return;
@@ -115,6 +115,7 @@ A live public record of audience growth, reach, and content momentum on X. Warm 
             engagement: { label: 'Avg Weekly Engagement' }
           },
           growth: { eyebrow: 'Growth Curve', title: 'Followers over time', tooltipFollowers: 'Followers' },
+          impressionsChart: { eyebrow: 'Reach Curve', title: 'Weekly Impressions', tooltipViews: 'Views', tooltipRange: 'Week' },
           week: {
             eyebrow: 'This Week Snapshot',
             title: 'Momentum in one glance',
@@ -154,6 +155,7 @@ A live public record of audience growth, reach, and content momentum on X. Warm 
             engagement: { label: '周均互动' }
           },
           growth: { eyebrow: '增长曲线', title: '关注数随时间变化', tooltipFollowers: '关注数' },
+          impressionsChart: { eyebrow: '曝光曲线', title: '每周曝光量', tooltipViews: '曝光量', tooltipRange: '时间范围' },
           week: {
             eyebrow: '本周快照',
             title: '一眼看清本周状态',
@@ -187,11 +189,28 @@ A live public record of audience growth, reach, and content momentum on X. Warm 
       let dashboardData = null;
       let radarChart = null;
       let growthChart = null;
+      let impressionsChart = null;
       const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       const escapeHtml = (value = '') => value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
       const t = (path) => path.split('.').reduce((acc, key) => acc?.[key], copy[currentLang]);
       const formatNumber = (value) => new Intl.NumberFormat(currentLang === 'zh' ? 'zh-CN' : 'en-US').format(Math.round(value || 0));
       const formatCompact = (value) => new Intl.NumberFormat(currentLang === 'zh' ? 'zh-CN' : 'en-US', { notation: 'compact', maximumFractionDigits: 1 }).format(value || 0);
+      const formatShortNumber = (value) => {
+        const numericValue = Number(value) || 0;
+        const absoluteValue = Math.abs(numericValue);
+        if (absoluteValue >= 1_000_000) return `${(numericValue / 1_000_000).toFixed(1)}M`;
+        if (absoluteValue >= 1_000) return `${(numericValue / 1_000).toFixed(1)}K`;
+        return formatNumber(numericValue);
+      };
+      const formatMonthYear = (value) => new Date(`${value}T00:00:00Z`).toLocaleDateString(copy[currentLang].dates.locale, { month: 'short', year: 'numeric', timeZone: 'UTC' });
+      const formatDateRange = (start, end) => {
+        const startDate = new Date(`${start}T00:00:00Z`);
+        const endDate = new Date(`${end}T00:00:00Z`);
+        const locale = copy[currentLang].dates.locale;
+        const monthDayFormatter = new Intl.DateTimeFormat(locale, { month: 'short', day: 'numeric', timeZone: 'UTC' });
+        const endFormatter = new Intl.DateTimeFormat(locale, { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+        return `${monthDayFormatter.format(startDate)} – ${endFormatter.format(endDate)}`;
+      };
       const truncate = (text, max = 220) => (text && text.length > max ? `${text.slice(0, max).trim()}…` : (text || ''));
 
       function revealOnScroll() {
@@ -208,7 +227,7 @@ A live public record of audience growth, reach, and content momentum on X. Warm 
       function animateCount(element, target) {
         if (!element) return;
         if (prefersReducedMotion) {
-          element.textContent = formatNumber(target);
+          element.textContent = element.dataset.countup === 'impressions' ? formatShortNumber(target) : formatNumber(target);
           return;
         }
         const duration = 1400;
@@ -216,7 +235,8 @@ A live public record of audience growth, reach, and content momentum on X. Warm 
         const step = (now) => {
           const progress = Math.min((now - start) / duration, 1);
           const eased = 1 - Math.pow(1 - progress, 3);
-          element.textContent = formatNumber(target * eased);
+          const value = target * eased;
+          element.textContent = element.dataset.countup === 'impressions' ? formatShortNumber(value) : formatNumber(value);
           if (progress < 1) requestAnimationFrame(step);
         };
         requestAnimationFrame(step);
@@ -337,7 +357,7 @@ A live public record of audience growth, reach, and content momentum on X. Warm 
         const history = data.followerHistory || [];
         const labels = history.map((item) => item.date);
         const values = history.map((item) => item.count);
-        const milestones = new Map((data.milestones || []).map((item) => [item.date, item.label]));
+        const milestones = new Map((data.milestones || []).map((item) => [item.date, item]));
         const hoveredMilestone = { value: null };
 
         const milestonePlugin = {
@@ -346,8 +366,8 @@ A live public record of audience growth, reach, and content momentum on X. Warm 
             const { ctx, chartArea, scales: { x, y } } = chart;
             ctx.save();
             history.forEach((item, index) => {
-              const label = milestones.get(item.date);
-              if (!label) return;
+              const milestone = milestones.get(item.date);
+              if (!milestone) return;
               const point = chart.getDatasetMeta(0).data[index];
               if (!point) return;
               const active = hoveredMilestone.value === item.date;
@@ -361,7 +381,7 @@ A live public record of audience growth, reach, and content momentum on X. Warm 
 
               if (active) {
                 ctx.font = '12px Georgia, serif';
-                const text = label;
+                const text = typeof milestone.count === 'number' && milestone.count >= 100 ? `${formatShortNumber(milestone.count)} · ${formatMonthYear(milestone.date)}` : `${milestone.label} · ${formatMonthYear(milestone.date)}`;
                 const textWidth = ctx.measureText(text).width;
                 const boxWidth = textWidth + 16;
                 const boxHeight = 28;
@@ -446,7 +466,9 @@ A live public record of audience growth, reach, and content momentum on X. Warm 
                   label: (context) => `${t('growth.tooltipFollowers')}: ${formatNumber(context.parsed.y)}`,
                   afterBody: (items) => {
                     const date = items[0]?.label;
-                    return milestones.has(date) ? [milestones.get(date)] : [];
+                    if (!milestones.has(date)) return [];
+                    const milestone = milestones.get(date);
+                    return [typeof milestone.count === 'number' && milestone.count >= 100 ? `${formatShortNumber(milestone.count)} · ${formatMonthYear(milestone.date)}` : `${milestone.label} · ${formatMonthYear(milestone.date)}`];
                   }
                 }
               }
@@ -466,6 +488,80 @@ A live public record of audience growth, reach, and content momentum on X. Warm 
             }
           },
           plugins: [milestonePlugin]
+        });
+      }
+
+
+      function renderImpressionsChart(data) {
+        const canvas = document.getElementById('impressionsChart');
+        if (!canvas || typeof Chart === 'undefined') return;
+
+        const weeklyStats = (data.weeklyStats || []).slice(-53);
+        const labels = weeklyStats.map((item, index) => {
+          const date = new Date(`${item.startDate}T00:00:00Z`);
+          const label = date.toLocaleDateString(copy[currentLang].dates.locale, { month: 'short', year: 'numeric', timeZone: 'UTC' });
+          const previous = weeklyStats[index - 1];
+          if (!previous) return label;
+          const previousLabel = new Date(`${previous.startDate}T00:00:00Z`).toLocaleDateString(copy[currentLang].dates.locale, { month: 'short', year: 'numeric', timeZone: 'UTC' });
+          return previousLabel === label ? '' : label;
+        });
+        const values = weeklyStats.map((item) => item.totalViews || 0);
+
+        impressionsChart?.destroy();
+        impressionsChart = new Chart(canvas, {
+          type: 'line',
+          data: {
+            labels,
+            datasets: [{
+              label: t('impressionsChart.title'),
+              data: values,
+              borderColor: '#8953d1',
+              backgroundColor: (context) => {
+                const { chart } = context;
+                const { ctx, chartArea } = chart;
+                if (!chartArea) return 'rgba(137, 83, 209, 0.18)';
+                const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+                gradient.addColorStop(0, 'rgba(137, 83, 209, 0.28)');
+                gradient.addColorStop(1, 'rgba(137, 83, 209, 0.01)');
+                return gradient;
+              },
+              fill: true,
+              tension: 0.28,
+              borderWidth: 3,
+              pointRadius: 0,
+              pointHitRadius: 16
+            }]
+          },
+          options: {
+            animation: prefersReducedMotion ? false : { duration: 1600 },
+            maintainAspectRatio: false,
+            interaction: { intersect: false, mode: 'index' },
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  title: (items) => {
+                    const item = weeklyStats[items[0]?.dataIndex || 0];
+                    return formatDateRange(item.startDate, item.endDate);
+                  },
+                  label: (context) => `${t('impressionsChart.tooltipViews')}: ${formatShortNumber(context.parsed.y)}`
+                }
+              }
+            },
+            scales: {
+              x: {
+                grid: { display: false },
+                ticks: { maxTicksLimit: 13, color: document.documentElement.dataset.theme === 'dark' ? '#8f8b96' : '#8a7d8f' }
+              },
+              y: {
+                grid: { color: 'rgba(137, 83, 209, 0.1)' },
+                ticks: {
+                  color: document.documentElement.dataset.theme === 'dark' ? '#8f8b96' : '#8a7d8f',
+                  callback: (value) => formatShortNumber(value)
+                }
+              }
+            }
+          }
         });
       }
 
@@ -494,6 +590,7 @@ A live public record of audience growth, reach, and content momentum on X. Warm 
         buildTweetsRail('allTimeTweetsRail', data.allTimeTweets || []);
         renderRadar(data);
         renderGrowthChart(data);
+        renderImpressionsChart(data);
       }
 
       // Listen for global language toggle (LanguageToggle.astro sets data-lang on <html>)
