@@ -49,8 +49,24 @@ const meta = {
             <p class="panel-kicker">Interactive Map</p>
             <h3 class="map-title font-serif">城市轨迹 / City by city</h3>
           </div>
+          <div class="map-controls">
+            <button id="replay-btn" class="map-ctrl-btn font-serif" title="Journey Replay" aria-label="Play journey replay">▶</button>
+            <button id="heatmap-btn" class="map-ctrl-btn" title="Stay Heatmap" aria-label="Toggle stay heatmap">◉</button>
+          </div>
         </div>
         <div id="travel-map" class="travel-map" aria-label="Travel map"></div>
+
+        <!-- ====== LIVE COUNTER BADGE ====== -->
+        <div class="live-counter" id="live-counter" aria-live="polite"></div>
+
+        <!-- ====== NEXT STOP BADGE ====== -->
+        <div class="next-stop-badge" id="next-stop-badge" aria-label="Next destination"></div>
+
+        <!-- ====== REPLAY PROGRESS ====== -->
+        <div class="replay-progress" id="replay-progress" aria-hidden="true">
+          <div class="replay-track"><div class="replay-fill" id="replay-fill"></div></div>
+          <span class="replay-label font-serif" id="replay-label"></span>
+        </div>
 
         <!-- ====== MAP STORY PANEL ====== -->
         <aside class="map-panel" id="map-panel" aria-hidden="true">
@@ -123,6 +139,13 @@ const meta = {
       border-color: color-mix(in srgb, #8953d1 24%, transparent) !important;
     }
     :global(.leaflet-control-zoom a:hover) { color: #8953d1 !important; }
+    :global(.next-stop-tooltip) {
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      font-family: inherit;
+    }
+    :global(.next-stop-tooltip::before) { display: none !important; }
 
     /* ---- CSS variables ---- */
     .travel-shell {
@@ -555,6 +578,127 @@ const meta = {
     }
     .insight-card--wide { grid-column: span 2; }
 
+    /* ---- Map Controls ---- */
+    .map-controls {
+      display: flex;
+      gap: 0.45rem;
+      align-items: center;
+    }
+    .map-ctrl-btn {
+      width: 2.1rem;
+      height: 2.1rem;
+      border-radius: 50%;
+      border: 1px solid var(--travel-border);
+      background: color-mix(in srgb, var(--travel-surface) 92%, transparent);
+      color: var(--travel-muted);
+      font-size: 0.8rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      backdrop-filter: blur(8px);
+    }
+    .map-ctrl-btn:hover {
+      border-color: var(--purple);
+      color: var(--purple);
+      background: color-mix(in srgb, var(--purple) 10%, transparent);
+    }
+    .map-ctrl-btn.is-active {
+      background: var(--purple);
+      border-color: var(--purple);
+      color: #fff;
+    }
+
+    /* ---- Live Counter ---- */
+    .live-counter {
+      position: absolute;
+      bottom: 1rem;
+      left: 1rem;
+      z-index: 600;
+      background: color-mix(in srgb, var(--travel-panel) 96%, transparent);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--travel-border);
+      border-radius: 999px;
+      padding: 0.28rem 0.75rem;
+      font-size: 0.73rem;
+      color: var(--purple);
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      display: none;
+      gap: 0.3rem;
+      align-items: center;
+    }
+    .live-counter.is-visible { display: flex; }
+    .live-counter::before {
+      content: "";
+      width: 0.38rem;
+      height: 0.38rem;
+      border-radius: 50%;
+      background: var(--purple);
+      animation: pulse-dot 2s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+    :global(html[data-theme="dark"]) .live-counter { color: var(--purple-light); }
+    :global(html[data-theme="dark"]) .live-counter::before { background: var(--purple-light); }
+
+    /* ---- Next Stop Badge ---- */
+    .next-stop-badge {
+      position: absolute;
+      bottom: 1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 600;
+      background: color-mix(in srgb, var(--travel-panel) 96%, transparent);
+      backdrop-filter: blur(12px);
+      border: 1px solid color-mix(in srgb, var(--purple) 30%, transparent);
+      border-radius: 999px;
+      padding: 0.28rem 0.85rem;
+      font-size: 0.73rem;
+      color: var(--travel-soft);
+      white-space: nowrap;
+      display: none;
+    }
+    .next-stop-badge.is-visible { display: block; }
+    .next-stop-badge strong { color: var(--purple); font-size: 0.78rem; }
+    :global(html[data-theme="dark"]) .next-stop-badge strong { color: var(--purple-light); }
+
+    /* ---- Replay Progress ---- */
+    .replay-progress {
+      position: absolute;
+      bottom: 3.4rem;
+      left: 1rem;
+      right: 1rem;
+      z-index: 600;
+      display: none;
+      align-items: center;
+      gap: 0.65rem;
+    }
+    .replay-progress.is-active { display: flex; }
+    .replay-track {
+      flex: 1;
+      height: 3px;
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--purple) 20%, transparent);
+      overflow: hidden;
+    }
+    .replay-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--purple);
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+    .replay-label {
+      font-size: 0.68rem;
+      color: var(--purple);
+      white-space: nowrap;
+      min-width: 4rem;
+      text-align: right;
+    }
+    :global(html[data-theme="dark"]) .replay-label { color: var(--purple-light); }
+    :global(html[data-theme="dark"]) .replay-fill { background: var(--purple-light); }
+
     /* ---- Responsive ---- */
     @media (max-width: 720px) {
       .hero-stats, .insight-grid { grid-template-columns: 1fr; }
@@ -573,6 +717,8 @@ const meta = {
         transition: transform 0.38s cubic-bezier(0.34, 1.28, 0.64, 1), opacity 0.3s;
       }
       .map-panel.is-open { transform: translateY(0); opacity: 1; }
+      .next-stop-badge { display: none !important; }
+      .live-counter { font-size: 0.65rem; padding: 0.22rem 0.6rem; }
     }
   </style>
 
@@ -583,9 +729,10 @@ const meta = {
   ></script>
 
   <script is:inline>
-    const TILE_LIGHT = "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png";
-    const TILE_DARK  = "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
-    const PURPLE = "#8953d1";
+    const TILE_LIGHT  = "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png";
+    const TILE_DARK   = "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
+    const PURPLE      = "#8953d1";
+    const NEXT_CITY   = { name: "Xi'an", nameCN: "西安", lat: 34.3416, lng: 108.9398, date: "2026-03-31" };
 
     const getLang = () => document.documentElement.getAttribute("data-lang") === "zh" ? "zh" : "en";
     const fmtShort = (v, lang) => {
@@ -621,6 +768,8 @@ const meta = {
     const spotSvg = `<svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg"><circle cx="9" cy="9" r="5" fill="#fdf7ff" stroke="#8953d1" stroke-width="2"/></svg>`;
 
     let _map, _data, _currentCityItem, _markerRefs, _spotLayer, _selectedId, _activeYear;
+    let _replayTimer = null, _replayIndex = 0, _isReplaying = false;
+    let _heatmapOn = false, _heatCircles = [];
 
     /* ---- Map Panel ---- */
     const openMapPanel = () => {
@@ -967,6 +1116,124 @@ const meta = {
       // Build year tabs (default: "now")
       _activeYear = "now";
       buildYearTabs();
+
+      // ---- Live Counter ----
+      const counterEl = document.getElementById("live-counter");
+      if (counterEl && _currentCityItem) {
+        const updateCounter = () => {
+          const now = new Date();
+          const arr = new Date(_currentCityItem.arrival);
+          const d = Math.floor((now - arr) / 86400000);
+          const h = Math.floor(((now - arr) % 86400000) / 3600000);
+          const m = Math.floor(((now - arr) % 3600000) / 60000);
+          const s = Math.floor(((now - arr) % 60000) / 1000);
+          const isZh = getLang() === "zh";
+          counterEl.textContent = isZh
+            ? `成都第 ${d}天 ${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`
+            : `Day ${d} in Chengdu · ${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+        };
+        counterEl.classList.add("is-visible");
+        updateCounter();
+        setInterval(updateCounter, 1000);
+      }
+
+      // ---- Next Stop Badge ----
+      const nextBadge = document.getElementById("next-stop-badge");
+      if (nextBadge) {
+        const isZh = getLang() === "zh";
+        const daysUntil = Math.ceil((new Date(NEXT_CITY.date) - new Date()) / 86400000);
+        const inStr = daysUntil > 0
+          ? (isZh ? `${daysUntil} 天后出发` : `in ${daysUntil} day${daysUntil===1?"":"s"}`)
+          : (isZh ? "今天出发！" : "Today!");
+        nextBadge.innerHTML = isZh
+          ? `下一站 → <strong>${NEXT_CITY.nameCN}</strong> · ${inStr}`
+          : `Next → <strong>${NEXT_CITY.name}</strong> · ${inStr}`;
+        nextBadge.classList.add("is-visible");
+        // Draw dashed preview line to Xi'an
+        if (_currentCityItem) {
+          L.polyline(
+            [[_currentCityItem.lat, _currentCityItem.lng], [NEXT_CITY.lat, NEXT_CITY.lng]],
+            { color: PURPLE, weight: 2, opacity: 0.38, dashArray: "4 9" }
+          ).addTo(_map);
+          const nextIcon = L.divIcon({
+            html: `<svg width="44" height="44" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="22" cy="22" r="10" fill="${PURPLE}" opacity="0.08"/>
+              <circle cx="22" cy="22" r="6" fill="none" stroke="${PURPLE}" stroke-width="2" stroke-dasharray="3 3" opacity="0.7"/>
+            </svg>`,
+            className: "", iconSize: [44,44], iconAnchor: [22,22]
+          });
+          const nextMarker = L.marker([NEXT_CITY.lat, NEXT_CITY.lng], { icon: nextIcon, interactive: false }).addTo(_map);
+          const tooltip = isZh
+            ? `<span style="color:${PURPLE};font-size:0.75rem">下一站 · ${NEXT_CITY.nameCN}</span>`
+            : `<span style="color:${PURPLE};font-size:0.75rem">Next · ${NEXT_CITY.name}</span>`;
+          nextMarker.bindTooltip(tooltip, { permanent: true, direction: "right", offset: [8, 0], className: "next-stop-tooltip" });
+        }
+      }
+
+      // ---- Journey Replay ----
+      const replayBtn = document.getElementById("replay-btn");
+      const replayProgress = document.getElementById("replay-progress");
+      const replayFill = document.getElementById("replay-fill");
+      const replayLabel = document.getElementById("replay-label");
+      const REPLAY_DELAY = 2200;
+
+      const stopReplay = () => {
+        _isReplaying = false;
+        clearTimeout(_replayTimer);
+        if (replayBtn) { replayBtn.textContent = "▶"; replayBtn.classList.remove("is-active"); }
+        if (replayProgress) replayProgress.classList.remove("is-active");
+      };
+
+      const replayStep = (idx, sorted) => {
+        if (idx >= sorted.length) { stopReplay(); return; }
+        const city = sorted[idx];
+        const pct = Math.round(((idx + 1) / sorted.length) * 100);
+        if (replayFill) replayFill.style.width = `${pct}%`;
+        if (replayLabel) replayLabel.textContent = getLang() === "zh" ? city.nameCN : city.name;
+        selectCity(city.id, false);
+        _replayTimer = setTimeout(() => replayStep(idx + 1, sorted), REPLAY_DELAY);
+      };
+
+      if (replayBtn) {
+        replayBtn.addEventListener("click", () => {
+          if (_isReplaying) { stopReplay(); return; }
+          _isReplaying = true;
+          replayBtn.textContent = "⏸";
+          replayBtn.classList.add("is-active");
+          replayProgress.classList.add("is-active");
+          replayFill.style.width = "0%";
+          if (_activeYear !== "now") { switchYear("now"); }
+          const sorted = [...cities].sort((a, b) => new Date(a.arrival) - new Date(b.arrival));
+          replayStep(0, sorted);
+        });
+      }
+
+      // ---- Stay Heatmap ----
+      const heatBtn = document.getElementById("heatmap-btn");
+      const showHeatmap = () => {
+        _heatCircles = cities.filter(c => c.stayDays).map(c => {
+          const radius = Math.min(80000, Math.max(12000, c.stayDays * 1800));
+          const alpha = Math.min(0.55, 0.12 + c.stayDays * 0.01);
+          return L.circle([c.lat, c.lng], {
+            radius,
+            color: "transparent",
+            fillColor: PURPLE,
+            fillOpacity: alpha,
+            interactive: false
+          }).addTo(_map);
+        });
+      };
+      const hideHeatmap = () => {
+        _heatCircles.forEach(c => c.remove());
+        _heatCircles = [];
+      };
+      if (heatBtn) {
+        heatBtn.addEventListener("click", () => {
+          _heatmapOn = !_heatmapOn;
+          heatBtn.classList.toggle("is-active", _heatmapOn);
+          _heatmapOn ? showHeatmap() : hideHeatmap();
+        });
+      }
 
       // Theme observer
       new MutationObserver(setTiles).observe(
