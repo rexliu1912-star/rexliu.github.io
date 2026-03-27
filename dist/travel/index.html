@@ -573,10 +573,15 @@ Digital nomad since Oct 2025 — a living map of cities, detours, libraries, and
           }
 
           if (idx === sortedCities.length - 1) {
+            // Auto-open current city story without flying (stay on full map view)
             setTimeout(() => {
-              _selectedId = null;
-              selectCity(_currentCityItem.id, false);
-            }, 400);
+              _selectedId = _currentCityItem.id;
+              document.querySelectorAll(".year-city-item").forEach(n =>
+                n.classList.toggle("is-active", n.dataset.cityId === _currentCityItem.id)
+              );
+              renderStoryCard(_currentCityItem, false);
+              openMapPanel();
+            }, 600);
           }
         }, 300 * idx + 160);
       });
