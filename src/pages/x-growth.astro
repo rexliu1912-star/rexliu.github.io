@@ -223,11 +223,17 @@ const meta = {
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-  <script is:inline>window.__dashboardData = fetch('/data/dashboard.json').then(r => r.json());</script>
   <script is:inline>
-    (() => {
+    function __initXGrowth() {
       const root = document.getElementById('x-growth-dashboard');
       if (!root) return;
+      // Reset fetch promise on every page load so data is always fresh
+      window.__dashboardData = fetch('/data/dashboard.json?_=' + Date.now()).then(r => r.json());
+      // Destroy any existing Chart.js instances on canvases in this page
+      document.querySelectorAll('canvas').forEach(c => {
+        const existing = window.Chart && Chart.getChart(c);
+        if (existing) existing.destroy();
+      });
 
       const copy = {
         en: {
@@ -1099,7 +1105,7 @@ const meta = {
       updateStaticCopy();
       attachRailControls('allTimeTweetsRail', 'allTimeTweetsPrev', 'allTimeTweetsNext');
 
-      (window.__dashboardData || fetch('/data/dashboard.json').then(r => r.json()))
+      (window.__dashboardData || fetch('/data/dashboard.json?_=' + Date.now()).then(r => r.json()))
         .then((data) => {
           renderDashboard(data);
           revealOnScroll();
@@ -1108,6 +1114,10 @@ const meta = {
           console.error('Failed to load dashboard data', error);
           document.getElementById('dashboardUpdated').textContent = t('footer.failed');
         });
-    })();
+    }
+
+    // Run on first load and on every Astro View Transition navigation
+    __initXGrowth();
+    document.addEventListener('astro:page-load', __initXGrowth);
   </script>
 </PageLayout>
