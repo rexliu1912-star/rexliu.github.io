@@ -22,7 +22,7 @@ const ogOptions: SatoriOptions = {
 const markup = () =>
 	html`<div tw="flex flex-col w-full h-full bg-[#151515] text-[#FFF8EB] items-center justify-center p-20" style="font-family: 'Roboto Mono';">
 		<div tw="flex flex-col items-center w-full">
-			<h1 tw="text-7xl font-bold tracking-[0.1em] uppercase text-center mb-10">
+			<h1 tw="text-7xl font-bold uppercase text-center mb-10" style="letter-spacing: 0.1em;">
 				${siteConfig.title}
 			</h1>
 

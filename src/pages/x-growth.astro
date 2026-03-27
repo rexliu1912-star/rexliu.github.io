@@ -74,6 +74,68 @@ const meta = {
           <canvas id="impressionsChart" class="h-[320px] w-full"></canvas>
         </div>
       </article>
+
+      <section class="grid gap-4 md:grid-cols-2">
+        <article class="glow-card fade-in-up rounded-[2rem] border border-black/8 bg-white/75 p-5 backdrop-blur-sm dark:border-white/10 dark:bg-white/5" style="--delay: 90ms">
+          <div class="mb-4 flex items-start justify-between gap-3">
+            <div>
+              <p data-i18n="miniCharts.engagement.eyebrow" class="mb-2 text-[11px] font-bold tracking-[0.22em] text-[#8953d1]/80 uppercase dark:text-[#e7ddf6]/80">Engagement</p>
+              <h3 data-i18n="miniCharts.engagement.title" class="font-serif text-xl font-semibold text-black dark:text-white">互动量</h3>
+            </div>
+          </div>
+          <div class="relative overflow-hidden rounded-[1.5rem] border border-[#8953d1]/10 bg-[linear-gradient(180deg,rgba(137,83,209,0.08),rgba(255,248,235,0.4))] p-4 dark:border-[#e7ddf6]/10 dark:bg-[linear-gradient(180deg,rgba(231,221,246,0.08),rgba(21,21,21,0.4))]">
+            <canvas id="engagementChart" class="h-[200px] w-full"></canvas>
+          </div>
+        </article>
+
+        <article class="glow-card fade-in-up rounded-[2rem] border border-black/8 bg-white/75 p-5 backdrop-blur-sm dark:border-white/10 dark:bg-white/5" style="--delay: 120ms">
+          <div class="mb-4">
+            <p data-i18n="miniCharts.peakWeek.eyebrow" class="mb-2 text-[11px] font-bold tracking-[0.22em] text-[#8953d1]/80 uppercase dark:text-[#e7ddf6]/80">Peak Week</p>
+            <h3 data-i18n="miniCharts.peakWeek.title" class="font-serif text-xl font-semibold text-black dark:text-white">最佳单周</h3>
+          </div>
+          <div class="h-[200px] rounded-[1.5rem] border border-[#8953d1]/12 bg-[#8953d1]/[0.05] p-5 dark:border-[#e7ddf6]/12 dark:bg-[#e7ddf6]/[0.04]">
+            <div class="flex h-full flex-col justify-between">
+              <div>
+                <div class="mb-3 flex items-center justify-between gap-3">
+                  <p id="peakWeekLabel" class="font-serif text-3xl font-semibold text-black dark:text-white">—</p>
+                  <span data-i18n="miniCharts.peakWeek.badge" class="rounded-full border border-[#8953d1]/20 bg-white/80 px-3 py-1 text-[11px] font-bold tracking-[0.18em] text-[#8953d1] uppercase dark:border-[#e7ddf6]/20 dark:bg-white/10 dark:text-[#e7ddf6]">Best reach</span>
+                </div>
+                <p id="peakWeekRange" class="text-sm leading-6 text-gray-500 dark:text-gray-400">—</p>
+              </div>
+              <div class="grid gap-3 sm:grid-cols-2">
+                <div class="rounded-2xl border border-black/6 bg-white/70 p-4 dark:border-white/8 dark:bg-white/[0.03]">
+                  <p data-i18n="miniCharts.peakWeek.viewsLabel" class="text-[11px] uppercase tracking-[0.18em] text-gray-400">Views</p>
+                  <p id="peakWeekViews" class="mt-2 font-serif text-2xl text-black dark:text-white">—</p>
+                </div>
+                <div class="rounded-2xl border border-black/6 bg-white/70 p-4 dark:border-white/8 dark:bg-white/[0.03]">
+                  <p data-i18n="miniCharts.peakWeek.engagementLabel" class="text-[11px] uppercase tracking-[0.18em] text-gray-400">Engagement</p>
+                  <p id="peakWeekEngagement" class="mt-2 font-serif text-2xl text-black dark:text-white">—</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="glow-card fade-in-up rounded-[2rem] border border-black/8 bg-white/75 p-5 backdrop-blur-sm dark:border-white/10 dark:bg-white/5" style="--delay: 150ms">
+          <div class="mb-4">
+            <p data-i18n="miniCharts.profileVisits.eyebrow" class="mb-2 text-[11px] font-bold tracking-[0.22em] text-[#8953d1]/80 uppercase dark:text-[#e7ddf6]/80">Profile Visits</p>
+            <h3 data-i18n="miniCharts.profileVisits.title" class="font-serif text-xl font-semibold text-black dark:text-white">主页访问</h3>
+          </div>
+          <div class="relative overflow-hidden rounded-[1.5rem] border border-[#8953d1]/10 bg-[linear-gradient(180deg,rgba(137,83,209,0.08),rgba(255,248,235,0.4))] p-4 dark:border-[#e7ddf6]/10 dark:bg-[linear-gradient(180deg,rgba(231,221,246,0.08),rgba(21,21,21,0.4))]">
+            <canvas id="profileVisitsChart" class="h-[200px] w-full"></canvas>
+          </div>
+        </article>
+
+        <article class="glow-card fade-in-up rounded-[2rem] border border-black/8 bg-white/75 p-5 backdrop-blur-sm dark:border-white/10 dark:bg-white/5" style="--delay: 180ms">
+          <div class="mb-4">
+            <p data-i18n="miniCharts.followers.eyebrow" class="mb-2 text-[11px] font-bold tracking-[0.22em] text-[#8953d1]/80 uppercase dark:text-[#e7ddf6]/80">Weekly Followers</p>
+            <h3 data-i18n="miniCharts.followers.title" class="font-serif text-xl font-semibold text-black dark:text-white">每周新增关注</h3>
+          </div>
+          <div class="relative overflow-hidden rounded-[1.5rem] border border-[#8953d1]/10 bg-[linear-gradient(180deg,rgba(137,83,209,0.08),rgba(255,248,235,0.4))] p-4 dark:border-[#e7ddf6]/10 dark:bg-[linear-gradient(180deg,rgba(231,221,246,0.08),rgba(21,21,21,0.4))]">
+            <canvas id="followersDeltaChart" class="h-[200px] w-full"></canvas>
+          </div>
+        </article>
+      </section>
     </section>
 
     <section class="grid gap-4 lg:grid-cols-[minmax(300px,0.95fr)_minmax(0,1.05fr)]">
@@ -117,17 +179,34 @@ const meta = {
 
     <section class="grid gap-4 xl:grid-cols-2">
       <article class="glow-card fade-in-up overflow-hidden rounded-[2rem] border border-black/8 bg-white/75 p-5 backdrop-blur-sm dark:border-white/10 dark:bg-white/5">
-        <div class="mb-5 flex items-center justify-between gap-4">
-          <div>
-            <p data-i18n="tweets.recent.eyebrow" class="mb-2 text-[11px] font-bold tracking-[0.22em] text-[#8953d1]/80 uppercase dark:text-[#e7ddf6]/80">Top Tweets</p>
-            <h2 data-i18n="tweets.recent.title" class="font-serif text-2xl font-semibold text-black dark:text-white">Last 7 Days</h2>
-          </div>
-          <div class="hidden gap-2 sm:flex">
-            <button id="recentTweetsPrev" class="rounded-full border border-black/8 px-3 py-1 text-xs text-gray-500 hover:border-[#8953d1]/40 hover:text-[#8953d1] dark:border-white/10 dark:text-gray-400 dark:hover:border-[#e7ddf6]/40 dark:hover:text-[#e7ddf6]">←</button>
-            <button id="recentTweetsNext" class="rounded-full border border-black/8 px-3 py-1 text-xs text-gray-500 hover:border-[#8953d1]/40 hover:text-[#8953d1] dark:border-white/10 dark:text-gray-400 dark:hover:border-[#e7ddf6]/40 dark:hover:text-[#e7ddf6]">→</button>
+        <div class="mb-5">
+          <p data-i18n="contentIntelligence.eyebrow" class="mb-2 text-[11px] font-bold tracking-[0.22em] text-[#8953d1]/80 uppercase dark:text-[#e7ddf6]/80">Weekly Content Analysis</p>
+          <h2 data-i18n="contentIntelligence.title" class="font-serif text-2xl font-semibold text-black dark:text-white">Content Intelligence</h2>
+          <p data-i18n="contentIntelligence.description" class="mt-2 max-w-2xl text-sm leading-6 text-gray-500 dark:text-gray-400">Read the strongest 7-day posts, the dominant content pillar, and the week-over-week shift without expanding the dashboard length.</p>
+        </div>
+
+        <div class="grid gap-4">
+          <div id="contentTopTweets" class="grid gap-3"></div>
+
+          <div class="grid gap-4 lg:grid-cols-[minmax(0,1.05fr)_minmax(280px,0.95fr)]">
+            <div class="rounded-[1.5rem] border border-black/6 bg-black/[0.02] p-4 dark:border-white/8 dark:bg-white/[0.03]">
+              <div class="mb-4 flex items-center justify-between gap-3">
+                <div>
+                  <p data-i18n="contentIntelligence.pillars.eyebrow" class="text-[11px] font-bold tracking-[0.2em] text-[#8953d1]/75 uppercase dark:text-[#e7ddf6]/75">Topic Signals</p>
+                  <h3 data-i18n="contentIntelligence.pillars.title" class="mt-2 font-serif text-xl font-semibold text-black dark:text-white">Weekly pillar mix</h3>
+                </div>
+                <span id="contentStrongestPillar" class="rounded-full border border-[#8953d1]/20 bg-[#8953d1]/[0.06] px-3 py-1 text-[11px] font-bold tracking-[0.18em] text-[#8953d1] uppercase dark:border-[#e7ddf6]/20 dark:bg-[#e7ddf6]/[0.08] dark:text-[#e7ddf6]">—</span>
+              </div>
+              <div id="pillarBars" class="grid gap-3"></div>
+            </div>
+
+            <div class="rounded-[1.5rem] border border-[#8953d1]/12 bg-[#8953d1]/[0.05] p-4 dark:border-[#e7ddf6]/12 dark:bg-[#e7ddf6]/[0.04]">
+              <p data-i18n="contentIntelligence.compare.eyebrow" class="text-[11px] font-bold tracking-[0.2em] text-[#8953d1]/75 uppercase dark:text-[#e7ddf6]/75">Week over week</p>
+              <h3 data-i18n="contentIntelligence.compare.title" class="mt-2 font-serif text-xl font-semibold text-black dark:text-white">This week vs last week</h3>
+              <div id="weekCompareBars" class="mt-4 grid gap-4"></div>
+            </div>
           </div>
         </div>
-        <div id="recentTweetsRail" class="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 [scrollbar-width:none]"></div>
       </article>
 
       <article class="glow-card fade-in-up overflow-hidden rounded-[2rem] border border-black/8 bg-white/75 p-5 backdrop-blur-sm dark:border-white/10 dark:bg-white/5" style="--delay: 120ms">
@@ -168,6 +247,12 @@ const meta = {
           },
           growth: { eyebrow: 'Growth Curve', title: 'Followers over time', tooltipFollowers: 'Followers' },
           impressionsChart: { eyebrow: 'Reach Curve', title: 'Weekly Impressions', tooltipViews: 'Views', tooltipRange: 'Week' },
+          miniCharts: {
+            engagement: { eyebrow: 'Engagement', title: '互动量' },
+            peakWeek: { eyebrow: 'Peak Week', title: 'Best week', badge: 'Best reach', viewsLabel: 'Views', engagementLabel: 'Engagement' },
+            profileVisits: { eyebrow: 'Profile Visits', title: '主页访问' },
+            followers: { eyebrow: 'Weekly Followers', title: 'Followers / week' }
+          },
           week: {
             eyebrow: 'This Week Snapshot',
             title: 'Momentum in one glance',
@@ -180,6 +265,32 @@ const meta = {
             eyebrow: 'Content Radar',
             title: 'Average impressions by content pillar',
             description: 'Grounded in baseline pillar analysis, so the chart reflects what actually earns attention instead of proxy metrics.'
+          },
+          contentIntelligence: {
+            eyebrow: 'Weekly Content Analysis',
+            title: 'Content Intelligence',
+            description: 'Read the strongest 7-day posts, the dominant content pillar, and the week-over-week shift without expanding the dashboard length.',
+            topTweets: { rank: 'Top {value}' },
+            pillars: {
+              eyebrow: 'Topic Signals',
+              title: 'Weekly pillar mix',
+              strongest: 'Hot: {value}',
+              tweetsCount: '{value} tweets',
+              labels: {
+                crypto: 'Crypto / SNEK',
+                ai: 'AI / Tech',
+                investment: 'Investment',
+                lifestyle: 'Lifestyle',
+                growth: 'Growth / X'
+              }
+            },
+            compare: {
+              eyebrow: 'Week over week',
+              title: 'This week vs last week',
+              views: 'Views',
+              engagement: 'Engagement',
+              vs: 'vs'
+            }
           },
           tweets: {
             recent: { eyebrow: 'Top Tweets', title: 'Last 7 Days' },
@@ -208,6 +319,12 @@ const meta = {
           },
           growth: { eyebrow: '增长曲线', title: '关注数随时间变化', tooltipFollowers: '关注数' },
           impressionsChart: { eyebrow: '曝光曲线', title: '每周曝光量', tooltipViews: '曝光量', tooltipRange: '时间范围' },
+          miniCharts: {
+            engagement: { eyebrow: '互动量', title: 'Engagement' },
+            peakWeek: { eyebrow: '最佳单周', title: 'Peak Week', badge: '最高曝光', viewsLabel: '浏览量', engagementLabel: '互动量' },
+            profileVisits: { eyebrow: '主页访问', title: 'Profile Visits' },
+            followers: { eyebrow: '每周新增关注', title: 'Weekly Followers' }
+          },
           week: {
             eyebrow: '本周快照',
             title: '一眼看清本周状态',
@@ -220,6 +337,32 @@ const meta = {
             eyebrow: '内容雷达',
             title: '不同内容支柱的平均曝光',
             description: '这里直接使用 baseline 的内容支柱数据，看到的是真实平均曝光，而不是用点赞等代理指标去猜。'
+          },
+          contentIntelligence: {
+            eyebrow: '每周内容分析',
+            title: '内容洞察',
+            description: '用一个紧凑面板看清最近 7 天最强内容、主题重心，以及和上周相比是升还是降。',
+            topTweets: { rank: 'TOP {value}' },
+            pillars: {
+              eyebrow: '主题信号',
+              title: '本周内容支柱分布',
+              strongest: '最强：{value}',
+              tweetsCount: '{value} 条推文',
+              labels: {
+                crypto: 'Crypto / SNEK',
+                ai: 'AI / Tech',
+                investment: 'Investment',
+                lifestyle: 'Lifestyle',
+                growth: 'Growth / X'
+              }
+            },
+            compare: {
+              eyebrow: '周环比',
+              title: '本周 vs 上周',
+              views: '浏览量',
+              engagement: '互动量',
+              vs: '对比'
+            }
           },
           tweets: {
             recent: { eyebrow: '高表现推文', title: '最近 7 天' },
@@ -242,6 +385,9 @@ const meta = {
       let radarChart = null;
       let growthChart = null;
       let impressionsChart = null;
+      let engagementChart = null;
+      let profileVisitsChart = null;
+      let followersDeltaChart = null;
       const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       const escapeHtml = (value = '') => value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
       const t = (path) => path.split('.').reduce((acc, key) => acc?.[key], copy[currentLang]);
@@ -264,6 +410,216 @@ const meta = {
         return `${monthDayFormatter.format(startDate)} – ${endFormatter.format(endDate)}`;
       };
       const truncate = (text, max = 220) => (text && text.length > max ? `${text.slice(0, max).trim()}…` : (text || ''));
+
+      const formatPercentChange = (current, previous) => {
+        const currentValue = Number(current) || 0;
+        const previousValue = Number(previous) || 0;
+        if (!previousValue) return { value: '0.0%', numeric: 0 };
+        const numeric = ((currentValue - previousValue) / previousValue) * 100;
+        const prefix = numeric > 0 ? '+' : '';
+        return { value: `${prefix}${numeric.toFixed(1)}%`, numeric };
+      };
+      const extractWeekNumber = (week = '') => week.split('-W')[1] || week;
+      const getPillarConfig = () => ([
+        { key: 'crypto', label: copy[currentLang].contentIntelligence.pillars.labels.crypto, keywords: ['snek', 'cardano', 'ada', 'btc', 'bitcoin', 'crypto', 'defi', 'chain', 'token', 'whale'] },
+        { key: 'ai', label: copy[currentLang].contentIntelligence.pillars.labels.ai, keywords: ['ai', 'agent', 'claude', 'gpt', 'code', 'build', 'ship', 'tool', 'automation'] },
+        { key: 'investment', label: copy[currentLang].contentIntelligence.pillars.labels.investment, keywords: ['invest', 'portfolio', 'dca', 'position', 'market', 'bull', 'bear', 'risk'] },
+        { key: 'lifestyle', label: copy[currentLang].contentIntelligence.pillars.labels.lifestyle, keywords: ['travel', 'family', 'nomad', 'life', 'morning', 'coffee', 'walk'] },
+        { key: 'growth', label: copy[currentLang].contentIntelligence.pillars.labels.growth, keywords: ['follower', 'growth', 'thread', 'engagement', 'twitter', 'content'] }
+      ]);
+      const analyzePillars = (tweets = []) => {
+        const config = getPillarConfig();
+        return config.map((pillar) => ({
+          ...pillar,
+          count: tweets.reduce((total, tweet) => {
+            const textValue = `${tweet.text || ''}`.toLowerCase();
+            return total + (pillar.keywords.some((keyword) => textValue.includes(keyword)) ? 1 : 0);
+          }, 0)
+        }));
+      };
+      const strongestPillar = (pillars = []) => pillars.reduce((best, pillar) => {
+        if (!best) return pillar;
+        if (pillar.count > best.count) return pillar;
+        return best;
+      }, null);
+      const chartTheme = () => ({
+        tick: document.documentElement.dataset.theme === 'dark' ? '#8f8b96' : '#8a7d8f',
+        label: document.documentElement.dataset.theme === 'dark' ? '#e7ddf6' : '#5b5563',
+        grid: 'rgba(137, 83, 209, 0.1)'
+      });
+      function createAreaChart(instance, canvas, labels, values, tooltipLabel, tooltipFormatter = formatNumber) {
+        if (!canvas || typeof Chart === 'undefined') return instance;
+        instance?.destroy();
+        const theme = chartTheme();
+        return new Chart(canvas, {
+          type: 'line',
+          data: {
+            labels,
+            datasets: [{
+              label: tooltipLabel,
+              data: values,
+              borderColor: '#8953d1',
+              backgroundColor: (context) => {
+                const { chart } = context;
+                const { ctx, chartArea } = chart;
+                if (!chartArea) return 'rgba(137, 83, 209, 0.18)';
+                const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+                gradient.addColorStop(0, 'rgba(137, 83, 209, 0.28)');
+                gradient.addColorStop(1, 'rgba(137, 83, 209, 0.01)');
+                return gradient;
+              },
+              fill: true,
+              tension: 0.28,
+              borderWidth: 3,
+              pointRadius: 0,
+              pointHitRadius: 14
+            }]
+          },
+          options: {
+            animation: prefersReducedMotion ? false : { duration: 1400 },
+            maintainAspectRatio: false,
+            interaction: { intersect: false, mode: 'index' },
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  title: (items) => items[0]?.label || '',
+                  label: (context) => `${tooltipLabel}: ${tooltipFormatter(context.parsed.y)}`
+                }
+              }
+            },
+            scales: {
+              x: { grid: { display: false }, ticks: { maxTicksLimit: 8, color: theme.tick } },
+              y: { grid: { color: theme.grid }, ticks: { color: theme.tick, callback: (value) => tooltipFormatter(value) } }
+            }
+          }
+        });
+      }
+      function createFollowersBarChart(canvas, labels, values) {
+        if (!canvas || typeof Chart === 'undefined') return null;
+        followersDeltaChart?.destroy();
+        const theme = chartTheme();
+        return new Chart(canvas, {
+          type: 'bar',
+          data: {
+            labels,
+            datasets: [{
+              label: t('miniCharts.followers.eyebrow'),
+              data: values,
+              borderRadius: 999,
+              backgroundColor: values.map((value) => value >= 0 ? '#8953d1' : 'rgba(148, 163, 184, 0.65)'),
+              hoverBackgroundColor: values.map((value) => value >= 0 ? '#8953d1' : 'rgba(148, 163, 184, 0.85)')
+            }]
+          },
+          options: {
+            animation: prefersReducedMotion ? false : { duration: 1400 },
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false },
+              tooltip: { callbacks: { label: (context) => `${t('miniCharts.followers.eyebrow')}: ${formatNumber(context.parsed.y)}` } }
+            },
+            scales: {
+              x: { grid: { display: false }, ticks: { maxTicksLimit: 8, color: theme.tick } },
+              y: { grid: { color: theme.grid }, ticks: { color: theme.tick, callback: (value) => formatNumber(value) } }
+            }
+          }
+        });
+      }
+      function renderMiniCharts(data) {
+        const weeklyStats = data.weeklyStats || [];
+        const labels = weeklyStats.map((item) => `W${extractWeekNumber(item.week)}`);
+        engagementChart = createAreaChart(engagementChart, document.getElementById('engagementChart'), labels, weeklyStats.map((item) => item.totalEngagement || 0), t('miniCharts.engagement.eyebrow'));
+        profileVisitsChart = createAreaChart(profileVisitsChart, document.getElementById('profileVisitsChart'), labels, weeklyStats.map((item) => Number(item.profileVisits) || 0), t('miniCharts.profileVisits.eyebrow'));
+        followersDeltaChart = createFollowersBarChart(document.getElementById('followersDeltaChart'), labels, weeklyStats.map((item) => Number(item.newFollowers) || 0));
+
+        const peakWeek = weeklyStats.reduce((best, item) => ((item.totalViews || 0) > (best?.totalViews || 0) ? item : best), null);
+        if (!peakWeek) return;
+        document.getElementById('peakWeekLabel').textContent = `W${extractWeekNumber(peakWeek.week)}`;
+        document.getElementById('peakWeekRange').textContent = formatDateRange(peakWeek.startDate, peakWeek.endDate);
+        document.getElementById('peakWeekViews').textContent = formatShortNumber(peakWeek.totalViews || 0);
+        document.getElementById('peakWeekEngagement').textContent = formatNumber(peakWeek.totalEngagement || 0);
+      }
+      function renderContentIntelligence(data) {
+        const recentTweets = (data.recentTweets || []).slice(0, 10);
+        const topTweets = recentTweets.slice(0, 3);
+        const pillarStats = analyzePillars(recentTweets);
+        const bestPillar = strongestPillar(pillarStats);
+        const topTweetsEl = document.getElementById('contentTopTweets');
+        const pillarBarsEl = document.getElementById('pillarBars');
+        const strongestEl = document.getElementById('contentStrongestPillar');
+        const compareEl = document.getElementById('weekCompareBars');
+
+        if (topTweetsEl) {
+          topTweetsEl.innerHTML = topTweets.map((tweet, index) => `
+            <a href="${tweet.url || t('tweets.openFallback')}" target="_blank" rel="noreferrer" class="rounded-[1.5rem] border border-black/6 bg-black/[0.02] p-4 transition hover:border-[#8953d1]/30 hover:bg-[#8953d1]/[0.04] dark:border-white/8 dark:bg-white/[0.03] dark:hover:border-[#e7ddf6]/30 dark:hover:bg-[#e7ddf6]/[0.04]">
+              <div class="mb-3 flex items-center justify-between gap-3 text-xs uppercase tracking-[0.18em] text-gray-400">
+                <span>${t('contentIntelligence.topTweets.rank').replace('{value}', index + 1)}</span>
+                <span>${escapeHtml(tweet.date || '')}</span>
+              </div>
+              <p class="font-serif text-base leading-7 text-gray-700 dark:text-gray-200">${escapeHtml(truncate(tweet.text, 200))}</p>
+              <div class="mt-4 flex flex-wrap gap-3 text-xs text-gray-500 dark:text-gray-400">
+                <span>❤️ ${formatNumber(tweet.likes)}</span>
+                <span>🔄 ${formatNumber(tweet.retweets)}</span>
+                <span>👀 ${formatCompact(tweet.views)}</span>
+              </div>
+            </a>
+          `).join('');
+        }
+
+        if (strongestEl) {
+          strongestEl.textContent = bestPillar ? copy[currentLang].contentIntelligence.pillars.strongest.replace('{value}', bestPillar.label) : '—';
+        }
+
+        if (pillarBarsEl) {
+          const maxCount = Math.max(...pillarStats.map((pillar) => pillar.count), 1);
+          pillarBarsEl.innerHTML = pillarStats.map((pillar) => {
+            const width = `${Math.max((pillar.count / maxCount) * 100, pillar.count ? 12 : 4)}%`;
+            const isBest = bestPillar?.key === pillar.key;
+            return `
+              <div class="rounded-2xl border ${isBest ? 'border-[#8953d1]/20 bg-[#8953d1]/[0.05] dark:border-[#e7ddf6]/20 dark:bg-[#e7ddf6]/[0.05]' : 'border-black/6 bg-white/70 dark:border-white/8 dark:bg-white/[0.03]'} p-3">
+                <div class="mb-2 flex items-center justify-between gap-3 text-sm">
+                  <span class="font-medium text-black dark:text-white">${pillar.label}</span>
+                  <span class="text-gray-500 dark:text-gray-400">${t('contentIntelligence.pillars.tweetsCount').replace('{value}', formatNumber(pillar.count))}</span>
+                </div>
+                <div class="h-2.5 rounded-full bg-black/6 dark:bg-white/8">
+                  <div class="h-full rounded-full bg-[#8953d1]" style="width:${width}"></div>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+
+        if (compareEl) {
+          const viewsChange = formatPercentChange(data.thisWeek?.views, data.thisWeek?.previousWeekViews);
+          const engagementChange = formatPercentChange(data.thisWeek?.engagement, data.thisWeek?.previousWeekEngagement);
+          const rows = [
+            {
+              label: t('contentIntelligence.compare.views'),
+              current: data.thisWeek?.views || 0,
+              previous: data.thisWeek?.previousWeekViews || 0,
+              change: viewsChange
+            },
+            {
+              label: t('contentIntelligence.compare.engagement'),
+              current: data.thisWeek?.engagement || 0,
+              previous: data.thisWeek?.previousWeekEngagement || 0,
+              change: engagementChange
+            }
+          ];
+          compareEl.innerHTML = rows.map((row) => {
+            const positive = row.change.numeric >= 0;
+            return `
+              <div class="rounded-2xl border border-black/6 bg-white/70 p-4 dark:border-white/8 dark:bg-white/[0.03]">
+                <div class="mb-2 flex items-center justify-between gap-3">
+                  <p class="text-sm font-medium text-black dark:text-white">${row.label}</p>
+                  <span class="text-sm font-semibold ${positive ? 'text-emerald-500' : 'text-rose-500'}">${row.change.value}</span>
+                </div>
+                <p class="text-sm leading-6 text-gray-500 dark:text-gray-400">${formatNumber(row.current)} ${t('contentIntelligence.compare.vs')} ${formatNumber(row.previous)}</p>
+              </div>
+            `;
+          }).join('');
+        }
+      }
 
       function revealOnScroll() {
         const items = [...root.querySelectorAll('.fade-in-up')];
@@ -643,6 +999,8 @@ const meta = {
         renderRadar(data);
         renderGrowthChart(data);
         renderImpressionsChart(data);
+        renderMiniCharts(data);
+        renderContentIntelligence(data);
       }
 
       // Listen for global language toggle (LanguageToggle.astro sets data-lang on <html>)
