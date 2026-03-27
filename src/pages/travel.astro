@@ -183,7 +183,6 @@ const meta = {
       --travel-muted: #9b90ad;
       --travel-border: rgba(167, 117, 232, 0.18);
     }
-    .travel-hero,
     .timeline-panel,
     .map-frame,
     .insight-card {
@@ -193,9 +192,8 @@ const meta = {
     }
     .travel-hero {
       display: grid;
-      gap: 1.5rem;
-      padding: 1.5rem;
-      border-radius: 1.75rem;
+      gap: 1rem;
+      padding: 0 0 1.75rem;
     }
     .eyebrow,
     .panel-kicker,
@@ -311,10 +309,10 @@ const meta = {
     }
     .timeline-item:hover,
     .timeline-item.is-active {
-      border-color: color-mix(in srgb, #8953d1 55%, transparent);
-      transform: translateY(-1px);
-      background: color-mix(in srgb, #8953d1 8%, var(--travel-surface));
-      box-shadow: 0 0 0 1px color-mix(in srgb, #8953d1 20%, transparent), 0 4px 16px rgba(137,83,209,0.12);
+      border-color: color-mix(in srgb, #8953d1 70%, transparent);
+      transform: translateY(-2px);
+      background: color-mix(in srgb, #8953d1 10%, var(--travel-surface));
+      box-shadow: 0 0 0 1px color-mix(in srgb, #8953d1 30%, transparent), 0 6px 20px rgba(137,83,209,0.18);
     }
     .timeline-item--prior::before {
       background: linear-gradient(180deg, rgba(148, 163, 184, 0.85), rgba(148,163,184,0.25));
@@ -357,6 +355,28 @@ const meta = {
       padding: 0.2rem 0.55rem;
       border-radius: 999px;
       font-weight: 600;
+    }
+    /* Current city — pinned top, visually distinct */
+    .timeline-item--current {
+      border-color: color-mix(in srgb, #8953d1 35%, transparent);
+      background: color-mix(in srgb, #8953d1 7%, var(--travel-surface));
+    }
+    /* Prior cities section divider */
+    .timeline-section-label {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.5rem 0.2rem 0.3rem;
+      color: var(--travel-muted);
+      font-size: 0.68rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+    .timeline-section-label::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--travel-border);
     }
     .map-panel { display: grid; gap: 1rem; }
     .map-frame {
@@ -587,11 +607,12 @@ const meta = {
       };
 
       const timelineList = document.getElementById("timeline-list");
-      let timelineItemIndex = 0;
-      const addTimelineItem = (city, prior = false, prepend = false) => {
+      let staggerIndex = 0;
+
+      const addTimelineItem = (city, prior = false, extraClass = "") => {
         const button = document.createElement("button");
         button.type = "button";
-        button.className = `timeline-item${prior ? " timeline-item--prior" : ""}`;
+        button.className = ["timeline-item", prior ? "timeline-item--prior" : "", extraClass].filter(Boolean).join(" ");
         button.dataset.cityId = city.id;
         button.innerHTML = `
           <span class="time">${prior ? city.year : `${fmtDate(city.arrival)} — ${fmtDate(city.departure)}`}</span>
@@ -610,48 +631,55 @@ const meta = {
           if (window.innerWidth <= 980) timelinePanel.classList.remove("is-open");
         });
 
-        // Staggered entrance animation
-        const delay = timelineItemIndex * 60;
-        timelineItemIndex++;
+        // Staggered entrance animation — 60ms interval
+        const delay = staggerIndex * 60;
+        staggerIndex++;
         button.style.opacity = "0";
-        button.style.transform = "translateX(-12px)";
-        button.style.transition = "opacity 320ms ease-out, transform 320ms ease-out, border-color 220ms ease, background 220ms ease, box-shadow 220ms ease";
+        button.style.transform = "translateY(10px)";
+        button.style.transition = "opacity 340ms ease-out, transform 340ms ease-out, border-color 220ms ease, background 220ms ease, box-shadow 220ms ease";
+        timelineList.appendChild(button);
 
-        if (prepend && timelineList.firstChild) {
-          timelineList.insertBefore(button, timelineList.firstChild);
-        } else {
-          timelineList.appendChild(button);
-        }
-
-        // Trigger animation after paint
         requestAnimationFrame(() => {
           setTimeout(() => {
             button.style.opacity = "1";
-            button.style.transform = "translateX(0)";
+            button.style.transform = "translateY(0)";
           }, delay);
         });
       };
 
-      // Add current city first (at top)
+      const addSectionLabel = (text) => {
+        const div = document.createElement("div");
+        div.className = "timeline-section-label";
+        div.textContent = text;
+        timelineList.appendChild(div);
+      };
+
+      // 1. Current city — pinned at top, visually distinct
       const currentCityItem = cities.find((city) => city.isCurrent) || currentCity;
       if (currentCityItem) {
-        addTimelineItem(currentCityItem, false, false);
+        addTimelineItem(currentCityItem, false, "timeline-item--current");
       }
 
-      priorCities.forEach((city) => {
-        addTimelineItem(city, true, false);
-        bounds.extend([city.lat, city.lng]);
-        const icon = L.divIcon({ html: markerSvg(false, true), className: "", iconSize: [44, 44], iconAnchor: [22, 22] });
-        const marker = L.marker([city.lat, city.lng], { icon, keyboard: false }).bindPopup(popupHtml(city), { offset: [0, -10] });
-        marker.on("click", () => selectTimeline(city.id));
-        marker.addTo(priorLayer);
-      });
+      // 2. Rest of nomad cities (newest → oldest, skip current)
+      const otherNomadCities = cities
+        .filter((city) => city.id !== currentCityItem?.id)
+        .sort((a, b) => new Date(b.arrival) - new Date(a.arrival));
+      otherNomadCities.forEach((city) => addTimelineItem(city, false));
+
+      // 3. Prior cities section
+      if (priorCities.length > 0) {
+        addSectionLabel("Prior Travels");
+        priorCities.forEach((city) => {
+          addTimelineItem(city, true);
+          bounds.extend([city.lat, city.lng]);
+          const icon = L.divIcon({ html: markerSvg(false, true), className: "", iconSize: [44, 44], iconAnchor: [22, 22] });
+          const marker = L.marker([city.lat, city.lng], { icon, keyboard: false }).bindPopup(popupHtml(city), { offset: [0, -10] });
+          marker.on("click", () => selectTimeline(city.id));
+          marker.addTo(priorLayer);
+        });
+      }
 
       const markerRefs = new Map();
-      // Add non-current cities (current already added at top)
-      cities.forEach((city) => {
-        if (city.id !== currentCityItem?.id) addTimelineItem(city, false);
-      });
 
       const lineLatLngs = [];
       cities.forEach((city, index) => {
