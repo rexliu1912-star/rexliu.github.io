@@ -586,7 +586,12 @@ Digital nomad since Oct 2025 — a living map of cities, detours, libraries, and
         }, 300 * idx + 160);
       });
 
-      _map.fitBounds(bounds.pad(0.15));
+      // Fit to nomad route only (not prior cities) for a tighter initial view
+      const nomadBounds = L.latLngBounds([]);
+      sortedCities.forEach(c => nomadBounds.extend([c.lat, c.lng]));
+      if (nomadBounds.isValid()) {
+        _map.fitBounds(nomadBounds.pad(0.25), { maxZoom: 6 });
+      }
 
       // Panel close button
       document.getElementById("map-panel-close")?.addEventListener("click", closeMapPanel);
