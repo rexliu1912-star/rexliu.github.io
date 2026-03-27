@@ -527,14 +527,23 @@ const meta = {
       }
       function renderMiniCharts(data) {
         const weeklyStats = data.weeklyStats || [];
-        const labels = weeklyStats.map((item) => `W${extractWeekNumber(item.week)}`);
+        const locale = copy[currentLang].dates.locale;
+        const labels = weeklyStats.map((item, index) => {
+          const date = new Date(`${item.startDate}T00:00:00Z`);
+          const label = date.toLocaleDateString(locale, { month: 'short', year: 'numeric', timeZone: 'UTC' });
+          const previous = weeklyStats[index - 1];
+          if (!previous) return label;
+          const previousLabel = new Date(`${previous.startDate}T00:00:00Z`).toLocaleDateString(locale, { month: 'short', year: 'numeric', timeZone: 'UTC' });
+          return previousLabel === label ? '' : label;
+        });
         engagementChart = createAreaChart(engagementChart, document.getElementById('engagementChart'), labels, weeklyStats.map((item) => item.totalEngagement || 0), t('miniCharts.engagement.eyebrow'));
         profileVisitsChart = createAreaChart(profileVisitsChart, document.getElementById('profileVisitsChart'), labels, weeklyStats.map((item) => Number(item.profileVisits) || 0), t('miniCharts.profileVisits.eyebrow'));
         followersDeltaChart = createFollowersBarChart(document.getElementById('followersDeltaChart'), labels, weeklyStats.map((item) => Number(item.newFollowers) || 0));
 
         const peakWeek = weeklyStats.reduce((best, item) => ((item.totalViews || 0) > (best?.totalViews || 0) ? item : best), null);
         if (!peakWeek) return;
-        document.getElementById('peakWeekLabel').textContent = `W${extractWeekNumber(peakWeek.week)}`;
+        var peakDate = new Date(`${peakWeek.startDate}T00:00:00Z`);
+        document.getElementById('peakWeekLabel').textContent = peakDate.toLocaleDateString(locale, { month: 'short', year: 'numeric', timeZone: 'UTC' });
         document.getElementById('peakWeekRange').textContent = formatDateRange(peakWeek.startDate, peakWeek.endDate);
         document.getElementById('peakWeekViews').textContent = formatShortNumber(peakWeek.totalViews || 0);
         document.getElementById('peakWeekEngagement').textContent = formatNumber(peakWeek.totalEngagement || 0);
