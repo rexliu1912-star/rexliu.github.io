@@ -246,6 +246,15 @@ const meta = {
     }
     .travel-map { width: 100%; min-height: 620px; }
 
+    /* ---- Story panel content entrance animation ---- */
+    @keyframes story-slide-in {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .map-panel.is-open .map-panel-inner {
+      animation: story-slide-in 0.35s ease both;
+    }
+
     /* ---- Map Story Panel ---- */
     .map-panel {
       position: absolute;
@@ -734,6 +743,17 @@ const meta = {
     const PURPLE      = "#8953d1";
     const NEXT_CITY   = { name: "Xi'an", nameCN: "西安", lat: 34.3416, lng: 108.9398, date: "2026-03-31" };
 
+    // Region color palette — brand-adjacent but lively
+    const REGION_COLORS = {
+      "Yunnan":    { main: "#10b981", glow: "rgba(16,185,129,0.22)" },   // 翠绿
+      "Guangxi":   { main: "#f59e0b", glow: "rgba(245,158,11,0.22)" },   // 橙金
+      "Fujian":    { main: "#0ea5e9", glow: "rgba(14,165,233,0.22)" },   // 海蓝
+      "Sichuan":   { main: "#ef4444", glow: "rgba(239,68,68,0.22)" },    // 辣红
+      "Chongqing": { main: "#f97316", glow: "rgba(249,115,22,0.22)" },   // 橙红
+      "default":   { main: PURPLE,    glow: "rgba(137,83,209,0.22)" },
+    };
+    const getRegionColor = (province) => REGION_COLORS[province] || REGION_COLORS["default"];
+
     const getLang = () => document.documentElement.getAttribute("data-lang") === "zh" ? "zh" : "en";
     const fmtShort = (v, lang) => {
       if (!v) return lang === "zh" ? "至今" : "Now";
@@ -756,11 +776,15 @@ const meta = {
       return m ? m[1] : "Unknown";
     };
 
-    const markerSvg = (current=false, prior=false) => {
-      const c = prior ? "#94a3b8" : PURPLE;
-      const pulse = current ? `<circle cx="22" cy="22" r="17" fill="${c}" opacity="0.16"><animate attributeName="r" values="14;22;14" dur="2s" repeatCount="indefinite"/></circle>` : "";
+    const markerSvg = (current=false, prior=false, color=null) => {
+      const c = prior ? "#94a3b8" : (color || PURPLE);
+      const pulse = current
+        ? `<circle cx="22" cy="22" r="17" fill="${c}" opacity="0.16"><animate attributeName="r" values="14;22;14" dur="2s" repeatCount="indefinite"/></circle>`
+        : "";
+      const glow = !prior && !current
+        ? `<circle cx="22" cy="22" r="13" fill="${c}" opacity="0.10"/>` : "";
       return `<svg width="44" height="44" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
-        ${pulse}
+        ${pulse}${glow}
         <circle cx="22" cy="22" r="10" fill="${c}" opacity="0.18"/>
         <circle cx="22" cy="22" r="6.5" fill="${c}" stroke="white" stroke-width="2.5"/>
       </svg>`;
@@ -845,7 +869,14 @@ const meta = {
       const city = allCities.find(c => c.id === cityId);
       if (!city) return;
 
-      _map.flyTo([city.lat, city.lng], city.spots?.length ? 7.5 : 6.2, { duration: 0.9 });
+      // Dramatic fly: zoom out briefly then push into city
+      const targetZoom = city.spots?.length ? 8 : 6.8;
+      const currentZoom = _map.getZoom();
+      if (Math.abs(_map.getCenter().lat - city.lat) > 3 || Math.abs(_map.getCenter().lng - city.lng) > 3) {
+        _map.flyTo([city.lat, city.lng], targetZoom, { duration: 1.2, easeLinearity: 0.3 });
+      } else {
+        _map.flyTo([city.lat, city.lng], targetZoom, { duration: 0.8, easeLinearity: 0.5 });
+      }
 
       _spotLayer.clearLayers();
       if (!isPrior && city.spots?.length) {
@@ -1061,15 +1092,34 @@ const meta = {
         });
       });
 
-      // Nomad city markers + animated route
+      // Nomad city markers + animated route (region-colored)
       const sortedCities = [...cities].sort((a,b) => new Date(a.arrival) - new Date(b.arrival));
       const lineLatLngs = [];
 
       sortedCities.forEach((city, idx) => {
         bounds.extend([city.lat, city.lng]);
         setTimeout(() => {
-          const icon = L.divIcon({ html: markerSvg(city.isCurrent), className: "", iconSize: [44,44], iconAnchor: [22,22] });
+          const rc = getRegionColor(city.province);
+          const icon = L.divIcon({
+            html: markerSvg(city.isCurrent, false, rc.main),
+            className: "",
+            iconSize: [44,44],
+            iconAnchor: [22,22]
+          });
           const m = L.marker([city.lat, city.lng], { icon }).addTo(markerLayer);
+
+          // Hover glow ring
+          const glowDiv = document.createElement("div");
+          glowDiv.style.cssText = `position:absolute;width:44px;height:44px;border-radius:50%;background:${rc.glow};transform:scale(0);transition:transform 0.25s ease;pointer-events:none;top:0;left:0`;
+          m.on("mouseover", () => {
+            const el = m.getElement();
+            if (el) { el.style.transform = "scale(1.22)"; el.style.transition = "transform 0.2s ease"; el.style.zIndex = "999"; }
+          });
+          m.on("mouseout", () => {
+            const el = m.getElement();
+            if (el) { el.style.transform = "scale(1)"; el.style.zIndex = ""; }
+          });
+
           m.on("click", () => {
             if (_activeYear !== "now") {
               switchYear("now");
@@ -1079,11 +1129,14 @@ const meta = {
             }
           });
           _markerRefs.set(city.id, m);
-          lineLatLngs.push([city.lat, city.lng]);
 
+          // Colored route segment connecting to previous city
+          const prevCity = sortedCities[idx - 1];
+          lineLatLngs.push([city.lat, city.lng]);
           if (lineLatLngs.length > 1) {
+            const segColor = prevCity ? getRegionColor(prevCity.province).main : PURPLE;
             const segment = L.polyline(lineLatLngs.slice(-2), {
-              color: PURPLE, weight: 2.5, opacity: 0,
+              color: segColor, weight: 2.5, opacity: 0,
               dashArray: "7 11", lineCap: "round"
             }).addTo(routeLayer);
             requestAnimationFrame(() => {
@@ -1092,7 +1145,7 @@ const meta = {
                 const len = segEl.getTotalLength ? segEl.getTotalLength() : 500;
                 segEl.style.strokeDasharray = `${len}`;
                 segEl.style.strokeDashoffset = `${len}`;
-                segEl.style.opacity = "0.78";
+                segEl.style.opacity = "0.72";
                 segEl.style.transition = "stroke-dashoffset 600ms ease-out";
                 requestAnimationFrame(() => { segEl.style.strokeDashoffset = "0"; });
               }
@@ -1212,12 +1265,13 @@ const meta = {
       const heatBtn = document.getElementById("heatmap-btn");
       const showHeatmap = () => {
         _heatCircles = cities.filter(c => c.stayDays).map(c => {
-          const radius = Math.min(80000, Math.max(12000, c.stayDays * 1800));
-          const alpha = Math.min(0.55, 0.12 + c.stayDays * 0.01);
+          const rc = getRegionColor(c.province);
+          const radius = Math.min(90000, Math.max(14000, c.stayDays * 2000));
+          const alpha = Math.min(0.5, 0.1 + c.stayDays * 0.009);
           return L.circle([c.lat, c.lng], {
             radius,
             color: "transparent",
-            fillColor: PURPLE,
+            fillColor: rc.main,
             fillOpacity: alpha,
             interactive: false
           }).addTo(_map);
