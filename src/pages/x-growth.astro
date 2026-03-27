@@ -553,6 +553,7 @@ const meta = {
               <p class="font-serif text-base leading-7 text-gray-700 dark:text-gray-200">${escapeHtml(truncate(tweet.text, 200))}</p>
               <div class="mt-4 flex flex-wrap gap-3 text-xs text-gray-500 dark:text-gray-400">
                 <span>❤️ ${formatNumber(tweet.likes)}</span>
+                <span>💬 ${formatNumber(tweet.replies || 0)}</span>
                 <span>🔄 ${formatNumber(tweet.retweets)}</span>
                 <span>👀 ${formatCompact(tweet.views)}</span>
               </div>
