@@ -855,6 +855,31 @@ const meta = {
         row.innerHTML = `<span>📍</span> ${city.picks.map(p => `<span class="story-pick-tag">${p}</span>`).join(" ")}`;
         detEl.appendChild(row);
       }
+
+      // Extra visits from merged cities
+      const extraVisits = _data && _data._visitMergeMap ? (_data._visitMergeMap[city.id] || []) : [];
+      if (extraVisits.length > 0) {
+        const divider = document.createElement("div");
+        divider.style.cssText = "border-top:1px solid var(--travel-border);padding-top:0.75rem;margin-top:0.25rem;";
+        const label = document.createElement("div");
+        label.style.cssText = "font-size:0.68rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--travel-muted);margin-bottom:0.5rem;";
+        label.textContent = isZh ? "历次到访" : "Previous Visits";
+        divider.appendChild(label);
+        extraVisits.forEach(v => {
+          const vrow = document.createElement("div");
+          vrow.style.cssText = "display:flex;flex-direction:column;gap:0.2rem;padding:0.5rem 0.75rem;border-radius:0.65rem;border:1px solid var(--travel-border);background:color-mix(in srgb,var(--travel-surface) 80%,transparent);margin-bottom:0.4rem;";
+          const vtitle = document.createElement("div");
+          vtitle.style.cssText = "font-size:0.82rem;font-weight:600;color:var(--travel-text);";
+          vtitle.textContent = (isZh ? (v.yearCN || v.year) : v.year) || "";
+          const vquote = document.createElement("div");
+          vquote.style.cssText = "font-size:0.78rem;font-style:italic;color:var(--travel-soft);line-height:1.6;";
+          vquote.textContent = (isZh ? (v.quoteCN || v.quote) : v.quote) || "";
+          vrow.appendChild(vtitle);
+          if (vquote.textContent) vrow.appendChild(vquote);
+          divider.appendChild(vrow);
+        });
+        detEl.appendChild(divider);
+      }
     };
 
     /* ---- Select city ---- */
@@ -1015,6 +1040,15 @@ const meta = {
       _data = await fetch("/data/travel.json").then(r => r.json());
       const cities = _data.cities;
       const priorCities = _data.priorCities || [];
+
+      // Pre-build visit merge map on _data for renderStoryCard
+      _data._visitMergeMap = {};
+      priorCities.forEach(c => {
+        if (c.mergeInto) {
+          if (!_data._visitMergeMap[c.mergeInto]) _data._visitMergeMap[c.mergeInto] = [];
+          _data._visitMergeMap[c.mergeInto].push(c);
+        }
+      });
       const today = new Date();
       const startDate = new Date(_data.meta.startDate);
       const daysOnRoad = daysBetween(startDate, today);
@@ -1088,8 +1122,9 @@ const meta = {
         "yunhe": "Zhejiang", "sanya": "Hainan",
       };
 
-      // Prior city markers — colored by region, not grey
+      // Prior city markers — skip merged cities (rendered via primary)
       priorCities.forEach(city => {
+        if (city.mergeInto) return; // skip, shown via primary marker
         bounds.extend([city.lat, city.lng]);
         const province = PRIOR_PROVINCE[city.id] || "default";
         const rc = getRegionColor(province);
@@ -1271,7 +1306,7 @@ const meta = {
         return new Date(`${m[1]}-${m[2]||"01"}-${m[3]||"01"}`);
       };
       const allCitiesChron = [
-        ...priorCities.map(c => ({ ...c, _isPrior: true, _sortDate: parsePriorDate(c.year) })),
+        ...priorCities.filter(c => !c.mergeInto).map(c => ({ ...c, _isPrior: true, _sortDate: parsePriorDate(c.year) })),
         ...cities.map(c => ({ ...c, _isPrior: false, _sortDate: new Date(c.arrival) }))
       ].sort((a, b) => a._sortDate - b._sortDate);
 
