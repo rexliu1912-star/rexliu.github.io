@@ -42,7 +42,7 @@ const meta = {
             <p class="panel-kicker">Timeline</p>
             <h2>Nomad Route</h2>
           </div>
-          <span class="panel-badge">12 stops</span>
+          <span class="panel-badge" id="timeline-stop-count">—</span>
         </div>
         <div class="timeline-list" id="timeline-list"></div>
       </aside>
@@ -501,6 +501,7 @@ const meta = {
       const citiesCovered = cities.length + priorCities.length;
       const daysOnRoad = daysBetween(startDate, today);
       const totalDistance = cities.slice(1).reduce((sum, city, index) => sum + haversine(cities[index], city), 0);
+      const timelineStopCount = document.getElementById("timeline-stop-count");
       const longestStay = cities.filter((city) => city.stayDays).sort((a, b) => b.stayDays - a.stayDays)[0];
       const shortestStay = cities.filter((city) => city.stayDays).sort((a, b) => a.stayDays - b.stayDays)[0];
       const currentCity = cities.find((city) => city.id === data.meta.currentCity) || cities[cities.length - 1];
@@ -525,6 +526,7 @@ const meta = {
       fillCounter("cities", citiesCovered);
       fillCounter("days", daysOnRoad);
       fillCounter("distance", Math.round(totalDistance), " km");
+      if (timelineStopCount) timelineStopCount.textContent = `${citiesCovered} stops`;
 
       document.getElementById("longest-stay").textContent = `${longestStay.name} · ${longestStay.stayDays} days`;
       document.getElementById("longest-stay-note").textContent = longestStay.quoteCN;
