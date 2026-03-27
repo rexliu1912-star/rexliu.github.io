@@ -220,8 +220,25 @@ const meta = {
 		</h2>
 
 		<div class="lab-curated-scroll flex gap-4 overflow-x-auto pb-4 lg:grid lg:grid-cols-4 lg:overflow-visible lg:pb-0">
+			<!-- Library -->
+			<a href="/os/library" class="lab-curated-card lab-slide-in fade-in-up group flex w-[280px] shrink-0 flex-col rounded-xl border border-gray-200 p-5 transition-all hover:border-[#8953d1]/40 dark:border-gray-800 dark:hover:border-[#a175e8]/40 lg:w-auto" style="--delay: 150ms">
+				<span class="mb-3 text-2xl">📚</span>
+				<h3 class="mb-1 font-serif text-base font-medium text-black group-hover:text-[#8953d1] dark:text-white dark:group-hover:text-[#a175e8]">
+					Library
+				</h3>
+				<p class="font-serif text-sm text-gray-400">
+					<span class="lang-en">Books, films & shows</span>
+					<span class="lang-zh">书影记录</span>
+				</p>
+				<p class="mt-2 font-serif text-xs text-gray-400 dark:text-gray-500">
+					<span class="lang-en">What shaped how I think</span>
+					<span class="lang-zh">塑造思维的书与片</span>
+				</p>
+				<span class="mt-auto pt-3 font-serif text-sm text-purple-400 opacity-0 transition-opacity group-hover:opacity-100">→</span>
+			</a>
+
 			<!-- Bookmarks -->
-			<a href="/lab/bookmarks/" class="lab-curated-card lab-slide-in fade-in-up group flex w-[280px] shrink-0 flex-col rounded-xl border border-gray-200 p-5 transition-all hover:border-[#8953d1]/40 dark:border-gray-800 dark:hover:border-[#a175e8]/40 lg:w-auto" style="--delay: 150ms">
+			<a href="/lab/bookmarks/" class="lab-curated-card lab-slide-in fade-in-up group flex w-[280px] shrink-0 flex-col rounded-xl border border-gray-200 p-5 transition-all hover:border-[#8953d1]/40 dark:border-gray-800 dark:hover:border-[#a175e8]/40 lg:w-auto" style="--delay: 230ms">
 				<span class="mb-3 text-2xl">🔖</span>
 				<h3 class="mb-1 font-serif text-base font-medium text-black group-hover:text-[#8953d1] dark:text-white dark:group-hover:text-[#a175e8]">
 					Bookmarks
@@ -239,7 +256,7 @@ const meta = {
 			</a>
 
 			<!-- Digest -->
-			<a href="/lab/digest/" class="lab-curated-card lab-slide-in fade-in-up group flex w-[280px] shrink-0 flex-col rounded-xl border border-gray-200 p-5 transition-all hover:border-[#8953d1]/40 dark:border-gray-800 dark:hover:border-[#a175e8]/40 lg:w-auto" style="--delay: 230ms">
+			<a href="/lab/digest/" class="lab-curated-card lab-slide-in fade-in-up group flex w-[280px] shrink-0 flex-col rounded-xl border border-gray-200 p-5 transition-all hover:border-[#8953d1]/40 dark:border-gray-800 dark:hover:border-[#a175e8]/40 lg:w-auto" style="--delay: 310ms">
 				<span class="mb-3 text-2xl">📖</span>
 				<h3 class="mb-1 font-serif text-base font-medium text-black group-hover:text-[#8953d1] dark:text-white dark:group-hover:text-[#a175e8]">
 					Digest
@@ -258,7 +275,7 @@ const meta = {
 			</a>
 
 			<!-- Builder's Log -->
-			<a href="/lab/builder-log/" class="lab-curated-card lab-slide-in fade-in-up group flex w-[280px] shrink-0 flex-col rounded-xl border border-gray-200 p-5 transition-all hover:border-[#8953d1]/40 dark:border-gray-800 dark:hover:border-[#a175e8]/40 lg:w-auto" style="--delay: 310ms">
+			<a href="/lab/builder-log/" class="lab-curated-card lab-slide-in fade-in-up group flex w-[280px] shrink-0 flex-col rounded-xl border border-gray-200 p-5 transition-all hover:border-[#8953d1]/40 dark:border-gray-800 dark:hover:border-[#a175e8]/40 lg:w-auto" style="--delay: 390ms">
 				<span class="mb-3 text-2xl">🔨</span>
 				<h3 class="mb-1 font-serif text-base font-medium text-black group-hover:text-[#8953d1] dark:text-white dark:group-hover:text-[#a175e8]">
 					Builder's Log
@@ -273,23 +290,6 @@ const meta = {
 						<span class="lang-zh">最新: {(latestBuilderLog.data.title_zh || latestBuilderLog.data.title).slice(0, 30)}{(latestBuilderLog.data.title_zh || latestBuilderLog.data.title).length > 30 ? "…" : ""}</span>
 					</p>
 				)}
-				<span class="mt-auto pt-3 font-serif text-sm text-purple-400 opacity-0 transition-opacity group-hover:opacity-100">→</span>
-			</a>
-
-			<!-- Library -->
-			<a href="/os/library" class="lab-curated-card lab-slide-in fade-in-up group flex w-[280px] shrink-0 flex-col rounded-xl border border-gray-200 p-5 transition-all hover:border-[#8953d1]/40 dark:border-gray-800 dark:hover:border-[#a175e8]/40 lg:w-auto" style="--delay: 390ms">
-				<span class="mb-3 text-2xl">📚</span>
-				<h3 class="mb-1 font-serif text-base font-medium text-black group-hover:text-[#8953d1] dark:text-white dark:group-hover:text-[#a175e8]">
-					Library
-				</h3>
-				<p class="font-serif text-sm text-gray-400">
-					<span class="lang-en">Books, films & shows</span>
-					<span class="lang-zh">书影记录</span>
-				</p>
-				<p class="mt-2 font-serif text-xs text-gray-400 dark:text-gray-500">
-					<span class="lang-en">What shaped how I think</span>
-					<span class="lang-zh">塑造思维的书与片</span>
-				</p>
 				<span class="mt-auto pt-3 font-serif text-sm text-purple-400 opacity-0 transition-opacity group-hover:opacity-100">→</span>
 			</a>
 		</div>
