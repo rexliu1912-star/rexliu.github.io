@@ -2,8 +2,8 @@
 import PageLayout from "@/layouts/Base.astro";
 
 const meta = {
-  title: "Travel",
-  description: "An interactive map of Rex Liu's digital nomad journey across China.",
+	title: "Travel",
+	description: "An interactive map of Rex Liu's digital nomad journey across China.",
 };
 ---
 
@@ -16,7 +16,7 @@ const meta = {
 
   <section class="travel-shell">
 
-    <!-- ====== HERO — 与全站风格一致，无独立卡片容器 ====== -->
+    <!-- ====== HERO ====== -->
     <div class="travel-hero">
       <p class="eyebrow fade-in-up" style="--delay: 40ms">Digital Nomad Atlas</p>
       <h1 class="hero-reveal-text font-serif text-4xl font-bold dark:text-white sm:text-5xl" style="letter-spacing: -0.01em">
@@ -41,83 +41,82 @@ const meta = {
       </div>
     </div>
 
-    <!-- ====== MAIN LAYOUT ====== -->
-    <div class="travel-layout">
-
-      <!-- LEFT: Timeline panel -->
-      <aside class="timeline-panel fade-in-up" style="--delay: 140ms">
-        <div class="panel-head">
-          <p class="panel-kicker">Nomad Route</p>
-          <span class="panel-badge font-serif" id="timeline-stop-count">—</span>
-        </div>
-
-        <!-- Current city — pinned hero card -->
-        <div class="current-city-card" id="current-city-card">
-          <div class="current-city-inner">
-            <div class="current-city-top">
-              <span class="now-pill">📍 NOW</span>
-              <span class="current-city-duration font-serif" id="current-city-duration">—</span>
-            </div>
-            <h2 class="current-city-name font-serif" id="current-city-name">—</h2>
-            <p class="current-city-quote font-serif" id="current-city-quote">—</p>
-            <div class="current-city-spots" id="current-city-spots"></div>
+    <!-- ====== MAP (full width, main hero) ====== -->
+    <div class="map-section fade-in-up" style="--delay: 80ms">
+      <div class="map-frame">
+        <div class="map-overlay">
+          <div>
+            <p class="panel-kicker">Interactive Map</p>
+            <h3 class="map-title font-serif">城市轨迹 / City by city</h3>
           </div>
         </div>
+        <div id="travel-map" class="travel-map" aria-label="Travel map"></div>
+      </div>
+    </div>
 
-        <!-- Nomad timeline -->
-        <div class="timeline-list" id="timeline-list"></div>
+    <!-- ====== HORIZONTAL TIMELINE ====== -->
+    <div class="timeline-section fade-in-up" style="--delay: 120ms">
+      <div class="timeline-nav">
+        <button class="tl-arrow tl-arrow--left font-serif" id="tl-arrow-left" type="button" aria-label="Scroll left">←</button>
+        <div class="tl-scroll" id="tl-scroll">
+          <div class="tl-track-h" id="tl-track"></div>
+        </div>
+        <button class="tl-arrow tl-arrow--right font-serif" id="tl-arrow-right" type="button" aria-label="Scroll right">→</button>
+      </div>
+      <button class="prior-toggle font-serif" id="prior-toggle" type="button" aria-expanded="false">
+        <span id="prior-toggle-label" data-en="Earlier travels" data-zh="更早的旅行">Earlier travels</span>
+        <span class="prior-arrow" id="prior-arrow">↓</span>
+      </button>
+      <div class="prior-track-wrap" id="prior-track-wrap" aria-hidden="true">
+        <div class="tl-scroll tl-scroll--prior">
+          <div class="tl-track-h" id="tl-prior-track"></div>
+        </div>
+      </div>
+    </div>
 
-        <!-- Prior cities toggle -->
-        <button class="prior-toggle font-serif" id="prior-toggle" type="button" aria-expanded="false">
-          <span id="prior-toggle-label">Prior Travels</span>
-          <span class="prior-arrow" id="prior-arrow">↓</span>
-        </button>
-        <div class="prior-list" id="prior-list" aria-hidden="true"></div>
-      </aside>
-
-      <!-- RIGHT: Map + insights -->
-      <section class="map-panel fade-in-up" style="--delay: 80ms">
-        <div class="map-frame">
-          <div class="map-overlay">
-            <div>
-              <p class="panel-kicker">Interactive Map</p>
-              <h3 class="map-title font-serif">城市轨迹 / City by city</h3>
-            </div>
-            <button class="drawer-toggle font-serif" id="timeline-toggle" type="button" aria-expanded="false">
-              Timeline
-            </button>
+    <!-- ====== STORY CARD ====== -->
+    <div class="story-card-wrap" id="story-card-wrap">
+      <article class="story-card" id="story-card">
+        <div class="story-head">
+          <div class="story-head-left">
+            <h2 class="story-city font-serif" id="story-city">—</h2>
+            <span class="story-meta font-serif" id="story-meta"></span>
           </div>
-          <div id="travel-map" class="travel-map" aria-label="Travel map"></div>
+          <span class="story-time font-serif" id="story-time"></span>
         </div>
+        <div class="story-images" id="story-images"></div>
+        <blockquote class="story-quote font-serif" id="story-quote"></blockquote>
+        <div class="story-details" id="story-details"></div>
+      </article>
+    </div>
 
-        <div class="insight-grid">
-          <article class="insight-card">
-            <span class="insight-label">Longest Stay</span>
-            <strong class="font-serif" id="longest-stay">—</strong>
-            <p id="longest-stay-note">Slow living compounds.</p>
-          </article>
-          <article class="insight-card">
-            <span class="insight-label">Shortest Stay</span>
-            <strong class="font-serif" id="shortest-stay">—</strong>
-            <p id="shortest-stay-note">Quick trips still leave a mark.</p>
-          </article>
-          <article class="insight-card">
-            <span class="insight-label">Current Streak</span>
-            <strong class="font-serif" id="current-streak">—</strong>
-            <p>Days since the journey began.</p>
-          </article>
-          <article class="insight-card">
-            <span class="insight-label">Libraries Found</span>
-            <strong class="font-serif" id="libraries-found">—</strong>
-            <p>Bookstores and libraries along the route.</p>
-          </article>
-          <article class="insight-card insight-card--wide">
-            <span class="insight-label">Best Meals on Record</span>
-            <strong class="font-serif" id="best-meal">—</strong>
-            <p id="best-meal-note">Every city leaves a taste memory.</p>
-          </article>
-        </div>
-      </section>
+    <!-- ====== INSIGHT GRID ====== -->
+    <div class="insight-grid">
+      <article class="insight-card">
+        <span class="insight-label">Longest Stay</span>
+        <strong class="font-serif" id="longest-stay">—</strong>
+        <p id="longest-stay-note">Slow living compounds.</p>
+      </article>
+      <article class="insight-card">
+        <span class="insight-label">Shortest Stay</span>
+        <strong class="font-serif" id="shortest-stay">—</strong>
+        <p id="shortest-stay-note">Quick trips still leave a mark.</p>
+      </article>
+      <article class="insight-card">
+        <span class="insight-label">Current Streak</span>
+        <strong class="font-serif" id="current-streak">—</strong>
+        <p>Days since the journey began.</p>
+      </article>
+      <article class="insight-card">
+        <span class="insight-label">Libraries Found</span>
+        <strong class="font-serif" id="libraries-found">—</strong>
+        <p>Bookstores and libraries along the route.</p>
+      </article>
+      <article class="insight-card insight-card--wide">
+        <span class="insight-label">Best Meals on Record</span>
+        <strong class="font-serif" id="best-meal">—</strong>
+        <p id="best-meal-note">Every city leaves a taste memory.</p>
+      </article>
     </div>
   </section>
 
@@ -130,15 +129,6 @@ const meta = {
 
   <style>
     /* ---- Leaflet overrides ---- */
-    :global(.leaflet-popup-content-wrapper),
-    :global(.leaflet-popup-tip) {
-      background: color-mix(in srgb, var(--travel-surface) 92%, transparent);
-      color: var(--travel-text);
-      border: 1px solid color-mix(in srgb, #8953d1 24%, transparent);
-      box-shadow: 0 20px 50px rgba(16, 18, 27, 0.22);
-      backdrop-filter: blur(20px);
-    }
-    :global(.leaflet-popup-content) { margin: 0; min-width: 260px; }
     :global(.leaflet-control-attribution),
     :global(.leaflet-control-zoom a) {
       background: color-mix(in srgb, var(--travel-surface) 92%, transparent) !important;
@@ -146,38 +136,6 @@ const meta = {
       border-color: color-mix(in srgb, #8953d1 24%, transparent) !important;
     }
     :global(.leaflet-control-zoom a:hover) { color: #8953d1 !important; }
-    :global(.travel-popup) {
-      padding: 1.1rem 1.1rem 0.9rem;
-      font-family: Georgia, "Times New Roman", serif;
-    }
-    :global(.travel-popup h3) {
-      margin: 0 0 0.2rem;
-      font-size: 1.2rem;
-      font-weight: 700;
-      color: var(--travel-text);
-    }
-    :global(.travel-popup .meta) {
-      display: block;
-      margin-bottom: 0.65rem;
-      font-size: 0.71rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--travel-muted);
-    }
-    :global(.travel-popup p) {
-      margin: 0 0 0.85rem;
-      line-height: 1.65;
-      color: var(--travel-soft);
-      font-size: 0.92rem;
-    }
-    :global(.travel-popup .tags) { display: flex; flex-wrap: wrap; gap: 0.35rem; }
-    :global(.travel-popup .tags span) {
-      border-radius: 999px;
-      background: color-mix(in srgb, #8953d1 10%, transparent);
-      color: #8953d1;
-      padding: 0.2rem 0.55rem;
-      font-size: 0.7rem;
-    }
 
     /* ---- CSS variables ---- */
     .travel-shell {
@@ -202,7 +160,7 @@ const meta = {
       --travel-border:  rgba(161, 117, 232, 0.18);
     }
 
-    /* ---- Hero (no card wrapper — matches site style) ---- */
+    /* ---- Hero ---- */
     .travel-hero { display: grid; gap: 1rem; padding-bottom: 0.5rem; }
     .eyebrow {
       margin: 0;
@@ -210,7 +168,6 @@ const meta = {
       text-transform: uppercase;
       letter-spacing: 0.22em;
       font-size: 0.72rem;
-      font-family: Georgia, serif;
     }
     .hero-stats {
       display: grid;
@@ -243,292 +200,13 @@ const meta = {
       line-height: 1.05;
     }
 
-    /* ---- Layout grid ---- */
-    .travel-layout {
-      display: grid;
-      grid-template-columns: 300px minmax(0, 1fr);
-      gap: 1.5rem;
-      align-items: start;
-    }
-
-    /* ---- Timeline panel ---- */
-    .timeline-panel {
-      position: sticky;
-      top: 5.6rem;
-      border-radius: 1.5rem;
-      border: 1px solid var(--travel-border);
-      background: linear-gradient(180deg,
-        color-mix(in srgb, var(--travel-surface) 95%, transparent),
-        color-mix(in srgb, var(--travel-panel) 100%, transparent));
-      backdrop-filter: blur(18px);
-      padding: 1.1rem;
-      max-height: calc(100vh - 7rem);
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-    }
-    .panel-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .panel-kicker {
-      margin: 0;
-      color: var(--purple);
-      text-transform: uppercase;
-      letter-spacing: 0.2em;
-      font-size: 0.68rem;
-      font-family: Georgia, serif;
-    }
-    .panel-badge {
-      border-radius: 999px;
-      border: 1px solid var(--travel-border);
-      color: var(--travel-muted);
-      padding: 0.28rem 0.65rem;
-      font-size: 0.7rem;
-      white-space: nowrap;
-      letter-spacing: 0.08em;
-    }
-
-    /* ---- Current city card (pinned hero inside panel) ---- */
-    .current-city-card {
-      border-radius: 1.15rem;
-      border: 1px solid color-mix(in srgb, var(--purple) 35%, transparent);
-      background: color-mix(in srgb, var(--purple) 7%, var(--travel-surface));
-      box-shadow: 0 0 0 1px color-mix(in srgb, var(--purple) 12%, transparent),
-                  0 6px 24px rgba(137,83,209,0.14);
-      overflow: hidden;
-      flex-shrink: 0;
-      cursor: pointer;
-      transition: box-shadow 0.25s, transform 0.25s, border-color 0.25s;
-    }
-    .current-city-card:hover {
-      border-color: color-mix(in srgb, var(--purple) 60%, transparent);
-      box-shadow: 0 0 0 1px color-mix(in srgb, var(--purple) 25%, transparent),
-                  0 10px 32px rgba(137,83,209,0.22);
-      transform: translateY(-2px);
-    }
-    .current-city-inner { padding: 1rem 1.1rem 1rem; }
-    .current-city-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 0.5rem;
-    }
-    .now-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.25rem;
-      background: var(--purple);
-      color: #fff;
-      font-size: 0.64rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      padding: 0.22rem 0.55rem;
-      border-radius: 999px;
-      font-weight: 600;
-      font-family: Georgia, serif;
-    }
-    .current-city-duration {
-      font-size: 0.72rem;
-      color: var(--travel-muted);
-      letter-spacing: 0.06em;
-    }
-    .current-city-name {
-      margin: 0 0 0.4rem;
-      font-size: 1.65rem;
-      font-weight: 700;
-      line-height: 1.1;
-      color: var(--travel-text);
-    }
-    .current-city-quote {
-      margin: 0 0 0.65rem;
-      font-size: 0.86rem;
-      line-height: 1.6;
-      color: var(--travel-soft);
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-    .current-city-spots {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.3rem;
-    }
-    .current-city-spots span {
-      border-radius: 999px;
-      background: color-mix(in srgb, var(--purple) 10%, transparent);
-      color: var(--purple);
-      padding: 0.18rem 0.5rem;
-      font-size: 0.68rem;
-      font-family: Georgia, serif;
-    }
-    :global(html[data-theme="dark"]) .current-city-spots span {
-      color: var(--purple-light);
-      background: color-mix(in srgb, var(--purple-light) 12%, transparent);
-    }
-
-    /* ---- Scrollable timeline list ---- */
-    .timeline-list {
-      flex: 1;
-      overflow-y: auto;
-      overflow-x: hidden;
-      padding-right: 0.15rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-      /* custom scrollbar */
-      scrollbar-width: thin;
-      scrollbar-color: color-mix(in srgb, var(--purple) 20%, transparent) transparent;
-    }
-    .timeline-list::-webkit-scrollbar { width: 3px; }
-    .timeline-list::-webkit-scrollbar-thumb {
-      background: color-mix(in srgb, var(--purple) 28%, transparent);
-      border-radius: 999px;
-    }
-
-    /* Individual timeline item */
-    .tl-item {
-      position: relative;
-      display: flex;
-      gap: 0.75rem;
-      padding: 0.75rem 0.6rem 0.75rem 0;
-      cursor: pointer;
-      border-radius: 0.75rem;
-      transition: background 0.2s ease;
-    }
-    .tl-item:hover { background: color-mix(in srgb, var(--purple) 6%, transparent); }
-    .tl-item.is-active { background: color-mix(in srgb, var(--purple) 9%, transparent); }
-
-    /* Vertical track line + dot */
-    .tl-track {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      flex-shrink: 0;
-      width: 1.4rem;
-      padding-top: 0.25rem;
-    }
-    .tl-dot {
-      width: 0.55rem;
-      height: 0.55rem;
-      border-radius: 50%;
-      background: color-mix(in srgb, var(--purple) 45%, transparent);
-      border: 1.5px solid color-mix(in srgb, var(--purple) 55%, transparent);
-      flex-shrink: 0;
-      transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
-    }
-    .tl-item:hover .tl-dot,
-    .tl-item.is-active .tl-dot {
-      background: var(--purple);
-      border-color: var(--purple);
-      box-shadow: 0 0 0 3px color-mix(in srgb, var(--purple) 22%, transparent);
-    }
-    .tl-line {
-      flex: 1;
-      width: 1px;
-      background: linear-gradient(180deg,
-        color-mix(in srgb, var(--purple) 25%, transparent),
-        color-mix(in srgb, var(--purple) 6%, transparent));
-      margin-top: 0.35rem;
-    }
-    .tl-content { flex: 1; min-width: 0; }
-    .tl-time {
-      display: block;
-      font-size: 0.68rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--travel-muted);
-      margin-bottom: 0.22rem;
-      font-family: Georgia, serif;
-    }
-    .tl-name {
-      display: block;
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: var(--travel-text);
-      margin-bottom: 0.22rem;
-      font-family: Georgia, "Times New Roman", serif;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .tl-item.is-active .tl-name { color: var(--purple); }
-    :global(html[data-theme="dark"]) .tl-item.is-active .tl-name { color: var(--purple-light); }
-    .tl-quote {
-      display: block;
-      font-size: 0.78rem;
-      line-height: 1.5;
-      color: var(--travel-soft);
-      font-family: Georgia, serif;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-
-    /* ---- Prior travels toggle ---- */
-    .prior-toggle {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 100%;
-      padding: 0.55rem 0.6rem;
-      border-radius: 0.75rem;
-      border: 1px dashed var(--travel-border);
-      background: transparent;
-      color: var(--travel-muted);
-      font-size: 0.72rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: border-color 0.2s, color 0.2s, background 0.2s;
-      flex-shrink: 0;
-    }
-    .prior-toggle:hover {
-      border-color: color-mix(in srgb, var(--purple) 40%, transparent);
-      color: var(--purple);
-      background: color-mix(in srgb, var(--purple) 5%, transparent);
-    }
-    .prior-arrow { transition: transform 0.25s ease; }
-    .prior-toggle[aria-expanded="true"] .prior-arrow { transform: rotate(180deg); }
-
-    .prior-list {
-      overflow: hidden;
-      max-height: 0;
-      transition: max-height 0.35s ease;
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-    }
-    .prior-list.is-open { max-height: 600px; }
-
-    /* Prior items — slightly muted */
-    .tl-item--prior .tl-dot {
-      background: color-mix(in srgb, #94a3b8 40%, transparent);
-      border-color: color-mix(in srgb, #94a3b8 50%, transparent);
-    }
-    .tl-item--prior .tl-line {
-      background: linear-gradient(180deg,
-        color-mix(in srgb, #94a3b8 20%, transparent),
-        color-mix(in srgb, #94a3b8 5%, transparent));
-    }
-    .tl-item--prior:hover .tl-dot,
-    .tl-item--prior.is-active .tl-dot {
-      background: #94a3b8;
-      border-color: #94a3b8;
-      box-shadow: 0 0 0 3px rgba(148,163,184,0.18);
-    }
-
     /* ---- Map ---- */
-    .map-panel { display: grid; gap: 1.1rem; }
+    .map-section { display: grid; }
     .map-frame {
       position: relative;
       overflow: hidden;
       border-radius: 1.6rem;
-      min-height: 680px;
+      min-height: 620px;
       border: 1px solid var(--travel-border);
       background: color-mix(in srgb, var(--travel-surface) 90%, transparent);
     }
@@ -543,26 +221,291 @@ const meta = {
       pointer-events: none;
     }
     .map-overlay > * { pointer-events: auto; }
+    .panel-kicker {
+      margin: 0;
+      color: var(--purple);
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      font-size: 0.68rem;
+    }
     .map-title {
       margin: 0.15rem 0 0;
       font-size: 1.15rem;
       font-weight: 600;
       color: var(--travel-text);
     }
-    .drawer-toggle {
-      display: none;
-      border-radius: 999px;
+    .travel-map { width: 100%; min-height: 620px; }
+
+    /* ---- Horizontal Timeline ---- */
+    .timeline-section { display: grid; gap: 0.75rem; }
+    .timeline-nav {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .tl-arrow {
+      flex-shrink: 0;
+      width: 2.2rem;
+      height: 2.2rem;
+      border-radius: 50%;
       border: 1px solid var(--travel-border);
       background: color-mix(in srgb, var(--travel-surface) 92%, transparent);
-      backdrop-filter: blur(10px);
+      color: var(--travel-muted);
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+    }
+    .tl-arrow:hover {
+      border-color: var(--purple);
+      color: var(--purple);
+      background: color-mix(in srgb, var(--purple) 8%, transparent);
+    }
+    .tl-scroll {
+      flex: 1;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+    .tl-scroll::-webkit-scrollbar { display: none; }
+    .tl-track-h {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      padding: 0.75rem 0;
+      position: relative;
+    }
+
+    /* Timeline dot-item */
+    .tl-stop {
+      scroll-snap-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.35rem;
+      min-width: 5.5rem;
+      padding: 0.5rem 0.4rem;
+      cursor: pointer;
+      border-radius: 0.75rem;
+      transition: background 0.2s;
+      position: relative;
+    }
+    .tl-stop:hover { background: color-mix(in srgb, var(--purple) 6%, transparent); }
+    .tl-stop.is-active { background: color-mix(in srgb, var(--purple) 10%, transparent); }
+    .tl-stop-dot {
+      width: 0.6rem;
+      height: 0.6rem;
+      border-radius: 50%;
+      background: color-mix(in srgb, var(--purple) 45%, transparent);
+      border: 1.5px solid color-mix(in srgb, var(--purple) 55%, transparent);
+      transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
+      flex-shrink: 0;
+    }
+    .tl-stop:hover .tl-stop-dot,
+    .tl-stop.is-active .tl-stop-dot {
+      background: var(--purple);
+      border-color: var(--purple);
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--purple) 18%, transparent);
+    }
+    .tl-stop-dot.is-current {
+      background: var(--purple);
+      border-color: var(--purple);
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { box-shadow: 0 0 0 3px color-mix(in srgb, var(--purple) 25%, transparent); }
+      50% { box-shadow: 0 0 0 8px color-mix(in srgb, var(--purple) 10%, transparent); }
+    }
+    .tl-stop-name {
+      font-size: 0.72rem;
+      font-weight: 600;
       color: var(--travel-text);
-      padding: 0.6rem 1rem;
-      font-size: 0.74rem;
+      white-space: nowrap;
+    }
+    .tl-stop.is-active .tl-stop-name { color: var(--purple); }
+    :global(html[data-theme="dark"]) .tl-stop.is-active .tl-stop-name { color: var(--purple-light); }
+    .tl-stop-date {
+      font-size: 0.6rem;
+      color: var(--travel-muted);
+      letter-spacing: 0.06em;
+      white-space: nowrap;
+    }
+    .now-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.2rem;
+      background: var(--purple);
+      color: #fff;
+      font-size: 0.55rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.15rem 0.45rem;
+      border-radius: 999px;
+      font-weight: 600;
+    }
+    /* Line connector between dots */
+    .tl-connector {
+      width: 2rem;
+      height: 1px;
+      background: color-mix(in srgb, var(--purple) 22%, transparent);
+      flex-shrink: 0;
+      margin-top: -1.2rem;
+      align-self: flex-start;
+      margin-top: 0.65rem;
+    }
+
+    /* Prior toggle */
+    .prior-toggle {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      padding: 0.55rem 0.8rem;
+      border-radius: 0.75rem;
+      border: 1px dashed var(--travel-border);
+      background: transparent;
+      color: var(--travel-muted);
+      font-size: 0.72rem;
       letter-spacing: 0.14em;
       text-transform: uppercase;
       cursor: pointer;
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
     }
-    .travel-map { width: 100%; min-height: 680px; }
+    .prior-toggle:hover {
+      border-color: color-mix(in srgb, var(--purple) 40%, transparent);
+      color: var(--purple);
+      background: color-mix(in srgb, var(--purple) 5%, transparent);
+    }
+    .prior-arrow { transition: transform 0.25s ease; }
+    .prior-toggle[aria-expanded="true"] .prior-arrow { transform: rotate(180deg); }
+
+    .prior-track-wrap {
+      overflow: hidden;
+      max-height: 0;
+      transition: max-height 0.35s ease;
+    }
+    .prior-track-wrap.is-open { max-height: 200px; }
+    .tl-scroll--prior { opacity: 0.7; }
+
+    /* Prior dots — gray */
+    .tl-stop--prior .tl-stop-dot {
+      background: color-mix(in srgb, #94a3b8 40%, transparent);
+      border-color: color-mix(in srgb, #94a3b8 50%, transparent);
+    }
+    .tl-stop--prior:hover .tl-stop-dot,
+    .tl-stop--prior.is-active .tl-stop-dot {
+      background: #94a3b8;
+      border-color: #94a3b8;
+      box-shadow: 0 0 0 4px rgba(148,163,184,0.18);
+    }
+
+    /* ---- Story Card ---- */
+    .story-card-wrap {
+      position: relative;
+      min-height: 120px;
+    }
+    .story-card {
+      border-radius: 1.35rem;
+      border: 1px solid var(--travel-border);
+      background: color-mix(in srgb, var(--travel-surface) 95%, transparent);
+      padding: 1.5rem 1.8rem;
+      display: grid;
+      gap: 1.1rem;
+      transition: opacity 280ms ease, transform 280ms ease;
+      box-shadow: 0 2px 12px rgba(137,83,209,0.06);
+    }
+    .story-card.is-exit {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    .story-card.is-enter {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+    .story-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .story-head-left { display: flex; flex-direction: column; gap: 0.25rem; }
+    .story-city {
+      margin: 0;
+      font-size: clamp(1.6rem, 3.5vw, 2rem);
+      font-weight: 700;
+      line-height: 1.15;
+      color: var(--travel-text);
+    }
+    .story-meta {
+      font-size: 0.78rem;
+      color: var(--travel-muted);
+      letter-spacing: 0.06em;
+    }
+    .story-time {
+      font-size: 0.78rem;
+      color: var(--purple);
+      letter-spacing: 0.06em;
+      white-space: nowrap;
+      padding-top: 0.35rem;
+    }
+    :global(html[data-theme="dark"]) .story-time { color: var(--purple-light); }
+
+    /* Images */
+    .story-images {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 0.75rem;
+    }
+    .story-images:empty { display: none; }
+    .story-images img {
+      width: 100%;
+      aspect-ratio: 16/9;
+      object-fit: cover;
+      border-radius: 0.75rem;
+      border: 1px solid var(--travel-border);
+    }
+
+    /* Quote */
+    .story-quote {
+      margin: 0;
+      font-size: clamp(1.05rem, 2vw, 1.25rem);
+      font-style: italic;
+      line-height: 1.75;
+      color: var(--travel-soft);
+      padding: 0.5rem 0;
+      border-top: 1px solid var(--travel-border);
+    }
+    .story-quote:empty { display: none; }
+
+    /* Details (tastes + picks) */
+    .story-details { display: grid; gap: 0.6rem; }
+    .story-details:empty { display: none; }
+    .story-detail-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--travel-soft);
+      flex-wrap: wrap;
+    }
+    .story-detail-icon { flex-shrink: 0; }
+    .story-pick-tag {
+      display: inline-block;
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--purple) 10%, transparent);
+      color: var(--purple);
+      padding: 0.2rem 0.6rem;
+      font-size: 0.72rem;
+    }
+    :global(html[data-theme="dark"]) .story-pick-tag {
+      color: var(--purple-light);
+      background: color-mix(in srgb, var(--purple-light) 12%, transparent);
+    }
 
     /* ---- Insight grid ---- */
     .insight-grid {
@@ -603,31 +546,17 @@ const meta = {
       margin: 0.5rem 0 0;
       line-height: 1.65;
       color: var(--travel-soft);
-      font-family: Georgia, serif;
       font-size: 0.85rem;
     }
     .insight-card--wide { grid-column: span 2; }
 
     /* ---- Responsive ---- */
-    @media (max-width: 980px) {
-      .travel-layout { grid-template-columns: 1fr; }
-      .timeline-panel {
-        position: fixed;
-        left: 1rem; right: 1rem; bottom: 1rem; top: auto;
-        z-index: 700;
-        max-height: min(72vh, 34rem);
-        transform: translateY(calc(100% + 1.5rem));
-        transition: transform 280ms ease;
-      }
-      .timeline-panel.is-open { transform: translateY(0); }
-      .drawer-toggle { display: inline-flex; }
-      .map-frame, .travel-map { min-height: 70vh; }
-    }
     @media (max-width: 720px) {
       .hero-stats, .insight-grid { grid-template-columns: 1fr; }
       .insight-card--wide { grid-column: span 1; }
-      .map-frame, .travel-map { min-height: 62vh; }
-      .map-overlay { flex-direction: column; align-items: flex-start; }
+      .map-frame, .travel-map { min-height: 50vh; }
+      .tl-arrow { display: none; }
+      .story-card { padding: 1.2rem; }
     }
   </style>
 
@@ -642,8 +571,14 @@ const meta = {
     const TILE_DARK  = "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
     const PURPLE = "#8953d1";
 
-    const fmtDate = (v) => !v ? "Now" : new Date(v).toLocaleDateString("en-US", { year:"numeric", month:"short", day:"numeric" });
-    const fmtShort = (v) => !v ? "Now" : new Date(v).toLocaleDateString("en-US", { month:"short", year:"2-digit" });
+    const getLang = () => document.documentElement.getAttribute("data-lang") === "zh" ? "zh" : "en";
+    const fmtShort = (v, lang) => {
+      if (!v) return lang === "zh" ? "至今" : "Now";
+      const d = new Date(v);
+      return lang === "zh"
+        ? `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,"0")}`
+        : d.toLocaleDateString("en-US", { month:"short", year:"2-digit" });
+    };
     const daysBetween = (a, b) => Math.max(1, Math.round((b - a) / 86400000) + 1);
     const haversine = (a, b) => {
       const R = 6371, r = d => d * Math.PI / 180;
@@ -651,14 +586,6 @@ const meta = {
       const q = Math.sin(dLat/2)**2 + Math.cos(r(a.lat)) * Math.cos(r(b.lat)) * Math.sin(dLng/2)**2;
       return 2 * R * Math.atan2(Math.sqrt(q), Math.sqrt(1-q));
     };
-
-    const popupHtml = (city) => `
-      <article class="travel-popup">
-        <span class="meta">${city.nameCN} · ${city.provinceCN || city.year || ""}</span>
-        <h3>${city.name}</h3>
-        <p>${city.quoteCN || city.quote}</p>
-        <div class="tags">${(city.spots||[]).slice(0,5).map(s=>`<span>${s.nameCN}</span>`).join("")}</div>
-      </article>`;
 
     const markerSvg = (current=false, prior=false) => {
       const c = prior ? "#94a3b8" : PURPLE;
@@ -671,22 +598,205 @@ const meta = {
     };
     const spotSvg = `<svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg"><circle cx="9" cy="9" r="5" fill="#fdf7ff" stroke="#8953d1" stroke-width="2"/></svg>`;
 
+    let _map, _data, _currentCityItem, _markerRefs, _spotLayer, _selectedId;
+
+    /* ---- Story Card ---- */
+    const renderStoryCard = (city, isPrior) => {
+      const lang = getLang();
+      const card = document.getElementById("story-card");
+      const isZh = lang === "zh";
+
+      // Exit animation
+      card.classList.add("is-exit");
+
+      setTimeout(() => {
+        // City name
+        document.getElementById("story-city").textContent = isZh ? city.nameCN : city.name;
+
+        // Meta: province + stay
+        let metaParts = [];
+        if (city.provinceCN || city.province) metaParts.push(isZh ? city.provinceCN : city.province);
+        if (city.stayLabelCN || city.stayLabel) metaParts.push(isZh ? city.stayLabelCN : city.stayLabel);
+        document.getElementById("story-meta").textContent = metaParts.join(" · ");
+
+        // Time
+        const timeEl = document.getElementById("story-time");
+        if (city.isCurrent) {
+          timeEl.innerHTML = '<span class="now-pill">NOW</span>';
+        } else if (isPrior) {
+          timeEl.textContent = isZh ? (city.yearCN || city.year) : city.year;
+        } else {
+          timeEl.textContent = `${fmtShort(city.arrival, lang)} — ${fmtShort(city.departure, lang)}`;
+        }
+
+        // Images
+        const imgEl = document.getElementById("story-images");
+        imgEl.innerHTML = "";
+        if (city.images && city.images.length > 0) {
+          city.images.forEach(src => {
+            const img = document.createElement("img");
+            img.src = src;
+            img.alt = isZh ? city.nameCN : city.name;
+            img.loading = "lazy";
+            imgEl.appendChild(img);
+          });
+        }
+
+        // Quote
+        const quoteEl = document.getElementById("story-quote");
+        const quote = isZh ? (city.quoteCN || city.quote) : city.quote;
+        quoteEl.textContent = quote ? `"${quote}"` : "";
+
+        // Details (tastes + picks)
+        const detEl = document.getElementById("story-details");
+        detEl.innerHTML = "";
+
+        if (city.tastes && city.tastes.length > 0) {
+          const row = document.createElement("div");
+          row.className = "story-detail-row";
+          const tasteText = city.tastes.map(t => isZh ? t.nameCN : t.name).join(" · ");
+          row.innerHTML = `<span class="story-detail-icon">🍜</span> <span>${isZh ? "味道推荐" : "Taste Picks"}：${tasteText}</span>`;
+          detEl.appendChild(row);
+        }
+
+        if (city.picks && city.picks.length > 0) {
+          const row = document.createElement("div");
+          row.className = "story-detail-row";
+          row.innerHTML = `<span class="story-detail-icon">📍</span> ${city.picks.map(p => `<span class="story-pick-tag">${p}</span>`).join(" ")}`;
+          detEl.appendChild(row);
+        }
+
+        // Enter animation
+        card.classList.remove("is-exit");
+        card.classList.add("is-enter");
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            card.classList.remove("is-enter");
+          });
+        });
+      }, 280);
+    };
+
+    /* ---- Select city (unified) ---- */
+    const selectCity = (cityId, isPrior) => {
+      if (_selectedId === cityId) return;
+      _selectedId = cityId;
+
+      // Update timeline highlight
+      document.querySelectorAll(".tl-stop").forEach(n => n.classList.toggle("is-active", n.dataset.cityId === cityId));
+
+      // Scroll active into view
+      const active = document.querySelector(`.tl-stop[data-city-id="${cityId}"]`);
+      active?.scrollIntoView({ inline: "center", behavior: "smooth" });
+
+      // Find city data
+      const allCities = [..._data.cities, ...(_data.priorCities || [])];
+      const city = allCities.find(c => c.id === cityId);
+      if (!city) return;
+
+      // Map flyTo
+      _map.flyTo([city.lat, city.lng], city.spots?.length ? 7.5 : 6.2, { duration: 0.9 });
+
+      // Show spots
+      _spotLayer.clearLayers();
+      if (!isPrior && city.spots?.length) {
+        city.spots.forEach(s => {
+          const icon = L.divIcon({ html: spotSvg, className: "", iconSize: [18,18], iconAnchor: [9,9] });
+          L.marker([s.lat, s.lng], { icon })
+            .bindTooltip(`${s.nameCN} · ${s.name}`, { direction: "top", offset: [0,-8] })
+            .addTo(_spotLayer);
+        });
+        if (city.spots.length > 1) {
+          L.polyline(city.spots.map(s => [s.lat, s.lng]), { color: PURPLE, opacity: 0.32, weight: 1.5, dashArray: "4 7" }).addTo(_spotLayer);
+        }
+      }
+
+      // Update story card
+      renderStoryCard(city, isPrior);
+    };
+
+    /* ---- Build horizontal timeline ---- */
+    const buildTimeline = () => {
+      const lang = getLang();
+      const isZh = lang === "zh";
+      const track = document.getElementById("tl-track");
+      const priorTrack = document.getElementById("tl-prior-track");
+      track.innerHTML = "";
+      priorTrack.innerHTML = "";
+
+      // Nomad cities — chronological order
+      const sorted = [..._data.cities].sort((a,b) => new Date(a.arrival) - new Date(b.arrival));
+      sorted.forEach((city, idx) => {
+        if (idx > 0) {
+          const conn = document.createElement("div");
+          conn.className = "tl-connector";
+          track.appendChild(conn);
+        }
+        const stop = document.createElement("div");
+        stop.className = "tl-stop";
+        stop.dataset.cityId = city.id;
+        if (city.id === _selectedId) stop.classList.add("is-active");
+
+        const dotClass = city.isCurrent ? "tl-stop-dot is-current" : "tl-stop-dot";
+        const nameText = isZh ? city.nameCN : city.name;
+        const dateText = city.isCurrent ? "" : fmtShort(city.arrival, lang);
+        const nowBadge = city.isCurrent ? `<span class="now-pill">NOW</span>` : "";
+
+        stop.innerHTML = `
+          ${nowBadge}
+          <div class="${dotClass}"></div>
+          <span class="tl-stop-name">${nameText}</span>
+          <span class="tl-stop-date">${dateText}</span>
+        `;
+        stop.addEventListener("click", () => selectCity(city.id, false));
+        track.appendChild(stop);
+      });
+
+      // Prior cities
+      const priorCities = _data.priorCities || [];
+      priorCities.forEach((city, idx) => {
+        if (idx > 0) {
+          const conn = document.createElement("div");
+          conn.className = "tl-connector";
+          priorTrack.appendChild(conn);
+        }
+        const stop = document.createElement("div");
+        stop.className = "tl-stop tl-stop--prior";
+        stop.dataset.cityId = city.id;
+        if (city.id === _selectedId) stop.classList.add("is-active");
+
+        const nameText = isZh ? city.nameCN : city.name;
+        stop.innerHTML = `
+          <div class="tl-stop-dot"></div>
+          <span class="tl-stop-name">${nameText}</span>
+          <span class="tl-stop-date">${city.year || ""}</span>
+        `;
+        stop.addEventListener("click", () => selectCity(city.id, true));
+        priorTrack.appendChild(stop);
+      });
+
+      // Update prior toggle label
+      const toggleLabel = document.getElementById("prior-toggle-label");
+      if (toggleLabel) toggleLabel.textContent = isZh ? "更早的旅行" : "Earlier travels";
+    };
+
+    /* ---- Main init ---- */
     const initTravel = async () => {
       const mapNode = document.getElementById("travel-map");
       if (!mapNode || !window.L) return;
       if (mapNode.dataset.ready === "true") return;
       mapNode.dataset.ready = "true";
 
-      const data = await fetch("/data/travel.json").then(r => r.json());
-      const cities = data.cities;
-      const priorCities = data.priorCities || [];
+      _data = await fetch("/data/travel.json").then(r => r.json());
+      const cities = _data.cities;
+      const priorCities = _data.priorCities || [];
       const today = new Date();
-      const startDate = new Date(data.meta.startDate);
+      const startDate = new Date(_data.meta.startDate);
       const daysOnRoad = daysBetween(startDate, today);
       const totalDistance = cities.slice(1).reduce((s, c, i) => s + haversine(cities[i], c), 0);
       const citiesCovered = cities.length + priorCities.length;
 
-      const currentCityItem = cities.find(c => c.id === data.meta.currentCity) || cities[cities.length - 1];
+      _currentCityItem = cities.find(c => c.id === _data.meta.currentCity) || cities[cities.length - 1];
       const longestStay  = cities.filter(c => c.stayDays).sort((a,b) => b.stayDays - a.stayDays)[0];
       const shortestStay = cities.filter(c => c.stayDays).sort((a,b) => a.stayDays - b.stayDays)[0];
       const libraries = cities.flatMap(c => c.spots||[]).filter(s => s.isLibrary).length;
@@ -709,9 +819,8 @@ const meta = {
       fillCounter("days", daysOnRoad);
       fillCounter("distance", Math.round(totalDistance), " km");
 
-      // Stat badges
+      // Insight badges
       const el = id => document.getElementById(id);
-      el("timeline-stop-count").textContent = `${cities.length} stops`;
       el("longest-stay").textContent   = longestStay ? `${longestStay.name} · ${longestStay.stayDays}d` : "—";
       el("longest-stay-note").textContent  = longestStay?.quoteCN || "";
       el("shortest-stay").textContent  = shortestStay ? `${shortestStay.name} · ${shortestStay.stayDays}d` : "—";
@@ -719,174 +828,136 @@ const meta = {
       el("current-streak").textContent = `${daysOnRoad} days`;
       el("libraries-found").textContent = `${libraries}`;
       el("best-meal").textContent = allMeals.slice(0,3).join(" / ");
-      el("best-meal-note").textContent = currentCityItem?.mealCN ? `${currentCityItem.nameCN} right now: ${currentCityItem.mealCN}` : "";
-
-      // Current city card
-      el("current-city-name").textContent = currentCityItem.nameCN;
-      el("current-city-quote").textContent = currentCityItem.quoteCN || currentCityItem.quote;
-      const daysHere = daysBetween(new Date(currentCityItem.arrival), today);
-      el("current-city-duration").textContent = `${daysHere} days`;
-      const spotsEl = el("current-city-spots");
-      (currentCityItem.spots||[]).slice(0,4).forEach(s => {
-        const sp = document.createElement("span"); sp.textContent = s.nameCN; spotsEl.appendChild(sp);
-      });
+      el("best-meal-note").textContent = _currentCityItem?.mealCN ? `${_currentCityItem.nameCN} right now: ${_currentCityItem.mealCN}` : "";
 
       // Map init
-      const map = L.map(mapNode, { zoomControl:true, attributionControl:true, preferCanvas:true })
-                   .setView([27.5, 106.1], 5.4);
+      _map = L.map(mapNode, { zoomControl: true, attributionControl: true, preferCanvas: true })
+               .setView([27.5, 106.1], 5.4);
       let tileLayer;
       const setTiles = () => {
         const dark = document.documentElement.getAttribute("data-theme") === "dark";
         if (tileLayer) tileLayer.remove();
         tileLayer = L.tileLayer(dark ? TILE_DARK : TILE_LIGHT, {
-          subdomains:"abcd", maxZoom:18,
-          attribution:'&copy; OpenStreetMap contributors &copy; CARTO'
-        }).addTo(map);
+          subdomains: "abcd", maxZoom: 18,
+          attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
+        }).addTo(_map);
       };
       setTiles();
-      new MutationObserver(setTiles).observe(document.documentElement, { attributes:true, attributeFilter:["data-theme"] });
 
-      const routeLayer  = L.layerGroup().addTo(map);
-      const markerLayer = L.layerGroup().addTo(map);
-      const spotLayer   = L.layerGroup().addTo(map);
-      const priorLayer  = L.layerGroup().addTo(map);
+      const routeLayer  = L.layerGroup().addTo(_map);
+      const markerLayer = L.layerGroup().addTo(_map);
+      _spotLayer   = L.layerGroup().addTo(_map);
+      const priorLayer  = L.layerGroup().addTo(_map);
       const bounds = L.latLngBounds([]);
-      const markerRefs = new Map();
+      _markerRefs = new Map();
 
-      const showCitySpots = (city) => {
-        spotLayer.clearLayers();
-        if (!city.spots?.length) return;
-        const lls = city.spots.map(s => [s.lat, s.lng]);
-        lls.forEach((ll, i) => {
-          const icon = L.divIcon({ html:spotSvg, className:"", iconSize:[18,18], iconAnchor:[9,9] });
-          L.marker(ll, {icon}).bindTooltip(`${city.spots[i].nameCN} · ${city.spots[i].name}`, {direction:"top",offset:[0,-8]}).addTo(spotLayer);
-        });
-        if (lls.length > 1) L.polyline(lls, {color:PURPLE,opacity:0.32,weight:1.5,dashArray:"4 7"}).addTo(spotLayer);
-        map.flyToBounds(L.latLngBounds(lls).pad(0.4), {duration:0.85, maxZoom:10});
-      };
-
-      const selectTimeline = (id) => {
-        document.querySelectorAll(".tl-item").forEach(n => n.classList.toggle("is-active", n.dataset.cityId===id));
-        // scroll active item into view inside the list
-        const active = document.querySelector(`.tl-item[data-city-id="${id}"]`);
-        active?.scrollIntoView({block:"nearest", behavior:"smooth"});
-      };
-
-      // Build timeline items — stagger 60ms
-      let staggerIdx = 0;
-      const addTlItem = (city, prior=false, container=null) => {
-        const target = container || document.getElementById("timeline-list");
-        const div = document.createElement("div");
-        div.className = `tl-item${prior ? " tl-item--prior" : ""}`;
-        div.dataset.cityId = city.id;
-
-        const timeLabel = prior
-          ? (city.year || "")
-          : `${fmtShort(city.arrival)} — ${fmtShort(city.departure)}`;
-
-        div.innerHTML = `
-          <div class="tl-track">
-            <div class="tl-dot"></div>
-            <div class="tl-line"></div>
-          </div>
-          <div class="tl-content">
-            <span class="tl-time">${timeLabel}</span>
-            <span class="tl-name">${city.nameCN}</span>
-            <span class="tl-quote">${city.quoteCN || city.quote}</span>
-          </div>`;
-
-        div.addEventListener("click", () => {
-          selectTimeline(city.id);
-          if (prior) {
-            map.flyTo([city.lat, city.lng], 6.2, {duration:0.9});
-          } else {
-            map.flyTo([city.lat, city.lng], city.spots?.length ? 7.5 : 6.5, {duration:0.9});
-            showCitySpots(city);
-            markerRefs.get(city.id)?.openPopup();
-          }
-          if (window.innerWidth <= 980) document.querySelector(".timeline-panel")?.classList.remove("is-open");
-        });
-
-        // Stagger entrance
-        const delay = staggerIdx * 60;
-        staggerIdx++;
-        div.style.cssText = "opacity:0;transform:translateY(8px);transition:opacity 320ms ease-out,transform 320ms ease-out";
-        target.appendChild(div);
-        requestAnimationFrame(() => setTimeout(() => {
-          div.style.opacity = "1"; div.style.transform = "translateY(0)";
-        }, delay));
-      };
-
-      // Current city card click → fly map
-      el("current-city-card")?.addEventListener("click", () => {
-        selectTimeline(currentCityItem.id);
-        map.flyTo([currentCityItem.lat, currentCityItem.lng],
-          currentCityItem.spots?.length ? 7.5 : 6.5, {duration:0.9});
-        showCitySpots(currentCityItem);
-        markerRefs.get(currentCityItem.id)?.openPopup();
-      });
-
-      // Nomad cities (newest first, skip current)
-      const nomadOthers = cities
-        .filter(c => c.id !== currentCityItem.id)
-        .sort((a,b) => new Date(b.arrival) - new Date(a.arrival));
-      nomadOthers.forEach(c => addTlItem(c));
-
-      // Prior cities (collapsed)
-      const priorListEl = el("prior-list");
-      const priorToggle = el("prior-toggle");
-      const priorArrow  = el("prior-arrow");
+      // Prior city markers (no popup)
       priorCities.forEach(city => {
-        addTlItem(city, true, priorListEl);
         bounds.extend([city.lat, city.lng]);
-        const icon = L.divIcon({html:markerSvg(false,true),className:"",iconSize:[44,44],iconAnchor:[22,22]});
-        const m = L.marker([city.lat,city.lng],{icon,keyboard:false}).bindPopup(popupHtml(city),{offset:[0,-10]});
-        m.on("click", () => selectTimeline(city.id));
-        m.addTo(priorLayer);
-      });
-      priorToggle?.addEventListener("click", () => {
-        const open = priorListEl.classList.toggle("is-open");
-        priorToggle.setAttribute("aria-expanded", String(open));
-        el("prior-toggle-label").textContent = open ? "Prior Travels" : "Prior Travels";
+        const icon = L.divIcon({ html: markerSvg(false, true), className: "", iconSize: [44,44], iconAnchor: [22,22] });
+        const m = L.marker([city.lat, city.lng], { icon, keyboard: false }).addTo(priorLayer);
+        m.on("click", () => selectCity(city.id, true));
       });
 
-      // Map markers + route — staggered appear
+      // Nomad city markers — staggered + route dash animation
+      const sortedCities = [...cities].sort((a,b) => new Date(a.arrival) - new Date(b.arrival));
       const lineLatLngs = [];
-      cities.forEach((city, idx) => {
+
+      sortedCities.forEach((city, idx) => {
         bounds.extend([city.lat, city.lng]);
         setTimeout(() => {
-          const icon = L.divIcon({html:markerSvg(city.isCurrent),className:"",iconSize:[44,44],iconAnchor:[22,22]});
-          const m = L.marker([city.lat,city.lng],{icon}).bindPopup(popupHtml(city),{offset:[0,-12]});
-          m.on("click", () => { selectTimeline(city.id); showCitySpots(city); });
-          m.addTo(markerLayer);
-          markerRefs.set(city.id, m);
+          const icon = L.divIcon({ html: markerSvg(city.isCurrent), className: "", iconSize: [44,44], iconAnchor: [22,22] });
+          const m = L.marker([city.lat, city.lng], { icon }).addTo(markerLayer);
+          m.on("click", () => selectCity(city.id, false));
+          _markerRefs.set(city.id, m);
+
           lineLatLngs.push([city.lat, city.lng]);
+
+          // SVG dash animation for route segments
           if (lineLatLngs.length > 1) {
-            L.polyline(lineLatLngs.slice(-2), {
-              color:PURPLE, weight:2.5, opacity:0.78,
-              dashArray:"7 11", lineCap:"round"
+            const segment = L.polyline(lineLatLngs.slice(-2), {
+              color: PURPLE, weight: 2.5, opacity: 0,
+              dashArray: "7 11", lineCap: "round",
+              className: "route-segment"
             }).addTo(routeLayer);
+
+            // Animate in: fade opacity
+            requestAnimationFrame(() => {
+              const el = segment.getElement();
+              if (el) {
+                const len = el.getTotalLength ? el.getTotalLength() : 500;
+                el.style.strokeDasharray = `${len}`;
+                el.style.strokeDashoffset = `${len}`;
+                el.style.opacity = "0.78";
+                el.style.transition = "stroke-dashoffset 600ms ease-out";
+                requestAnimationFrame(() => { el.style.strokeDashoffset = "0"; });
+              }
+            });
           }
-          if (idx === cities.length - 1) {
+
+          // After last city → select current
+          if (idx === sortedCities.length - 1) {
             setTimeout(() => {
-              selectTimeline(currentCityItem.id);
-              markerRefs.get(currentCityItem.id)?.openPopup();
-              showCitySpots(currentCityItem);
+              _selectedId = null;
+              selectCity(_currentCityItem.id, false);
             }, 400);
           }
-        }, 200 * idx + 160);
+        }, 300 * idx + 160);
       });
-      map.fitBounds(bounds.pad(0.15));
 
-      // Mobile drawer
-      const timelinePanel = document.querySelector(".timeline-panel");
-      el("timeline-toggle")?.addEventListener("click", () => {
-        const open = timelinePanel.classList.toggle("is-open");
-        el("timeline-toggle").setAttribute("aria-expanded", String(open));
+      _map.fitBounds(bounds.pad(0.15));
+
+      // Build timeline
+      buildTimeline();
+
+      // Arrow navigation
+      const scrollContainer = document.getElementById("tl-scroll");
+      document.getElementById("tl-arrow-left")?.addEventListener("click", () => {
+        scrollContainer.scrollBy({ left: -200, behavior: "smooth" });
       });
+      document.getElementById("tl-arrow-right")?.addEventListener("click", () => {
+        scrollContainer.scrollBy({ left: 200, behavior: "smooth" });
+      });
+
+      // Prior toggle
+      const priorToggle = document.getElementById("prior-toggle");
+      const priorWrap = document.getElementById("prior-track-wrap");
+      priorToggle?.addEventListener("click", () => {
+        const open = priorWrap.classList.toggle("is-open");
+        priorToggle.setAttribute("aria-expanded", String(open));
+      });
+
+      // Theme observer — swap tiles
+      new MutationObserver(setTiles).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+
+      // Lang observer — rebuild timeline + refresh story card
+      new MutationObserver(() => {
+        buildTimeline();
+        // Refresh current story card
+        if (_selectedId) {
+          const allCities = [..._data.cities, ...(_data.priorCities || [])];
+          const city = allCities.find(c => c.id === _selectedId);
+          const isPrior = (_data.priorCities || []).some(c => c.id === _selectedId);
+          if (city) {
+            // Skip exit animation for lang switch — just re-render instantly
+            const card = document.getElementById("story-card");
+            card.classList.remove("is-exit", "is-enter");
+            const savedId = _selectedId;
+            _selectedId = null;
+            // Temporarily bypass animation
+            renderStoryCard(city, isPrior);
+            _selectedId = savedId;
+          }
+        }
+      }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-lang"] });
     };
 
     initTravel();
-    document.addEventListener("astro:page-load", initTravel);
+    document.addEventListener("astro:page-load", () => {
+      const mapNode = document.getElementById("travel-map");
+      if (mapNode) mapNode.dataset.ready = "";
+      _selectedId = null;
+      initTravel();
+    });
   </script>
 </PageLayout>
