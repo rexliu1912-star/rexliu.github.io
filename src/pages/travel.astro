@@ -41,7 +41,7 @@ const meta = {
       </div>
     </div>
 
-    <!-- ====== MAP (full width, main hero) ====== -->
+    <!-- ====== MAP ====== -->
     <div class="map-section fade-in-up" style="--delay: 80ms">
       <div class="map-frame">
         <div class="map-overlay">
@@ -51,43 +51,30 @@ const meta = {
           </div>
         </div>
         <div id="travel-map" class="travel-map" aria-label="Travel map"></div>
-      </div>
-    </div>
 
-    <!-- ====== HORIZONTAL TIMELINE ====== -->
-    <div class="timeline-section fade-in-up" style="--delay: 120ms">
-      <div class="timeline-nav">
-        <button class="tl-arrow tl-arrow--left font-serif" id="tl-arrow-left" type="button" aria-label="Scroll left">←</button>
-        <div class="tl-scroll" id="tl-scroll">
-          <div class="tl-track-h" id="tl-track"></div>
-        </div>
-        <button class="tl-arrow tl-arrow--right font-serif" id="tl-arrow-right" type="button" aria-label="Scroll right">→</button>
-      </div>
-      <button class="prior-toggle font-serif" id="prior-toggle" type="button" aria-expanded="false">
-        <span id="prior-toggle-label" data-en="Earlier travels" data-zh="更早的旅行">Earlier travels</span>
-        <span class="prior-arrow" id="prior-arrow">↓</span>
-      </button>
-      <div class="prior-track-wrap" id="prior-track-wrap" aria-hidden="true">
-        <div class="tl-scroll tl-scroll--prior">
-          <div class="tl-track-h" id="tl-prior-track"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ====== STORY CARD ====== -->
-    <div class="story-card-wrap" id="story-card-wrap">
-      <article class="story-card" id="story-card">
-        <div class="story-head">
-          <div class="story-head-left">
-            <h2 class="story-city font-serif" id="story-city">—</h2>
-            <span class="story-meta font-serif" id="story-meta"></span>
+        <!-- ====== MAP STORY PANEL ====== -->
+        <aside class="map-panel" id="map-panel" aria-hidden="true">
+          <button class="map-panel-close" id="map-panel-close" type="button" aria-label="Close">✕</button>
+          <div class="map-panel-inner" id="story-card">
+            <div class="story-head">
+              <div class="story-head-left">
+                <h2 class="story-city font-serif" id="story-city">—</h2>
+                <span class="story-meta font-serif" id="story-meta"></span>
+              </div>
+              <span class="story-time font-serif" id="story-time"></span>
+            </div>
+            <div class="story-images" id="story-images"></div>
+            <blockquote class="story-quote font-serif" id="story-quote"></blockquote>
+            <div class="story-details" id="story-details"></div>
           </div>
-          <span class="story-time font-serif" id="story-time"></span>
-        </div>
-        <div class="story-images" id="story-images"></div>
-        <blockquote class="story-quote font-serif" id="story-quote"></blockquote>
-        <div class="story-details" id="story-details"></div>
-      </article>
+        </aside>
+      </div>
+    </div>
+
+    <!-- ====== YEAR TAB TIMELINE ====== -->
+    <div class="year-tab-section fade-in-up" style="--delay: 120ms">
+      <div class="year-tabs" id="year-tabs" role="tablist" aria-label="Travel years"></div>
+      <div class="year-cities" id="year-cities" role="tabpanel"></div>
     </div>
 
     <!-- ====== INSIGHT GRID ====== -->
@@ -236,104 +223,148 @@ const meta = {
     }
     .travel-map { width: 100%; min-height: 620px; }
 
-    /* ---- Horizontal Timeline ---- */
-    .timeline-section { display: grid; gap: 0.75rem; }
-    .timeline-nav {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
+    /* ---- Map Story Panel ---- */
+    .map-panel {
+      position: absolute;
+      top: 0.75rem;
+      right: 0.75rem;
+      bottom: 0.75rem;
+      width: min(340px, calc(100% - 1.5rem));
+      z-index: 600;
+      border-radius: 1.25rem;
+      background: color-mix(in srgb, var(--travel-panel) 97%, transparent);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--travel-border);
+      box-shadow: 0 8px 40px rgba(0,0,0,0.14), 0 0 0 1px rgba(137,83,209,0.08);
+      transform: translateX(calc(100% + 1.5rem));
+      transition: transform 0.38s cubic-bezier(0.34, 1.28, 0.64, 1), opacity 0.3s;
+      opacity: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scrollbar-width: thin;
+      scrollbar-color: color-mix(in srgb, var(--purple) 22%, transparent) transparent;
     }
-    .tl-arrow {
-      flex-shrink: 0;
-      width: 2.2rem;
-      height: 2.2rem;
+    .map-panel::-webkit-scrollbar { width: 4px; }
+    .map-panel::-webkit-scrollbar-thumb {
+      background: color-mix(in srgb, var(--purple) 22%, transparent);
+      border-radius: 2px;
+    }
+    .map-panel.is-open {
+      transform: translateX(0);
+      opacity: 1;
+    }
+
+    .map-panel-close {
+      position: sticky;
+      top: 0.6rem;
+      float: right;
+      margin: 0.65rem 0.7rem 0 0;
+      width: 1.7rem;
+      height: 1.7rem;
       border-radius: 50%;
       border: 1px solid var(--travel-border);
-      background: color-mix(in srgb, var(--travel-surface) 92%, transparent);
+      background: color-mix(in srgb, var(--travel-surface) 95%, transparent);
       color: var(--travel-muted);
-      font-size: 1rem;
+      font-size: 0.75rem;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: border-color 0.2s, color 0.2s, background 0.2s;
-    }
-    .tl-arrow:hover {
-      border-color: var(--purple);
-      color: var(--purple);
-      background: color-mix(in srgb, var(--purple) 8%, transparent);
-    }
-    .tl-scroll {
-      flex: 1;
-      overflow-x: auto;
-      overflow-y: hidden;
-      scroll-snap-type: x mandatory;
-      scrollbar-width: none;
-      -webkit-overflow-scrolling: touch;
-    }
-    .tl-scroll::-webkit-scrollbar { display: none; }
-    .tl-track-h {
-      display: flex;
-      align-items: center;
-      gap: 0;
-      padding: 0.75rem 0;
-      position: relative;
-    }
-
-    /* Timeline dot-item */
-    .tl-stop {
-      scroll-snap-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.35rem;
-      min-width: 5.5rem;
-      padding: 0.5rem 0.4rem;
-      cursor: pointer;
-      border-radius: 0.75rem;
-      transition: background 0.2s;
-      position: relative;
-    }
-    .tl-stop:hover { background: color-mix(in srgb, var(--purple) 6%, transparent); }
-    .tl-stop.is-active { background: color-mix(in srgb, var(--purple) 10%, transparent); }
-    .tl-stop-dot {
-      width: 0.6rem;
-      height: 0.6rem;
-      border-radius: 50%;
-      background: color-mix(in srgb, var(--purple) 45%, transparent);
-      border: 1.5px solid color-mix(in srgb, var(--purple) 55%, transparent);
-      transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
+      z-index: 10;
+      transition: all 0.2s;
       flex-shrink: 0;
     }
-    .tl-stop:hover .tl-stop-dot,
-    .tl-stop.is-active .tl-stop-dot {
-      background: var(--purple);
+    .map-panel-close:hover {
+      background: color-mix(in srgb, var(--purple) 12%, transparent);
       border-color: var(--purple);
-      box-shadow: 0 0 0 4px color-mix(in srgb, var(--purple) 18%, transparent);
+      color: var(--purple);
     }
-    .tl-stop-dot.is-current {
-      background: var(--purple);
-      border-color: var(--purple);
-      animation: pulse-dot 2s ease-in-out infinite;
+
+    .map-panel-inner {
+      padding: 0.4rem 1.2rem 1.5rem;
+      display: grid;
+      gap: 1rem;
     }
-    @keyframes pulse-dot {
-      0%, 100% { box-shadow: 0 0 0 3px color-mix(in srgb, var(--purple) 25%, transparent); }
-      50% { box-shadow: 0 0 0 8px color-mix(in srgb, var(--purple) 10%, transparent); }
+
+    /* story elements inside panel */
+    .map-panel-inner .story-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 0.75rem;
+      flex-wrap: wrap;
     }
-    .tl-stop-name {
-      font-size: 0.72rem;
-      font-weight: 600;
+    .map-panel-inner .story-head-left { display: flex; flex-direction: column; gap: 0.2rem; }
+    .map-panel-inner .story-city {
+      margin: 0;
+      font-size: clamp(1.3rem, 2.5vw, 1.6rem);
+      font-weight: 700;
+      line-height: 1.15;
       color: var(--travel-text);
-      white-space: nowrap;
     }
-    .tl-stop.is-active .tl-stop-name { color: var(--purple); }
-    :global(html[data-theme="dark"]) .tl-stop.is-active .tl-stop-name { color: var(--purple-light); }
-    .tl-stop-date {
-      font-size: 0.6rem;
+    .map-panel-inner .story-meta {
+      font-size: 0.73rem;
       color: var(--travel-muted);
-      letter-spacing: 0.06em;
-      white-space: nowrap;
+      letter-spacing: 0.05em;
     }
+    .map-panel-inner .story-time {
+      font-size: 0.73rem;
+      color: var(--purple);
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+      padding-top: 0.2rem;
+    }
+    :global(html[data-theme="dark"]) .map-panel-inner .story-time { color: var(--purple-light); }
+
+    .map-panel-inner .story-images {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.55rem;
+    }
+    .map-panel-inner .story-images:empty { display: none; }
+    .map-panel-inner .story-images img {
+      width: 100%;
+      aspect-ratio: 16/9;
+      object-fit: cover;
+      border-radius: 0.65rem;
+      border: 1px solid var(--travel-border);
+    }
+
+    .map-panel-inner .story-quote {
+      margin: 0;
+      font-size: 0.93rem;
+      font-style: italic;
+      line-height: 1.72;
+      color: var(--travel-soft);
+      padding: 0.5rem 0;
+      border-top: 1px solid var(--travel-border);
+    }
+    .map-panel-inner .story-quote:empty { display: none; }
+
+    .map-panel-inner .story-details { display: grid; gap: 0.5rem; }
+    .map-panel-inner .story-details:empty { display: none; }
+    .map-panel-inner .story-detail-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.4rem;
+      font-size: 0.8rem;
+      color: var(--travel-soft);
+      flex-wrap: wrap;
+    }
+    .map-panel-inner .story-pick-tag {
+      display: inline-block;
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--purple) 10%, transparent);
+      color: var(--purple);
+      padding: 0.18rem 0.55rem;
+      font-size: 0.7rem;
+    }
+    :global(html[data-theme="dark"]) .map-panel-inner .story-pick-tag {
+      color: var(--purple-light);
+      background: color-mix(in srgb, var(--purple-light) 12%, transparent);
+    }
+
     .now-pill {
       display: inline-flex;
       align-items: center;
@@ -347,164 +378,138 @@ const meta = {
       border-radius: 999px;
       font-weight: 600;
     }
-    /* Line connector between dots */
-    .tl-connector {
-      width: 2rem;
-      height: 1px;
-      background: color-mix(in srgb, var(--purple) 22%, transparent);
-      flex-shrink: 0;
-      margin-top: -1.2rem;
-      align-self: flex-start;
-      margin-top: 0.65rem;
-    }
 
-    /* Prior toggle */
-    .prior-toggle {
+    /* ---- Year Tab Timeline ---- */
+    .year-tab-section { display: grid; gap: 1rem; }
+
+    .year-tabs {
       display: flex;
-      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.4rem;
       align-items: center;
-      width: 100%;
-      padding: 0.55rem 0.8rem;
-      border-radius: 0.75rem;
-      border: 1px dashed var(--travel-border);
-      background: transparent;
-      color: var(--travel-muted);
-      font-size: 0.72rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: border-color 0.2s, color 0.2s, background 0.2s;
-    }
-    .prior-toggle:hover {
-      border-color: color-mix(in srgb, var(--purple) 40%, transparent);
-      color: var(--purple);
-      background: color-mix(in srgb, var(--purple) 5%, transparent);
-    }
-    .prior-arrow { transition: transform 0.25s ease; }
-    .prior-toggle[aria-expanded="true"] .prior-arrow { transform: rotate(180deg); }
-
-    .prior-track-wrap {
-      overflow: hidden;
-      max-height: 0;
-      transition: max-height 0.35s ease;
-    }
-    .prior-track-wrap.is-open { max-height: 200px; }
-    .tl-scroll--prior { opacity: 0.7; }
-
-    /* Prior dots — gray */
-    .tl-stop--prior .tl-stop-dot {
-      background: color-mix(in srgb, #94a3b8 40%, transparent);
-      border-color: color-mix(in srgb, #94a3b8 50%, transparent);
-    }
-    .tl-stop--prior:hover .tl-stop-dot,
-    .tl-stop--prior.is-active .tl-stop-dot {
-      background: #94a3b8;
-      border-color: #94a3b8;
-      box-shadow: 0 0 0 4px rgba(148,163,184,0.18);
     }
 
-    /* ---- Story Card ---- */
-    .story-card-wrap {
-      position: relative;
-      min-height: 120px;
-    }
-    .story-card {
-      border-radius: 1.35rem;
-      border: 1px solid var(--travel-border);
-      background: color-mix(in srgb, var(--travel-surface) 95%, transparent);
-      padding: 1.5rem 1.8rem;
-      display: grid;
-      gap: 1.1rem;
-      transition: opacity 280ms ease, transform 280ms ease;
-      box-shadow: 0 2px 12px rgba(137,83,209,0.06);
-    }
-    .story-card.is-exit {
-      opacity: 0;
-      transform: translateX(-20px);
-    }
-    .story-card.is-enter {
-      opacity: 0;
-      transform: translateX(20px);
-    }
-    .story-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
-    .story-head-left { display: flex; flex-direction: column; gap: 0.25rem; }
-    .story-city {
-      margin: 0;
-      font-size: clamp(1.6rem, 3.5vw, 2rem);
-      font-weight: 700;
-      line-height: 1.15;
-      color: var(--travel-text);
-    }
-    .story-meta {
-      font-size: 0.78rem;
-      color: var(--travel-muted);
-      letter-spacing: 0.06em;
-    }
-    .story-time {
-      font-size: 0.78rem;
-      color: var(--purple);
-      letter-spacing: 0.06em;
-      white-space: nowrap;
-      padding-top: 0.35rem;
-    }
-    :global(html[data-theme="dark"]) .story-time { color: var(--purple-light); }
-
-    /* Images */
-    .story-images {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 0.75rem;
-    }
-    .story-images:empty { display: none; }
-    .story-images img {
-      width: 100%;
-      aspect-ratio: 16/9;
-      object-fit: cover;
-      border-radius: 0.75rem;
-      border: 1px solid var(--travel-border);
-    }
-
-    /* Quote */
-    .story-quote {
-      margin: 0;
-      font-size: clamp(1.05rem, 2vw, 1.25rem);
-      font-style: italic;
-      line-height: 1.75;
-      color: var(--travel-soft);
-      padding: 0.5rem 0;
-      border-top: 1px solid var(--travel-border);
-    }
-    .story-quote:empty { display: none; }
-
-    /* Details (tastes + picks) */
-    .story-details { display: grid; gap: 0.6rem; }
-    .story-details:empty { display: none; }
-    .story-detail-row {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.5rem;
-      font-size: 0.85rem;
-      color: var(--travel-soft);
-      flex-wrap: wrap;
-    }
-    .story-detail-icon { flex-shrink: 0; }
-    .story-pick-tag {
-      display: inline-block;
+    .year-tab {
+      padding: 0.35rem 1rem;
       border-radius: 999px;
-      background: color-mix(in srgb, var(--purple) 10%, transparent);
-      color: var(--purple);
-      padding: 0.2rem 0.6rem;
-      font-size: 0.72rem;
+      border: 1px solid var(--travel-border);
+      background: color-mix(in srgb, var(--travel-surface) 85%, transparent);
+      color: var(--travel-muted);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+      white-space: nowrap;
     }
-    :global(html[data-theme="dark"]) .story-pick-tag {
-      color: var(--purple-light);
-      background: color-mix(in srgb, var(--purple-light) 12%, transparent);
+    .year-tab:hover {
+      border-color: color-mix(in srgb, var(--purple) 45%, transparent);
+      color: var(--purple);
+      background: color-mix(in srgb, var(--purple) 6%, transparent);
+    }
+    .year-tab.is-active {
+      background: var(--purple);
+      border-color: var(--purple);
+      color: #fff;
+    }
+
+    /* "Now" tab special style */
+    .year-tab--now {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .year-tab--now::before {
+      content: "";
+      width: 0.42rem;
+      height: 0.42rem;
+      border-radius: 50%;
+      background: currentColor;
+      opacity: 0.7;
+      flex-shrink: 0;
+    }
+    .year-tab--now.is-active::before {
+      opacity: 1;
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 25%, transparent); }
+      50% { box-shadow: 0 0 0 7px color-mix(in srgb, currentColor 10%, transparent); }
+    }
+
+    /* City grid */
+    .year-cities {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+      gap: 0.55rem;
+    }
+
+    .year-city-item {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      padding: 0.65rem 0.9rem;
+      border-radius: 0.9rem;
+      border: 1px solid var(--travel-border);
+      background: color-mix(in srgb, var(--travel-surface) 88%, transparent);
+      cursor: pointer;
+      transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s, background 0.2s;
+    }
+    .year-city-item:hover {
+      border-color: color-mix(in srgb, var(--purple) 40%, transparent);
+      box-shadow: 0 2px 10px rgba(137,83,209,0.1);
+      transform: translateY(-1px);
+    }
+    .year-city-item.is-active {
+      border-color: var(--purple);
+      background: color-mix(in srgb, var(--purple) 8%, transparent);
+    }
+
+    .year-city-dot {
+      width: 0.5rem;
+      height: 0.5rem;
+      border-radius: 50%;
+      background: color-mix(in srgb, var(--purple) 45%, transparent);
+      border: 1.5px solid color-mix(in srgb, var(--purple) 55%, transparent);
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+    .year-city-item:hover .year-city-dot,
+    .year-city-item.is-active .year-city-dot {
+      background: var(--purple);
+      border-color: var(--purple);
+    }
+    .year-city-dot--current {
+      background: var(--purple) !important;
+      border-color: var(--purple) !important;
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+
+    .year-city-body {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.12rem;
+    }
+    .year-city-name {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--travel-text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .year-city-item.is-active .year-city-name { color: var(--purple); }
+    :global(html[data-theme="dark"]) .year-city-item.is-active .year-city-name { color: var(--purple-light); }
+    .year-city-date {
+      font-size: 0.67rem;
+      color: var(--travel-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     /* ---- Insight grid ---- */
@@ -555,8 +560,19 @@ const meta = {
       .hero-stats, .insight-grid { grid-template-columns: 1fr; }
       .insight-card--wide { grid-column: span 1; }
       .map-frame, .travel-map { min-height: 50vh; }
-      .tl-arrow { display: none; }
-      .story-card { padding: 1.2rem; }
+      .year-cities { grid-template-columns: 1fr 1fr; }
+      /* panel slides up from bottom on mobile */
+      .map-panel {
+        top: auto;
+        right: 0.5rem;
+        left: 0.5rem;
+        bottom: 0.5rem;
+        width: auto;
+        max-height: 55%;
+        transform: translateY(calc(100% + 1rem));
+        transition: transform 0.38s cubic-bezier(0.34, 1.28, 0.64, 1), opacity 0.3s;
+      }
+      .map-panel.is-open { transform: translateY(0); opacity: 1; }
     }
   </style>
 
@@ -586,6 +602,12 @@ const meta = {
       const q = Math.sin(dLat/2)**2 + Math.cos(r(a.lat)) * Math.cos(r(b.lat)) * Math.sin(dLng/2)**2;
       return 2 * R * Math.atan2(Math.sqrt(q), Math.sqrt(1-q));
     };
+    // Extract starting year from prior city year string e.g. "2018-02-09 ~ 02-12" → "2018"
+    const extractYear = (yearStr) => {
+      if (!yearStr) return "Unknown";
+      const m = yearStr.match(/(\d{4})/);
+      return m ? m[1] : "Unknown";
+    };
 
     const markerSvg = (current=false, prior=false) => {
       const c = prior ? "#94a3b8" : PURPLE;
@@ -598,106 +620,84 @@ const meta = {
     };
     const spotSvg = `<svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg"><circle cx="9" cy="9" r="5" fill="#fdf7ff" stroke="#8953d1" stroke-width="2"/></svg>`;
 
-    let _map, _data, _currentCityItem, _markerRefs, _spotLayer, _selectedId;
+    let _map, _data, _currentCityItem, _markerRefs, _spotLayer, _selectedId, _activeYear;
 
-    /* ---- Story Card ---- */
-    const renderStoryCard = (city, isPrior) => {
-      const lang = getLang();
-      const card = document.getElementById("story-card");
-      const isZh = lang === "zh";
-
-      // Exit animation
-      card.classList.add("is-exit");
-
-      setTimeout(() => {
-        // City name
-        document.getElementById("story-city").textContent = isZh ? city.nameCN : city.name;
-
-        // Meta: province + stay
-        let metaParts = [];
-        if (city.provinceCN || city.province) metaParts.push(isZh ? city.provinceCN : city.province);
-        if (city.stayLabelCN || city.stayLabel) metaParts.push(isZh ? city.stayLabelCN : city.stayLabel);
-        document.getElementById("story-meta").textContent = metaParts.join(" · ");
-
-        // Time
-        const timeEl = document.getElementById("story-time");
-        if (city.isCurrent) {
-          timeEl.innerHTML = '<span class="now-pill">NOW</span>';
-        } else if (isPrior) {
-          timeEl.textContent = isZh ? (city.yearCN || city.year) : city.year;
-        } else {
-          timeEl.textContent = `${fmtShort(city.arrival, lang)} — ${fmtShort(city.departure, lang)}`;
-        }
-
-        // Images
-        const imgEl = document.getElementById("story-images");
-        imgEl.innerHTML = "";
-        if (city.images && city.images.length > 0) {
-          city.images.forEach(src => {
-            const img = document.createElement("img");
-            img.src = src;
-            img.alt = isZh ? city.nameCN : city.name;
-            img.loading = "lazy";
-            imgEl.appendChild(img);
-          });
-        }
-
-        // Quote
-        const quoteEl = document.getElementById("story-quote");
-        const quote = isZh ? (city.quoteCN || city.quote) : city.quote;
-        quoteEl.textContent = quote ? `"${quote}"` : "";
-
-        // Details (tastes + picks)
-        const detEl = document.getElementById("story-details");
-        detEl.innerHTML = "";
-
-        if (city.tastes && city.tastes.length > 0) {
-          const row = document.createElement("div");
-          row.className = "story-detail-row";
-          const tasteText = city.tastes.map(t => isZh ? t.nameCN : t.name).join(" · ");
-          row.innerHTML = `<span class="story-detail-icon">🍜</span> <span>${isZh ? "味道推荐" : "Taste Picks"}：${tasteText}</span>`;
-          detEl.appendChild(row);
-        }
-
-        if (city.picks && city.picks.length > 0) {
-          const row = document.createElement("div");
-          row.className = "story-detail-row";
-          row.innerHTML = `<span class="story-detail-icon">📍</span> ${city.picks.map(p => `<span class="story-pick-tag">${p}</span>`).join(" ")}`;
-          detEl.appendChild(row);
-        }
-
-        // Enter animation
-        card.classList.remove("is-exit");
-        card.classList.add("is-enter");
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            card.classList.remove("is-enter");
-          });
-        });
-      }, 280);
+    /* ---- Map Panel ---- */
+    const openMapPanel = () => {
+      const panel = document.getElementById("map-panel");
+      if (panel) { panel.classList.add("is-open"); panel.setAttribute("aria-hidden", "false"); }
+    };
+    const closeMapPanel = () => {
+      const panel = document.getElementById("map-panel");
+      if (panel) { panel.classList.remove("is-open"); panel.setAttribute("aria-hidden", "true"); }
     };
 
-    /* ---- Select city (unified) ---- */
+    /* ---- Story Card Render ---- */
+    const renderStoryCard = (city, isPrior) => {
+      const lang = getLang();
+      const isZh = lang === "zh";
+
+      document.getElementById("story-city").textContent = isZh ? city.nameCN : city.name;
+
+      let metaParts = [];
+      if (city.provinceCN || city.province) metaParts.push(isZh ? (city.provinceCN || city.province) : city.province);
+      if (city.stayLabelCN || city.stayLabel) metaParts.push(isZh ? (city.stayLabelCN || city.stayLabel) : city.stayLabel);
+      document.getElementById("story-meta").textContent = metaParts.join(" · ");
+
+      const timeEl = document.getElementById("story-time");
+      if (city.isCurrent) {
+        timeEl.innerHTML = '<span class="now-pill">NOW</span>';
+      } else if (isPrior) {
+        timeEl.textContent = isZh ? (city.yearCN || city.year || "") : (city.year || "");
+      } else {
+        timeEl.textContent = `${fmtShort(city.arrival, lang)} — ${fmtShort(city.departure, lang)}`;
+      }
+
+      const imgEl = document.getElementById("story-images");
+      imgEl.innerHTML = "";
+      if (city.images && city.images.length > 0) {
+        city.images.forEach(src => {
+          const img = document.createElement("img");
+          img.src = src; img.alt = isZh ? city.nameCN : city.name; img.loading = "lazy";
+          imgEl.appendChild(img);
+        });
+      }
+
+      const quoteEl = document.getElementById("story-quote");
+      const quote = isZh ? (city.quoteCN || city.quote) : city.quote;
+      quoteEl.textContent = quote ? `"${quote}"` : "";
+
+      const detEl = document.getElementById("story-details");
+      detEl.innerHTML = "";
+      if (city.tastes && city.tastes.length > 0) {
+        const row = document.createElement("div");
+        row.className = "story-detail-row";
+        const tasteText = city.tastes.map(t => isZh ? t.nameCN : t.name).join(" · ");
+        row.innerHTML = `<span>🍜</span> <span>${isZh ? "味道推荐" : "Taste Picks"}：${tasteText}</span>`;
+        detEl.appendChild(row);
+      }
+      if (city.picks && city.picks.length > 0) {
+        const row = document.createElement("div");
+        row.className = "story-detail-row";
+        row.innerHTML = `<span>📍</span> ${city.picks.map(p => `<span class="story-pick-tag">${p}</span>`).join(" ")}`;
+        detEl.appendChild(row);
+      }
+    };
+
+    /* ---- Select city ---- */
     const selectCity = (cityId, isPrior) => {
-      if (_selectedId === cityId) return;
       _selectedId = cityId;
 
-      // Update timeline highlight
-      document.querySelectorAll(".tl-stop").forEach(n => n.classList.toggle("is-active", n.dataset.cityId === cityId));
+      document.querySelectorAll(".year-city-item").forEach(n =>
+        n.classList.toggle("is-active", n.dataset.cityId === cityId)
+      );
 
-      // Scroll active into view
-      const active = document.querySelector(`.tl-stop[data-city-id="${cityId}"]`);
-      active?.scrollIntoView({ inline: "center", behavior: "smooth" });
-
-      // Find city data
       const allCities = [..._data.cities, ...(_data.priorCities || [])];
       const city = allCities.find(c => c.id === cityId);
       if (!city) return;
 
-      // Map flyTo
       _map.flyTo([city.lat, city.lng], city.spots?.length ? 7.5 : 6.2, { duration: 0.9 });
 
-      // Show spots
       _spotLayer.clearLayers();
       if (!isPrior && city.spots?.length) {
         city.spots.forEach(s => {
@@ -707,77 +707,122 @@ const meta = {
             .addTo(_spotLayer);
         });
         if (city.spots.length > 1) {
-          L.polyline(city.spots.map(s => [s.lat, s.lng]), { color: PURPLE, opacity: 0.32, weight: 1.5, dashArray: "4 7" }).addTo(_spotLayer);
+          L.polyline(city.spots.map(s => [s.lat, s.lng]), {
+            color: PURPLE, opacity: 0.32, weight: 1.5, dashArray: "4 7"
+          }).addTo(_spotLayer);
         }
       }
 
-      // Update story card
       renderStoryCard(city, isPrior);
+      openMapPanel();
     };
 
-    /* ---- Build horizontal timeline ---- */
-    const buildTimeline = () => {
+    /* ---- Year tab rendering ---- */
+    const renderYearCities = (isZh) => {
+      const citiesEl = document.getElementById("year-cities");
+      if (!citiesEl) return;
+      citiesEl.innerHTML = "";
+
+      let citiesToShow = [];
+      let isPriorGroup = false;
+
+      if (_activeYear === "now") {
+        citiesToShow = [..._data.cities].sort((a, b) => new Date(a.arrival) - new Date(b.arrival));
+        isPriorGroup = false;
+      } else {
+        citiesToShow = (_data.priorCities || []).filter(c => extractYear(c.year) === _activeYear);
+        isPriorGroup = true;
+      }
+
+      citiesToShow.forEach(city => {
+        const item = document.createElement("div");
+        item.className = `year-city-item${_selectedId === city.id ? " is-active" : ""}`;
+        item.dataset.cityId = city.id;
+
+        const dotClass = city.isCurrent ? "year-city-dot year-city-dot--current" : "year-city-dot";
+        const nameText = isZh ? city.nameCN : city.name;
+        let dateText = "";
+        if (city.isCurrent) {
+          dateText = isZh ? "当前城市" : "Current";
+        } else if (isPriorGroup) {
+          dateText = city.year || "";
+        } else {
+          dateText = fmtShort(city.arrival, isZh ? "zh" : "en");
+        }
+
+        item.innerHTML = `
+          <div class="${dotClass}"></div>
+          <div class="year-city-body">
+            <span class="year-city-name">${nameText}</span>
+            <span class="year-city-date">${dateText}</span>
+          </div>
+        `;
+        item.addEventListener("click", () => selectCity(city.id, isPriorGroup));
+        citiesEl.appendChild(item);
+      });
+    };
+
+    const switchYear = (year) => {
+      _activeYear = year;
+      _selectedId = null;
+      closeMapPanel();
+
+      document.querySelectorAll(".year-tab").forEach(btn => {
+        const active = btn.dataset.year === year;
+        btn.classList.toggle("is-active", active);
+        btn.setAttribute("aria-selected", active ? "true" : "false");
+      });
+
+      const isZh = getLang() === "zh";
+      renderYearCities(isZh);
+
+      // Fly to year's cities bounds
+      if (_map) {
+        const bounds = L.latLngBounds([]);
+        const citiesToShow = year === "now"
+          ? _data.cities
+          : (_data.priorCities || []).filter(c => extractYear(c.year) === year);
+        citiesToShow.forEach(c => bounds.extend([c.lat, c.lng]));
+        if (bounds.isValid()) _map.flyToBounds(bounds.pad(0.3), { duration: 0.9 });
+        _spotLayer.clearLayers();
+      }
+    };
+
+    const buildYearTabs = () => {
       const lang = getLang();
       const isZh = lang === "zh";
-      const track = document.getElementById("tl-track");
-      const priorTrack = document.getElementById("tl-prior-track");
-      track.innerHTML = "";
-      priorTrack.innerHTML = "";
+      const tabsEl = document.getElementById("year-tabs");
+      if (!tabsEl) return;
 
-      // Nomad cities — chronological order
-      const sorted = [..._data.cities].sort((a,b) => new Date(a.arrival) - new Date(b.arrival));
-      sorted.forEach((city, idx) => {
-        if (idx > 0) {
-          const conn = document.createElement("div");
-          conn.className = "tl-connector";
-          track.appendChild(conn);
-        }
-        const stop = document.createElement("div");
-        stop.className = "tl-stop";
-        stop.dataset.cityId = city.id;
-        if (city.id === _selectedId) stop.classList.add("is-active");
-
-        const dotClass = city.isCurrent ? "tl-stop-dot is-current" : "tl-stop-dot";
-        const nameText = isZh ? city.nameCN : city.name;
-        const dateText = city.isCurrent ? "" : fmtShort(city.arrival, lang);
-        const nowBadge = city.isCurrent ? `<span class="now-pill">NOW</span>` : "";
-
-        stop.innerHTML = `
-          ${nowBadge}
-          <div class="${dotClass}"></div>
-          <span class="tl-stop-name">${nameText}</span>
-          <span class="tl-stop-date">${dateText}</span>
-        `;
-        stop.addEventListener("click", () => selectCity(city.id, false));
-        track.appendChild(stop);
-      });
-
-      // Prior cities
+      // Gather unique start years from prior cities
       const priorCities = _data.priorCities || [];
-      priorCities.forEach((city, idx) => {
-        if (idx > 0) {
-          const conn = document.createElement("div");
-          conn.className = "tl-connector";
-          priorTrack.appendChild(conn);
-        }
-        const stop = document.createElement("div");
-        stop.className = "tl-stop tl-stop--prior";
-        stop.dataset.cityId = city.id;
-        if (city.id === _selectedId) stop.classList.add("is-active");
+      const yearSet = new Set(priorCities.map(c => extractYear(c.year)));
+      const sortedYears = [...yearSet].sort((a, b) => b - a);
 
-        const nameText = isZh ? city.nameCN : city.name;
-        stop.innerHTML = `
-          <div class="tl-stop-dot"></div>
-          <span class="tl-stop-name">${nameText}</span>
-          <span class="tl-stop-date">${city.year || ""}</span>
-        `;
-        stop.addEventListener("click", () => selectCity(city.id, true));
-        priorTrack.appendChild(stop);
+      tabsEl.innerHTML = "";
+
+      // "Now" tab
+      const nowBtn = document.createElement("button");
+      nowBtn.className = `year-tab year-tab--now font-serif${_activeYear === "now" ? " is-active" : ""}`;
+      nowBtn.setAttribute("role", "tab");
+      nowBtn.setAttribute("aria-selected", _activeYear === "now" ? "true" : "false");
+      nowBtn.dataset.year = "now";
+      nowBtn.textContent = isZh ? "游牧中" : "Now";
+      nowBtn.addEventListener("click", () => switchYear("now"));
+      tabsEl.appendChild(nowBtn);
+
+      sortedYears.forEach(yr => {
+        const btn = document.createElement("button");
+        btn.className = `year-tab font-serif${_activeYear === yr ? " is-active" : ""}`;
+        btn.setAttribute("role", "tab");
+        btn.setAttribute("aria-selected", _activeYear === yr ? "true" : "false");
+        btn.dataset.year = yr;
+        btn.textContent = yr;
+        btn.addEventListener("click", () => switchYear(yr));
+        tabsEl.appendChild(btn);
       });
 
-      // Update prior toggle label
-      const toggleLabel = document.getElementById("prior-toggle-label");
-      if (toggleLabel) toggleLabel.textContent = isZh ? "更早的旅行" : "Earlier travels";
+      renderYearCities(isZh);
     };
 
     /* ---- Main init ---- */
@@ -819,16 +864,16 @@ const meta = {
       fillCounter("days", daysOnRoad);
       fillCounter("distance", Math.round(totalDistance), " km");
 
-      // Insight badges
       const el = id => document.getElementById(id);
-      el("longest-stay").textContent   = longestStay ? `${longestStay.name} · ${longestStay.stayDays}d` : "—";
+      el("longest-stay").textContent       = longestStay ? `${longestStay.name} · ${longestStay.stayDays}d` : "—";
       el("longest-stay-note").textContent  = longestStay?.quoteCN || "";
-      el("shortest-stay").textContent  = shortestStay ? `${shortestStay.name} · ${shortestStay.stayDays}d` : "—";
+      el("shortest-stay").textContent      = shortestStay ? `${shortestStay.name} · ${shortestStay.stayDays}d` : "—";
       el("shortest-stay-note").textContent = shortestStay?.quoteCN || "";
-      el("current-streak").textContent = `${daysOnRoad} days`;
-      el("libraries-found").textContent = `${libraries}`;
-      el("best-meal").textContent = allMeals.slice(0,3).join(" / ");
-      el("best-meal-note").textContent = _currentCityItem?.mealCN ? `${_currentCityItem.nameCN} right now: ${_currentCityItem.mealCN}` : "";
+      el("current-streak").textContent     = `${daysOnRoad} days`;
+      el("libraries-found").textContent    = `${libraries}`;
+      el("best-meal").textContent          = allMeals.slice(0,3).join(" / ");
+      el("best-meal-note").textContent     = _currentCityItem?.mealCN
+        ? `${_currentCityItem.nameCN} right now: ${_currentCityItem.mealCN}` : "";
 
       // Map init
       _map = L.map(mapNode, { zoomControl: true, attributionControl: true, preferCanvas: true })
@@ -846,20 +891,28 @@ const meta = {
 
       const routeLayer  = L.layerGroup().addTo(_map);
       const markerLayer = L.layerGroup().addTo(_map);
-      _spotLayer   = L.layerGroup().addTo(_map);
+      _spotLayer        = L.layerGroup().addTo(_map);
       const priorLayer  = L.layerGroup().addTo(_map);
       const bounds = L.latLngBounds([]);
       _markerRefs = new Map();
 
-      // Prior city markers (no popup)
+      // Prior city markers
       priorCities.forEach(city => {
         bounds.extend([city.lat, city.lng]);
         const icon = L.divIcon({ html: markerSvg(false, true), className: "", iconSize: [44,44], iconAnchor: [22,22] });
         const m = L.marker([city.lat, city.lng], { icon, keyboard: false }).addTo(priorLayer);
-        m.on("click", () => selectCity(city.id, true));
+        m.on("click", () => {
+          const yr = extractYear(city.year);
+          if (_activeYear !== yr) {
+            switchYear(yr);
+            setTimeout(() => selectCity(city.id, true), 200);
+          } else {
+            selectCity(city.id, true);
+          }
+        });
       });
 
-      // Nomad city markers — staggered + route dash animation
+      // Nomad city markers + animated route
       const sortedCities = [...cities].sort((a,b) => new Date(a.arrival) - new Date(b.arrival));
       const lineLatLngs = [];
 
@@ -868,34 +921,35 @@ const meta = {
         setTimeout(() => {
           const icon = L.divIcon({ html: markerSvg(city.isCurrent), className: "", iconSize: [44,44], iconAnchor: [22,22] });
           const m = L.marker([city.lat, city.lng], { icon }).addTo(markerLayer);
-          m.on("click", () => selectCity(city.id, false));
+          m.on("click", () => {
+            if (_activeYear !== "now") {
+              switchYear("now");
+              setTimeout(() => selectCity(city.id, false), 200);
+            } else {
+              selectCity(city.id, false);
+            }
+          });
           _markerRefs.set(city.id, m);
-
           lineLatLngs.push([city.lat, city.lng]);
 
-          // SVG dash animation for route segments
           if (lineLatLngs.length > 1) {
             const segment = L.polyline(lineLatLngs.slice(-2), {
               color: PURPLE, weight: 2.5, opacity: 0,
-              dashArray: "7 11", lineCap: "round",
-              className: "route-segment"
+              dashArray: "7 11", lineCap: "round"
             }).addTo(routeLayer);
-
-            // Animate in: fade opacity
             requestAnimationFrame(() => {
-              const el = segment.getElement();
-              if (el) {
-                const len = el.getTotalLength ? el.getTotalLength() : 500;
-                el.style.strokeDasharray = `${len}`;
-                el.style.strokeDashoffset = `${len}`;
-                el.style.opacity = "0.78";
-                el.style.transition = "stroke-dashoffset 600ms ease-out";
-                requestAnimationFrame(() => { el.style.strokeDashoffset = "0"; });
+              const segEl = segment.getElement();
+              if (segEl) {
+                const len = segEl.getTotalLength ? segEl.getTotalLength() : 500;
+                segEl.style.strokeDasharray = `${len}`;
+                segEl.style.strokeDashoffset = `${len}`;
+                segEl.style.opacity = "0.78";
+                segEl.style.transition = "stroke-dashoffset 600ms ease-out";
+                requestAnimationFrame(() => { segEl.style.strokeDashoffset = "0"; });
               }
             });
           }
 
-          // After last city → select current
           if (idx === sortedCities.length - 1) {
             setTimeout(() => {
               _selectedId = null;
@@ -907,47 +961,26 @@ const meta = {
 
       _map.fitBounds(bounds.pad(0.15));
 
-      // Build timeline
-      buildTimeline();
+      // Panel close button
+      document.getElementById("map-panel-close")?.addEventListener("click", closeMapPanel);
 
-      // Arrow navigation
-      const scrollContainer = document.getElementById("tl-scroll");
-      document.getElementById("tl-arrow-left")?.addEventListener("click", () => {
-        scrollContainer.scrollBy({ left: -200, behavior: "smooth" });
-      });
-      document.getElementById("tl-arrow-right")?.addEventListener("click", () => {
-        scrollContainer.scrollBy({ left: 200, behavior: "smooth" });
-      });
+      // Build year tabs (default: "now")
+      _activeYear = "now";
+      buildYearTabs();
 
-      // Prior toggle
-      const priorToggle = document.getElementById("prior-toggle");
-      const priorWrap = document.getElementById("prior-track-wrap");
-      priorToggle?.addEventListener("click", () => {
-        const open = priorWrap.classList.toggle("is-open");
-        priorToggle.setAttribute("aria-expanded", String(open));
-      });
+      // Theme observer
+      new MutationObserver(setTiles).observe(
+        document.documentElement, { attributes: true, attributeFilter: ["data-theme"] }
+      );
 
-      // Theme observer — swap tiles
-      new MutationObserver(setTiles).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
-
-      // Lang observer — rebuild timeline + refresh story card
+      // Lang observer
       new MutationObserver(() => {
-        buildTimeline();
-        // Refresh current story card
+        buildYearTabs();
         if (_selectedId) {
           const allCities = [..._data.cities, ...(_data.priorCities || [])];
           const city = allCities.find(c => c.id === _selectedId);
           const isPrior = (_data.priorCities || []).some(c => c.id === _selectedId);
-          if (city) {
-            // Skip exit animation for lang switch — just re-render instantly
-            const card = document.getElementById("story-card");
-            card.classList.remove("is-exit", "is-enter");
-            const savedId = _selectedId;
-            _selectedId = null;
-            // Temporarily bypass animation
-            renderStoryCard(city, isPrior);
-            _selectedId = savedId;
-          }
+          if (city) renderStoryCard(city, isPrior);
         }
       }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-lang"] });
     };
@@ -957,6 +990,7 @@ const meta = {
       const mapNode = document.getElementById("travel-map");
       if (mapNode) mapNode.dataset.ready = "";
       _selectedId = null;
+      _activeYear = null;
       initTravel();
     });
   </script>
