@@ -8,6 +8,8 @@ const meta = {
 ---
 
 <PageLayout meta={meta}>
+  <link slot="head" rel="preload" href="/data/dashboard.json" as="fetch" crossorigin />
+  <link slot="head" rel="preload" href="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" as="script" />
   <section class="mb-12 border-b border-black/8 pb-8 dark:border-white/10">
     <div class="mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
       <div>
@@ -216,6 +218,7 @@ const meta = {
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script is:inline>window.__dashboardData = fetch('/data/dashboard.json').then(r => r.json());</script>
   <script is:inline>
     (() => {
       const root = document.getElementById('x-growth-dashboard');
@@ -1091,8 +1094,7 @@ const meta = {
       updateStaticCopy();
       attachRailControls('allTimeTweetsRail', 'allTimeTweetsPrev', 'allTimeTweetsNext');
 
-      fetch('/data/dashboard.json')
-        .then((response) => response.json())
+      (window.__dashboardData || fetch('/data/dashboard.json').then(r => r.json()))
         .then((data) => {
           renderDashboard(data);
           revealOnScroll();
