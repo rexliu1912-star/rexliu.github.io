@@ -944,6 +944,28 @@ const meta = {
         n.classList.toggle("is-active", n.dataset.cityId === cityId)
       );
 
+      // Pulse animation on selected marker
+      const marker = _markerRefs?.get(cityId);
+      if (marker) {
+        const el = marker.getElement();
+        if (el) {
+          const svg = el.querySelector("svg");
+          if (svg) {
+            svg.style.transition = "transform 0.15s ease-out";
+            svg.style.transform = "scale(1.5)";
+            setTimeout(() => {
+              svg.style.transition = "transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)";
+              svg.style.transform = "scale(1.15)";
+            }, 150);
+            setTimeout(() => {
+              svg.style.transition = "transform 0.3s ease";
+              svg.style.transform = "scale(1)";
+            }, 600);
+          }
+          el.style.zIndex = "999";
+        }
+      }
+
       const allCities = [..._data.cities, ...(_data.priorCities || [])];
       const city = allCities.find(c => c.id === cityId);
       if (!city) return;

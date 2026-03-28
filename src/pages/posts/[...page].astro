@@ -52,14 +52,14 @@ const descYearKeys = Object.keys(groupedByYear).sort((a, b) => +b - +a);
 		<div>
 			{
 				descYearKeys.map((yearKey) => (
-					<section class="mb-12">
+					<section class="mb-12 fade-in-up" style={`--delay: ${descYearKeys.indexOf(yearKey) * 100}ms`}>
 						<h2 class="mb-6 border-b border-dashed border-gray-200 pb-2 font-serif text-sm font-bold tracking-widest text-gray-400 uppercase dark:border-zinc-700">
-							{yearKey}
+							{yearKey} <span class="ml-2 font-normal normal-case tracking-normal text-gray-300 dark:text-zinc-600">· {groupedByYear[yearKey]?.length} 篇</span>
 						</h2>
 
 						<ul class="space-y-6 text-start">
-							{groupedByYear[yearKey]?.map((p) => (
-								<li class="flex flex-col">
+							{groupedByYear[yearKey]?.map((p, i) => (
+								<li class="fade-in-up flex flex-col" style={`--delay: ${descYearKeys.indexOf(yearKey) * 100 + (i + 1) * 40}ms`}>
 									<div class="flex items-baseline justify-between gap-x-4">
 										<a
 											href={`/posts/${p.id}/`}

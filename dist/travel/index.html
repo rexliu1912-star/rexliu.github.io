@@ -22,7 +22,7 @@
 				}, 100);
 			})();
 		</script><link rel="stylesheet" href="/_astro/travel.D7SNE5mj.css">
-<link rel="stylesheet" href="/_astro/_slug_.DV3DS7Mx.css"></head> <body class="bg-global-bg text-global-text mx-auto flex min-h-screen max-w-4xl flex-col px-4 pt-8 font-mono text-sm font-normal antialiased sm:px-8"> <script>
+<link rel="stylesheet" href="/_astro/_slug_.CBzTBMFe.css"></head> <body class="bg-global-bg text-global-text mx-auto flex min-h-screen max-w-4xl flex-col px-4 pt-8 font-mono text-sm font-normal antialiased sm:px-8"> <script>
 	const lightModePref = window.matchMedia("(prefers-color-scheme: light)");
 
 	function getUserPref() {
@@ -268,6 +268,28 @@ OS
       document.querySelectorAll(".year-city-item").forEach(n =>
         n.classList.toggle("is-active", n.dataset.cityId === cityId)
       );
+
+      // Pulse animation on selected marker
+      const marker = _markerRefs?.get(cityId);
+      if (marker) {
+        const el = marker.getElement();
+        if (el) {
+          const svg = el.querySelector("svg");
+          if (svg) {
+            svg.style.transition = "transform 0.15s ease-out";
+            svg.style.transform = "scale(1.5)";
+            setTimeout(() => {
+              svg.style.transition = "transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)";
+              svg.style.transform = "scale(1.15)";
+            }, 150);
+            setTimeout(() => {
+              svg.style.transition = "transform 0.3s ease";
+              svg.style.transform = "scale(1)";
+            }, 600);
+          }
+          el.style.zIndex = "999";
+        }
+      }
 
       const allCities = [..._data.cities, ...(_data.priorCities || [])];
       const city = allCities.find(c => c.id === cityId);
