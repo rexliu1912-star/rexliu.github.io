@@ -498,11 +498,19 @@ Digital nomad since Oct 2025 — a living map of cities, detours, libraries, and
         const m = L.marker([city.lat, city.lng], { icon, keyboard: false }).addTo(priorLayer);
         m.on("mouseover", () => {
           const el = m.getElement();
-          if (el) { el.style.transform = "scale(1.18)"; el.style.transition = "transform 0.2s ease"; }
+          if (el) {
+            const svg = el.querySelector("svg");
+            if (svg) { svg.style.transform = "scale(1.18)"; svg.style.transition = "transform 0.2s ease"; }
+            el.style.zIndex = "999";
+          }
         });
         m.on("mouseout", () => {
           const el = m.getElement();
-          if (el) { el.style.transform = "scale(1)"; }
+          if (el) {
+            const svg = el.querySelector("svg");
+            if (svg) { svg.style.transform = "scale(1)"; }
+            el.style.zIndex = "";
+          }
         });
         m.on("click", () => {
           const yr = extractYear(city.year);
@@ -536,11 +544,19 @@ Digital nomad since Oct 2025 — a living map of cities, detours, libraries, and
           glowDiv.style.cssText = `position:absolute;width:44px;height:44px;border-radius:50%;background:${rc.glow};transform:scale(0);transition:transform 0.25s ease;pointer-events:none;top:0;left:0`;
           m.on("mouseover", () => {
             const el = m.getElement();
-            if (el) { el.style.transform = "scale(1.22)"; el.style.transition = "transform 0.2s ease"; el.style.zIndex = "999"; }
+            if (el) {
+              const svg = el.querySelector("svg");
+              if (svg) { svg.style.transform = "scale(1.22)"; svg.style.transition = "transform 0.2s ease"; }
+              el.style.zIndex = "999";
+            }
           });
           m.on("mouseout", () => {
             const el = m.getElement();
-            if (el) { el.style.transform = "scale(1)"; el.style.zIndex = ""; }
+            if (el) {
+              const svg = el.querySelector("svg");
+              if (svg) { svg.style.transform = "scale(1)"; }
+              el.style.zIndex = "";
+            }
           });
 
           m.on("click", () => {
