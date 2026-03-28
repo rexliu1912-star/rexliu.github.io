@@ -87,11 +87,10 @@ const meta = {
       </div>
     </div>
 
-    <!-- ====== CITY CARD WATERFALL ====== -->
-    <div class="cards-section fade-in-up" style="--delay: 120ms">
-      <p class="panel-kicker">Our Journey</p>
-      <h3 class="section-title font-serif">去过的地方 / Places We've Been</h3>
-      <div class="city-cards" id="city-cards"></div>
+    <!-- ====== STORY FLOW ====== -->
+    <div class="story-flow fade-in-up" id="story-flow" style="--delay: 120ms">
+      <div class="story-flow__line"></div>
+      <!-- JS 动态生成节点 -->
     </div>
 
     <!-- ====== INSIGHT GRID ====== -->
@@ -447,95 +446,92 @@ const meta = {
       opacity: 1;
     }
 
-    /* ---- City Card Waterfall ---- */
-    .cards-section {
-      display: grid;
-      gap: 0.75rem;
-    }
-    .section-title {
-      margin: 0;
-      font-size: 1.15rem;
-      font-weight: 600;
-      color: var(--travel-text);
-    }
-    :global(.city-cards) {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 1rem;
-      margin-top: 0.25rem;
-    }
-    :global(.city-card) {
+    /* ---- Story Flow ---- */
+    :global(.story-flow) {
       position: relative;
+      padding: 1rem 0 2rem 2.5rem;
+    }
+    :global(.story-flow__line) {
+      position: absolute;
+      left: 0.6rem;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, #d4d0dc 0%, #d4d0dc var(--prior-end, 50%), var(--purple) var(--prior-end, 50%), var(--purple) 100%);
+    }
+    :global(html[data-theme="dark"]) :global(.story-flow__line) {
+      background: linear-gradient(to bottom, #3a3548 0%, #3a3548 var(--prior-end, 50%), var(--purple) var(--prior-end, 50%), var(--purple) 100%);
+    }
+
+    /* Node base */
+    :global(.story-node) {
+      position: relative;
+      padding: 0.5rem 0;
+      cursor: pointer;
+    }
+
+    /* Dot base */
+    :global(.story-node__dot) {
+      position: absolute;
+      left: -1.9rem;
+      top: 0.75rem;
+      z-index: 2;
+    }
+
+    /* ---- Nomad node (big card) ---- */
+    :global(.story-node--nomad) {
+      padding: 0.75rem 0;
+    }
+    :global(.story-node__dot--nomad) {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--purple);
+      top: 1.25rem;
+      left: calc(-1.9rem - 1px);
+    }
+    :global(.story-node--nomad.is-current) :global(.story-node__dot--nomad) {
+      animation: breathe-dot 2.5s ease-in-out infinite;
+    }
+    @keyframes breathe-dot {
+      0%, 100% { box-shadow: 0 0 0 3px rgba(137,83,209,0.25); }
+      50% { box-shadow: 0 0 0 7px rgba(137,83,209,0.10); }
+    }
+
+    :global(.story-node__card) {
+      padding: 1rem;
       border-radius: 1rem;
       border: 1px solid var(--travel-border);
-      padding: 1rem 1.1rem;
-      cursor: pointer;
-      transition: transform 0.22s, box-shadow 0.22s, border-color 0.22s;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      gap: 0.4rem;
-      background: color-mix(in srgb, var(--travel-surface) 92%, transparent);
+      border-left: 3px solid var(--purple);
+      background: color-mix(in srgb, var(--purple) 3%, var(--travel-surface));
+      transition: box-shadow 0.22s, border-color 0.22s;
     }
-    :global(.city-card:hover) {
-      transform: translateY(-3px);
-      box-shadow: 0 6px 20px rgba(137,83,209,0.13);
+    :global(.story-node__card:hover) {
+      box-shadow: 0 4px 16px rgba(137,83,209,0.12);
       border-color: color-mix(in srgb, var(--purple) 40%, transparent);
     }
-    :global(.city-card.is-active) {
+    :global(.story-node.is-visible) :global(.story-node__card) {
       border-color: var(--purple);
       box-shadow: 0 4px 16px rgba(137,83,209,0.18);
     }
-
-    /* Nomad card */
-    :global(.city-card--nomad) {
-      border-left: 3px solid var(--purple);
-      background: color-mix(in srgb, var(--purple) 3%, var(--travel-surface));
-    }
-    /* Prior card */
-    :global(.city-card--prior) {
-      border-left: 3px solid #c4c0cc;
-      background: color-mix(in srgb, var(--travel-surface) 92%, transparent);
-    }
-    :global(html[data-theme="dark"] .city-card--prior) {
-      border-left-color: #5a5568;
-    }
-    /* Current card */
-    :global(.city-card--current) {
-      border: 2px solid var(--purple);
-      border-left: 3px solid var(--purple);
-      background: color-mix(in srgb, var(--purple) 5%, var(--travel-surface));
-    }
-
-    :global(.city-card__cover) {
-      position: absolute;
-      inset: 0;
-      background-size: cover;
-      background-position: center;
-      opacity: 0.12;
-      pointer-events: none;
-      border-radius: inherit;
-    }
-
-    :global(.city-card__header) {
+    :global(.story-node__head) {
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
+      align-items: center;
       gap: 0.5rem;
-      position: relative;
+      margin-bottom: 0.35rem;
     }
-    :global(.city-card__name) {
+    :global(.story-node__city) {
+      margin: 0;
       font-family: Georgia, 'Times New Roman', serif;
-      font-size: 1rem;
+      font-size: 1.05rem;
       font-weight: 600;
       color: var(--travel-text);
-      margin: 0;
       line-height: 1.2;
     }
-    :global(.city-card__now) {
+    :global(.story-node__badge) {
       display: inline-flex;
       align-items: center;
-      gap: 0.2rem;
       background: var(--purple);
       color: #fff;
       font-size: 0.55rem;
@@ -551,42 +547,82 @@ const meta = {
       0%, 100% { opacity: 1; }
       50% { opacity: 0.65; }
     }
-
-    :global(.city-card__date) {
+    :global(.story-node__date) {
+      display: block;
       font-size: 0.73rem;
       color: var(--travel-muted);
       letter-spacing: 0.02em;
       font-family: Inter, -apple-system, PingFang SC, sans-serif;
     }
-    :global(.city-card__stay) {
+    :global(.story-node__stay) {
+      display: block;
       font-size: 0.7rem;
       color: var(--purple);
       font-weight: 600;
       font-family: Inter, -apple-system, PingFang SC, sans-serif;
+      margin-top: 0.15rem;
     }
-    :global(html[data-theme="dark"] .city-card__stay) { color: var(--purple-light); }
-
-    :global(.city-card__quote) {
+    :global(html[data-theme="dark"]) :global(.story-node__stay) { color: var(--purple-light); }
+    :global(.story-node__quote) {
+      margin: 0.4rem 0 0;
       font-size: 0.78rem;
       font-style: italic;
       color: var(--travel-soft);
       line-height: 1.55;
-      margin: 0;
-      position: relative;
       font-family: Inter, -apple-system, PingFang SC, sans-serif;
     }
 
-    @media (max-width: 720px) {
-      :global(.city-cards) {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 0.65rem;
-      }
-      :global(.city-card) { padding: 0.75rem 0.85rem; }
-      :global(.city-card__name) { font-size: 0.88rem; }
-      :global(.city-card__quote) { font-size: 0.72rem; }
+    /* ---- Prior node (compact row) ---- */
+    :global(.story-node--prior) {
+      padding: 0.3rem 0;
     }
-    @media (max-width: 420px) {
-      :global(.city-cards) { grid-template-columns: 1fr; }
+    :global(.story-node__dot--prior) {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      border: 2px solid #b0aab8;
+      background: transparent;
+      top: 0.55rem;
+      left: calc(-1.9rem);
+    }
+    :global(html[data-theme="dark"]) :global(.story-node__dot--prior) {
+      border-color: #5a5568;
+    }
+    :global(.story-node__line-content) {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.82rem;
+    }
+    :global(.story-node__city-sm) {
+      color: var(--travel-text);
+      font-weight: 500;
+    }
+    :global(.story-node__year) {
+      color: var(--travel-muted);
+      font-size: 0.75rem;
+    }
+
+    /* ---- Transition marker ---- */
+    :global(.story-node--transition) {
+      padding: 0.6rem 0;
+      pointer-events: none;
+    }
+    :global(.story-node--transition) :global(.story-node__line-content) {
+      font-size: 0.68rem;
+      color: var(--purple);
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-weight: 600;
+    }
+
+    @media (max-width: 720px) {
+      :global(.story-flow) { padding-left: 2rem; }
+      :global(.story-node__dot) { left: -1.5rem; }
+      :global(.story-node__dot--nomad) { left: calc(-1.5rem - 1px); }
+      :global(.story-node__dot--prior) { left: calc(-1.5rem); }
+      :global(.story-node__card) { padding: 0.75rem; }
+      :global(.story-node__city) { font-size: 0.95rem; }
     }
 
     /* ---- Insight grid ---- */
@@ -933,9 +969,9 @@ const meta = {
     const selectCity = (cityId, isPrior) => {
       _selectedId = cityId;
 
-      // Highlight card
-      document.querySelectorAll(".city-card").forEach(c =>
-        c.classList.toggle("is-active", c.dataset.cityId === cityId)
+      // Highlight story node
+      document.querySelectorAll(".story-node").forEach(n =>
+        n.classList.toggle("is-visible", n.dataset.cityId === cityId)
       );
 
       const allCities = [..._data.cities, ...(_data.priorCities || [])];
@@ -970,7 +1006,7 @@ const meta = {
 
     };
 
-    /* ---- Card Waterfall Builder ---- */
+    /* ---- Story Flow Builder ---- */
     const NOMAD_START = "2025-11-18";
 
     const parsePriorDate = (yearStr) => {
@@ -980,10 +1016,28 @@ const meta = {
       return new Date(`${m[1]}-${m[2]||"01"}-${m[3]||"01"}`);
     };
 
-    const buildCards = () => {
-      const container = document.getElementById("city-cards");
+    const computePriorSpan = (yearStr, isZh) => {
+      if (!yearStr) return "";
+      const ym = yearStr.match(/(\d{4}).*?(\d{4})/);
+      if (ym && ym[1] !== ym[2]) {
+        const span = parseInt(ym[2]) - parseInt(ym[1]);
+        return span > 1 ? `${span}${isZh ? "年" : " years"}` : `${span}${isZh ? "年" : " year"}`;
+      }
+      if (yearStr.includes("~") || yearStr.match(/^\d{4}-\d{2}-\d{2}$/)) {
+        return isZh ? "短途" : "Short trip";
+      }
+      return "";
+    };
+
+    let _storyObserver = null;
+
+    const buildStoryFlow = () => {
+      const container = document.getElementById("story-flow");
       if (!container) return;
-      container.innerHTML = "";
+
+      // Remove old generated nodes, keep the line
+      container.querySelectorAll(".story-node").forEach(n => n.remove());
+      if (_storyObserver) { _storyObserver.disconnect(); _storyObserver = null; }
 
       const isZh = getLang() === "zh";
       const priorCities = (_data.priorCities || []).filter(c => !c.mergeInto);
@@ -994,88 +1048,139 @@ const meta = {
         ...nomadCities.map(c => ({ ...c, _isPrior: false, _isNomad: true, _sortDate: new Date(c.arrival) }))
       ].sort((a, b) => a._sortDate - b._sortDate);
 
-      allNodes.forEach(city => {
-        const card = document.createElement("div");
-        card.className = "city-card";
-        card.dataset.cityId = city.id;
+      // Find index where nomad starts for line gradient
+      const firstNomadIdx = allNodes.findIndex(c => c._isNomad);
+      const totalNodes = allNodes.length;
 
-        if (city.isCurrent) {
-          card.classList.add("city-card--current");
-        } else if (city._isNomad) {
-          card.classList.add("city-card--nomad");
-        } else {
-          card.classList.add("city-card--prior");
+      let lastWasPrior = false;
+
+      allNodes.forEach((city, idx) => {
+        // Insert transition marker between prior and nomad
+        if (city._isNomad && lastWasPrior) {
+          const trans = document.createElement("div");
+          trans.className = "story-node story-node--transition";
+          trans.innerHTML = `<div class="story-node__dot story-node__dot--nomad" style="background:var(--purple);width:6px;height:6px;left:calc(-1.9rem + 1px)"></div>
+            <div class="story-node__line-content"><span>${isZh ? "▸ 数字游牧开始" : "▸ Nomad Life Begins"}</span></div>`;
+          container.appendChild(trans);
         }
+        lastWasPrior = city._isPrior;
 
-        // Cover image
-        if (city.images && city.images.length > 0) {
-          const cover = document.createElement("div");
-          cover.className = "city-card__cover";
-          cover.style.backgroundImage = `url(${city.images[0]})`;
-          card.appendChild(cover);
-        }
+        const node = document.createElement("div");
+        node.dataset.cityId = city.id;
+        node.dataset.lat = city.lat;
+        node.dataset.lng = city.lng;
 
-        // Header
-        const header = document.createElement("div");
-        header.className = "city-card__header";
-        const nameEl = document.createElement("h4");
-        nameEl.className = "city-card__name";
-        nameEl.textContent = isZh ? city.nameCN : city.name;
-        header.appendChild(nameEl);
-        if (city.isCurrent) {
-          const now = document.createElement("span");
-          now.className = "city-card__now";
-          now.textContent = "NOW";
-          header.appendChild(now);
-        }
-        card.appendChild(header);
+        if (city._isNomad) {
+          // ---- Big card (nomad city) ----
+          node.className = "story-node story-node--nomad";
+          if (city.isCurrent) node.classList.add("is-current");
 
-        // Date range
-        const dateEl = document.createElement("span");
-        dateEl.className = "city-card__date";
-        if (city._isPrior) {
-          dateEl.textContent = isZh ? (city.yearCN || city.year || "") : (city.year || "");
-        } else {
+          const dot = document.createElement("div");
+          dot.className = "story-node__dot story-node__dot--nomad";
+          node.appendChild(dot);
+
+          const card = document.createElement("div");
+          card.className = "story-node__card";
+
+          // Head
+          const head = document.createElement("div");
+          head.className = "story-node__head";
+          const cityName = document.createElement("h4");
+          cityName.className = "story-node__city font-serif";
+          cityName.textContent = isZh ? city.nameCN : city.name;
+          head.appendChild(cityName);
+          if (city.isCurrent) {
+            const badge = document.createElement("span");
+            badge.className = "story-node__badge";
+            badge.textContent = "NOW";
+            head.appendChild(badge);
+          }
+          card.appendChild(head);
+
+          // Date
+          const dateEl = document.createElement("span");
+          dateEl.className = "story-node__date";
           const arrStr = fmtShort(city.arrival, isZh ? "zh" : "en");
           const depStr = fmtShort(city.departure, isZh ? "zh" : "en");
           dateEl.textContent = `${arrStr} — ${depStr}`;
-        }
-        card.appendChild(dateEl);
+          card.appendChild(dateEl);
 
-        // Stay info
-        const stay = document.createElement("span");
-        stay.className = "city-card__stay";
-        if (city.stayDays) {
-          stay.textContent = `${city.stayDays}d · ${isZh ? (city.stayLabelCN || city.stayLabel || "") : (city.stayLabel || "")}`;
-        } else if (city._isPrior && city.year) {
-          // Parse year range for prior cities (e.g. "2010-2013" or "2013-02-12 ~ 02-15")
-          const ym = city.year.match(/(\d{4}).*?(\d{4})/);
-          if (ym && ym[1] !== ym[2]) {
-            const span = parseInt(ym[2]) - parseInt(ym[1]);
-            stay.textContent = span > 1 ? `${span} ${isZh ? "年" : "years"}` : `${span} ${isZh ? "年" : "year"}`;
-          } else if (city.year.includes("~")) {
-            stay.textContent = isZh ? "短途" : "Short trip";
+          // Stay
+          if (city.stayDays) {
+            const stay = document.createElement("span");
+            stay.className = "story-node__stay";
+            stay.textContent = `${city.stayDays}d · ${isZh ? (city.stayLabelCN || city.stayLabel || "") : (city.stayLabel || "")}`;
+            card.appendChild(stay);
           }
-        }
-        if (stay.textContent) card.appendChild(stay);
 
-        // Quote
-        const quote = isZh ? (city.quoteCN || city.quote) : city.quote;
-        if (quote) {
-          const q = document.createElement("p");
-          q.className = "city-card__quote";
-          q.textContent = `"${quote}"`;
-          card.appendChild(q);
+          // Quote
+          const quote = isZh ? (city.quoteCN || city.quote) : city.quote;
+          if (quote) {
+            const q = document.createElement("p");
+            q.className = "story-node__quote";
+            q.textContent = `"${quote}"`;
+            card.appendChild(q);
+          }
+
+          node.appendChild(card);
+        } else {
+          // ---- Compact row (prior city) ----
+          node.className = "story-node story-node--prior";
+          const dot = document.createElement("div");
+          dot.className = "story-node__dot story-node__dot--prior";
+          node.appendChild(dot);
+
+          const content = document.createElement("div");
+          content.className = "story-node__line-content";
+
+          const citySmall = document.createElement("span");
+          citySmall.className = "story-node__city-sm";
+          citySmall.textContent = isZh ? city.nameCN : city.name;
+          content.appendChild(citySmall);
+
+          const yearEl = document.createElement("span");
+          yearEl.className = "story-node__year";
+          const yearStr = isZh ? (city.yearCN || city.year || "") : (city.year || "");
+          const span = computePriorSpan(city.year, isZh);
+          yearEl.textContent = span ? `${yearStr} · ${span}` : yearStr;
+          content.appendChild(yearEl);
+
+          node.appendChild(content);
         }
 
-        card.addEventListener("click", () => {
-          container.querySelectorAll(".city-card").forEach(c => c.classList.remove("is-active"));
-          card.classList.add("is-active");
+        // Click handler
+        node.addEventListener("click", () => {
           selectCity(city.id, city._isPrior);
         });
 
-        container.appendChild(card);
+        container.appendChild(node);
       });
+
+      // Set line gradient position
+      if (firstNomadIdx > 0 && totalNodes > 0) {
+        // Add +1 for transition marker
+        const priorPct = Math.round(((firstNomadIdx) / (totalNodes + 1)) * 100);
+        container.querySelector(".story-flow__line").style.setProperty("--prior-end", `${priorPct}%`);
+      } else {
+        container.querySelector(".story-flow__line").style.setProperty("--prior-end", "0%");
+      }
+
+      // Scroll-driven map sync
+      _storyObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const lat = parseFloat(entry.target.dataset.lat);
+            const lng = parseFloat(entry.target.dataset.lng);
+            if (_map && !isNaN(lat) && !isNaN(lng)) {
+              _map.flyTo([lat, lng], 7, { duration: 0.6 });
+            }
+            document.querySelectorAll(".story-node").forEach(n => n.classList.remove("is-visible"));
+            entry.target.classList.add("is-visible");
+          }
+        });
+      }, { rootMargin: "-30% 0px -60% 0px", threshold: 0 });
+
+      container.querySelectorAll(".story-node[data-city-id]").forEach(n => _storyObserver.observe(n));
     };
 
     /* ---- Main init ---- */
@@ -1265,8 +1370,8 @@ const meta = {
             // Auto-open current city story without flying (stay on full map view)
             setTimeout(() => {
               _selectedId = _currentCityItem.id;
-              document.querySelectorAll(".city-card").forEach(c =>
-                c.classList.toggle("is-active", c.dataset.cityId === _currentCityItem.id)
+              document.querySelectorAll(".story-node").forEach(n =>
+                n.classList.toggle("is-visible", n.dataset.cityId === _currentCityItem.id)
               );
               renderStoryCard(_currentCityItem, false);
               openMapPanel();
@@ -1285,8 +1390,8 @@ const meta = {
       // Panel close button
       document.getElementById("map-panel-close")?.addEventListener("click", closeMapPanel);
 
-      // Build city cards
-      buildCards();
+      // Build story flow
+      buildStoryFlow();
 
       // ---- Live Counter ----
       const counterEl = document.getElementById("live-counter");
@@ -1451,7 +1556,7 @@ const meta = {
 
       // Lang observer
       new MutationObserver(() => {
-        buildCards();
+        buildStoryFlow();
         if (_selectedId) {
           const allCities = [..._data.cities, ...(_data.priorCities || [])];
           const city = allCities.find(c => c.id === _selectedId);
