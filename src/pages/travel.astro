@@ -1171,6 +1171,18 @@ const meta = {
       fillCounter("days", daysOnRoad);
       fillCounter("distance", Math.round(totalDistance), " km");
 
+      // Province lookup for prior cities (declared early for province count)
+      const PRIOR_PROVINCE = {
+        "nanchang": "Jiangxi", "shangrao": "Jiangxi", "wuyuan": "Jiangxi", "ganzhou": "Jiangxi", "jian": "Jiangxi",
+        "dongguan": "Guangdong", "humen": "Guangdong", "shenzhen": "Guangdong",
+        "shanghai-life": "Shanghai", "shanghai-lucky": "Shanghai",
+        "suzhou-2014": "Jiangsu", "suzhou-2023": "Jiangsu",
+        "nanjing": "Jiangsu", "wuxi": "Jiangsu",
+        "hongkong-macau": "Guangdong", "xiamen": "Fujian",
+        "kunming": "Yunnan", "dali-first": "Yunnan",
+        "yunhe": "Zhejiang", "sanya": "Hainan",
+      };
+
       // Province count
       const provinceSet = new Set();
       cities.forEach(c => { if (c.province) provinceSet.add(c.province); });
@@ -1212,18 +1224,6 @@ const meta = {
       const priorLayer  = L.layerGroup().addTo(_map);
       const bounds = L.latLngBounds([]);
       _markerRefs = new Map();
-
-      // Province lookup for prior cities (no province field in data)
-      const PRIOR_PROVINCE = {
-        "nanchang": "Jiangxi", "shangrao": "Jiangxi", "wuyuan": "Jiangxi", "ganzhou": "Jiangxi", "jian": "Jiangxi",
-        "dongguan": "Guangdong", "humen": "Guangdong", "shenzhen": "Guangdong",
-        "shanghai-life": "Shanghai", "shanghai-lucky": "Shanghai",
-        "suzhou-2014": "Jiangsu", "suzhou-2023": "Jiangsu",
-        "nanjing": "Jiangsu", "wuxi": "Jiangsu",
-        "hongkong-macau": "Guangdong", "xiamen": "Fujian",
-        "kunming": "Yunnan", "dali-first": "Yunnan",
-        "yunhe": "Zhejiang", "sanya": "Hainan",
-      };
 
       // Prior city markers — skip merged cities (rendered via primary)
       priorCities.forEach(city => {
