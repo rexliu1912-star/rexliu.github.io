@@ -23,7 +23,7 @@ const meta = {
         The Journey
       </h1>
       <p class="hero-reveal-subtitle font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300" style="max-width: 44rem">
-        Digital nomad since Nov 2025 — a living map of cities, detours, libraries, and the shape of a sovereign life on the road.
+        Digital nomad since Oct 2025 — a living map of cities, detours, libraries, and the shape of a sovereign life on the road.
       </p>
       <div class="hero-stats fade-in-up" style="--delay: 260ms" aria-label="Travel statistics">
         <article class="stat-card">
@@ -50,8 +50,8 @@ const meta = {
             <h3 class="map-title font-serif">城市轨迹 / City by city</h3>
           </div>
           <div class="map-controls">
-            <button id="replay-btn" class="map-ctrl-btn map-ctrl-btn--tip font-serif" data-tip-en="Journey Replay" data-tip-zh="旅程回放" aria-label="Play journey replay">▶</button>
-            <button id="stay-btn" class="map-ctrl-btn map-ctrl-btn--tip" data-tip-en="Stay Duration" data-tip-zh="停留时长" aria-label="Toggle stay duration">◉</button>
+            <button id="replay-btn" class="map-ctrl-btn" title="Journey Replay" aria-label="Play journey replay">▶</button>
+            <button id="heatmap-btn" class="map-ctrl-btn" title="Stay Heatmap" aria-label="Toggle stay heatmap">◉</button>
           </div>
         </div>
         <div id="travel-map" class="travel-map" aria-label="Travel map"></div>
@@ -65,7 +65,7 @@ const meta = {
         <!-- ====== REPLAY PROGRESS ====== -->
         <div class="replay-progress" id="replay-progress" aria-hidden="true">
           <div class="replay-track"><div class="replay-fill" id="replay-fill"></div></div>
-          <span class="replay-label font-serif" id="replay-label"></span>
+          <span class="replay-label" id="replay-label"></span>
         </div>
 
         <!-- ====== MAP STORY PANEL ====== -->
@@ -75,22 +75,22 @@ const meta = {
             <div class="story-head">
               <div class="story-head-left">
                 <h2 class="story-city font-serif" id="story-city">—</h2>
-                <span class="story-meta font-serif" id="story-meta"></span>
+                <span class="story-meta" id="story-meta"></span>
               </div>
-              <span class="story-time font-serif" id="story-time"></span>
+              <span class="story-time" id="story-time"></span>
             </div>
             <div class="story-images" id="story-images"></div>
-            <blockquote class="story-quote font-serif" id="story-quote"></blockquote>
+            <blockquote class="story-quote" id="story-quote"></blockquote>
             <div class="story-details" id="story-details"></div>
           </div>
         </aside>
       </div>
     </div>
 
-    <!-- ====== STORY FLOW ====== -->
-    <div class="story-flow fade-in-up" id="story-flow" style="--delay: 120ms">
-      <div class="story-flow__line"></div>
-      <!-- JS 动态生成节点 -->
+    <!-- ====== YEAR TAB TIMELINE ====== -->
+    <div class="year-tab-section fade-in-up" style="--delay: 120ms">
+      <div class="year-tabs" id="year-tabs" role="tablist" aria-label="Travel years"></div>
+      <div class="year-cities" id="year-cities" role="tabpanel"></div>
     </div>
 
     <!-- ====== INSIGHT GRID ====== -->
@@ -160,7 +160,6 @@ const meta = {
       display: grid;
       gap: 2rem;
       padding-bottom: 3.5rem;
-      font-family: "Inter", -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
     }
     :global(html[data-theme="dark"]) .travel-shell {
       --travel-surface: rgba(22, 22, 26, 0.82);
@@ -412,217 +411,137 @@ const meta = {
       font-weight: 600;
     }
 
+    /* ---- Year Tab Timeline ---- */
+    .year-tab-section { display: grid; gap: 1rem; }
+
+    .year-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      align-items: center;
+    }
+
+    .year-tab {
+      padding: 0.35rem 1rem;
+      border-radius: 999px;
+      border: 1px solid var(--travel-border);
+      background: color-mix(in srgb, var(--travel-surface) 85%, transparent);
+      color: var(--travel-muted);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+    .year-tab:hover {
+      border-color: color-mix(in srgb, var(--purple) 45%, transparent);
+      color: var(--purple);
+      background: color-mix(in srgb, var(--purple) 6%, transparent);
+    }
+    .year-tab.is-active {
+      background: var(--purple);
+      border-color: var(--purple);
+      color: #fff;
+    }
+
+    /* "Now" tab special style */
+    .year-tab--now {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .year-tab--now::before {
+      content: "";
+      width: 0.42rem;
+      height: 0.42rem;
+      border-radius: 50%;
+      background: currentColor;
+      opacity: 0.7;
+      flex-shrink: 0;
+    }
+    .year-tab--now.is-active::before {
+      opacity: 1;
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+
     @keyframes pulse-dot {
       0%, 100% { box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 25%, transparent); }
       50% { box-shadow: 0 0 0 7px color-mix(in srgb, currentColor 10%, transparent); }
     }
 
-    /* ---- CSS Tooltips for map buttons ---- */
-    .map-ctrl-btn--tip {
-      position: relative;
-    }
-    .map-ctrl-btn--tip::after {
-      content: attr(data-tip-en);
-      position: absolute;
-      top: calc(100% + 6px);
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(20, 20, 24, 0.92);
-      color: #fff;
-      font-size: 0.65rem;
-      font-family: inherit;
-      white-space: nowrap;
-      padding: 0.25rem 0.55rem;
-      border-radius: 0.4rem;
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.18s;
-      z-index: 10;
-    }
-    :global(html[data-lang="zh"]) .map-ctrl-btn--tip::after {
-      content: attr(data-tip-zh);
-    }
-    .map-ctrl-btn--tip:hover::after {
-      opacity: 1;
+    /* City grid */
+    .year-cities {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+      gap: 0.55rem;
     }
 
-    /* ---- Story Flow ---- */
-    :global(.story-flow) {
-      position: relative;
-      padding: 1rem 0 2rem 2.5rem;
-    }
-    :global(.story-flow__line) {
-      position: absolute;
-      left: 0.6rem;
-      top: 0;
-      bottom: 0;
-      width: 2px;
-      background: linear-gradient(to bottom, #d4d0dc 0%, #d4d0dc var(--prior-end, 50%), var(--purple) var(--prior-end, 50%), var(--purple) 100%);
-    }
-    :global(html[data-theme="dark"]) :global(.story-flow__line) {
-      background: linear-gradient(to bottom, #3a3548 0%, #3a3548 var(--prior-end, 50%), var(--purple) var(--prior-end, 50%), var(--purple) 100%);
-    }
-
-    /* Node base */
-    :global(.story-node) {
-      position: relative;
-      padding: 0.5rem 0;
-      cursor: pointer;
-    }
-
-    /* Dot base */
-    :global(.story-node__dot) {
-      position: absolute;
-      left: -1.9rem;
-      top: 0.75rem;
-      z-index: 2;
-    }
-
-    /* ---- Nomad node (big card) ---- */
-    :global(.story-node--nomad) {
-      padding: 0.75rem 0;
-    }
-    :global(.story-node__dot--nomad) {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: var(--purple);
-      top: 1.25rem;
-      left: calc(-1.9rem - 1px);
-    }
-    :global(.story-node--nomad.is-current) :global(.story-node__dot--nomad) {
-      animation: breathe-dot 2.5s ease-in-out infinite;
-    }
-    @keyframes breathe-dot {
-      0%, 100% { box-shadow: 0 0 0 3px rgba(137,83,209,0.25); }
-      50% { box-shadow: 0 0 0 7px rgba(137,83,209,0.10); }
-    }
-
-    :global(.story-node__card) {
-      padding: 1rem;
-      border-radius: 1rem;
+    .year-city-item {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      padding: 0.65rem 0.9rem;
+      border-radius: 0.9rem;
       border: 1px solid var(--travel-border);
-      border-left: 3px solid var(--purple);
-      background: color-mix(in srgb, var(--purple) 3%, var(--travel-surface));
-      transition: box-shadow 0.22s, border-color 0.22s;
+      background: color-mix(in srgb, var(--travel-surface) 88%, transparent);
+      cursor: pointer;
+      transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s, background 0.2s;
     }
-    :global(.story-node__card:hover) {
-      box-shadow: 0 4px 16px rgba(137,83,209,0.12);
+    .year-city-item:hover {
       border-color: color-mix(in srgb, var(--purple) 40%, transparent);
+      box-shadow: 0 2px 10px rgba(137,83,209,0.1);
+      transform: translateY(-1px);
     }
-    :global(.story-node.is-visible) :global(.story-node__card) {
+    .year-city-item.is-active {
       border-color: var(--purple);
-      box-shadow: 0 4px 16px rgba(137,83,209,0.18);
-    }
-    :global(.story-node__head) {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 0.35rem;
-    }
-    :global(.story-node__city) {
-      margin: 0;
-      font-family: Georgia, 'Times New Roman', serif;
-      font-size: 1.05rem;
-      font-weight: 600;
-      color: var(--travel-text);
-      line-height: 1.2;
-    }
-    :global(.story-node__badge) {
-      display: inline-flex;
-      align-items: center;
-      background: var(--purple);
-      color: #fff;
-      font-size: 0.55rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      padding: 0.15rem 0.45rem;
-      border-radius: 999px;
-      font-weight: 600;
-      flex-shrink: 0;
-      animation: breathe 2.5s ease-in-out infinite;
-    }
-    @keyframes breathe {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.65; }
-    }
-    :global(.story-node__date) {
-      display: block;
-      font-size: 0.73rem;
-      color: var(--travel-muted);
-      letter-spacing: 0.02em;
-      font-family: Inter, -apple-system, PingFang SC, sans-serif;
-    }
-    :global(.story-node__stay) {
-      display: block;
-      font-size: 0.7rem;
-      color: var(--purple);
-      font-weight: 600;
-      font-family: Inter, -apple-system, PingFang SC, sans-serif;
-      margin-top: 0.15rem;
-    }
-    :global(html[data-theme="dark"]) :global(.story-node__stay) { color: var(--purple-light); }
-    :global(.story-node__quote) {
-      margin: 0.4rem 0 0;
-      font-size: 0.78rem;
-      font-style: italic;
-      color: var(--travel-soft);
-      line-height: 1.55;
-      font-family: Inter, -apple-system, PingFang SC, sans-serif;
+      background: color-mix(in srgb, var(--purple) 8%, transparent);
     }
 
-    /* ---- Prior node (compact row) ---- */
-    :global(.story-node--prior) {
-      padding: 0.3rem 0;
-    }
-    :global(.story-node__dot--prior) {
-      width: 8px;
-      height: 8px;
+    .year-city-dot {
+      width: 0.5rem;
+      height: 0.5rem;
       border-radius: 50%;
-      border: 2px solid #b0aab8;
-      background: transparent;
-      top: 0.55rem;
-      left: calc(-1.9rem);
+      background: color-mix(in srgb, var(--purple) 45%, transparent);
+      border: 1.5px solid color-mix(in srgb, var(--purple) 55%, transparent);
+      flex-shrink: 0;
+      transition: all 0.2s;
     }
-    :global(html[data-theme="dark"]) :global(.story-node__dot--prior) {
-      border-color: #5a5568;
+    .year-city-item:hover .year-city-dot,
+    .year-city-item.is-active .year-city-dot {
+      background: var(--purple);
+      border-color: var(--purple);
     }
-    :global(.story-node__line-content) {
+    .year-city-dot--current {
+      background: var(--purple) !important;
+      border-color: var(--purple) !important;
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+
+    .year-city-body {
+      flex: 1;
+      min-width: 0;
       display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.82rem;
+      flex-direction: column;
+      gap: 0.12rem;
     }
-    :global(.story-node__city-sm) {
-      color: var(--travel-text);
-      font-weight: 500;
-    }
-    :global(.story-node__year) {
-      color: var(--travel-muted);
-      font-size: 0.75rem;
-    }
-
-    /* ---- Transition marker ---- */
-    :global(.story-node--transition) {
-      padding: 0.6rem 0;
-      pointer-events: none;
-    }
-    :global(.story-node--transition) :global(.story-node__line-content) {
-      font-size: 0.68rem;
-      color: var(--purple);
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
+    .year-city-name {
+      font-size: 0.85rem;
       font-weight: 600;
+      color: var(--travel-text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
-
-    @media (max-width: 720px) {
-      :global(.story-flow) { padding-left: 2rem; }
-      :global(.story-node__dot) { left: -1.5rem; }
-      :global(.story-node__dot--nomad) { left: calc(-1.5rem - 1px); }
-      :global(.story-node__dot--prior) { left: calc(-1.5rem); }
-      :global(.story-node__card) { padding: 0.75rem; }
-      :global(.story-node__city) { font-size: 0.95rem; }
+    .year-city-item.is-active .year-city-name { color: var(--purple); }
+    :global(html[data-theme="dark"]) .year-city-item.is-active .year-city-name { color: var(--purple-light); }
+    .year-city-date {
+      font-size: 0.67rem;
+      color: var(--travel-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     /* ---- Insight grid ---- */
@@ -794,6 +713,7 @@ const meta = {
       .hero-stats, .insight-grid { grid-template-columns: 1fr; }
       .insight-card--wide { grid-column: span 1; }
       .map-frame, .travel-map { min-height: 50vh; }
+      .year-cities { grid-template-columns: 1fr 1fr; }
       /* panel slides up from bottom on mobile */
       .map-panel {
         top: auto;
@@ -874,9 +794,9 @@ const meta = {
     };
     const spotSvg = `<svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg"><circle cx="9" cy="9" r="5" fill="#fdf7ff" stroke="#8953d1" stroke-width="2"/></svg>`;
 
-    let _map, _data, _currentCityItem, _markerRefs, _spotLayer, _selectedId;
+    let _map, _data, _currentCityItem, _markerRefs, _spotLayer, _selectedId, _activeYear;
     let _replayTimer = null, _replayIndex = 0, _isReplaying = false;
-    let _stayArcsOn = false, _stayArcLayer = null;
+    let _heatmapOn = false, _heatCircles = [];
 
     /* ---- Map Panel ---- */
     const openMapPanel = () => {
@@ -969,9 +889,8 @@ const meta = {
     const selectCity = (cityId, isPrior) => {
       _selectedId = cityId;
 
-      // Highlight story node
-      document.querySelectorAll(".story-node").forEach(n =>
-        n.classList.toggle("is-visible", n.dataset.cityId === cityId)
+      document.querySelectorAll(".year-city-item").forEach(n =>
+        n.classList.toggle("is-active", n.dataset.cityId === cityId)
       );
 
       const allCities = [..._data.cities, ...(_data.priorCities || [])];
@@ -980,6 +899,7 @@ const meta = {
 
       // Dramatic fly: zoom out briefly then push into city
       const targetZoom = city.spots?.length ? 8 : 6.8;
+      const currentZoom = _map.getZoom();
       if (Math.abs(_map.getCenter().lat - city.lat) > 3 || Math.abs(_map.getCenter().lng - city.lng) > 3) {
         _map.flyTo([city.lat, city.lng], targetZoom, { duration: 1.2, easeLinearity: 0.3 });
       } else {
@@ -1003,184 +923,114 @@ const meta = {
 
       renderStoryCard(city, isPrior);
       openMapPanel();
-
     };
 
-    /* ---- Story Flow Builder ---- */
-    const NOMAD_START = "2025-11-18";
+    /* ---- Year tab rendering ---- */
+    const renderYearCities = (isZh) => {
+      const citiesEl = document.getElementById("year-cities");
+      if (!citiesEl) return;
+      citiesEl.innerHTML = "";
 
-    const parsePriorDate = (yearStr) => {
-      if (!yearStr) return new Date(0);
-      const m = yearStr.match(/(\d{4})-?(\d{2})?-?(\d{2})?/);
-      if (!m) return new Date(0);
-      return new Date(`${m[1]}-${m[2]||"01"}-${m[3]||"01"}`);
-    };
+      let citiesToShow = [];
+      let isPriorGroup = false;
 
-    const computePriorSpan = (yearStr, isZh) => {
-      if (!yearStr) return "";
-      const ym = yearStr.match(/(\d{4}).*?(\d{4})/);
-      if (ym && ym[1] !== ym[2]) {
-        const span = parseInt(ym[2]) - parseInt(ym[1]);
-        return span > 1 ? `${span}${isZh ? "年" : " years"}` : `${span}${isZh ? "年" : " year"}`;
+      if (_activeYear === "now") {
+        citiesToShow = [..._data.cities].sort((a, b) => new Date(a.arrival) - new Date(b.arrival));
+        isPriorGroup = false;
+      } else {
+        citiesToShow = (_data.priorCities || []).filter(c => extractYear(c.year) === _activeYear);
+        isPriorGroup = true;
       }
-      if (yearStr.includes("~") || yearStr.match(/^\d{4}-\d{2}-\d{2}$/)) {
-        return isZh ? "短途" : "Short trip";
-      }
-      return "";
-    };
 
-    let _storyObserver = null;
+      citiesToShow.forEach(city => {
+        const item = document.createElement("div");
+        item.className = `year-city-item${_selectedId === city.id ? " is-active" : ""}`;
+        item.dataset.cityId = city.id;
 
-    const buildStoryFlow = () => {
-      const container = document.getElementById("story-flow");
-      if (!container) return;
-
-      // Remove old generated nodes, keep the line
-      container.querySelectorAll(".story-node").forEach(n => n.remove());
-      if (_storyObserver) { _storyObserver.disconnect(); _storyObserver = null; }
-
-      const isZh = getLang() === "zh";
-      const priorCities = (_data.priorCities || []).filter(c => !c.mergeInto);
-      const nomadCities = [..._data.cities].sort((a,b) => new Date(a.arrival) - new Date(b.arrival));
-
-      const allNodes = [
-        ...priorCities.map(c => ({ ...c, _isPrior: true, _isNomad: false, _sortDate: parsePriorDate(c.year) })),
-        ...nomadCities.map(c => ({ ...c, _isPrior: false, _isNomad: true, _sortDate: new Date(c.arrival) }))
-      ].sort((a, b) => a._sortDate - b._sortDate);
-
-      // Find index where nomad starts for line gradient
-      const firstNomadIdx = allNodes.findIndex(c => c._isNomad);
-      const totalNodes = allNodes.length;
-
-      let lastWasPrior = false;
-
-      allNodes.forEach((city, idx) => {
-        // Insert transition marker between prior and nomad
-        if (city._isNomad && lastWasPrior) {
-          const trans = document.createElement("div");
-          trans.className = "story-node story-node--transition";
-          trans.innerHTML = `<div class="story-node__dot story-node__dot--nomad" style="background:var(--purple);width:6px;height:6px;left:calc(-1.9rem + 1px)"></div>
-            <div class="story-node__line-content"><span>${isZh ? "▸ 数字游牧开始" : "▸ Nomad Life Begins"}</span></div>`;
-          container.appendChild(trans);
-        }
-        lastWasPrior = city._isPrior;
-
-        const node = document.createElement("div");
-        node.dataset.cityId = city.id;
-        node.dataset.lat = city.lat;
-        node.dataset.lng = city.lng;
-
-        if (city._isNomad) {
-          // ---- Big card (nomad city) ----
-          node.className = "story-node story-node--nomad";
-          if (city.isCurrent) node.classList.add("is-current");
-
-          const dot = document.createElement("div");
-          dot.className = "story-node__dot story-node__dot--nomad";
-          node.appendChild(dot);
-
-          const card = document.createElement("div");
-          card.className = "story-node__card";
-
-          // Head
-          const head = document.createElement("div");
-          head.className = "story-node__head";
-          const cityName = document.createElement("h4");
-          cityName.className = "story-node__city font-serif";
-          cityName.textContent = isZh ? city.nameCN : city.name;
-          head.appendChild(cityName);
-          if (city.isCurrent) {
-            const badge = document.createElement("span");
-            badge.className = "story-node__badge";
-            badge.textContent = "NOW";
-            head.appendChild(badge);
-          }
-          card.appendChild(head);
-
-          // Date
-          const dateEl = document.createElement("span");
-          dateEl.className = "story-node__date";
-          const arrStr = fmtShort(city.arrival, isZh ? "zh" : "en");
-          const depStr = fmtShort(city.departure, isZh ? "zh" : "en");
-          dateEl.textContent = `${arrStr} — ${depStr}`;
-          card.appendChild(dateEl);
-
-          // Stay
-          if (city.stayDays) {
-            const stay = document.createElement("span");
-            stay.className = "story-node__stay";
-            stay.textContent = `${city.stayDays}d · ${isZh ? (city.stayLabelCN || city.stayLabel || "") : (city.stayLabel || "")}`;
-            card.appendChild(stay);
-          }
-
-          // Quote
-          const quote = isZh ? (city.quoteCN || city.quote) : city.quote;
-          if (quote) {
-            const q = document.createElement("p");
-            q.className = "story-node__quote";
-            q.textContent = `"${quote}"`;
-            card.appendChild(q);
-          }
-
-          node.appendChild(card);
+        const dotClass = city.isCurrent ? "year-city-dot year-city-dot--current" : "year-city-dot";
+        const nameText = isZh ? city.nameCN : city.name;
+        let dateText = "";
+        if (city.isCurrent) {
+          dateText = isZh ? "当前城市" : "Current";
+        } else if (isPriorGroup) {
+          dateText = city.year || "";
         } else {
-          // ---- Compact row (prior city) ----
-          node.className = "story-node story-node--prior";
-          const dot = document.createElement("div");
-          dot.className = "story-node__dot story-node__dot--prior";
-          node.appendChild(dot);
-
-          const content = document.createElement("div");
-          content.className = "story-node__line-content";
-
-          const citySmall = document.createElement("span");
-          citySmall.className = "story-node__city-sm";
-          citySmall.textContent = isZh ? city.nameCN : city.name;
-          content.appendChild(citySmall);
-
-          const yearEl = document.createElement("span");
-          yearEl.className = "story-node__year";
-          const yearStr = isZh ? (city.yearCN || city.year || "") : (city.year || "");
-          const span = computePriorSpan(city.year, isZh);
-          yearEl.textContent = span ? `${yearStr} · ${span}` : yearStr;
-          content.appendChild(yearEl);
-
-          node.appendChild(content);
+          dateText = fmtShort(city.arrival, isZh ? "zh" : "en");
         }
 
-        // Click handler
-        node.addEventListener("click", () => {
-          selectCity(city.id, city._isPrior);
-        });
+        item.innerHTML = `
+          <div class="${dotClass}"></div>
+          <div class="year-city-body">
+            <span class="year-city-name">${nameText}</span>
+            <span class="year-city-date">${dateText}</span>
+          </div>
+        `;
+        item.addEventListener("click", () => selectCity(city.id, isPriorGroup));
+        citiesEl.appendChild(item);
+      });
+    };
 
-        container.appendChild(node);
+    const switchYear = (year) => {
+      _activeYear = year;
+      _selectedId = null;
+      closeMapPanel();
+
+      document.querySelectorAll(".year-tab").forEach(btn => {
+        const active = btn.dataset.year === year;
+        btn.classList.toggle("is-active", active);
+        btn.setAttribute("aria-selected", active ? "true" : "false");
       });
 
-      // Set line gradient position
-      if (firstNomadIdx > 0 && totalNodes > 0) {
-        // Add +1 for transition marker
-        const priorPct = Math.round(((firstNomadIdx) / (totalNodes + 1)) * 100);
-        container.querySelector(".story-flow__line").style.setProperty("--prior-end", `${priorPct}%`);
-      } else {
-        container.querySelector(".story-flow__line").style.setProperty("--prior-end", "0%");
+      const isZh = getLang() === "zh";
+      renderYearCities(isZh);
+
+      // Fly to year's cities bounds
+      if (_map) {
+        const bounds = L.latLngBounds([]);
+        const citiesToShow = year === "now"
+          ? _data.cities
+          : (_data.priorCities || []).filter(c => extractYear(c.year) === year);
+        citiesToShow.forEach(c => bounds.extend([c.lat, c.lng]));
+        if (bounds.isValid()) _map.flyToBounds(bounds.pad(0.3), { duration: 0.9 });
+        _spotLayer.clearLayers();
       }
+    };
 
-      // Scroll-driven map sync
-      _storyObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            const lat = parseFloat(entry.target.dataset.lat);
-            const lng = parseFloat(entry.target.dataset.lng);
-            if (_map && !isNaN(lat) && !isNaN(lng)) {
-              _map.flyTo([lat, lng], 7, { duration: 0.6 });
-            }
-            document.querySelectorAll(".story-node").forEach(n => n.classList.remove("is-visible"));
-            entry.target.classList.add("is-visible");
-          }
-        });
-      }, { rootMargin: "-30% 0px -60% 0px", threshold: 0 });
+    const buildYearTabs = () => {
+      const lang = getLang();
+      const isZh = lang === "zh";
+      const tabsEl = document.getElementById("year-tabs");
+      if (!tabsEl) return;
 
-      container.querySelectorAll(".story-node[data-city-id]").forEach(n => _storyObserver.observe(n));
+      // Gather unique start years from prior cities
+      const priorCities = _data.priorCities || [];
+      const yearSet = new Set(priorCities.map(c => extractYear(c.year)));
+      const sortedYears = [...yearSet].sort((a, b) => a - b);
+
+      tabsEl.innerHTML = "";
+
+      sortedYears.forEach(yr => {
+        const btn = document.createElement("button");
+        btn.className = `year-tab${_activeYear === yr ? " is-active" : ""}`;
+        btn.setAttribute("role", "tab");
+        btn.setAttribute("aria-selected", _activeYear === yr ? "true" : "false");
+        btn.dataset.year = yr;
+        btn.textContent = yr;
+        btn.addEventListener("click", () => switchYear(yr));
+        tabsEl.appendChild(btn);
+      });
+
+      // "Now" tab (last, right side)
+      const nowBtn = document.createElement("button");
+      nowBtn.className = `year-tab year-tab--now${_activeYear === "now" ? " is-active" : ""}`;
+      nowBtn.setAttribute("role", "tab");
+      nowBtn.setAttribute("aria-selected", _activeYear === "now" ? "true" : "false");
+      nowBtn.dataset.year = "now";
+      nowBtn.textContent = isZh ? "游牧中" : "Now";
+      nowBtn.addEventListener("click", () => switchYear("now"));
+      tabsEl.appendChild(nowBtn);
+
+      renderYearCities(isZh);
     };
 
     /* ---- Main init ---- */
@@ -1302,7 +1152,15 @@ const meta = {
             el.style.zIndex = "";
           }
         });
-        m.on("click", () => selectCity(city.id, true));
+        m.on("click", () => {
+          const yr = extractYear(city.year);
+          if (_activeYear !== yr) {
+            switchYear(yr);
+            setTimeout(() => selectCity(city.id, true), 200);
+          } else {
+            selectCity(city.id, true);
+          }
+        });
       });
 
       // Nomad city markers + animated route (region-colored)
@@ -1341,7 +1199,14 @@ const meta = {
             }
           });
 
-          m.on("click", () => selectCity(city.id, false));
+          m.on("click", () => {
+            if (_activeYear !== "now") {
+              switchYear("now");
+              setTimeout(() => selectCity(city.id, false), 200);
+            } else {
+              selectCity(city.id, false);
+            }
+          });
           _markerRefs.set(city.id, m);
 
           // Colored route segment connecting to previous city
@@ -1370,8 +1235,8 @@ const meta = {
             // Auto-open current city story without flying (stay on full map view)
             setTimeout(() => {
               _selectedId = _currentCityItem.id;
-              document.querySelectorAll(".story-node").forEach(n =>
-                n.classList.toggle("is-visible", n.dataset.cityId === _currentCityItem.id)
+              document.querySelectorAll(".year-city-item").forEach(n =>
+                n.classList.toggle("is-active", n.dataset.cityId === _currentCityItem.id)
               );
               renderStoryCard(_currentCityItem, false);
               openMapPanel();
@@ -1390,8 +1255,9 @@ const meta = {
       // Panel close button
       document.getElementById("map-panel-close")?.addEventListener("click", closeMapPanel);
 
-      // Build story flow
-      buildStoryFlow();
+      // Build year tabs (default: "now")
+      _activeYear = "now";
+      buildYearTabs();
 
       // ---- Live Counter ----
       const counterEl = document.getElementById("live-counter");
@@ -1460,7 +1326,14 @@ const meta = {
         if (replayProgress) replayProgress.classList.remove("is-active");
       };
 
-      // Build full chronological list for replay
+      // Build full chronological list: prior cities + nomad cities
+      // Prior cities: extract start year from year string for sorting
+      const parsePriorDate = (yearStr) => {
+        if (!yearStr) return new Date(0);
+        const m = yearStr.match(/(\d{4})-?(\d{2})?-?(\d{2})?/);
+        if (!m) return new Date(0);
+        return new Date(`${m[1]}-${m[2]||"01"}-${m[3]||"01"}`);
+      };
       const allCitiesChron = [
         ...priorCities.filter(c => !c.mergeInto).map(c => ({ ...c, _isPrior: true, _sortDate: parsePriorDate(c.year) })),
         ...cities.map(c => ({ ...c, _isPrior: false, _sortDate: new Date(c.arrival) }))
@@ -1473,7 +1346,15 @@ const meta = {
         if (replayFill) replayFill.style.width = `${pct}%`;
         if (replayLabel) replayLabel.textContent = getLang() === "zh" ? city.nameCN : city.name;
 
-        selectCity(city.id, city._isPrior);
+        // Switch year tab to match
+        if (city._isPrior) {
+          const yr = extractYear(city.year);
+          if (_activeYear !== yr) switchYear(yr);
+          setTimeout(() => selectCity(city.id, true), _activeYear !== extractYear(city.year) ? 150 : 0);
+        } else {
+          if (_activeYear !== "now") switchYear("now");
+          setTimeout(() => selectCity(city.id, false), 0);
+        }
         _replayTimer = setTimeout(() => replayStep(idx + 1, sorted), REPLAY_DELAY);
       };
 
@@ -1489,63 +1370,31 @@ const meta = {
         });
       }
 
-      // ---- Stay Duration Arcs ----
-      _stayArcLayer = L.layerGroup();
-      const stayBtn = document.getElementById("stay-btn");
-
-      const buildStayArcs = () => {
-        _stayArcLayer.clearLayers();
-        // Combine cities + priorCities that have stayDays
-        const allWithStay = [
-          ...cities.filter(c => c.stayDays),
-          ...(priorCities || []).filter(c => !c.mergeInto && c.stayDays)
-        ];
-        if (!allWithStay.length) return;
-        const maxDays = Math.max(...allWithStay.map(c => c.stayDays));
-
-        allWithStay.forEach(c => {
-          const rc = getRegionColor(c.province || "default");
-          const angle = (c.stayDays / maxDays) * 360;
-          const r = 22;
-          const cx = 28, cy = 28;
-          // SVG arc
-          const startAngle = -90; // 12 o'clock
-          const endAngle = startAngle + angle;
-          const startRad = startAngle * Math.PI / 180;
-          const endRad = endAngle * Math.PI / 180;
-          const x1 = cx + r * Math.cos(startRad);
-          const y1 = cy + r * Math.sin(startRad);
-          const x2 = cx + r * Math.cos(endRad);
-          const y2 = cy + r * Math.sin(endRad);
-          const largeArc = angle > 180 ? 1 : 0;
-          const daysLabel = `${c.stayDays}d`;
-
-          const svg = `<svg width="56" height="56" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${rc.main}" stroke-width="3.5" opacity="0.12"/>
-            <path d="M ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2}" fill="none" stroke="${rc.main}" stroke-width="3.5" stroke-linecap="round" opacity="0.85"/>
-            <text x="${cx}" y="${cy + 1}" text-anchor="middle" dominant-baseline="central" fill="${rc.main}" font-size="10" font-weight="700" font-family="Inter,system-ui,sans-serif">${daysLabel}</text>
-          </svg>`;
-
-          const icon = L.divIcon({
-            html: svg,
-            className: "",
-            iconSize: [56, 56],
-            iconAnchor: [28, 28]
-          });
-          L.marker([c.lat, c.lng], { icon, interactive: false, zIndexOffset: -100 }).addTo(_stayArcLayer);
+      // ---- Stay Heatmap ----
+      const heatBtn = document.getElementById("heatmap-btn");
+      const showHeatmap = () => {
+        _heatCircles = cities.filter(c => c.stayDays).map(c => {
+          const rc = getRegionColor(c.province);
+          const radius = Math.min(90000, Math.max(14000, c.stayDays * 2000));
+          const alpha = Math.min(0.5, 0.1 + c.stayDays * 0.009);
+          return L.circle([c.lat, c.lng], {
+            radius,
+            color: "transparent",
+            fillColor: rc.main,
+            fillOpacity: alpha,
+            interactive: false
+          }).addTo(_map);
         });
       };
-
-      if (stayBtn) {
-        stayBtn.addEventListener("click", () => {
-          _stayArcsOn = !_stayArcsOn;
-          stayBtn.classList.toggle("is-active", _stayArcsOn);
-          if (_stayArcsOn) {
-            buildStayArcs();
-            _stayArcLayer.addTo(_map);
-          } else {
-            _stayArcLayer.remove();
-          }
+      const hideHeatmap = () => {
+        _heatCircles.forEach(c => c.remove());
+        _heatCircles = [];
+      };
+      if (heatBtn) {
+        heatBtn.addEventListener("click", () => {
+          _heatmapOn = !_heatmapOn;
+          heatBtn.classList.toggle("is-active", _heatmapOn);
+          _heatmapOn ? showHeatmap() : hideHeatmap();
         });
       }
 
@@ -1556,7 +1405,7 @@ const meta = {
 
       // Lang observer
       new MutationObserver(() => {
-        buildStoryFlow();
+        buildYearTabs();
         if (_selectedId) {
           const allCities = [..._data.cities, ...(_data.priorCities || [])];
           const city = allCities.find(c => c.id === _selectedId);
@@ -1571,6 +1420,7 @@ const meta = {
       const mapNode = document.getElementById("travel-map");
       if (mapNode) mapNode.dataset.ready = "";
       _selectedId = null;
+      _activeYear = null;
       initTravel();
     });
   </script>
