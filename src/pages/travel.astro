@@ -52,7 +52,7 @@ const meta = {
           </div>
           <div class="map-controls">
             <button id="replay-btn" class="map-ctrl-btn" title="Journey Replay" aria-label="Play journey replay">▶</button>
-            <button id="heatmap-btn" class="map-ctrl-btn" title="Stay Heatmap" aria-label="Toggle stay heatmap">◉</button>
+
           </div>
         </div>
         <div id="travel-map" class="travel-map" aria-label="Travel map"></div>
@@ -1502,33 +1502,7 @@ const meta = {
         });
       }
 
-      // ---- Stay Heatmap ----
-      const heatBtn = document.getElementById("heatmap-btn");
-      const showHeatmap = () => {
-        _heatCircles = cities.filter(c => c.stayDays).map(c => {
-          const rc = getRegionColor(c.province);
-          const radius = Math.min(90000, Math.max(14000, c.stayDays * 2000));
-          const alpha = Math.min(0.5, 0.1 + c.stayDays * 0.009);
-          return L.circle([c.lat, c.lng], {
-            radius,
-            color: "transparent",
-            fillColor: rc.main,
-            fillOpacity: alpha,
-            interactive: false
-          }).addTo(_map);
-        });
-      };
-      const hideHeatmap = () => {
-        _heatCircles.forEach(c => c.remove());
-        _heatCircles = [];
-      };
-      if (heatBtn) {
-        heatBtn.addEventListener("click", () => {
-          _heatmapOn = !_heatmapOn;
-          heatBtn.classList.toggle("is-active", _heatmapOn);
-          _heatmapOn ? showHeatmap() : hideHeatmap();
-        });
-      }
+      // (Stay Heatmap removed per Rex request)
 
       // ---- GeoJSON City Boundary Highlights ----
       const PROVINCE_CODES = {
