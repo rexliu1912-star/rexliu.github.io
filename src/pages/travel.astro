@@ -483,68 +483,65 @@ const meta = {
       gap: 0.65rem;
     }
 
-    .year-city-item {
+    :global(.year-city-item) {
       display: flex;
       align-items: center;
       gap: 0.6rem;
-      padding: 0.5rem 0.2rem;
+      padding: 0.5rem 0.2rem 0.5rem 1rem;
       border-radius: 0;
       border: none;
       border-bottom: 1px solid color-mix(in srgb, var(--travel-border) 50%, transparent);
       background: transparent;
       cursor: pointer;
-      transition: color 0.2s, padding-left 0.2s;
+      transition: color 0.2s, padding-left 0.25s, background 0.2s;
       position: relative;
     }
-    .year-city-item:hover {
+    :global(.year-city-item:hover) {
       color: var(--purple);
-      padding-left: 0.5rem;
+      padding-left: 1.4rem;
+      background: color-mix(in srgb, var(--purple) 4%, transparent);
     }
-    .year-city-item:hover::before {
+    :global(.year-city-item:hover::before) {
       content: "→";
       position: absolute;
-      left: -0.8rem;
+      left: 0.15rem;
       color: var(--purple);
-      font-size: 0.75rem;
+      font-size: 0.8rem;
       opacity: 1;
     }
-    .year-city-item::before {
+    :global(.year-city-item::before) {
       content: "";
       position: absolute;
-      left: -0.8rem;
+      left: 0.15rem;
       opacity: 0;
       transition: opacity 0.2s;
     }
-    .year-city-item.is-active {
+    :global(.year-city-item.is-active) {
       color: var(--purple);
-      padding-left: 0.5rem;
+      padding-left: 1.4rem;
+      background: color-mix(in srgb, var(--purple) 4%, transparent);
     }
-    .year-city-item.is-active::before {
+    :global(.year-city-item.is-active::before) {
       content: "→";
       position: absolute;
-      left: -0.8rem;
+      left: 0.15rem;
       color: var(--purple);
-      font-size: 0.75rem;
+      font-size: 0.8rem;
       opacity: 1;
     }
 
-    .year-city-dot {
+    :global(.year-city-dot) {
       display: none;
     }
-    .year-city-dot--current {
-      background: var(--purple) !important;
-      border-color: var(--purple) !important;
-      animation: pulse-dot 2s ease-in-out infinite;
-    }
 
-    .year-city-body {
+    :global(.year-city-body) {
       flex: 1;
       min-width: 0;
       display: flex;
       flex-direction: column;
       gap: 0.15rem;
     }
-    .year-city-name {
+    :global(.year-city-name) {
       font-size: 0.85rem;
       font-weight: 600;
       color: var(--travel-text);
@@ -552,11 +549,11 @@ const meta = {
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    .year-city-item:hover .year-city-name,
-    .year-city-item.is-active .year-city-name { color: var(--purple); }
-    :global(html[data-theme="dark"]) .year-city-item:hover .year-city-name,
-    :global(html[data-theme="dark"]) .year-city-item.is-active .year-city-name { color: var(--purple-light); }
-    .year-city-date {
+    :global(.year-city-item:hover .year-city-name),
+    :global(.year-city-item.is-active .year-city-name) { color: var(--purple); }
+    :global(html[data-theme="dark"] .year-city-item:hover .year-city-name),
+    :global(html[data-theme="dark"] .year-city-item.is-active .year-city-name) { color: var(--purple-light); }
+    :global(.year-city-date) {
       font-size: 0.7rem;
       color: var(--travel-muted);
       white-space: nowrap;
