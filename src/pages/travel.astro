@@ -458,13 +458,13 @@ const meta = {
       font-weight: 600;
       color: var(--travel-text);
     }
-    .city-cards {
+    :global(.city-cards) {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
       gap: 1rem;
       margin-top: 0.25rem;
     }
-    .city-card {
+    :global(.city-card) {
       position: relative;
       border-radius: 1rem;
       border: 1px solid var(--travel-border);
@@ -475,38 +475,39 @@ const meta = {
       display: flex;
       flex-direction: column;
       gap: 0.4rem;
+      background: color-mix(in srgb, var(--travel-surface) 92%, transparent);
     }
-    .city-card:hover {
+    :global(.city-card:hover) {
       transform: translateY(-3px);
       box-shadow: 0 6px 20px rgba(137,83,209,0.13);
       border-color: color-mix(in srgb, var(--purple) 40%, transparent);
     }
-    .city-card.is-active {
+    :global(.city-card.is-active) {
       border-color: var(--purple);
       box-shadow: 0 4px 16px rgba(137,83,209,0.18);
     }
 
     /* Nomad card */
-    .city-card--nomad {
+    :global(.city-card--nomad) {
       border-left: 3px solid var(--purple);
       background: color-mix(in srgb, var(--purple) 3%, var(--travel-surface));
     }
     /* Prior card */
-    .city-card--prior {
+    :global(.city-card--prior) {
       border-left: 3px solid #c4c0cc;
       background: color-mix(in srgb, var(--travel-surface) 92%, transparent);
     }
-    :global(html[data-theme="dark"]) .city-card--prior {
+    :global(html[data-theme="dark"] .city-card--prior) {
       border-left-color: #5a5568;
     }
     /* Current card */
-    .city-card--current {
+    :global(.city-card--current) {
       border: 2px solid var(--purple);
       border-left: 3px solid var(--purple);
       background: color-mix(in srgb, var(--purple) 5%, var(--travel-surface));
     }
 
-    .city-card__cover {
+    :global(.city-card__cover) {
       position: absolute;
       inset: 0;
       background-size: cover;
@@ -516,14 +517,14 @@ const meta = {
       border-radius: inherit;
     }
 
-    .city-card__header {
+    :global(.city-card__header) {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
       gap: 0.5rem;
       position: relative;
     }
-    .city-card__name {
+    :global(.city-card__name) {
       font-family: Georgia, 'Times New Roman', serif;
       font-size: 1rem;
       font-weight: 600;
@@ -531,7 +532,7 @@ const meta = {
       margin: 0;
       line-height: 1.2;
     }
-    .city-card__now {
+    :global(.city-card__now) {
       display: inline-flex;
       align-items: center;
       gap: 0.2rem;
@@ -551,38 +552,41 @@ const meta = {
       50% { opacity: 0.65; }
     }
 
-    .city-card__date {
-      font-size: 0.7rem;
+    :global(.city-card__date) {
+      font-size: 0.73rem;
       color: var(--travel-muted);
       letter-spacing: 0.02em;
+      font-family: Inter, -apple-system, PingFang SC, sans-serif;
     }
-    .city-card__stay {
-      font-size: 0.68rem;
+    :global(.city-card__stay) {
+      font-size: 0.7rem;
       color: var(--purple);
       font-weight: 600;
+      font-family: Inter, -apple-system, PingFang SC, sans-serif;
     }
-    :global(html[data-theme="dark"]) .city-card__stay { color: var(--purple-light); }
+    :global(html[data-theme="dark"] .city-card__stay) { color: var(--purple-light); }
 
-    .city-card__quote {
+    :global(.city-card__quote) {
       font-size: 0.78rem;
       font-style: italic;
       color: var(--travel-soft);
       line-height: 1.55;
       margin: 0;
       position: relative;
+      font-family: Inter, -apple-system, PingFang SC, sans-serif;
     }
 
     @media (max-width: 720px) {
-      .city-cards {
+      :global(.city-cards) {
         grid-template-columns: repeat(2, 1fr);
         gap: 0.65rem;
       }
-      .city-card { padding: 0.75rem 0.85rem; }
-      .city-card__name { font-size: 0.88rem; }
-      .city-card__quote { font-size: 0.72rem; }
+      :global(.city-card) { padding: 0.75rem 0.85rem; }
+      :global(.city-card__name) { font-size: 0.88rem; }
+      :global(.city-card__quote) { font-size: 0.72rem; }
     }
     @media (max-width: 420px) {
-      .city-cards { grid-template-columns: 1fr; }
+      :global(.city-cards) { grid-template-columns: 1fr; }
     }
 
     /* ---- Insight grid ---- */
@@ -1032,17 +1036,28 @@ const meta = {
         if (city._isPrior) {
           dateEl.textContent = isZh ? (city.yearCN || city.year || "") : (city.year || "");
         } else {
-          dateEl.textContent = `${fmtShort(city.arrival, isZh ? "zh" : "en")} — ${fmtShort(city.departure, isZh ? "zh" : "en")}`;
+          const arrStr = fmtShort(city.arrival, isZh ? "zh" : "en");
+          const depStr = fmtShort(city.departure, isZh ? "zh" : "en");
+          dateEl.textContent = `${arrStr} — ${depStr}`;
         }
         card.appendChild(dateEl);
 
-        // Stay days
+        // Stay info
+        const stay = document.createElement("span");
+        stay.className = "city-card__stay";
         if (city.stayDays) {
-          const stay = document.createElement("span");
-          stay.className = "city-card__stay";
           stay.textContent = `${city.stayDays}d · ${isZh ? (city.stayLabelCN || city.stayLabel || "") : (city.stayLabel || "")}`;
-          card.appendChild(stay);
+        } else if (city._isPrior && city.year) {
+          // Parse year range for prior cities (e.g. "2010-2013" or "2013-02-12 ~ 02-15")
+          const ym = city.year.match(/(\d{4}).*?(\d{4})/);
+          if (ym && ym[1] !== ym[2]) {
+            const span = parseInt(ym[2]) - parseInt(ym[1]);
+            stay.textContent = span > 1 ? `${span} ${isZh ? "年" : "years"}` : `${span} ${isZh ? "年" : "year"}`;
+          } else if (city.year.includes("~")) {
+            stay.textContent = isZh ? "短途" : "Short trip";
+          }
         }
+        if (stay.textContent) card.appendChild(stay);
 
         // Quote
         const quote = isZh ? (city.quoteCN || city.quote) : city.quote;

@@ -21,7 +21,7 @@
 					document.documentElement.classList.remove('theme-loaded');
 				}, 100);
 			})();
-		</script><link rel="stylesheet" href="/_astro/travel.CL5_JMgn.css">
+		</script><link rel="stylesheet" href="/_astro/travel.C_lb6guI.css">
 <link rel="stylesheet" href="/_astro/_slug_.CNrzOcJD.css"></head> <body class="bg-global-bg text-global-text mx-auto flex min-h-screen max-w-4xl flex-col px-4 pt-8 font-mono text-sm font-normal antialiased sm:px-8"> <script>
 	const lightModePref = window.matchMedia("(prefers-color-scheme: light)");
 
@@ -352,17 +352,28 @@ Digital nomad since Nov 2025 — a living map of cities, detours, libraries, and
         if (city._isPrior) {
           dateEl.textContent = isZh ? (city.yearCN || city.year || "") : (city.year || "");
         } else {
-          dateEl.textContent = `${fmtShort(city.arrival, isZh ? "zh" : "en")} — ${fmtShort(city.departure, isZh ? "zh" : "en")}`;
+          const arrStr = fmtShort(city.arrival, isZh ? "zh" : "en");
+          const depStr = fmtShort(city.departure, isZh ? "zh" : "en");
+          dateEl.textContent = `${arrStr} — ${depStr}`;
         }
         card.appendChild(dateEl);
 
-        // Stay days
+        // Stay info
+        const stay = document.createElement("span");
+        stay.className = "city-card__stay";
         if (city.stayDays) {
-          const stay = document.createElement("span");
-          stay.className = "city-card__stay";
           stay.textContent = `${city.stayDays}d · ${isZh ? (city.stayLabelCN || city.stayLabel || "") : (city.stayLabel || "")}`;
-          card.appendChild(stay);
+        } else if (city._isPrior && city.year) {
+          // Parse year range for prior cities (e.g. "2010-2013" or "2013-02-12 ~ 02-15")
+          const ym = city.year.match(/(\d{4}).*?(\d{4})/);
+          if (ym && ym[1] !== ym[2]) {
+            const span = parseInt(ym[2]) - parseInt(ym[1]);
+            stay.textContent = span > 1 ? `${span} ${isZh ? "年" : "years"}` : `${span} ${isZh ? "年" : "year"}`;
+          } else if (city.year.includes("~")) {
+            stay.textContent = isZh ? "短途" : "Short trip";
+          }
         }
+        if (stay.textContent) card.appendChild(stay);
 
         // Quote
         const quote = isZh ? (city.quoteCN || city.quote) : city.quote;
