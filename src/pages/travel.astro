@@ -23,7 +23,7 @@ const meta = {
         The Journey
       </h1>
       <p class="hero-reveal-subtitle font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300" style="max-width: 44rem">
-        Digital nomad since Oct 2025 — a living map of cities, detours, libraries, and the shape of a sovereign life on the road.
+        Digital nomad since Nov 2025 — a living map of cities, detours, libraries, and the shape of a sovereign life on the road.
       </p>
       <div class="hero-stats fade-in-up" style="--delay: 260ms" aria-label="Travel statistics">
         <article class="stat-card">
@@ -1116,6 +1116,18 @@ const meta = {
       tabsEl.appendChild(nowBtn);
 
       renderYearCities(isZh);
+
+      // Trigger stagger entrance for initial load
+      setTimeout(() => {
+        const citiesGrid = document.getElementById("year-cities");
+        if (citiesGrid) {
+          const items = citiesGrid.querySelectorAll(".year-city-item");
+          items.forEach((item, i) => {
+            item.style.animationDelay = `${i * 60}ms`;
+            item.classList.add("city-enter");
+          });
+        }
+      }, 100);
     };
 
     /* ---- Main init ---- */
@@ -1199,7 +1211,7 @@ const meta = {
         ? `${_currentCityItem.nameCN} right now: ${_currentCityItem.mealCN}` : "";
 
       // Map init
-      _map = L.map(mapNode, { zoomControl: true, attributionControl: true, preferCanvas: true })
+      _map = L.map(mapNode, { zoomControl: true, attributionControl: true, preferCanvas: false })
                .setView([27.5, 106.1], 5.4);
       let tileLayer;
       const setTiles = () => {
@@ -1348,19 +1360,7 @@ const meta = {
               }
             });
 
-            // Date label at midpoint of route segment
-            if (prevCity) {
-              const midLat = (prevCity.lat + city.lat) / 2;
-              const midLng = (prevCity.lng + city.lng) / 2;
-              const dateLabel = fmtShort(city.arrival, "en");
-              const dateIcon = L.divIcon({
-                html: `<span class="route-date-label">${dateLabel}</span>`,
-                className: "",
-                iconSize: [60, 20],
-                iconAnchor: [30, 10]
-              });
-              L.marker([midLat, midLng], { icon: dateIcon, interactive: false }).addTo(routeLayer);
-            }
+            // (date labels removed per Rex request)
           }
 
           if (idx === sortedCities.length - 1) {
