@@ -147,6 +147,19 @@ const meta = {
       font-family: Georgia, Cambria, "Times New Roman", Times, serif;
     }
     :global(.next-stop-tooltip::before) { display: none !important; }
+    :global(.city-tooltip) {
+      background: color-mix(in srgb, var(--travel-panel, #fff) 95%, transparent) !important;
+      border: 1px solid var(--travel-border, rgba(137,83,209,0.15)) !important;
+      border-radius: 0.5rem !important;
+      padding: 0.25rem 0.6rem !important;
+      font-family: Georgia, serif !important;
+      font-size: 0.78rem !important;
+      color: var(--travel-text, #171717) !important;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+    }
+    :global(.city-tooltip::before) {
+      border-top-color: color-mix(in srgb, var(--travel-panel, #fff) 95%, transparent) !important;
+    }
 
     /* ---- Base font: match site-wide Georgia serif (Lab/Home pages) ---- */
     .travel-shell {
@@ -901,6 +914,26 @@ const meta = {
         });
         detEl.appendChild(divider);
       }
+
+      // Articles written in this city
+      if (city.articles && city.articles.length > 0) {
+        const artDiv = document.createElement("div");
+        artDiv.style.cssText = "border-top:1px solid var(--travel-border);padding-top:0.75rem;margin-top:0.25rem;";
+        const artLabel = document.createElement("div");
+        artLabel.style.cssText = "font-size:0.68rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--travel-muted);margin-bottom:0.5rem;";
+        artLabel.textContent = isZh ? "📝 在这里写的" : "📝 Written Here";
+        artDiv.appendChild(artLabel);
+        city.articles.forEach(function(a) {
+          const link = document.createElement("a");
+          link.href = "/posts/" + a.slug + "/";
+          link.style.cssText = "display:block;font-size:0.78rem;color:var(--purple);text-decoration:none;padding:0.3rem 0;border-bottom:1px solid var(--travel-border);transition:opacity 0.2s;";
+          link.textContent = a.title;
+          link.addEventListener("mouseover", function() { link.style.opacity = "0.7"; });
+          link.addEventListener("mouseout", function() { link.style.opacity = "1"; });
+          artDiv.appendChild(link);
+        });
+        detEl.appendChild(artDiv);
+      }
     };
 
     /* ---- Select city ---- */
@@ -1166,6 +1199,7 @@ const meta = {
           className: "", iconSize: [MARKER_SIZE, MARKER_SIZE], iconAnchor: [MARKER_CENTER, MARKER_CENTER]
         });
         const m = L.marker([city.lat, city.lng], { icon, keyboard: false }).addTo(priorLayer);
+        m.bindTooltip(city.nameCN || city.name, { direction: "top", offset: [0, -16], className: "city-tooltip" });
         m.on("mouseover", () => {
           const el = m.getElement();
           if (el) {
@@ -1208,6 +1242,7 @@ const meta = {
             iconAnchor: [MARKER_CENTER, MARKER_CENTER]
           });
           const m = L.marker([city.lat, city.lng], { icon }).addTo(markerLayer);
+          m.bindTooltip(city.nameCN || city.name, { direction: "top", offset: [0, -16], className: "city-tooltip" });
 
           // Hover glow ring
           const glowDiv = document.createElement("div");

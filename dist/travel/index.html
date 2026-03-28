@@ -21,7 +21,7 @@
 					document.documentElement.classList.remove('theme-loaded');
 				}, 100);
 			})();
-		</script><link rel="stylesheet" href="/_astro/travel.De83Jt6-.css">
+		</script><link rel="stylesheet" href="/_astro/travel.D7SNE5mj.css">
 <link rel="stylesheet" href="/_astro/_slug_.CNrzOcJD.css"></head> <body class="bg-global-bg text-global-text mx-auto flex min-h-screen max-w-4xl flex-col px-4 pt-8 font-mono text-sm font-normal antialiased sm:px-8"> <script>
 	const lightModePref = window.matchMedia("(prefers-color-scheme: light)");
 
@@ -242,6 +242,26 @@ Digital nomad since Nov 2025 — a living map of cities, detours, libraries, and
           divider.appendChild(vrow);
         });
         detEl.appendChild(divider);
+      }
+
+      // Articles written in this city
+      if (city.articles && city.articles.length > 0) {
+        const artDiv = document.createElement("div");
+        artDiv.style.cssText = "border-top:1px solid var(--travel-border);padding-top:0.75rem;margin-top:0.25rem;";
+        const artLabel = document.createElement("div");
+        artLabel.style.cssText = "font-size:0.68rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--travel-muted);margin-bottom:0.5rem;";
+        artLabel.textContent = isZh ? "📝 在这里写的" : "📝 Written Here";
+        artDiv.appendChild(artLabel);
+        city.articles.forEach(function(a) {
+          const link = document.createElement("a");
+          link.href = "/posts/" + a.slug + "/";
+          link.style.cssText = "display:block;font-size:0.78rem;color:var(--purple);text-decoration:none;padding:0.3rem 0;border-bottom:1px solid var(--travel-border);transition:opacity 0.2s;";
+          link.textContent = a.title;
+          link.addEventListener("mouseover", function() { link.style.opacity = "0.7"; });
+          link.addEventListener("mouseout", function() { link.style.opacity = "1"; });
+          artDiv.appendChild(link);
+        });
+        detEl.appendChild(artDiv);
       }
     };
 
@@ -508,6 +528,7 @@ Digital nomad since Nov 2025 — a living map of cities, detours, libraries, and
           className: "", iconSize: [MARKER_SIZE, MARKER_SIZE], iconAnchor: [MARKER_CENTER, MARKER_CENTER]
         });
         const m = L.marker([city.lat, city.lng], { icon, keyboard: false }).addTo(priorLayer);
+        m.bindTooltip(city.nameCN || city.name, { direction: "top", offset: [0, -16], className: "city-tooltip" });
         m.on("mouseover", () => {
           const el = m.getElement();
           if (el) {
@@ -550,6 +571,7 @@ Digital nomad since Nov 2025 — a living map of cities, detours, libraries, and
             iconAnchor: [MARKER_CENTER, MARKER_CENTER]
           });
           const m = L.marker([city.lat, city.lng], { icon }).addTo(markerLayer);
+          m.bindTooltip(city.nameCN || city.name, { direction: "top", offset: [0, -16], className: "city-tooltip" });
 
           // Hover glow ring
           const glowDiv = document.createElement("div");
