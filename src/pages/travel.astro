@@ -18,25 +18,25 @@ const meta = {
 
     <!-- ====== HERO ====== -->
     <div class="travel-hero">
-      <p class="eyebrow fade-in-up" style="--delay: 40ms">Digital Nomad Atlas</p>
+      <p class="eyebrow fade-in-up" style="--delay: 40ms" data-i18n-en="Digital Nomad Atlas" data-i18n-zh="数字游牧地图">Digital Nomad Atlas</p>
       <h1 class="hero-reveal-text font-serif text-4xl font-bold dark:text-white sm:text-5xl" style="letter-spacing: -0.01em">
-        The Journey
+        <span data-i18n-en="The Journey" data-i18n-zh="旅途">The Journey</span>
       </h1>
       <p class="hero-reveal-subtitle font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300" style="max-width: 44rem">
-        Digital nomad since Nov 2025 — a living map of cities, detours, libraries, and the shape of a sovereign life on the road.
+        <span data-i18n-en="Digital nomad since Nov 2025 — a living map of cities, detours, libraries, and the shape of a sovereign life on the road." data-i18n-zh="2025年11月起，数字游牧——一幅由城市、弯路、书店和自由生活构成的地图。">Digital nomad since Nov 2025 — a living map of cities, detours, libraries, and the shape of a sovereign life on the road.</span>
       </p>
       <div class="hero-stats fade-in-up" style="--delay: 260ms" aria-label="Travel statistics">
         <article class="stat-card">
-          <span class="stat-label">Cities</span>
+          <span class="stat-label" data-i18n-en="Cities" data-i18n-zh="城市">Cities</span>
           <strong class="stat-value font-serif" data-counter="cities">0</strong>
           <span class="stat-sub" id="province-count" style="display:block;font-size:0.72rem;color:var(--travel-muted);margin-top:0.25rem"></span>
         </article>
         <article class="stat-card">
-          <span class="stat-label">Days on the Road</span>
+          <span class="stat-label" data-i18n-en="Days on the Road" data-i18n-zh="在路上的日子">Days on the Road</span>
           <strong class="stat-value font-serif" data-counter="days">0</strong>
         </article>
         <article class="stat-card">
-          <span class="stat-label">Total Distance</span>
+          <span class="stat-label" data-i18n-en="Total Distance" data-i18n-zh="总里程">Total Distance</span>
           <strong class="stat-value font-serif" data-counter="distance">0 km</strong>
         </article>
       </div>
@@ -47,7 +47,7 @@ const meta = {
       <div class="map-frame">
         <div class="map-overlay">
           <div>
-            <p class="panel-kicker">Interactive Map</p>
+            <p class="panel-kicker" data-i18n-en="Interactive Map" data-i18n-zh="互动地图">Interactive Map</p>
             <h3 class="map-title font-serif">城市轨迹 / City by city</h3>
           </div>
           <div class="map-controls">
@@ -96,30 +96,30 @@ const meta = {
     <!-- ====== INSIGHT GRID ====== -->
     <div class="insight-grid">
       <article class="insight-card">
-        <span class="insight-label">Longest Stay</span>
+        <span class="insight-label" data-i18n-en="Longest Stay" data-i18n-zh="最长停留">Longest Stay</span>
         <strong class="font-serif" id="longest-stay">—</strong>
-        <p id="longest-stay-note">Slow living compounds.</p>
+        <p id="longest-stay-note" data-i18n-en="Slow living compounds." data-i18n-zh="慢生活的复利。">Slow living compounds.</p>
       </article>
       <article class="insight-card">
-        <span class="insight-label">Shortest Stay</span>
+        <span class="insight-label" data-i18n-en="Shortest Stay" data-i18n-zh="最短停留">Shortest Stay</span>
         <strong class="font-serif" id="shortest-stay">—</strong>
-        <p id="shortest-stay-note">Quick trips still leave a mark.</p>
+        <p id="shortest-stay-note" data-i18n-en="Quick trips still leave a mark." data-i18n-zh="短途旅行也能留下印记。">Quick trips still leave a mark.</p>
       </article>
       
       <article class="insight-card">
-        <span class="insight-label">Libraries Found</span>
+        <span class="insight-label" data-i18n-en="Libraries Found" data-i18n-zh="发现的书店">Libraries Found</span>
         <strong class="font-serif" id="libraries-found">—</strong>
-        <p>Bookstores and libraries along the route.</p>
+        <p data-i18n-en="Bookstores and libraries along the route." data-i18n-zh="沿途发现的书店和图书馆。">Bookstores and libraries along the route.</p>
       </article>
       <article class="insight-card">
-        <span class="insight-label">Longest Leg</span>
+        <span class="insight-label" data-i18n-en="Longest Leg" data-i18n-zh="最远一程">Longest Leg</span>
         <strong class="font-serif" id="longest-leg">—</strong>
-        <p id="longest-leg-note">The farthest single hop.</p>
+        <p id="longest-leg-note" data-i18n-en="The farthest single hop." data-i18n-zh="最远的一次跳跃。">The farthest single hop.</p>
       </article>
       <article class="insight-card insight-card--wide">
-        <span class="insight-label">Best Meals on Record</span>
+        <span class="insight-label" data-i18n-en="Best Meals on Record" data-i18n-zh="舌尖记忆">Best Meals on Record</span>
         <strong class="font-serif" id="best-meal">—</strong>
-        <p id="best-meal-note">Every city leaves a taste memory.</p>
+        <p id="best-meal-note" data-i18n-en="Every city leaves a taste memory." data-i18n-zh="每座城市都有味道的记忆。">Every city leaves a taste memory.</p>
       </article>
     </div>
   </section>
@@ -921,7 +921,7 @@ const meta = {
         artDiv.style.cssText = "border-top:1px solid var(--travel-border);padding-top:0.75rem;margin-top:0.25rem;";
         const artLabel = document.createElement("div");
         artLabel.style.cssText = "font-size:0.68rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--travel-muted);margin-bottom:0.5rem;";
-        artLabel.textContent = isZh ? "📝 在这里写的" : "📝 Written Here";
+        artLabel.textContent = isZh ? "📝 在这里写的文章" : "📝 Written Here";
         artDiv.appendChild(artLabel);
         city.articles.forEach(function(a) {
           const link = document.createElement("a");
@@ -1140,7 +1140,7 @@ const meta = {
       el("libraries-found").textContent    = `${libraries}`;
       el("best-meal").textContent          = allMeals.slice(0,3).join(" / ");
       el("best-meal-note").textContent     = _currentCityItem?.mealCN
-        ? `${_currentCityItem.nameCN} right now: ${_currentCityItem.mealCN}` : "";
+        ? (getLang() === "zh" ? `${_currentCityItem.nameCN}当下推荐：${_currentCityItem.mealCN}` : `${_currentCityItem.nameCN} right now: ${_currentCityItem.mealCN}`) : "";
 
       // Map init
       _map = L.map(mapNode, { zoomControl: true, attributionControl: true, preferCanvas: true })
@@ -1529,8 +1529,25 @@ const meta = {
         document.documentElement, { attributes: true, attributeFilter: ["data-theme"] }
       );
 
+      // i18n text updater
+      const updateI18n = () => {
+        const lang = getLang();
+        const attr = lang === "zh" ? "data-i18n-zh" : "data-i18n-en";
+        document.querySelectorAll("[data-i18n-en]").forEach(el => {
+          const text = el.getAttribute(attr);
+          if (text) el.textContent = text;
+        });
+        // Dynamic texts
+        const provEl = document.getElementById("province-count");
+        if (provEl) provEl.textContent = lang === "zh" ? `横跨 ${provinceSet.size} 个省份` : `across ${provinceSet.size} provinces`;
+        const legNoteEl = document.getElementById("longest-leg-note");
+        if (legNoteEl) legNoteEl.textContent = lang === "zh" ? "上海 → 大理" : "Shanghai → Dali";
+      };
+      updateI18n();
+
       // Lang observer
       new MutationObserver(() => {
+        updateI18n();
         buildYearTabs();
         if (_selectedId) {
           const allCities = [..._data.cities, ...(_data.priorCities || [])];
