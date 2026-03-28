@@ -501,7 +501,7 @@ Digital nomad since Nov 2025 — a living map of cities, detours, libraries, and
         "nanjing": "Jiangsu", "wuxi": "Jiangsu",
         "hongkong-macau": "Guangdong", "xiamen": "Fujian",
         "kunming": "Yunnan", "dali-first": "Yunnan",
-        "yunhe": "Zhejiang", "sanya": "Hainan",
+        "yunhe": "Zhejiang", "sanya": "Hainan", "hulunbuir": "Inner Mongolia",
       };
 
       // Province count
@@ -761,7 +761,7 @@ Digital nomad since Nov 2025 — a living map of cities, detours, libraries, and
       const PROVINCE_CODES = {
         530000: "Yunnan", 450000: "Guangxi", 350000: "Fujian", 510000: "Sichuan",
         500000: "Chongqing", 360000: "Jiangxi", 440000: "Guangdong", 310000: "Shanghai",
-        320000: "Jiangsu", 460000: "Hainan", 330000: "Zhejiang"
+        320000: "Jiangsu", 460000: "Hainan", 330000: "Zhejiang", 150000: "Inner Mongolia"
       };
       const visitedCityNames = new Set([
         ...cities.map(c => c.nameCN),
@@ -789,6 +789,7 @@ Digital nomad since Nov 2025 — a living map of cities, detours, libraries, and
       if (!REGION_COLORS["Shanghai"]) REGION_COLORS["Shanghai"] = { main: "#8b5cf6", glow: "rgba(139,92,246,0.22)" };
       if (!REGION_COLORS["Jiangsu"]) REGION_COLORS["Jiangsu"] = { main: "#14b8a6", glow: "rgba(20,184,166,0.22)" };
       if (!REGION_COLORS["Hainan"]) REGION_COLORS["Hainan"] = { main: "#f97316", glow: "rgba(249,115,22,0.22)" };
+      if (!REGION_COLORS["Inner Mongolia"]) REGION_COLORS["Inner Mongolia"] = { main: "#a78bfa", glow: "rgba(167,139,250,0.22)" };
       if (!REGION_COLORS["Zhejiang"]) REGION_COLORS["Zhejiang"] = { main: "#22c55e", glow: "rgba(34,197,94,0.22)" };
 
       (async function() {
