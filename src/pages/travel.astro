@@ -29,6 +29,7 @@ const meta = {
         <article class="stat-card">
           <span class="stat-label">Cities</span>
           <strong class="stat-value font-serif" data-counter="cities">0</strong>
+          <span class="stat-sub" id="province-count" style="display:block;font-size:0.72rem;color:var(--travel-muted);margin-top:0.25rem"></span>
         </article>
         <article class="stat-card">
           <span class="stat-label">Days on the Road</span>
@@ -109,6 +110,11 @@ const meta = {
         <span class="insight-label">Libraries Found</span>
         <strong class="font-serif" id="libraries-found">—</strong>
         <p>Bookstores and libraries along the route.</p>
+      </article>
+      <article class="insight-card">
+        <span class="insight-label">Longest Leg</span>
+        <strong class="font-serif" id="longest-leg">—</strong>
+        <p id="longest-leg-note">The farthest single hop.</p>
       </article>
       <article class="insight-card insight-card--wide">
         <span class="insight-label">Best Meals on Record</span>
@@ -1130,6 +1136,27 @@ const meta = {
         "yunhe": "Zhejiang", "sanya": "Hainan",
       };
 
+      // Province count
+      const provinceSet = new Set();
+      cities.forEach(c => { if (c.province) provinceSet.add(c.province); });
+      Object.values(PRIOR_PROVINCE).forEach(p => provinceSet.add(p));
+      const provEl = document.getElementById("province-count");
+      if (provEl) provEl.textContent = `across ${provinceSet.size} provinces`;
+
+      // Longest leg between consecutive nomad cities
+      const sortedForLeg = [...cities].sort((a,b) => new Date(a.arrival) - new Date(b.arrival));
+      let maxDist = 0, legFrom = null, legTo = null;
+      for (let i = 1; i < sortedForLeg.length; i++) {
+        const d = haversine(sortedForLeg[i-1], sortedForLeg[i]);
+        if (d > maxDist) { maxDist = d; legFrom = sortedForLeg[i-1]; legTo = sortedForLeg[i]; }
+      }
+      if (legFrom) {
+        const legEl = document.getElementById("longest-leg");
+        const legNoteEl = document.getElementById("longest-leg-note");
+        if (legEl) legEl.textContent = `${Math.round(maxDist)} km`;
+        if (legNoteEl) legNoteEl.textContent = `${legFrom.name} → ${legTo.name}`;
+      }
+
       // Prior city markers — skip merged cities (rendered via primary)
       priorCities.forEach(city => {
         if (city.mergeInto) return; // skip, shown via primary marker
@@ -1223,17 +1250,10 @@ const meta = {
               color: segColor, weight: 2.5, opacity: 0,
               dashArray: "7 11", lineCap: "round"
             }).addTo(routeLayer);
-            requestAnimationFrame(() => {
-              const segEl = segment.getElement();
-              if (segEl) {
-                const len = segEl.getTotalLength ? segEl.getTotalLength() : 500;
-                segEl.style.strokeDasharray = `${len}`;
-                segEl.style.strokeDashoffset = `${len}`;
-                segEl.style.opacity = "0.72";
-                segEl.style.transition = "stroke-dashoffset 600ms ease-out";
-                requestAnimationFrame(() => { segEl.style.strokeDashoffset = "0"; });
-              }
-            });
+            // Animate route draw-in then flow
+            segment.setStyle({ opacity: 0.72 });
+            let dashOff = 0;
+            const flowInterval = setInterval(() => { dashOff -= 0.5; segment.setStyle({ dashOffset: dashOff }); }, 50);
           }
 
           if (idx === sortedCities.length - 1) {
@@ -1427,6 +1447,38 @@ const meta = {
           } catch(e) { console.warn("GeoJSON failed:", code, e); }
         }
       })();
+
+      // ---- Hero Parallax ----
+      window.addEventListener("scroll", () => {
+        const hero = document.querySelector(".travel-hero");
+        if (hero) {
+          const y = window.scrollY;
+          hero.style.transform = `translateY(${y * 0.15}px)`;
+          hero.style.opacity = Math.max(0, 1 - y / 600);
+        }
+      }, { passive: true });
+
+      // ---- City Grid Stagger ----
+      const triggerStagger = () => {
+        const grid = document.getElementById("year-cities");
+        if (!grid) return;
+        const items = grid.querySelectorAll(".year-city-item");
+        items.forEach((item, i) => {
+          item.style.opacity = "0";
+          item.style.transform = "translateY(12px)";
+          item.style.transition = `opacity 0.4s ease ${i * 50}ms, transform 0.4s ease ${i * 50}ms`;
+          setTimeout(() => { item.style.opacity = "1"; item.style.transform = "translateY(0)"; }, 50);
+        });
+      };
+      // Trigger on initial load
+      triggerStagger();
+      // Re-trigger on tab switch (patch switchYear)
+      const _origSwitchYear = switchYear;
+      // switchYear already calls renderYearCities, add stagger after
+      const yearCitiesEl = document.getElementById("year-cities");
+      if (yearCitiesEl) {
+        new MutationObserver(() => { setTimeout(triggerStagger, 30); }).observe(yearCitiesEl, { childList: true });
+      }
 
       // Theme observer
       new MutationObserver(setTiles).observe(
