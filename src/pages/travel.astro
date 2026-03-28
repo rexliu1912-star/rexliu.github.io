@@ -1152,19 +1152,11 @@ const meta = {
       const provEl = document.getElementById("province-count");
       if (provEl) provEl.textContent = `across ${provinceSet.size} provinces`;
 
-      // Longest leg between consecutive nomad cities
-      const sortedForLeg = [...cities].sort((a,b) => new Date(a.arrival) - new Date(b.arrival));
-      let maxDist = 0, legFrom = null, legTo = null;
-      for (let i = 1; i < sortedForLeg.length; i++) {
-        const d = haversine(sortedForLeg[i-1], sortedForLeg[i]);
-        if (d > maxDist) { maxDist = d; legFrom = sortedForLeg[i-1]; legTo = sortedForLeg[i]; }
-      }
-      if (legFrom) {
-        const legEl = document.getElementById("longest-leg");
-        const legNoteEl = document.getElementById("longest-leg-note");
-        if (legEl) legEl.textContent = `${Math.round(maxDist)} km`;
-        if (legNoteEl) legNoteEl.textContent = `${legFrom.name} → ${legTo.name}`;
-      }
+      // Longest leg — Shanghai → Dali (start of nomad journey)
+      const legEl = document.getElementById("longest-leg");
+      const legNoteEl = document.getElementById("longest-leg-note");
+      if (legEl) legEl.textContent = "2,162 km";
+      if (legNoteEl) legNoteEl.textContent = "Shanghai → Dali";
 
       // Prior city markers — skip merged cities (rendered via primary)
       priorCities.forEach(city => {
