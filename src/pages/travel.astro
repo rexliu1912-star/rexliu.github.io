@@ -143,11 +143,14 @@ const meta = {
       background: transparent !important;
       border: none !important;
       box-shadow: none !important;
-      font-family: inherit;
+      font-family: Inter, -apple-system, "PingFang SC", sans-serif;
     }
     :global(.next-stop-tooltip::before) { display: none !important; }
 
-    /* ---- CSS variables ---- */
+    /* ---- Base font override: body is font-mono, travel needs sans ---- */
+    .travel-shell {
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    }
     .travel-shell {
       --travel-surface: rgba(255, 255, 255, 0.78);
       --travel-panel:   rgba(255, 251, 244, 0.82);
@@ -432,7 +435,7 @@ const meta = {
       letter-spacing: 0.06em;
       cursor: pointer;
       transition: all 0.2s;
-      font-family: inherit;
+      font-family: Inter, -apple-system, "PingFang SC", sans-serif;
       white-space: nowrap;
     }
     .year-tab:hover {
