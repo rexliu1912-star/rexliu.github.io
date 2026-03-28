@@ -49,6 +49,7 @@ type LibraryItem = {
   year: number | undefined;
   cover: string | undefined;
   coverClass: string;
+  reviewSlug: string | undefined;
 };
 
 const bookTagColors: Record<string, string> = {
@@ -106,6 +107,7 @@ const books: LibraryItem[] = (booksData as BookEntry[])
     year: undefined,
     cover: book.cover,
     coverClass: (book.tags && book.tags[0] ? bookTagColors[book.tags[0]] : undefined) || defaultBookColor,
+    reviewSlug: (book as any).reviewSlug,
   }))
   .sort((a, b) => {
     if (!a.sortDate && !b.sortDate) return 0;
@@ -129,6 +131,7 @@ const media: LibraryItem[] = (mediaData as MediaEntry[])
     year: item.year,
     cover: item.cover,
     coverClass: mediaTypeColors[item.type] || defaultBookColor,
+    reviewSlug: undefined,
   }))
   .sort((a, b) => (b.year || 0) - (a.year || 0));
 
@@ -305,6 +308,14 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
                   <p class="mt-4 font-serif text-sm text-gray-500 dark:text-gray-400">
                     <span class="lang-en">No notes yet.</span><span class="lang-zh">暂无笔记。</span>
                   </p>
+                )}
+                {item.reviewSlug && (
+                  <a href={`/posts/${item.reviewSlug}/`} class="mt-4 inline-flex items-center gap-1.5 font-serif text-sm text-[#8953d1] dark:text-[#a175e8] hover:opacity-70 transition-opacity no-underline">
+                    <span>📝</span>
+                    <span class="lang-zh">阅读书评</span>
+                    <span class="lang-en">Read Review</span>
+                    <span>→</span>
+                  </a>
                 )}
                 <div class="lib-reaction-modal" style="margin-top:16px;">
                 <button
