@@ -29,7 +29,6 @@ const meta = {
         <article class="stat-card">
           <span class="stat-label">Cities</span>
           <strong class="stat-value font-serif" data-counter="cities">0</strong>
-          <span class="stat-sub" id="province-count"></span>
         </article>
         <article class="stat-card">
           <span class="stat-label">Days on the Road</span>
@@ -52,7 +51,6 @@ const meta = {
           </div>
           <div class="map-controls">
             <button id="replay-btn" class="map-ctrl-btn" title="Journey Replay" aria-label="Play journey replay">▶</button>
-
           </div>
         </div>
         <div id="travel-map" class="travel-map" aria-label="Travel map"></div>
@@ -106,15 +104,11 @@ const meta = {
         <strong class="font-serif" id="shortest-stay">—</strong>
         <p id="shortest-stay-note">Quick trips still leave a mark.</p>
       </article>
+      
       <article class="insight-card">
         <span class="insight-label">Libraries Found</span>
         <strong class="font-serif" id="libraries-found">—</strong>
         <p>Bookstores and libraries along the route.</p>
-      </article>
-      <article class="insight-card">
-        <span class="insight-label">Longest Leg</span>
-        <strong class="font-serif" id="longest-leg">—</strong>
-        <p id="longest-leg-note">The farthest single hop.</p>
       </article>
       <article class="insight-card insight-card--wide">
         <span class="insight-label">Best Meals on Record</span>
@@ -599,61 +593,6 @@ const meta = {
     }
     .insight-card--wide { grid-column: span 2; }
 
-    /* ---- Province count sub stat ---- */
-    .stat-sub {
-      display: block;
-      margin-top: 0.3rem;
-      font-size: 0.72rem;
-      color: var(--travel-muted);
-      letter-spacing: 0.03em;
-    }
-
-    /* ---- Route flow animation ---- */
-    :global(.travel-route-animated) {
-      stroke-dasharray: 8 16 !important;
-      animation: route-flow 2s linear infinite !important;
-    }
-    @keyframes route-flow {
-      to { stroke-dashoffset: -24; }
-    }
-
-    /* ---- Route date labels ---- */
-    :global(.route-date-label) {
-      font-size: 0.6rem;
-      color: var(--travel-muted);
-      background: color-mix(in srgb, var(--travel-surface) 85%, transparent);
-      padding: 0.1rem 0.35rem;
-      border-radius: 0.3rem;
-      white-space: nowrap;
-      backdrop-filter: blur(4px);
-      font-family: Georgia, serif;
-    }
-
-    /* ---- Marker entrance animation ---- */
-    :global(.marker-hidden) {
-      opacity: 0 !important;
-      transform: scale(0) !important;
-    }
-    :global(.marker-enter) {
-      animation: marker-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-    }
-    @keyframes marker-pop {
-      from { transform: scale(0); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
-    }
-
-    /* ---- City grid stagger entrance ---- */
-    :global(.year-city-item:not(.city-enter)) {
-      opacity: 0;
-      transform: translateY(12px);
-    }
-    :global(.year-city-item.city-enter) {
-      animation: city-fade-up 0.45s ease forwards;
-    }
-    @keyframes city-fade-up {
-      to { opacity: 1; transform: translateY(0); }
-    }
-
     /* ---- Map Controls ---- */
     .map-controls {
       display: flex;
@@ -817,12 +756,6 @@ const meta = {
       "Fujian":    { main: "#0ea5e9", glow: "rgba(14,165,233,0.22)" },   // 海蓝
       "Sichuan":   { main: "#ef4444", glow: "rgba(239,68,68,0.22)" },    // 辣红
       "Chongqing": { main: "#f97316", glow: "rgba(249,115,22,0.22)" },   // 橙红
-      "Jiangxi":   { main: "#f472b6", glow: "rgba(244,114,182,0.22)" },  // 粉红
-      "Guangdong": { main: "#06b6d4", glow: "rgba(6,182,212,0.22)" },    // 青色
-      "Shanghai":  { main: "#8b5cf6", glow: "rgba(139,92,246,0.22)" },   // 紫
-      "Jiangsu":   { main: "#14b8a6", glow: "rgba(20,184,166,0.22)" },   // 青绿
-      "Hainan":    { main: "#f97316", glow: "rgba(249,115,22,0.22)" },   // 橙
-      "Zhejiang":  { main: "#22c55e", glow: "rgba(34,197,94,0.22)" },    // 绿
       "default":   { main: PURPLE,    glow: "rgba(137,83,209,0.22)" },
     };
     const getRegionColor = (province) => REGION_COLORS[province] || REGION_COLORS["default"];
@@ -869,7 +802,7 @@ const meta = {
 
     let _map, _data, _currentCityItem, _markerRefs, _spotLayer, _selectedId, _activeYear;
     let _replayTimer = null, _replayIndex = 0, _isReplaying = false;
-    let _heatmapOn = false, _heatCircles = [];
+    
 
     /* ---- Map Panel ---- */
     const openMapPanel = () => {
@@ -1057,18 +990,6 @@ const meta = {
       const isZh = getLang() === "zh";
       renderYearCities(isZh);
 
-      // Re-trigger stagger entrance for newly rendered city items
-      setTimeout(() => {
-        const citiesGrid = document.getElementById("year-cities");
-        if (citiesGrid) {
-          const items = citiesGrid.querySelectorAll(".year-city-item");
-          items.forEach((item, i) => {
-            item.style.animationDelay = `${i * 60}ms`;
-            item.classList.add("city-enter");
-          });
-        }
-      }, 50);
-
       // Fly to year's cities bounds
       if (_map) {
         const bounds = L.latLngBounds([]);
@@ -1116,18 +1037,6 @@ const meta = {
       tabsEl.appendChild(nowBtn);
 
       renderYearCities(isZh);
-
-      // Trigger stagger entrance for initial load
-      setTimeout(() => {
-        const citiesGrid = document.getElementById("year-cities");
-        if (citiesGrid) {
-          const items = citiesGrid.querySelectorAll(".year-city-item");
-          items.forEach((item, i) => {
-            item.style.animationDelay = `${i * 60}ms`;
-            item.classList.add("city-enter");
-          });
-        }
-      }, 100);
     };
 
     /* ---- Main init ---- */
@@ -1178,28 +1087,6 @@ const meta = {
       fillCounter("days", daysOnRoad);
       fillCounter("distance", Math.round(totalDistance), " km");
 
-      // Province lookup for prior cities (declared early for province count)
-      const PRIOR_PROVINCE = {
-        "nanchang": "Jiangxi", "shangrao": "Jiangxi", "wuyuan": "Jiangxi", "ganzhou": "Jiangxi", "jian": "Jiangxi",
-        "dongguan": "Guangdong", "humen": "Guangdong", "shenzhen": "Guangdong",
-        "shanghai-life": "Shanghai", "shanghai-lucky": "Shanghai",
-        "suzhou-2014": "Jiangsu", "suzhou-2023": "Jiangsu",
-        "nanjing": "Jiangsu", "wuxi": "Jiangsu",
-        "hongkong-macau": "Guangdong", "xiamen": "Fujian",
-        "kunming": "Yunnan", "dali-first": "Yunnan",
-        "yunhe": "Zhejiang", "sanya": "Hainan",
-      };
-
-      // Province count
-      const provinceSet = new Set();
-      cities.forEach(c => { if (c.province) provinceSet.add(c.province); });
-      Object.values(PRIOR_PROVINCE).forEach(p => provinceSet.add(p));
-      const provCountEl = document.getElementById("province-count");
-      if (provCountEl) provCountEl.textContent = `across ${provinceSet.size} provinces`;
-
-      // Longest leg (computed after sortedCities below)
-
-
       const el = id => document.getElementById(id);
       el("longest-stay").textContent       = longestStay ? `${longestStay.name} · ${longestStay.stayDays}d` : "—";
       el("longest-stay-note").textContent  = longestStay?.quoteCN || "";
@@ -1211,7 +1098,7 @@ const meta = {
         ? `${_currentCityItem.nameCN} right now: ${_currentCityItem.mealCN}` : "";
 
       // Map init
-      _map = L.map(mapNode, { zoomControl: true, attributionControl: true, preferCanvas: false })
+      _map = L.map(mapNode, { zoomControl: true, attributionControl: true, preferCanvas: true })
                .setView([27.5, 106.1], 5.4);
       let tileLayer;
       const setTiles = () => {
@@ -1230,6 +1117,18 @@ const meta = {
       const priorLayer  = L.layerGroup().addTo(_map);
       const bounds = L.latLngBounds([]);
       _markerRefs = new Map();
+
+      // Province lookup for prior cities (no province field in data)
+      const PRIOR_PROVINCE = {
+        "nanchang": "Jiangxi", "shangrao": "Jiangxi", "wuyuan": "Jiangxi", "ganzhou": "Jiangxi", "jian": "Jiangxi",
+        "dongguan": "Guangdong", "humen": "Guangdong", "shenzhen": "Guangdong",
+        "shanghai-life": "Shanghai", "shanghai-lucky": "Shanghai",
+        "suzhou-2014": "Jiangsu", "suzhou-2023": "Jiangsu",
+        "nanjing": "Jiangsu", "wuxi": "Jiangsu",
+        "hongkong-macau": "Guangdong", "xiamen": "Fujian",
+        "kunming": "Yunnan", "dali-first": "Yunnan",
+        "yunhe": "Zhejiang", "sanya": "Hainan",
+      };
 
       // Prior city markers — skip merged cities (rendered via primary)
       priorCities.forEach(city => {
@@ -1273,37 +1172,17 @@ const meta = {
       const sortedCities = [...cities].sort((a,b) => new Date(a.arrival) - new Date(b.arrival));
       const lineLatLngs = [];
 
-      // Longest leg computation
-      let longestLeg = { dist: 0, from: null, to: null };
-      for (let i = 1; i < sortedCities.length; i++) {
-        const d = haversine(sortedCities[i-1], sortedCities[i]);
-        if (d > longestLeg.dist) longestLeg = { dist: d, from: sortedCities[i-1], to: sortedCities[i] };
-      }
-      if (longestLeg.from) {
-        el("longest-leg").textContent = `${Math.round(longestLeg.dist)} km`;
-        el("longest-leg-note").textContent = `${longestLeg.from.name} → ${longestLeg.to.name}`;
-      }
-
       sortedCities.forEach((city, idx) => {
         bounds.extend([city.lat, city.lng]);
         setTimeout(() => {
           const rc = getRegionColor(city.province);
           const icon = L.divIcon({
             html: markerSvg(city.isCurrent, false, rc.main),
-            className: "marker-hidden",
+            className: "",
             iconSize: [MARKER_SIZE, MARKER_SIZE],
             iconAnchor: [MARKER_CENTER, MARKER_CENTER]
           });
           const m = L.marker([city.lat, city.lng], { icon }).addTo(markerLayer);
-
-          // Marker entrance animation — pop in after route draws
-          requestAnimationFrame(() => {
-            const mEl = m.getElement();
-            if (mEl) {
-              mEl.classList.remove("marker-hidden");
-              mEl.classList.add("marker-enter");
-            }
-          });
 
           // Hover glow ring
           const glowDiv = document.createElement("div");
@@ -1351,16 +1230,10 @@ const meta = {
                 segEl.style.strokeDasharray = `${len}`;
                 segEl.style.strokeDashoffset = `${len}`;
                 segEl.style.opacity = "0.72";
-                segEl.style.transition = "stroke-dashoffset 1200ms ease-out";
-                requestAnimationFrame(() => {
-                  segEl.style.strokeDashoffset = "0";
-                  // After draw-in, switch to flow animation
-                  setTimeout(() => { segEl.classList.add("travel-route-animated"); }, 1300);
-                });
+                segEl.style.transition = "stroke-dashoffset 600ms ease-out";
+                requestAnimationFrame(() => { segEl.style.strokeDashoffset = "0"; });
               }
             });
-
-            // (date labels removed per Rex request)
           }
 
           if (idx === sortedCities.length - 1) {
@@ -1502,9 +1375,7 @@ const meta = {
         });
       }
 
-      // (Stay Heatmap removed per Rex request)
-
-      // ---- GeoJSON City Boundary Highlights ----
+      // ---- City Boundary Highlights (GeoJSON) ----
       const PROVINCE_CODES = {
         530000: "Yunnan", 450000: "Guangxi", 350000: "Fujian", 510000: "Sichuan",
         500000: "Chongqing", 360000: "Jiangxi", 440000: "Guangdong", 310000: "Shanghai",
@@ -1518,76 +1389,44 @@ const meta = {
         "巍山": "大理", "阳朔": "桂林", "武夷山": "南平",
         "虎门": "东莞", "婺源": "上饶", "云和": "丽水",
       };
-      // Add alias parents to visited set for matching
       const aliasParents = new Set();
-      Object.entries(CITY_ALIASES).forEach(([alias, parent]) => {
-        if (visitedCityNames.has(alias)) aliasParents.add(parent);
+      Object.entries(CITY_ALIASES).forEach(function(e) {
+        if (visitedCityNames.has(e[0])) aliasParents.add(e[1]);
       });
 
-      const geoLayer = L.layerGroup().addTo(_map);
-      // Ensure geoLayer is below markers
-      geoLayer.setZIndex && geoLayer.setZIndex(200);
+      // Also add region colors for provinces not yet defined
+      if (!REGION_COLORS["Jiangxi"]) REGION_COLORS["Jiangxi"] = { main: "#f472b6", glow: "rgba(244,114,182,0.22)" };
+      if (!REGION_COLORS["Guangdong"]) REGION_COLORS["Guangdong"] = { main: "#06b6d4", glow: "rgba(6,182,212,0.22)" };
+      if (!REGION_COLORS["Shanghai"]) REGION_COLORS["Shanghai"] = { main: "#8b5cf6", glow: "rgba(139,92,246,0.22)" };
+      if (!REGION_COLORS["Jiangsu"]) REGION_COLORS["Jiangsu"] = { main: "#14b8a6", glow: "rgba(20,184,166,0.22)" };
+      if (!REGION_COLORS["Hainan"]) REGION_COLORS["Hainan"] = { main: "#f97316", glow: "rgba(249,115,22,0.22)" };
+      if (!REGION_COLORS["Zhejiang"]) REGION_COLORS["Zhejiang"] = { main: "#22c55e", glow: "rgba(34,197,94,0.22)" };
 
-      // Async load GeoJSON boundaries
-      (async () => {
-        for (const [code, provinceName] of Object.entries(PROVINCE_CODES)) {
+      (async function() {
+        for (var code in PROVINCE_CODES) {
+          var provinceName = PROVINCE_CODES[code];
           try {
-            const resp = await fetch(`https://geo.datav.aliyun.com/areas_v3/bound/${code}_full.json`);
-            const geo = await resp.json();
-            geo.features.forEach(feature => {
-              const name = feature.properties.name;
-              const isVisited = [...visitedCityNames].some(cn => name.includes(cn)) ||
-                                [...aliasParents].some(p => name.includes(p));
-              if (isVisited) {
-                const rc = getRegionColor(provinceName);
+            var resp = await fetch("https://geo.datav.aliyun.com/areas_v3/bound/" + code + "_full.json");
+            var geo = await resp.json();
+            geo.features.forEach(function(feature) {
+              var name = feature.properties.name;
+              var visited = false;
+              visitedCityNames.forEach(function(cn) { if (name.indexOf(cn) !== -1) visited = true; });
+              aliasParents.forEach(function(p) { if (name.indexOf(p) !== -1) visited = true; });
+              if (visited) {
+                var rc = getRegionColor(provinceName);
                 L.geoJSON(feature, {
-                  style: {
-                    fillColor: rc.main,
-                    fillOpacity: 0.13,
-                    weight: 1,
-                    color: rc.main,
-                    opacity: 0.3,
-                  },
-                  onEachFeature: (f, layer) => {
-                    layer.on("mouseover", () => layer.setStyle({ fillOpacity: 0.25 }));
-                    layer.on("mouseout", () => layer.setStyle({ fillOpacity: 0.13 }));
+                  style: { fillColor: rc.main, fillOpacity: 0.13, weight: 1, color: rc.main, opacity: 0.3 },
+                  onEachFeature: function(f, layer) {
+                    layer.on("mouseover", function() { layer.setStyle({ fillOpacity: 0.25 }); });
+                    layer.on("mouseout", function() { layer.setStyle({ fillOpacity: 0.13 }); });
                   }
-                }).addTo(geoLayer);
+                }).addTo(_map);
               }
             });
-          } catch(e) { console.warn("GeoJSON load failed:", code, e); }
+          } catch(e) { console.warn("GeoJSON failed:", code, e); }
         }
       })();
-
-      // ---- Hero Parallax ----
-      window.addEventListener("scroll", () => {
-        const hero = document.querySelector(".travel-hero");
-        if (hero) {
-          const y = window.scrollY;
-          hero.style.transform = `translateY(${y * 0.15}px)`;
-          hero.style.opacity = Math.max(0, 1 - y / 600);
-        }
-      }, { passive: true });
-
-      // ---- City Grid Stagger Entrance ----
-      const observeCityGrid = () => {
-        const citiesGrid = document.getElementById("year-cities");
-        if (!citiesGrid) return;
-        const gridObserver = new IntersectionObserver((entries) => {
-          entries.forEach(entry => {
-            if (entry.isIntersecting) {
-              const items = entry.target.querySelectorAll(".year-city-item");
-              items.forEach((item, i) => {
-                item.style.animationDelay = `${i * 60}ms`;
-                item.classList.add("city-enter");
-              });
-              gridObserver.unobserve(entry.target);
-            }
-          });
-        }, { threshold: 0.1 });
-        gridObserver.observe(citiesGrid);
-      };
-      observeCityGrid();
 
       // Theme observer
       new MutationObserver(setTiles).observe(
