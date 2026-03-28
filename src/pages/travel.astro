@@ -1408,10 +1408,17 @@ const meta = {
       const CITY_ALIASES = {
         "巍山": "大理", "阳朔": "桂林", "武夷山": "南平",
         "虎门": "东莞", "婺源": "上饶", "云和": "丽水",
+        "腾冲": "保山",
       };
       const aliasParents = new Set();
       Object.entries(CITY_ALIASES).forEach(function(e) {
         if (visitedCityNames.has(e[0])) aliasParents.add(e[1]);
+      });
+      // Direct municipalities: if any city in this province was visited, light up ALL districts
+      const MUNICIPALITY_PROVINCES = { "310000": "上海", "500000": "重庆" };
+      const lightUpAllDistricts = new Set();
+      Object.entries(MUNICIPALITY_PROVINCES).forEach(function(e) {
+        if (visitedCityNames.has(e[1])) lightUpAllDistricts.add(e[0]);
       });
 
       // Also add region colors for provinces not yet defined
@@ -1431,8 +1438,11 @@ const meta = {
             geo.features.forEach(function(feature) {
               var name = feature.properties.name;
               var visited = false;
-              visitedCityNames.forEach(function(cn) { if (name.indexOf(cn) !== -1) visited = true; });
-              aliasParents.forEach(function(p) { if (name.indexOf(p) !== -1) visited = true; });
+              // For municipalities (Shanghai, Chongqing), light up all districts
+              if (lightUpAllDistricts.has(String(code))) { visited = true; }
+              // Normal city name matching
+              if (!visited) visitedCityNames.forEach(function(cn) { if (name.indexOf(cn) !== -1) visited = true; });
+              if (!visited) aliasParents.forEach(function(p) { if (name.indexOf(p) !== -1) visited = true; });
               if (visited) {
                 var rc = getRegionColor(provinceName);
                 L.geoJSON(feature, {
