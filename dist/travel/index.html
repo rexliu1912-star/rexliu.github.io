@@ -760,7 +760,7 @@ Digital nomad since Nov 2025 — a living map of cities, detours, libraries, and
         for (var code in PROVINCE_CODES) {
           var provinceName = PROVINCE_CODES[code];
           try {
-            var resp = await fetch("https://geo.datav.aliyun.com/areas_v3/bound/" + code + "_full.json");
+            var resp = await fetch("/data/geo/" + code + ".json");
             var geo = await resp.json();
             geo.features.forEach(function(feature) {
               var name = feature.properties.name;
