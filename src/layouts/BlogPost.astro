@@ -131,24 +131,37 @@ const displayDate = formatCustomDate(publishDate);
 						</>
 					)
 				}
+				{/* Right-aligned: copy link + magazine toggle */}
+				<div class="ml-auto flex items-center gap-2">
+					<button
+						type="button"
+						class="js-copy-link flex items-center gap-1 text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]"
+						title="Copy article link"
+					>
+						<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+							<path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+						</svg>
+					</button>
+					<span class="text-gray-300 dark:text-gray-600">·</span>
+					<button
+						type="button"
+						data-view-option="toggle"
+						class="flex items-center gap-1 text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]"
+						title="Switch to magazine view"
+					>
+						<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<rect x="3" y="3" width="7" height="18"></rect>
+							<rect x="14" y="3" width="7" height="18"></rect>
+						</svg>
+						<span class="js-toggle-label text-xs">Magazine</span>
+					</button>
+				</div>
 			</div>
 
 			<hr class="my-8 border-dashed border-gray-200 dark:border-gray-700" />
 
 			<div class="relative view-shell">
-				<!-- Magazine toggle: small icon button -->
-				<button
-					type="button"
-					data-view-option="toggle"
-					class="absolute right-0 -top-6 z-10 flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium text-gray-400 transition-all hover:text-[#8953d1] hover:bg-[#8953d1]/5 dark:text-gray-500 dark:hover:text-[#a175e8] dark:hover:bg-[#a175e8]/5"
-					title="Switch to magazine view"
-				>
-					<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-						<rect x="3" y="3" width="7" height="18"></rect>
-						<rect x="14" y="3" width="7" height="18"></rect>
-					</svg>
-					<span class="js-toggle-label">Magazine</span>
-				</button>
 				<div id="blog-post-source" class="js-prose-view view-panel transition-all duration-300 ease-out">
 					<div class="prose prose-lg prose-serif dark:prose-invert max-w-none font-serif">
 						<slot />
@@ -168,6 +181,21 @@ const displayDate = formatCustomDate(publishDate);
 
 <script>
 	document.addEventListener("astro:page-load", () => {
+		// Copy link button
+		const copyBtn = document.querySelector<HTMLButtonElement>(".js-copy-link");
+		if (copyBtn) {
+			copyBtn.addEventListener("click", async () => {
+				try {
+					await navigator.clipboard.writeText(window.location.href);
+					const svg = copyBtn.querySelector("svg");
+					if (svg) {
+						svg.style.color = "#8953d1";
+						setTimeout(() => { svg.style.color = ""; }, 1500);
+					}
+				} catch {}
+			});
+		}
+
 		const article = document.querySelector<HTMLElement>("[data-view-root]");
 		const options = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-view-option]"));
 		const proseView = document.querySelector<HTMLElement>(".js-prose-view");
