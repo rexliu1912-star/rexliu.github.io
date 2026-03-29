@@ -19,6 +19,18 @@ function detectType(tags: string[]): AnimationType {
 const type = detectType(tags);
 const PURPLE = "#8953d1";
 const PURPLE_LIGHT = "#a175e8";
+
+// Pre-compute the sine wave path on server side
+function buildSnakePath(): string {
+  let d = "M 10 30";
+  for (let x = 10; x <= 570; x += 4) {
+    const y = 30 + Math.sin((x / 570) * Math.PI * 3) * 13;
+    d += ` L ${x} ${y.toFixed(1)}`;
+  }
+  return d;
+}
+
+const snakePath = type === "crypto" ? buildSnakePath() : "";
 ---
 
 {type !== "none" && (
@@ -34,37 +46,23 @@ const PURPLE_LIGHT = "#a175e8";
               <stop offset="100%" stop-color={PURPLE_LIGHT} stop-opacity="0.4"/>
             </linearGradient>
           </defs>
-          <path id="snakePath" d="" fill="none" stroke={`url(#g-crypto)`} stroke-width="2.5" stroke-linecap="round"/>
-          <!-- Lead dot -->
+          <path d={snakePath} fill="none" stroke={`url(#g-crypto)`} stroke-width="2.5" stroke-linecap="round" id="crypto-path"/>
           <circle r="5" fill={PURPLE}>
             <animateMotion dur="3.5s" repeatCount="indefinite">
-              <mpath href="#snakePath"/>
+              <mpath href="#crypto-path"/>
             </animateMotion>
           </circle>
-          <!-- Trail dot -->
           <circle r="3" fill={PURPLE_LIGHT} opacity="0.6">
             <animateMotion dur="3.5s" begin="0.35s" repeatCount="indefinite">
-              <mpath href="#snakePath"/>
+              <mpath href="#crypto-path"/>
             </animateMotion>
           </circle>
           <text x="572" y="38" fill={PURPLE} font-size="22" font-weight="bold" opacity="0.85">₿</text>
-          <script>
-            {`(function(){
-              var p=document.getElementById('snakePath');
-              if(!p)return;
-              var d='M 10 30';
-              for(var x=10;x<=570;x+=4){
-                d+=' L '+x+' '+(30+Math.sin((x/570)*Math.PI*3)*13);
-              }
-              p.setAttribute('d',d);
-            })()`}
-          </script>
         </svg>
       )}
 
       {type === "ai" && (
         <svg class="tag-anim-svg" viewBox="0 0 600 60" preserveAspectRatio="xMidYMid meet">
-          <!-- Nodes -->
           {[
             [20,30],[90,14],[90,46],[170,30],[250,14],[250,46],
             [330,30],[410,14],[410,46],[490,30],[570,30]
@@ -74,12 +72,10 @@ const PURPLE_LIGHT = "#a175e8";
                 begin={`${i * 0.17}s`} repeatCount="indefinite"/>
             </circle>
           ))}
-          <!-- Edges -->
           <polyline points="20,30 90,14 170,30 250,14 330,30 410,14 490,30 570,30"
             fill="none" stroke={PURPLE} stroke-width="1" opacity="0.3"/>
           <polyline points="90,46 170,30 250,46 330,30 410,46 490,30"
             fill="none" stroke={PURPLE} stroke-width="1" opacity="0.3"/>
-          <!-- Pulse -->
           <circle r="3.5" fill={PURPLE}>
             <animateMotion dur="2.2s" repeatCount="indefinite"
               path="M20,30 L90,14 L170,30 L250,14 L330,30 L410,14 L490,30 L570,30"/>
@@ -98,25 +94,30 @@ const PURPLE_LIGHT = "#a175e8";
               <stop offset="0%" stop-color={PURPLE} stop-opacity="0.05"/>
               <stop offset="100%" stop-color={PURPLE} stop-opacity="0.35"/>
             </linearGradient>
-            <clipPath id="chart-clip">
-              <rect x="0" y="0" height="60" width="0">
-                <animate attributeName="width" from="0" to="580" dur="2.5s"
-                  fill="freeze" calcMode="spline" keySplines="0.4 0 0.2 1"/>
-              </rect>
-            </clipPath>
           </defs>
+          <!-- Area fill -->
           <polygon
             points="10,54 80,48 150,40 210,44 280,30 350,22 420,14 490,9 560,5 560,57 10,57"
-            fill="url(#g-inv)" clip-path="url(#chart-clip)"/>
-          <polyline
+            fill="url(#g-inv)">
+            <animate attributeName="opacity" values="0;0.9;0.9;0;0" dur="4s" repeatCount="indefinite"
+              calcMode="spline" keyTimes="0;0.3;0.7;1;1" keySplines="0.4 0 0.2 1;0 0 0 0;0.4 0 0.2 1;0 0 0 0"/>
+          </polygon>
+          <!-- Chart line drawn via stroke-dashoffset -->
+          <polyline id="inv-line"
             points="10,54 80,48 150,40 210,44 280,30 350,22 420,14 490,9 560,5"
             fill="none" stroke={PURPLE} stroke-width="2.5"
             stroke-linecap="round" stroke-linejoin="round"
-            clip-path="url(#chart-clip)"/>
+            stroke-dasharray="700" stroke-dashoffset="700">
+            <animate attributeName="stroke-dashoffset" values="700;0;0;700;700" dur="4s"
+              repeatCount="indefinite" calcMode="spline"
+              keyTimes="0;0.5;0.7;1;1"
+              keySplines="0.4 0 0.2 1;0 0 0 0;0.4 0 0.2 1;0 0 0 0"/>
+          </polyline>
           <!-- Tip dot -->
           <circle cx="560" cy="5" r="5" fill={PURPLE}>
-            <animate attributeName="opacity" from="0" to="1" dur="0.3s" begin="2.4s" fill="freeze"/>
-            <animate attributeName="r" values="5;7;5" dur="1.6s" begin="2.7s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" values="0;0;1;1;0;0" dur="4s" repeatCount="indefinite"
+              keyTimes="0;0.45;0.5;0.7;0.85;1"/>
+            <animate attributeName="r" values="5;7;5" dur="1.2s" begin="2s" repeatCount="indefinite"/>
           </circle>
           <text x="572" y="16" fill={PURPLE} font-size="18" opacity="0.85">↗</text>
         </svg>
@@ -131,7 +132,6 @@ const PURPLE_LIGHT = "#a175e8";
               <stop offset="100%" stop-color={PURPLE_LIGHT} stop-opacity="0.3"/>
             </linearGradient>
           </defs>
-          <!-- Compass -->
           <circle cx="35" cy="30" r="22" fill="none" stroke={PURPLE} stroke-width="1.5" opacity="0.5"/>
           <circle cx="35" cy="30" r="2.5" fill={PURPLE}/>
           <g>
@@ -142,12 +142,10 @@ const PURPLE_LIGHT = "#a175e8";
               dur="4s" repeatCount="indefinite"/>
           </g>
           <text x="31" y="10" fill={PURPLE} font-size="8" font-family="system-ui">N</text>
-          <!-- Journey path -->
           <path d="M 65 30 Q 160 10 280 28 Q 380 45 480 18 Q 525 8 570 22"
             fill="none" stroke={`url(#g-travel)`} stroke-width="1.5" stroke-dasharray="5,5">
             <animate attributeName="stroke-dashoffset" from="200" to="0" dur="4s" repeatCount="indefinite"/>
           </path>
-          <!-- Location dots -->
           {([[130,18],[280,28],[420,22],[560,21]] as [number,number][]).map(([cx,cy], i) => (
             <circle cx={cx} cy={cy} r="3.5" fill={PURPLE}>
               <animate attributeName="opacity" values="0.2;1;0.2" dur="2.5s"
@@ -176,7 +174,7 @@ const PURPLE_LIGHT = "#a175e8";
     display: block;
   }
   @keyframes anim-fadeout {
-    from { opacity: 1; max-height: 80px; margin-bottom: 0; }
-    to   { opacity: 0; max-height: 0;   margin-bottom: -16px; }
+    from { opacity: 1; max-height: 80px; }
+    to   { opacity: 0; max-height: 0; margin-bottom: -8px; }
   }
 </style>
