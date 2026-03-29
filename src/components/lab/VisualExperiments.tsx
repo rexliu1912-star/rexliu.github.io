@@ -138,7 +138,6 @@ function SineWaveStudio() {
             <span className="lang-zh">市场周期可预测。你对它的反应，不行。</span>
           </p>
         </div>
-        <span className="exp-tag">crypto</span>
       </div>
 
       <canvas ref={canvasRef} className="exp-canvas" style={{ width: "100%", height: "220px" }} />
@@ -379,7 +378,6 @@ function NeuralPulse() {
             <span className="lang-zh">智能是连接，不是计算力。</span>
           </p>
         </div>
-        <span className="exp-tag">ai</span>
       </div>
 
       <canvas ref={canvasRef} className="exp-canvas" style={{ width: "100%", height: "220px" }} />
@@ -601,7 +599,6 @@ function CompoundGrowth() {
             <span className="lang-zh">世界第八大奇迹，可视化。</span>
           </p>
         </div>
-        <span className="exp-tag">investment</span>
       </div>
 
       <canvas ref={canvasRef} className="exp-canvas" style={{ width: "100%", height: "220px" }} />
@@ -894,7 +891,6 @@ function BezierJourney() {
             <span className="lang-zh">人生不是直线。它被无形的控制点所牵引。</span>
           </p>
         </div>
-        <span className="exp-tag">travel</span>
       </div>
 
       <canvas
