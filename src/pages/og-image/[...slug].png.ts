@@ -35,7 +35,7 @@ const markup = () =>
 	</div>`;
 
 export async function GET() {
-	const svg = await satori(markup(), ogOptions);
+	const svg = await satori(markup() as any, ogOptions);
 	const pngBuffer = new Resvg(svg).render().asPng();
 	const png = new Uint8Array(pngBuffer);
 

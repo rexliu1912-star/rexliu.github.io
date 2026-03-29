@@ -166,7 +166,7 @@ export default function MagazineView({ sourceId }: Props) {
 
 	const layoutColumns = useMemo(() => {
 		if (!columnWidth || blocks.length === 0) return Array.from({ length: columns }, () => [] as RenderBlock[]);
-		const renderedBlocks = blocks.map((block) => layoutBlock(block, columnWidth));
+		const renderedBlocks = blocks.map((block: SourceBlock) => layoutBlock(block, columnWidth));
 		return distributeBlocks(renderedBlocks, columns);
 	}, [blocks, columnWidth, columns]);
 
@@ -176,7 +176,7 @@ export default function MagazineView({ sourceId }: Props) {
 			className="grid gap-8 text-[rgba(17,24,39,0.94)] dark:text-[rgba(243,244,246,0.92)]"
 			style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
 		>
-			{layoutColumns.map((column, columnIndex) => (
+			{layoutColumns.map((column: RenderBlock[], columnIndex: number) => (
 				<div
 					key={`column-${columnIndex}`}
 					className="min-w-0"
