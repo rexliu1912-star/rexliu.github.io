@@ -183,7 +183,7 @@ function useRevealAnimation(sectionCount: number) {
 					}
 				}
 			},
-			{ rootMargin: "0px 0px -8% 0px", threshold: 0.08 },
+			{ rootMargin: "200px 0px 200px 0px", threshold: 0.01 },
 		);
 
 		const nodes = root.querySelectorAll<HTMLElement>("[data-magazine-reveal]");
