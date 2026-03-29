@@ -83,27 +83,6 @@ const displayDate = formatCustomDate(publishDate);
 			<div class="mt-2 flex flex-wrap items-center gap-x-3 gap-y-2 font-serif text-sm text-gray-400">
 				<time datetime={articleDate}>{displayDate}</time>
 
-				<span>·</span>
-				<div class="flex items-center gap-2 text-[#8953d1] dark:text-[#a175e8]">
-					<button
-						type="button"
-						class="view-toggle-link font-medium underline-offset-4 transition hover:underline"
-						data-view-option="magazine"
-						aria-pressed="false"
-					>
-						Magazine View
-					</button>
-					<span class="text-gray-300 dark:text-gray-600">/</span>
-					<button
-						type="button"
-						class="view-toggle-link font-medium underline-offset-4 transition hover:underline"
-						data-view-option="prose"
-						aria-pressed="true"
-					>
-						Standard View
-					</button>
-				</div>
-
 				{
 					originalUrl && (
 						<>
@@ -157,6 +136,19 @@ const displayDate = formatCustomDate(publishDate);
 			<hr class="my-8 border-dashed border-gray-200 dark:border-gray-700" />
 
 			<div class="relative view-shell">
+				<!-- Magazine toggle: small icon button -->
+				<button
+					type="button"
+					data-view-option="toggle"
+					class="absolute right-0 -top-6 z-10 flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium text-gray-400 transition-all hover:text-[#8953d1] hover:bg-[#8953d1]/5 dark:text-gray-500 dark:hover:text-[#a175e8] dark:hover:bg-[#a175e8]/5"
+					title="Switch to magazine view"
+				>
+					<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<rect x="3" y="3" width="7" height="18"></rect>
+						<rect x="14" y="3" width="7" height="18"></rect>
+					</svg>
+					<span class="js-toggle-label">Magazine</span>
+				</button>
 				<div id="blog-post-source" class="js-prose-view view-panel transition-all duration-300 ease-out">
 					<div class="prose prose-lg prose-serif dark:prose-invert max-w-none font-serif">
 						<slot />
@@ -227,8 +219,19 @@ const displayDate = formatCustomDate(publishDate);
 
 		options.forEach((option) => {
 			option.addEventListener("click", () => {
-				const nextView = option.dataset.viewOption === "magazine" ? "magazine" : "prose";
-				applyView(nextView);
+				if (option.dataset.viewOption === "toggle") {
+					// Toggle between views
+					const currentView = article.dataset.view || "prose";
+					const nextView = currentView === "prose" ? "magazine" : "prose";
+					applyView(nextView);
+					// Update toggle label
+					const label = option.querySelector(".js-toggle-label");
+					if (label) label.textContent = nextView === "magazine" ? "Standard" : "Magazine";
+					option.title = nextView === "magazine" ? "Switch to standard view" : "Switch to magazine view";
+				} else {
+					const nextView = option.dataset.viewOption === "magazine" ? "magazine" : "prose";
+					applyView(nextView);
+				}
 			});
 		});
 	});

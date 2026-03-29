@@ -109,24 +109,17 @@ function distributeBlocks(blocks: MeasuredBlock[], columns: number) {
 	const buckets = Array.from({ length: columns }, () => [] as MeasuredBlock[]);
 	if (blocks.length === 0) return buckets;
 
-	const totalHeight = blocks.reduce((sum, block) => sum + block.height, 0);
-	const targetHeight = totalHeight / columns;
-	let currentColumn = 0;
-	let currentHeight = 0;
+	// Greedy shortest-column algorithm: always put the next block into the shortest column
+	const heights = new Array(columns).fill(0);
 
 	for (const block of blocks) {
-		if (
-			columns > 1 &&
-			currentColumn < columns - 1 &&
-			currentHeight > 0 &&
-			currentHeight + block.height > targetHeight
-		) {
-			currentColumn += 1;
-			currentHeight = 0;
+		// Find the column with minimum height
+		let minCol = 0;
+		for (let c = 1; c < columns; c++) {
+			if (heights[c] < heights[minCol]) minCol = c;
 		}
-
-		buckets[currentColumn]?.push(block);
-		currentHeight += block.height;
+		buckets[minCol].push(block);
+		heights[minCol] += block.height;
 	}
 
 	return buckets;
