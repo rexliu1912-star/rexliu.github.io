@@ -1,0 +1,275 @@
+---
+import PageLayout from "@/layouts/Base.astro";
+import VisualExperiments from "@/components/lab/VisualExperiments";
+
+const meta = {
+  title: "Visual Thinking — Lab",
+  description: "Rex Liu's way of thinking, visualized through interactive math experiments.",
+};
+---
+
+<PageLayout meta={meta}>
+  <!-- Hero -->
+  <section class="mb-12">
+    <div class="mb-2 flex items-center gap-2">
+      <a href="/lab/" class="font-serif text-sm text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]">
+        Lab
+      </a>
+      <span class="text-gray-300 dark:text-gray-600">/</span>
+      <span class="font-serif text-sm text-gray-500 dark:text-gray-400">Visual</span>
+    </div>
+
+    <h1 class="hero-reveal-text mb-3 font-serif text-4xl font-bold dark:text-white">
+      <span class="lang-en">Visual Thinking</span>
+      <span class="lang-zh">可视化思维</span>
+    </h1>
+
+    <p class="hero-reveal-subtitle lang-en max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">
+      Math is language. Graphics are thinking. Interaction is understanding.<br />
+      Four experiments — four ways Rex sees the world.
+    </p>
+    <p class="hero-reveal-subtitle lang-zh max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">
+      数学是语言，图形是思维，交互是理解。<br />
+      四个实验，四种 Rex 看世界的方式。
+    </p>
+
+    <div class="mt-4 flex flex-wrap gap-3">
+      {["01 Sine Wave · crypto", "02 Neural Pulse · ai", "03 Compound Growth · investment", "04 Bezier Journey · travel"].map((label) => (
+        <span class="rounded-full border border-[#8953d1]/30 px-3 py-1 font-serif text-xs text-[#8953d1] dark:text-[#a175e8]">
+          {label}
+        </span>
+      ))}
+    </div>
+  </section>
+
+  <!-- React Islands -->
+  <VisualExperiments client:only="react" />
+
+  <!-- Footer note -->
+  <section class="mt-16 border-t border-gray-100 pt-8 dark:border-gray-800">
+    <p class="font-serif text-sm text-gray-400 dark:text-gray-500">
+      <span class="lang-en">These animations first appeared as tag decorations in Rex's articles. v1 · static · no real-time data.</span>
+      <span class="lang-zh">这些动画最初出现在 Rex 文章的 tag 标注中。v1 · 静态 · 无实时数据。</span>
+    </p>
+    <div class="mt-3">
+      <a href="/lab/" class="font-serif text-sm text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]">
+        <span class="lang-en">← Back to Lab</span>
+        <span class="lang-zh">← 返回 Lab</span>
+      </a>
+    </div>
+  </section>
+</PageLayout>
+
+<style is:global>
+  /* ====== Experiment Card ====== */
+  .visual-experiments {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+  }
+
+  .experiment-card {
+    border: 1px solid rgba(137, 83, 209, 0.2);
+    border-radius: 1rem;
+    overflow: hidden;
+    background: #fffaef;
+    box-shadow: 0 1px 8px rgba(0,0,0,0.04);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  :global([data-theme="dark"]) .experiment-card {
+    background: #111118;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+  }
+  .experiment-card:hover {
+    border-color: rgba(137, 83, 209, 0.45);
+    box-shadow: 0 4px 20px rgba(137,83,209,0.12);
+  }
+
+  /* ====== Header ====== */
+  .exp-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem 1rem;
+    border-bottom: 1px solid rgba(137,83,209,0.1);
+  }
+
+  .exp-num {
+    font-family: serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #8953d1;
+    letter-spacing: 0.05em;
+    padding-top: 0.25rem;
+    min-width: 2rem;
+  }
+
+  .exp-title {
+    font-family: serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #111;
+    margin: 0 0 0.2rem;
+  }
+  :global([data-theme="dark"]) .exp-title {
+    color: #f0f0f0;
+  }
+
+  .exp-subtitle {
+    font-family: serif;
+    font-size: 0.85rem;
+    color: #777;
+    margin: 0;
+    line-height: 1.5;
+  }
+  :global([data-theme="dark"]) .exp-subtitle {
+    color: #999;
+  }
+
+  .exp-tag {
+    margin-left: auto;
+    font-size: 0.7rem;
+    font-family: serif;
+    color: #a175e8;
+    border: 1px solid rgba(161,117,232,0.4);
+    border-radius: 999px;
+    padding: 0.2rem 0.6rem;
+    white-space: nowrap;
+    align-self: flex-start;
+    margin-top: 0.2rem;
+  }
+
+  /* ====== Canvas ====== */
+  .exp-canvas {
+    display: block;
+    width: 100%;
+    background: #0d0d14;
+  }
+
+  /* ====== Controls ====== */
+  .exp-controls {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid rgba(137,83,209,0.08);
+  }
+
+  .control-group label {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: serif;
+    font-size: 0.8rem;
+    color: #666;
+    margin-bottom: 0.4rem;
+  }
+  :global([data-theme="dark"]) .control-group label {
+    color: #aaa;
+  }
+
+  .control-val {
+    margin-left: auto;
+    color: #8953d1;
+    font-weight: 600;
+    font-size: 0.8rem;
+  }
+
+  .control-group input[type="range"] {
+    width: 100%;
+    accent-color: #8953d1;
+    cursor: pointer;
+  }
+
+  /* ====== Result display ====== */
+  .exp-result {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid rgba(137,83,209,0.08);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .result-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: serif;
+    font-size: 0.85rem;
+  }
+
+  .result-label {
+    color: #999;
+  }
+
+  .result-val {
+    font-weight: 700;
+    color: #8953d1;
+  }
+
+  .result-diff .result-val {
+    color: #a175e8;
+  }
+
+  /* ====== Formula ====== */
+  .exp-formula {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid rgba(137,83,209,0.08);
+    background: rgba(137,83,209,0.03);
+  }
+  :global([data-theme="dark"]) .exp-formula {
+    background: rgba(137,83,209,0.06);
+  }
+
+  .exp-formula pre {
+    margin: 0;
+    font-family: "JetBrains Mono", "Fira Code", "Courier New", monospace;
+    font-size: 0.8rem;
+    color: #a175e8;
+    line-height: 1.7;
+    white-space: pre-wrap;
+  }
+
+  /* ====== Quote ====== */
+  .exp-quote {
+    padding: 1rem 1.5rem;
+  }
+
+  .exp-quote blockquote {
+    margin: 0;
+    padding-left: 1rem;
+    border-left: 3px solid #8953d1;
+    font-family: serif;
+    font-style: italic;
+    font-size: 0.9rem;
+    color: #8953d1;
+    line-height: 1.6;
+  }
+  :global([data-theme="dark"]) .exp-quote blockquote {
+    color: #a175e8;
+  }
+
+  /* ====== Hint ====== */
+  .exp-hint {
+    padding: 0.6rem 1.5rem;
+    font-family: serif;
+    font-size: 0.8rem;
+    color: #a175e8;
+    opacity: 0.7;
+    margin: 0;
+    border-bottom: 1px solid rgba(137,83,209,0.08);
+  }
+
+  /* ====== Mobile ====== */
+  @media (max-width: 640px) {
+    .exp-header {
+      flex-wrap: wrap;
+    }
+    .exp-tag {
+      margin-left: 0;
+    }
+    .exp-controls {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>
