@@ -33,13 +33,7 @@ const meta = {
       四个实验，四种 Rex 看世界的方式。
     </p>
 
-    <div class="mt-4 flex flex-wrap gap-3">
-      {["01 Sine Wave · crypto", "02 Neural Pulse · ai", "03 Compound Growth · investment", "04 Bezier Journey · travel"].map((label) => (
-        <span class="rounded-full border border-[#8953d1]/30 px-3 py-1 font-serif text-xs text-[#8953d1] dark:text-[#a175e8]">
-          {label}
-        </span>
-      ))}
-    </div>
+
   </section>
 
   <!-- React Islands -->
@@ -69,16 +63,17 @@ const meta = {
   }
 
   .experiment-card {
-    border: 1px solid rgba(137, 83, 209, 0.2);
+    border: 1px solid rgba(137, 83, 209, 0.15);
     border-radius: 1rem;
     overflow: hidden;
-    background: #fffaef;
+    background: var(--color-global-bg);
     box-shadow: 0 1px 8px rgba(0,0,0,0.04);
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
   }
   :global([data-theme="dark"]) .experiment-card {
-    background: #111118;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+    background: #1a1a24;
+    border-color: rgba(137, 83, 209, 0.2);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.3);
   }
   .experiment-card:hover {
     border-color: rgba(137, 83, 209, 0.45);

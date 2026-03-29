@@ -554,7 +554,15 @@ function CompoundGrowth() {
     }
 
     progressRef.current += 0.008;
-    if (progressRef.current < 1) animRef.current = requestAnimationFrame(draw);
+    if (progressRef.current < 1) {
+      animRef.current = requestAnimationFrame(draw);
+    } else {
+      // pause 1.5s then restart
+      setTimeout(() => {
+        progressRef.current = 0;
+        animRef.current = requestAnimationFrame(draw);
+      }, 1500);
+    }
   }, [buildData, years]);
 
   useEffect(() => {
