@@ -4,6 +4,7 @@ import { getCollection } from "astro:content";
 import ReadingProgress from "@/components/blog/ReadingProgress.astro";
 import Comments from "@/components/blog/Comments.astro";
 import RelatedPosts from "@/components/blog/RelatedPosts.astro";
+import MagazineView from "@/components/blog/MagazineView";
 import { getRelatedPosts } from "@/utils/post";
 import BaseLayout from "./Base.astro";
 
@@ -69,12 +70,24 @@ const displayDate = formatCustomDate(publishDate);
 		</div>
 
 		{/* 2. 文章头部区域 */}
-		<article class="flex flex-col gap-4">
-			<h1
-				class="font-serif text-3xl leading-tight font-bold text-black sm:text-4xl dark:text-white"
-			>
-				{title}
-			</h1>
+		<article class="flex flex-col gap-4" data-view-root data-view="prose">
+			<div class="flex items-start justify-between gap-4">
+				<h1
+					class="font-serif text-3xl leading-tight font-bold text-black sm:text-4xl dark:text-white"
+				>
+					{title}
+				</h1>
+				<button
+					type="button"
+					class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#8953d1]/20 bg-[#8953d1]/5 text-lg transition-all duration-300 hover:border-[#8953d1]/40 hover:bg-[#8953d1]/10 focus:outline-none focus:ring-2 focus:ring-[#8953d1]/40 dark:border-[#a175e8]/20 dark:bg-[#a175e8]/10"
+					data-view-toggle
+					aria-pressed="false"
+					aria-label="Switch to magazine view"
+					title="Toggle magazine view"
+				>
+					<span data-view-icon>📄</span>
+				</button>
+			</div>
 
 			{
 				description && (
@@ -144,8 +157,16 @@ const displayDate = formatCustomDate(publishDate);
 
 			<hr class="my-8 border-dashed border-gray-200 dark:border-gray-700" />
 
-			<div class="prose prose-lg prose-serif dark:prose-invert max-w-none font-serif">
-				<slot />
+			<div class="relative">
+				<div id="blog-post-source" class="js-prose-view transition-opacity duration-300">
+					<div class="prose prose-lg prose-serif dark:prose-invert max-w-none font-serif">
+						<slot />
+					</div>
+				</div>
+
+				<div class="js-magazine-view pointer-events-none hidden opacity-0 transition-opacity duration-300">
+					<MagazineView client:only="react" sourceId="blog-post-source" />
+				</div>
 			</div>
 
 			<Comments slug={post.id} />
@@ -155,3 +176,53 @@ const displayDate = formatCustomDate(publishDate);
 		</article>
 	</div>
 </BaseLayout>
+
+<script>
+	document.addEventListener("astro:page-load", () => {
+		const article = document.querySelector<HTMLElement>("[data-view-root]");
+		const toggle = document.querySelector<HTMLButtonElement>("[data-view-toggle]");
+		const icon = document.querySelector<HTMLElement>("[data-view-icon]");
+		const proseView = document.querySelector<HTMLElement>(".js-prose-view");
+		const magazineView = document.querySelector<HTMLElement>(".js-magazine-view");
+		if (!article || !toggle || !icon || !proseView || !magazineView) return;
+
+		const applyView = (view: "prose" | "magazine") => {
+			const isMagazine = view === "magazine";
+			article.dataset.view = view;
+			toggle.setAttribute("aria-pressed", String(isMagazine));
+			toggle.setAttribute("aria-label", isMagazine ? "Switch to standard article view" : "Switch to magazine view");
+			icon.textContent = isMagazine ? "📰" : "📄";
+			proseView.classList.toggle("hidden", isMagazine);
+			proseView.classList.toggle("opacity-0", isMagazine);
+			magazineView.classList.toggle("hidden", !isMagazine);
+			magazineView.classList.toggle("pointer-events-none", !isMagazine);
+			requestAnimationFrame(() => {
+				magazineView.classList.toggle("opacity-0", !isMagazine);
+			});
+		};
+
+		applyView("prose");
+		toggle.addEventListener("click", () => {
+			applyView(article.dataset.view === "magazine" ? "prose" : "magazine");
+		});
+	});
+</script>
+
+<style>
+	.magazine-dropcap::first-letter {
+		float: left;
+		margin: 0.1em 0.12em 0 0;
+		font-size: 3.8em;
+		line-height: 0.8;
+		font-weight: 700;
+		color: #8953d1;
+	}
+	.magazine-dropcap > div:first-child::first-letter {
+		float: left;
+		margin: 0.1em 0.12em 0 0;
+		font-size: 3.8em;
+		line-height: 0.8;
+		font-weight: 700;
+		color: #8953d1;
+	}
+</style>
