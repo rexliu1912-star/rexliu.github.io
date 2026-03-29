@@ -4,7 +4,7 @@ description: "读完西风那篇近两万字的《战争阴霾下的新世界》
 publishDate: "2026-03-11"
 tags: ["Investment", "Life", "Macro"]
 coverImage:
-  src: "./2026-03-11-xifeng-reading-cover.png"
+  src: "https://cdn.rexliu.io/images/posts/2026-03-11-xifeng-reading-cover.png"
   alt: "一篇两万字读后，我改了四个决策习惯"
 ---
 

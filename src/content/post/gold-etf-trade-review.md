@@ -4,7 +4,7 @@ description: "A full breakdown of my Gold ETF (518880) trade — the entries, ex
 publishDate: "2026-03-24"
 tags: ["Investment", "Trading", "Gold"]
 coverImage:
-  src: "./2026-03-24-gold-etf-review-cover.png"
+  src: "https://cdn.rexliu.io/images/posts/2026-03-24-gold-etf-review-cover.png"
   alt: "Gold ETF Trade Review Cover"
 ---
 

@@ -4,7 +4,7 @@ description: "用李继刚的结构投资思路，把持有三年的 SNEK 做一
 publishDate: "2026-03-06"
 tags: ["Crypto", "Investment", "Snek", "Cardano"]
 coverImage:
-  src: "./2026-03-06-snek-structure-analysis-cover.png"
+  src: "https://cdn.rexliu.io/images/posts/2026-03-06-snek-structure-analysis-cover.png"
   alt: "SNEK 五层底层结构分析封面"
 originalUrl: "https://x.com/rexliu/status/2029770623157993756"
 ---

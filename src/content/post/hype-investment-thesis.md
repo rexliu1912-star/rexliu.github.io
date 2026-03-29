@@ -4,7 +4,7 @@ description: "Hyperliquid is probably the strongest DeFi product I've looked at 
 publishDate: "2026-03-17"
 tags: ["Crypto", "Investment", "DeFi"]
 coverImage:
-  src: "./2026-03-17-hype-investment-thesis-cover.png"
+  src: "https://cdn.rexliu.io/images/posts/2026-03-17-hype-investment-thesis-cover.png"
   alt: "Hyperliquid Investment Thesis Cover"
 ---
 

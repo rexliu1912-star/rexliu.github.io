@@ -20,7 +20,7 @@ const post = defineCollection({
 			coverImage: z
 				.object({
 					alt: z.string(),
-					src: image(),
+					src: z.string(), // supports CDN URLs (cdn.rexliu.io) and local paths
 				})
 				.optional(),
 			draft: z.boolean().default(false),

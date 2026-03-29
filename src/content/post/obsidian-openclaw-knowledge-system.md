@@ -4,7 +4,7 @@ description: "A step-by-step guide to using Obsidian as the shared memory layer 
 publishDate: "2026-03-19"
 tags: ["AI", "Productivity", "Build in Public"]
 coverImage:
-  src: "./2026-03-19-obsidian-openclaw-cover.png"
+  src: "https://cdn.rexliu.io/images/posts/2026-03-19-obsidian-openclaw-cover.png"
   alt: "Obsidian + OpenClaw Knowledge System Cover"
 ---
 
