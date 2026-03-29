@@ -4,6 +4,20 @@ import { useState, useEffect, useRef, useCallback } from "react";
 const PURPLE = "#8953d1";
 const PURPLE_LIGHT = "#a175e8";
 
+function getCanvasBg(): string {
+  if (typeof document === "undefined") return "#0d0d14";
+  const isDark = document.documentElement.getAttribute("data-theme") === "dark"
+    || document.documentElement.classList.contains("dark");
+  return isDark ? "#0d0d14" : "#f5f0ff";
+}
+
+function getGridColor(): string {
+  if (typeof document === "undefined") return "rgba(137,83,209,0.08)";
+  const isDark = document.documentElement.getAttribute("data-theme") === "dark"
+    || document.documentElement.classList.contains("dark");
+  return isDark ? "rgba(137,83,209,0.08)" : "rgba(137,83,209,0.12)";
+}
+
 // ============================================================
 // Experiment 1: Sine Wave Studio
 // ============================================================
@@ -25,11 +39,11 @@ function SineWaveStudio() {
     const t = Date.now() / 1000;
 
     ctx.clearRect(0, 0, W, H);
-    ctx.fillStyle = "#0d0d14";
+    ctx.fillStyle = getCanvasBg();
     ctx.fillRect(0, 0, W, H);
 
     // Grid
-    ctx.strokeStyle = "rgba(137,83,209,0.08)";
+    ctx.strokeStyle = getGridColor();
     ctx.lineWidth = 1;
     for (let y = 0; y <= H; y += 40) {
       ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
@@ -165,7 +179,11 @@ function SineWaveStudio() {
       </div>
 
       <div className="exp-formula">
-        <pre>{`y = A · sin(ωx + φ)\n\nA = ${amplitude}  (振幅 / amplitude)\nω = ${frequency}  (频率 / frequency)\nφ = ${phase.toFixed(1)}  (相位 / phase)`}</pre>
+        <pre>{`y = A · sin(ωx + φ)\n\nA = ${amplitude}  振幅 — 波动幅度，对应市场波动烈度\nω = ${frequency}  频率 — 周期快慢，对应牛熊切换节奏\nφ = ${phase.toFixed(1)}  相位 — 起始偏移，对应你的入场时机`}</pre>
+      </div>
+      <div className="exp-explain">
+        <p className="lang-en">Markets are not random — they follow cycles. The sine wave is the simplest model of any recurring phenomenon. By adjusting A (amplitude) and ω (frequency), you can visualize how volatile and how frequent market swings are. The phase φ represents your entry point — the same wave, but you enter at different moments.</p>
+        <p className="lang-zh">市场不是随机的，它遵循周期。正弦函数是描述任何周期性现象最简洁的模型。调整振幅 A 和频率 ω，你可以直观感受市场波动的激烈程度与快慢节奏。相位 φ 代表你的入场时机——同一条波，但你在不同时刻进入，结果截然不同。</p>
       </div>
 
       <div className="exp-quote">
@@ -259,7 +277,7 @@ function NeuralPulse() {
     const ps = pulseStateRef.current;
 
     ctx.clearRect(0, 0, W, H);
-    ctx.fillStyle = "#0d0d14";
+    ctx.fillStyle = getCanvasBg();
     ctx.fillRect(0, 0, W, H);
 
     ps.timer += 0.016 * speed;
@@ -394,7 +412,11 @@ function NeuralPulse() {
       </div>
 
       <div className="exp-formula">
-        <pre>{`G = (V, E)\nV = nodes (thoughts/tools/people)\nE = edges (information flow)\n\nPageRank:\nimportance ≠ ability\nimportance = connections to high-value nodes`}</pre>
+        <pre>{`G = (V, E)\nV = 节点 nodes — 个体、工具、想法\nE = 边 edges — 信息的流动路径\n\nPageRank 核心洞见：\n重要性 ≠ 自身能力\n重要性 = 被高价值节点连接的次数`}</pre>
+      </div>
+      <div className="exp-explain">
+        <p className="lang-en">Graph theory models intelligence as a network, not a single point. A node's importance is determined not by itself, but by who connects to it. This is how ideas spread, how influence compounds, and why being well-connected matters more than being smart in isolation. Watch how a pulse travels through the network — that's how information really moves.</p>
+        <p className="lang-zh">图论把智能建模为网络，而非孤立的点。一个节点的重要性不由自身决定，而由连接它的高价值节点数量决定。这就是为什么人脉比个人能力更能放大影响力，也是为什么想法能病毒式传播。看脉冲如何沿网络传播——这就是信息在现实中真正的流动方式。</p>
       </div>
 
       <div className="exp-quote">
@@ -437,7 +459,7 @@ function CompoundGrowth() {
     const H = canvas.offsetHeight;
 
     ctx.clearRect(0, 0, W, H);
-    ctx.fillStyle = "#0d0d14";
+    ctx.fillStyle = getCanvasBg();
     ctx.fillRect(0, 0, W, H);
 
     const { compound, linear } = buildData();
@@ -622,7 +644,11 @@ function CompoundGrowth() {
       </div>
 
       <div className="exp-formula">
-        <pre>{`FV = PV · (1 + r)ⁿ  (compound / 复利)\nFV = PV · (1 + r·n) (linear / 线性)\n\n差距 = (1+r)ⁿ − (1+r·n)  ↑ grows with time`}</pre>
+        <pre>{`FV = PV · (1 + r)ⁿ    复利 Compound\nFV = PV · (1 + r·n)   线性 Linear\n\n差距 Gap = (1+r)ⁿ − (1+r·n)\n              ↑ 时间越长，差距越大`}</pre>
+      </div>
+      <div className="exp-explain">
+        <p className="lang-en">The difference between linear and exponential growth seems small early on, but the gap accelerates over time. This is why "staying in the game" matters more than timing — every year you exit, you lose one compounding period, and the cost is not linear. Move the sliders and watch the gap widen.</p>
+        <p className="lang-zh">线性增长和指数增长的差距在早期看起来很小，但随时间加速扩大。这就是为什么「坚持在场」比择时更重要——每退出一年，你失去的不是一份固定收益，而是一个复利周期。拖动滑块，感受差距如何随时间翻倍。</p>
       </div>
 
       <div className="exp-quote">
@@ -681,7 +707,7 @@ function BezierJourney() {
     const H = canvas.offsetHeight;
 
     ctx.clearRect(0, 0, W, H);
-    ctx.fillStyle = "#0d0d14";
+    ctx.fillStyle = getCanvasBg();
     ctx.fillRect(0, 0, W, H);
 
     const P0: Pt = { x: 60, y: H * 0.75 };
@@ -882,7 +908,11 @@ function BezierJourney() {
       </p>
 
       <div className="exp-formula">
-        <pre>{`B(t) = (1−t)³P₀ + 3(1−t)²t·P₁ + 3(1−t)t²·P₂ + t³P₃\nt ∈ [0, 1]\n\nP₀ = start  P₃ = destination\nP₁,P₂ = control points (choices/chances)\n\n真相：改变控制点，终点不变，路径完全不同。`}</pre>
+        <pre>{`B(t) = (1−t)³P₀ + 3(1−t)²t·P₁ + 3(1−t)t²·P₂ + t³P₃\nt ∈ [0, 1]\n\nP₀ = 起点 start（当下处境）\nP₃ = 终点 destination（长远目标）\nP₁, P₂ = 控制点 control points（选择/机遇/牵引力）`}</pre>
+      </div>
+      <div className="exp-explain">
+        <p className="lang-en">A Bezier curve is defined by control points that never lie on the curve itself — they pull and bend the path without being destinations. Life works the same way: your choices (P₁, P₂) don't determine where you end up, but they completely change how you get there. Drag the control points to feel this firsthand.</p>
+        <p className="lang-zh">贝塞尔曲线由控制点定义，但控制点本身不在曲线上——它们拉弯路径，而不是终点。人生也是如此：你的选择（P₁、P₂）不决定你的最终目标，但完全改变了你到达的方式。拖动控制点，亲身感受这条数学定律。</p>
       </div>
 
       <div className="exp-quote">

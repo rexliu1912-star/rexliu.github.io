@@ -95,7 +95,7 @@ const meta = {
   }
 
   .exp-num {
-    font-family: serif;
+    font-family: Georgia, Cambria, "Times New Roman", Times, serif;
     font-size: 0.75rem;
     font-weight: 700;
     color: #8953d1;
@@ -105,7 +105,7 @@ const meta = {
   }
 
   .exp-title {
-    font-family: serif;
+    font-family: Georgia, Cambria, "Times New Roman", Times, serif;
     font-size: 1.25rem;
     font-weight: 700;
     color: #111;
@@ -116,7 +116,7 @@ const meta = {
   }
 
   .exp-subtitle {
-    font-family: serif;
+    font-family: Georgia, Cambria, "Times New Roman", Times, serif;
     font-size: 0.85rem;
     color: #777;
     margin: 0;
@@ -129,7 +129,7 @@ const meta = {
   .exp-tag {
     margin-left: auto;
     font-size: 0.7rem;
-    font-family: serif;
+    font-family: Georgia, Cambria, "Times New Roman", Times, serif;
     color: #a175e8;
     border: 1px solid rgba(161,117,232,0.4);
     border-radius: 999px;
@@ -143,6 +143,9 @@ const meta = {
   .exp-canvas {
     display: block;
     width: 100%;
+    background: #f5f0ff;
+  }
+  :global([data-theme="dark"]) .exp-canvas {
     background: #0d0d14;
   }
 
@@ -159,7 +162,7 @@ const meta = {
     display: flex;
     align-items: center;
     gap: 0.4rem;
-    font-family: serif;
+    font-family: Georgia, Cambria, "Times New Roman", Times, serif;
     font-size: 0.8rem;
     color: #666;
     margin-bottom: 0.4rem;
@@ -194,7 +197,7 @@ const meta = {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    font-family: serif;
+    font-family: Georgia, Cambria, "Times New Roman", Times, serif;
     font-size: 0.85rem;
   }
 
@@ -230,6 +233,22 @@ const meta = {
     white-space: pre-wrap;
   }
 
+  /* ====== Math Explanation ====== */
+  .exp-explain {
+    padding: 0.75rem 1.5rem;
+    border-bottom: 1px solid rgba(137,83,209,0.08);
+  }
+  .exp-explain p {
+    margin: 0;
+    font-family: Georgia, Cambria, "Times New Roman", Times, serif;
+    font-size: 0.875rem;
+    line-height: 1.7;
+    color: #555;
+  }
+  :global([data-theme="dark"]) .exp-explain p {
+    color: #aaa;
+  }
+
   /* ====== Quote ====== */
   .exp-quote {
     padding: 1rem 1.5rem;
@@ -239,7 +258,7 @@ const meta = {
     margin: 0;
     padding-left: 1rem;
     border-left: 3px solid #8953d1;
-    font-family: serif;
+    font-family: Georgia, Cambria, "Times New Roman", Times, serif;
     font-style: italic;
     font-size: 0.9rem;
     color: #8953d1;
@@ -252,7 +271,7 @@ const meta = {
   /* ====== Hint ====== */
   .exp-hint {
     padding: 0.6rem 1.5rem;
-    font-family: serif;
+    font-family: Georgia, Cambria, "Times New Roman", Times, serif;
     font-size: 0.8rem;
     color: #a175e8;
     opacity: 0.7;

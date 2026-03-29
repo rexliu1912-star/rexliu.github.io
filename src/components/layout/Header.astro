@@ -10,7 +10,7 @@ const GITHUB_URL = "https://github.com/rexliu1912-star";
 const TELEGRAM_URL = "https://t.me/rexlab2026";
 ---
 
-<header class="sticky top-0 z-50 mb-16 flex items-center justify-between bg-[var(--color-global-bg)]/90 backdrop-blur-md pt-2 pb-2 transition-shadow duration-300" id="main-header">
+<header class="sticky top-0 z-50 mb-16 flex items-center justify-between pt-2 pb-2 transition-all duration-200" id="main-header" style="background: var(--color-global-bg);">
 	<nav class="flex items-center gap-6 font-serif text-sm text-black dark:text-white">
 		{
 			isHome ? (
@@ -142,13 +142,21 @@ const TELEGRAM_URL = "https://t.me/rexlab2026";
 
 <script>
 	function initHeader() {
-		const header = document.getElementById("main-header");
+		const header = document.getElementById("main-header") as HTMLElement | null;
 		if (!header) return;
 		const onScroll = () => {
-			if (window.scrollY > 10) {
-				header.classList.add("shadow-sm", "dark:shadow-gray-900/50");
+			if (window.scrollY > 8) {
+				header.style.backdropFilter = "blur(12px)";
+				(header.style as CSSStyleDeclaration & { webkitBackdropFilter: string }).webkitBackdropFilter = "blur(12px)";
+				header.style.background = "color-mix(in srgb, var(--color-global-bg) 85%, transparent)";
+				header.style.borderBottom = "1px solid color-mix(in srgb, currentColor 8%, transparent)";
+				header.style.boxShadow = "0 1px 12px rgba(0,0,0,0.06)";
 			} else {
-				header.classList.remove("shadow-sm", "dark:shadow-gray-900/50");
+				header.style.backdropFilter = "";
+				(header.style as CSSStyleDeclaration & { webkitBackdropFilter: string }).webkitBackdropFilter = "";
+				header.style.background = "var(--color-global-bg)";
+				header.style.borderBottom = "none";
+				header.style.boxShadow = "none";
 			}
 		};
 		window.addEventListener("scroll", onScroll, { passive: true });
