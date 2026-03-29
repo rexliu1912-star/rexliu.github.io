@@ -46,6 +46,7 @@
 
 		// Update on resize
 		window.addEventListener("resize", updateReadingProgress, { passive: true });
+		window.addEventListener("reading-progress:refresh", updateReadingProgress as EventListener);
 
 		// Initial update
 		updateReadingProgress();
@@ -58,6 +59,7 @@
 	document.addEventListener("astro:before-preparation", () => {
 		window.removeEventListener("scroll", updateReadingProgress);
 		window.removeEventListener("resize", updateReadingProgress);
+		window.removeEventListener("reading-progress:refresh", updateReadingProgress as EventListener);
 	});
 
 	// Reinitialize after view transition completes

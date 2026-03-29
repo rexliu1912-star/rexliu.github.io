@@ -14,7 +14,6 @@ interface Props {
 
 const { post } = Astro.props;
 
-// Get all posts for related posts feature
 const allPosts = await getCollection("post");
 const relatedPosts = getRelatedPosts(post, allPosts, 3);
 const {
@@ -23,13 +22,11 @@ const {
 
 const articleDate = publishDate.toISOString();
 
-// 自定义日期格式化逻辑：生成类似 "Mar 3rd 2025" 的格式
 const formatCustomDate = (date: Date) => {
 	const day = date.getDate();
 	const month = date.toLocaleDateString("en-US", { month: "short" });
 	const year = date.getFullYear();
 
-	// 计算序数词后缀 (st, nd, rd, th)
 	const getOrdinal = (n: number) => {
 		const s = ["th", "st", "nd", "rd"];
 		const v = n % 100;
@@ -45,7 +42,6 @@ const displayDate = formatCustomDate(publishDate);
 <BaseLayout meta={{ title, description, articleDate }}>
 	<ReadingProgress />
 	<div class="mb-16 sm:mt-8">
-		{/* 1. Back 按钮 */}
 		<div class="mb-8">
 			<button
 				onclick="history.back()"
@@ -69,24 +65,11 @@ const displayDate = formatCustomDate(publishDate);
 			</button>
 		</div>
 
-		{/* 2. 文章头部区域 */}
 		<article class="flex flex-col gap-4" data-view-root data-view="prose">
 			<div class="flex items-start justify-between gap-4">
-				<h1
-					class="font-serif text-3xl leading-tight font-bold text-black sm:text-4xl dark:text-white"
-				>
+				<h1 class="font-serif text-3xl leading-tight font-bold text-black sm:text-4xl dark:text-white">
 					{title}
 				</h1>
-				<button
-					type="button"
-					class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#8953d1]/20 bg-[#8953d1]/5 text-lg transition-all duration-300 hover:border-[#8953d1]/40 hover:bg-[#8953d1]/10 focus:outline-none focus:ring-2 focus:ring-[#8953d1]/40 dark:border-[#a175e8]/20 dark:bg-[#a175e8]/10"
-					data-view-toggle
-					aria-pressed="false"
-					aria-label="Switch to magazine view"
-					title="Toggle magazine view"
-				>
-					<span data-view-icon>📄</span>
-				</button>
 			</div>
 
 			{
@@ -97,20 +80,37 @@ const displayDate = formatCustomDate(publishDate);
 				)
 			}
 
-			{/* Meta 信息：日期 & 原文链接 & Tags */}
-			<div class="mt-2 flex flex-wrap items-center gap-3 font-serif text-sm text-gray-400">
-				<time datetime={articleDate}>
-					{displayDate}
-				</time>
+			<div class="mt-2 flex flex-wrap items-center gap-x-3 gap-y-2 font-serif text-sm text-gray-400">
+				<time datetime={articleDate}>{displayDate}</time>
 
-				{/* 只有当 originalUrl 存在时才渲染 */}
+				<span>·</span>
+				<div class="flex items-center gap-2 text-[#8953d1] dark:text-[#a175e8]">
+					<button
+						type="button"
+						class="view-toggle-link font-medium underline-offset-4 transition hover:underline"
+						data-view-option="magazine"
+						aria-pressed="false"
+					>
+						Magazine View
+					</button>
+					<span class="text-gray-300 dark:text-gray-600">/</span>
+					<button
+						type="button"
+						class="view-toggle-link font-medium underline-offset-4 transition hover:underline"
+						data-view-option="prose"
+						aria-pressed="true"
+					>
+						Standard View
+					</button>
+				</div>
+
 				{
 					originalUrl && (
 						<>
 							<span>·</span>
 							<a
 								href={originalUrl}
-								target="_blank" rel="noopener noreferrer"
+								target="_blank"
 								rel="noopener noreferrer"
 								class="inline-flex items-center gap-1 font-serif underline decoration-dotted underline-offset-4 transition-colors hover:text-[#8953d1] dark:hover:text-[#a175e8]"
 							>
@@ -135,7 +135,6 @@ const displayDate = formatCustomDate(publishDate);
 					)
 				}
 
-				{/* Tags */}
 				{
 					tags && tags.length > 0 && (
 						<>
@@ -157,21 +156,19 @@ const displayDate = formatCustomDate(publishDate);
 
 			<hr class="my-8 border-dashed border-gray-200 dark:border-gray-700" />
 
-			<div class="relative">
-				<div id="blog-post-source" class="js-prose-view transition-opacity duration-300">
+			<div class="relative view-shell">
+				<div id="blog-post-source" class="js-prose-view view-panel transition-all duration-300 ease-out">
 					<div class="prose prose-lg prose-serif dark:prose-invert max-w-none font-serif">
 						<slot />
 					</div>
 				</div>
 
-				<div class="js-magazine-view pointer-events-none hidden opacity-0 transition-opacity duration-300">
+				<div class="js-magazine-view view-panel hidden opacity-0 transition-all duration-300 ease-out">
 					<MagazineView client:only="react" sourceId="blog-post-source" />
 				</div>
 			</div>
 
 			<Comments slug={post.id} />
-
-			{/* Related Posts */}
 			<RelatedPosts posts={relatedPosts} />
 		</article>
 	</div>
@@ -180,49 +177,95 @@ const displayDate = formatCustomDate(publishDate);
 <script>
 	document.addEventListener("astro:page-load", () => {
 		const article = document.querySelector<HTMLElement>("[data-view-root]");
-		const toggle = document.querySelector<HTMLButtonElement>("[data-view-toggle]");
-		const icon = document.querySelector<HTMLElement>("[data-view-icon]");
+		const options = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-view-option]"));
 		const proseView = document.querySelector<HTMLElement>(".js-prose-view");
 		const magazineView = document.querySelector<HTMLElement>(".js-magazine-view");
-		if (!article || !toggle || !icon || !proseView || !magazineView) return;
+		if (!article || options.length === 0 || !proseView || !magazineView) return;
+
+		const updateOptionState = (view: "prose" | "magazine") => {
+			options.forEach((option) => {
+				const isActive = option.dataset.viewOption === view;
+				option.setAttribute("aria-pressed", String(isActive));
+				option.classList.toggle("is-active", isActive);
+			});
+		};
+
+		const syncReadingProgress = () => {
+			window.dispatchEvent(new CustomEvent("reading-progress:refresh"));
+		};
 
 		const applyView = (view: "prose" | "magazine") => {
 			const isMagazine = view === "magazine";
 			article.dataset.view = view;
-			toggle.setAttribute("aria-pressed", String(isMagazine));
-			toggle.setAttribute("aria-label", isMagazine ? "Switch to standard article view" : "Switch to magazine view");
-			icon.textContent = isMagazine ? "📰" : "📄";
+			updateOptionState(view);
+			article.classList.toggle("is-magazine-view", isMagazine);
+
 			proseView.classList.toggle("hidden", isMagazine);
+			proseView.classList.toggle("pointer-events-none", isMagazine);
 			proseView.classList.toggle("opacity-0", isMagazine);
+			proseView.classList.toggle("translate-y-2", isMagazine);
+
 			magazineView.classList.toggle("hidden", !isMagazine);
 			magazineView.classList.toggle("pointer-events-none", !isMagazine);
+
 			requestAnimationFrame(() => {
 				magazineView.classList.toggle("opacity-0", !isMagazine);
+				magazineView.classList.toggle("translate-y-2", !isMagazine);
+				syncReadingProgress();
 			});
 		};
 
 		applyView("prose");
-		toggle.addEventListener("click", () => {
-			applyView(article.dataset.view === "magazine" ? "prose" : "magazine");
+
+		options.forEach((option) => {
+			option.addEventListener("click", () => {
+				const nextView = option.dataset.viewOption === "magazine" ? "magazine" : "prose";
+				applyView(nextView);
+			});
 		});
 	});
 </script>
 
 <style>
-	.magazine-dropcap::first-letter {
-		float: left;
-		margin: 0.1em 0.12em 0 0;
-		font-size: 3.8em;
-		line-height: 0.8;
-		font-weight: 700;
-		color: #8953d1;
+	.view-shell {
+		position: relative;
 	}
-	.magazine-dropcap > div:first-child::first-letter {
-		float: left;
-		margin: 0.1em 0.12em 0 0;
-		font-size: 3.8em;
-		line-height: 0.8;
-		font-weight: 700;
-		color: #8953d1;
+
+	.view-panel {
+		transform-origin: top center;
+	}
+
+	.view-toggle-link.is-active {
+		text-decoration: underline;
+		text-decoration-thickness: 1px;
+		font-weight: 600;
+	}
+
+	[data-view-root].is-magazine-view .js-magazine-view {
+		animation: view-expand 300ms ease;
+	}
+
+	[data-view-root]:not(.is-magazine-view) .js-prose-view {
+		animation: view-expand 300ms ease;
+	}
+
+	@keyframes view-expand {
+		from {
+			opacity: 0;
+			transform: translateY(8px) scaleY(0.985);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0) scaleY(1);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		[data-view-root].is-magazine-view .js-magazine-view,
+		[data-view-root]:not(.is-magazine-view) .js-prose-view,
+		.view-panel {
+			animation: none;
+			transition: none;
+		}
 	}
 </style>
