@@ -14,7 +14,7 @@ const baseSchema = z.object({
 // 1. 定义 Post 集合
 const post = defineCollection({
 	loader: glob({ base: "./src/content/post", pattern: "**/*.{md,mdx}" }),
-	schema: ({ image }) =>
+	schema: () =>
 		baseSchema.extend({
 			description: z.string(),
 			coverImage: z
