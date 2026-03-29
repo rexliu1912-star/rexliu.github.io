@@ -194,6 +194,11 @@ const displayDate = formatCustomDate(publishDate);
 			window.dispatchEvent(new CustomEvent("reading-progress:refresh"));
 		};
 
+		const syncMagazineLayout = () => {
+			window.dispatchEvent(new CustomEvent("magazine-view:refresh"));
+			window.dispatchEvent(new Event("resize"));
+		};
+
 		const applyView = (view: "prose" | "magazine") => {
 			const isMagazine = view === "magazine";
 			article.dataset.view = view;
@@ -211,6 +216,9 @@ const displayDate = formatCustomDate(publishDate);
 			requestAnimationFrame(() => {
 				magazineView.classList.toggle("opacity-0", !isMagazine);
 				magazineView.classList.toggle("translate-y-2", !isMagazine);
+				if (isMagazine) {
+					requestAnimationFrame(syncMagazineLayout);
+				}
 				syncReadingProgress();
 			});
 		};

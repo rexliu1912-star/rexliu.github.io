@@ -187,13 +187,22 @@ function useRevealAnimation(sectionCount: number) {
 		);
 
 		const nodes = root.querySelectorAll<HTMLElement>("[data-magazine-reveal]");
+		const fallbackTimer = window.setTimeout(() => {
+			for (const node of nodes) {
+				node.classList.add("is-visible");
+			}
+		}, 450);
+
 		for (const node of nodes) {
 			if (!node.classList.contains("is-visible")) {
 				observer.observe(node);
 			}
 		}
 
-		return () => observer.disconnect();
+		return () => {
+			window.clearTimeout(fallbackTimer);
+			observer.disconnect();
+		};
 	}, [sectionCount]);
 }
 
@@ -224,10 +233,12 @@ export default function MagazineView({ sourceId }: Props) {
 		const resizeObserver = new ResizeObserver(updateSize);
 		resizeObserver.observe(root);
 		window.addEventListener("resize", updateSize);
+		window.addEventListener("magazine-view:refresh", updateSize as EventListener);
 
 		return () => {
 			resizeObserver.disconnect();
 			window.removeEventListener("resize", updateSize);
+			window.removeEventListener("magazine-view:refresh", updateSize as EventListener);
 		};
 	}, []);
 
