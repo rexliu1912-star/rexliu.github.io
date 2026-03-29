@@ -10,7 +10,7 @@ const GITHUB_URL = "https://github.com/rexliu1912-star";
 const TELEGRAM_URL = "https://t.me/rexlab2026";
 ---
 
-<header class="sticky top-0 z-50 mb-16 flex items-center justify-between bg-[var(--color-global-bg)] pt-2 pb-2" id="main-header">
+<header class="sticky top-0 z-50 mb-16 flex items-center justify-between bg-[var(--color-global-bg)]/90 backdrop-blur-md pt-2 pb-2 transition-shadow duration-300" id="main-header">
 	<nav class="flex items-center gap-6 font-serif text-sm text-black dark:text-white">
 		{
 			isHome ? (
@@ -139,3 +139,20 @@ const TELEGRAM_URL = "https://t.me/rexlab2026";
 		<ThemeToggle />
 	</div>
 </header>
+
+<script>
+	function initHeader() {
+		const header = document.getElementById("main-header");
+		if (!header) return;
+		const onScroll = () => {
+			if (window.scrollY > 10) {
+				header.classList.add("shadow-sm", "dark:shadow-gray-900/50");
+			} else {
+				header.classList.remove("shadow-sm", "dark:shadow-gray-900/50");
+			}
+		};
+		window.addEventListener("scroll", onScroll, { passive: true });
+		onScroll();
+	}
+	document.addEventListener("astro:page-load", initHeader);
+</script>
