@@ -127,13 +127,13 @@ function SineWaveStudio() {
   return (
     <div className="experiment-card">
       <div className="exp-header">
-        <span className="exp-num">01</span>
+        <span className="exp-num text-[#8953d1]">01</span>
         <div>
-          <h2 className="exp-title">
+          <h2 className="exp-title text-gray-900 dark:text-white">
             <span className="lang-en">Sine Wave Studio</span>
             <span className="lang-zh">正弦波工作室</span>
           </h2>
-          <p className="exp-subtitle">
+          <p className="exp-subtitle text-gray-500 dark:text-gray-400">
             <span className="lang-en">Market Cycles Are Predictable. Your Reaction to Them Is Not.</span>
             <span className="lang-zh">市场周期可预测。你对它的反应，不行。</span>
           </p>
@@ -367,13 +367,13 @@ function NeuralPulse() {
   return (
     <div className="experiment-card">
       <div className="exp-header">
-        <span className="exp-num">02</span>
+        <span className="exp-num text-[#8953d1]">02</span>
         <div>
-          <h2 className="exp-title">
+          <h2 className="exp-title text-gray-900 dark:text-white">
             <span className="lang-en">Neural Pulse</span>
             <span className="lang-zh">神经脉冲</span>
           </h2>
-          <p className="exp-subtitle">
+          <p className="exp-subtitle text-gray-500 dark:text-gray-400">
             <span className="lang-en">Intelligence Is Connection, Not Computation.</span>
             <span className="lang-zh">智能是连接，不是计算力。</span>
           </p>
@@ -588,13 +588,13 @@ function CompoundGrowth() {
   return (
     <div className="experiment-card">
       <div className="exp-header">
-        <span className="exp-num">03</span>
+        <span className="exp-num text-[#8953d1]">03</span>
         <div>
-          <h2 className="exp-title">
+          <h2 className="exp-title text-gray-900 dark:text-white">
             <span className="lang-en">Compound Growth</span>
             <span className="lang-zh">复利增长</span>
           </h2>
-          <p className="exp-subtitle">
+          <p className="exp-subtitle text-gray-500 dark:text-gray-400">
             <span className="lang-en">The 8th Wonder of the World, Visualized.</span>
             <span className="lang-zh">世界第八大奇迹，可视化。</span>
           </p>
@@ -880,13 +880,13 @@ function BezierJourney() {
   return (
     <div className="experiment-card">
       <div className="exp-header">
-        <span className="exp-num">04</span>
+        <span className="exp-num text-[#8953d1]">04</span>
         <div>
-          <h2 className="exp-title">
+          <h2 className="exp-title text-gray-900 dark:text-white">
             <span className="lang-en">Bezier Journey</span>
             <span className="lang-zh">贝塞尔旅程</span>
           </h2>
-          <p className="exp-subtitle">
+          <p className="exp-subtitle text-gray-500 dark:text-gray-400">
             <span className="lang-en">Life Is Not a Straight Line. It's Pulled by Invisible Control Points.</span>
             <span className="lang-zh">人生不是直线。它被无形的控制点所牵引。</span>
           </p>
