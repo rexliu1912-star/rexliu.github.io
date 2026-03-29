@@ -5,6 +5,7 @@ import ReadingProgress from "@/components/blog/ReadingProgress.astro";
 import Comments from "@/components/blog/Comments.astro";
 import RelatedPosts from "@/components/blog/RelatedPosts.astro";
 import MagazineView from "@/components/blog/MagazineView";
+import TagAnimation from "@/components/blog/TagAnimation.astro";
 import { getRelatedPosts } from "@/utils/post";
 import BaseLayout from "./Base.astro";
 
@@ -79,6 +80,8 @@ const displayDate = formatCustomDate(publishDate);
 					</p>
 				)
 			}
+
+			<TagAnimation tags={tags} />
 
 			<div class="mt-2 flex flex-wrap items-center gap-x-3 gap-y-2 font-serif text-sm text-gray-400">
 				<time datetime={articleDate}>{displayDate}</time>
