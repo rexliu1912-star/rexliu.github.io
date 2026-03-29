@@ -131,32 +131,30 @@ const displayDate = formatCustomDate(publishDate);
 						</>
 					)
 				}
-				{/* Right-aligned: copy link + magazine toggle */}
-				<div class="ml-auto flex items-center gap-2">
-					<button
-						type="button"
-						class="js-copy-link flex items-center gap-1 text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]"
-						title="Copy article link"
-					>
-						<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-							<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
-							<path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
-						</svg>
-					</button>
-					<span class="text-gray-300 dark:text-gray-600">·</span>
-					<button
-						type="button"
-						data-view-option="toggle"
-						class="flex items-center gap-1 text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]"
-						title="Switch to magazine view"
-					>
-						<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-							<rect x="3" y="3" width="7" height="18"></rect>
-							<rect x="14" y="3" width="7" height="18"></rect>
-						</svg>
-						<span class="js-toggle-label text-xs">Magazine</span>
-					</button>
-				</div>
+				{/* Copy link — after tags, matching digest style */}
+				<span>·</span>
+				<button
+					id="share-btn"
+					class="inline-flex items-center text-gray-400 transition-colors hover:text-[#8953d1] dark:hover:text-[#a175e8]"
+					title="Copy link"
+				>
+					<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+				</button>
+				<span id="share-toast" class="font-serif text-xs text-[#8953d1] opacity-0 transition-opacity duration-300">✓</span>
+
+				{/* Magazine toggle — right-aligned */}
+				<button
+					type="button"
+					data-view-option="toggle"
+					class="ml-auto flex items-center gap-1 text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]"
+					title="Switch to magazine view"
+				>
+					<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<rect x="3" y="3" width="7" height="18"></rect>
+						<rect x="14" y="3" width="7" height="18"></rect>
+					</svg>
+					<span class="js-toggle-label text-xs">Magazine</span>
+				</button>
 			</div>
 
 			<hr class="my-8 border-dashed border-gray-200 dark:border-gray-700" />
@@ -181,20 +179,24 @@ const displayDate = formatCustomDate(publishDate);
 
 <script>
 	document.addEventListener("astro:page-load", () => {
-		// Copy link button
-		const copyBtn = document.querySelector<HTMLButtonElement>(".js-copy-link");
-		if (copyBtn) {
-			copyBtn.addEventListener("click", async () => {
-				try {
-					await navigator.clipboard.writeText(window.location.href);
-					const svg = copyBtn.querySelector("svg");
-					if (svg) {
-						svg.style.color = "#8953d1";
-						setTimeout(() => { svg.style.color = ""; }, 1500);
-					}
-				} catch {}
-			});
-		}
+		// Copy link button (matching digest style)
+		document.getElementById('share-btn')?.addEventListener('click', async () => {
+			try {
+				await navigator.clipboard.writeText(window.location.href);
+			} catch {
+				const input = document.createElement('input');
+				input.value = window.location.href;
+				document.body.appendChild(input);
+				input.select();
+				document.execCommand('copy');
+				document.body.removeChild(input);
+			}
+			const toast = document.getElementById('share-toast');
+			if (toast) {
+				toast.style.opacity = '1';
+				setTimeout(() => { toast.style.opacity = '0'; }, 2000);
+			}
+		});
 
 		const article = document.querySelector<HTMLElement>("[data-view-root]");
 		const options = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-view-option]"));
