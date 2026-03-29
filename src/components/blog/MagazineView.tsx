@@ -118,7 +118,7 @@ function distributeBlocks(blocks: MeasuredBlock[], columns: number) {
 		for (let c = 1; c < columns; c++) {
 			if (heights[c] < heights[minCol]) minCol = c;
 		}
-		buckets[minCol].push(block);
+		buckets[minCol]!.push(block);
 		heights[minCol] += block.height;
 	}
 
