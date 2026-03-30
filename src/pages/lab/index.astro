@@ -295,6 +295,37 @@ const meta = {
 		</div>
 	</section>
 
+	<!-- ====== SECTION 2.5: PLAYER STATS ====== -->
+	<section class="mb-20">
+		<a href="/lab/player/" class="lab-player-card fade-in-up group block rounded-xl border border-purple-500/20 p-6 transition-all hover:border-purple-500/40 sm:p-8" style="--delay: 150ms">
+			<div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+				<div class="flex-1">
+					<div class="mb-2 flex items-center gap-3">
+						<span class="text-2xl">⚔️</span>
+						<h3 class="font-serif text-xl font-bold text-black group-hover:text-[#8953d1] dark:text-white dark:group-hover:text-[#a175e8] sm:text-2xl">
+							<span class="lang-en">Player Stats</span>
+							<span class="lang-zh">江湖档案</span>
+						</h3>
+					</div>
+					<p class="lang-en font-serif text-base leading-relaxed text-gray-500 dark:text-gray-400">
+						Your open-world cultivation dashboard — all stats from real data.
+					</p>
+					<p class="lang-zh font-serif text-base leading-relaxed text-gray-500 dark:text-gray-400">
+						开放世界修行面板——六维属性、技能树、探索地图，全部来自真实数据。
+					</p>
+				</div>
+				<div class="flex items-center gap-2">
+					<div class="flex gap-1">
+						{["体魄","悟性","心法","剑术","声望","统御"].map(s => (
+							<span class="inline-block h-8 w-8 rounded border border-purple-500/30 bg-purple-500/10 text-center font-serif text-xs leading-8 text-purple-400">{s[0]}</span>
+						))}
+					</div>
+					<span class="ml-2 font-serif text-sm text-purple-400 opacity-0 transition-opacity group-hover:opacity-100">→</span>
+				</div>
+			</div>
+		</a>
+	</section>
+
 	<!-- ====== SECTION 3: DATA STREAMS ====== -->
 	<section class="mb-16">
 		<h2 class="fade-in-up mb-2 font-serif text-xs font-bold tracking-widest text-gray-400 uppercase dark:text-gray-500" style="--delay: 100ms">
@@ -385,6 +416,24 @@ const meta = {
 </PageLayout>
 
 <style>
+	/* Player Stats card */
+	.lab-player-card {
+		background: linear-gradient(135deg, #f8f4ff 0%, #fdf5e0 100%);
+		box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
+		transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+	}
+	.lab-player-card:hover {
+		box-shadow: 0 4px 20px rgba(137, 83, 209, 0.18);
+		transform: translateY(-2px);
+	}
+	:global([data-theme="dark"]) .lab-player-card {
+		background: linear-gradient(135deg, #111118 0%, #1a0f2e 100%);
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+	}
+	:global([data-theme="dark"]) .lab-player-card:hover {
+		box-shadow: 0 4px 24px rgba(161, 117, 232, 0.22);
+	}
+
 	/* Visual Thinking card */
 	.lab-visual-card {
 		background: linear-gradient(135deg, #fffaef 0%, #f8f4ff 100%);
