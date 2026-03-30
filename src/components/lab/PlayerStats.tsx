@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -432,9 +432,9 @@ function SkillTree({ tagCounts, postCount, builderLogCount, dark }: {
   const [tooltip, setTooltip] = useState<{ text: string; x: number; y: number } | null>(null);
 
   // Node box with Lv.N label
-  function NodeBox({ x, y, w, h, label, labelEn, count, url }: {
+  function NodeBox({ x, y, w, h, label, count, url }: {
     x: number; y: number; w: number; h: number;
-    label: string; labelEn: string; count: number; url?: string;
+    label: string; count: number; url?: string;
   }) {
     const lv = count;
     const isActive = lv > 0;

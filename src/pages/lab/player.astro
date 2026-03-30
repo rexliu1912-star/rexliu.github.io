@@ -129,26 +129,34 @@ const achievements = [
     descZh: "造物日志 20+", descEn: "20+ builder logs",
     unlocked: builderLogCount >= 20, unlockedDate: "2026-03",
   },
-  {
+  ...(cityCount >= 20 ? [{
     id: "world-traveler",
     icon: "🌏", nameZh: "游遍天下", nameEn: "World Traveler",
     descZh: "游历 20 座城市", descEn: "Visit 20 cities",
-    unlocked: cityCount >= 20, unlockedDate: cityCount >= 20 ? "2026" : undefined,
-    progress: cityCount >= 20 ? undefined : cityCount, max: cityCount >= 20 ? undefined : 20,
-  },
+    unlocked: true, unlockedDate: "2026",
+  }] : [{
+    id: "world-traveler",
+    icon: "🌏", nameZh: "游遍天下", nameEn: "World Traveler",
+    descZh: "游历 20 座城市", descEn: "Visit 20 cities",
+    unlocked: false, progress: cityCount, max: 20,
+  }]),
   {
     id: "10k-club",
     icon: "🚀", nameZh: "名震江湖", nameEn: "10K Club",
     descZh: "X 10,000 关注者", descEn: "X 10,000 followers",
     unlocked: false, progress: followers, max: 10000,
   },
-  {
+  ...(postCount >= 100 ? [{
     id: "author",
     icon: "📖", nameZh: "著作等身", nameEn: "Author",
     descZh: "著文 100 篇", descEn: "Write 100 articles",
-    unlocked: postCount >= 100,
-    progress: postCount >= 100 ? undefined : postCount, max: postCount >= 100 ? undefined : 100,
-  },
+    unlocked: true, unlockedDate: "2026",
+  }] : [{
+    id: "author",
+    icon: "📖", nameZh: "著作等身", nameEn: "Author",
+    descZh: "著文 100 篇", descEn: "Write 100 articles",
+    unlocked: false, progress: postCount, max: 100,
+  }]),
 ];
 
 // ─── Cultivation Log (ALL historical data) ──────────────────────────────────
