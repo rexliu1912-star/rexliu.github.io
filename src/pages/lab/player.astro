@@ -34,35 +34,52 @@ for (const post of posts) {
   }
 }
 
-// ─── Stat Calculations ─────────────────────────────────────────────────────
+// ─── Counts ─────────────────────────────────────────────────────────────────
 const postCount = posts.length;
 const digestCount = digests.length;
 const builderLogCount = builderLogs.length;
 const projectCount = projects.length;
 const libraryCount = (mediaData as any[]).length;
-
-// 体魄 Vitality: cities * 1.5 + travel_days * 0.1, cap 100
-const vitality = Math.min(100, Math.round(cities.length * 1.5 + travelDays * 0.1));
-
-// 悟性 Wisdom: posts * 1 + library * 0.3, cap 100
-const wisdom = Math.min(100, Math.round(postCount * 1 + libraryCount * 0.3));
-
-// 心法 Spirit: digests * 0.8 + 15 (framework base), cap 100
-const spirit = Math.min(100, Math.round(digestCount * 0.8 + 15));
-
-// 剑术 Craft: projects * 3 + builder_logs * 0.5, cap 100
-const craft = Math.min(100, Math.round(projectCount * 3 + builderLogCount * 0.5));
-
-// 声望 Renown: 6.4 (current followers 6.4k / 1000), cap 100
-const followers = 6400;
-const renown = Math.min(100, Math.round(6.4));
-
-// 统御 Command: 6 agents * 5 + 20 base, cap 100
+const cityCount = cities.length;
 const agents = 6;
-const command = Math.min(100, Math.round(agents * 5 + 20));
+const followers = 6400; // hardcoded per spec
 
-const stats = { vitality, wisdom, spirit, craft, renown, command };
-const avgStat = Math.round((vitality + wisdom + spirit + craft + renown + command) / 6);
+// ─── EXP Calculation (real data driven) ─────────────────────────────────────
+// Each post: +10 EXP, each library item: +3 EXP, each city: +5 EXP,
+// each builder-log: +8 EXP, each digest: +2 EXP
+const totalExp = postCount * 10 + libraryCount * 3 + cityCount * 5 + builderLogCount * 8 + digestCount * 2;
+
+// Level = floor(sqrt(totalEXP / 10)), cap 99
+const level = Math.min(99, Math.floor(Math.sqrt(totalExp / 10)));
+
+// EXP for current level and next level
+const currentLevelExp = level * level * 10;
+const nextLevelExp = (level + 1) * (level + 1) * 10;
+const expInLevel = totalExp - currentLevelExp;
+const expNeeded = nextLevelExp - currentLevelExp;
+const expProgress = Math.min(100, Math.round((expInLevel / expNeeded) * 100));
+
+// ─── Six Stats (per design spec) ────────────────────────────────────────────
+// 体魄 Vitality: cities * 5, cap 100
+const vitality = Math.min(100, Math.round(cityCount * 5));
+
+// 悟性 Wisdom: posts + library * 0.3, cap 100
+const wisdom = Math.min(100, Math.round(postCount + libraryCount * 0.3));
+
+// 声望 Renown: log10(followers) * 25, cap 100
+const renown = Math.min(100, Math.round(Math.log10(followers) * 25));
+
+// 统御 Command: agents * 8 + projects * 2, cap 100
+const command = Math.min(100, Math.round(agents * 8 + projectCount * 2));
+
+// 技巧 Craft: builder-logs * 3, cap 100
+const craft = Math.min(100, Math.round(builderLogCount * 3));
+
+// 见闻 Insight: (library + digest * 0.2) * 0.8, cap 100
+const insight = Math.min(100, Math.round((libraryCount + digestCount * 0.2) * 0.8));
+
+const stats = { vitality, wisdom, renown, command, craft, insight };
+const avgStat = Math.round((vitality + wisdom + renown + command + craft + insight) / 6);
 
 // ─── Rank ──────────────────────────────────────────────────────────────────
 function getRank(avg: number): { zh: string; en: string } {
@@ -92,7 +109,7 @@ const achievements = [
     id: "nomad",
     icon: "🗺️", nameZh: "行万里路", nameEn: "Nomad",
     descZh: "游历 5 座城市", descEn: "Visited 5 cities",
-    unlocked: cities.length >= 5, unlockedDate: "2025-11",
+    unlocked: cityCount >= 5, unlockedDate: "2025-11",
   },
   {
     id: "bookworm",
@@ -109,14 +126,15 @@ const achievements = [
   {
     id: "midnight-builder",
     icon: "🌙", nameZh: "夜行衣", nameEn: "Midnight Builder",
-    descZh: "子时仍在修炼", descEn: "Still building at midnight",
+    descZh: "造物日志 20+", descEn: "20+ builder logs",
     unlocked: builderLogCount >= 20, unlockedDate: "2026-03",
   },
   {
     id: "world-traveler",
     icon: "🌏", nameZh: "游遍天下", nameEn: "World Traveler",
     descZh: "游历 20 座城市", descEn: "Visit 20 cities",
-    unlocked: false, progress: cities.length, max: 20,
+    unlocked: cityCount >= 20, unlockedDate: cityCount >= 20 ? "2026" : undefined,
+    progress: cityCount >= 20 ? undefined : cityCount, max: cityCount >= 20 ? undefined : 20,
   },
   {
     id: "10k-club",
@@ -128,78 +146,79 @@ const achievements = [
     id: "author",
     icon: "📖", nameZh: "著作等身", nameEn: "Author",
     descZh: "著文 100 篇", descEn: "Write 100 articles",
-    unlocked: false, progress: postCount, max: 100,
-  },
-  {
-    id: "polyglot",
-    icon: "🌐", nameZh: "学贯中西", nameEn: "Polyglot",
-    descZh: "中英双语各 20 篇", descEn: "20 articles in each language",
-    unlocked: false, progress: 15, max: 40,
+    unlocked: postCount >= 100,
+    progress: postCount >= 100 ? undefined : postCount, max: postCount >= 100 ? undefined : 100,
   },
 ];
 
-// ─── Recent Activity (last 7 days) ─────────────────────────────────────────
-const now = new Date();
-const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-
-// Gather all content items with dates
+// ─── Cultivation Log (ALL historical data) ──────────────────────────────────
 type ActivityItem = {
-  date: Date;
+  dateRaw: Date;
+  dateEn: string;
+  dateZh: string;
   icon: string;
-  statZh: string; statEn: string; amount: number;
-  descZh: string; descEn: string;
+  statZh: string;
+  statEn: string;
+  exp: number;
+  descZh: string;
+  descEn: string;
+  type: string;
 };
 
 const allActivity: ActivityItem[] = [];
+const months = ["一月","二月","三月","四月","五月","六月","七月","八月","九月","十月","十一月","十二月"];
 
-// Posts
+function fmtDate(d: Date) {
+  const dateZh = `${d.getFullYear()}年${months[d.getMonth()]}${d.getDate()}日`;
+  const dateEn = d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+  return { dateZh, dateEn };
+}
+
+// Posts: +10 EXP each
 for (const post of posts) {
-  if (post.data.publishDate >= sevenDaysAgo) {
-    allActivity.push({
-      date: post.data.publishDate,
-      icon: "✍️", statZh: "悟性", statEn: "Wisdom", amount: 2,
-      descZh: `著文《${post.data.title}》`,
-      descEn: `Published "${post.data.title}"`,
-    });
-  }
-}
-
-// Builder Logs
-for (const log of builderLogs) {
-  if (log.data.date >= sevenDaysAgo) {
-    allActivity.push({
-      date: log.data.date,
-      icon: "🛠️", statZh: "剑术", statEn: "Craft", amount: 3,
-      descZh: log.data.title_zh ?? log.data.title,
-      descEn: log.data.title,
-    });
-  }
-}
-
-// Sort descending, take 7
-allActivity.sort((a, b) => b.date.getTime() - a.date.getTime());
-const recentActivity = allActivity.slice(0, 7).map(act => {
-  const d = act.date;
-  const months = ["一月","二月","三月","四月","五月","六月","七月","八月","九月","十月","十一月","十二月"];
-  const dateZh = `${months[d.getMonth()]}${d.getDate()}日`;
-  const dateEn = d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-  return { ...act, dateZh, date: dateEn };
-});
-
-// If no recent activity, add travel entry
-if (recentActivity.length < 3) {
-  recentActivity.push({
-    date: "Today",
-    dateZh: "今日",
-    icon: "🗺️", statZh: "体魄", statEn: "Vitality", amount: 1,
-    descZh: `${currentCityObj.nameCN}游历第 ${travelDays} 天`,
-    descEn: `Day ${travelDays} in ${currentCityObj.name}`,
+  const d = new Date(post.data.publishDate);
+  const { dateZh, dateEn } = fmtDate(d);
+  allActivity.push({
+    dateRaw: d, dateZh, dateEn,
+    icon: "✍️", statZh: "悟性", statEn: "Wisdom", exp: 10,
+    descZh: `著文《${post.data.title}》`, descEn: `Published "${post.data.title}"`,
+    type: "post",
   });
 }
 
+// Builder Logs: +8 EXP each
+for (const log of builderLogs) {
+  const d = new Date(log.data.date);
+  const { dateZh, dateEn } = fmtDate(d);
+  allActivity.push({
+    dateRaw: d, dateZh, dateEn,
+    icon: "🛠️", statZh: "技巧", statEn: "Craft", exp: 8,
+    descZh: log.data.title_zh ?? log.data.title, descEn: log.data.title,
+    type: "builder-log",
+  });
+}
+
+// Digests: +2 EXP each
+for (const digest of digests) {
+  const d = new Date(digest.data.date);
+  const { dateZh, dateEn } = fmtDate(d);
+  allActivity.push({
+    dateRaw: d, dateZh, dateEn,
+    icon: "📜", statZh: "见闻", statEn: "Insight", exp: 2,
+    descZh: digest.data.title_zh ?? digest.data.title, descEn: digest.data.title,
+    type: "digest",
+  });
+}
+
+// Sort newest first
+allActivity.sort((a, b) => b.dateRaw.getTime() - a.dateRaw.getTime());
+
+// Serialize for client
+const activityForClient = allActivity.map(({ dateRaw, ...rest }) => rest);
+
 const meta = {
   title: "Player Stats — Lab",
-  description: "Rex Liu's open-world cultivation dashboard.",
+  description: "Rex Liu's open-world cultivation dashboard. 江湖档案。",
 };
 ---
 
@@ -228,14 +247,17 @@ const meta = {
     <p class="hero-reveal-subtitle lang-zh max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">
       开放世界修行面板。所有数值来自真实数据，无手动设置。
     </p>
-
-
   </section>
 
   <!-- React Island -->
   <PlayerStats
     client:only="react"
     stats={stats}
+    level={level}
+    totalExp={totalExp}
+    expInLevel={expInLevel}
+    expNeeded={expNeeded}
+    expProgress={expProgress}
     rank={rank}
     avgStat={avgStat}
     currentCity={{ name: currentCityObj.name, nameCN: currentCityObj.nameCN }}
@@ -243,16 +265,20 @@ const meta = {
     tagCounts={tagCounts}
     postCount={postCount}
     builderLogCount={builderLogCount}
+    digestCount={digestCount}
+    libraryCount={libraryCount}
+    cityCount={cityCount}
+    projectCount={projectCount}
     cities={cities.map(c => ({ id: c.id, name: c.name, nameCN: c.nameCN, lat: c.lat, lng: c.lng }))}
     achievements={achievements}
-    recentActivity={recentActivity}
+    activityLog={activityForClient}
   />
 
   <!-- Footer -->
   <section class="mt-16 border-t border-gray-100 pt-8 dark:border-gray-800">
     <p class="font-serif text-sm text-gray-400 dark:text-gray-500">
-      <span class="lang-en">All stats auto-calculated from content collections. No hardcoded values. Updates on every build.</span>
-      <span class="lang-zh">所有属性自动计算，无硬编码数值，每次构建更新。</span>
+      <span class="lang-en">All stats auto-calculated from content collections. No hardcoded values (except X followers). Updates on every build.</span>
+      <span class="lang-zh">所有属性自动计算（X 粉丝数除外），每次构建更新。</span>
     </p>
     <div class="mt-3">
       <a href="/lab/" class="font-serif text-sm text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]">
