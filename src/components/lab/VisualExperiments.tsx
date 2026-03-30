@@ -18,6 +18,26 @@ function getGridColor(): string {
   return isDark ? "rgba(137,83,209,0.08)" : "rgba(137,83,209,0.12)";
 }
 
+function isDarkMode(): boolean {
+  if (typeof document === "undefined") return true;
+  return document.documentElement.getAttribute("data-theme") === "dark"
+    || document.documentElement.classList.contains("dark");
+}
+
+function useThemeColors() {
+  const [dark, setDark] = useState(isDarkMode);
+  useEffect(() => {
+    setDark(isDarkMode());
+    const observer = new MutationObserver(() => setDark(isDarkMode()));
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "class"] });
+    return () => observer.disconnect();
+  }, []);
+  return {
+    title: dark ? "#ffffff" : "#111111",
+    subtitle: dark ? "#aaaaaa" : "#777777",
+  };
+}
+
 // ============================================================
 // Experiment 1: Sine Wave Studio
 // ============================================================
@@ -28,6 +48,7 @@ function SineWaveStudio() {
   const [frequency, setFrequency] = useState(3);
   const [phase, setPhase] = useState(0);
   const [waveCount, setWaveCount] = useState(1);
+  const tc = useThemeColors();
 
   const draw = useCallback(() => {
     const canvas = canvasRef.current;
@@ -129,11 +150,11 @@ function SineWaveStudio() {
       <div className="exp-header">
         <span className="exp-num">01</span>
         <div>
-          <h2 className="exp-title">
+          <h2 className="exp-title" style={{color: tc.title}}>
             <span className="lang-en">Sine Wave Studio</span>
             <span className="lang-zh">正弦波工作室</span>
           </h2>
-          <p className="exp-subtitle">
+          <p className="exp-subtitle" style={{color: tc.subtitle}}>
             <span className="lang-en">Market Cycles Are Predictable. Your Reaction to Them Is Not.</span>
             <span className="lang-zh">市场周期可预测。你对它的反应，不行。</span>
           </p>
@@ -213,6 +234,7 @@ function NeuralPulse() {
   const [nodeCount, setNodeCount] = useState(11);
   const [speed, setSpeed] = useState(1);
   const [density, setDensity] = useState(2);
+  const tc = useThemeColors();
 
   const canvasSize = useRef({ W: 600, H: 220 });
 
@@ -369,11 +391,11 @@ function NeuralPulse() {
       <div className="exp-header">
         <span className="exp-num">02</span>
         <div>
-          <h2 className="exp-title">
+          <h2 className="exp-title" style={{color: tc.title}}>
             <span className="lang-en">Neural Pulse</span>
             <span className="lang-zh">神经脉冲</span>
           </h2>
-          <p className="exp-subtitle">
+          <p className="exp-subtitle" style={{color: tc.subtitle}}>
             <span className="lang-en">Intelligence Is Connection, Not Computation.</span>
             <span className="lang-zh">智能是连接，不是计算力。</span>
           </p>
@@ -437,6 +459,7 @@ function CompoundGrowth() {
   const [years, setYears] = useState(20);
   const animRef = useRef<number>(0);
   const progressRef = useRef(0);
+  const tc = useThemeColors();
 
   const buildData = useCallback(() => {
     const compound: number[] = [];
@@ -590,11 +613,11 @@ function CompoundGrowth() {
       <div className="exp-header">
         <span className="exp-num">03</span>
         <div>
-          <h2 className="exp-title">
+          <h2 className="exp-title" style={{color: tc.title}}>
             <span className="lang-en">Compound Growth</span>
             <span className="lang-zh">复利增长</span>
           </h2>
-          <p className="exp-subtitle">
+          <p className="exp-subtitle" style={{color: tc.subtitle}}>
             <span className="lang-en">The 8th Wonder of the World, Visualized.</span>
             <span className="lang-zh">世界第八大奇迹，可视化。</span>
           </p>
@@ -690,6 +713,7 @@ function bezierTangent(t: number, P0: Pt, P1: Pt, P2: Pt, P3: Pt): Pt {
 function BezierJourney() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animRef = useRef<number>(0);
+  const tc = useThemeColors();
   const isDragging = useRef<null | "p1" | "p2">(null);
   const [p1, setP1] = useState<Pt>({ x: 0.25, y: 0.2 });
   const [p2, setP2] = useState<Pt>({ x: 0.75, y: 0.8 });
@@ -882,11 +906,11 @@ function BezierJourney() {
       <div className="exp-header">
         <span className="exp-num">04</span>
         <div>
-          <h2 className="exp-title">
+          <h2 className="exp-title" style={{color: tc.title}}>
             <span className="lang-en">Bezier Journey</span>
             <span className="lang-zh">贝塞尔旅程</span>
           </h2>
-          <p className="exp-subtitle">
+          <p className="exp-subtitle" style={{color: tc.subtitle}}>
             <span className="lang-en">Life Is Not a Straight Line. It's Pulled by Invisible Control Points.</span>
             <span className="lang-zh">人生不是直线。它被无形的控制点所牵引。</span>
           </p>
