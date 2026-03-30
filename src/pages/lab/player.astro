@@ -41,31 +41,25 @@ const builderLogCount = builderLogs.length;
 const projectCount = projects.length;
 const libraryCount = (mediaData as any[]).length;
 
-// 体魄 Vitality: cities * 3 + travel_days * 0.5, cap 100
-const vitality = Math.min(100, Math.round(cities.length * 3 + travelDays * 0.5));
+// 体魄 Vitality: cities * 1.5 + travel_days * 0.1, cap 100
+const vitality = Math.min(100, Math.round(cities.length * 1.5 + travelDays * 0.1));
 
-// 悟性 Wisdom: posts * 2 + library * 0.5 + flomo(0), cap 100
-const wisdom = Math.min(100, Math.round(postCount * 2 + libraryCount * 0.5));
+// 悟性 Wisdom: posts * 1 + library * 0.3, cap 100
+const wisdom = Math.min(100, Math.round(postCount * 1 + libraryCount * 0.3));
 
-// 心法 Spirit: digests * 1.5 + framework_items * 2 + decisions * 1, cap 100
-const frameworkItems = 8; // Hardcoded investment framework items
-const decisions = 102;   // From builder-log Day 001
-const spirit = Math.min(100, Math.round(digestCount * 1.5 + frameworkItems * 2 + decisions * 1));
+// 心法 Spirit: digests * 0.8 + 15 (framework base), cap 100
+const spirit = Math.min(100, Math.round(digestCount * 0.8 + 15));
 
-// 剑术 Craft: projects * 5 + builder_logs * 1 + experiments * 5, cap 100
-const experiments = 4; // Visual experiments
-const craft = Math.min(100, Math.round(projectCount * 5 + builderLogCount * 1 + experiments * 5));
+// 剑术 Craft: projects * 3 + builder_logs * 0.5, cap 100
+const craft = Math.min(100, Math.round(projectCount * 3 + builderLogCount * 0.5));
 
-// 声望 Renown: followers / 1000 + weekly_eng * 0.1, cap 100
-const followers = 6423;
-const weeklyEng = 5495;
-const renown = Math.min(100, Math.round(followers / 1000 + weeklyEng * 0.1));
+// 声望 Renown: 6.4 (current followers 6.4k / 1000), cap 100
+const followers = 6400;
+const renown = Math.min(100, Math.round(6.4));
 
-// 统御 Command: agents * 5 + proposals * 0.3 + crons * 0.5, cap 100
+// 统御 Command: 6 agents * 5 + 20 base, cap 100
 const agents = 6;
-const proposals = 30; // Estimated
-const crons = 19;
-const command = Math.min(100, Math.round(agents * 5 + proposals * 0.3 + crons * 0.5));
+const command = Math.min(100, Math.round(agents * 5 + 20));
 
 const stats = { vitality, wisdom, spirit, craft, renown, command };
 const avgStat = Math.round((vitality + wisdom + spirit + craft + renown + command) / 6);
@@ -204,8 +198,8 @@ if (recentActivity.length < 3) {
 }
 
 const meta = {
-  title: "Player Stats · 江湖档案 — Lab",
-  description: "Rex Liu's open-world cultivation dashboard — all stats from real data. 刘先生的江湖修行档案。",
+  title: "Player Stats — Lab",
+  description: "Rex Liu's open-world cultivation dashboard.",
 };
 ---
 
@@ -235,17 +229,7 @@ const meta = {
       开放世界修行面板。所有数值来自真实数据，无手动设置。
     </p>
 
-    <!-- Quick stat bar -->
-    <div class="mt-4 flex flex-wrap gap-x-4 gap-y-1 font-serif text-sm">
-      <span class="lang-en text-gray-400">Realm: <strong style="color:#8953d1">{rank.en}</strong></span>
-      <span class="lang-zh text-gray-400">境界：<strong style="color:#8953d1">{rank.zh}</strong></span>
-      <span class="text-gray-300 dark:text-gray-600">·</span>
-      <span class="lang-en text-gray-400">Avg Stat: <strong style="color:#8953d1">{avgStat}</strong></span>
-      <span class="lang-zh text-gray-400">综合修为：<strong style="color:#8953d1">{avgStat}</strong></span>
-      <span class="text-gray-300 dark:text-gray-600">·</span>
-      <span class="lang-en text-gray-400">Cities: <strong style="color:#8953d1">{cities.length}</strong></span>
-      <span class="lang-zh text-gray-400">游历城市：<strong style="color:#8953d1">{cities.length}</strong></span>
-    </div>
+
   </section>
 
   <!-- React Island -->
