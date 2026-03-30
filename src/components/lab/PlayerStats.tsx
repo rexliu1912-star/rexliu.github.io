@@ -537,34 +537,34 @@ function SkillTree({ tagCounts, postCount, builderLogCount, dark }: {
         })}
 
         {/* Branch 1: 周期心法 */}
-        <NodeBox x={bX} y={b1y} w={nW} h={nH} label="周期心法" labelEn="Cycle Arts" count={tagCounts["crypto"] || 0} url="/tags/crypto/" />
+        <NodeBox x={bX} y={b1y} w={nW} h={nH} label="周期心法" count={tagCounts["crypto"] || 0} url="/tags/crypto/" />
         {[l1y, l2y].map(ly => {
           const r = rightOf(bX, b1y, nW, nH);
           const l = leftOf(lX, ly, nH);
           return <HLine key={ly} x1={r.x} y1={r.y} x2={l.x} y2={l.y} />;
         })}
-        <NodeBox x={lX} y={l1y} w={nW} h={nH} label="盈亏同源" labelEn="P&L Unity" count={tagCounts["trading"] || 0} />
-        <NodeBox x={lX} y={l2y} w={nW} h={nH} label="买预期卖事实" labelEn="Buy Signal" count={tagCounts["alpha"] || 0} />
+        <NodeBox x={lX} y={l1y} w={nW} h={nH} label="盈亏同源" count={tagCounts["trading"] || 0} />
+        <NodeBox x={lX} y={l2y} w={nW} h={nH} label="买预期卖事实" count={tagCounts["alpha"] || 0} />
 
         {/* Branch 2: 价值心法 */}
-        <NodeBox x={bX} y={b2y} w={nW} h={nH} label="价值心法" labelEn="Value Arts" count={tagCounts["investment"] || 0} url="/tags/investment/" />
+        <NodeBox x={bX} y={b2y} w={nW} h={nH} label="价值心法" count={tagCounts["investment"] || 0} url="/tags/investment/" />
         {[l3y, l4y].map(ly => {
           const r = rightOf(bX, b2y, nW, nH);
           const l = leftOf(lX, ly, nH);
           return <HLine key={ly} x1={r.x} y1={r.y} x2={l.x} y2={l.y} />;
         })}
-        <NodeBox x={lX} y={l3y} w={nW} h={nH} label="复利之道" labelEn="Compounding" count={tagCounts["evergreen"] || 0} url="/tags/evergreen/" />
-        <NodeBox x={lX} y={l4y} w={nW} h={nH} label="长期主义" labelEn="Long-term" count={(tagCounts["investment"] || 0) + (tagCounts["wealth"] || 0)} />
+        <NodeBox x={lX} y={l3y} w={nW} h={nH} label="复利之道" count={tagCounts["evergreen"] || 0} url="/tags/evergreen/" />
+        <NodeBox x={lX} y={l4y} w={nW} h={nH} label="长期主义" count={(tagCounts["investment"] || 0) + (tagCounts["wealth"] || 0)} />
 
         {/* Branch 3: 风控心法 */}
-        <NodeBox x={bX} y={b3y} w={nW} h={nH} label="风控心法" labelEn="Risk Arts" count={tagCounts["wealth"] || 0} url="/tags/wealth/" />
+        <NodeBox x={bX} y={b3y} w={nW} h={nH} label="风控心法" count={tagCounts["wealth"] || 0} url="/tags/wealth/" />
         {[l5y, l6y].map(ly => {
           const r = rightOf(bX, b3y, nW, nH);
           const l = leftOf(lX, ly, nH);
           return <HLine key={ly} x1={r.x} y1={r.y} x2={l.x} y2={l.y} />;
         })}
-        <NodeBox x={lX} y={l5y} w={nW} h={nH} label="对手盘" labelEn="Counter-play" count={tagCounts["macro"] || 0} />
-        <NodeBox x={lX} y={l6y} w={nW} h={nH} label="去中心化" labelEn="Decentralize" count={tagCounts["crypto"] || 0} url="/tags/crypto/" />
+        <NodeBox x={lX} y={l5y} w={nW} h={nH} label="对手盘" count={tagCounts["macro"] || 0} />
+        <NodeBox x={lX} y={l6y} w={nW} h={nH} label="去中心化" count={tagCounts["crypto"] || 0} url="/tags/crypto/" />
 
         {/* ── Outer Arts ── */}
         <RootBox x={oRx} y={oRy} w={rW} h={rH} label="外功" />
@@ -576,35 +576,35 @@ function SkillTree({ tagCounts, postCount, builderLogCount, dark }: {
         })}
 
         {/* Branch 1: 剑法·写作 */}
-        <NodeBox x={obX} y={ob1y} w={nW} h={nH} label="剑法·写作" labelEn="Sword·Write" count={postCount} url="/posts/" />
+        <NodeBox x={obX} y={ob1y} w={nW} h={nH} label="剑法·写作" count={postCount} url="/posts/" />
         {[ol1y, ol2y, ol3y].map(ly => {
           const r = rightOf(obX, ob1y, nW, nH);
           const l = leftOf(olX, ly, nH);
           return <HLine key={ly + 2000} x1={r.x} y1={r.y} x2={l.x} y2={l.y} />;
         })}
-        <NodeBox x={olX} y={ol1y} w={nW} h={nH} label="生活" labelEn="Life" count={tagCounts["life"] || 0} url="/tags/life/" />
-        <NodeBox x={olX} y={ol2y} w={nW} h={nH} label="人物志" labelEn="People" count={tagCounts["people"] || 0} url="/tags/people/" />
-        <NodeBox x={olX} y={ol3y} w={nW} h={nH} label="常青文" labelEn="Evergreen" count={tagCounts["evergreen"] || 0} url="/tags/evergreen/" />
+        <NodeBox x={olX} y={ol1y} w={nW} h={nH} label="生活" count={tagCounts["life"] || 0} url="/tags/life/" />
+        <NodeBox x={olX} y={ol2y} w={nW} h={nH} label="人物志" count={tagCounts["people"] || 0} url="/tags/people/" />
+        <NodeBox x={olX} y={ol3y} w={nW} h={nH} label="常青文" count={tagCounts["evergreen"] || 0} url="/tags/evergreen/" />
 
         {/* Branch 2: 掌法·编程 */}
-        <NodeBox x={obX} y={ob2y} w={nW} h={nH} label="掌法·编程" labelEn="Palm·Code" count={tagCounts["ai"] || 0} url="/tags/ai/" />
+        <NodeBox x={obX} y={ob2y} w={nW} h={nH} label="掌法·编程" count={tagCounts["ai"] || 0} url="/tags/ai/" />
         {[ol4y, ol5y].map(ly => {
           const r = rightOf(obX, ob2y, nW, nH);
           const l = leftOf(olX, ly, nH);
           return <HLine key={ly + 3000} x1={r.x} y1={r.y} x2={l.x} y2={l.y} />;
         })}
-        <NodeBox x={olX} y={ol4y} w={nW} h={nH} label="Vibe Coding" labelEn="Vibe Code" count={tagCounts["vibe coding"] || tagCounts["ai"] || 0} url="/tags/ai/" />
-        <NodeBox x={olX} y={ol5y} w={nW} h={nH} label="Agent 系统" labelEn="Agent Sys" count={builderLogCount} />
+        <NodeBox x={olX} y={ol4y} w={nW} h={nH} label="Vibe Coding" count={tagCounts["vibe coding"] || tagCounts["ai"] || 0} url="/tags/ai/" />
+        <NodeBox x={olX} y={ol5y} w={nW} h={nH} label="Agent 系统" count={builderLogCount} />
 
         {/* Branch 3: 轻功·探索 */}
-        <NodeBox x={obX} y={ob3y} w={nW} h={nH} label="轻功·探索" labelEn="Swift·Explore" count={tagCounts["travel"] || 0} url="/tags/travel/" />
+        <NodeBox x={obX} y={ob3y} w={nW} h={nH} label="轻功·探索" count={tagCounts["travel"] || 0} url="/tags/travel/" />
         {[ol6y, ol7y].map(ly => {
           const r = rightOf(obX, ob3y, nW, nH);
           const l = leftOf(olX, ly, nH);
           return <HLine key={ly + 4000} x1={r.x} y1={r.y} x2={l.x} y2={l.y} />;
         })}
-        <NodeBox x={olX} y={ol6y} w={nW} h={nH} label="旅居" labelEn="Nomad Stay" count={tagCounts["travel"] || 0} url="/tags/travel/" />
-        <NodeBox x={olX} y={ol7y} w={nW} h={nH} label="数字游牧" labelEn="Digital Nomad" count={tagCounts["travel"] || 0} />
+        <NodeBox x={olX} y={ol6y} w={nW} h={nH} label="旅居" count={tagCounts["travel"] || 0} url="/tags/travel/" />
+        <NodeBox x={olX} y={ol7y} w={nW} h={nH} label="数字游牧" count={tagCounts["travel"] || 0} />
 
         {/* Tooltip */}
         {tooltip && (
