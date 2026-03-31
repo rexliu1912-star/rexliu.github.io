@@ -313,7 +313,7 @@ function TooltipWrap({ content, children, align = "left" }: { content: React.Rea
 }
 
 function Section({ dark, children }: { dark: boolean; children: React.ReactNode }) {
-  return <section className="ps-section" style={{ width: "100%", maxWidth: 1040, margin: "0 auto", border: `1px solid ${dark ? "rgba(137,83,209,0.24)" : "rgba(137,83,209,0.14)"}`, borderRadius: 24, padding: "1.4rem", background: dark ? "linear-gradient(180deg, rgba(18,14,29,0.98), rgba(10,8,18,0.98))" : "linear-gradient(180deg, rgba(255,255,255,0.96), rgba(248,242,255,0.96))", boxShadow: dark ? "0 18px 42px rgba(0,0,0,0.22)" : "0 18px 34px rgba(137,83,209,0.08)" }}>{children}</section>;
+  return <section className="ps-section" style={{ width: "100%", maxWidth: 1200, margin: "0 auto", border: `1px solid ${dark ? "rgba(137,83,209,0.24)" : "rgba(137,83,209,0.14)"}`, borderRadius: 24, padding: "1.4rem", background: dark ? "linear-gradient(180deg, rgba(18,14,29,0.98), rgba(10,8,18,0.98))" : "linear-gradient(180deg, rgba(255,255,255,0.96), rgba(248,242,255,0.96))", boxShadow: dark ? "0 18px 42px rgba(0,0,0,0.22)" : "0 18px 34px rgba(137,83,209,0.08)" }}>{children}</section>;
 }
 
 function SectionHeader({ icon, zh, en, dark }: { icon: string; zh: string; en: string; dark: boolean }) {
@@ -493,9 +493,9 @@ function QuestPanel({ quests, dark }: { quests: PlayerStatsProps["quests"]; dark
   const [tab, setTab] = useState<"main" | "side">("main");
   return <div style={{ display: "grid", gap: 14 }}>
     <div style={{ display: "inline-flex", gap: 8, padding: 6, borderRadius: 999, border: `1px solid ${dark ? "rgba(137,83,209,0.22)" : "rgba(137,83,209,0.16)"}` }}>
-      {(["main", "side"] as const).map(key => <button key={key} type="button" onClick={() => setTab(key)} style={{ border: 0, cursor: "pointer", borderRadius: 999, padding: "8px 14px", background: tab === key ? PURPLE : "transparent", color: tab === key ? "#fff" : (dark ? "#d6cdf0" : "#6f657d") }}>{key === "main" ? "主线 / Main" : "支线 / Side"}</button>)}
+      {(["main", "side"] as const).map(key => <button key={key} type="button" onClick={() => setTab(key)} style={{ border: 0, cursor: "pointer", borderRadius: 999, padding: "8px 14px", background: tab === key ? PURPLE : "transparent", color: tab === key ? "#fff" : (dark ? "#d6cdf0" : "#6f657d") }}>{key === "main" ? `主线 / Main (${quests.main.length})` : `支线 / Side (${quests.side.length})`}</button>)}
     </div>
-    <div style={{ display: "grid", gap: 12 }}>
+    <div style={{ display: "grid", gap: 12, maxHeight: tab === "side" ? 720 : undefined, overflowY: tab === "side" ? "auto" : undefined, paddingRight: tab === "side" ? 4 : 0 }}>
       {tab === "main" ? quests.main.map(quest => {
         const current = Number(quest.current ?? 0);
         const goal = Number(quest.goal ?? 0);
@@ -505,7 +505,7 @@ function QuestPanel({ quests, dark }: { quests: PlayerStatsProps["quests"]; dark
           <div style={{ marginTop: 12, display: "flex", justifyContent: "space-between", fontFamily: "monospace", fontSize: 11, color: dark ? "#c8bed8" : "#78688a" }}><span>{current}{quest.unit ? ` ${quest.unit}` : ""}</span><span>{goal}{quest.unit ? ` ${quest.unit}` : ""}</span></div>
           <div style={{ marginTop: 6, height: 12, overflow: "hidden", borderRadius: 999, background: dark ? "rgba(255,255,255,0.05)" : "rgba(60,20,90,0.06)" }}><div style={{ width: `${Math.round(ratio)}%`, height: "100%", background: `linear-gradient(90deg, ${PURPLE}, rgba(137,83,209,0.52))` }} /></div>
         </div></TooltipWrap>;
-      }) : quests.side.map(quest => <div key={quest.id} style={{ borderRadius: 18, padding: 16, border: `1px solid ${dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.7)", display: "flex", justifyContent: "space-between", gap: 12, alignItems: "center" }}><div><div style={{ color: dark ? "#fff" : "#261a33", fontWeight: 700 }}>{quest.titleCN}</div><div style={{ marginTop: 6, color: dark ? "#ac9fbe" : "#8b7a98", fontFamily: "monospace", fontSize: 11 }}>{quest.progress}</div></div><div style={{ color: PURPLE, fontFamily: "monospace", fontSize: 11 }}>{quest.status}</div></div>)}
+      }) : quests.side.map(quest => <div key={quest.id} style={{ borderRadius: 18, padding: 16, border: `1px solid ${dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.7)", display: "flex", justifyContent: "space-between", gap: 12, alignItems: "flex-start" }}><div style={{ minWidth: 0, flex: 1 }}><div style={{ color: dark ? "#fff" : "#261a33", fontWeight: 700 }}>{quest.titleCN}</div><div style={{ marginTop: 6, color: dark ? "#ac9fbe" : "#8b7a98", fontFamily: "monospace", fontSize: 11, lineHeight: 1.6, wordBreak: "break-word" }}>{quest.progress}</div></div><div style={{ color: quest.status === "completed" ? PURPLE : (dark ? "#d6cdf0" : "#6f657d"), fontFamily: "monospace", fontSize: 11, whiteSpace: "nowrap", paddingTop: 2 }}>{quest.status === "completed" ? "COMPLETED" : "ACTIVE"}</div></div>)}
     </div>
   </div>;
 }
@@ -514,22 +514,186 @@ function RetainerPanel({ retainers, dark }: { retainers: RetainerData[]; dark: b
   return <div className="retainer-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 12 }}>{retainers.map(agent => <a key={agent.id} href="/lab/agents/" style={{ textDecoration: "none" }}><div style={{ borderRadius: 18, padding: 14, border: `1px solid ${dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.7)" }}><div style={{ display: "flex", gap: 12, alignItems: "center" }}><img src={agent.sprite} alt={agent.name} width={56} height={56} style={{ width: 56, height: 56, borderRadius: 14, objectFit: "cover", imageRendering: "pixelated", border: "1px solid rgba(137,83,209,0.26)" }} /><div><div style={{ color: dark ? "#fff" : "#261a33", fontWeight: 700 }}>{agent.name} {agent.emoji}</div><div style={{ color: PURPLE, fontSize: 11 }}>{agent.titleZh}</div></div></div><div style={{ marginTop: 12, display: "flex", justifyContent: "space-between", fontFamily: "monospace", fontSize: 11 }}><span style={{ color: dark ? "#c8bed8" : "#78688a" }}>Lv.{agent.level}</span><span style={{ color: PURPLE }}>{agent.sessions} sessions</span></div></div></a>)}</div>;
 }
 
-function SkillBranch({ title, nodes, dark }: { title: string; nodes: Array<{ label: string; count: number; url?: string }>; dark: boolean }) {
-  return <div style={{ borderRadius: 22, padding: 16, border: `1px solid ${dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.72)" }}>
-    <div style={{ color: PURPLE, fontFamily: "monospace", fontSize: 12, marginBottom: 14 }}>{title}</div>
-    <div className="skill-branch" style={{ display: "grid", gap: 14 }}>
-      {nodes.map((node, index) => {
-        const innerNode = <div className="skill-node" style={{ minHeight: 86, borderRadius: 18, padding: 14, border: `1px solid ${dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.12)"}`, background: dark ? "linear-gradient(180deg, rgba(34,25,52,0.94), rgba(20,15,31,0.94))" : "linear-gradient(180deg, rgba(255,255,255,0.94), rgba(248,242,255,0.98))", display: "flex", flexDirection: "column", justifyContent: "space-between", position: "relative", overflow: "hidden" }}>
-          <div className="skill-node-pulse" style={{ position: "absolute", inset: -20, background: "radial-gradient(circle at 12% 18%, rgba(137,83,209,0.12), transparent 38%)", opacity: 0.8 }} />
-          <div style={{ position: "relative", zIndex: 1, color: dark ? "#fff" : "#261a33", fontWeight: 700 }}>{node.label}</div>
-          <div style={{ position: "relative", zIndex: 1, color: PURPLE, fontFamily: "monospace", fontSize: 12 }}>Lv.{node.count}</div>
-        </div>;
-        const wrapped = node.url ? <a href={node.url} style={{ textDecoration: "none" }}>{innerNode}</a> : innerNode;
-        return <div key={node.label} className="skill-row" style={{ display: "grid", gridTemplateColumns: index % 2 === 0 ? "1.1fr 0.9fr" : "0.9fr 1.1fr", gap: 14, alignItems: "center" }}>
-          <div className="skill-line-wrap" style={{ position: "relative", height: 2, background: "linear-gradient(90deg, rgba(137,83,209,0.38), rgba(137,83,209,0.06))", overflow: "hidden", borderRadius: 999 }}><span className="skill-line-flow" style={{ position: "absolute", inset: 0, background: "linear-gradient(90deg, transparent, rgba(137,83,209,0.9), transparent)", transform: "translateX(-100%)" }} /></div>
-          <TooltipWrap content={<div>{node.desc && <div style={{ marginBottom: 4, color: "#e0d0ff" }}>{node.desc}</div>}<div>{node.count} 篇相关文章 · Lv.{node.count}</div></div>} align="center">{wrapped}</TooltipWrap>
-        </div>;
-      })}
+type SkillNode = { label: string; desc: string; count: number; url?: string };
+type SkillGroup = { label: string; nodes: SkillNode[] };
+
+type SkillTreeNode = SkillNode & {
+  id: string;
+  depth: 0 | 1 | 2;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+};
+
+type SkillTreeEdge = {
+  id: string;
+  from: SkillTreeNode;
+  to: SkillTreeNode;
+  path: string;
+  active: boolean;
+};
+
+function buildSkillTreeLayout(rootLabel: string, groups: SkillGroup[]) {
+  const rootWidth = 152;
+  const branchWidth = 140;
+  const leafWidth = 158;
+  const nodeHeight = 44;
+  const rootX = 20;
+  const branchX = 270;
+  const leafX = 520;
+  const sectionGap = 34;
+  const leafGap = 56;
+  const branchGap = 70;
+
+  let cursorY = 26;
+  const branchCenters: number[] = [];
+  const nodes: SkillTreeNode[] = [];
+  const edges: SkillTreeEdge[] = [];
+
+  const branchNodes = groups.map((group, groupIndex) => {
+    const leafNodes = group.nodes.map((node, leafIndex) => {
+      const leafNode: SkillTreeNode = {
+        ...node,
+        id: `leaf-${groupIndex}-${leafIndex}`,
+        depth: 2,
+        x: leafX,
+        y: cursorY,
+        width: leafWidth,
+        height: nodeHeight,
+      };
+      cursorY += nodeHeight + leafGap;
+      nodes.push(leafNode);
+      return leafNode;
+    });
+
+    const firstLeaf = leafNodes[0]!;
+    const lastLeaf = leafNodes[leafNodes.length - 1]!;
+    const centerY = (firstLeaf.y + lastLeaf.y) / 2 + nodeHeight / 2;
+    branchCenters.push(centerY);
+
+    const branchNode: SkillTreeNode = {
+      label: group.label,
+      desc: `${group.nodes.length} 项分支`,
+      count: group.nodes.reduce((sum, item) => sum + item.count, 0),
+      id: `branch-${groupIndex}`,
+      depth: 1,
+      x: branchX,
+      y: centerY - nodeHeight / 2,
+      width: branchWidth,
+      height: nodeHeight,
+    };
+    nodes.push(branchNode);
+
+    leafNodes.forEach((leafNode, leafIndex) => {
+      const startX = branchNode.x + branchNode.width;
+      const startY = branchNode.y + branchNode.height / 2;
+      const endX = leafNode.x;
+      const endY = leafNode.y + leafNode.height / 2;
+      const midX = startX + (endX - startX) * 0.45;
+      edges.push({
+        id: `edge-branch-${groupIndex}-${leafIndex}`,
+        from: branchNode,
+        to: leafNode,
+        active: leafNode.count > 0,
+        path: `M ${startX} ${startY} C ${midX} ${startY}, ${midX} ${endY}, ${endX} ${endY}`,
+      });
+    });
+
+    cursorY += sectionGap;
+    return branchNode;
+  });
+
+  const rootCenterY = (branchCenters[0]! + branchCenters[branchCenters.length - 1]!) / 2;
+  const rootNode: SkillTreeNode = {
+    label: rootLabel,
+    desc: "武学总纲",
+    count: branchNodes.reduce((sum, item) => sum + item.count, 0),
+    id: "root",
+    depth: 0,
+    x: rootX,
+    y: rootCenterY - 54 / 2,
+    width: rootWidth,
+    height: 54,
+  };
+  nodes.push(rootNode);
+
+  branchNodes.forEach((branchNode, index) => {
+    const startX = rootNode.x + rootNode.width;
+    const startY = rootNode.y + rootNode.height / 2;
+    const endX = branchNode.x;
+    const endY = branchNode.y + branchNode.height / 2;
+    const midX = startX + (endX - startX) * 0.45;
+    edges.push({
+      id: `edge-root-${index}`,
+      from: rootNode,
+      to: branchNode,
+      active: branchNode.count > 0,
+      path: `M ${startX} ${startY} C ${midX} ${startY}, ${midX} ${endY}, ${endX} ${endY}`,
+    });
+  });
+
+  const width = leafX + leafWidth + 28;
+  const height = Math.max(cursorY - sectionGap + 14, rootNode.y + rootNode.height + 28);
+  return { nodes, edges, width, height };
+}
+
+function SkillTreePanel({ title, subtitle, rootLabel, groups, dark }: { title: string; subtitle: string; rootLabel: string; groups: SkillGroup[]; dark: boolean }) {
+  const layout = useMemo(() => buildSkillTreeLayout(rootLabel, groups), [rootLabel, groups]);
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
+
+  return <div style={{ borderRadius: 24, padding: 18, border: `1px solid ${dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.12)"}`, background: dark ? "linear-gradient(180deg, rgba(22,16,35,0.98), rgba(12,10,20,0.98))" : "linear-gradient(180deg, rgba(255,255,255,0.98), rgba(247,240,255,0.98))", boxShadow: dark ? "0 16px 34px rgba(0,0,0,0.18)" : "0 16px 26px rgba(137,83,209,0.07)" }}>
+    <div style={{ display: "flex", justifyContent: "space-between", gap: 12, alignItems: "flex-start", flexWrap: "wrap", marginBottom: 14 }}>
+      <div>
+        <div style={{ color: PURPLE, fontFamily: "monospace", fontSize: 12 }}>{title}</div>
+        <div style={{ marginTop: 6, color: dark ? "#bcb2cb" : "#6f657d", fontSize: 13 }}>{subtitle}</div>
+      </div>
+      <div style={{ color: dark ? "#9f93b1" : "#8a7b97", fontFamily: "monospace", fontSize: 11 }}>ROOT → BRANCH → LEAF</div>
+    </div>
+    <div style={{ overflowX: "auto", overflowY: "hidden", borderRadius: 18 }}>
+      <svg viewBox={`0 0 ${layout.width} ${layout.height}`} style={{ width: "100%", minWidth: 760, height: "auto", display: "block" }}>
+        <defs>
+          <filter id="skillTreeGlow" x="-40%" y="-40%" width="180%" height="180%">
+            <feGaussianBlur stdDeviation="4" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+        {layout.edges.map(edge => {
+          const stroke = edge.active ? "rgba(137,83,209,0.72)" : (dark ? "rgba(110,102,124,0.5)" : "rgba(160,150,174,0.46)");
+          return <g key={edge.id}>
+            <path d={edge.path} fill="none" stroke={stroke} strokeWidth={2} strokeLinecap="round" />
+            {edge.active && <path d={edge.path} fill="none" stroke={PURPLE} strokeWidth={2.6} strokeLinecap="round" className="skill-tree-flow" filter="url(#skillTreeGlow)" />}
+          </g>;
+        })}
+        {layout.nodes.map(node => {
+          const active = node.count > 0 || node.depth === 0;
+          const isHovered = hoveredId === node.id;
+          const cardFill = active
+            ? (dark ? "rgba(30,22,46,0.98)" : "rgba(255,255,255,0.98)")
+            : (dark ? "rgba(35,33,42,0.98)" : "rgba(239,237,244,0.98)");
+          const border = active ? PURPLE : (dark ? "rgba(97,91,108,0.7)" : "rgba(160,154,170,0.8)");
+          const labelColor = active ? (dark ? "#f7f1ff" : "#261a33") : (dark ? "#9f93b1" : "#7f748d");
+          const countColor = active ? PURPLE : (dark ? "#7e758d" : "#93889f");
+          const body = <g className={`skill-tree-node ${active ? "is-active" : "is-dim"} ${node.url ? "is-link" : ""}`} onMouseEnter={() => setHoveredId(node.id)} onMouseLeave={() => setHoveredId(current => current === node.id ? null : current)}>
+            <rect x={node.x} y={node.y} rx={16} ry={16} width={node.width} height={node.height} fill={cardFill} stroke={border} strokeWidth={active ? 1.4 : 1.1} filter={active ? "url(#skillTreeGlow)" : undefined} />
+            <text x={node.x + 14} y={node.y + 20} fill={labelColor} style={{ fontSize: node.depth === 0 ? 14 : 13, fontWeight: 700, fontFamily: 'Georgia, Cambria, serif', pointerEvents: 'none' }}>{node.label}</text>
+            <text x={node.x + 14} y={node.y + node.height - 12} fill={countColor} style={{ fontSize: 11, fontFamily: 'monospace', pointerEvents: 'none' }}>{node.depth === 0 ? `TOTAL ${node.count}` : `${node.count} 篇 · Lv.${node.count}`}</text>
+            {isHovered && node.depth !== 0 && <g style={{ pointerEvents: 'none' }}>
+              <rect x={Math.min(node.x + node.width + 12, layout.width - 248)} y={Math.max(node.y - 10, 10)} width={236} height={70} rx={14} ry={14} fill="rgba(12,10,20,0.98)" stroke="rgba(137,83,209,0.42)" strokeWidth={1.1} />
+              <text x={Math.min(node.x + node.width + 26, layout.width - 234)} y={Math.max(node.y + 12, 24)} fill="#f5efff" style={{ fontSize: 12, fontFamily: 'Georgia, Cambria, serif' }}>{node.desc}</text>
+              <text x={Math.min(node.x + node.width + 26, layout.width - 234)} y={Math.max(node.y + 38, 50)} fill="#ccb7f7" style={{ fontSize: 11, fontFamily: 'monospace' }}>{`${node.count} 篇相关文章 · Lv.${node.count}`}</text>
+            </g>}
+          </g>;
+
+          if (node.url) {
+            return <a key={node.id} href={node.url}>{body}</a>;
+          }
+          return <g key={node.id}>{body}</g>;
+        })}
+      </svg>
     </div>
   </div>;
 }
@@ -559,9 +723,20 @@ function SkillTree({ tagCounts, postCount, builderLogCount, dark }: { tagCounts:
     { label: "仙风云体术", desc: "数字游牧 · 身法如风", count: tagCounts.travel || 0 },
   ];
 
-  return <div style={{ display: "grid", gap: 14 }}>
-    <SkillBranch title="内功心法 / Inner Arts" nodes={inner} dark={dark} />
-    <SkillBranch title="外功仙术 / Outer Arts" nodes={outer} dark={dark} />
+  const innerGroups: SkillGroup[] = [
+    { label: "势", nodes: inner.slice(0, 3) },
+    { label: "守", nodes: inner.slice(3, 6) },
+    { label: "观", nodes: inner.slice(6, 9) },
+  ];
+  const outerGroups: SkillGroup[] = [
+    { label: "文", nodes: outer.slice(0, 3) },
+    { label: "技", nodes: outer.slice(3, 7) },
+    { label: "行", nodes: outer.slice(7, 10) },
+  ];
+
+  return <div style={{ display: "grid", gap: 16 }}>
+    <SkillTreePanel title="内功心法 / Inner Arts" subtitle="根基先立，再向右生长出分支与叶脉。" rootLabel="内功心法" groups={innerGroups} dark={dark} />
+    <SkillTreePanel title="外功仙术 / Outer Arts" subtitle="兵器、写作与游历并行，整棵树上下展开显示。" rootLabel="外功仙术" groups={outerGroups} dark={dark} />
   </div>;
 }
 
@@ -630,11 +805,12 @@ function CultivationLog({ activityLog, dark }: { activityLog: PlayerStatsProps["
 export default function PlayerStats(props: PlayerStatsProps) {
   const dark = useTheme();
   const { stats, level, totalExp, expInLevel, expNeeded, expProgress, rank, currentCity, travelDays, tagCounts, postCount, builderLogCount, cities, achievements, retainers, quests, equipment, activityLog, chapters, relationships, statFormulas, expFormula, levelFormula } = props;
-  return <div style={{ width: "100%", maxWidth: 1080, margin: "0 auto", fontFamily: "Georgia, Cambria, serif", paddingInline: 12 }}>
+  return <div style={{ width: "100%", maxWidth: 1200, margin: "0 auto", fontFamily: "Georgia, Cambria, serif", paddingInline: 12 }}>
     <style>{`
       @keyframes chapterSlide { from { opacity: 0; transform: translateX(26px); } to { opacity: 1; transform: translateX(0); } }
       @keyframes skillPulse { 0%, 100% { transform: scale(1); opacity: 0.7; } 50% { transform: scale(1.03); opacity: 1; } }
       @keyframes lineFlow { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
+      @keyframes skillTreeDash { to { stroke-dashoffset: -180; } }
       .equipment-floating { transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 220ms cubic-bezier(0.22, 1, 0.36, 1), border-color 220ms ease; }
       .equipment-floating:hover { transform: translateY(-8px); box-shadow: 0 22px 36px rgba(137,83,209,0.2), 0 0 26px rgba(137,83,209,0.16); border-color: rgba(137,83,209,0.34); }
       .equipment-ring-core::after { content: ""; position: absolute; inset: 16px; border-radius: 50%; box-shadow: inset 0 0 28px rgba(137,83,209,0.08); }
@@ -644,14 +820,16 @@ export default function PlayerStats(props: PlayerStatsProps) {
       .skill-node:hover .skill-node-pulse { animation: skillPulse 1.3s ease-in-out infinite; }
       .skill-row:hover .skill-line-flow { animation-duration: 1.1s; }
       .skill-line-flow { animation: lineFlow 2.6s linear infinite; opacity: 0.9; }
+      .skill-tree-node { transition: transform 180ms cubic-bezier(0.22, 1, 0.36, 1), opacity 180ms ease; transform-origin: center; cursor: default; }
+      .skill-tree-node.is-link { cursor: pointer; }
+      .skill-tree-node:hover { transform: translateY(-2px) scale(1.012); }
+      .skill-tree-flow { stroke-dasharray: 16 164; stroke-dashoffset: 0; animation: skillTreeDash 4.2s linear infinite; }
       .relationship-card:hover { transform: translateY(-4px); box-shadow: 0 14px 26px rgba(137,83,209,0.12); }
       @media (max-width: 960px) {
         .hero-grid { grid-template-columns: 1fr !important; }
         .hero-side { min-width: 0 !important; }
         .stats-grid { grid-template-columns: 1fr !important; }
         .retainer-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
-        .skill-row { grid-template-columns: 1fr !important; }
-        .skill-line-wrap { display: none !important; }
       }
       @media (max-width: 760px) {
         .equipment-ring { display: none !important; }
