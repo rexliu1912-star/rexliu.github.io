@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import { memo, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 
 export interface RetainerData {
   id: string;
@@ -143,6 +143,15 @@ export interface PlayerStatsProps {
 
 const PURPLE = "#8953d1";
 const TOOLTIP_SCOPE = "player-stats-tooltip";
+const SUCCESS = "#5c8f68";
+const STAT_META = [
+  { key: "vitality", zh: "体力", en: "HP" },
+  { key: "wisdom", zh: "灵力", en: "Spirit" },
+  { key: "craft", zh: "武术", en: "Martial" },
+  { key: "insight", zh: "身法", en: "Agility" },
+  { key: "renown", zh: "声望", en: "Renown" },
+  { key: "command", zh: "统御", en: "Command" },
+] as const;
 
 function isDarkMode(): boolean {
   if (typeof document === "undefined") return true;
@@ -173,7 +182,7 @@ function usePrefersReducedMotion() {
   return reduced;
 }
 
-function useInView<T extends HTMLElement>(threshold = 0.18) {
+function useInView<T extends HTMLElement>(threshold = 0.18, persist = true) {
   const ref = useRef<T | null>(null);
   const [inView, setInView] = useState(false);
   useEffect(() => {
@@ -183,14 +192,18 @@ function useInView<T extends HTMLElement>(threshold = 0.18) {
     }
     const el = ref.current;
     const ob = new IntersectionObserver(([entry]: IntersectionObserverEntry[]) => {
-      if (entry?.isIntersecting) {
-        setInView(true);
-        ob.disconnect();
+      if (persist) {
+        if (entry?.isIntersecting) {
+          setInView(true);
+          ob.disconnect();
+        }
+      } else {
+        setInView(Boolean(entry?.isIntersecting));
       }
     }, { threshold, rootMargin: "0px 0px -8% 0px" });
     ob.observe(el);
     return () => ob.disconnect();
-  }, [threshold]);
+  }, [threshold, persist]);
   return { ref, inView };
 }
 
@@ -229,12 +242,14 @@ function TooltipWrap({ content, children, align = "left" }: { content: React.Rea
       const detail = (event as CustomEvent<{ id?: string; scope?: string }>).detail;
       if (detail?.scope === TOOLTIP_SCOPE && detail.id !== id) close();
     };
-    document.addEventListener("player-stats:tooltip-open", handle as EventListener);
-    document.addEventListener("pointerdown", (event) => {
+    const pointerHandler = (event: Event) => {
       if (!triggerRef.current?.contains(event.target as Node)) close();
-    });
+    };
+    document.addEventListener("player-stats:tooltip-open", handle as EventListener);
+    document.addEventListener("pointerdown", pointerHandler);
     return () => {
       document.removeEventListener("player-stats:tooltip-open", handle as EventListener);
+      document.removeEventListener("pointerdown", pointerHandler);
     };
   }, [id]);
 
@@ -293,8 +308,8 @@ function TooltipWrap({ content, children, align = "left" }: { content: React.Rea
           width: "min(320px, calc(100vw - 48px))",
           padding: "10px 12px",
           borderRadius: 14,
-          border: `1px solid rgba(137,83,209,0.42)`,
-          background: "rgba(12,10,20,0.98)",
+          border: `1px solid rgba(137,83,209,0.34)`,
+          background: "rgba(12,10,20,0.96)",
           color: "#f5efff",
           fontFamily: "monospace",
           fontSize: 11,
@@ -303,7 +318,7 @@ function TooltipWrap({ content, children, align = "left" }: { content: React.Rea
           opacity: open ? 1 : 0,
           transform: open ? openTranslate : translate,
           transition: "opacity 170ms ease, transform 170ms ease",
-          boxShadow: "0 18px 40px rgba(0,0,0,0.34)"
+          boxShadow: "0 10px 22px rgba(0,0,0,0.28)"
         }}
       >
         {content}
@@ -312,15 +327,15 @@ function TooltipWrap({ content, children, align = "left" }: { content: React.Rea
   );
 }
 
-function Section({ dark, children }: { dark: boolean; children: React.ReactNode }) {
-  return <section className="ps-section" style={{ width: "100%", maxWidth: 1200, margin: "0 auto", border: `1px solid ${dark ? "rgba(137,83,209,0.24)" : "rgba(137,83,209,0.14)"}`, borderRadius: 24, padding: "1.4rem", background: dark ? "linear-gradient(180deg, rgba(18,14,29,0.98), rgba(10,8,18,0.98))" : "linear-gradient(180deg, rgba(255,255,255,0.96), rgba(248,242,255,0.96))", boxShadow: dark ? "0 18px 42px rgba(0,0,0,0.22)" : "0 18px 34px rgba(137,83,209,0.08)" }}>{children}</section>;
-}
+const Section = memo(function Section({ dark, children }: { dark: boolean; children: React.ReactNode }) {
+  return <section className="ps-section" style={{ width: "100%", maxWidth: 1200, margin: "0 auto", border: `1px solid ${dark ? "rgba(137,83,209,0.22)" : "rgba(137,83,209,0.14)"}`, borderRadius: 24, padding: "1.35rem", background: dark ? "linear-gradient(180deg, rgba(18,14,29,0.98), rgba(10,8,18,0.98))" : "linear-gradient(180deg, rgba(255,255,255,0.96), rgba(248,242,255,0.96))", boxShadow: dark ? "0 10px 24px rgba(0,0,0,0.18)" : "0 10px 20px rgba(137,83,209,0.08)" }}>{children}</section>;
+});
 
-function SectionHeader({ icon, zh, en, dark }: { icon: string; zh: string; en: string; dark: boolean }) {
-  return <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 18 }}><span style={{ width: 34, height: 34, borderRadius: 999, display: "grid", placeItems: "center", border: `1px solid ${dark ? "rgba(137,83,209,0.26)" : "rgba(137,83,209,0.18)"}`, background: dark ? "rgba(137,83,209,0.1)" : "rgba(137,83,209,0.06)" }}>{icon}</span><div style={{ fontFamily: "Georgia, Cambria, serif", fontWeight: 700, color: dark ? "#fff" : "#261a33", fontSize: "1.06rem" }}><span className="lang-zh">{zh}</span><span className="lang-en">{en}</span></div><div style={{ flex: 1, height: 1, background: "linear-gradient(90deg, rgba(137,83,209,0.34), transparent)" }} /></div>;
-}
+const SectionHeader = memo(function SectionHeader({ icon, zh, en, dark }: { icon: string; zh: string; en: string; dark: boolean }) {
+  return <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 18 }}><span style={{ width: 34, height: 34, borderRadius: 999, display: "grid", placeItems: "center", border: `1px solid ${dark ? "rgba(137,83,209,0.24)" : "rgba(137,83,209,0.18)"}`, background: dark ? "rgba(137,83,209,0.08)" : "rgba(137,83,209,0.05)" }}>{icon}</span><div style={{ fontFamily: "Georgia, Cambria, serif", fontWeight: 700, color: dark ? "#fff" : "#261a33", fontSize: "1.06rem" }}><span className="lang-zh">{zh}</span><span className="lang-en">{en}</span></div><div style={{ flex: 1, height: 1, background: "linear-gradient(90deg, rgba(137,83,209,0.28), transparent)" }} /></div>;
+});
 
-function HeroCard({ dark, rank, level, totalExp, expInLevel, expNeeded, expProgress, currentCity, travelDays, expFormula, levelFormula }: {
+const HeroCard = memo(function HeroCard({ dark, rank, level, totalExp, expInLevel, expNeeded, expProgress, currentCity, travelDays, expFormula, levelFormula }: {
   dark: boolean; rank: { zh: string; en: string }; level: number; totalExp: number; expInLevel: number; expNeeded: number; expProgress: number; currentCity: { name: string; nameCN: string }; travelDays: number; expFormula: { zh: string; en: string }; levelFormula: { zh: string; en: string; nextLevel: string };
 }) {
   const expAnimated = Math.round(useCountUp(totalExp, 900, true));
@@ -328,8 +343,8 @@ function HeroCard({ dark, rank, level, totalExp, expInLevel, expNeeded, expProgr
   const levelAnimated = Math.round(useCountUp(level, 900, true));
   return <div className="hero-grid" style={{ display: "grid", gridTemplateColumns: "132px 1fr auto", gap: "1rem", alignItems: "center" }}>
     <div style={{ position: "relative" }}>
-      <img src="/images/rex-avatar.png" alt="Rex avatar" width={132} height={160} style={{ width: 132, height: 160, objectFit: "cover", imageRendering: "pixelated", borderRadius: 18, border: "1px solid rgba(137,83,209,0.34)", boxShadow: "0 12px 28px rgba(137,83,209,0.14)" }} />
-      <TooltipWrap content={<><div className="lang-zh">{levelFormula.zh}</div><div className="lang-en" style={{ color: "#ccb7f7" }}>{levelFormula.en}</div><div style={{ marginTop: 6, color: "#fff" }}>{levelFormula.nextLevel}</div></>} align="center"><div style={{ position: "absolute", left: "50%", bottom: -12, transform: "translateX(-50%)", padding: "4px 12px", borderRadius: 999, background: dark ? "rgba(10,10,18,0.94)" : "rgba(255,255,255,0.94)", border: "1px solid rgba(137,83,209,0.26)", color: PURPLE, fontFamily: "monospace", fontWeight: 700 }}>Lv.{levelAnimated}</div></TooltipWrap>
+      <img src="/images/rex-avatar.png" alt="Rex avatar" width={132} height={160} style={{ width: 132, height: 160, objectFit: "cover", imageRendering: "pixelated", borderRadius: 18, border: "1px solid rgba(137,83,209,0.28)", boxShadow: "0 8px 18px rgba(137,83,209,0.12)" }} />
+      <TooltipWrap content={<><div className="lang-zh">{levelFormula.zh}</div><div className="lang-en" style={{ color: "#ccb7f7" }}>{levelFormula.en}</div><div style={{ marginTop: 6, color: "#fff" }}>{levelFormula.nextLevel}</div></>} align="center"><div style={{ position: "absolute", left: "50%", bottom: -12, transform: "translateX(-50%)", padding: "4px 12px", borderRadius: 999, background: dark ? "rgba(10,10,18,0.94)" : "rgba(255,255,255,0.94)", border: "1px solid rgba(137,83,209,0.24)", color: PURPLE, fontFamily: "monospace", fontWeight: 700 }}>Lv.{levelAnimated}</div></TooltipWrap>
     </div>
     <div>
       <div style={{ display: "flex", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
@@ -338,21 +353,21 @@ function HeroCard({ dark, rank, level, totalExp, expInLevel, expNeeded, expProgr
           <div style={{ marginTop: 6, color: PURPLE, fontFamily: "monospace", fontSize: 12, fontWeight: 700 }}>PLAYER STATS</div>
           <p style={{ margin: "10px 0 0", color: dark ? "#bcb2cb" : "#6f657d", lineHeight: 1.7 }}><span className="lang-en">Sword intent in writing, inner strength in systems, footsteps across cities.</span><span className="lang-zh">文章为剑，系统为功，城市为路。</span></p>
         </div>
-        <div style={{ writingMode: "vertical-rl", textOrientation: "upright", letterSpacing: "0.12em", color: PURPLE, border: "1px solid rgba(137,83,209,0.22)", borderRadius: 999, padding: "10px 6px", background: dark ? "rgba(137,83,209,0.08)" : "rgba(137,83,209,0.05)" }}>江湖档案</div>
+        <div style={{ writingMode: "vertical-rl", textOrientation: "upright", letterSpacing: "0.12em", color: PURPLE, border: "1px solid rgba(137,83,209,0.2)", borderRadius: 999, padding: "10px 6px", background: dark ? "rgba(137,83,209,0.06)" : "rgba(137,83,209,0.04)" }}>江湖档案</div>
       </div>
       <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 14 }}>
-        {[`⚔️ ${rank.zh}`, `📍 ${currentCity.nameCN}`, `🗓️ 游历 ${travelDays} 天`].map(item => <span key={item} style={{ padding: "6px 10px", borderRadius: 999, border: "1px solid rgba(137,83,209,0.2)", color: dark ? "#e9ddff" : "#6f46a3", background: dark ? "rgba(137,83,209,0.1)" : "rgba(137,83,209,0.06)", fontSize: 12 }}>{item}</span>)}
+        {[`⚔️ ${rank.zh}`, `📍 ${currentCity.nameCN}`, `🗓️ 游历 ${travelDays} 天`].map(item => <span key={item} style={{ padding: "6px 10px", borderRadius: 999, border: "1px solid rgba(137,83,209,0.18)", color: dark ? "#e9ddff" : "#6f46a3", background: dark ? "rgba(137,83,209,0.08)" : "rgba(137,83,209,0.05)", fontSize: 12 }}>{item}</span>)}
       </div>
       <div style={{ marginTop: 16 }}>
         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8, gap: 10, flexWrap: "wrap" }}>
           <TooltipWrap content={<><div className="lang-zh">{expFormula.zh}</div><div className="lang-en" style={{ color: "#ccb7f7" }}>{expFormula.en}</div></>}><span style={{ color: PURPLE, fontFamily: "monospace", fontWeight: 700, fontSize: 12 }}>TOTAL EXP {expAnimated.toLocaleString()}</span></TooltipWrap>
           <span style={{ color: dark ? "#bcb2cb" : "#6f657d", fontFamily: "monospace", fontSize: 12 }}>{expInLevel} / {expNeeded}</span>
         </div>
-        <TooltipWrap content={<><div className="lang-zh">{expFormula.zh}</div><div className="lang-en" style={{ color: "#ccb7f7" }}>{expFormula.en}</div></>}><div style={{ height: 16, borderRadius: 999, overflow: "hidden", border: "1px solid rgba(137,83,209,0.22)", background: dark ? "rgba(255,255,255,0.05)" : "rgba(60,20,90,0.06)" }}><div style={{ height: "100%", width: `${progressAnimated}%`, background: `linear-gradient(90deg, ${PURPLE}, rgba(137,83,209,0.56))`, boxShadow: "0 0 18px rgba(137,83,209,0.32)" }} /></div></TooltipWrap>
+        <TooltipWrap content={<><div className="lang-zh">{expFormula.zh}</div><div className="lang-en" style={{ color: "#ccb7f7" }}>{expFormula.en}</div></>}><div style={{ height: 16, borderRadius: 999, overflow: "hidden", border: "1px solid rgba(137,83,209,0.2)", background: dark ? "rgba(255,255,255,0.05)" : "rgba(60,20,90,0.06)" }}><div style={{ height: "100%", width: `${progressAnimated}%`, background: `linear-gradient(90deg, ${PURPLE}, rgba(137,83,209,0.56))` }} /></div></TooltipWrap>
       </div>
     </div>
     <div className="hero-side" style={{ minWidth: 120 }}>
-      <div style={{ borderRadius: 18, padding: 16, border: "1px solid rgba(137,83,209,0.22)", background: dark ? "rgba(137,83,209,0.08)" : "rgba(137,83,209,0.05)" }}>
+      <div style={{ borderRadius: 18, padding: 16, border: "1px solid rgba(137,83,209,0.2)", background: dark ? "rgba(137,83,209,0.06)" : "rgba(137,83,209,0.04)" }}>
         <div style={{ fontFamily: "monospace", fontSize: 11, color: dark ? "#bcb2cb" : "#7a6d89" }}>Realm</div>
         <div style={{ color: PURPLE, fontWeight: 700, fontSize: 26, fontFamily: "Georgia, Cambria, serif" }}>{rank.zh}</div>
         <div style={{ fontFamily: "monospace", fontSize: 11, color: dark ? "#bcb2cb" : "#7a6d89", marginTop: 10 }}>Progress</div>
@@ -360,9 +375,9 @@ function HeroCard({ dark, rank, level, totalExp, expInLevel, expNeeded, expProgr
       </div>
     </div>
   </div>;
-}
+});
 
-function ChapterCarousel({ chapters, dark }: { chapters: ChapterData[]; dark: boolean }) {
+const ChapterCarousel = memo(function ChapterCarousel({ chapters, dark }: { chapters: ChapterData[]; dark: boolean }) {
   const reduced = usePrefersReducedMotion();
   const initialIndex = Math.max(0, chapters.findIndex(c => c.id === "current"));
   const [index, setIndex] = useState(initialIndex >= 0 ? initialIndex : Math.max(chapters.length - 1, 0));
@@ -379,13 +394,13 @@ function ChapterCarousel({ chapters, dark }: { chapters: ChapterData[]; dark: bo
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
       <div style={{ color: dark ? "#bcb2cb" : "#6f657d", fontFamily: "monospace", fontSize: 12 }}>Chapter {index + 1} / {chapters.length}</div>
       <div style={{ display: "inline-flex", gap: 8, alignItems: "center" }}>
-        <button type="button" onClick={() => setIndex(v => Math.max(0, v - 1))} disabled={index === 0} style={{ width: 38, height: 38, borderRadius: 999, cursor: index === 0 ? "not-allowed" : "pointer", border: "1px solid rgba(137,83,209,0.2)", background: dark ? "rgba(137,83,209,0.08)" : "rgba(137,83,209,0.05)", color: PURPLE, opacity: index === 0 ? 0.35 : 1 }}>←</button>
-        <button type="button" onClick={() => setIndex(v => Math.min(chapters.length - 1, v + 1))} disabled={index === chapters.length - 1} style={{ width: 38, height: 38, borderRadius: 999, cursor: index === chapters.length - 1 ? "not-allowed" : "pointer", border: "1px solid rgba(137,83,209,0.2)", background: dark ? "rgba(137,83,209,0.08)" : "rgba(137,83,209,0.05)", color: PURPLE, opacity: index === chapters.length - 1 ? 0.35 : 1 }}>→</button>
+        <button type="button" onClick={() => setIndex(v => Math.max(0, v - 1))} disabled={index === 0} style={{ width: 38, height: 38, borderRadius: 999, cursor: index === 0 ? "not-allowed" : "pointer", border: "1px solid rgba(137,83,209,0.18)", background: dark ? "rgba(137,83,209,0.06)" : "rgba(137,83,209,0.04)", color: PURPLE, opacity: index === 0 ? 0.35 : 1 }}>←</button>
+        <button type="button" onClick={() => setIndex(v => Math.min(chapters.length - 1, v + 1))} disabled={index === chapters.length - 1} style={{ width: 38, height: 38, borderRadius: 999, cursor: index === chapters.length - 1 ? "not-allowed" : "pointer", border: "1px solid rgba(137,83,209,0.18)", background: dark ? "rgba(137,83,209,0.06)" : "rgba(137,83,209,0.04)", color: PURPLE, opacity: index === chapters.length - 1 ? 0.35 : 1 }}>→</button>
       </div>
     </div>
 
     <div style={{ overflow: "hidden", borderRadius: 22 }}>
-      <div key={active.id} className="chapter-slide-card" style={{ borderRadius: 22, border: `1px solid ${active.id === "current" ? "rgba(137,83,209,0.32)" : dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.12)"}`, background: dark ? "linear-gradient(180deg, rgba(24,18,40,0.98), rgba(14,10,24,0.98))" : "linear-gradient(180deg, rgba(255,255,255,0.98), rgba(247,240,255,0.98))", boxShadow: active.id === "current" ? "0 18px 40px rgba(137,83,209,0.14), inset 0 0 0 1px rgba(137,83,209,0.08)" : undefined, animation: reduced ? undefined : "chapterSlide 260ms cubic-bezier(0.22, 1, 0.36, 1)" }}>
+      <div key={active.id} className="chapter-slide-card" style={{ borderRadius: 22, border: `1px solid ${active.id === "current" ? "rgba(137,83,209,0.28)" : dark ? "rgba(137,83,209,0.16)" : "rgba(137,83,209,0.12)"}`, background: dark ? "linear-gradient(180deg, rgba(24,18,40,0.98), rgba(14,10,24,0.98))" : "linear-gradient(180deg, rgba(255,255,255,0.98), rgba(247,240,255,0.98))", boxShadow: active.id === "current" ? "0 10px 22px rgba(137,83,209,0.12)" : undefined, animation: reduced ? undefined : "chapterSlide 260ms cubic-bezier(0.22, 1, 0.36, 1)" }}>
         <div style={{ display: "grid", gap: 16, padding: "1.2rem" }}>
           <div style={{ display: "flex", justifyContent: "space-between", gap: 14, alignItems: "flex-start", flexWrap: "wrap" }}>
             <div>
@@ -394,23 +409,24 @@ function ChapterCarousel({ chapters, dark }: { chapters: ChapterData[]; dark: bo
               <div style={{ marginTop: 6, color: dark ? "#bcb2cb" : "#6f657d", fontSize: 13 }}>{active.location}</div>
             </div>
             <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "flex-end" }}>
-              {active.id === "current" && <span style={{ padding: "6px 10px", borderRadius: 999, border: "1px solid rgba(137,83,209,0.24)", background: "rgba(137,83,209,0.1)", color: PURPLE, fontFamily: "monospace", fontSize: 11 }}>CURRENT</span>}
-              {active.boss?.defeated && <span style={{ padding: "6px 10px", borderRadius: 999, border: "1px solid rgba(137,83,209,0.24)", background: dark ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.7)", color: PURPLE, fontFamily: "monospace", fontSize: 11 }}>✅ 已击败</span>}
+              {active.id === "current" && <span style={{ padding: "6px 10px", borderRadius: 999, border: "1px solid rgba(137,83,209,0.22)", background: "rgba(137,83,209,0.08)", color: PURPLE, fontFamily: "monospace", fontSize: 11 }}>CURRENT</span>}
+              {active.boss?.defeated && <span style={{ padding: "6px 10px", borderRadius: 999, border: `1px solid ${SUCCESS}55`, background: `${SUCCESS}18`, color: SUCCESS, fontFamily: "monospace", fontSize: 11 }}>✅ 已击败</span>}
             </div>
           </div>
+
           <p style={{ margin: 0, color: dark ? "#d3cae0" : "#6f657d", lineHeight: 1.8, fontSize: 14 }}>{active.summary}</p>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
             <div className="chapter-dots" style={{ display: "flex", gap: 8, alignItems: "center" }}>
               {chapters.map((chapter, dotIndex) => <button key={chapter.id} type="button" onClick={() => setIndex(dotIndex)} aria-label={`Go to chapter ${dotIndex + 1}`} style={{ width: dotIndex === index ? 26 : 10, height: 10, borderRadius: 999, border: 0, background: dotIndex === index ? PURPLE : (dark ? "rgba(255,255,255,0.18)" : "rgba(137,83,209,0.2)"), cursor: "pointer", transition: "all 180ms ease" }} />)}
             </div>
-            <button type="button" onClick={() => setExpanded(v => !v)} style={{ borderRadius: 999, border: "1px solid rgba(137,83,209,0.2)", background: expanded ? PURPLE : "transparent", color: expanded ? "#fff" : PURPLE, padding: "10px 14px", cursor: "pointer", fontWeight: 700 }}>{expanded ? "收起详情" : "展开详情"}</button>
+            <button type="button" onClick={() => setExpanded(v => !v)} style={{ borderRadius: 999, border: "1px solid rgba(137,83,209,0.18)", background: expanded ? PURPLE : "transparent", color: expanded ? "#fff" : PURPLE, padding: "10px 14px", cursor: "pointer", fontWeight: 700 }}>{expanded ? "收起详情" : "展开详情"}</button>
           </div>
           <div className="chapter-detail-grid" style={{ display: "grid", gridTemplateRows: expanded ? "1fr" : "0fr", transition: reduced ? undefined : "grid-template-rows 240ms cubic-bezier(0.22, 1, 0.36, 1)" }}>
             <div style={{ overflow: "hidden" }}>
-              <div style={{ paddingTop: 14, display: "grid", gap: 12, borderTop: "1px solid rgba(137,83,209,0.12)" }}>
-                {active.boss && <div style={{ borderRadius: 16, padding: 14, border: "1px solid rgba(137,83,209,0.16)", background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.7)" }}><div style={{ color: PURPLE, fontFamily: "monospace", fontSize: 11 }}>Boss</div><div style={{ marginTop: 6, color: dark ? "#fff" : "#261a33", fontWeight: 700 }}>{active.boss.name}</div><div style={{ marginTop: 6, color: dark ? "#d3cae0" : "#6f657d", fontSize: 13 }}>{active.boss.description || active.boss.reward}</div></div>}
-                {!!active.rewards.length && <div><div style={{ color: PURPLE, fontFamily: "monospace", fontSize: 11, marginBottom: 8 }}>Rewards</div><div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>{active.rewards.map(reward => <span key={reward} style={{ padding: "6px 10px", borderRadius: 999, border: "1px solid rgba(137,83,209,0.18)", background: dark ? "rgba(137,83,209,0.08)" : "rgba(137,83,209,0.05)", color: PURPLE, fontSize: 12 }}>{reward}</span>)}</div></div>}
-                {!!active.articles.length && <div><div style={{ color: PURPLE, fontFamily: "monospace", fontSize: 11, marginBottom: 8 }}>Articles</div><div style={{ display: "grid", gap: 8 }}>{active.articles.map(article => <a key={article} href={`/posts/${article}/`} style={{ textDecoration: "none", borderRadius: 14, padding: "12px 14px", border: "1px solid rgba(137,83,209,0.14)", background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.74)", color: dark ? "#ece3ff" : "#4b2d78", fontFamily: "monospace", fontSize: 12 }}>↗ /posts/{article}/</a>)}</div></div>}
+              <div style={{ paddingTop: 14, display: "grid", gap: 12, borderTop: "1px solid rgba(137,83,209,0.1)" }}>
+                {active.boss && <div style={{ borderRadius: 16, padding: 14, border: "1px solid rgba(137,83,209,0.14)", background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.7)" }}><div style={{ color: PURPLE, fontFamily: "monospace", fontSize: 11 }}>Boss</div><div style={{ marginTop: 6, color: dark ? "#fff" : "#261a33", fontWeight: 700 }}>{active.boss.name}</div><div style={{ marginTop: 6, color: dark ? "#d3cae0" : "#6f657d", fontSize: 13 }}>{active.boss.description || active.boss.reward}</div></div>}
+                {!!active.rewards.length && <div><div style={{ color: PURPLE, fontFamily: "monospace", fontSize: 11, marginBottom: 8 }}>Rewards</div><div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>{active.rewards.map(reward => <span key={reward} style={{ padding: "6px 10px", borderRadius: 999, border: "1px solid rgba(137,83,209,0.16)", background: dark ? "rgba(137,83,209,0.06)" : "rgba(137,83,209,0.04)", color: PURPLE, fontSize: 12 }}>{reward}</span>)}</div></div>}
+                {!!active.articles.length && <div><div style={{ color: PURPLE, fontFamily: "monospace", fontSize: 11, marginBottom: 8 }}>Articles</div><div style={{ display: "grid", gap: 8 }}>{active.articles.map(article => <a key={article} href={`/posts/${article}/`} style={{ textDecoration: "none", borderRadius: 14, padding: "12px 14px", border: "1px solid rgba(137,83,209,0.12)", background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.74)", color: dark ? "#ece3ff" : "#4b2d78", fontFamily: "monospace", fontSize: 12 }}>↗ /posts/{article}/</a>)}</div></div>}
               </div>
             </div>
           </div>
@@ -418,35 +434,63 @@ function ChapterCarousel({ chapters, dark }: { chapters: ChapterData[]; dark: bo
       </div>
     </div>
   </div>;
-}
+});
 
-function StatBars({ stats, statFormulas, dark }: { stats: PlayerStatsProps["stats"]; statFormulas: Record<string, StatFormulaData>; dark: boolean }) {
-  const { ref, inView } = useInView<HTMLDivElement>(0.2);
-  const labels = [
-    ["vitality", "体力", "HP"],
-    ["wisdom", "灵力", "Spirit"],
-    ["renown", "声望", "Renown"],
-    ["command", "统御", "Command"],
-    ["craft", "武术", "Martial"],
-    ["insight", "身法", "Agility"],
-  ] as const;
-  return <div ref={ref} className="stats-grid" style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 12, alignItems: "stretch" }}>
-    {labels.map(([key, zh, en]) => {
-      const target = stats[key];
-      const animated = Math.round(useCountUp(target, 500, inView));
-      const formula = statFormulas[key];
-      return <TooltipWrap key={key} content={<><div className="lang-zh">{formula?.formulaZh}</div><div className="lang-en" style={{ color: "#ccb7f7" }}>{formula?.formulaEn}</div></>}><div style={{ borderRadius: 18, padding: "14px 16px", border: `1px solid ${dark ? "rgba(137,83,209,0.16)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.64)" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10, marginBottom: 10 }}>
-          <div style={{ color: dark ? "#fff" : "#261a33", fontFamily: "Georgia, Cambria, serif", fontWeight: 700 }}>{zh} <span style={{ fontSize: 11, color: dark ? "#9f93b1" : "#8a7b97" }}>/ {en}</span></div>
-          <div style={{ color: PURPLE, fontFamily: "monospace", fontWeight: 700 }}>{animated}</div>
+const StatRadar = memo(function StatRadar({ stats, statFormulas, dark }: { stats: PlayerStatsProps["stats"]; statFormulas: Record<string, StatFormulaData>; dark: boolean }) {
+  const { ref, inView } = useInView<HTMLDivElement>(0.24, false);
+  const animatedValues = STAT_META.map(({ key }) => useCountUp(stats[key], 900, inView));
+  const size = 360;
+  const center = size / 2;
+  const radius = 116;
+  const rings = [20, 40, 60, 80];
+  const points = STAT_META.map((meta, index) => {
+    const angle = -Math.PI / 2 + (Math.PI * 2 * index) / STAT_META.length;
+    const value = animatedValues[index] ?? 0;
+    const x = center + Math.cos(angle) * radius * (value / 100);
+    const y = center + Math.sin(angle) * radius * (value / 100);
+    const lx = center + Math.cos(angle) * (radius + 28);
+    const ly = center + Math.sin(angle) * (radius + 28);
+    return { ...meta, angle, value, x, y, lx, ly, formula: statFormulas[meta.key] };
+  });
+  const polygon = points.map(point => `${point.x},${point.y}`).join(" ");
+
+  const ringPolygon = (ratio: number) => STAT_META.map((_, index) => {
+    const angle = -Math.PI / 2 + (Math.PI * 2 * index) / STAT_META.length;
+    const x = center + Math.cos(angle) * radius * ratio;
+    const y = center + Math.sin(angle) * radius * ratio;
+    return `${x},${y}`;
+  }).join(" ");
+
+  return <div ref={ref} className={`radar-wrap ${inView ? "is-active" : ""}`} style={{ display: "grid", gridTemplateColumns: "minmax(0, 420px) minmax(0, 1fr)", gap: 18, alignItems: "center" }}>
+    <div style={{ display: "grid", placeItems: "center" }}>
+      <svg viewBox={`0 0 ${size} ${size}`} style={{ width: "100%", maxWidth: 360, display: "block", overflow: "visible" }}>
+        {rings.map(ring => <polygon key={ring} points={ringPolygon(ring / 100)} fill="none" stroke={dark ? "rgba(137,83,209,0.2)" : "rgba(137,83,209,0.16)"} strokeWidth={1} />)}
+        {STAT_META.map((_, index) => {
+          const angle = -Math.PI / 2 + (Math.PI * 2 * index) / STAT_META.length;
+          const x = center + Math.cos(angle) * radius;
+          const y = center + Math.sin(angle) * radius;
+          return <line key={index} x1={center} y1={center} x2={x} y2={y} stroke={dark ? "rgba(137,83,209,0.16)" : "rgba(137,83,209,0.12)"} strokeWidth={1} />;
+        })}
+        <polygon points={polygon} fill="rgba(137,83,209,0.3)" stroke={PURPLE} strokeWidth={2.2} />
+        {points.map(point => <TooltipWrap key={point.key} content={<><div className="lang-zh">{point.formula?.formulaZh ?? `${point.zh} 公式暂缺`}</div><div className="lang-en" style={{ color: "#ccb7f7" }}>{point.formula?.formulaEn ?? `${point.en} formula pending`}</div><div style={{ marginTop: 6, color: "#fff" }}><span className="lang-zh">数据源：Player Stats / 实时聚合</span><span className="lang-en">Source: Player Stats / live aggregate</span></div></>} align="center"><g><circle cx={point.x} cy={point.y} r={6} fill={PURPLE} stroke={dark ? "#110d1b" : "#fff"} strokeWidth={2} />
+          <text x={point.lx} y={point.ly - 4} textAnchor="middle" fill={dark ? "#f3ebff" : "#261a33"} style={{ fontFamily: 'Georgia, Cambria, serif', fontSize: 14, fontWeight: 700 }}>{point.zh}</text>
+          <text x={point.lx} y={point.ly + 12} textAnchor="middle" fill={dark ? "#c9bddc" : "#7a6d89"} style={{ fontFamily: 'monospace', fontSize: 10 }}>{point.en}</text></g></TooltipWrap>)}
+        <circle cx={center} cy={center} r={4} fill={PURPLE} />
+      </svg>
+    </div>
+    <div className="stats-grid" style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 12 }}>
+      {points.map(point => <TooltipWrap key={point.key} content={<><div className="lang-zh">{point.formula?.formulaZh}</div><div className="lang-en" style={{ color: "#ccb7f7" }}>{point.formula?.formulaEn}</div><div style={{ marginTop: 6, color: "#fff" }}><span className="lang-zh">数据源：聚合 Player Stats</span><span className="lang-en">Source: aggregated Player Stats</span></div></>}><div style={{ borderRadius: 16, padding: "14px 16px", border: `1px solid ${dark ? "rgba(137,83,209,0.16)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.68)" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", gap: 10, alignItems: "center" }}>
+          <div style={{ color: dark ? "#fff" : "#261a33", fontFamily: "Georgia, Cambria, serif", fontWeight: 700 }}>{point.zh} <span style={{ fontSize: 11, color: dark ? "#9f93b1" : "#8a7b97" }}>/ {point.en}</span></div>
+          <div style={{ color: PURPLE, fontFamily: "monospace", fontWeight: 700 }}>{Math.round(point.value)}</div>
         </div>
-        <div style={{ height: 12, borderRadius: 999, overflow: "hidden", background: dark ? "rgba(255,255,255,0.06)" : "rgba(60,20,90,0.06)" }}><div style={{ width: `${animated}%`, height: "100%", background: `linear-gradient(90deg, ${PURPLE}, rgba(137,83,209,0.5))`, boxShadow: "0 0 16px rgba(137,83,209,0.26)" }} /></div>
-      </div></TooltipWrap>;
-    })}
+        <div style={{ marginTop: 10, height: 8, borderRadius: 999, overflow: "hidden", background: dark ? "rgba(255,255,255,0.05)" : "rgba(60,20,90,0.06)" }}><div style={{ width: `${Math.round(point.value)}%`, height: "100%", background: `linear-gradient(90deg, ${PURPLE}, rgba(137,83,209,0.56))` }} /></div>
+      </div></TooltipWrap>)}
+    </div>
   </div>;
-}
+});
 
-function EquipmentRing({ equipment, dark }: { equipment: EquipmentData[]; dark: boolean }) {
+const EquipmentRing = memo(function EquipmentRing({ equipment, dark }: { equipment: EquipmentData[]; dark: boolean }) {
   const positions = [
     { top: 18, left: "50%", transform: "translate(-50%, 0)" },
     { top: "26%", right: 24 },
@@ -458,24 +502,24 @@ function EquipmentRing({ equipment, dark }: { equipment: EquipmentData[]; dark: 
 
   return <>
     <div className="equipment-ring" style={{ position: "relative", minHeight: 560 }}>
-      <div className="equipment-ring-core" style={{ position: "absolute", left: "50%", top: "50%", transform: "translate(-50%, -50%)", width: 240, height: 240, borderRadius: "50%", border: "1px solid rgba(137,83,209,0.24)", background: dark ? "radial-gradient(circle at 50% 45%, rgba(137,83,209,0.2), rgba(20,15,31,0.96) 68%)" : "radial-gradient(circle at 50% 45%, rgba(137,83,209,0.14), rgba(250,246,255,0.98) 72%)", boxShadow: "0 0 0 1px rgba(137,83,209,0.08), 0 0 34px rgba(137,83,209,0.14)", display: "grid", placeItems: "center", overflow: "hidden" }}>
-        <div style={{ position: "absolute", inset: 18, borderRadius: "50%", border: "1px dashed rgba(137,83,209,0.18)" }} />
-        <div style={{ position: "absolute", width: 176, height: 176, borderRadius: "50%", border: "1px solid rgba(137,83,209,0.18)", boxShadow: "0 0 24px rgba(137,83,209,0.12) inset" }} />
+      <div className="equipment-ring-core" style={{ position: "absolute", left: "50%", top: "50%", transform: "translate(-50%, -50%)", width: 240, height: 240, borderRadius: "50%", border: "1px solid rgba(137,83,209,0.22)", background: dark ? "radial-gradient(circle at 50% 45%, rgba(137,83,209,0.16), rgba(20,15,31,0.96) 68%)" : "radial-gradient(circle at 50% 45%, rgba(137,83,209,0.12), rgba(250,246,255,0.98) 72%)", boxShadow: "0 0 0 1px rgba(137,83,209,0.06), 0 0 18px rgba(137,83,209,0.1)", display: "grid", placeItems: "center", overflow: "hidden" }}>
+        <div style={{ position: "absolute", inset: 18, borderRadius: "50%", border: "1px dashed rgba(137,83,209,0.16)" }} />
+        <div style={{ position: "absolute", width: 176, height: 176, borderRadius: "50%", border: "1px solid rgba(137,83,209,0.16)" }} />
         <div style={{ textAlign: "center", display: "grid", gap: 10, placeItems: "center" }}>
-          <div style={{ width: 92, height: 92, borderRadius: "50%", display: "grid", placeItems: "center", border: "1px solid rgba(137,83,209,0.24)", background: dark ? "rgba(137,83,209,0.08)" : "rgba(137,83,209,0.06)", color: PURPLE, fontSize: 30 }}>令</div>
+          <div style={{ width: 92, height: 92, borderRadius: "50%", display: "grid", placeItems: "center", border: "1px solid rgba(137,83,209,0.2)", background: dark ? "rgba(137,83,209,0.06)" : "rgba(137,83,209,0.04)", color: PURPLE, fontSize: 30 }}>令</div>
           <div style={{ color: dark ? "#fff" : "#261a33", fontWeight: 700, fontFamily: "Georgia, Cambria, serif" }}>江湖装备核心</div>
           <div style={{ color: dark ? "#bcb2cb" : "#6f657d", fontFamily: "monospace", fontSize: 11 }}>6 SLOTS ORBITING</div>
         </div>
       </div>
       <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
-        {positions.map((_position, index) => {
+        {positions.map((_, index) => {
           const angle = index * 60 - 90;
-          return <div key={`line-${index}`} className="equipment-line" style={{ position: "absolute", left: "50%", top: "50%", width: 180, height: 2, transform: `translate(-50%, -50%) rotate(${angle}deg)`, transformOrigin: "left center", background: "linear-gradient(90deg, rgba(137,83,209,0.34), rgba(137,83,209,0.05))", boxShadow: "0 0 14px rgba(137,83,209,0.12)" }} />;
+          return <div key={`line-${index}`} className="equipment-line" style={{ position: "absolute", left: "50%", top: "50%", width: 180, height: 2, transform: `translate(-50%, -50%) rotate(${angle}deg)`, transformOrigin: "left center", background: "linear-gradient(90deg, rgba(137,83,209,0.24), rgba(137,83,209,0.04))" }} />;
         })}
       </div>
       {equipment.slice(0, 6).map((item, i) => {
-        const card = <div className="equipment-floating" style={{ width: 196, borderRadius: 20, padding: 14, border: `1px solid ${dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(21,16,34,0.96)" : "rgba(255,255,255,0.94)", boxShadow: "0 10px 24px rgba(137,83,209,0.08)", position: "relative", zIndex: 2 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", gap: 8, alignItems: "center" }}><span style={{ color: PURPLE, fontSize: 11, fontFamily: "monospace", padding: "4px 8px", borderRadius: 999, border: "1px solid rgba(137,83,209,0.2)" }}>{item.slotCN}</span><span style={{ color: dark ? "#ac9fbe" : "#8b7a98", fontFamily: "monospace", fontSize: 10 }}>{item.acquired}</span></div>
+        const card = <div className="equipment-floating" style={{ width: 196, borderRadius: 20, padding: 14, border: `1px solid ${dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(21,16,34,0.96)" : "rgba(255,255,255,0.94)", boxShadow: "0 8px 18px rgba(137,83,209,0.08)", position: "relative", zIndex: 2, willChange: "transform" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", gap: 8, alignItems: "center" }}><span style={{ color: PURPLE, fontSize: 11, fontFamily: "monospace", padding: "4px 8px", borderRadius: 999, border: "1px solid rgba(137,83,209,0.18)" }}>{item.slotCN}</span><span style={{ color: dark ? "#ac9fbe" : "#8b7a98", fontFamily: "monospace", fontSize: 10 }}>{item.acquired}</span></div>
           <div style={{ marginTop: 10, color: dark ? "#fff" : "#261a33", fontWeight: 700, fontFamily: "Georgia, Cambria, serif" }}>{item.nameCN}</div>
           <TooltipWrap content={<><div className="lang-zh">{item.effectCN}</div><div className="lang-en" style={{ color: "#ccb7f7" }}>{item.effectEN}</div></>}><div style={{ marginTop: 8, color: dark ? "#d6cdf0" : "#6f46a3", fontSize: 12 }}>{item.effectCN}</div></TooltipWrap>
         </div>;
@@ -487,32 +531,55 @@ function EquipmentRing({ equipment, dark }: { equipment: EquipmentData[]; dark: 
       {equipment.map(item => <TooltipWrap key={item.id} content={<><div className="lang-zh">{item.effectCN}</div><div className="lang-en" style={{ color: "#ccb7f7" }}>{item.effectEN}</div></>}><a href={item.article ? `/posts/${item.article}/` : undefined} style={{ textDecoration: "none" }}><div style={{ borderRadius: 16, padding: 14, border: `1px solid ${dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(21,16,34,0.96)" : "rgba(255,255,255,0.94)" }}><div style={{ color: PURPLE, fontFamily: "monospace", fontSize: 11 }}>{item.slotCN}</div><div style={{ marginTop: 8, color: dark ? "#fff" : "#261a33", fontWeight: 700 }}>{item.nameCN}</div><div style={{ marginTop: 8, color: dark ? "#d6cdf0" : "#6f46a3", fontSize: 12 }}>{item.effectCN}</div></div></a></TooltipWrap>)}
     </div>
   </>;
+});
+
+function QuestRing({ quest, dark, active }: { quest: QuestData; dark: boolean; active: boolean }) {
+  const current = Number(quest.current ?? 0);
+  const goal = Number(quest.goal ?? 0);
+  const ratio = quest.status === "completed" ? 100 : Math.max(0, Math.min(100, goal > 0 ? current / goal * 100 : 0));
+  const progress = Math.round(useCountUp(ratio, 850, active));
+  const radius = 34;
+  const circumference = 2 * Math.PI * radius;
+  const dashoffset = circumference - (progress / 100) * circumference;
+  const stroke = quest.status === "completed" ? SUCCESS : PURPLE;
+  return <TooltipWrap content={<div>{current} / {goal}{quest.unit ? ` ${quest.unit}` : ""}</div>} align="center"><div style={{ borderRadius: 20, padding: 16, border: `1px solid ${dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.7)", display: "grid", gap: 12, justifyItems: "center" }}>
+    <div style={{ width: 92, height: 92, position: "relative" }}>
+      <svg viewBox="0 0 92 92" style={{ width: "100%", height: "100%", transform: "rotate(-90deg)" }}>
+        <circle cx="46" cy="46" r={radius} fill="none" stroke={dark ? "rgba(255,255,255,0.1)" : "rgba(60,20,90,0.1)"} strokeWidth="8" />
+        <circle cx="46" cy="46" r={radius} fill="none" stroke={stroke} strokeWidth="8" strokeLinecap="round" strokeDasharray={circumference} strokeDashoffset={dashoffset} />
+      </svg>
+      <div style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", fontFamily: "monospace", fontWeight: 700, color: quest.status === "completed" ? SUCCESS : PURPLE }}>
+        <div style={{ textAlign: "center" }}>{quest.status === "completed" ? <><div style={{ fontSize: 18 }}>✅</div><div style={{ fontSize: 12 }}>100%</div></> : `${progress}%`}</div>
+      </div>
+    </div>
+    <div style={{ textAlign: "center" }}>
+      <div style={{ color: dark ? "#fff" : "#261a33", fontWeight: 700 }}>{quest.titleCN}</div>
+      {quest.target && <div style={{ color: dark ? "#ac9fbe" : "#8b7a98", fontFamily: "monospace", fontSize: 11, marginTop: 6 }}>{quest.target}</div>}
+      <div style={{ marginTop: 8, color: dark ? "#c8bed8" : "#78688a", fontFamily: "monospace", fontSize: 11 }}>{current}{quest.unit ? ` ${quest.unit}` : ""} / {goal}{quest.unit ? ` ${quest.unit}` : ""}</div>
+    </div>
+  </div></TooltipWrap>;
 }
 
-function QuestPanel({ quests, dark }: { quests: PlayerStatsProps["quests"]; dark: boolean }) {
+const QuestPanel = memo(function QuestPanel({ quests, dark }: { quests: PlayerStatsProps["quests"]; dark: boolean }) {
   const [tab, setTab] = useState<"main" | "side">("main");
+  const { ref, inView } = useInView<HTMLDivElement>(0.22, false);
   return <div style={{ display: "grid", gap: 14 }}>
-    <div style={{ display: "inline-flex", gap: 8, padding: 6, borderRadius: 999, border: `1px solid ${dark ? "rgba(137,83,209,0.22)" : "rgba(137,83,209,0.16)"}` }}>
+    <div style={{ display: "inline-flex", gap: 8, padding: 6, borderRadius: 999, border: `1px solid ${dark ? "rgba(137,83,209,0.2)" : "rgba(137,83,209,0.16)"}` }}>
       {(["main", "side"] as const).map(key => <button key={key} type="button" onClick={() => setTab(key)} style={{ border: 0, cursor: "pointer", borderRadius: 999, padding: "8px 14px", background: tab === key ? PURPLE : "transparent", color: tab === key ? "#fff" : (dark ? "#d6cdf0" : "#6f657d") }}>{key === "main" ? `主线 / Main (${quests.main.length})` : `支线 / Side (${quests.side.length})`}</button>)}
     </div>
-    <div style={{ display: "grid", gap: 12, maxHeight: tab === "side" ? 720 : undefined, overflowY: tab === "side" ? "auto" : undefined, paddingRight: tab === "side" ? 4 : 0 }}>
-      {tab === "main" ? quests.main.map(quest => {
-        const current = Number(quest.current ?? 0);
-        const goal = Number(quest.goal ?? 0);
-        const ratio = quest.status === "completed" ? 100 : Math.max(0, Math.min(100, goal > 0 ? current / goal * 100 : 0));
-        return <TooltipWrap key={quest.id} content={<div>{current} / {goal}{quest.unit ? ` ${quest.unit}` : ""}</div>}><div style={{ borderRadius: 18, padding: 16, border: `1px solid ${dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.7)" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}><div><div style={{ color: dark ? "#fff" : "#261a33", fontWeight: 700 }}>{quest.titleCN}</div>{quest.target && <div style={{ color: dark ? "#ac9fbe" : "#8b7a98", fontFamily: "monospace", fontSize: 11, marginTop: 6 }}>{quest.target}</div>}</div><div style={{ color: PURPLE, fontFamily: "monospace", fontWeight: 700 }}>{quest.status === "completed" ? "✅ Completed" : `${Math.round(ratio)}%`}</div></div>
-          <div style={{ marginTop: 12, display: "flex", justifyContent: "space-between", fontFamily: "monospace", fontSize: 11, color: dark ? "#c8bed8" : "#78688a" }}><span>{current}{quest.unit ? ` ${quest.unit}` : ""}</span><span>{goal}{quest.unit ? ` ${quest.unit}` : ""}</span></div>
-          <div style={{ marginTop: 6, height: 12, overflow: "hidden", borderRadius: 999, background: dark ? "rgba(255,255,255,0.05)" : "rgba(60,20,90,0.06)" }}><div style={{ width: `${Math.round(ratio)}%`, height: "100%", background: `linear-gradient(90deg, ${PURPLE}, rgba(137,83,209,0.52))` }} /></div>
-        </div></TooltipWrap>;
-      }) : quests.side.map(quest => <div key={quest.id} style={{ borderRadius: 18, padding: 16, border: `1px solid ${dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.7)", display: "flex", justifyContent: "space-between", gap: 12, alignItems: "flex-start" }}><div style={{ minWidth: 0, flex: 1 }}><div style={{ color: dark ? "#fff" : "#261a33", fontWeight: 700 }}>{quest.titleCN}</div><div style={{ marginTop: 6, color: dark ? "#ac9fbe" : "#8b7a98", fontFamily: "monospace", fontSize: 11, lineHeight: 1.6, wordBreak: "break-word" }}>{quest.progress}</div></div><div style={{ color: quest.status === "completed" ? PURPLE : (dark ? "#d6cdf0" : "#6f657d"), fontFamily: "monospace", fontSize: 11, whiteSpace: "nowrap", paddingTop: 2 }}>{quest.status === "completed" ? "COMPLETED" : "ACTIVE"}</div></div>)}
+    <div ref={ref} style={{ display: "grid", gap: 12, maxHeight: tab === "side" ? 720 : undefined, overflowY: tab === "side" ? "auto" : undefined, paddingRight: tab === "side" ? 4 : 0 }}>
+      {tab === "main" ? <div className="quest-main-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))", gap: 12 }}>{quests.main.map(quest => <QuestRing key={quest.id} quest={quest} dark={dark} active={inView} />)}</div> : quests.side.map(quest => <div key={quest.id} style={{ borderRadius: 18, padding: 16, border: `1px solid ${dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.7)", display: "flex", justifyContent: "space-between", gap: 12, alignItems: "flex-start" }}><div style={{ minWidth: 0, flex: 1 }}><div style={{ color: dark ? "#fff" : "#261a33", fontWeight: 700 }}>{quest.titleCN}</div><div style={{ marginTop: 6, color: dark ? "#ac9fbe" : "#8b7a98", fontFamily: "monospace", fontSize: 11, lineHeight: 1.6, wordBreak: "break-word" }}>{quest.progress}</div></div><div style={{ color: quest.status === "completed" ? PURPLE : (dark ? "#d6cdf0" : "#6f657d"), fontFamily: "monospace", fontSize: 11, whiteSpace: "nowrap", paddingTop: 2 }}>{quest.status === "completed" ? "COMPLETED" : "ACTIVE"}</div></div>)}
     </div>
   </div>;
-}
+});
 
-function RetainerPanel({ retainers, dark }: { retainers: RetainerData[]; dark: boolean }) {
-  return <div className="retainer-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 12 }}>{retainers.map(agent => <a key={agent.id} href="/lab/agents/" style={{ textDecoration: "none" }}><div style={{ borderRadius: 18, padding: 14, border: `1px solid ${dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.7)" }}><div style={{ display: "flex", gap: 12, alignItems: "center" }}><img src={agent.sprite} alt={agent.name} width={56} height={56} style={{ width: 56, height: 56, borderRadius: 14, objectFit: "cover", imageRendering: "pixelated", border: "1px solid rgba(137,83,209,0.26)" }} /><div><div style={{ color: dark ? "#fff" : "#261a33", fontWeight: 700 }}>{agent.name} {agent.emoji}</div><div style={{ color: PURPLE, fontSize: 11 }}>{agent.titleZh}</div></div></div><div style={{ marginTop: 12, display: "flex", justifyContent: "space-between", fontFamily: "monospace", fontSize: 11 }}><span style={{ color: dark ? "#c8bed8" : "#78688a" }}>Lv.{agent.level}</span><span style={{ color: PURPLE }}>{agent.sessions} sessions</span></div></div></a>)}</div>;
-}
+const RetainerPanel = memo(function RetainerPanel({ retainers, dark }: { retainers: RetainerData[]; dark: boolean }) {
+  const maxSessions = Math.max(...retainers.map(agent => agent.sessions), 1);
+  return <div className="retainer-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 12 }}>{retainers.map(agent => {
+    const ratio = Math.max(6, Math.round(agent.sessions / maxSessions * 100));
+    return <a key={agent.id} href="/lab/agents/" style={{ textDecoration: "none" }}><div style={{ borderRadius: 18, padding: 14, border: `1px solid ${dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.7)" }}><div style={{ display: "flex", gap: 12, alignItems: "center" }}><img src={agent.sprite} alt={agent.name} width={56} height={56} style={{ width: 56, height: 56, borderRadius: 14, objectFit: "cover", imageRendering: "pixelated", border: "1px solid rgba(137,83,209,0.24)" }} /><div><div style={{ color: dark ? "#fff" : "#261a33", fontWeight: 700 }}>{agent.name} {agent.emoji}</div><div style={{ color: PURPLE, fontSize: 11 }}>{agent.titleZh}</div></div></div><div style={{ marginTop: 12, display: "flex", justifyContent: "space-between", fontFamily: "monospace", fontSize: 11 }}><span style={{ color: dark ? "#c8bed8" : "#78688a" }}>Lv.{agent.level}</span><span style={{ color: PURPLE }}>{agent.sessions} sessions</span></div><div style={{ marginTop: 10, height: 4, borderRadius: 999, background: dark ? "rgba(255,255,255,0.07)" : "rgba(60,20,90,0.08)", overflow: "hidden" }}><div style={{ width: `${ratio}%`, height: "100%", borderRadius: 999, background: PURPLE }} /></div></div></a>;
+  })}</div>;
+});
 
 type SkillNode = { label: string; desc: string; count: number; url?: string };
 type SkillGroup = { label: string; nodes: SkillNode[] };
@@ -544,7 +611,6 @@ function buildSkillTreeLayout(rootLabel: string, groups: SkillGroup[]) {
   const leafX = 520;
   const sectionGap = 34;
   const leafGap = 56;
-  const branchGap = 70;
 
   let cursorY = 26;
   const branchCenters: number[] = [];
@@ -638,11 +704,12 @@ function buildSkillTreeLayout(rootLabel: string, groups: SkillGroup[]) {
   return { nodes, edges, width, height };
 }
 
-function SkillTreePanel({ title, subtitle, rootLabel, groups, dark }: { title: string; subtitle: string; rootLabel: string; groups: SkillGroup[]; dark: boolean }) {
+const SkillTreePanel = memo(function SkillTreePanel({ title, subtitle, rootLabel, groups, dark }: { title: string; subtitle: string; rootLabel: string; groups: SkillGroup[]; dark: boolean }) {
   const layout = useMemo(() => buildSkillTreeLayout(rootLabel, groups), [rootLabel, groups]);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const { ref, inView } = useInView<HTMLDivElement>(0.18, false);
 
-  return <div style={{ borderRadius: 24, padding: 18, border: `1px solid ${dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.12)"}`, background: dark ? "linear-gradient(180deg, rgba(22,16,35,0.98), rgba(12,10,20,0.98))" : "linear-gradient(180deg, rgba(255,255,255,0.98), rgba(247,240,255,0.98))", boxShadow: dark ? "0 16px 34px rgba(0,0,0,0.18)" : "0 16px 26px rgba(137,83,209,0.07)" }}>
+  return <div ref={ref} style={{ borderRadius: 24, padding: 18, border: `1px solid ${dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.12)"}`, background: dark ? "linear-gradient(180deg, rgba(22,16,35,0.98), rgba(12,10,20,0.98))" : "linear-gradient(180deg, rgba(255,255,255,0.98), rgba(247,240,255,0.98))", boxShadow: dark ? "0 10px 22px rgba(0,0,0,0.16)" : "0 10px 18px rgba(137,83,209,0.07)" }}>
     <div style={{ display: "flex", justifyContent: "space-between", gap: 12, alignItems: "flex-start", flexWrap: "wrap", marginBottom: 14 }}>
       <div>
         <div style={{ color: PURPLE, fontFamily: "monospace", fontSize: 12 }}>{title}</div>
@@ -652,37 +719,26 @@ function SkillTreePanel({ title, subtitle, rootLabel, groups, dark }: { title: s
     </div>
     <div style={{ overflowX: "auto", overflowY: "hidden", borderRadius: 18 }}>
       <svg viewBox={`0 0 ${layout.width} ${layout.height}`} style={{ width: "100%", minWidth: 760, height: "auto", display: "block" }}>
-        <defs>
-          <filter id="skillTreeGlow" x="-40%" y="-40%" width="180%" height="180%">
-            <feGaussianBlur stdDeviation="4" result="blur" />
-            <feMerge>
-              <feMergeNode in="blur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
-        </defs>
         {layout.edges.map(edge => {
-          const stroke = edge.active ? "rgba(137,83,209,0.72)" : (dark ? "rgba(110,102,124,0.5)" : "rgba(160,150,174,0.46)");
+          const stroke = edge.active ? "rgba(137,83,209,0.58)" : (dark ? "rgba(110,102,124,0.46)" : "rgba(160,150,174,0.4)");
           return <g key={edge.id}>
             <path d={edge.path} fill="none" stroke={stroke} strokeWidth={2} strokeLinecap="round" />
-            {edge.active && <path d={edge.path} fill="none" stroke={PURPLE} strokeWidth={2.6} strokeLinecap="round" className="skill-tree-flow" filter="url(#skillTreeGlow)" />}
+            {edge.active && inView && <path d={edge.path} fill="none" stroke={PURPLE} strokeWidth={2.2} strokeLinecap="round" className="skill-tree-flow" />}
           </g>;
         })}
         {layout.nodes.map(node => {
           const active = node.count > 0 || node.depth === 0;
           const isHovered = hoveredId === node.id;
-          const cardFill = active
-            ? (dark ? "rgba(30,22,46,0.98)" : "rgba(255,255,255,0.98)")
-            : (dark ? "rgba(35,33,42,0.98)" : "rgba(239,237,244,0.98)");
+          const cardFill = active ? (dark ? "rgba(30,22,46,0.98)" : "rgba(255,255,255,0.98)") : (dark ? "rgba(35,33,42,0.98)" : "rgba(239,237,244,0.98)");
           const border = active ? PURPLE : (dark ? "rgba(97,91,108,0.7)" : "rgba(160,154,170,0.8)");
           const labelColor = active ? (dark ? "#f7f1ff" : "#261a33") : (dark ? "#9f93b1" : "#7f748d");
           const countColor = active ? PURPLE : (dark ? "#7e758d" : "#93889f");
           const body = <g className={`skill-tree-node ${active ? "is-active" : "is-dim"} ${node.url ? "is-link" : ""}`} onMouseEnter={() => setHoveredId(node.id)} onMouseLeave={() => setHoveredId(current => current === node.id ? null : current)}>
-            <rect x={node.x} y={node.y} rx={16} ry={16} width={node.width} height={node.height} fill={cardFill} stroke={border} strokeWidth={active ? 1.4 : 1.1} filter={active ? "url(#skillTreeGlow)" : undefined} />
+            <rect x={node.x} y={node.y} rx={16} ry={16} width={node.width} height={node.height} fill={cardFill} stroke={border} strokeWidth={active ? 1.3 : 1.1} />
             <text x={node.x + 14} y={node.y + 20} fill={labelColor} style={{ fontSize: node.depth === 0 ? 14 : 13, fontWeight: 700, fontFamily: 'Georgia, Cambria, serif', pointerEvents: 'none' }}>{node.label}</text>
             <text x={node.x + 14} y={node.y + node.height - 12} fill={countColor} style={{ fontSize: 11, fontFamily: 'monospace', pointerEvents: 'none' }}>{node.depth === 0 ? `TOTAL ${node.count}` : `${node.count} 篇 · Lv.${node.count}`}</text>
             {isHovered && node.depth !== 0 && <g style={{ pointerEvents: 'none' }}>
-              <rect x={Math.min(node.x + node.width + 12, layout.width - 248)} y={Math.max(node.y - 10, 10)} width={236} height={70} rx={14} ry={14} fill="rgba(12,10,20,0.98)" stroke="rgba(137,83,209,0.42)" strokeWidth={1.1} />
+              <rect x={Math.min(node.x + node.width + 12, layout.width - 248)} y={Math.max(node.y - 10, 10)} width={236} height={70} rx={14} ry={14} fill="rgba(12,10,20,0.98)" stroke="rgba(137,83,209,0.34)" strokeWidth={1.1} />
               <text x={Math.min(node.x + node.width + 26, layout.width - 234)} y={Math.max(node.y + 12, 24)} fill="#f5efff" style={{ fontSize: 12, fontFamily: 'Georgia, Cambria, serif' }}>{node.desc}</text>
               <text x={Math.min(node.x + node.width + 26, layout.width - 234)} y={Math.max(node.y + 38, 50)} fill="#ccb7f7" style={{ fontSize: 11, fontFamily: 'monospace' }}>{`${node.count} 篇相关文章 · Lv.${node.count}`}</text>
             </g>}
@@ -696,9 +752,9 @@ function SkillTreePanel({ title, subtitle, rootLabel, groups, dark }: { title: s
       </svg>
     </div>
   </div>;
-}
+});
 
-function SkillTree({ tagCounts, postCount, builderLogCount, dark }: { tagCounts: Record<string, number>; postCount: number; builderLogCount: number; dark: boolean }) {
+const SkillTree = memo(function SkillTree({ tagCounts, postCount, builderLogCount, dark }: { tagCounts: Record<string, number>; postCount: number; builderLogCount: number; dark: boolean }) {
   const inner = [
     { label: "天罡战气", desc: "周期判断 · 顺势而为", count: tagCounts.crypto || 0, url: "/tags/crypto/" },
     { label: "金蝉脱壳", desc: "盈亏同源 · 全身而退", count: tagCounts.trading || 0 },
@@ -738,69 +794,80 @@ function SkillTree({ tagCounts, postCount, builderLogCount, dark }: { tagCounts:
     <SkillTreePanel title="内功心法 / Inner Arts" subtitle="根基先立，再向右生长出分支与叶脉。" rootLabel="内功心法" groups={innerGroups} dark={dark} />
     <SkillTreePanel title="外功仙术 / Outer Arts" subtitle="兵器、写作与游历并行，整棵树上下展开显示。" rootLabel="外功仙术" groups={outerGroups} dark={dark} />
   </div>;
-}
+});
 
-function RelationshipPanel({ relationships, dark }: { relationships: RelationshipData[]; dark: boolean }) {
+const RelationshipPanel = memo(function RelationshipPanel({ relationships, dark }: { relationships: RelationshipData[]; dark: boolean }) {
   return <div className="relationship-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 12 }}>{relationships.map(item => {
-    const card = <div className="relationship-card" style={{ borderRadius: 18, padding: 16, border: `1px solid ${dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.72)", transition: "transform 180ms ease, box-shadow 180ms ease" }}><div style={{ display: "flex", justifyContent: "space-between", gap: 10, alignItems: "center" }}><div style={{ color: dark ? "#fff" : "#261a33", fontWeight: 700 }}>{item.nameCN}</div><span style={{ color: PURPLE, fontSize: 11, padding: "4px 8px", borderRadius: 999, border: "1px solid rgba(137,83,209,0.18)" }}>{item.roleCN}</span></div><p style={{ margin: "10px 0 0", color: dark ? "#d3cae0" : "#6f657d", fontSize: 13, lineHeight: 1.65 }}>{item.impactCN}</p>{item.article && <div style={{ marginTop: 10, color: PURPLE, fontFamily: "monospace", fontSize: 11 }}>↗ /posts/{item.article}/</div>}</div>;
+    const card = <div className="relationship-card" style={{ borderRadius: 18, padding: 16, border: `1px solid ${dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.72)", transition: "transform 180ms ease, box-shadow 180ms ease", willChange: "transform" }}><div style={{ display: "flex", justifyContent: "space-between", gap: 10, alignItems: "center" }}><div style={{ color: dark ? "#fff" : "#261a33", fontWeight: 700 }}>{item.nameCN}</div><span style={{ color: PURPLE, fontSize: 11, padding: "4px 8px", borderRadius: 999, border: "1px solid rgba(137,83,209,0.16)" }}>{item.roleCN}</span></div><p style={{ margin: "10px 0 0", color: dark ? "#d3cae0" : "#6f657d", fontSize: 13, lineHeight: 1.65 }}>{item.impactCN}</p>{item.article && <div style={{ marginTop: 10, color: PURPLE, fontFamily: "monospace", fontSize: 11 }}>↗ /posts/{item.article}/</div>}</div>;
     return item.article ? <a key={item.id} href={`/posts/${item.article}/`} style={{ textDecoration: "none" }}>{card}</a> : <div key={item.id}>{card}</div>;
   })}</div>;
-}
+});
 
 const CATEGORY_META: Record<string, { icon: string; zh: string }> = { cultivation: { icon: "🗡️", zh: "修行" }, jianghu: { icon: "🌍", zh: "江湖" }, command: { icon: "🤖", zh: "统御" }, knowledge: { icon: "📚", zh: "身法" }, health: { icon: "💪", zh: "体力" }, investment: { icon: "💰", zh: "财修" }, hidden: { icon: "🔮", zh: "奇遇" } };
 
-function AchievementBadges({ achievements, dark }: { achievements: AchievementData[]; dark: boolean }) {
+const AchievementBadges = memo(function AchievementBadges({ achievements, dark }: { achievements: AchievementData[]; dark: boolean }) {
+  const { ref, inView } = useInView<HTMLDivElement>(0.22, true);
   const groups = achievements.reduce<Record<string, AchievementData[]>>((acc, item) => {
     if (item.hidden && !item.unlocked) return acc;
     (acc[item.category] ||= []).push(item);
     return acc;
   }, {});
 
+  let unlockedIndex = 0;
+
   return (
-    <div>
+    <div ref={ref}>
       {Object.entries(groups).map(([key, items]) => (
         <div key={key} style={{ marginBottom: 20 }}>
           <div style={{ color: PURPLE, fontWeight: 700, marginBottom: 10 }}>
             {CATEGORY_META[key]?.icon} {CATEGORY_META[key]?.zh}
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: 12 }}>
-            {items.map(item => (
-              <div
-                key={item.id}
-                style={{
-                  borderRadius: 16,
-                  padding: 14,
-                  border: `1px solid ${item.unlocked ? "rgba(137,83,209,0.24)" : (dark ? "rgba(255,255,255,0.08)" : "rgba(90,45,140,0.08)")}`,
-                  background: item.unlocked ? (dark ? "rgba(137,83,209,0.08)" : "rgba(137,83,209,0.05)") : (dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.7)"),
-                }}
-              >
-                <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                  <span style={{ fontSize: 22 }}>{item.icon}</span>
-                  <div style={{ color: dark ? "#fff" : "#261a33", fontWeight: 700, fontSize: 13 }}>{item.nameZh}</div>
-                </div>
-                <p style={{ margin: "8px 0 0", color: dark ? "#c8bed8" : "#78688a", fontSize: 12, lineHeight: 1.6 }}>{item.descZh}</p>
-                {item.unlocked && item.unlockedDate && (
-                  <div style={{ marginTop: 8, color: PURPLE, fontFamily: "monospace", fontSize: 10 }}>✓ {item.unlockedDate}</div>
-                )}
-                {!item.unlocked && item.progress !== undefined && item.max !== undefined && (
-                  <div style={{ marginTop: 8, color: dark ? "#c8bed8" : "#78688a", fontFamily: "monospace", fontSize: 10 }}>
-                    {item.progress}/{item.max}
+            {items.map(item => {
+              const delay = item.unlocked ? unlockedIndex++ * 80 : 0;
+              return (
+                <div
+                  key={item.id}
+                  className={item.unlocked && inView ? "achievement-badge is-revealed" : "achievement-badge"}
+                  style={{
+                    borderRadius: 16,
+                    padding: 14,
+                    border: `1px solid ${item.unlocked ? "rgba(137,83,209,0.22)" : (dark ? "rgba(255,255,255,0.08)" : "rgba(90,45,140,0.08)")}`,
+                    background: item.unlocked ? (dark ? "rgba(137,83,209,0.08)" : "rgba(137,83,209,0.05)") : (dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.7)"),
+                    opacity: item.unlocked ? (inView ? 1 : 0) : 0.5,
+                    transform: item.unlocked ? (inView ? "scale(1)" : "scale(0.85)") : "scale(1)",
+                    transition: item.unlocked ? `opacity 260ms ease ${delay}ms, transform 260ms ease ${delay}ms, box-shadow 260ms ease ${delay}ms` : undefined,
+                    boxShadow: item.unlocked && inView ? "0 0 18px rgba(137,83,209,0.18)" : "none"
+                  }}
+                >
+                  <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                    <span style={{ fontSize: 22 }}>{item.icon}</span>
+                    <div style={{ color: dark ? "#fff" : "#261a33", fontWeight: 700, fontSize: 13 }}>{item.nameZh}</div>
                   </div>
-                )}
-              </div>
-            ))}
+                  <p style={{ margin: "8px 0 0", color: dark ? "#c8bed8" : "#78688a", fontSize: 12, lineHeight: 1.6 }}>{item.descZh}</p>
+                  {item.unlocked && item.unlockedDate && (
+                    <div style={{ marginTop: 8, color: PURPLE, fontFamily: "monospace", fontSize: 10 }}>✓ {item.unlockedDate}</div>
+                  )}
+                  {!item.unlocked && item.progress !== undefined && item.max !== undefined && (
+                    <div style={{ marginTop: 8, color: dark ? "#c8bed8" : "#78688a", fontFamily: "monospace", fontSize: 10 }}>
+                      {item.progress}/{item.max}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
       ))}
     </div>
   );
-}
+});
 
-function CultivationLog({ activityLog, dark }: { activityLog: PlayerStatsProps["activityLog"]; dark: boolean }) {
-  const [showAll, setShowAll] = useState(false);
-  const visible = showAll ? activityLog : activityLog.slice(0, 10);
-  return <div><div style={{ display: "grid", gap: 10 }}>{visible.map((item, i) => <div key={`${item.dateEn}-${i}`} className="cultivation-row" style={{ display: "grid", gridTemplateColumns: "80px 28px 1fr auto", gap: 10, alignItems: "start", borderRadius: 14, padding: "10px 12px", border: `1px solid ${dark ? "rgba(137,83,209,0.14)" : "rgba(137,83,209,0.1)"}`, background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.72)" }}><div style={{ color: dark ? "#ac9fbe" : "#8b7a98", fontFamily: "monospace", fontSize: 11 }}>{item.dateZh}</div><div>{item.icon}</div><div style={{ color: dark ? "#fff" : "#261a33", fontSize: 12 }}>{item.descZh}</div><div style={{ color: PURPLE, fontFamily: "monospace", fontWeight: 700, fontSize: 11 }}>+{item.exp} EXP</div></div>)}</div>{activityLog.length > 10 && <button type="button" onClick={() => setShowAll(v => !v)} style={{ marginTop: 12, borderRadius: 999, border: "1px solid rgba(137,83,209,0.2)", background: "transparent", color: PURPLE, padding: "10px 16px", cursor: "pointer" }}>{showAll ? "收起" : `查看全部 ${activityLog.length} 条记录`}</button>}</div>;
-}
+const CultivationLog = memo(function CultivationLog({ activityLog, dark }: { activityLog: PlayerStatsProps["activityLog"]; dark: boolean }) {
+  const visible = activityLog.slice(0, 20);
+  return <div style={{ position: "relative", paddingLeft: 22 }}><div style={{ position: "absolute", left: 7, top: 6, bottom: 6, width: 2, background: PURPLE, opacity: 0.45 }} />
+    <div style={{ display: "grid", gap: 12 }}>{visible.map((item, i) => <div key={`${item.dateEn}-${i}`} style={{ position: "relative", paddingLeft: 18 }}><span style={{ position: "absolute", left: -1, top: 10, width: 8, height: 8, borderRadius: "50%", background: PURPLE }} /><div style={{ borderRadius: 16, padding: "12px 14px", border: `1px solid ${dark ? "rgba(137,83,209,0.14)" : "rgba(137,83,209,0.1)"}`, background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.72)" }}><div style={{ display: "flex", justifyContent: "space-between", gap: 10, flexWrap: "wrap" }}><div style={{ color: dark ? "#ac9fbe" : "#8b7a98", fontFamily: "monospace", fontSize: 11 }}>{item.dateZh}</div><div style={{ color: PURPLE, fontFamily: "monospace", fontWeight: 700, fontSize: 11 }}>+{item.exp} EXP</div></div><div style={{ marginTop: 8, display: "grid", gridTemplateColumns: "26px 1fr", gap: 10, alignItems: "start" }}><div>{item.icon}</div><div style={{ color: dark ? "#fff" : "#261a33", fontSize: 12, lineHeight: 1.7 }}>{item.descZh}</div></div></div></div>)}</div></div>;
+});
 
 export default function PlayerStats(props: PlayerStatsProps) {
   const dark = useTheme();
@@ -808,46 +875,42 @@ export default function PlayerStats(props: PlayerStatsProps) {
   return <div style={{ width: "100%", maxWidth: 1200, margin: "0 auto", fontFamily: "Georgia, Cambria, serif", paddingInline: 12 }}>
     <style>{`
       @keyframes chapterSlide { from { opacity: 0; transform: translateX(26px); } to { opacity: 1; transform: translateX(0); } }
-      @keyframes skillPulse { 0%, 100% { transform: scale(1); opacity: 0.7; } 50% { transform: scale(1.03); opacity: 1; } }
-      @keyframes lineFlow { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
-      @keyframes skillTreeDash { to { stroke-dashoffset: -180; } }
+      @keyframes lineFlow { from { stroke-dashoffset: 180; } to { stroke-dashoffset: 0; } }
+      @keyframes radarPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.01); } }
+      .radar-wrap.is-active > :first-child { animation: radarPulse 4s ease-in-out infinite; transform-origin: center; will-change: transform; }
       .equipment-floating { transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 220ms cubic-bezier(0.22, 1, 0.36, 1), border-color 220ms ease; }
-      .equipment-floating:hover { transform: translateY(-8px); box-shadow: 0 22px 36px rgba(137,83,209,0.2), 0 0 26px rgba(137,83,209,0.16); border-color: rgba(137,83,209,0.34); }
-      .equipment-ring-core::after { content: ""; position: absolute; inset: 16px; border-radius: 50%; box-shadow: inset 0 0 28px rgba(137,83,209,0.08); }
-      .equipment-line { animation: lineFlow 3.4s linear infinite; }
-      .skill-node { transition: transform 180ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 180ms ease, border-color 180ms ease; box-shadow: 0 8px 18px rgba(137,83,209,0.06); }
-      .skill-node:hover { transform: translateY(-4px); box-shadow: 0 18px 28px rgba(137,83,209,0.14), 0 0 18px rgba(137,83,209,0.12); border-color: rgba(137,83,209,0.28); }
-      .skill-node:hover .skill-node-pulse { animation: skillPulse 1.3s ease-in-out infinite; }
-      .skill-row:hover .skill-line-flow { animation-duration: 1.1s; }
-      .skill-line-flow { animation: lineFlow 2.6s linear infinite; opacity: 0.9; }
-      .skill-tree-node { transition: transform 180ms cubic-bezier(0.22, 1, 0.36, 1), opacity 180ms ease; transform-origin: center; cursor: default; }
+      .equipment-floating:hover { transform: translateY(-6px); box-shadow: 0 12px 22px rgba(137,83,209,0.16); border-color: rgba(137,83,209,0.28); }
+      .equipment-ring-core::after { content: ""; position: absolute; inset: 16px; border-radius: 50%; box-shadow: inset 0 0 12px rgba(137,83,209,0.08); }
+      .equipment-line { animation: lineFlow 3.4s linear infinite; stroke-dasharray: 120; }
+      .skill-tree-node { transition: transform 180ms cubic-bezier(0.22, 1, 0.36, 1), opacity 180ms ease; transform-origin: center; cursor: default; will-change: transform; }
       .skill-tree-node.is-link { cursor: pointer; }
-      .skill-tree-node:hover { transform: translateY(-2px) scale(1.012); }
-      .skill-tree-flow { stroke-dasharray: 16 164; stroke-dashoffset: 0; animation: skillTreeDash 4.2s linear infinite; }
-      .relationship-card:hover { transform: translateY(-4px); box-shadow: 0 14px 26px rgba(137,83,209,0.12); }
+      .skill-tree-node:hover { transform: translateY(-2px) scale(1.01); }
+      .skill-tree-flow { stroke-dasharray: 16 164; animation: lineFlow 4.2s linear infinite; }
+      .relationship-card:hover { transform: translateY(-4px); box-shadow: 0 10px 18px rgba(137,83,209,0.1); }
       @media (max-width: 960px) {
         .hero-grid { grid-template-columns: 1fr !important; }
         .hero-side { min-width: 0 !important; }
         .stats-grid { grid-template-columns: 1fr !important; }
+        .radar-wrap { grid-template-columns: 1fr !important; }
         .retainer-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
       }
       @media (max-width: 760px) {
         .equipment-ring { display: none !important; }
         .equipment-mobile-grid { display: grid !important; }
-        .cultivation-row { grid-template-columns: 1fr !important; }
+        .quest-main-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
       }
       @media (max-width: 640px) {
         .retainer-grid, .relationship-grid { grid-template-columns: 1fr !important; }
         .ps-section { padding: 0.8rem !important; }
       }
       @media (prefers-reduced-motion: reduce) {
-        .chapter-slide-card, .equipment-floating, .skill-node, .skill-line-flow, .equipment-line { animation: none !important; transition: none !important; }
+        .chapter-slide-card, .equipment-floating, .equipment-line, .skill-tree-flow, .radar-wrap.is-active > :first-child, .achievement-badge { animation: none !important; transition: none !important; }
       }
     `}</style>
     <div style={{ display: "grid", gap: 18 }}>
       <Section dark={dark}><HeroCard dark={dark} rank={rank} level={level} totalExp={totalExp} expInLevel={expInLevel} expNeeded={expNeeded} expProgress={expProgress} currentCity={currentCity} travelDays={travelDays} expFormula={expFormula} levelFormula={levelFormula} /></Section>
       <Section dark={dark}><SectionHeader icon="🧭" zh="人生章节" en="Chapter Archive" dark={dark} /><ChapterCarousel chapters={chapters} dark={dark} /></Section>
-      <Section dark={dark}><SectionHeader icon="📊" zh="六维属性" en="Six Attributes" dark={dark} /><StatBars stats={stats} statFormulas={statFormulas} dark={dark} /></Section>
+      <Section dark={dark}><SectionHeader icon="📊" zh="六维属性" en="Six Attributes" dark={dark} /><StatRadar stats={stats} statFormulas={statFormulas} dark={dark} /></Section>
       <Section dark={dark}><SectionHeader icon="🧰" zh="装备栏" en="Equipment" dark={dark} /><EquipmentRing equipment={equipment} dark={dark} /></Section>
       <Section dark={dark}><SectionHeader icon="📜" zh="任务面板" en="Quest Board" dark={dark} /><QuestPanel quests={quests} dark={dark} /></Section>
       <Section dark={dark}><SectionHeader icon="🏯" zh="门客系统" en="Retainers" dark={dark} /><RetainerPanel retainers={retainers} dark={dark} /></Section>
