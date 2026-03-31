@@ -772,7 +772,7 @@ const meta = {
     const TILE_LIGHT  = "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png";
     const TILE_DARK   = "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
     const PURPLE      = "#8953d1";
-    const NEXT_CITY   = { name: "Xi'an", nameCN: "西安", lat: 34.3416, lng: 108.9398, date: "2026-03-31" };
+    const NEXT_CITY   = null; // no upcoming destination
 
     // Region color palette — brand-adjacent but lively
     const REGION_COLORS = {
@@ -1361,7 +1361,7 @@ const meta = {
 
       // ---- Next Stop Badge ----
       const nextBadge = document.getElementById("next-stop-badge");
-      if (nextBadge) {
+      if (NEXT_CITY && nextBadge) {
         const isZh = getLang() === "zh";
         const daysUntil = Math.ceil((new Date(NEXT_CITY.date) - new Date()) / 86400000);
         const inStr = daysUntil > 0
