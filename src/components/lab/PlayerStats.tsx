@@ -29,6 +29,30 @@ export interface AchievementData {
   max?: number;
 }
 
+export interface QuestData {
+  id: string;
+  titleCN: string;
+  titleEN: string;
+  target?: string;
+  current?: number;
+  goal?: number;
+  unit?: string;
+  status: "active" | "completed";
+  progress?: string;
+}
+
+export interface EquipmentData {
+  id: string;
+  slotCN: string;
+  slotEN: string;
+  nameCN: string;
+  nameEN: string;
+  effectCN: string;
+  effectEN: string;
+  acquired: string;
+  article: string | null;
+}
+
 export interface PlayerStatsProps {
   stats: {
     vitality: number;
@@ -57,6 +81,11 @@ export interface PlayerStatsProps {
   cities: Array<{ id: string; name: string; nameCN: string; lat: number; lng: number }>;
   achievements: AchievementData[];
   retainers: RetainerData[];
+  quests: {
+    main: QuestData[];
+    side: QuestData[];
+  };
+  equipment: EquipmentData[];
   activityLog: Array<{
     dateEn: string;
     dateZh: string;
@@ -307,7 +336,7 @@ function HeroCard({ rank, level, totalExp, expInLevel, expNeeded, expProgress, c
             </p>
           </div>
           <div style={{ display: "flex", alignItems: "stretch", gap: 12 }}>
-            <VerticalSeal text="修真档案" dark={dark} />
+            <VerticalSeal text="江湖档案" dark={dark} />
           </div>
         </div>
 
@@ -855,6 +884,162 @@ function CultivationLog({ activityLog, dark }: { activityLog: PlayerStatsProps["
   );
 }
 
+function MainQuestCard({ quest, dark }: { quest: QuestData; dark: boolean }) {
+  const reducedMotion = usePrefersReducedMotion();
+  const current = quest.current ?? 0;
+  const goal = quest.goal ?? 0;
+  const ratio = quest.status === "completed" ? 100 : Math.max(0, Math.min(100, goal > 0 ? (current / goal) * 100 : 0));
+  const animatedRatio = reducedMotion ? Math.round(ratio) : useCountUp(Math.round(ratio), 500, true);
+  const done = quest.status === "completed";
+
+  return (
+    <div style={{
+      position: "relative",
+      overflow: "hidden",
+      borderRadius: 18,
+      border: `1px solid ${done ? "rgba(36,160,96,0.28)" : (dark ? "rgba(137,83,209,0.24)" : "rgba(137,83,209,0.14)")}`,
+      background: dark ? "linear-gradient(180deg, rgba(22,16,34,0.96), rgba(10,10,20,0.96))" : "linear-gradient(180deg, rgba(255,255,255,0.96), rgba(247,241,255,0.96))",
+      padding: "16px 16px 14px",
+      boxShadow: done ? "0 12px 24px rgba(36,160,96,0.12)" : "0 12px 26px rgba(137,83,209,0.08)",
+    }}>
+      <div style={{ display: "flex", justifyContent: "space-between", gap: 12, alignItems: "flex-start", flexWrap: "wrap" }}>
+        <div>
+          <div style={{ fontFamily: "Georgia, Cambria, serif", fontSize: 15, fontWeight: 700, color: dark ? "#fff" : "#281c35" }}>
+            <span className="lang-zh">{quest.titleCN}</span>
+            <span className="lang-en">{quest.titleEN}</span>
+          </div>
+          {quest.target && <div style={{ marginTop: 6, fontFamily: "monospace", fontSize: 11, color: dark ? "#a99dbc" : "#857593" }}>{quest.target}</div>}
+        </div>
+        <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "6px 10px", borderRadius: 999, border: `1px solid ${done ? "rgba(36,160,96,0.3)" : "rgba(137,83,209,0.2)"}`, background: done ? "rgba(36,160,96,0.12)" : (dark ? "rgba(137,83,209,0.1)" : "rgba(137,83,209,0.06)"), color: done ? "#3bb273" : "#8953d1", fontFamily: "monospace", fontSize: 11, fontWeight: 700 }}>
+          <span>{done ? "✅" : "✦"}</span>
+          <span>{done ? "Completed" : `${animatedRatio}%`}</span>
+        </div>
+      </div>
+      <div style={{ marginTop: 12 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", gap: 8, marginBottom: 6, fontFamily: "monospace", fontSize: 11, color: dark ? "#bdb4cb" : "#7d6c95" }}>
+          <span>{current}{quest.unit ? ` ${quest.unit}` : ""}</span>
+          <span>{goal}{quest.unit ? ` ${quest.unit}` : ""}</span>
+        </div>
+        <div style={{ height: 12, borderRadius: 999, overflow: "hidden", border: `1px solid ${done ? "rgba(36,160,96,0.18)" : (dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.12)")}`, background: dark ? "rgba(255,255,255,0.05)" : "rgba(60,20,90,0.06)" }}>
+          <div style={{ width: `${animatedRatio}%`, height: "100%", background: done ? "linear-gradient(90deg, rgba(36,160,96,0.92), rgba(86,200,130,0.56))" : "linear-gradient(90deg, rgba(137,83,209,0.96), rgba(137,83,209,0.56))", boxShadow: done ? "0 0 16px rgba(36,160,96,0.25)" : "0 0 16px rgba(137,83,209,0.28)", transition: "width 0.16s linear" }} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function QuestPanel({ quests, dark }: { quests: PlayerStatsProps["quests"]; dark: boolean }) {
+  const [activeTab, setActiveTab] = useState<"main" | "side">("main");
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <div style={{ display: "inline-flex", gap: 8, padding: 6, borderRadius: 999, border: `1px solid ${dark ? "rgba(137,83,209,0.24)" : "rgba(137,83,209,0.16)"}`, background: dark ? "rgba(14,10,24,0.72)" : "rgba(255,255,255,0.76)", width: "fit-content" }}>
+        {([
+          { key: "main", zh: "主线", en: "Main" },
+          { key: "side", zh: "支线", en: "Side" },
+        ] as const).map(tab => {
+          const selected = activeTab === tab.key;
+          return (
+            <button
+              key={tab.key}
+              type="button"
+              onClick={() => setActiveTab(tab.key)}
+              style={{
+                border: "none",
+                borderRadius: 999,
+                padding: "8px 14px",
+                background: selected ? "linear-gradient(90deg, rgba(137,83,209,0.95), rgba(137,83,209,0.7))" : "transparent",
+                color: selected ? "#fff" : (dark ? "#cbbfe0" : "#6d5c80"),
+                cursor: "pointer",
+                fontFamily: "Georgia, Cambria, serif",
+                fontSize: 13,
+                fontWeight: 700,
+                boxShadow: selected ? "0 8px 20px rgba(137,83,209,0.22)" : "none",
+                transition: "all 0.2s ease",
+              }}
+            >
+              <span className="lang-zh">{tab.zh}</span>
+              <span className="lang-en">{tab.en}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      <div style={{ display: "grid", gap: 12 }}>
+        {activeTab === "main" ? quests.main.map(quest => (
+          <MainQuestCard key={quest.id} quest={quest} dark={dark} />
+        )) : quests.side.map(quest => {
+          const done = quest.status === "completed";
+          return (
+            <div key={quest.id} style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: 12, alignItems: "center", borderRadius: 18, border: `1px solid ${dark ? "rgba(137,83,209,0.22)" : "rgba(137,83,209,0.14)"}`, background: dark ? "linear-gradient(180deg, rgba(22,16,34,0.96), rgba(10,10,20,0.96))" : "linear-gradient(180deg, rgba(255,255,255,0.96), rgba(247,241,255,0.96))", padding: "16px" }} className="quest-side-card">
+              <div>
+                <div style={{ fontFamily: "Georgia, Cambria, serif", fontSize: 15, fontWeight: 700, color: dark ? "#fff" : "#281c35" }}>
+                  <span className="lang-zh">{quest.titleCN}</span>
+                  <span className="lang-en">{quest.titleEN}</span>
+                </div>
+                <div style={{ marginTop: 6, fontFamily: "monospace", fontSize: 11, color: dark ? "#a99dbc" : "#857593" }}>{quest.progress}</div>
+              </div>
+              <div style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", padding: "6px 10px", borderRadius: 999, border: `1px solid ${done ? "rgba(36,160,96,0.3)" : "rgba(137,83,209,0.22)"}`, background: done ? "rgba(36,160,96,0.12)" : (dark ? "rgba(137,83,209,0.1)" : "rgba(137,83,209,0.06)"), color: done ? "#3bb273" : "#8953d1", fontFamily: "monospace", fontSize: 11, fontWeight: 700 }}>
+                {done ? "completed" : "active"}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function EquipmentPanel({ equipment, dark }: { equipment: EquipmentData[]; dark: boolean }) {
+  return (
+    <div className="equipment-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 14 }}>
+      {equipment.map(item => {
+        const content = (
+          <div style={{
+            position: "relative",
+            height: "100%",
+            overflow: "hidden",
+            borderRadius: 18,
+            border: `1px solid ${dark ? "rgba(137,83,209,0.22)" : "rgba(137,83,209,0.14)"}`,
+            background: dark ? "linear-gradient(180deg, rgba(24,18,37,0.96), rgba(14,10,24,0.96))" : "linear-gradient(180deg, rgba(255,255,255,0.94), rgba(248,242,255,0.94))",
+            padding: "16px",
+            boxShadow: dark ? "0 10px 24px rgba(0,0,0,0.18)" : "0 12px 22px rgba(137,83,209,0.07)",
+            transition: "transform 0.24s ease, box-shadow 0.24s ease, border-color 0.24s ease",
+          }} className="equipment-card">
+            <div style={{ position: "absolute", inset: 0, pointerEvents: "none", background: "linear-gradient(135deg, rgba(137,83,209,0.1), transparent 45%, rgba(137,83,209,0.06))" }} />
+            <div style={{ position: "relative", display: "flex", flexDirection: "column", gap: 10, height: "100%" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+                <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "5px 10px", borderRadius: 999, border: "1px solid rgba(137,83,209,0.2)", background: dark ? "rgba(137,83,209,0.12)" : "rgba(137,83,209,0.06)", color: "#8953d1", fontFamily: "monospace", fontSize: 11, fontWeight: 700 }}>
+                  <span className="lang-zh">{item.slotCN}</span>
+                  <span className="lang-en">{item.slotEN}</span>
+                </div>
+                <span style={{ fontFamily: "monospace", fontSize: 11, color: dark ? "#b8afc9" : "#867695" }}>{item.acquired}</span>
+              </div>
+              <div style={{ fontFamily: "Georgia, Cambria, serif", fontSize: 16, fontWeight: 700, color: dark ? "#fff" : "#2d203a" }}>
+                <span className="lang-zh">{item.nameCN}</span>
+                <span className="lang-en">{item.nameEN}</span>
+              </div>
+              <div style={{ fontFamily: "Georgia, Cambria, serif", fontSize: 12, lineHeight: 1.6, color: dark ? "#d8cfff" : "#6e4a9d" }}>
+                <span className="lang-zh">{item.effectCN}</span>
+                <span className="lang-en">{item.effectEN}</span>
+              </div>
+              <div style={{ marginTop: "auto", fontFamily: "monospace", fontSize: 10, color: item.article ? "#8953d1" : (dark ? "#8f85a0" : "#8b7999") }}>
+                {item.article ? (<>↗ <span className="lang-zh">查看关联文章</span><span className="lang-en">Open linked post</span></>) : (<>— <span className="lang-zh">暂无关联文章</span><span className="lang-en">No linked post yet</span></>)}
+              </div>
+            </div>
+          </div>
+        );
+
+        if (item.article) {
+          return <a key={item.id} href={`/posts/${item.article}/`} style={{ textDecoration: "none" }}>{content}</a>;
+        }
+
+        return <div key={item.id}>{content}</div>;
+      })}
+    </div>
+  );
+}
+
 function SectionHeader({ icon, zh, en, dark }: { icon: string; zh: string; en: string; dark: boolean }) {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 12, margin: "0 0 1.2rem" }}>
@@ -872,7 +1057,7 @@ export default function PlayerStats(props: PlayerStatsProps) {
   const dark = useTheme();
   const heroReveal = useInView<HTMLDivElement>(0.15);
   const statsReveal = useInView<HTMLDivElement>(0.2);
-  const { stats, level, totalExp, expInLevel, expNeeded, expProgress, rank, currentCity, travelDays, tagCounts, postCount, builderLogCount, cities, achievements, retainers, activityLog } = props;
+  const { stats, level, totalExp, expInLevel, expNeeded, expProgress, rank, currentCity, travelDays, tagCounts, postCount, builderLogCount, cities, achievements, retainers, quests, equipment, activityLog } = props;
 
   return (
     <div style={{ fontFamily: "Georgia, Cambria, serif", maxWidth: 980, margin: "0 auto" }}>
@@ -912,6 +1097,12 @@ export default function PlayerStats(props: PlayerStatsProps) {
           transform: translateY(-2px);
           box-shadow: 0 0 18px rgba(137,83,209,0.14);
         }
+        .equipment-card:hover {
+          transform: translateY(-6px);
+          border-color: rgba(137,83,209,0.42) !important;
+          box-shadow: 0 0 0 1px rgba(137,83,209,0.1), 0 18px 34px rgba(137,83,209,0.18), 0 0 24px rgba(137,83,209,0.16);
+        }
+        .quest-side-card { min-height: 92px; }
         @media (prefers-reduced-motion: reduce) {
           .player-shell::before,
           .player-shell::after,
@@ -924,11 +1115,14 @@ export default function PlayerStats(props: PlayerStatsProps) {
           .hero-side-stats { justify-self: stretch !important; min-width: 0 !important; }
         }
         @media (max-width: 780px) {
-          .retainer-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+          .retainer-grid, .equipment-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
           .cultivation-row { grid-template-columns: 1fr !important; }
         }
+        @media (max-width: 640px) {
+          .quest-side-card { grid-template-columns: 1fr !important; }
+        }
         @media (max-width: 520px) {
-          .retainer-grid { grid-template-columns: 1fr !important; }
+          .retainer-grid, .equipment-grid { grid-template-columns: 1fr !important; }
         }
       `}</style>
       <div className="player-shell">
@@ -949,6 +1143,16 @@ export default function PlayerStats(props: PlayerStatsProps) {
           <DecorativeSection dark={dark} delay={60}>
             <SectionHeader icon="🏯" zh="门客" en="Retainers" dark={dark} />
             <RetainerPanel retainers={retainers} dark={dark} />
+          </DecorativeSection>
+
+          <DecorativeSection dark={dark} delay={70}>
+            <SectionHeader icon="📜" zh="任务系统" en="Quest Board" dark={dark} />
+            <QuestPanel quests={quests} dark={dark} />
+          </DecorativeSection>
+
+          <DecorativeSection dark={dark} delay={75}>
+            <SectionHeader icon="🧰" zh="装备系统" en="Equipment" dark={dark} />
+            <EquipmentPanel equipment={equipment} dark={dark} />
           </DecorativeSection>
 
           <DecorativeSection dark={dark} delay={80}>

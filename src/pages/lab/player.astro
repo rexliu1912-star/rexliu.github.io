@@ -5,6 +5,7 @@ import { getCollection } from "astro:content";
 import travelData from "../../../public/data/travel.json";
 import mediaData from "../../data/media.json";
 import agentWorkload from "../../../public/data/agent-workload.json";
+import journeyData from "../../../public/data/journey.json";
 
 // ─── Data Collections ──────────────────────────────────────────────────────
 const posts = await getCollection("post");
@@ -392,8 +393,8 @@ allActivity.sort((a, b) => b.dateRaw.getTime() - a.dateRaw.getTime());
 const activityForClient = allActivity.map(({ dateRaw, ...rest }) => rest);
 
 const meta = {
-  title: "Player Stats — Rex's Open-World Cultivation Dashboard",
-  description: "A live player-stats page for Rex Liu, translating real content, travel, projects, and agent activity into an open-world cultivation dashboard.",
+  title: "Player Stats — Rex's Open-World Adventure Dashboard",
+  description: "A live player-stats page for Rex Liu, translating real content, travel, projects, and agent activity into an open-world adventure dashboard.",
   ogImage: "/social-card-v2.png?v=20260331b",
 };
 ---
@@ -414,13 +415,13 @@ const meta = {
 
     <h1 class="hero-reveal-text mb-3 font-serif text-4xl font-bold dark:text-white">
       <span class="lang-en">Player Stats</span>
-      <span class="lang-zh">修真档案</span>
+      <span class="lang-zh">江湖档案</span>
     </h1>
     <p class="hero-reveal-subtitle lang-en max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">
-      Your open-world cultivation dashboard. Every stat from real data, no manual input.
+      Your open-world adventure dashboard. Every stat from real data, no manual input.
     </p>
     <p class="hero-reveal-subtitle lang-zh max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">
-      开放世界修行面板。所有数值来自真实数据，无手动设置。
+      开放世界江湖面板。所有数值来自真实数据，无手动设置。
     </p>
   </section>
 
@@ -446,6 +447,8 @@ const meta = {
     cities={cities.map(c => ({ id: c.id, name: c.name, nameCN: c.nameCN, lat: c.lat, lng: c.lng }))}
     achievements={achievements}
     retainers={retainers}
+    quests={(journeyData as any).quests}
+    equipment={(journeyData as any).equipment}
     activityLog={activityForClient}
   />
 
