@@ -470,8 +470,8 @@ const StatRadar = memo(function StatRadar({ stats, statFormulas, dark }: { stats
   }).join(" ");
 
   return <div ref={ref} className={`radar-wrap ${inView ? "is-active" : ""}`} style={{ display: "grid", placeItems: "center" }}>
-    <div style={{ position: "relative", width: "100%", maxWidth: 396, minHeight: 396, margin: "0 auto" }}>
-      <svg viewBox={`0 0 ${size} ${size}`} style={{ width: "100%", maxWidth: 396, display: "block", margin: "0 auto", overflow: "visible" }}>
+    <div style={{ position: "relative", width: "100%", maxWidth: 396, margin: "0 auto" }}>
+      <svg viewBox={`0 0 ${size} ${size}`} style={{ width: "100%", maxWidth: 396, height: "auto", display: "block", margin: "0 auto", overflow: "visible" }}>
         {rings.map(ring => <polygon key={ring} points={ringPolygon(ring / 100)} fill="none" stroke={dark ? "rgba(137,83,209,0.2)" : "rgba(137,83,209,0.16)"} strokeWidth={1} />)}
         {STAT_META.map((_, index) => {
           const angle = -Math.PI / 2 + (Math.PI * 2 * index) / STAT_META.length;
@@ -939,6 +939,8 @@ export default function PlayerStats(props: PlayerStatsProps) {
       @media (max-width: 640px) {
         .retainer-grid, .relationship-grid { grid-template-columns: 1fr !important; }
         .ps-section { padding: 0.8rem !important; }
+        .quest-main-grid { grid-template-columns: 1fr !important; }
+        .chapter-nav-btn { width: 32px !important; height: 32px !important; min-width: 32px !important; }
       }
       @media (prefers-reduced-motion: reduce) {
         .chapter-slide-card, .equipment-floating, .equipment-line, .skill-tree-flow, .radar-wrap.is-active > :first-child, .achievement-badge { animation: none !important; transition: none !important; }
