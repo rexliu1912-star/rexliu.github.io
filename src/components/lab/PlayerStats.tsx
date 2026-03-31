@@ -182,8 +182,8 @@ function useInView<T extends HTMLElement>(threshold = 0.18) {
       return;
     }
     const el = ref.current;
-    const ob = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) {
+    const ob = new IntersectionObserver(([entry]: IntersectionObserverEntry[]) => {
+      if (entry?.isIntersecting) {
         setInView(true);
         ob.disconnect();
       }
@@ -468,7 +468,7 @@ function EquipmentRing({ equipment, dark }: { equipment: EquipmentData[]; dark: 
         </div>
       </div>
       <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
-        {positions.map((position, index) => {
+        {positions.map((_position, index) => {
           const angle = index * 60 - 90;
           return <div key={`line-${index}`} className="equipment-line" style={{ position: "absolute", left: "50%", top: "50%", width: 180, height: 2, transform: `translate(-50%, -50%) rotate(${angle}deg)`, transformOrigin: "left center", background: "linear-gradient(90deg, rgba(137,83,209,0.34), rgba(137,83,209,0.05))", boxShadow: "0 0 14px rgba(137,83,209,0.12)" }} />;
         })}
