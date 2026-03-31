@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 
 export interface RetainerData {
   id: string;
@@ -87,9 +87,54 @@ function useTheme() {
   return dark;
 }
 
-function useCountUp(target: number, duration = 1200) {
-  const [value, setValue] = useState(0);
+function usePrefersReducedMotion() {
+  const [reduced, setReduced] = useState(false);
   useEffect(() => {
+    if (typeof window === "undefined" || !("matchMedia" in window)) return;
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => setReduced(media.matches);
+    update();
+    media.addEventListener?.("change", update);
+    return () => media.removeEventListener?.("change", update);
+  }, []);
+  return reduced;
+}
+
+function useInView<T extends HTMLElement>(threshold = 0.22) {
+  const ref = useRef<T | null>(null);
+  const [inView, setInView] = useState(false);
+
+  useEffect(() => {
+    if (!ref.current || typeof IntersectionObserver === "undefined") {
+      setInView(true);
+      return;
+    }
+    const el = ref.current;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setInView(true);
+          observer.disconnect();
+        }
+      },
+      { threshold, rootMargin: "0px 0px -10% 0px" },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [threshold]);
+
+  return { ref, inView };
+}
+
+function useCountUp(target: number, duration = 1200, enabled = true) {
+  const [value, setValue] = useState(enabled ? 0 : target);
+  const reducedMotion = usePrefersReducedMotion();
+
+  useEffect(() => {
+    if (!enabled || reducedMotion) {
+      setValue(target);
+      return;
+    }
     const start = performance.now();
     let raf = 0;
     const step = (now: number) => {
@@ -100,12 +145,13 @@ function useCountUp(target: number, duration = 1200) {
     };
     raf = requestAnimationFrame(step);
     return () => cancelAnimationFrame(raf);
-  }, [target, duration]);
+  }, [target, duration, enabled, reducedMotion]);
+
   return value;
 }
 
-function PixelBar({ value, dark, color = "#8953d1", segments = 20 }: { value: number; dark: boolean; color?: string; segments?: number }) {
-  const animated = useCountUp(value);
+function PixelBar({ value, dark, color = "#8953d1", segments = 20, animate = true }: { value: number; dark: boolean; color?: string; segments?: number; animate?: boolean }) {
+  const animated = useCountUp(value, 1000, animate);
   const filled = Math.round((animated / 100) * segments);
   return (
     <div style={{ display: "flex", gap: 3, alignItems: "center" }}>
@@ -131,22 +177,33 @@ function PixelBar({ value, dark, color = "#8953d1", segments = 20 }: { value: nu
   );
 }
 
-function DecorativeSection({ children, dark, className }: { children: ReactNode; dark: boolean; className?: string }) {
+function DecorativeSection({ children, dark, className, reveal = true, delay = 0 }: { children: ReactNode; dark: boolean; className?: string; reveal?: boolean; delay?: number }) {
+  const { ref, inView } = useInView<HTMLDivElement>(0.15);
+  const reducedMotion = usePrefersReducedMotion();
   const bg = dark
     ? "linear-gradient(180deg, rgba(19,16,32,0.98), rgba(12,10,24,0.98))"
     : "linear-gradient(180deg, rgba(253,250,255,0.96), rgba(248,243,255,0.96))";
   const border = dark ? "rgba(137,83,209,0.28)" : "rgba(137,83,209,0.16)";
+  const visible = !reveal || reducedMotion || inView;
+
   return (
-    <div className={className} style={{
-      position: "relative",
-      overflow: "hidden",
-      border: `1px solid ${border}`,
-      borderRadius: 20,
-      padding: "1.5rem",
-      background: bg,
-      boxShadow: dark ? "0 20px 50px rgba(0,0,0,0.28)" : "0 18px 40px rgba(137,83,209,0.08)",
-      backdropFilter: "blur(6px)",
-    }}>
+    <div
+      ref={ref}
+      className={className}
+      style={{
+        position: "relative",
+        overflow: "hidden",
+        border: `1px solid ${border}`,
+        borderRadius: 20,
+        padding: "1.5rem",
+        background: bg,
+        boxShadow: dark ? "0 20px 50px rgba(0,0,0,0.28)" : "0 18px 40px rgba(137,83,209,0.08)",
+        backdropFilter: "blur(6px)",
+        opacity: visible ? 1 : 0,
+        transform: visible ? "translateY(0)" : "translateY(20px)",
+        transition: `opacity 720ms cubic-bezier(0.22, 1, 0.36, 1) ${delay}ms, transform 720ms cubic-bezier(0.22, 1, 0.36, 1) ${delay}ms`,
+      }}
+    >
       <div style={{ position: "absolute", inset: 0, pointerEvents: "none", opacity: dark ? 0.18 : 0.3, backgroundImage: "radial-gradient(circle at 1px 1px, rgba(137,83,209,0.22) 1px, transparent 0)", backgroundSize: "14px 14px", mixBlendMode: dark ? "screen" : "multiply" }} />
       <div style={{ position: "absolute", inset: 0, pointerEvents: "none", opacity: dark ? 0.1 : 0.18, background: "repeating-linear-gradient(8deg, transparent 0 10px, rgba(137,83,209,0.08) 10px 11px, transparent 11px 20px)" }} />
       <div style={{ position: "absolute", top: -40, right: -10, width: 180, height: 180, borderRadius: "50%", background: "radial-gradient(circle, rgba(137,83,209,0.16), transparent 68%)", filter: "blur(4px)", pointerEvents: "none" }} />
@@ -200,7 +257,7 @@ function InfoTag({ icon, zh, en, dark }: { icon: string; zh: string; en: string;
   );
 }
 
-function HeroCard({ rank, level, totalExp, expInLevel, expNeeded, expProgress, currentCity, travelDays, dark }: {
+function HeroCard({ rank, level, totalExp, expInLevel, expNeeded, expProgress, currentCity, travelDays, dark, animate }: {
   rank: { zh: string; en: string };
   level: number;
   totalExp: number;
@@ -210,9 +267,12 @@ function HeroCard({ rank, level, totalExp, expInLevel, expNeeded, expProgress, c
   currentCity: { name: string; nameCN: string };
   travelDays: number;
   dark: boolean;
+  animate: boolean;
 }) {
-  const animatedLevel = useCountUp(level, 1500);
-  const animatedExp = useCountUp(totalExp, 2000);
+  const animatedLevel = useCountUp(level, 1400, animate);
+  const animatedExp = useCountUp(totalExp, 1800, animate);
+  const animatedProgress = useCountUp(expProgress, 1300, animate);
+  const animatedTravelDays = useCountUp(travelDays, 1400, animate);
   const textPrimary = dark ? "#ffffff" : "#22172f";
   const textSecondary = dark ? "#b9b1c9" : "#6f657d";
 
@@ -247,15 +307,15 @@ function HeroCard({ rank, level, totalExp, expInLevel, expNeeded, expProgress, c
             </p>
           </div>
           <div style={{ display: "flex", alignItems: "stretch", gap: 12 }}>
-            <VerticalSeal text="江湖档案" dark={dark} />
+            <VerticalSeal text="修真档案" dark={dark} />
           </div>
         </div>
 
         <div style={{ marginTop: 16, display: "flex", flexWrap: "wrap", gap: 8 }}>
           <InfoTag icon="⚔️" zh={rank.zh} en={rank.en} dark={dark} />
-          <InfoTag icon="🏔️" zh="逍遥派" en="Sovereign School" dark={dark} />
+          <InfoTag icon="🏔️" zh="逍遥道统" en="Xiaoyao Lineage" dark={dark} />
           <InfoTag icon="📍" zh={currentCity.nameCN} en={currentCity.name} dark={dark} />
-          <InfoTag icon="🗓️" zh={`游历 ${travelDays} 天`} en={`Day ${travelDays}`} dark={dark} />
+          <InfoTag icon="🗓️" zh={`游历 ${animatedTravelDays} 天`} en={`Day ${animatedTravelDays}`} dark={dark} />
         </div>
 
         <div style={{ marginTop: 18 }}>
@@ -267,10 +327,10 @@ function HeroCard({ rank, level, totalExp, expInLevel, expNeeded, expProgress, c
             <div style={{ position: "absolute", inset: 0, background: "repeating-linear-gradient(90deg, transparent 0 18px, rgba(137,83,209,0.08) 18px 19px)" }} />
             <div style={{
               height: "100%",
-              width: `${expProgress}%`,
+              width: `${animatedProgress}%`,
               background: "linear-gradient(90deg, rgba(137,83,209,0.95), rgba(137,83,209,0.55))",
               boxShadow: "0 0 18px rgba(137,83,209,0.35)",
-              transition: "width 1.5s cubic-bezier(0.22, 1, 0.36, 1)",
+              transition: "width 0.2s linear",
               position: "relative",
             }}>
               <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(255,255,255,0.28), transparent)" }} />
@@ -289,18 +349,24 @@ function HeroCard({ rank, level, totalExp, expInLevel, expNeeded, expProgress, c
           <div style={{ fontFamily: "monospace", fontSize: 11, color: dark ? "#bdb4cb" : "#7d6c95" }}>Realm</div>
           <div style={{ fontFamily: "Georgia, Cambria, serif", fontSize: 26, color: "#8953d1", fontWeight: 700, lineHeight: 1.1 }}>{rank.zh}</div>
           <div style={{ fontFamily: "monospace", fontSize: 11, color: dark ? "#8f859f" : "#91839f", marginTop: 8 }}>Progress</div>
-          <div style={{ fontFamily: "monospace", fontSize: 22, color: dark ? "#ffffff" : "#2d203a", fontWeight: 700 }}>{expProgress}%</div>
+          <div style={{ fontFamily: "monospace", fontSize: 22, color: dark ? "#ffffff" : "#2d203a", fontWeight: 700 }}>{animatedProgress}%</div>
         </div>
       </div>
     </div>
   );
 }
 
-function RadarChart({ stats, dark }: { stats: PlayerStatsProps["stats"]; dark: boolean }) {
+function RadarChart({ stats, dark, animate }: { stats: PlayerStatsProps["stats"]; dark: boolean; animate: boolean }) {
+  const reducedMotion = usePrefersReducedMotion();
   const [animated, setAnimated] = useState({ vitality: 0, wisdom: 0, renown: 0, command: 0, craft: 0, insight: 0 });
-  const [selected, setSelected] = useState<string | null>(null);
+  const [hovered, setHovered] = useState<string | null>(null);
+  const [tooltip, setTooltip] = useState<{ key: string; x: number; y: number } | null>(null);
 
   useEffect(() => {
+    if (!animate || reducedMotion) {
+      setAnimated(stats);
+      return;
+    }
     const duration = 1500;
     const start = performance.now();
     let raf = 0;
@@ -319,7 +385,7 @@ function RadarChart({ stats, dark }: { stats: PlayerStatsProps["stats"]; dark: b
     };
     raf = requestAnimationFrame(step);
     return () => cancelAnimationFrame(raf);
-  }, [stats]);
+  }, [stats, animate, reducedMotion]);
 
   const size = 280;
   const cx = size / 2;
@@ -328,11 +394,20 @@ function RadarChart({ stats, dark }: { stats: PlayerStatsProps["stats"]; dark: b
   const axes = [
     { key: "vitality", zh: "体魄", en: "Vitality", angle: -90 },
     { key: "wisdom", zh: "悟性", en: "Wisdom", angle: -30 },
-    { key: "craft", zh: "技巧", en: "Craft", angle: 30 },
+    { key: "craft", zh: "机巧", en: "Craft", angle: 30 },
     { key: "command", zh: "统御", en: "Command", angle: 90 },
     { key: "renown", zh: "声望", en: "Renown", angle: 150 },
     { key: "insight", zh: "见闻", en: "Insight", angle: 210 },
   ] as const;
+
+  const statFormulas: Record<string, { zh: string; en: string }> = {
+    vitality: { zh: "游历城池 → mid=50 渐近缩放", en: "cities explored → mid=50 asymptotic" },
+    wisdom: { zh: "文章 + 书影音×0.3 → mid=120", en: "posts + library×0.3 → mid=120" },
+    renown: { zh: "关注数 → mid=15000", en: "followers → mid=15000" },
+    command: { zh: "门客×8 + 项目×2 → mid=80", en: "retainers×8 + projects×2 → mid=80" },
+    craft: { zh: "造物日志 → mid=50", en: "builder logs → mid=50" },
+    insight: { zh: "书影音 + 精读×0.2 → mid=100", en: "library + digests×0.2 → mid=100" },
+  };
 
   function polar(angle: number, r: number) {
     const rad = (angle * Math.PI) / 180;
@@ -350,14 +425,9 @@ function RadarChart({ stats, dark }: { stats: PlayerStatsProps["stats"]; dark: b
     }).map((p, i) => `${i === 0 ? "M" : "L"}${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(" ") + " Z";
   }
 
-  const statFormulas: Record<string, { zh: string; en: string }> = {
-    vitality: { zh: "城市数 → mid=50 渐近缩放", en: "cities → mid=50 asymptotic" },
-    wisdom: { zh: "文章 + 书影音×0.3 → mid=120", en: "posts + library×0.3 → mid=120" },
-    renown: { zh: "关注数 → mid=15000", en: "followers → mid=15000" },
-    command: { zh: "Agent×8 + 项目×2 → mid=80", en: "agents×8 + projects×2 → mid=80" },
-    craft: { zh: "造物日志 → mid=50", en: "builder logs → mid=50" },
-    insight: { zh: "书影音 + 精读×0.2 → mid=100", en: "library + digests×0.2 → mid=100" },
-  };
+  const activeKey = hovered ?? tooltip?.key ?? axes[0].key;
+  const activeAxis = axes.find(a => a.key === activeKey) ?? axes[0];
+  const activeValue = stats[activeAxis.key as keyof typeof stats];
 
   return (
     <div style={{ display: "flex", flexWrap: "wrap", gap: "1.5rem", alignItems: "center", justifyContent: "center" }}>
@@ -373,40 +443,70 @@ function RadarChart({ stats, dark }: { stats: PlayerStatsProps["stats"]; dark: b
           {axes.map(a => {
             const v = animated[a.key as keyof typeof animated];
             const p = polar(a.angle, (v / 100) * maxR);
-            const isSelected = selected === a.key;
+            const isHovered = hovered === a.key;
             return (
-              <circle key={a.key} cx={p.x} cy={p.y} r={isSelected ? 8 : 5.5} fill="#8953d1" stroke={dark ? "#140f20" : "#fff"} strokeWidth={2} style={{ cursor: "pointer" }} onClick={() => setSelected(selected === a.key ? null : a.key)} />
+              <g key={a.key}>
+                <circle
+                  cx={p.x}
+                  cy={p.y}
+                  r={isHovered ? 8 : 5.5}
+                  fill="#8953d1"
+                  stroke={dark ? "#140f20" : "#fff"}
+                  strokeWidth={2}
+                  style={{ cursor: "default" }}
+                  onMouseEnter={() => {
+                    setHovered(a.key);
+                    setTooltip({ key: a.key, x: p.x, y: p.y - 22 });
+                  }}
+                  onMouseLeave={() => {
+                    setHovered(null);
+                    setTooltip(null);
+                  }}
+                />
+              </g>
             );
           })}
           {axes.map(a => {
             const p = polar(a.angle, maxR + 28);
-            const isSelected = selected === a.key;
+            const isHovered = hovered === a.key;
             return (
-              <g key={a.key} style={{ cursor: "pointer" }} onClick={() => setSelected(selected === a.key ? null : a.key)}>
-                <text x={p.x} y={p.y - 4} textAnchor="middle" fontFamily="Georgia, Cambria, serif" fontSize={12} fontWeight={isSelected ? 700 : 500} fill={isSelected ? "#8953d1" : (dark ? "#ddd4ee" : "#443150")}>{a.zh}</text>
+              <g
+                key={a.key}
+                style={{ cursor: "default" }}
+                onMouseEnter={() => setHovered(a.key)}
+                onMouseLeave={() => setHovered(null)}
+              >
+                <text x={p.x} y={p.y - 4} textAnchor="middle" fontFamily="Georgia, Cambria, serif" fontSize={12} fontWeight={isHovered ? 700 : 500} fill={isHovered ? "#8953d1" : (dark ? "#ddd4ee" : "#443150")}>{a.zh}</text>
                 <text x={p.x} y={p.y + 12} textAnchor="middle" fontFamily="monospace" fontSize={10} fill={dark ? "#8f85a0" : "#8b7999"}>{Math.round(animated[a.key as keyof typeof animated])}</text>
               </g>
             );
           })}
+          {tooltip && (
+            <g pointerEvents="none">
+              <rect x={tooltip.x - 58} y={tooltip.y - 28} width={116} height={24} rx={12} fill={dark ? "rgba(19,16,30,0.96)" : "rgba(255,255,255,0.96)"} stroke="rgba(137,83,209,0.28)" strokeWidth={1} />
+              <text x={tooltip.x} y={tooltip.y - 12} textAnchor="middle" fontFamily="monospace" fontSize={10} fill="#8953d1">{activeAxis.zh} · {stats[tooltip.key as keyof typeof stats]}</text>
+            </g>
+          )}
         </svg>
       </div>
 
       <div style={{ flex: 1, minWidth: 240, maxWidth: 380 }}>
+        <div style={{ marginBottom: 12, padding: "10px 12px", borderRadius: 14, border: `1px solid ${dark ? "rgba(137,83,209,0.22)" : "rgba(137,83,209,0.16)"}`, background: dark ? "rgba(137,83,209,0.08)" : "rgba(137,83,209,0.05)" }}>
+          <div style={{ fontFamily: "Georgia, Cambria, serif", fontSize: 13, fontWeight: 700, color: dark ? "#fff" : "#2d203a" }}>{activeAxis.zh} <span style={{ fontSize: 11, color: dark ? "#8f85a0" : "#8b7999" }}>/ {activeAxis.en}</span></div>
+          <div style={{ marginTop: 6, fontFamily: "monospace", fontSize: 18, color: "#8953d1", fontWeight: 700 }}>{activeValue}</div>
+          <div className="lang-zh" style={{ marginTop: 6, fontFamily: "monospace", fontSize: 11, color: dark ? "#ccb7f7" : "#7a51b7" }}>{statFormulas[activeAxis.key]?.zh}</div>
+          <div className="lang-en" style={{ fontFamily: "monospace", fontSize: 11, color: dark ? "#ccb7f7" : "#7a51b7" }}>{statFormulas[activeAxis.key]?.en}</div>
+        </div>
+
         {axes.map(a => {
           const value = stats[a.key as keyof typeof stats];
-          const isSelected = selected === a.key;
+          const isHovered = hovered === a.key;
           return (
-            <div key={a.key} onClick={() => setSelected(selected === a.key ? null : a.key)} style={{ marginBottom: 10, cursor: "pointer", padding: "10px 12px", borderRadius: 14, border: `1px solid ${isSelected ? "rgba(137,83,209,0.3)" : (dark ? "rgba(255,255,255,0.06)" : "rgba(80,40,120,0.08)")}`, background: isSelected ? "rgba(137,83,209,0.08)" : (dark ? "rgba(255,255,255,0.02)" : "rgba(255,255,255,0.4)"), transition: "all 0.2s ease" }}>
+            <div key={a.key} onMouseEnter={() => setHovered(a.key)} onMouseLeave={() => setHovered(null)} style={{ marginBottom: 10, padding: "10px 12px", borderRadius: 14, border: `1px solid ${isHovered ? "rgba(137,83,209,0.3)" : (dark ? "rgba(255,255,255,0.06)" : "rgba(80,40,120,0.08)")}`, background: isHovered ? "rgba(137,83,209,0.08)" : (dark ? "rgba(255,255,255,0.02)" : "rgba(255,255,255,0.4)"), transition: "all 0.2s ease" }}>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6, gap: 8, alignItems: "center" }}>
-                <span style={{ fontFamily: "Georgia, Cambria, serif", fontSize: 13, color: isSelected ? "#8953d1" : (dark ? "#fff" : "#2d203a"), fontWeight: 700 }}>{a.zh} <span style={{ fontSize: 11, color: dark ? "#8f85a0" : "#8b7999" }}>/ {a.en}</span></span>
+                <span style={{ fontFamily: "Georgia, Cambria, serif", fontSize: 13, color: isHovered ? "#8953d1" : (dark ? "#fff" : "#2d203a"), fontWeight: 700 }}>{a.zh} <span style={{ fontSize: 11, color: dark ? "#8f85a0" : "#8b7999" }}>/ {a.en}</span></span>
               </div>
-              <PixelBar value={value} dark={dark} />
-              {isSelected && (
-                <div style={{ marginTop: 8, paddingTop: 8, borderTop: "1px solid rgba(137,83,209,0.14)" }}>
-                  <div className="lang-zh" style={{ fontFamily: "monospace", fontSize: 11, color: dark ? "#ccb7f7" : "#7a51b7" }}>{statFormulas[a.key]?.zh}</div>
-                  <div className="lang-en" style={{ fontFamily: "monospace", fontSize: 11, color: dark ? "#ccb7f7" : "#7a51b7" }}>{statFormulas[a.key]?.en}</div>
-                </div>
-              )}
+              <PixelBar value={value} dark={dark} animate={animate} />
             </div>
           );
         })}
@@ -485,30 +585,31 @@ function SkillTree({ tagCounts, postCount, builderLogCount, dark }: {
   dark: boolean;
 }) {
   const [tooltip, setTooltip] = useState<{ text: string; x: number; y: number } | null>(null);
+  const reducedMotion = usePrefersReducedMotion();
 
   const innerNodes: SkillNode[] = [
-    { id: "i-1", group: "inner", tier: 1, row: 0, label: "周期心法", count: tagCounts.crypto || 0, url: "/tags/crypto/" },
-    { id: "i-2", group: "inner", tier: 2, row: 0, label: "盈亏同源", count: tagCounts.trading || 0 },
-    { id: "i-3", group: "inner", tier: 2, row: 1, label: "买预期卖事实", count: tagCounts.alpha || 0 },
-    { id: "i-4", group: "inner", tier: 1, row: 2, label: "价值心法", count: tagCounts.investment || 0, url: "/tags/investment/" },
-    { id: "i-5", group: "inner", tier: 2, row: 2, label: "复利之道", count: tagCounts.evergreen || 0, url: "/tags/evergreen/" },
-    { id: "i-6", group: "inner", tier: 2, row: 3, label: "长期主义", count: (tagCounts.investment || 0) + (tagCounts.wealth || 0) },
-    { id: "i-7", group: "inner", tier: 1, row: 4, label: "风控心法", count: tagCounts.wealth || 0, url: "/tags/wealth/" },
-    { id: "i-8", group: "inner", tier: 2, row: 4, label: "对手盘", count: tagCounts.macro || 0 },
-    { id: "i-9", group: "inner", tier: 2, row: 5, label: "去中心化", count: tagCounts.crypto || 0, url: "/tags/crypto/" },
+    { id: "i-1", group: "inner", tier: 1, row: 0, label: "太虚观势", count: tagCounts.crypto || 0, url: "/tags/crypto/" },
+    { id: "i-2", group: "inner", tier: 2, row: 0, label: "盈虚同源", count: tagCounts.trading || 0 },
+    { id: "i-3", group: "inner", tier: 2, row: 1, label: "先机落子", count: tagCounts.alpha || 0 },
+    { id: "i-4", group: "inner", tier: 1, row: 2, label: "长青道藏", count: tagCounts.investment || 0, url: "/tags/investment/" },
+    { id: "i-5", group: "inner", tier: 2, row: 2, label: "复利真诀", count: tagCounts.evergreen || 0, url: "/tags/evergreen/" },
+    { id: "i-6", group: "inner", tier: 2, row: 3, label: "久炼归一", count: (tagCounts.investment || 0) + (tagCounts.wealth || 0) },
+    { id: "i-7", group: "inner", tier: 1, row: 4, label: "止损心印", count: tagCounts.wealth || 0, url: "/tags/wealth/" },
+    { id: "i-8", group: "inner", tier: 2, row: 4, label: "对局照影", count: tagCounts.macro || 0 },
+    { id: "i-9", group: "inner", tier: 2, row: 5, label: "无界归流", count: tagCounts.crypto || 0, url: "/tags/crypto/" },
   ];
 
   const outerNodes: SkillNode[] = [
-    { id: "o-1", group: "outer", tier: 1, row: 0, label: "剑法·写作", count: postCount, url: "/posts/" },
-    { id: "o-2", group: "outer", tier: 2, row: 0, label: "生活", count: tagCounts.life || 0, url: "/tags/life/" },
-    { id: "o-3", group: "outer", tier: 2, row: 1, label: "人物志", count: tagCounts.people || 0, url: "/tags/people/" },
-    { id: "o-4", group: "outer", tier: 2, row: 2, label: "常青文", count: tagCounts.evergreen || 0, url: "/tags/evergreen/" },
-    { id: "o-5", group: "outer", tier: 1, row: 3, label: "掌法·编程", count: tagCounts.ai || 0, url: "/tags/ai/" },
-    { id: "o-6", group: "outer", tier: 2, row: 3, label: "Vibe Coding", count: tagCounts["vibe coding"] || tagCounts.ai || 0, url: "/tags/ai/" },
-    { id: "o-7", group: "outer", tier: 2, row: 4, label: "Agent 系统", count: builderLogCount },
-    { id: "o-8", group: "outer", tier: 1, row: 5, label: "轻功·探索", count: tagCounts.travel || 0, url: "/tags/travel/" },
-    { id: "o-9", group: "outer", tier: 2, row: 5, label: "旅居", count: tagCounts.travel || 0, url: "/tags/travel/" },
-    { id: "o-10", group: "outer", tier: 2, row: 6, label: "数字游牧", count: tagCounts.travel || 0 },
+    { id: "o-1", group: "outer", tier: 1, row: 0, label: "文心剑诀", count: postCount, url: "/posts/" },
+    { id: "o-2", group: "outer", tier: 2, row: 0, label: "烟火人间", count: tagCounts.life || 0, url: "/tags/life/" },
+    { id: "o-3", group: "outer", tier: 2, row: 1, label: "群侠录", count: tagCounts.people || 0, url: "/tags/people/" },
+    { id: "o-4", group: "outer", tier: 2, row: 2, label: "不凋卷", count: tagCounts.evergreen || 0, url: "/tags/evergreen/" },
+    { id: "o-5", group: "outer", tier: 1, row: 3, label: "机关百炼", count: tagCounts.ai || 0, url: "/tags/ai/" },
+    { id: "o-6", group: "outer", tier: 2, row: 3, label: "灵感铸式", count: tagCounts["vibe coding"] || tagCounts.ai || 0, url: "/tags/ai/" },
+    { id: "o-7", group: "outer", tier: 2, row: 4, label: "傀儡阵图", count: builderLogCount, url: "/builder-log/" },
+    { id: "o-8", group: "outer", tier: 1, row: 5, label: "踏云行", count: tagCounts.travel || 0, url: "/tags/travel/" },
+    { id: "o-9", group: "outer", tier: 2, row: 5, label: "山海寄居", count: tagCounts.travel || 0, url: "/tags/travel/" },
+    { id: "o-10", group: "outer", tier: 2, row: 6, label: "天涯游修", count: tagCounts.travel || 0 },
   ];
 
   const layout = useMemo(() => {
@@ -523,8 +624,8 @@ function SkillTree({ tagCounts, postCount, builderLogCount, dark }: {
     const rowGap = 74;
 
     const roots = {
-      inner: { x: tierX.root, y: 214, w: rootW, h: rootH, label: "内功" },
-      outer: { x: tierX.root, y: 600, w: rootW, h: rootH, label: "外功" },
+      inner: { x: tierX.root, y: 214, w: rootW, h: rootH, label: "内景" },
+      outer: { x: tierX.root, y: 600, w: rootW, h: rootH, label: "外景" },
     };
 
     const positions = new Map<string, { x: number; y: number; w: number; h: number }>();
@@ -534,7 +635,7 @@ function SkillTree({ tagCounts, postCount, builderLogCount, dark }: {
       positions.set(node.id, { x, y, w: nodeW, h: nodeH });
     });
 
-    return { width, height, rootW, rootH, nodeW, nodeH, tierX, sectionTop, rowGap, roots, positions };
+    return { width, height, roots, positions };
   }, [builderLogCount, postCount, tagCounts]);
 
   function pointRight(box: { x: number; y: number; w: number; h: number }) { return { x: box.x + box.w, y: box.y + box.h / 2 }; }
@@ -547,7 +648,7 @@ function SkillTree({ tagCounts, postCount, builderLogCount, dark }: {
     return (
       <>
         <path d={curve} fill="none" stroke={dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.16)"} strokeWidth={8} strokeLinecap="round" />
-        <path d={curve} fill="none" stroke="#8953d1" strokeOpacity={0.42} strokeWidth={1.6} strokeLinecap="round" strokeDasharray="5 7" />
+        <path className={reducedMotion ? "" : "meridian-flow"} d={curve} fill="none" stroke="#8953d1" strokeOpacity={0.42} strokeWidth={1.6} strokeLinecap="round" strokeDasharray="5 7" />
       </>
     );
   }
@@ -558,16 +659,15 @@ function SkillTree({ tagCounts, postCount, builderLogCount, dark }: {
     const textColor = active ? (dark ? "#f5efff" : "#4a2d74") : (dark ? "#7d738f" : "#9c8dac");
     const fill = active ? (dark ? "rgba(137,83,209,0.16)" : "rgba(137,83,209,0.08)") : (dark ? "rgba(255,255,255,0.03)" : "rgba(75,35,120,0.03)");
     const border = active ? "rgba(137,83,209,0.7)" : (dark ? "rgba(255,255,255,0.08)" : "rgba(90,45,140,0.12)");
-    const glow = active ? "0 0 20px rgba(137,83,209,0.16)" : "none";
 
     return (
       <g
         style={{ cursor: active && node.url ? "pointer" : "default" }}
         onClick={() => { if (active && node.url) window.location.href = node.url; }}
-        onMouseEnter={() => setTooltip({ text: active ? `${node.count} 篇 · Lv.${node.count}` : "未点亮 · Locked", x: box.x + box.w / 2, y: box.y - 14 })}
+        onMouseEnter={() => setTooltip({ text: active ? `${node.count} 篇 · 点击前往` : "未点亮 · Locked", x: box.x + box.w / 2, y: box.y - 14 })}
         onMouseLeave={() => setTooltip(null)}
       >
-        <rect x={box.x} y={box.y} width={box.w} height={box.h} rx={14} fill={fill} stroke={border} strokeWidth={1.5} style={{ filter: glow !== "none" ? `drop-shadow(${glow})` : undefined }} />
+        <rect x={box.x} y={box.y} width={box.w} height={box.h} rx={14} fill={fill} stroke={border} strokeWidth={1.5} style={{ filter: active ? "drop-shadow(0 0 16px rgba(137,83,209,0.14))" : undefined, transition: "all 0.2s ease" }} />
         <rect x={box.x + 6} y={box.y + 6} width={box.w - 12} height={box.h - 12} rx={10} fill="transparent" stroke={dark ? "rgba(255,255,255,0.04)" : "rgba(137,83,209,0.08)"} strokeWidth={1} />
         <text x={box.x + box.w / 2} y={box.y + 18} textAnchor="middle" fontFamily="Georgia, Cambria, serif" fontSize={12} fontWeight={700} fill={textColor}>{node.label}</text>
         <text x={box.x + box.w / 2} y={box.y + 33} textAnchor="middle" fontFamily="monospace" fontSize={10} fontWeight={700} fill={active ? "#8953d1" : (dark ? "#7d738f" : "#ae9fba")}>Lv.{node.count}</text>
@@ -602,11 +702,11 @@ function SkillTree({ tagCounts, postCount, builderLogCount, dark }: {
             <rect x={0} y={0} width={layout.width} height={layout.height} rx={26} fill={dark ? "rgba(10,8,18,0.32)" : "rgba(255,255,255,0.45)"} stroke={dark ? "rgba(137,83,209,0.12)" : "rgba(137,83,209,0.1)"} />
             <circle cx={160} cy={240} r={110} fill="url(#meridianGlow)" />
             <circle cx={160} cy={626} r={110} fill="url(#meridianGlow)" />
-            <text x={78} y={84} fontFamily="Georgia, Cambria, serif" fontSize={14} fontWeight={700} fill="#8953d1">心法脉络</text>
-            <text x={78} y={470} fontFamily="Georgia, Cambria, serif" fontSize={14} fontWeight={700} fill="#8953d1">招式脉络</text>
+            <text x={78} y={84} fontFamily="Georgia, Cambria, serif" fontSize={14} fontWeight={700} fill="#8953d1">道心脉络</text>
+            <text x={78} y={470} fontFamily="Georgia, Cambria, serif" fontSize={14} fontWeight={700} fill="#8953d1">行技脉络</text>
 
-            <RootBox root={layout.roots.inner} label="内功" />
-            <RootBox root={layout.roots.outer} label="外功" />
+            <RootBox root={layout.roots.inner} label="内景" />
+            <RootBox root={layout.roots.outer} label="外景" />
 
             {tier1Inner.map(node => <Connector key={`root-inner-${node.id}`} from={layout.roots.inner} to={layout.positions.get(node.id)!} />)}
             {tier1Outer.map(node => <Connector key={`root-outer-${node.id}`} from={layout.roots.outer} to={layout.positions.get(node.id)!} />)}
@@ -640,7 +740,7 @@ const CATEGORY_META: Record<string, { icon: string; zh: string; en: string }> = 
   command: { icon: "🤖", zh: "统御", en: "Command" },
   knowledge: { icon: "📚", zh: "见闻", en: "Knowledge" },
   health: { icon: "💪", zh: "体魄", en: "Health" },
-  investment: { icon: "💰", zh: "投资", en: "Investment" },
+  investment: { icon: "💰", zh: "财修", en: "Investment" },
   hidden: { icon: "🔮", zh: "奇遇", en: "Hidden" },
 };
 const CATEGORY_ORDER = ["cultivation", "jianghu", "command", "knowledge", "health", "investment", "hidden"];
@@ -674,7 +774,7 @@ function AchievementBadges({ achievements, dark }: { achievements: AchievementDa
                 const border = a.unlocked ? (isSelected ? "rgba(137,83,209,0.46)" : "rgba(137,83,209,0.22)") : (dark ? "rgba(255,255,255,0.08)" : "rgba(70,35,110,0.08)");
                 const bg = a.unlocked ? (dark ? "rgba(137,83,209,0.1)" : "rgba(137,83,209,0.05)") : (dark ? "rgba(255,255,255,0.03)" : "rgba(70,35,110,0.03)");
                 return (
-                  <div key={a.id} onClick={() => setSelected(isSelected ? null : a.id)} style={{ border: `1px solid ${border}`, borderRadius: 16, background: bg, padding: "12px 14px", cursor: "pointer", opacity: a.unlocked ? 1 : 0.7 }}>
+                  <div key={a.id} onClick={() => setSelected(isSelected ? null : a.id)} className={a.unlocked ? "achievement-unlocked" : undefined} style={{ border: `1px solid ${border}`, borderRadius: 16, background: bg, padding: "12px 14px", cursor: "pointer", opacity: a.unlocked ? 1 : 0.7, boxShadow: a.unlocked ? "0 0 0 rgba(137,83,209,0)" : "none", transition: "transform 0.2s ease, box-shadow 0.2s ease" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
                       <span style={{ fontSize: 22, filter: a.unlocked ? "none" : "grayscale(1)" }}>{a.icon}</span>
                       <div style={{ fontFamily: "Georgia, Cambria, serif", fontSize: 12, fontWeight: 700, color: a.unlocked ? (dark ? "#fff" : "#352345") : (dark ? "#a69bb8" : "#8b7999") }}><span className="lang-zh">{a.nameZh}</span><span className="lang-en">{a.nameEn}</span></div>
@@ -705,20 +805,42 @@ function AchievementBadges({ achievements, dark }: { achievements: AchievementDa
 
 function CultivationLog({ activityLog, dark }: { activityLog: PlayerStatsProps["activityLog"]; dark: boolean }) {
   const [showAll, setShowAll] = useState(false);
+  const { ref, inView } = useInView<HTMLDivElement>(0.18);
+  const reducedMotion = usePrefersReducedMotion();
   const visible = showAll ? activityLog : activityLog.slice(0, 10);
   const totalExp = activityLog.reduce((sum, item) => sum + item.exp, 0);
+  const animatedTotalExp = useCountUp(totalExp, 1200, inView);
 
   return (
-    <div>
+    <div ref={ref}>
       <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-        {visible.map((act, i) => (
-          <div key={`${act.dateEn}-${i}`} style={{ display: "grid", gridTemplateColumns: "78px 28px 1fr auto", gap: 10, alignItems: "start", padding: "10px 12px", borderRadius: 14, border: `1px solid ${dark ? "rgba(137,83,209,0.12)" : "rgba(137,83,209,0.1)"}`, background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.58)" }} className="cultivation-row">
-            <div style={{ fontFamily: "monospace", fontSize: 11, color: dark ? "#a69bb8" : "#8b7999" }}><span className="lang-zh">{act.dateZh}</span><span className="lang-en">{act.dateEn}</span></div>
-            <span style={{ fontSize: 16 }}>{act.icon}</span>
-            <p style={{ margin: 0, fontFamily: "Georgia, Cambria, serif", fontSize: 12, lineHeight: 1.5, color: dark ? "#fff" : "#2d203a" }}><span className="lang-zh">{act.descZh}</span><span className="lang-en">{act.descEn}</span></p>
-            <span style={{ fontFamily: "monospace", fontSize: 11, color: "#8953d1", fontWeight: 700, whiteSpace: "nowrap", padding: "3px 8px", borderRadius: 999, border: "1px solid rgba(137,83,209,0.2)", background: dark ? "rgba(137,83,209,0.1)" : "rgba(137,83,209,0.06)" }}>+{act.exp} EXP</span>
-          </div>
-        ))}
+        {visible.map((act, i) => {
+          const entered = reducedMotion || inView;
+          return (
+            <div
+              key={`${act.dateEn}-${i}`}
+              style={{
+                display: "grid",
+                gridTemplateColumns: "78px 28px 1fr auto",
+                gap: 10,
+                alignItems: "start",
+                padding: "10px 12px",
+                borderRadius: 14,
+                border: `1px solid ${dark ? "rgba(137,83,209,0.12)" : "rgba(137,83,209,0.1)"}`,
+                background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.58)",
+                opacity: entered ? 1 : 0,
+                transform: entered ? "translateY(0)" : "translateY(16px)",
+                transition: `opacity 520ms ease ${i * 55}ms, transform 520ms ease ${i * 55}ms`,
+              }}
+              className="cultivation-row"
+            >
+              <div style={{ fontFamily: "monospace", fontSize: 11, color: dark ? "#a69bb8" : "#8b7999" }}><span className="lang-zh">{act.dateZh}</span><span className="lang-en">{act.dateEn}</span></div>
+              <span style={{ fontSize: 16 }}>{act.icon}</span>
+              <p style={{ margin: 0, fontFamily: "Georgia, Cambria, serif", fontSize: 12, lineHeight: 1.5, color: dark ? "#fff" : "#2d203a" }}><span className="lang-zh">{act.descZh}</span><span className="lang-en">{act.descEn}</span></p>
+              <span style={{ fontFamily: "monospace", fontSize: 11, color: "#8953d1", fontWeight: 700, whiteSpace: "nowrap", padding: "3px 8px", borderRadius: 999, border: "1px solid rgba(137,83,209,0.2)", background: dark ? "rgba(137,83,209,0.1)" : "rgba(137,83,209,0.06)" }}>+{act.exp} EXP</span>
+            </div>
+          );
+        })}
       </div>
       {activityLog.length > 10 && (
         <button onClick={() => setShowAll(v => !v)} style={{ marginTop: 12, width: "100%", padding: "10px 16px", borderRadius: 999, border: `1px solid ${dark ? "rgba(137,83,209,0.24)" : "rgba(137,83,209,0.18)"}`, background: "transparent", color: "#8953d1", fontFamily: "Georgia, Cambria, serif", fontSize: 13, cursor: "pointer" }}>
@@ -727,7 +849,7 @@ function CultivationLog({ activityLog, dark }: { activityLog: PlayerStatsProps["
       )}
       <div style={{ marginTop: 14, padding: "12px 14px", borderRadius: 16, border: `1px solid ${dark ? "rgba(137,83,209,0.2)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(137,83,209,0.08)" : "rgba(137,83,209,0.04)", display: "flex", justifyContent: "space-between", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
         <span style={{ fontFamily: "Georgia, Cambria, serif", fontSize: 12, color: dark ? "#bdb4cb" : "#857593" }}><span className="lang-zh">累计修为</span><span className="lang-en">Total Cultivation</span></span>
-        <span style={{ fontFamily: "monospace", fontSize: 15, color: "#8953d1", fontWeight: 800 }}>{totalExp.toLocaleString()} EXP</span>
+        <span style={{ fontFamily: "monospace", fontSize: 15, color: "#8953d1", fontWeight: 800 }}>{animatedTotalExp.toLocaleString()} EXP</span>
       </div>
     </div>
   );
@@ -748,6 +870,8 @@ function SectionHeader({ icon, zh, en, dark }: { icon: string; zh: string; en: s
 
 export default function PlayerStats(props: PlayerStatsProps) {
   const dark = useTheme();
+  const heroReveal = useInView<HTMLDivElement>(0.15);
+  const statsReveal = useInView<HTMLDivElement>(0.2);
   const { stats, level, totalExp, expInLevel, expNeeded, expProgress, rank, currentCity, travelDays, tagCounts, postCount, builderLogCount, cities, achievements, retainers, activityLog } = props;
 
   return (
@@ -777,6 +901,24 @@ export default function PlayerStats(props: PlayerStatsProps) {
           50% { transform: translate3d(18px,-12px,0) scale(1.08); opacity: 0.85; }
         }
         .player-stack { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 1.35rem; }
+        .meridian-flow {
+          animation: meridianFlow 8s linear infinite;
+        }
+        @keyframes meridianFlow {
+          from { stroke-dashoffset: 0; }
+          to { stroke-dashoffset: -72; }
+        }
+        .achievement-unlocked:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 0 18px rgba(137,83,209,0.14);
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .player-shell::before,
+          .player-shell::after,
+          .meridian-flow {
+            animation: none !important;
+          }
+        }
         @media (max-width: 900px) {
           .player-hero-grid { grid-template-columns: 1fr !important; }
           .hero-side-stats { justify-self: stretch !important; min-width: 0 !important; }
@@ -791,39 +933,45 @@ export default function PlayerStats(props: PlayerStatsProps) {
       `}</style>
       <div className="player-shell">
         <div className="player-stack">
-          <DecorativeSection dark={dark}>
-            <HeroCard rank={rank} level={level} totalExp={totalExp} expInLevel={expInLevel} expNeeded={expNeeded} expProgress={expProgress} currentCity={currentCity} travelDays={travelDays} dark={dark} />
-          </DecorativeSection>
+          <div ref={heroReveal.ref}>
+            <DecorativeSection dark={dark} delay={0}>
+              <HeroCard rank={rank} level={level} totalExp={totalExp} expInLevel={expInLevel} expNeeded={expNeeded} expProgress={expProgress} currentCity={currentCity} travelDays={travelDays} dark={dark} animate={heroReveal.inView} />
+            </DecorativeSection>
+          </div>
 
-          <DecorativeSection dark={dark}>
-            <SectionHeader icon="📊" zh="六维属性" en="Six Attributes" dark={dark} />
-            <RadarChart stats={stats} dark={dark} />
-          </DecorativeSection>
+          <div ref={statsReveal.ref}>
+            <DecorativeSection dark={dark} delay={40}>
+              <SectionHeader icon="📊" zh="六维属性" en="Six Attributes" dark={dark} />
+              <RadarChart stats={stats} dark={dark} animate={statsReveal.inView} />
+            </DecorativeSection>
+          </div>
 
-          <DecorativeSection dark={dark}>
+          <DecorativeSection dark={dark} delay={60}>
             <SectionHeader icon="🏯" zh="门客" en="Retainers" dark={dark} />
             <RetainerPanel retainers={retainers} dark={dark} />
           </DecorativeSection>
 
-          <DecorativeSection dark={dark}>
+          <DecorativeSection dark={dark} delay={80}>
             <SectionHeader icon="🌳" zh="技能树" en="Skill Tree" dark={dark} />
             <SkillTree tagCounts={tagCounts} postCount={postCount} builderLogCount={builderLogCount} dark={dark} />
           </DecorativeSection>
 
-          <a href="/travel/" style={{ display: "flex", gap: "1rem", alignItems: "center", justifyContent: "center", padding: "1.1rem 1.5rem", borderRadius: 20, border: `1px solid ${dark ? "rgba(137,83,209,0.24)" : "rgba(137,83,209,0.14)"}`, background: dark ? "linear-gradient(180deg, rgba(22,16,34,0.98), rgba(12,10,24,0.98))" : "linear-gradient(180deg, rgba(255,255,255,0.95), rgba(248,242,255,0.95))", textDecoration: "none", boxShadow: dark ? "0 12px 30px rgba(0,0,0,0.18)" : "0 12px 26px rgba(137,83,209,0.06)" }}>
-            <span style={{ fontSize: 28 }}>🗺️</span>
-            <div>
-              <div style={{ fontFamily: "Georgia, serif", fontSize: 22, fontWeight: 700, color: "#8953d1" }}>{cities.length} <span style={{ fontSize: 14, fontWeight: 400, color: dark ? "#bdb4cb" : "#6f657d" }}><span className="lang-en">cities explored</span><span className="lang-zh">座城市已游历</span></span></div>
-              <div style={{ fontSize: 12, color: dark ? "#a69bb8" : "#8b7999", fontFamily: "Georgia, serif" }}><span className="lang-en">→ Open full travel map</span><span className="lang-zh">→ 查看完整旅居地图</span></div>
-            </div>
-          </a>
+          <DecorativeSection dark={dark} delay={100}>
+            <a href="/travel/" style={{ display: "flex", gap: "1rem", alignItems: "center", justifyContent: "center", padding: "1.1rem 1.5rem", borderRadius: 20, border: `1px solid ${dark ? "rgba(137,83,209,0.24)" : "rgba(137,83,209,0.14)"}`, background: dark ? "linear-gradient(180deg, rgba(22,16,34,0.98), rgba(12,10,24,0.98))" : "linear-gradient(180deg, rgba(255,255,255,0.95), rgba(248,242,255,0.95))", textDecoration: "none", boxShadow: dark ? "0 12px 30px rgba(0,0,0,0.18)" : "0 12px 26px rgba(137,83,209,0.06)" }}>
+              <span style={{ fontSize: 28 }}>🗺️</span>
+              <div>
+                <div style={{ fontFamily: "Georgia, serif", fontSize: 22, fontWeight: 700, color: "#8953d1" }}>{cities.length} <span style={{ fontSize: 14, fontWeight: 400, color: dark ? "#bdb4cb" : "#6f657d" }}><span className="lang-en">cities explored</span><span className="lang-zh">座城市已游历</span></span></div>
+                <div style={{ fontSize: 12, color: dark ? "#a69bb8" : "#8b7999", fontFamily: "Georgia, serif" }}><span className="lang-en">→ Open full travel map</span><span className="lang-zh">→ 查看完整旅居地图</span></div>
+              </div>
+            </a>
+          </DecorativeSection>
 
-          <DecorativeSection dark={dark}>
+          <DecorativeSection dark={dark} delay={120}>
             <SectionHeader icon="🏆" zh="功勋录" en="Achievements" dark={dark} />
             <AchievementBadges achievements={achievements} dark={dark} />
           </DecorativeSection>
 
-          <DecorativeSection dark={dark}>
+          <DecorativeSection dark={dark} delay={140}>
             <SectionHeader icon="📜" zh="修行日志" en="Cultivation Log" dark={dark} />
             <CultivationLog activityLog={activityLog} dark={dark} />
           </DecorativeSection>
