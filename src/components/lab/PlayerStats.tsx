@@ -527,7 +527,7 @@ function SkillBranch({ title, nodes, dark }: { title: string; nodes: Array<{ lab
         const wrapped = node.url ? <a href={node.url} style={{ textDecoration: "none" }}>{innerNode}</a> : innerNode;
         return <div key={node.label} className="skill-row" style={{ display: "grid", gridTemplateColumns: index % 2 === 0 ? "1.1fr 0.9fr" : "0.9fr 1.1fr", gap: 14, alignItems: "center" }}>
           <div className="skill-line-wrap" style={{ position: "relative", height: 2, background: "linear-gradient(90deg, rgba(137,83,209,0.38), rgba(137,83,209,0.06))", overflow: "hidden", borderRadius: 999 }}><span className="skill-line-flow" style={{ position: "absolute", inset: 0, background: "linear-gradient(90deg, transparent, rgba(137,83,209,0.9), transparent)", transform: "translateX(-100%)" }} /></div>
-          <TooltipWrap content={<div>{node.count} 篇相关文章 · Lv.{node.count}</div>} align="center">{wrapped}</TooltipWrap>
+          <TooltipWrap content={<div>{node.desc && <div style={{ marginBottom: 4, color: "#e0d0ff" }}>{node.desc}</div>}<div>{node.count} 篇相关文章 · Lv.{node.count}</div></div>} align="center">{wrapped}</TooltipWrap>
         </div>;
       })}
     </div>
@@ -536,27 +536,27 @@ function SkillBranch({ title, nodes, dark }: { title: string; nodes: Array<{ lab
 
 function SkillTree({ tagCounts, postCount, builderLogCount, dark }: { tagCounts: Record<string, number>; postCount: number; builderLogCount: number; dark: boolean }) {
   const inner = [
-    { label: "天罡战气", count: tagCounts.crypto || 0, url: "/tags/crypto/" },
-    { label: "金蝉脱壳", count: tagCounts.trading || 0 },
-    { label: "飞龙探云手", count: tagCounts.alpha || 0 },
-    { label: "真元护体", count: tagCounts.investment || 0, url: "/tags/investment/" },
-    { label: "五气朝元", count: tagCounts.evergreen || 0, url: "/tags/evergreen/" },
-    { label: "醉仙望月步", count: (tagCounts.investment || 0) + (tagCounts.wealth || 0) },
-    { label: "金刚咒", count: tagCounts.wealth || 0, url: "/tags/wealth/" },
-    { label: "观音咒", count: tagCounts.macro || 0 },
-    { label: "仙风云体术", count: tagCounts.crypto || 0, url: "/tags/crypto/" },
+    { label: "天罡战气", desc: "周期判断 · 顺势而为", count: tagCounts.crypto || 0, url: "/tags/crypto/" },
+    { label: "金蝉脱壳", desc: "盈亏同源 · 全身而退", count: tagCounts.trading || 0 },
+    { label: "飞龙探云手", desc: "买预期卖事实 · 先人一步", count: tagCounts.alpha || 0 },
+    { label: "真元护体", desc: "价值投资 · 守护本金", count: tagCounts.investment || 0, url: "/tags/investment/" },
+    { label: "五气朝元", desc: "复利之道 · 累积回报", count: tagCounts.evergreen || 0, url: "/tags/evergreen/" },
+    { label: "醉仙望月步", desc: "长期主义 · 耐心换双倍", count: (tagCounts.investment || 0) + (tagCounts.wealth || 0) },
+    { label: "金刚咒", desc: "风控心法 · 铜墙铁壁", count: tagCounts.wealth || 0, url: "/tags/wealth/" },
+    { label: "观音咒", desc: "洞察对手 · 研究对手盘", count: tagCounts.macro || 0 },
+    { label: "仙风云体术", desc: "逍遥心法 · 去中心化信仰", count: tagCounts.crypto || 0, url: "/tags/crypto/" },
   ];
   const outer = [
-    { label: "御剑术", count: postCount, url: "/posts/" },
-    { label: "尘世篇", count: tagCounts.life || 0, url: "/tags/life/" },
-    { label: "人物志", count: tagCounts.people || 0, url: "/tags/people/" },
-    { label: "万剑诀", count: tagCounts.evergreen || 0, url: "/tags/evergreen/" },
-    { label: "天剑", count: tagCounts.ai || 0, url: "/tags/ai/" },
-    { label: "剑神", count: tagCounts["vibe coding"] || tagCounts.ai || 0, url: "/tags/ai/" },
-    { label: "灵葫咒", count: builderLogCount, url: "/builder-log/" },
-    { label: "凝神归元", count: tagCounts.travel || 0, url: "/tags/travel/" },
-    { label: "游方篇", count: tagCounts.travel || 0, url: "/tags/travel/" },
-    { label: "仙风云体术", count: tagCounts.travel || 0 },
+    { label: "御剑术", desc: "写作 · 第一把剑", count: postCount, url: "/posts/" },
+    { label: "尘世篇", desc: "生活随笔 · 人间烟火", count: tagCounts.life || 0, url: "/tags/life/" },
+    { label: "人物志", desc: "人物列传 · 记录启发者", count: tagCounts.people || 0, url: "/tags/people/" },
+    { label: "万剑诀", desc: "常青内容 · 经久不衰", count: tagCounts.evergreen || 0, url: "/tags/evergreen/" },
+    { label: "天剑", desc: "编程 · 最强武器", count: tagCounts.ai || 0, url: "/tags/ai/" },
+    { label: "剑神", desc: "AI 编程 · 终极技能", count: tagCounts["vibe coding"] || tagCounts.ai || 0, url: "/tags/ai/" },
+    { label: "灵葫咒", desc: "御灵术 · 驾驭 Agent", count: builderLogCount, url: "/builder-log/" },
+    { label: "凝神归元", desc: "旅行 · 修复与充电", count: tagCounts.travel || 0, url: "/tags/travel/" },
+    { label: "游方篇", desc: "旅居记录 · 行走江湖", count: tagCounts.travel || 0, url: "/tags/travel/" },
+    { label: "仙风云体术", desc: "数字游牧 · 身法如风", count: tagCounts.travel || 0 },
   ];
 
   return <div style={{ display: "grid", gap: 14 }}>
