@@ -392,12 +392,12 @@ function RadarChart({ stats, dark, animate }: { stats: PlayerStatsProps["stats"]
   const cy = size / 2;
   const maxR = 102;
   const axes = [
-    { key: "vitality", zh: "体魄", en: "Vitality", angle: -90 },
-    { key: "wisdom", zh: "悟性", en: "Wisdom", angle: -30 },
-    { key: "craft", zh: "机巧", en: "Craft", angle: 30 },
+    { key: "vitality", zh: "体力", en: "HP", angle: -90 },
+    { key: "wisdom", zh: "灵力", en: "Spirit", angle: -30 },
+    { key: "craft", zh: "武术", en: "Martial", angle: 30 },
     { key: "command", zh: "统御", en: "Command", angle: 90 },
     { key: "renown", zh: "声望", en: "Renown", angle: 150 },
-    { key: "insight", zh: "见闻", en: "Insight", angle: 210 },
+    { key: "insight", zh: "身法", en: "Agility", angle: 210 },
   ] as const;
 
   const statFormulas: Record<string, { zh: string; en: string }> = {
@@ -588,28 +588,28 @@ function SkillTree({ tagCounts, postCount, builderLogCount, dark }: {
   const reducedMotion = usePrefersReducedMotion();
 
   const innerNodes: SkillNode[] = [
-    { id: "i-1", group: "inner", tier: 1, row: 0, label: "太虚观势", count: tagCounts.crypto || 0, url: "/tags/crypto/" },
-    { id: "i-2", group: "inner", tier: 2, row: 0, label: "盈虚同源", count: tagCounts.trading || 0 },
-    { id: "i-3", group: "inner", tier: 2, row: 1, label: "先机落子", count: tagCounts.alpha || 0 },
-    { id: "i-4", group: "inner", tier: 1, row: 2, label: "长青道藏", count: tagCounts.investment || 0, url: "/tags/investment/" },
-    { id: "i-5", group: "inner", tier: 2, row: 2, label: "复利真诀", count: tagCounts.evergreen || 0, url: "/tags/evergreen/" },
-    { id: "i-6", group: "inner", tier: 2, row: 3, label: "久炼归一", count: (tagCounts.investment || 0) + (tagCounts.wealth || 0) },
-    { id: "i-7", group: "inner", tier: 1, row: 4, label: "止损心印", count: tagCounts.wealth || 0, url: "/tags/wealth/" },
-    { id: "i-8", group: "inner", tier: 2, row: 4, label: "对局照影", count: tagCounts.macro || 0 },
-    { id: "i-9", group: "inner", tier: 2, row: 5, label: "无界归流", count: tagCounts.crypto || 0, url: "/tags/crypto/" },
+    { id: "i-1", group: "inner", tier: 1, row: 0, label: "周期心法", count: tagCounts.crypto || 0, url: "/tags/crypto/" },
+    { id: "i-2", group: "inner", tier: 2, row: 0, label: "盈亏同源", count: tagCounts.trading || 0 },
+    { id: "i-3", group: "inner", tier: 2, row: 1, label: "先知先觉", count: tagCounts.alpha || 0 },
+    { id: "i-4", group: "inner", tier: 1, row: 2, label: "价值心法", count: tagCounts.investment || 0, url: "/tags/investment/" },
+    { id: "i-5", group: "inner", tier: 2, row: 2, label: "复利之道", count: tagCounts.evergreen || 0, url: "/tags/evergreen/" },
+    { id: "i-6", group: "inner", tier: 2, row: 3, label: "长期主义", count: (tagCounts.investment || 0) + (tagCounts.wealth || 0) },
+    { id: "i-7", group: "inner", tier: 1, row: 4, label: "真元护体", count: tagCounts.wealth || 0, url: "/tags/wealth/" },
+    { id: "i-8", group: "inner", tier: 2, row: 4, label: "读心术", count: tagCounts.macro || 0 },
+    { id: "i-9", group: "inner", tier: 2, row: 5, label: "逍遥心法", count: tagCounts.crypto || 0, url: "/tags/crypto/" },
   ];
 
   const outerNodes: SkillNode[] = [
-    { id: "o-1", group: "outer", tier: 1, row: 0, label: "文心剑诀", count: postCount, url: "/posts/" },
-    { id: "o-2", group: "outer", tier: 2, row: 0, label: "烟火人间", count: tagCounts.life || 0, url: "/tags/life/" },
-    { id: "o-3", group: "outer", tier: 2, row: 1, label: "群侠录", count: tagCounts.people || 0, url: "/tags/people/" },
-    { id: "o-4", group: "outer", tier: 2, row: 2, label: "不凋卷", count: tagCounts.evergreen || 0, url: "/tags/evergreen/" },
-    { id: "o-5", group: "outer", tier: 1, row: 3, label: "机关百炼", count: tagCounts.ai || 0, url: "/tags/ai/" },
-    { id: "o-6", group: "outer", tier: 2, row: 3, label: "灵感铸式", count: tagCounts["vibe coding"] || tagCounts.ai || 0, url: "/tags/ai/" },
-    { id: "o-7", group: "outer", tier: 2, row: 4, label: "傀儡阵图", count: builderLogCount, url: "/builder-log/" },
-    { id: "o-8", group: "outer", tier: 1, row: 5, label: "踏云行", count: tagCounts.travel || 0, url: "/tags/travel/" },
-    { id: "o-9", group: "outer", tier: 2, row: 5, label: "山海寄居", count: tagCounts.travel || 0, url: "/tags/travel/" },
-    { id: "o-10", group: "outer", tier: 2, row: 6, label: "天涯游修", count: tagCounts.travel || 0 },
+    { id: "o-1", group: "outer", tier: 1, row: 0, label: "御剑·写作", count: postCount, url: "/posts/" },
+    { id: "o-2", group: "outer", tier: 2, row: 0, label: "尘世游记", count: tagCounts.life || 0, url: "/tags/life/" },
+    { id: "o-3", group: "outer", tier: 2, row: 1, label: "人物列传", count: tagCounts.people || 0, url: "/tags/people/" },
+    { id: "o-4", group: "outer", tier: 2, row: 2, label: "长青秘籍", count: tagCounts.evergreen || 0, url: "/tags/evergreen/" },
+    { id: "o-5", group: "outer", tier: 1, row: 3, label: "天工·编程", count: tagCounts.ai || 0, url: "/tags/ai/" },
+    { id: "o-6", group: "outer", tier: 2, row: 3, label: "灵犀一指", count: tagCounts["vibe coding"] || tagCounts.ai || 0, url: "/tags/ai/" },
+    { id: "o-7", group: "outer", tier: 2, row: 4, label: "御灵术", count: builderLogCount, url: "/builder-log/" },
+    { id: "o-8", group: "outer", tier: 1, row: 5, label: "踏雪·探索", count: tagCounts.travel || 0, url: "/tags/travel/" },
+    { id: "o-9", group: "outer", tier: 2, row: 5, label: "游方记", count: tagCounts.travel || 0, url: "/tags/travel/" },
+    { id: "o-10", group: "outer", tier: 2, row: 6, label: "仙风云体", count: tagCounts.travel || 0 },
   ];
 
   const layout = useMemo(() => {
@@ -624,8 +624,8 @@ function SkillTree({ tagCounts, postCount, builderLogCount, dark }: {
     const rowGap = 74;
 
     const roots = {
-      inner: { x: tierX.root, y: 214, w: rootW, h: rootH, label: "内景" },
-      outer: { x: tierX.root, y: 600, w: rootW, h: rootH, label: "外景" },
+      inner: { x: tierX.root, y: 214, w: rootW, h: rootH, label: "内功心法" },
+      outer: { x: tierX.root, y: 600, w: rootW, h: rootH, label: "外功仙术" },
     };
 
     const positions = new Map<string, { x: number; y: number; w: number; h: number }>();
@@ -705,8 +705,8 @@ function SkillTree({ tagCounts, postCount, builderLogCount, dark }: {
             <text x={78} y={84} fontFamily="Georgia, Cambria, serif" fontSize={14} fontWeight={700} fill="#8953d1">道心脉络</text>
             <text x={78} y={470} fontFamily="Georgia, Cambria, serif" fontSize={14} fontWeight={700} fill="#8953d1">行技脉络</text>
 
-            <RootBox root={layout.roots.inner} label="内景" />
-            <RootBox root={layout.roots.outer} label="外景" />
+            <RootBox root={layout.roots.inner} label="内功心法" />
+            <RootBox root={layout.roots.outer} label="外功仙术" />
 
             {tier1Inner.map(node => <Connector key={`root-inner-${node.id}`} from={layout.roots.inner} to={layout.positions.get(node.id)!} />)}
             {tier1Outer.map(node => <Connector key={`root-outer-${node.id}`} from={layout.roots.outer} to={layout.positions.get(node.id)!} />)}
@@ -738,8 +738,8 @@ const CATEGORY_META: Record<string, { icon: string; zh: string; en: string }> = 
   cultivation: { icon: "🗡️", zh: "修行", en: "Cultivation" },
   jianghu: { icon: "🌍", zh: "江湖", en: "Exploration" },
   command: { icon: "🤖", zh: "统御", en: "Command" },
-  knowledge: { icon: "📚", zh: "见闻", en: "Knowledge" },
-  health: { icon: "💪", zh: "体魄", en: "Health" },
+  knowledge: { icon: "📚", zh: "身法", en: "Knowledge" },
+  health: { icon: "💪", zh: "体力", en: "Health" },
   investment: { icon: "💰", zh: "财修", en: "Investment" },
   hidden: { icon: "🔮", zh: "奇遇", en: "Hidden" },
 };

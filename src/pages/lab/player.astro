@@ -72,11 +72,11 @@ const avgStat = Math.round((vitality + wisdom + renown + command + craft + insig
 
 // ─── Rank ──────────────────────────────────────────────────────────────────
 function getRank(avg: number): { zh: string; en: string } {
-  if (avg >= 81) return { zh: "化神期", en: "Spirit Severing" };
-  if (avg >= 61) return { zh: "元婴期", en: "Nascent Soul" };
-  if (avg >= 41) return { zh: "金丹期", en: "Golden Core" };
-  if (avg >= 21) return { zh: "筑基期", en: "Foundation Establishment" };
-  return { zh: "练气期", en: "Qi Refining" };
+  if (avg >= 81) return { zh: "蜀山掌门", en: "Grandmaster" };
+  if (avg >= 61) return { zh: "一代侠客", en: "Hero" };
+  if (avg >= 41) return { zh: "蜀山弟子", en: "Shushan Disciple" };
+  if (avg >= 21) return { zh: "仗剑天涯", en: "Swordsman" };
+  return { zh: "初出茅庐", en: "Wanderer" };
 }
 const rank = getRank(avgStat);
 
@@ -297,13 +297,13 @@ const achievements: AchievementItem[] = [
 ];
 
 const agentMeta: Record<string, { emoji: string; titleZh: string; titleEn: string; sprite: string }> = {
-  main:       { emoji: "🧡", titleZh: "护法", titleEn: "Guardian", sprite: "/assets/pixel-office/avatars/avatar_0.png" },
-  writer:     { emoji: "🐍", titleZh: "翰林", titleEn: "Hanlin", sprite: "/assets/pixel-office/avatars/avatar_1.png" },
-  researcher: { emoji: "👁️", titleZh: "探花", titleEn: "Scout Laureate", sprite: "/assets/pixel-office/avatars/avatar_2.png" },
-  coder:      { emoji: "⚙️", titleZh: "铸器师", titleEn: "Artificer", sprite: "/assets/pixel-office/avatars/avatar_3.png" },
-  designer:   { emoji: "🎨", titleZh: "丹青手", titleEn: "Painter", sprite: "/assets/pixel-office/avatars/avatar_4.png" },
-  artist:     { emoji: "🎨", titleZh: "丹青手", titleEn: "Painter", sprite: "/assets/pixel-office/avatars/avatar_4.png" },
-  analyst:    { emoji: "📊", titleZh: "天机阁主", titleEn: "Master of Tianji", sprite: "/assets/pixel-office/avatars/avatar_5.png" },
+  main:       { emoji: "🧡", titleZh: "军师", titleEn: "Strategist", sprite: "/assets/pixel-office/avatars/avatar_0.png" },
+  writer:     { emoji: "🐍", titleZh: "剑侠", titleEn: "Swordsman", sprite: "/assets/pixel-office/avatars/avatar_1.png" },
+  researcher: { emoji: "👁️", titleZh: "斥候", titleEn: "Scout", sprite: "/assets/pixel-office/avatars/avatar_2.png" },
+  coder:      { emoji: "⚙️", titleZh: "铸剑师", titleEn: "Swordsmith", sprite: "/assets/pixel-office/avatars/avatar_3.png" },
+  designer:   { emoji: "🎨", titleZh: "丹青", titleEn: "Painter", sprite: "/assets/pixel-office/avatars/avatar_4.png" },
+  artist:     { emoji: "🎨", titleZh: "丹青", titleEn: "Painter", sprite: "/assets/pixel-office/avatars/avatar_4.png" },
+  analyst:    { emoji: "📊", titleZh: "账房", titleEn: "Keeper", sprite: "/assets/pixel-office/avatars/avatar_5.png" },
 };
 
 const rawAgents = (agentWorkload as any).agents as Array<{
@@ -360,7 +360,7 @@ for (const post of posts) {
   const { dateZh, dateEn } = fmtDate(d);
   allActivity.push({
     dateRaw: d, dateZh, dateEn,
-    icon: "✍️", statZh: "悟性", statEn: "Wisdom", exp: 10,
+    icon: "✍️", statZh: "灵力", statEn: "Spirit", exp: 10,
     descZh: `著文《${post.data.title}》`, descEn: `Published \"${post.data.title}\"`,
     type: "post",
   });
@@ -371,7 +371,7 @@ for (const log of builderLogs) {
   const { dateZh, dateEn } = fmtDate(d);
   allActivity.push({
     dateRaw: d, dateZh, dateEn,
-    icon: "🛠️", statZh: "机巧", statEn: "Craft", exp: 8,
+    icon: "🛠️", statZh: "武术", statEn: "Martial", exp: 8,
     descZh: log.data.title_zh ?? log.data.title, descEn: log.data.title,
     type: "builder-log",
   });
@@ -382,7 +382,7 @@ for (const digest of digests) {
   const { dateZh, dateEn } = fmtDate(d);
   allActivity.push({
     dateRaw: d, dateZh, dateEn,
-    icon: "📜", statZh: "见闻", statEn: "Insight", exp: 2,
+    icon: "📜", statZh: "身法", statEn: "Agility", exp: 2,
     descZh: digest.data.title_zh ?? digest.data.title, descEn: digest.data.title,
     type: "digest",
   });
@@ -394,6 +394,7 @@ const activityForClient = allActivity.map(({ dateRaw, ...rest }) => rest);
 const meta = {
   title: "Player Stats — Rex's Open-World Cultivation Dashboard",
   description: "A live player-stats page for Rex Liu, translating real content, travel, projects, and agent activity into an open-world cultivation dashboard.",
+  ogImage: "/social-card-v2.png?v=20260331b",
 };
 ---
 
