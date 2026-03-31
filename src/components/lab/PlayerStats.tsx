@@ -82,6 +82,10 @@ export interface RelationshipData {
   roleEN: string;
   impactCN: string;
   impactEN: string;
+  avatar?: string | null;
+  link?: string | null;
+  platformCN?: string | null;
+  platformEN?: string | null;
   article: string | null;
 }
 
@@ -439,18 +443,22 @@ const ChapterCarousel = memo(function ChapterCarousel({ chapters, dark }: { chap
 const StatRadar = memo(function StatRadar({ stats, statFormulas, dark }: { stats: PlayerStatsProps["stats"]; statFormulas: Record<string, StatFormulaData>; dark: boolean }) {
   const { ref, inView } = useInView<HTMLDivElement>(0.24, false);
   const animatedValues = STAT_META.map(({ key }) => useCountUp(stats[key], 900, inView));
-  const size = 360;
+  const size = 396;
   const center = size / 2;
-  const radius = 116;
+  const radius = 128;
   const rings = [20, 40, 60, 80];
   const points = STAT_META.map((meta, index) => {
     const angle = -Math.PI / 2 + (Math.PI * 2 * index) / STAT_META.length;
     const value = animatedValues[index] ?? 0;
     const x = center + Math.cos(angle) * radius * (value / 100);
     const y = center + Math.sin(angle) * radius * (value / 100);
-    const lx = center + Math.cos(angle) * (radius + 28);
-    const ly = center + Math.sin(angle) * (radius + 28);
-    return { ...meta, angle, value, x, y, lx, ly, formula: statFormulas[meta.key] };
+    const labelRadius = radius + 72;
+    const lx = center + Math.cos(angle) * labelRadius;
+    const ly = center + Math.sin(angle) * labelRadius;
+    const labelAlign = Math.abs(Math.cos(angle)) < 0.24 ? "center" : Math.cos(angle) > 0 ? "left" : "right";
+    const labelTranslateX = labelAlign === "center" ? "-50%" : labelAlign === "left" ? "0" : "-100%";
+    const labelTranslateY = Math.abs(Math.sin(angle)) > 0.9 ? (Math.sin(angle) > 0 ? "-10%" : "-92%") : "-50%";
+    return { ...meta, angle, value, x, y, lx, ly, labelAlign, labelTranslateX, labelTranslateY, formula: statFormulas[meta.key] };
   });
   const polygon = points.map(point => `${point.x},${point.y}`).join(" ");
 
@@ -461,9 +469,9 @@ const StatRadar = memo(function StatRadar({ stats, statFormulas, dark }: { stats
     return `${x},${y}`;
   }).join(" ");
 
-  return <div ref={ref} className={`radar-wrap ${inView ? "is-active" : ""}`} style={{ display: "grid", gridTemplateColumns: "minmax(0, 420px) minmax(0, 1fr)", gap: 18, alignItems: "center" }}>
-    <div style={{ display: "grid", placeItems: "center" }}>
-      <svg viewBox={`0 0 ${size} ${size}`} style={{ width: "100%", maxWidth: 360, display: "block", overflow: "visible" }}>
+  return <div ref={ref} className={`radar-wrap ${inView ? "is-active" : ""}`} style={{ display: "grid", placeItems: "center" }}>
+    <div style={{ position: "relative", width: "100%", maxWidth: 396, minHeight: 396, margin: "0 auto" }}>
+      <svg viewBox={`0 0 ${size} ${size}`} style={{ width: "100%", maxWidth: 396, display: "block", margin: "0 auto", overflow: "visible" }}>
         {rings.map(ring => <polygon key={ring} points={ringPolygon(ring / 100)} fill="none" stroke={dark ? "rgba(137,83,209,0.2)" : "rgba(137,83,209,0.16)"} strokeWidth={1} />)}
         {STAT_META.map((_, index) => {
           const angle = -Math.PI / 2 + (Math.PI * 2 * index) / STAT_META.length;
@@ -472,20 +480,13 @@ const StatRadar = memo(function StatRadar({ stats, statFormulas, dark }: { stats
           return <line key={index} x1={center} y1={center} x2={x} y2={y} stroke={dark ? "rgba(137,83,209,0.16)" : "rgba(137,83,209,0.12)"} strokeWidth={1} />;
         })}
         <polygon points={polygon} fill="rgba(137,83,209,0.3)" stroke={PURPLE} strokeWidth={2.2} />
-        {points.map(point => <TooltipWrap key={point.key} content={<><div className="lang-zh">{point.formula?.formulaZh ?? `${point.zh} 公式暂缺`}</div><div className="lang-en" style={{ color: "#ccb7f7" }}>{point.formula?.formulaEn ?? `${point.en} formula pending`}</div><div style={{ marginTop: 6, color: "#fff" }}><span className="lang-zh">数据源：Player Stats / 实时聚合</span><span className="lang-en">Source: Player Stats / live aggregate</span></div></>} align="center"><g><circle cx={point.x} cy={point.y} r={6} fill={PURPLE} stroke={dark ? "#110d1b" : "#fff"} strokeWidth={2} />
-          <text x={point.lx} y={point.ly - 4} textAnchor="middle" fill={dark ? "#f3ebff" : "#261a33"} style={{ fontFamily: 'Georgia, Cambria, serif', fontSize: 14, fontWeight: 700 }}>{point.zh}</text>
-          <text x={point.lx} y={point.ly + 12} textAnchor="middle" fill={dark ? "#c9bddc" : "#7a6d89"} style={{ fontFamily: 'monospace', fontSize: 10 }}>{point.en}</text></g></TooltipWrap>)}
+        {points.map(point => <TooltipWrap key={point.key} content={<><div className="lang-zh">{point.formula?.formulaZh ?? `${point.zh} 公式暂缺`}</div><div className="lang-en" style={{ color: "#ccb7f7" }}>{point.formula?.formulaEn ?? `${point.en} formula pending`}</div><div style={{ marginTop: 6, color: "#fff" }}><span className="lang-zh">数据源：Player Stats / 实时聚合</span><span className="lang-en">Source: Player Stats / live aggregate</span></div></>} align="center"><g><circle cx={point.x} cy={point.y} r={6} fill={PURPLE} stroke={dark ? "#110d1b" : "#fff"} strokeWidth={2} /></g></TooltipWrap>)}
         <circle cx={center} cy={center} r={4} fill={PURPLE} />
       </svg>
-    </div>
-    <div className="stats-grid" style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 12 }}>
-      {points.map(point => <TooltipWrap key={point.key} content={<><div className="lang-zh">{point.formula?.formulaZh}</div><div className="lang-en" style={{ color: "#ccb7f7" }}>{point.formula?.formulaEn}</div><div style={{ marginTop: 6, color: "#fff" }}><span className="lang-zh">数据源：聚合 Player Stats</span><span className="lang-en">Source: aggregated Player Stats</span></div></>}><div style={{ borderRadius: 16, padding: "14px 16px", border: `1px solid ${dark ? "rgba(137,83,209,0.16)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.68)" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", gap: 10, alignItems: "center" }}>
-          <div style={{ color: dark ? "#fff" : "#261a33", fontFamily: "Georgia, Cambria, serif", fontWeight: 700 }}>{point.zh} <span style={{ fontSize: 11, color: dark ? "#9f93b1" : "#8a7b97" }}>/ {point.en}</span></div>
-          <div style={{ color: PURPLE, fontFamily: "monospace", fontWeight: 700 }}>{Math.round(point.value)}</div>
-        </div>
-        <div style={{ marginTop: 10, height: 8, borderRadius: 999, overflow: "hidden", background: dark ? "rgba(255,255,255,0.05)" : "rgba(60,20,90,0.06)" }}><div style={{ width: `${Math.round(point.value)}%`, height: "100%", background: `linear-gradient(90deg, ${PURPLE}, rgba(137,83,209,0.56))` }} /></div>
-      </div></TooltipWrap>)}
+      {points.map(point => <div key={`${point.key}-label`} style={{ position: "absolute", left: point.lx, top: point.ly, transform: `translate(${point.labelTranslateX}, ${point.labelTranslateY})`, textAlign: point.labelAlign === "center" ? "center" : point.labelAlign === "left" ? "left" : "right", minWidth: 110, pointerEvents: "none" }}>
+        <div className="lang-zh" style={{ color: dark ? "#f3ebff" : "#261a33", fontSize: 14, fontWeight: 700, lineHeight: 1.2, whiteSpace: "nowrap" }}>{point.zh} <span style={{ color: PURPLE, fontFamily: "monospace" }}>{Math.round(point.value)}</span></div>
+        <div className="lang-en" style={{ color: dark ? "#c9bddc" : "#7a6d89", fontSize: 12, lineHeight: 1.2, whiteSpace: "nowrap" }}>{point.en} <span style={{ color: PURPLE, fontFamily: "monospace" }}>{Math.round(point.value)}</span></div>
+      </div>)}
     </div>
   </div>;
 });
@@ -605,12 +606,12 @@ function buildSkillTreeLayout(rootLabel: string, groups: SkillGroup[]) {
   const rootWidth = 152;
   const branchWidth = 140;
   const leafWidth = 158;
-  const nodeHeight = 44;
+  const nodeHeight = 54;
   const rootX = 20;
   const branchX = 270;
   const leafX = 520;
-  const sectionGap = 34;
-  const leafGap = 56;
+  const sectionGap = 44;
+  const leafGap = 68;
 
   let cursorY = 26;
   const branchCenters: number[] = [];
@@ -735,8 +736,11 @@ const SkillTreePanel = memo(function SkillTreePanel({ title, subtitle, rootLabel
           const countColor = active ? PURPLE : (dark ? "#7e758d" : "#93889f");
           const body = <g className={`skill-tree-node ${active ? "is-active" : "is-dim"} ${node.url ? "is-link" : ""}`} onMouseEnter={() => setHoveredId(node.id)} onMouseLeave={() => setHoveredId(current => current === node.id ? null : current)}>
             <rect x={node.x} y={node.y} rx={16} ry={16} width={node.width} height={node.height} fill={cardFill} stroke={border} strokeWidth={active ? 1.3 : 1.1} />
-            <text x={node.x + 14} y={node.y + 20} fill={labelColor} style={{ fontSize: node.depth === 0 ? 14 : 13, fontWeight: 700, fontFamily: 'Georgia, Cambria, serif', pointerEvents: 'none' }}>{node.label}</text>
-            <text x={node.x + 14} y={node.y + node.height - 12} fill={countColor} style={{ fontSize: 11, fontFamily: 'monospace', pointerEvents: 'none' }}>{node.depth === 0 ? `TOTAL ${node.count}` : `${node.count} 篇 · Lv.${node.count}`}</text>
+            <text x={node.x + 14} y={node.y + 18} fill={labelColor} style={{ fontSize: node.depth === 0 ? 14 : 13, fontWeight: 700, fontFamily: 'Georgia, Cambria, serif', pointerEvents: 'none' }}>
+              <tspan x={node.x + 14} dy="0.95em">{node.label}</tspan>
+              <tspan x={node.x + 14} dy="1.15em" fill={dark ? "#a895c4" : "#7a6d89"} style={{ fontSize: 10.5, fontFamily: 'system-ui, sans-serif', fontWeight: 500 }}>{node.desc}</tspan>
+            </text>
+            <text x={node.x + 14} y={node.y + node.height - 10} fill={countColor} style={{ fontSize: 11, fontFamily: 'monospace', pointerEvents: 'none' }}>{node.depth === 0 ? `TOTAL ${node.count}` : `${node.count} 篇 · Lv.${node.count}`}</text>
             {isHovered && node.depth !== 0 && <g style={{ pointerEvents: 'none' }}>
               <rect x={Math.min(node.x + node.width + 12, layout.width - 248)} y={Math.max(node.y - 10, 10)} width={236} height={70} rx={14} ry={14} fill="rgba(12,10,20,0.98)" stroke="rgba(137,83,209,0.34)" strokeWidth={1.1} />
               <text x={Math.min(node.x + node.width + 26, layout.width - 234)} y={Math.max(node.y + 12, 24)} fill="#f5efff" style={{ fontSize: 12, fontFamily: 'Georgia, Cambria, serif' }}>{node.desc}</text>
@@ -798,8 +802,40 @@ const SkillTree = memo(function SkillTree({ tagCounts, postCount, builderLogCoun
 
 const RelationshipPanel = memo(function RelationshipPanel({ relationships, dark }: { relationships: RelationshipData[]; dark: boolean }) {
   return <div className="relationship-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 12 }}>{relationships.map(item => {
-    const card = <div className="relationship-card" style={{ borderRadius: 18, padding: 16, border: `1px solid ${dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.72)", transition: "transform 180ms ease, box-shadow 180ms ease", willChange: "transform" }}><div style={{ display: "flex", justifyContent: "space-between", gap: 10, alignItems: "center" }}><div style={{ color: dark ? "#fff" : "#261a33", fontWeight: 700 }}>{item.nameCN}</div><span style={{ color: PURPLE, fontSize: 11, padding: "4px 8px", borderRadius: 999, border: "1px solid rgba(137,83,209,0.16)" }}>{item.roleCN}</span></div><p style={{ margin: "10px 0 0", color: dark ? "#d3cae0" : "#6f657d", fontSize: 13, lineHeight: 1.65 }}>{item.impactCN}</p>{item.article && <div style={{ marginTop: 10, color: PURPLE, fontFamily: "monospace", fontSize: 11 }}>↗ /posts/{item.article}/</div>}</div>;
-    return item.article ? <a key={item.id} href={`/posts/${item.article}/`} style={{ textDecoration: "none" }}>{card}</a> : <div key={item.id}>{card}</div>;
+    const hasExternal = Boolean(item.link);
+    const card = <div
+      className={`relationship-card ${hasExternal ? "is-clickable" : ""}`}
+      role={hasExternal ? "link" : undefined}
+      tabIndex={hasExternal ? 0 : undefined}
+      onClick={hasExternal ? () => window.open(item.link!, "_blank", "noopener,noreferrer") : undefined}
+      onKeyDown={hasExternal ? event => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          window.open(item.link!, "_blank", "noopener,noreferrer");
+        }
+      } : undefined}
+      style={{ borderRadius: 18, padding: 16, border: `1px solid ${dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.72)", transition: "transform 180ms ease, box-shadow 180ms ease", willChange: "transform", display: "grid", gap: 12 }}
+    >
+      <div style={{ display: "grid", gridTemplateColumns: "48px 1fr", gap: 12, alignItems: "center" }}>
+        <img src={item.avatar || "/images/rex-avatar.png"} alt={item.nameEN || item.nameCN} width={48} height={48} style={{ width: 48, height: 48, borderRadius: "50%", objectFit: "cover", border: `2px solid ${PURPLE}`, background: dark ? "rgba(137,83,209,0.08)" : "rgba(137,83,209,0.05)" }} />
+        <div style={{ minWidth: 0 }}>
+          <div className="lang-zh" style={{ color: dark ? "#fff" : "#261a33", fontWeight: 700, lineHeight: 1.2 }}>{item.nameCN}</div>
+          <div className="lang-en" style={{ color: dark ? "#fff" : "#261a33", fontWeight: 700, lineHeight: 1.2 }}>{item.nameEN}</div>
+          <div className="lang-zh" style={{ marginTop: 4, color: dark ? "#c9bddc" : "#7a6d89", fontSize: 12 }}>{item.roleCN}</div>
+          <div className="lang-en" style={{ marginTop: 4, color: dark ? "#c9bddc" : "#7a6d89", fontSize: 12 }}>{item.roleEN}</div>
+          {!!item.platformCN && <div className="lang-zh" style={{ marginTop: 4, color: PURPLE, fontSize: 11, fontFamily: "monospace" }}>{item.platformCN}</div>}
+          {!!item.platformEN && <div className="lang-en" style={{ marginTop: 4, color: PURPLE, fontSize: 11, fontFamily: "monospace" }}>{item.platformEN}</div>}
+        </div>
+      </div>
+      <div>
+        <div className="lang-zh" style={{ color: dark ? "#d3cae0" : "#6f657d", fontSize: 13, lineHeight: 1.65 }}>{item.impactCN}</div>
+        <div className="lang-en" style={{ color: dark ? "#d3cae0" : "#6f657d", fontSize: 13, lineHeight: 1.65 }}>{item.impactEN}</div>
+      </div>
+      {item.article && <div style={{ paddingTop: 8, borderTop: `1px solid ${dark ? "rgba(137,83,209,0.12)" : "rgba(137,83,209,0.08)"}` }}>
+        <a href={`/posts/${item.article}/`} onClick={event => event.stopPropagation()} style={{ color: PURPLE, fontFamily: "monospace", fontSize: 11, textDecoration: "none" }}>↗ /posts/{item.article}/</a>
+      </div>}
+    </div>;
+    return <div key={item.id}>{card}</div>;
   })}</div>;
 });
 
@@ -887,6 +923,7 @@ export default function PlayerStats(props: PlayerStatsProps) {
       .skill-tree-node:hover { transform: translateY(-2px) scale(1.01); }
       .skill-tree-flow { stroke-dasharray: 16 164; animation: lineFlow 4.2s linear infinite; }
       .relationship-card:hover { transform: translateY(-4px); box-shadow: 0 10px 18px rgba(137,83,209,0.1); }
+      .relationship-card.is-clickable { cursor: pointer; }
       @media (max-width: 960px) {
         .hero-grid { grid-template-columns: 1fr !important; }
         .hero-side { min-width: 0 !important; }

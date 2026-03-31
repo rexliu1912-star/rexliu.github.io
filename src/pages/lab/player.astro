@@ -276,7 +276,20 @@ const meta = {
     equipment={journey.equipment}
     activityLog={activityForClient}
     chapters={journey.chapters}
-    relationships={journey.relationships}
+    relationships={(journey.relationships ?? []).map((item: any) => ({
+      id: item.id,
+      nameCN: item.nameCN,
+      nameEN: item.nameEN,
+      roleCN: item.roleCN,
+      roleEN: item.roleEN,
+      impactCN: item.impactCN,
+      impactEN: item.impactEN,
+      article: item.article ?? null,
+      avatar: item.avatar ?? null,
+      link: item.link ?? null,
+      platformCN: item.platformCN ?? null,
+      platformEN: item.platformEN ?? null,
+    }))}
     statFormulas={statFormulas}
     expFormula={expFormula}
     levelFormula={levelFormula}
