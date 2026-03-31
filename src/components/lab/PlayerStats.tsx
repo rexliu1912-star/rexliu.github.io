@@ -400,7 +400,6 @@ function RadarChart({ stats, dark }: { stats: PlayerStatsProps["stats"]; dark: b
 // ─── RetainerPanel (门客系统) ─────────────────────────────────────────────────
 
 function RetainerPanel({ retainers, dark }: { retainers: RetainerData[]; dark: boolean }) {
-  const bg = dark ? "#1a1a24" : "#f8f4ff";
   const cardBg = dark ? "#111118" : "#ffffff";
   const border = dark ? "rgba(137,83,209,0.25)" : "rgba(137,83,209,0.15)";
   const textPrimary = dark ? "#e0e0e0" : "#333";
