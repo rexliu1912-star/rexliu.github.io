@@ -2,7 +2,7 @@
 title: "Mistral AI raises $830M in debt to set up a data center near Paris"
 title_zh: "Mistral AI 举债 8.3 亿美元，将在巴黎附近建设数据中心"
 date: 2026-03-31
-category: infrastructure
+category: funding
 tags: ["mistral", "data-center", "funding"]
 source: "https://techcrunch.com/2026/03/30/mistral-ai-raises-830m-in-debt-to-set-up-a-data-center-near-paris/"
 source_name: "TechCrunch"
