@@ -3,14 +3,42 @@ import { useState, useEffect } from "react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
+export interface RetainerData {
+  id: string;
+  name: string;
+  emoji: string;
+  titleZh: string;
+  titleEn: string;
+  sprite: string;
+  level: number;
+  sessions: number;
+  tokens: number;
+  model: string;
+}
+
+export interface AchievementData {
+  id: string;
+  icon: string;
+  nameZh: string;
+  nameEn: string;
+  descZh: string;
+  descEn: string;
+  unlocked: boolean;
+  category: string;
+  hidden?: boolean;
+  unlockedDate?: string;
+  progress?: number;
+  max?: number;
+}
+
 export interface PlayerStatsProps {
   stats: {
-    vitality: number;  // 体魄
-    wisdom: number;    // 悟性
-    renown: number;    // 声望
-    command: number;   // 统御
-    craft: number;     // 技巧
-    insight: number;   // 见闻
+    vitality: number;
+    wisdom: number;
+    renown: number;
+    command: number;
+    craft: number;
+    insight: number;
   };
   level: number;
   totalExp: number;
@@ -29,14 +57,8 @@ export interface PlayerStatsProps {
   cityCount: number;
   projectCount: number;
   cities: Array<{ id: string; name: string; nameCN: string; lat: number; lng: number }>;
-  achievements: Array<{
-    id: string; icon: string;
-    nameZh: string; nameEn: string;
-    descZh: string; descEn: string;
-    unlocked: boolean;
-    unlockedDate?: string;
-    progress?: number; max?: number;
-  }>;
+  achievements: AchievementData[];
+  retainers: RetainerData[];
   activityLog: Array<{
     dateEn: string; dateZh: string;
     icon: string; statZh: string; statEn: string; exp: number;
@@ -109,7 +131,7 @@ function PixelBar({ value, dark, color = "#8953d1" }: { value: number; dark: boo
   );
 }
 
-// ─── HeroCard with pixel avatar + Level + EXP ─────────────────────────────────
+// ─── HeroCard ─────────────────────────────────────────────────────────────────
 
 function HeroCard({ rank, level, totalExp, expInLevel, expNeeded, expProgress, currentCity, travelDays, dark }: {
   rank: { zh: string; en: string };
@@ -126,75 +148,45 @@ function HeroCard({ rank, level, totalExp, expInLevel, expNeeded, expProgress, c
   const border = dark ? "rgba(137,83,209,0.3)" : "rgba(137,83,209,0.2)";
   const textPrimary = dark ? "#ffffff" : "#111111";
   const textSecondary = dark ? "#aaaaaa" : "#666666";
-
   const animatedLevel = useCountUp(level, 1500);
   const animatedExp = useCountUp(totalExp, 2000);
 
   return (
     <div style={{
-      border: `1px solid ${border}`,
-      borderRadius: 12,
-      background: bg,
-      padding: "1.5rem",
-      display: "flex",
-      gap: "1.5rem",
-      alignItems: "flex-start",
-      flexWrap: "wrap",
+      border: `1px solid ${border}`, borderRadius: 12, background: bg,
+      padding: "1.5rem", display: "flex", gap: "1.5rem", alignItems: "flex-start", flexWrap: "wrap",
     }}>
-      {/* Pixel Avatar */}
       <div style={{ position: "relative", flexShrink: 0 }}>
         <div style={{
-          width: 120, height: 120,
-          borderRadius: 8,
-          border: `2px solid rgba(137,83,209,0.6)`,
-          overflow: "hidden",
-          imageRendering: "pixelated",
-          background: dark ? "#0d0d18" : "#ede8ff",
+          width: 120, height: 120, borderRadius: 8,
+          border: "2px solid rgba(137,83,209,0.6)", overflow: "hidden",
+          imageRendering: "pixelated", background: dark ? "#0d0d18" : "#ede8ff",
         }}>
-          <img
-            src="/images/rex-avatar.png"
-            alt="Rex Liu pixel avatar"
-            width={120}
-            height={120}
-            style={{
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
-              imageRendering: "pixelated",
-            }}
-          />
+          <img src="/images/rex-avatar.png" alt="Rex Liu pixel avatar"
+            width={120} height={120}
+            style={{ width: "100%", height: "100%", objectFit: "cover", imageRendering: "pixelated" }} />
         </div>
-        {/* Breathing glow */}
         <div style={{
           position: "absolute", inset: -4, borderRadius: 12,
           background: "radial-gradient(circle, rgba(137,83,209,0.2) 0%, transparent 70%)",
-          animation: "breathe 3s ease-in-out infinite",
-          pointerEvents: "none",
+          animation: "breathe 3s ease-in-out infinite", pointerEvents: "none",
         }} />
       </div>
 
-      {/* Info: Name + Level + EXP bar */}
       <div style={{ flex: 1, minWidth: 220 }}>
         <div style={{ display: "flex", alignItems: "baseline", gap: 12, flexWrap: "wrap" }}>
-          <h2 style={{
-            margin: 0,
-            fontFamily: "Georgia, Cambria, 'Times New Roman', Times, serif",
-            fontSize: "1.6rem", fontWeight: 700, color: textPrimary,
-          }}>
+          <h2 style={{ margin: 0, fontFamily: "Georgia, Cambria, 'Times New Roman', Times, serif", fontSize: "1.6rem", fontWeight: 700, color: textPrimary }}>
             Rex Liu
           </h2>
           <span style={{
-            fontFamily: "monospace", fontSize: 16, fontWeight: 800,
-            color: "#8953d1",
-            background: "rgba(137,83,209,0.12)",
-            padding: "2px 10px", borderRadius: 6,
+            fontFamily: "monospace", fontSize: 16, fontWeight: 800, color: "#8953d1",
+            background: "rgba(137,83,209,0.12)", padding: "2px 10px", borderRadius: 6,
             border: "1px solid rgba(137,83,209,0.3)",
           }}>
             Lv.{animatedLevel}
           </span>
         </div>
 
-        {/* EXP Progress Bar */}
         <div style={{ marginTop: 10, maxWidth: 340 }}>
           <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
             <span style={{ fontFamily: "monospace", fontSize: 12, color: "#8953d1", fontWeight: 700 }}>
@@ -206,30 +198,25 @@ function HeroCard({ rank, level, totalExp, expInLevel, expNeeded, expProgress, c
           </div>
           <div style={{
             height: 10, borderRadius: 2, overflow: "hidden",
-            background: dark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)",
-            imageRendering: "pixelated",
+            background: dark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)", imageRendering: "pixelated",
           }}>
             <div style={{
-              height: "100%",
-              width: `${expProgress}%`,
+              height: "100%", width: `${expProgress}%`,
               background: "linear-gradient(to right, #8953d1, #a175e8)",
-              transition: "width 1.5s cubic-bezier(0.22, 1, 0.36, 1)",
-              imageRendering: "pixelated",
+              transition: "width 1.5s cubic-bezier(0.22, 1, 0.36, 1)", imageRendering: "pixelated",
             }} />
           </div>
         </div>
 
-        {/* Tags: Rank, School, Location, Days */}
         <div style={{ marginTop: 10, display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
-          <InfoTag icon="⚔️" zh={`${rank.zh}`} en={`${rank.en}`} color="#8953d1" />
+          <InfoTag icon="⚔️" zh={rank.zh} en={rank.en} color="#8953d1" />
           <InfoTag icon="🏔️" zh="逍遥派" en="Sovereign School" color="#a175e8" />
-          <InfoTag icon="📍" zh={`${currentCity.nameCN}`} en={`${currentCity.name}`} color="#7040b0" />
+          <InfoTag icon="📍" zh={currentCity.nameCN} en={currentCity.name} color="#7040b0" />
           <InfoTag icon="🗓️" zh={`游历 ${travelDays} 天`} en={`Day ${travelDays}`} color="#9060c8" />
         </div>
 
         <p style={{
-          margin: "0.6rem 0 0",
-          fontFamily: "Georgia, Cambria, 'Times New Roman', Times, serif",
+          margin: "0.6rem 0 0", fontFamily: "Georgia, Cambria, 'Times New Roman', Times, serif",
           fontSize: "0.82rem", color: textSecondary, fontStyle: "italic",
         }}>
           <span className="lang-en">"Simplify the complex. Repeat the simple."</span>
@@ -245,8 +232,7 @@ function InfoTag({ icon, zh, en, color }: { icon: string; zh: string; en: string
     <span style={{
       display: "inline-flex", alignItems: "center", gap: 4,
       padding: "2px 8px", borderRadius: 999,
-      border: `1px solid ${color}40`,
-      background: `${color}12`,
+      border: `1px solid ${color}40`, background: `${color}12`,
       fontFamily: "Georgia, Cambria, 'Times New Roman', Times, serif", fontSize: "0.75rem", color,
     }}>
       <span>{icon}</span>
@@ -269,12 +255,9 @@ function RadarChart({ stats, dark }: { stats: PlayerStatsProps["stats"]; dark: b
       const t = Math.min((now - start) / duration, 1);
       const ease = 1 - Math.pow(1 - t, 3);
       setAnimated({
-        vitality: stats.vitality * ease,
-        wisdom: stats.wisdom * ease,
-        renown: stats.renown * ease,
-        command: stats.command * ease,
-        craft: stats.craft * ease,
-        insight: stats.insight * ease,
+        vitality: stats.vitality * ease, wisdom: stats.wisdom * ease,
+        renown: stats.renown * ease, command: stats.command * ease,
+        craft: stats.craft * ease, insight: stats.insight * ease,
       });
       if (t < 1) requestAnimationFrame(step);
     };
@@ -304,6 +287,7 @@ function RadarChart({ stats, dark }: { stats: PlayerStatsProps["stats"]; dark: b
   const gridColor = dark ? "rgba(137,83,209,0.12)" : "rgba(137,83,209,0.15)";
   const axisColor = dark ? "rgba(137,83,209,0.2)" : "rgba(137,83,209,0.25)";
   const textColor = dark ? "#aaaaaa" : "#777777";
+  const labelPrimary = dark ? "#ffffff" : "#111111";
 
   function hexPath(r: number) {
     return axes.map(a => polar(a.angle, (r / 100) * maxR))
@@ -320,19 +304,16 @@ function RadarChart({ stats, dark }: { stats: PlayerStatsProps["stats"]; dark: b
   }
 
   const statFormulas: Record<string, { zh: string; en: string }> = {
-    vitality: { zh: "城市数 × 5", en: "cities × 5" },
-    wisdom:   { zh: "文章数 + 书影音 × 0.3", en: "posts + library × 0.3" },
-    renown:   { zh: "log₁₀(关注数) × 25", en: "log₁₀(followers) × 25" },
-    command:  { zh: "Agent × 8 + 项目 × 2", en: "agents × 8 + projects × 2" },
-    craft:    { zh: "造物日志 × 3", en: "builder-logs × 3" },
-    insight:  { zh: "(书影音 + 精读 × 0.2) × 0.8", en: "(library + digests × 0.2) × 0.8" },
+    vitality: { zh: "城市数 → mid=50 渐近缩放", en: "cities → mid=50 asymptotic" },
+    wisdom:   { zh: "文章 + 书影音×0.3 → mid=120", en: "posts + library×0.3 → mid=120" },
+    renown:   { zh: "关注数 → mid=15000", en: "followers → mid=15000" },
+    command:  { zh: "Agent×8 + 项目×2 → mid=80", en: "agents×8 + projects×2 → mid=80" },
+    craft:    { zh: "造物日志 → mid=50", en: "builder-logs → mid=50" },
+    insight:  { zh: "书影音 + 精读×0.2 → mid=100", en: "library + digests×0.2 → mid=100" },
   };
-
-  const labelPrimary = dark ? "#ffffff" : "#111111";
 
   return (
     <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem", alignItems: "flex-start" }}>
-      {/* SVG Radar */}
       <div style={{ flex: "0 0 auto" }}>
         <svg width={size} height={size} style={{ overflow: "visible" }}>
           {gridLevels.map(lvl => (
@@ -348,13 +329,11 @@ function RadarChart({ stats, dark }: { stats: PlayerStatsProps["stats"]; dark: b
             const p = polar(a.angle, (v / 100) * maxR);
             const isSelected = selected === a.key;
             return (
-              <circle
-                key={a.key} cx={p.x} cy={p.y} r={isSelected ? 7 : 5}
+              <circle key={a.key} cx={p.x} cy={p.y} r={isSelected ? 7 : 5}
                 fill={isSelected ? "#a175e8" : "#8953d1"}
                 stroke={dark ? "#1a1a24" : "#f8f4ff"} strokeWidth={2}
                 style={{ cursor: "pointer", transition: "r 0.15s" }}
-                onClick={() => setSelected(selected === a.key ? null : a.key)}
-              />
+                onClick={() => setSelected(selected === a.key ? null : a.key)} />
             );
           })}
           {axes.map(a => {
@@ -378,22 +357,19 @@ function RadarChart({ stats, dark }: { stats: PlayerStatsProps["stats"]; dark: b
         </svg>
       </div>
 
-      {/* Stat bars */}
       <div style={{ flex: 1, minWidth: 220 }}>
         {axes.map(a => {
           const v = stats[a.key as keyof typeof stats];
           const isSelected = selected === a.key;
           return (
-            <div
-              key={a.key}
+            <div key={a.key}
               onClick={() => setSelected(selected === a.key ? null : a.key)}
               style={{
                 marginBottom: 10, cursor: "pointer", padding: "6px 10px", borderRadius: 8,
                 background: isSelected ? "rgba(137,83,209,0.08)" : "transparent",
                 border: `1px solid ${isSelected ? "rgba(137,83,209,0.3)" : "transparent"}`,
                 transition: "all 0.15s",
-              }}
-            >
+              }}>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
                 <span style={{
                   fontFamily: "Georgia, Cambria, 'Times New Roman', Times, serif",
@@ -421,7 +397,100 @@ function RadarChart({ stats, dark }: { stats: PlayerStatsProps["stats"]; dark: b
   );
 }
 
-// ─── SkillTree (horizontal with Lv.N labels) ─────────────────────────────────
+// ─── RetainerPanel (门客系统) ─────────────────────────────────────────────────
+
+function RetainerPanel({ retainers, dark }: { retainers: RetainerData[]; dark: boolean }) {
+  const bg = dark ? "#1a1a24" : "#f8f4ff";
+  const cardBg = dark ? "#111118" : "#ffffff";
+  const border = dark ? "rgba(137,83,209,0.25)" : "rgba(137,83,209,0.15)";
+  const textPrimary = dark ? "#e0e0e0" : "#333";
+  const textSecondary = dark ? "#888" : "#999";
+
+  return (
+    <div style={{
+      display: "grid",
+      gridTemplateColumns: "repeat(3, 1fr)",
+      gap: 12,
+    }}>
+      <style>{`
+        @media (max-width: 640px) {
+          .retainer-grid { grid-template-columns: repeat(2, 1fr) !important; }
+        }
+      `}</style>
+      {retainers.map(agent => (
+        <div key={agent.id} className="retainer-grid" style={{
+          border: `1px solid ${border}`,
+          borderRadius: 10,
+          background: cardBg,
+          padding: "14px",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: 8,
+          transition: "border-color 0.2s",
+        }}>
+          {/* Sprite */}
+          <div style={{
+            width: 48, height: 48,
+            borderRadius: 8,
+            border: "2px solid rgba(137,83,209,0.4)",
+            overflow: "hidden",
+            imageRendering: "pixelated",
+            background: dark ? "#0d0d18" : "#ede8ff",
+          }}>
+            <img
+              src={agent.sprite}
+              alt={`${agent.name} sprite`}
+              width={48} height={48}
+              style={{ width: "100%", height: "100%", objectFit: "cover", imageRendering: "pixelated" }}
+            />
+          </div>
+
+          {/* Name + Emoji */}
+          <div style={{ textAlign: "center" }}>
+            <div style={{
+              fontFamily: "Georgia, Cambria, serif",
+              fontSize: 13, fontWeight: 700, color: textPrimary,
+            }}>
+              {agent.name} {agent.emoji}
+            </div>
+            <div style={{
+              fontFamily: "Georgia, Cambria, serif",
+              fontSize: 11, color: "#8953d1",
+            }}>
+              <span className="lang-zh">{agent.titleZh}</span>
+              <span className="lang-en">{agent.titleEn}</span>
+            </div>
+          </div>
+
+          {/* Level */}
+          <div style={{
+            fontFamily: "monospace", fontSize: 12, fontWeight: 800,
+            color: "#a175e8",
+            background: "rgba(137,83,209,0.1)",
+            padding: "2px 8px", borderRadius: 4,
+            border: "1px solid rgba(137,83,209,0.2)",
+          }}>
+            <span className="lang-zh">修为</span>
+            <span className="lang-en">Lv</span>
+            .{agent.level}
+          </div>
+
+          {/* Sessions / model */}
+          <div style={{
+            fontFamily: "monospace", fontSize: 10, color: textSecondary,
+            textAlign: "center", lineHeight: 1.4,
+          }}>
+            <span className="lang-zh">累计 {agent.sessions} 次任务</span>
+            <span className="lang-en">{agent.sessions} sessions</span>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ─── SkillTree ────────────────────────────────────────────────────────────────
 
 function SkillTree({ tagCounts, postCount, builderLogCount, dark }: {
   tagCounts: Record<string, number>;
@@ -431,7 +500,6 @@ function SkillTree({ tagCounts, postCount, builderLogCount, dark }: {
 }) {
   const [tooltip, setTooltip] = useState<{ text: string; x: number; y: number } | null>(null);
 
-  // Node box with Lv.N label
   function NodeBox({ x, y, w, h, label, count, url }: {
     x: number; y: number; w: number; h: number;
     label: string; count: number; url?: string;
@@ -462,12 +530,10 @@ function SkillTree({ tagCounts, postCount, builderLogCount, dark }: {
       >
         <rect x={x} y={y} width={w} height={h} rx={5}
           fill={fillColor} stroke={borderColor} strokeWidth={1.5} />
-        {/* Label */}
         <text x={cx} y={y + h / 2 - 5} textAnchor="middle" dominantBaseline="middle"
           fontFamily="Georgia, Cambria, serif" fontSize={11} fontWeight={700} fill={textColor}>
           {label}
         </text>
-        {/* Lv.N */}
         <text x={cx} y={y + h / 2 + 9} textAnchor="middle" dominantBaseline="middle"
           fontFamily="monospace" fontSize={10} fontWeight={700} fill={lvColor}>
           Lv.{lv}
@@ -503,14 +569,12 @@ function SkillTree({ tagCounts, postCount, builderLogCount, dark }: {
   function rightOf(x: number, y: number, w: number, h: number) { return { x: x + w, y: y + h / 2 }; }
   function leftOf(x: number, y: number, h: number) { return { x, y: y + h / 2 }; }
 
-  // ── Inner Arts ──
   const iRx = 20, iRy = 94;
   const b1y = 28, b2y = 100, b3y = 172;
   const bX = 150;
   const lX = 310;
   const l1y = 10, l2y = 58, l3y = 82, l4y = 130, l5y = 154, l6y = 202;
 
-  // ── Outer Arts ──
   const yOff = 260;
   const oRx = 20, oRy = 94 + yOff;
   const ob1y = 28 + yOff, ob2y = 100 + yOff, ob3y = 172 + yOff;
@@ -526,17 +590,12 @@ function SkillTree({ tagCounts, postCount, builderLogCount, dark }: {
   return (
     <div style={{ position: "relative", overflowX: "auto" }}>
       <svg width={svgW} height={svgH} viewBox={`0 0 ${svgW} ${svgH}`} style={{ overflow: "visible", minWidth: svgW }}>
-
-        {/* ── Inner Arts ── */}
         <RootBox x={iRx} y={iRy} w={rW} h={rH} label="内功" />
-
         {[b1y, b2y, b3y].map(by => {
           const r = rightOf(iRx, iRy, rW, rH);
           const l = leftOf(bX, by, nH);
           return <HLine key={by} x1={r.x} y1={r.y} x2={l.x} y2={l.y} />;
         })}
-
-        {/* Branch 1: 周期心法 */}
         <NodeBox x={bX} y={b1y} w={nW} h={nH} label="周期心法" count={tagCounts["crypto"] || 0} url="/tags/crypto/" />
         {[l1y, l2y].map(ly => {
           const r = rightOf(bX, b1y, nW, nH);
@@ -545,8 +604,6 @@ function SkillTree({ tagCounts, postCount, builderLogCount, dark }: {
         })}
         <NodeBox x={lX} y={l1y} w={nW} h={nH} label="盈亏同源" count={tagCounts["trading"] || 0} />
         <NodeBox x={lX} y={l2y} w={nW} h={nH} label="买预期卖事实" count={tagCounts["alpha"] || 0} />
-
-        {/* Branch 2: 价值心法 */}
         <NodeBox x={bX} y={b2y} w={nW} h={nH} label="价值心法" count={tagCounts["investment"] || 0} url="/tags/investment/" />
         {[l3y, l4y].map(ly => {
           const r = rightOf(bX, b2y, nW, nH);
@@ -555,8 +612,6 @@ function SkillTree({ tagCounts, postCount, builderLogCount, dark }: {
         })}
         <NodeBox x={lX} y={l3y} w={nW} h={nH} label="复利之道" count={tagCounts["evergreen"] || 0} url="/tags/evergreen/" />
         <NodeBox x={lX} y={l4y} w={nW} h={nH} label="长期主义" count={(tagCounts["investment"] || 0) + (tagCounts["wealth"] || 0)} />
-
-        {/* Branch 3: 风控心法 */}
         <NodeBox x={bX} y={b3y} w={nW} h={nH} label="风控心法" count={tagCounts["wealth"] || 0} url="/tags/wealth/" />
         {[l5y, l6y].map(ly => {
           const r = rightOf(bX, b3y, nW, nH);
@@ -566,16 +621,12 @@ function SkillTree({ tagCounts, postCount, builderLogCount, dark }: {
         <NodeBox x={lX} y={l5y} w={nW} h={nH} label="对手盘" count={tagCounts["macro"] || 0} />
         <NodeBox x={lX} y={l6y} w={nW} h={nH} label="去中心化" count={tagCounts["crypto"] || 0} url="/tags/crypto/" />
 
-        {/* ── Outer Arts ── */}
         <RootBox x={oRx} y={oRy} w={rW} h={rH} label="外功" />
-
         {[ob1y, ob2y, ob3y].map(by => {
           const r = rightOf(oRx, oRy, rW, rH);
           const l = leftOf(obX, by, nH);
           return <HLine key={by + 1000} x1={r.x} y1={r.y} x2={l.x} y2={l.y} />;
         })}
-
-        {/* Branch 1: 剑法·写作 */}
         <NodeBox x={obX} y={ob1y} w={nW} h={nH} label="剑法·写作" count={postCount} url="/posts/" />
         {[ol1y, ol2y, ol3y].map(ly => {
           const r = rightOf(obX, ob1y, nW, nH);
@@ -585,8 +636,6 @@ function SkillTree({ tagCounts, postCount, builderLogCount, dark }: {
         <NodeBox x={olX} y={ol1y} w={nW} h={nH} label="生活" count={tagCounts["life"] || 0} url="/tags/life/" />
         <NodeBox x={olX} y={ol2y} w={nW} h={nH} label="人物志" count={tagCounts["people"] || 0} url="/tags/people/" />
         <NodeBox x={olX} y={ol3y} w={nW} h={nH} label="常青文" count={tagCounts["evergreen"] || 0} url="/tags/evergreen/" />
-
-        {/* Branch 2: 掌法·编程 */}
         <NodeBox x={obX} y={ob2y} w={nW} h={nH} label="掌法·编程" count={tagCounts["ai"] || 0} url="/tags/ai/" />
         {[ol4y, ol5y].map(ly => {
           const r = rightOf(obX, ob2y, nW, nH);
@@ -595,8 +644,6 @@ function SkillTree({ tagCounts, postCount, builderLogCount, dark }: {
         })}
         <NodeBox x={olX} y={ol4y} w={nW} h={nH} label="Vibe Coding" count={tagCounts["vibe coding"] || tagCounts["ai"] || 0} url="/tags/ai/" />
         <NodeBox x={olX} y={ol5y} w={nW} h={nH} label="Agent 系统" count={builderLogCount} />
-
-        {/* Branch 3: 轻功·探索 */}
         <NodeBox x={obX} y={ob3y} w={nW} h={nH} label="轻功·探索" count={tagCounts["travel"] || 0} url="/tags/travel/" />
         {[ol6y, ol7y].map(ly => {
           const r = rightOf(obX, ob3y, nW, nH);
@@ -606,7 +653,6 @@ function SkillTree({ tagCounts, postCount, builderLogCount, dark }: {
         <NodeBox x={olX} y={ol6y} w={nW} h={nH} label="旅居" count={tagCounts["travel"] || 0} url="/tags/travel/" />
         <NodeBox x={olX} y={ol7y} w={nW} h={nH} label="数字游牧" count={tagCounts["travel"] || 0} />
 
-        {/* Tooltip */}
         {tooltip && (
           <g>
             <rect x={tooltip.x - 55} y={tooltip.y - 22} width={110} height={20} rx={4}
@@ -621,81 +667,136 @@ function SkillTree({ tagCounts, postCount, builderLogCount, dark }: {
   );
 }
 
-// ─── AchievementBadges ────────────────────────────────────────────────────────
+// ─── AchievementBadges (grouped by category) ──────────────────────────────────
 
-function AchievementBadges({ achievements, dark }: { achievements: PlayerStatsProps["achievements"]; dark: boolean }) {
+const CATEGORY_META: Record<string, { icon: string; zh: string; en: string }> = {
+  cultivation: { icon: "🗡️", zh: "修行", en: "Cultivation" },
+  jianghu:     { icon: "🌍", zh: "江湖", en: "Exploration" },
+  command:     { icon: "🤖", zh: "统御", en: "Command" },
+  knowledge:   { icon: "📚", zh: "见闻", en: "Knowledge" },
+  health:      { icon: "💪", zh: "体魄", en: "Health" },
+  investment:  { icon: "💰", zh: "投资", en: "Investment" },
+  hidden:      { icon: "🔮", zh: "奇遇", en: "Hidden" },
+};
+
+const CATEGORY_ORDER = ["cultivation", "jianghu", "command", "knowledge", "health", "investment", "hidden"];
+
+function AchievementBadges({ achievements, dark }: { achievements: AchievementData[]; dark: boolean }) {
   const [selected, setSelected] = useState<string | null>(null);
   const textSecondary = dark ? "#888" : "#999";
 
+  // Group by category
+  const grouped: Record<string, AchievementData[]> = {};
+  for (const a of achievements) {
+    // Hidden achievements: skip if not unlocked
+    if (a.hidden && !a.unlocked) continue;
+    const cat = a.category || "hidden";
+    if (!grouped[cat]) grouped[cat] = [];
+    grouped[cat]!.push(a);
+  }
+
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: 12 }}>
-      {achievements.map(a => {
-        const isSelected = selected === a.id;
-        const borderColor = a.unlocked
-          ? (isSelected ? "#a175e8" : "rgba(137,83,209,0.3)")
-          : (dark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)");
-        const bg = a.unlocked
-          ? (dark ? "rgba(137,83,209,0.12)" : "rgba(137,83,209,0.06)")
-          : (dark ? "#111118" : "#f5f5f5");
+    <div>
+      {CATEGORY_ORDER.map(cat => {
+        const items = grouped[cat];
+        if (!items || items.length === 0) return null;
+        const meta = CATEGORY_META[cat] ?? { icon: "📋", zh: cat, en: cat };
 
         return (
-          <div
-            key={a.id}
-            onClick={() => setSelected(isSelected ? null : a.id)}
-            style={{
-              border: `1px solid ${borderColor}`,
-              borderRadius: 10, background: bg, padding: "12px 14px",
-              cursor: "pointer", transition: "all 0.15s",
-              opacity: a.unlocked ? 1 : 0.6,
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
-              <span style={{ fontSize: 22, filter: a.unlocked ? "none" : "grayscale(100%)" }}>{a.icon}</span>
-              <div style={{
-                fontFamily: "Georgia, Cambria, 'Times New Roman', Times, serif",
-                fontSize: 12, fontWeight: 700,
-                color: a.unlocked ? "#8953d1" : textSecondary,
+          <div key={cat} style={{ marginBottom: 20 }}>
+            {/* Category header */}
+            <div style={{
+              display: "flex", alignItems: "center", gap: 6,
+              marginBottom: 10, paddingBottom: 6,
+              borderBottom: `1px solid ${dark ? "rgba(137,83,209,0.15)" : "rgba(137,83,209,0.1)"}`,
+            }}>
+              <span style={{ fontSize: 16 }}>{meta.icon}</span>
+              <span style={{
+                fontFamily: "Georgia, Cambria, serif", fontSize: 13, fontWeight: 700,
+                color: dark ? "#c0a0f0" : "#6b3fa0",
               }}>
-                <span className="lang-zh">{a.nameZh}</span>
-                <span className="lang-en">{a.nameEn}</span>
-              </div>
+                <span className="lang-zh">{meta.zh}</span>
+                <span className="lang-en">{meta.en}</span>
+              </span>
+              <span style={{
+                fontFamily: "monospace", fontSize: 11, color: textSecondary, marginLeft: 4,
+              }}>
+                {items.filter(a => a.unlocked).length}/{items.length}
+              </span>
             </div>
 
-            <p style={{
-              margin: 0,
-              fontFamily: "Georgia, Cambria, 'Times New Roman', Times, serif",
-              fontSize: 11, color: textSecondary, lineHeight: 1.4,
-            }}>
-              <span className="lang-zh">{a.descZh}</span>
-              <span className="lang-en">{a.descEn}</span>
-            </p>
+            {/* Achievement grid */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: 10 }}>
+              {items.map(a => {
+                const isSelected = selected === a.id;
+                const isHiddenUnlocked = a.hidden && a.unlocked;
+                const borderColor = a.unlocked
+                  ? (isHiddenUnlocked ? "rgba(255,215,0,0.5)" : (isSelected ? "#a175e8" : "rgba(137,83,209,0.3)"))
+                  : (dark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)");
+                const bg = a.unlocked
+                  ? (isHiddenUnlocked
+                    ? (dark ? "rgba(255,215,0,0.08)" : "rgba(255,215,0,0.05)")
+                    : (dark ? "rgba(137,83,209,0.12)" : "rgba(137,83,209,0.06)"))
+                  : (dark ? "#111118" : "#f5f5f5");
 
-            {a.unlocked && a.unlockedDate && (
-              <div style={{ marginTop: 6, fontFamily: "monospace", fontSize: 10, color: "#8953d1" }}>
-                ✓ {a.unlockedDate}
-              </div>
-            )}
+                return (
+                  <div key={a.id}
+                    onClick={() => setSelected(isSelected ? null : a.id)}
+                    style={{
+                      border: `1px solid ${borderColor}`,
+                      borderRadius: 10, background: bg, padding: "12px 14px",
+                      cursor: "pointer", transition: "all 0.15s",
+                      opacity: a.unlocked ? 1 : 0.6,
+                    }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+                      <span style={{ fontSize: 22, filter: a.unlocked ? "none" : "grayscale(100%)" }}>{a.icon}</span>
+                      <div style={{
+                        fontFamily: "Georgia, Cambria, serif", fontSize: 12, fontWeight: 700,
+                        color: a.unlocked ? (isHiddenUnlocked ? "#ffd700" : "#8953d1") : textSecondary,
+                      }}>
+                        <span className="lang-zh">{a.nameZh}</span>
+                        <span className="lang-en">{a.nameEn}</span>
+                      </div>
+                    </div>
 
-            {!a.unlocked && a.progress !== undefined && a.max !== undefined && (
-              <div style={{ marginTop: 8 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
-                  <span style={{ fontFamily: "monospace", fontSize: 10, color: textSecondary }}>
-                    {a.progress}/{a.max}
-                  </span>
-                  <span style={{ fontFamily: "monospace", fontSize: 10, color: "#8953d1" }}>
-                    {Math.round((a.progress / a.max) * 100)}%
-                  </span>
-                </div>
-                <div style={{ height: 6, borderRadius: 3, background: dark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)", overflow: "hidden" }}>
-                  <div style={{
-                    height: "100%",
-                    width: `${Math.min(100, (a.progress / a.max) * 100)}%`,
-                    background: "linear-gradient(to right, #8953d1, #a175e8)",
-                    borderRadius: 3,
-                  }} />
-                </div>
-              </div>
-            )}
+                    <p style={{
+                      margin: 0, fontFamily: "Georgia, Cambria, serif",
+                      fontSize: 11, color: textSecondary, lineHeight: 1.4,
+                    }}>
+                      <span className="lang-zh">{a.descZh}</span>
+                      <span className="lang-en">{a.descEn}</span>
+                    </p>
+
+                    {a.unlocked && a.unlockedDate && (
+                      <div style={{ marginTop: 6, fontFamily: "monospace", fontSize: 10, color: isHiddenUnlocked ? "#ffd700" : "#8953d1" }}>
+                        ✓ {a.unlockedDate}
+                      </div>
+                    )}
+
+                    {!a.unlocked && a.progress !== undefined && a.max !== undefined && (
+                      <div style={{ marginTop: 8 }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
+                          <span style={{ fontFamily: "monospace", fontSize: 10, color: textSecondary }}>
+                            {a.progress}/{a.max}
+                          </span>
+                          <span style={{ fontFamily: "monospace", fontSize: 10, color: "#8953d1" }}>
+                            {Math.round((a.progress / a.max) * 100)}%
+                          </span>
+                        </div>
+                        <div style={{ height: 6, borderRadius: 3, background: dark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)", overflow: "hidden" }}>
+                          <div style={{
+                            height: "100%",
+                            width: `${Math.min(100, (a.progress / a.max) * 100)}%`,
+                            background: "linear-gradient(to right, #8953d1, #a175e8)",
+                            borderRadius: 3,
+                          }} />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </div>
         );
       })}
@@ -703,7 +804,7 @@ function AchievementBadges({ achievements, dark }: { achievements: PlayerStatsPr
   );
 }
 
-// ─── CultivationLog (全历史修行日志，可折叠) ─────────────────────────────────
+// ─── CultivationLog ───────────────────────────────────────────────────────────
 
 function CultivationLog({ activityLog, dark }: {
   activityLog: PlayerStatsProps["activityLog"];
@@ -720,12 +821,9 @@ function CultivationLog({ activityLog, dark }: {
   const visible = showAll ? activityLog : activityLog.slice(0, INITIAL_COUNT);
   const hasMore = activityLog.length > INITIAL_COUNT;
 
-  // Running EXP total (from bottom up)
-  const runningExp: number[] = [];
   let cumExp = 0;
   for (let i = activityLog.length - 1; i >= 0; i--) {
     cumExp += activityLog[i]!.exp;
-    runningExp[i] = cumExp;
   }
 
   return (
@@ -734,25 +832,18 @@ function CultivationLog({ activityLog, dark }: {
         {visible.map((act, i) => (
           <div key={i} style={{
             display: "flex", alignItems: "flex-start", gap: 10,
-            padding: "8px 12px", borderRadius: 8,
-            background: bg, border: `1px solid ${border}`,
+            padding: "8px 12px", borderRadius: 8, background: bg, border: `1px solid ${border}`,
           }}>
-            {/* Date */}
             <div style={{ flexShrink: 0, width: 80, textAlign: "left" }}>
               <div style={{ fontFamily: "monospace", fontSize: 11, color: textSecondary }}>
                 <span className="lang-zh">{act.dateZh}</span>
                 <span className="lang-en">{act.dateEn}</span>
               </div>
             </div>
-
-            {/* Icon */}
             <span style={{ fontSize: 16, flexShrink: 0 }}>{act.icon}</span>
-
-            {/* Content */}
             <div style={{ flex: 1, minWidth: 0 }}>
               <p style={{
-                margin: 0,
-                fontFamily: "Georgia, Cambria, 'Times New Roman', Times, serif",
+                margin: 0, fontFamily: "Georgia, Cambria, serif",
                 fontSize: 12, color: textPrimary, lineHeight: 1.4,
                 overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
               }}>
@@ -760,15 +851,11 @@ function CultivationLog({ activityLog, dark }: {
                 <span className="lang-en">{act.descEn}</span>
               </p>
             </div>
-
-            {/* EXP badge */}
             <span style={{
-              flexShrink: 0,
-              fontFamily: "monospace", fontSize: 11,
+              flexShrink: 0, fontFamily: "monospace", fontSize: 11,
               color: "#22c55e", fontWeight: 700,
               background: "rgba(34,197,94,0.1)", padding: "1px 6px", borderRadius: 4,
-              border: "1px solid rgba(34,197,94,0.25)",
-              whiteSpace: "nowrap",
+              border: "1px solid rgba(34,197,94,0.25)", whiteSpace: "nowrap",
             }}>
               +{act.exp} EXP
             </span>
@@ -776,7 +863,6 @@ function CultivationLog({ activityLog, dark }: {
         ))}
       </div>
 
-      {/* Show more / less toggle */}
       {hasMore && (
         <button
           onClick={() => setShowAll(!showAll)}
@@ -785,11 +871,8 @@ function CultivationLog({ activityLog, dark }: {
             background: "transparent",
             border: `1px solid ${dark ? "rgba(137,83,209,0.3)" : "rgba(137,83,209,0.2)"}`,
             color: "#8953d1", fontFamily: "Georgia, Cambria, serif",
-            fontSize: 13, cursor: "pointer",
-            transition: "all 0.15s",
-            width: "100%",
-          }}
-        >
+            fontSize: 13, cursor: "pointer", transition: "all 0.15s", width: "100%",
+          }}>
           {showAll ? (
             <>
               <span className="lang-zh">收起</span>
@@ -804,7 +887,6 @@ function CultivationLog({ activityLog, dark }: {
         </button>
       )}
 
-      {/* Total EXP summary */}
       <div style={{
         marginTop: 12, padding: "10px 14px", borderRadius: 8,
         background: bg, border: `1px solid ${dark ? "rgba(137,83,209,0.2)" : "rgba(137,83,209,0.15)"}`,
@@ -847,7 +929,7 @@ export default function PlayerStats(props: PlayerStatsProps) {
   const {
     stats, level, totalExp, expInLevel, expNeeded, expProgress,
     rank, currentCity, travelDays, tagCounts, postCount, builderLogCount,
-    cities, achievements, activityLog,
+    cities, achievements, retainers, activityLog,
   } = props;
 
   const sectionBg = dark ? "#161620" : "#f9f6ff";
@@ -871,23 +953,21 @@ export default function PlayerStats(props: PlayerStatsProps) {
 
       {/* Hero Card */}
       <div className="player-section">
-        <HeroCard
-          rank={rank}
-          level={level}
-          totalExp={totalExp}
-          expInLevel={expInLevel}
-          expNeeded={expNeeded}
-          expProgress={expProgress}
-          currentCity={currentCity}
-          travelDays={travelDays}
-          dark={dark}
-        />
+        <HeroCard rank={rank} level={level} totalExp={totalExp}
+          expInLevel={expInLevel} expNeeded={expNeeded} expProgress={expProgress}
+          currentCity={currentCity} travelDays={travelDays} dark={dark} />
       </div>
 
       {/* Radar Chart */}
       <div className="player-section">
         <SectionHeader icon="📊" zh="六维属性" en="Six Attributes" dark={dark} />
         <RadarChart stats={stats} dark={dark} />
+      </div>
+
+      {/* Retainer System (门客) */}
+      <div className="player-section">
+        <SectionHeader icon="🏯" zh="门客" en="Retainers" dark={dark} />
+        <RetainerPanel retainers={retainers} dark={dark} />
       </div>
 
       {/* Skill Tree */}
@@ -903,8 +983,7 @@ export default function PlayerStats(props: PlayerStatsProps) {
         border: `1px solid ${dark ? "rgba(137,83,209,0.3)" : "rgba(137,83,209,0.2)"}`,
         background: dark ? "#1a1a24" : "#f8f4ff",
         textDecoration: "none", cursor: "pointer",
-        transition: "border-color 0.2s",
-        marginBottom: "1.5rem",
+        transition: "border-color 0.2s", marginBottom: "1.5rem",
       }}>
         <span style={{ fontSize: 28 }}>🗺️</span>
         <div>
