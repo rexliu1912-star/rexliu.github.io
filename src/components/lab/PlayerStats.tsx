@@ -418,7 +418,7 @@ function RetainerPanel({ retainers, dark }: { retainers: RetainerData[]; dark: b
         }
       `}</style>
       {retainers.map(agent => (
-        <div key={agent.id} className="retainer-grid" style={{
+        <a key={agent.id} href="/lab/agents/" className="retainer-grid" style={{
           border: `1px solid ${border}`,
           borderRadius: 10,
           background: cardBg,
@@ -427,8 +427,11 @@ function RetainerPanel({ retainers, dark }: { retainers: RetainerData[]; dark: b
           flexDirection: "column",
           alignItems: "center",
           gap: 8,
-          transition: "border-color 0.2s",
-        }}>
+          transition: "border-color 0.2s, transform 0.15s",
+          textDecoration: "none",
+          cursor: "pointer",
+        }} onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = "#8953d1"; (e.currentTarget as HTMLElement).style.transform = "translateY(-2px)"; }}
+           onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = border; (e.currentTarget as HTMLElement).style.transform = "translateY(0)"; }}>
           {/* Sprite */}
           <div style={{
             width: 48, height: 48,
@@ -484,7 +487,7 @@ function RetainerPanel({ retainers, dark }: { retainers: RetainerData[]; dark: b
             <span className="lang-zh">累计 {agent.sessions} 次任务</span>
             <span className="lang-en">{agent.sessions} sessions</span>
           </div>
-        </div>
+        </a>
       ))}
     </div>
   );
@@ -936,7 +939,7 @@ export default function PlayerStats(props: PlayerStatsProps) {
   const sectionBorder = dark ? "rgba(137,83,209,0.2)" : "rgba(137,83,209,0.12)";
 
   return (
-    <div style={{ fontFamily: "Georgia, Cambria, 'Times New Roman', Times, serif", maxWidth: 900 }}>
+    <div style={{ fontFamily: "Georgia, Cambria, 'Times New Roman', Times, serif", maxWidth: 900, margin: "0 auto" }}>
       <style>{`
         @keyframes breathe {
           0%, 100% { opacity: 0.3; transform: scale(1); }
