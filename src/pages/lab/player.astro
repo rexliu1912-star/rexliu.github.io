@@ -6,37 +6,29 @@ import travelData from "../../../public/data/travel.json";
 import mediaData from "../../data/media.json";
 import agentWorkload from "../../../public/data/agent-workload.json";
 import journeyData from "../../../public/data/journey.json";
+import dashboardData from "../../../public/data/dashboard.json";
 
-// ─── Data Collections ──────────────────────────────────────────────────────
 const posts = await getCollection("post");
 const digests = await getCollection("digest");
 const builderLogs = await getCollection("builder-log");
 const projects = await getCollection("projects");
 
-// ─── Travel ────────────────────────────────────────────────────────────────
-const nomadCities = (travelData as any).cities as Array<{
-  id: string; name: string; nameCN: string; lat: number; lng: number;
-  arrival: string; departure?: string;
-}>;
-const priorCities = ((travelData as any).priorCities ?? []) as Array<{
-  id: string; name: string; nameCN: string; lat: number; lng: number;
-}>;
+const nomadCities = (travelData as any).cities as Array<{ id: string; name: string; nameCN: string; lat: number; lng: number; arrival: string; departure?: string }>;
+const priorCities = ((travelData as any).priorCities ?? []) as Array<{ id: string; name: string; nameCN: string; lat: number; lng: number }>;
 const cities = [...nomadCities, ...priorCities];
 const travelStart = new Date((travelData as any).meta.startDate);
 const travelDays = Math.floor((Date.now() - travelStart.getTime()) / (1000 * 60 * 60 * 24));
 const currentCityId = (travelData as any).meta.currentCity as string;
 const currentCityObj = cities.find(c => c.id === currentCityId) ?? cities[cities.length - 1]!;
 
-// ─── Tag Counts ────────────────────────────────────────────────────────────
 const tagCounts: Record<string, number> = {};
 for (const post of posts) {
   for (const tag of (post.data.tags ?? [])) {
-    const t = tag.toLowerCase();
+    const t = String(tag).toLowerCase();
     tagCounts[t] = (tagCounts[t] ?? 0) + 1;
   }
 }
 
-// ─── Counts ─────────────────────────────────────────────────────────────────
 const postCount = posts.length;
 const digestCount = digests.length;
 const builderLogCount = builderLogs.length;
@@ -44,9 +36,8 @@ const projectCount = projects.length;
 const libraryCount = (mediaData as any[]).length;
 const cityCount = cities.length;
 const agents = 6;
-const followers = 6400; // hardcoded per spec
+const followers = Number((dashboardData as any).heroStats?.currentFollowers ?? 0);
 
-// ─── EXP Calculation (real data driven) ─────────────────────────────────────
 const totalExp = postCount * 10 + libraryCount * 3 + cityCount * 5 + builderLogCount * 8 + digestCount * 2;
 const level = Math.min(99, Math.floor(Math.sqrt(totalExp / 10)));
 const currentLevelExp = level * level * 10;
@@ -55,23 +46,49 @@ const expInLevel = totalExp - currentLevelExp;
 const expNeeded = nextLevelExp - currentLevelExp;
 const expProgress = Math.min(100, Math.round((expInLevel / expNeeded) * 100));
 
-// ─── Six Stats: Asymptotic Scaling (v2) ─────────────────────────────────────
 function logScale(val: number, mid: number, cap = 95): number {
   if (val <= 0) return 0;
   return Math.min(cap, Math.round(100 * val / (val + mid)));
 }
 
-const vitality = logScale(cityCount, 50);
-const wisdom = logScale(postCount + libraryCount * 0.3, 120);
-const renown = logScale(followers, 15000);
-const command = logScale(agents * 8 + projectCount * 2, 80);
-const craft = logScale(builderLogCount, 50);
-const insight = logScale(libraryCount + digestCount * 0.2, 100);
+const vitalityInput = cityCount;
+const wisdomInput = postCount + libraryCount * 0.3;
+const renownInput = followers;
+const commandInput = agents * 8 + projectCount * 2;
+const craftInput = builderLogCount;
+const insightInput = libraryCount + digestCount * 0.2;
+
+const vitality = logScale(vitalityInput, 50);
+const wisdom = logScale(wisdomInput, 120);
+const renown = logScale(renownInput, 15000);
+const command = logScale(commandInput, 80);
+const craft = logScale(craftInput, 50);
+const insight = logScale(insightInput, 100);
 
 const stats = { vitality, wisdom, renown, command, craft, insight };
 const avgStat = Math.round((vitality + wisdom + renown + command + craft + insight) / 6);
 
-// ─── Rank ──────────────────────────────────────────────────────────────────
+const statFormulas = {
+  vitality: { labelZh: "体力", labelEn: "HP", value: vitality, formulaZh: `体力 = logScale(${cityCount}座城市, 50) → ${vitality}`, formulaEn: `HP = logScale(${cityCount} cities, 50) → ${vitality}` },
+  wisdom: { labelZh: "灵力", labelEn: "Spirit", value: wisdom, formulaZh: `灵力 = logScale(${postCount}篇 + ${libraryCount}本×0.3, 120) → ${wisdom}`, formulaEn: `Spirit = logScale(${postCount} posts + ${libraryCount} library×0.3, 120) → ${wisdom}` },
+  renown: { labelZh: "声望", labelEn: "Renown", value: renown, formulaZh: `声望 = logScale(${followers} followers, 15000) → ${renown}`, formulaEn: `Renown = logScale(${followers} followers, 15000) → ${renown}` },
+  command: { labelZh: "统御", labelEn: "Command", value: command, formulaZh: `统御 = logScale(${agents}门客×8 + ${projectCount}项目×2, 80) → ${command}`, formulaEn: `Command = logScale(${agents} agents×8 + ${projectCount} projects×2, 80) → ${command}` },
+  craft: { labelZh: "武术", labelEn: "Martial", value: craft, formulaZh: `武术 = logScale(${builderLogCount}篇造物日志, 50) → ${craft}`, formulaEn: `Martial = logScale(${builderLogCount} builder logs, 50) → ${craft}` },
+  insight: { labelZh: "身法", labelEn: "Agility", value: insight, formulaZh: `身法 = logScale(${libraryCount}本 + ${digestCount}篇×0.2, 100) → ${insight}`, formulaEn: `Agility = logScale(${libraryCount} library + ${digestCount} digests×0.2, 100) → ${insight}` },
+};
+
+const expFormula = {
+  zh: `EXP = 文章${postCount}×10 + 书影音${libraryCount}×3 + 城市${cityCount}×5 + 造物日志${builderLogCount}×8 + digest${digestCount}×2 = ${totalExp}`,
+  en: `EXP = posts ${postCount}×10 + library ${libraryCount}×3 + cities ${cityCount}×5 + builder logs ${builderLogCount}×8 + digests ${digestCount}×2 = ${totalExp}`,
+};
+
+const nextLevelTarget = (level + 1) * (level + 1) * 10;
+const levelFormula = {
+  zh: `Lv = floor(sqrt(EXP / 10))，当前 floor(sqrt(${totalExp} / 10)) = ${level}`,
+  en: `Lv = floor(sqrt(EXP / 10)); current floor(sqrt(${totalExp} / 10)) = ${level}`,
+  nextLevel: `下一级需要 ${nextLevelTarget - totalExp} EXP`,
+};
+
 function getRank(avg: number): { zh: string; en: string } {
   if (avg >= 81) return { zh: "蜀山掌门", en: "Grandmaster" };
   if (avg >= 61) return { zh: "一代侠客", en: "Hero" };
@@ -81,7 +98,6 @@ function getRank(avg: number): { zh: string; en: string } {
 }
 const rank = getRank(avgStat);
 
-// ─── Achievement Helpers ────────────────────────────────────────────────────
 function calcMaxStreak(): number {
   const allDates = new Set<string>();
   for (const p of posts) {
@@ -102,40 +118,21 @@ function calcMaxStreak(): number {
     const prev = new Date(sorted[i-1]!);
     const curr = new Date(sorted[i]!);
     const diff = (curr.getTime() - prev.getTime()) / (1000 * 60 * 60 * 24);
-    if (diff === 1) { streak++; }
+    if (diff === 1) streak++;
     else { maxStreak = Math.max(maxStreak, streak); streak = 1; }
   }
   return Math.max(maxStreak, streak);
 }
 const maxStreak = calcMaxStreak();
 
-function hasLongForm(): boolean {
-  for (const p of posts) {
-    if (p.body && p.body.split(/\s+/).length > 5000) return true;
-  }
-  return false;
-}
+function hasLongForm(): boolean { return posts.some(p => p.body && p.body.split(/\s+/).length > 5000); }
+function countBilingual(): number { return posts.filter(p => p.body && /<!--\s*en\s*-->/.test(p.body) && /<!--\s*(cn|zh)\s*-->/.test(p.body)).length; }
 const longFormUnlocked = hasLongForm();
-
-function countBilingual(): number {
-  let count = 0;
-  for (const p of posts) {
-    if (p.body && /<!--\s*en\s*-->/.test(p.body) && /<!--\s*(cn|zh)\s*-->/.test(p.body)) {
-      count++;
-    }
-  }
-  return count;
-}
 const bilingualCount = countBilingual();
 
 const cityIds = new Set(cities.map(c => c.id));
-const hasSilkRoadCities = [
-  cityIds.has("xian"), cityIds.has("chengdu"), cityIds.has("kunming")
-].filter(Boolean).length;
-const hasCoastalCities = [
-  cityIds.has("xiamen"), cityIds.has("fuzhou"), cityIds.has("quanzhou")
-].filter(Boolean).length;
-
+const hasSilkRoadCities = [cityIds.has("xian"), cityIds.has("chengdu"), cityIds.has("kunming")].filter(Boolean).length;
+const hasCoastalCities = [cityIds.has("xiamen"), cityIds.has("fuzhou"), cityIds.has("quanzhou")].filter(Boolean).length;
 const familyNomadCount = nomadCities.filter(c => {
   if (!c.arrival) return false;
   const arr = new Date(c.arrival);
@@ -144,157 +141,42 @@ const familyNomadCount = nomadCities.filter(c => {
   return days > 3;
 }).length;
 
-type AchievementItem = {
-  id: string;
-  icon: string;
-  nameZh: string;
-  nameEn: string;
-  descZh: string;
-  descEn: string;
-  unlocked: boolean;
-  category: string;
-  hidden?: boolean;
-  unlockedDate?: string;
-  progress?: number;
-  max?: number;
-};
-
-function ach(base: {
-  id: string; icon: string; nameZh: string; nameEn: string;
-  descZh: string; descEn: string; unlocked: boolean; category: string;
-  hidden?: boolean; unlockedDate?: string; progress?: number; max?: number;
-}): AchievementItem {
-  const result: AchievementItem = {
-    id: base.id, icon: base.icon, nameZh: base.nameZh, nameEn: base.nameEn,
-    descZh: base.descZh, descEn: base.descEn, unlocked: base.unlocked, category: base.category,
-  };
-  if (base.hidden === true) result.hidden = true;
-  if (base.unlockedDate !== undefined) result.unlockedDate = base.unlockedDate;
-  if (base.progress !== undefined) result.progress = base.progress;
-  if (base.max !== undefined) result.max = base.max;
-  return result;
-}
-
+type AchievementItem = { id: string; icon: string; nameZh: string; nameEn: string; descZh: string; descEn: string; unlocked: boolean; category: string; hidden?: boolean; unlockedDate?: string; progress?: number; max?: number; };
+function ach(base: AchievementItem): AchievementItem { return base; }
 const achievements: AchievementItem[] = [
-  ach({ id: "first-post", icon: "⚔️", nameZh: "初试剑意", nameEn: "First Post",
-    descZh: "发布第一篇文章", descEn: "Published the first article",
-    unlocked: postCount > 0, category: "cultivation", unlockedDate: "2025-12" }),
-  ach({ id: "ten-posts", icon: "📝", nameZh: "十篇成卷", nameEn: "Ten Posts",
-    descZh: "发布 10 篇文章", descEn: "Published 10 articles",
-    unlocked: postCount >= 10, category: "cultivation",
-    ...(postCount >= 10 ? { unlockedDate: "2025" } : { progress: postCount, max: 10 }) }),
-  ach({ id: "fifty-posts", icon: "🖋️", nameZh: "半百卷宗", nameEn: "Fifty Posts",
-    descZh: "发布 50 篇文章", descEn: "Published 50 articles",
-    unlocked: postCount >= 50, category: "cultivation",
-    ...(postCount >= 50 ? { unlockedDate: "2026" } : { progress: postCount, max: 50 }) }),
-  ach({ id: "author", icon: "📖", nameZh: "百卷藏锋", nameEn: "Author",
-    descZh: "著文 100 篇", descEn: "Write 100 articles",
-    unlocked: postCount >= 100, category: "cultivation",
-    ...(postCount >= 100 ? { unlockedDate: "2026" } : { progress: postCount, max: 100 }) }),
-  ach({ id: "daily-streak-7", icon: "🔥", nameZh: "七日不断炁", nameEn: "Weekly Streak",
-    descZh: "连续 7 天有内容产出", descEn: "7 consecutive days with content",
-    unlocked: maxStreak >= 7, category: "cultivation",
-    ...(maxStreak >= 7 ? { unlockedDate: "2026" } : { progress: maxStreak, max: 7 }) }),
-  ach({ id: "bilingual", icon: "🌐", nameZh: "双语双剑", nameEn: "Bilingual Writer",
-    descZh: "发布 10 篇中英双语文章", descEn: "Published 10 bilingual articles",
-    unlocked: bilingualCount >= 10, category: "cultivation",
-    ...(bilingualCount >= 10 ? { unlockedDate: "2026" } : { progress: bilingualCount, max: 10 }) }),
-  ach({ id: "long-form", icon: "📜", nameZh: "万言道卷", nameEn: "Long Form",
-    descZh: "单篇文章超过 5000 字", descEn: "Single article exceeding 5000 words",
-    unlocked: longFormUnlocked, category: "cultivation",
-    ...(longFormUnlocked ? { unlockedDate: "2026" } : {}) }),
-
-  ach({ id: "nomad", icon: "🗺️", nameZh: "行万里路", nameEn: "Nomad",
-    descZh: "游历 5 座城市", descEn: "Visited 5 cities",
-    unlocked: cityCount >= 5, category: "jianghu", unlockedDate: "2025-11" }),
-  ach({ id: "world-traveler", icon: "🌏", nameZh: "踏遍山河", nameEn: "World Traveler",
-    descZh: "游历 20 座城市", descEn: "Visit 20 cities",
-    unlocked: cityCount >= 20, category: "jianghu",
-    ...(cityCount >= 20 ? { unlockedDate: "2026" } : { progress: cityCount, max: 20 }) }),
-  ach({ id: "silk-road", icon: "🐫", nameZh: "西行古道", nameEn: "Silk Road",
-    descZh: "游历西安+成都+昆明", descEn: "Visit Xi'an + Chengdu + Kunming",
-    unlocked: hasSilkRoadCities >= 3, category: "jianghu",
-    ...(hasSilkRoadCities >= 3 ? { unlockedDate: "2026" } : { progress: hasSilkRoadCities, max: 3 }) }),
-  ach({ id: "coastal", icon: "🌊", nameZh: "临海听潮", nameEn: "Coastal Walk",
-    descZh: "游历厦门+福州+泉州", descEn: "Visit Xiamen + Fuzhou + Quanzhou",
-    unlocked: hasCoastalCities >= 3, category: "jianghu",
-    ...(hasCoastalCities >= 3 ? { unlockedDate: "2026-02" } : { progress: hasCoastalCities, max: 3 }) }),
-  ach({ id: "family-nomad", icon: "👨‍👩‍👦", nameZh: "携眷同游", nameEn: "Family Nomad",
-    descZh: "带家人旅居 10 城（停留 3 天+）", descEn: "Family stays in 10 cities (3+ days)",
-    unlocked: familyNomadCount >= 10, category: "jianghu",
-    ...(familyNomadCount >= 10 ? { unlockedDate: "2026" } : { progress: familyNomadCount, max: 10 }) }),
-  ach({ id: "100-days", icon: "📅", nameZh: "百日行脚", nameEn: "100 Days Nomad",
-    descZh: "数字游牧累计 100 天", descEn: "100 days of digital nomadism",
-    unlocked: travelDays >= 100, category: "jianghu",
-    ...(travelDays >= 100 ? { unlockedDate: "2026-03" } : { progress: travelDays, max: 100 }) }),
-
-  ach({ id: "agent-commander", icon: "🤖", nameZh: "六门同启", nameEn: "Agent Commander",
-    descZh: "统御 6 位 AI 门客", descEn: "Command 6 AI agents",
-    unlocked: agents >= 6, category: "command", unlockedDate: "2026-02" }),
-  ach({ id: "midnight-builder", icon: "🌙", nameZh: "子夜铸阵", nameEn: "Midnight Builder",
-    descZh: "造物日志 20+", descEn: "20+ builder logs",
-    unlocked: builderLogCount >= 20, category: "command", unlockedDate: "2026-03" }),
-  ach({ id: "hundred-crons", icon: "⚡", nameZh: "百阵运转", nameEn: "Hundred Crons",
-    descZh: "cron 累计成功 100 次", descEn: "100 successful cron runs",
-    unlocked: false, category: "command", progress: 46, max: 100 }),
-  ach({ id: "first-pr", icon: "🔀", nameZh: "初次破局", nameEn: "First PR",
-    descZh: "第一个 PR 合并", descEn: "First PR merged",
-    unlocked: true, category: "command", unlockedDate: "2025" }),
-  ach({ id: "system-architect", icon: "🏗️", nameZh: "造化司命", nameEn: "System Architect",
-    descZh: "维护 30+ 自动化 cron", descEn: "Maintain 30+ automation crons",
-    unlocked: true, category: "command", unlockedDate: "2026-03" }),
-
-  ach({ id: "bookworm", icon: "📚", nameZh: "博览群卷", nameEn: "Bookworm",
-    descZh: "涉猎 50+ 书影音", descEn: "50+ books & media",
-    unlocked: libraryCount >= 50, category: "knowledge", unlockedDate: "2026-03" }),
-  ach({ id: "library-100", icon: "🏛️", nameZh: "万卷藏经", nameEn: "Grand Library",
-    descZh: "100 本书影音", descEn: "100 books & media",
-    unlocked: libraryCount >= 100, category: "knowledge",
-    ...(libraryCount >= 100 ? { unlockedDate: "2026" } : { progress: libraryCount, max: 100 }) }),
-  ach({ id: "digest-master", icon: "📰", nameZh: "日课不辍", nameEn: "Digest Master",
-    descZh: "50 篇精读 digest", descEn: "50 digest articles",
-    unlocked: digestCount >= 50, category: "knowledge",
-    ...(digestCount >= 50 ? { unlockedDate: "2026" } : { progress: digestCount, max: 50 }) }),
-  ach({ id: "podcast-listener", icon: "🎧", nameZh: "兼听明鉴", nameEn: "Podcast Listener",
-    descZh: "总结 20 期播客", descEn: "Summarize 20 podcasts",
-    unlocked: false, category: "knowledge", progress: 0, max: 20 }),
-
-  ach({ id: "morning-person", icon: "🌅", nameZh: "朝阳练炁", nameEn: "Early Bird",
-    descZh: "连续 7 天 7AM 前有产出", descEn: "7 consecutive days with output before 7AM",
-    unlocked: false, category: "health", progress: 0, max: 7 }),
-  ach({ id: "walk-the-walk", icon: "🚶", nameZh: "步履为功", nameEn: "Walk the Walk",
-    descZh: "运动记录 30 次", descEn: "30 exercise logs",
-    unlocked: false, category: "health", progress: 0, max: 30 }),
-  ach({ id: "rest-master", icon: "🧘", nameZh: "息念养元", nameEn: "Rest Master",
-    descZh: "连续 30 天按时休息", descEn: "30 consecutive days of timely rest",
-    unlocked: false, category: "health", progress: 0, max: 30 }),
-  ach({ id: "digital-detox", icon: "🏖️", nameZh: "解兵归心", nameEn: "Digital Detox",
-    descZh: "周末连续 12h 无系统交互", descEn: "12h weekend without system interaction",
-    unlocked: false, category: "health", progress: 0, max: 1 }),
-  ach({ id: "sleep-well", icon: "😴", nameZh: "安神入定", nameEn: "Sleep Well",
-    descZh: "连续 7 天 23:00 前结束工作", descEn: "7 consecutive days finishing before 11PM",
-    unlocked: false, category: "health", progress: 0, max: 7 }),
-
-  ach({ id: "diamond-hands", icon: "💎", nameZh: "守拙如山", nameEn: "Diamond Hands",
-    descZh: "BTC 持仓跨越完整牛熊周期", descEn: "Held BTC through full bull-bear cycle",
-    unlocked: true, category: "investment", unlockedDate: "2017" }),
-  ach({ id: "comeback", icon: "🔄", nameZh: "破境重生", nameEn: "Comeback",
-    descZh: "经历 -80% 回撤后资产新高", descEn: "New ATH after -80% drawdown",
-    unlocked: true, category: "investment", unlockedDate: "2025" }),
-  ach({ id: "century-club", icon: "👑", nameZh: "千人之望", nameEn: "Century Club",
-    descZh: "X 1000+ 关注者", descEn: "X 1000+ followers",
-    unlocked: followers >= 1000, category: "investment", unlockedDate: "2023" }),
-
-  ach({ id: "bear-survivor", icon: "🐻", nameZh: "寒潮不退", nameEn: "Bear Survivor",
-    descZh: "F&G<10 持续 30 天仍在场", descEn: "Stayed active with F&G<10 for 30 days",
-    unlocked: true, category: "hidden", hidden: true, unlockedDate: "2026-03" }),
-  ach({ id: "serendipity", icon: "✨", nameZh: "机缘天降", nameEn: "Serendipity",
-    descZh: "单推文曝光超均值 10x", descEn: "Single tweet with 10x avg impressions",
-    unlocked: false, category: "hidden", hidden: true }),
-  ach({ id: "10k-club", icon: "🚀", nameZh: "名动九州", nameEn: "10K Club",
-    descZh: "X 10,000 关注者", descEn: "X 10,000 followers",
-    unlocked: followers >= 10000, category: "hidden", hidden: true,
-    ...(followers >= 10000 ? { unlockedDate: "2026" } : { progress: followers, max: 10000 }) }),
+  ach({ id: "first-post", icon: "⚔️", nameZh: "初试剑意", nameEn: "First Post", descZh: "发布第一篇文章", descEn: "Published the first article", unlocked: postCount > 0, category: "cultivation", unlockedDate: "2025-12" }),
+  ach({ id: "ten-posts", icon: "📝", nameZh: "十篇成卷", nameEn: "Ten Posts", descZh: "发布 10 篇文章", descEn: "Published 10 articles", unlocked: postCount >= 10, category: "cultivation", ...(postCount >= 10 ? { unlockedDate: "2025" } : { progress: postCount, max: 10 }) }),
+  ach({ id: "fifty-posts", icon: "🖋️", nameZh: "半百卷宗", nameEn: "Fifty Posts", descZh: "发布 50 篇文章", descEn: "Published 50 articles", unlocked: postCount >= 50, category: "cultivation", ...(postCount >= 50 ? { unlockedDate: "2026" } : { progress: postCount, max: 50 }) }),
+  ach({ id: "author", icon: "📖", nameZh: "百卷藏锋", nameEn: "Author", descZh: "著文 100 篇", descEn: "Write 100 articles", unlocked: postCount >= 100, category: "cultivation", ...(postCount >= 100 ? { unlockedDate: "2026" } : { progress: postCount, max: 100 }) }),
+  ach({ id: "daily-streak-7", icon: "🔥", nameZh: "七日不断炁", nameEn: "Weekly Streak", descZh: "连续 7 天有内容产出", descEn: "7 consecutive days with content", unlocked: maxStreak >= 7, category: "cultivation", ...(maxStreak >= 7 ? { unlockedDate: "2026" } : { progress: maxStreak, max: 7 }) }),
+  ach({ id: "bilingual", icon: "🌐", nameZh: "双语双剑", nameEn: "Bilingual Writer", descZh: "发布 10 篇中英双语文章", descEn: "Published 10 bilingual articles", unlocked: bilingualCount >= 10, category: "cultivation", ...(bilingualCount >= 10 ? { unlockedDate: "2026" } : { progress: bilingualCount, max: 10 }) }),
+  ach({ id: "long-form", icon: "📜", nameZh: "万言道卷", nameEn: "Long Form", descZh: "单篇文章超过 5000 字", descEn: "Single article exceeding 5000 words", unlocked: longFormUnlocked, category: "cultivation" }),
+  ach({ id: "nomad", icon: "🗺️", nameZh: "行万里路", nameEn: "Nomad", descZh: "游历 5 座城市", descEn: "Visited 5 cities", unlocked: cityCount >= 5, category: "jianghu", unlockedDate: "2025-11" }),
+  ach({ id: "world-traveler", icon: "🌏", nameZh: "踏遍山河", nameEn: "World Traveler", descZh: "游历 20 座城市", descEn: "Visit 20 cities", unlocked: cityCount >= 20, category: "jianghu", ...(cityCount >= 20 ? { unlockedDate: "2026" } : { progress: cityCount, max: 20 }) }),
+  ach({ id: "silk-road", icon: "🐫", nameZh: "西行古道", nameEn: "Silk Road", descZh: "游历西安+成都+昆明", descEn: "Visit Xi'an + Chengdu + Kunming", unlocked: hasSilkRoadCities >= 3, category: "jianghu", ...(hasSilkRoadCities >= 3 ? { unlockedDate: "2026" } : { progress: hasSilkRoadCities, max: 3 }) }),
+  ach({ id: "coastal", icon: "🌊", nameZh: "临海听潮", nameEn: "Coastal Walk", descZh: "游历厦门+福州+泉州", descEn: "Visit Xiamen + Fuzhou + Quanzhou", unlocked: hasCoastalCities >= 3, category: "jianghu", ...(hasCoastalCities >= 3 ? { unlockedDate: "2026-02" } : { progress: hasCoastalCities, max: 3 }) }),
+  ach({ id: "family-nomad", icon: "👨‍👩‍👦", nameZh: "携眷同游", nameEn: "Family Nomad", descZh: "带家人旅居 10 城（停留 3 天+）", descEn: "Family stays in 10 cities (3+ days)", unlocked: familyNomadCount >= 10, category: "jianghu", ...(familyNomadCount >= 10 ? { unlockedDate: "2026" } : { progress: familyNomadCount, max: 10 }) }),
+  ach({ id: "100-days", icon: "📅", nameZh: "百日行脚", nameEn: "100 Days Nomad", descZh: "数字游牧累计 100 天", descEn: "100 days of digital nomadism", unlocked: travelDays >= 100, category: "jianghu", ...(travelDays >= 100 ? { unlockedDate: "2026-03" } : { progress: travelDays, max: 100 }) }),
+  ach({ id: "agent-commander", icon: "🤖", nameZh: "六门同启", nameEn: "Agent Commander", descZh: "统御 6 位 AI 门客", descEn: "Command 6 AI agents", unlocked: agents >= 6, category: "command", unlockedDate: "2026-02" }),
+  ach({ id: "midnight-builder", icon: "🌙", nameZh: "子夜铸阵", nameEn: "Midnight Builder", descZh: "造物日志 20+", descEn: "20+ builder logs", unlocked: builderLogCount >= 20, category: "command", unlockedDate: "2026-03" }),
+  ach({ id: "hundred-crons", icon: "⚡", nameZh: "百阵运转", nameEn: "Hundred Crons", descZh: "cron 累计成功 100 次", descEn: "100 successful cron runs", unlocked: false, category: "command", progress: 46, max: 100 }),
+  ach({ id: "first-pr", icon: "🔀", nameZh: "初次破局", nameEn: "First PR", descZh: "第一个 PR 合并", descEn: "First PR merged", unlocked: true, category: "command", unlockedDate: "2025" }),
+  ach({ id: "system-architect", icon: "🏗️", nameZh: "造化司命", nameEn: "System Architect", descZh: "维护 30+ 自动化 cron", descEn: "Maintain 30+ automation crons", unlocked: true, category: "command", unlockedDate: "2026-03" }),
+  ach({ id: "bookworm", icon: "📚", nameZh: "博览群卷", nameEn: "Bookworm", descZh: "涉猎 50+ 书影音", descEn: "50+ books & media", unlocked: libraryCount >= 50, category: "knowledge", unlockedDate: "2026-03" }),
+  ach({ id: "library-100", icon: "🏛️", nameZh: "万卷藏经", nameEn: "Grand Library", descZh: "100 本书影音", descEn: "100 books & media", unlocked: libraryCount >= 100, category: "knowledge", ...(libraryCount >= 100 ? { unlockedDate: "2026" } : { progress: libraryCount, max: 100 }) }),
+  ach({ id: "digest-master", icon: "📰", nameZh: "日课不辍", nameEn: "Digest Master", descZh: "50 篇精读 digest", descEn: "50 digest articles", unlocked: digestCount >= 50, category: "knowledge", ...(digestCount >= 50 ? { unlockedDate: "2026" } : { progress: digestCount, max: 50 }) }),
+  ach({ id: "podcast-listener", icon: "🎧", nameZh: "兼听明鉴", nameEn: "Podcast Listener", descZh: "总结 20 期播客", descEn: "Summarize 20 podcasts", unlocked: false, category: "knowledge", progress: 0, max: 20 }),
+  ach({ id: "morning-person", icon: "🌅", nameZh: "朝阳练炁", nameEn: "Early Bird", descZh: "连续 7 天 7AM 前有产出", descEn: "7 consecutive days with output before 7AM", unlocked: false, category: "health", progress: 0, max: 7 }),
+  ach({ id: "walk-the-walk", icon: "🚶", nameZh: "步履为功", nameEn: "Walk the Walk", descZh: "运动记录 30 次", descEn: "30 exercise logs", unlocked: false, category: "health", progress: 0, max: 30 }),
+  ach({ id: "rest-master", icon: "🧘", nameZh: "息念养元", nameEn: "Rest Master", descZh: "连续 30 天按时休息", descEn: "30 consecutive days of timely rest", unlocked: false, category: "health", progress: 0, max: 30 }),
+  ach({ id: "digital-detox", icon: "🏖️", nameZh: "解兵归心", nameEn: "Digital Detox", descZh: "周末连续 12h 无系统交互", descEn: "12h weekend without system interaction", unlocked: false, category: "health", progress: 0, max: 1 }),
+  ach({ id: "sleep-well", icon: "😴", nameZh: "安神入定", nameEn: "Sleep Well", descZh: "连续 7 天 23:00 前结束工作", descEn: "7 consecutive days finishing before 11PM", unlocked: false, category: "health", progress: 0, max: 7 }),
+  ach({ id: "diamond-hands", icon: "💎", nameZh: "守拙如山", nameEn: "Diamond Hands", descZh: "BTC 持仓跨越完整牛熊周期", descEn: "Held BTC through full bull-bear cycle", unlocked: true, category: "investment", unlockedDate: "2017" }),
+  ach({ id: "comeback", icon: "🔄", nameZh: "破境重生", nameEn: "Comeback", descZh: "经历 -80% 回撤后资产新高", descEn: "New ATH after -80% drawdown", unlocked: true, category: "investment", unlockedDate: "2025" }),
+  ach({ id: "century-club", icon: "👑", nameZh: "千人之望", nameEn: "Century Club", descZh: "X 1000+ 关注者", descEn: "X 1000+ followers", unlocked: followers >= 1000, category: "investment", unlockedDate: "2023" }),
+  ach({ id: "bear-survivor", icon: "🐻", nameZh: "寒潮不退", nameEn: "Bear Survivor", descZh: "F&G<10 持续 30 天仍在场", descEn: "Stayed active with F&G<10 for 30 days", unlocked: true, category: "hidden", hidden: true, unlockedDate: "2026-03" }),
+  ach({ id: "serendipity", icon: "✨", nameZh: "机缘天降", nameEn: "Serendipity", descZh: "单推文曝光超均值 10x", descEn: "Single tweet with 10x avg impressions", unlocked: false, category: "hidden", hidden: true }),
+  ach({ id: "10k-club", icon: "🚀", nameZh: "名动九州", nameEn: "10K Club", descZh: "X 10,000 关注者", descEn: "X 10,000 followers", unlocked: followers >= 10000, category: "hidden", hidden: true, ...(followers >= 10000 ? { unlockedDate: "2026" } : { progress: followers, max: 10000 }) }),
 ];
 
 const agentMeta: Record<string, { emoji: string; titleZh: string; titleEn: string; sprite: string }> = {
@@ -307,90 +189,45 @@ const agentMeta: Record<string, { emoji: string; titleZh: string; titleEn: strin
   analyst:    { emoji: "📊", titleZh: "账房", titleEn: "Keeper", sprite: "/assets/pixel-office/avatars/avatar_5.png" },
 };
 
-const rawAgents = (agentWorkload as any).agents as Array<{
-  id: string; name: string; tokens: number; sessions: number; model: string;
-}>;
-
+const rawAgents = (agentWorkload as any).agents as Array<{ id: string; name: string; tokens: number; sessions: number; model: string }>;
 const agentIds = new Set(rawAgents.map(a => a.id));
 const allAgents = [...rawAgents];
-if (!agentIds.has("artist")) {
-  allAgents.push({ id: "artist", name: "Shuri", tokens: 0, sessions: 0, model: "Gemini 2.5" });
-}
+if (!agentIds.has("artist")) allAgents.push({ id: "artist", name: "Shuri", tokens: 0, sessions: 0, model: "Gemini 2.5" });
 
 const retainers = allAgents.map(a => {
   const meta = agentMeta[a.id] ?? { emoji: "🤖", titleZh: "门客", titleEn: "Retainer", sprite: "/assets/pixel-office/characters/char_0.png" };
   const agentLevel = Math.floor(logScale(a.sessions, 200) / 2);
-  return {
-    id: a.id,
-    name: a.name,
-    emoji: meta.emoji,
-    titleZh: meta.titleZh,
-    titleEn: meta.titleEn,
-    sprite: meta.sprite,
-    level: agentLevel,
-    sessions: a.sessions,
-    tokens: a.tokens,
-    model: a.model,
-  };
+  return { id: a.id, name: a.name, emoji: meta.emoji, titleZh: meta.titleZh, titleEn: meta.titleEn, sprite: meta.sprite, level: agentLevel, sessions: a.sessions, tokens: a.tokens, model: a.model };
 });
 
-type ActivityItem = {
-  dateRaw: Date;
-  dateEn: string;
-  dateZh: string;
-  icon: string;
-  statZh: string;
-  statEn: string;
-  exp: number;
-  descZh: string;
-  descEn: string;
-  type: string;
-};
-
+type ActivityItem = { dateRaw: Date; dateEn: string; dateZh: string; icon: string; statZh: string; statEn: string; exp: number; descZh: string; descEn: string; type: string };
 const allActivity: ActivityItem[] = [];
 const months = ["一月","二月","三月","四月","五月","六月","七月","八月","九月","十月","十一月","十二月"];
-
-function fmtDate(d: Date) {
-  const dateZh = `${d.getFullYear()}年${months[d.getMonth()]}${d.getDate()}日`;
-  const dateEn = d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
-  return { dateZh, dateEn };
-}
-
+function fmtDate(d: Date) { return { dateZh: `${d.getFullYear()}年${months[d.getMonth()]}${d.getDate()}日`, dateEn: d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }) }; }
 for (const post of posts) {
-  const d = new Date(post.data.publishDate);
-  const { dateZh, dateEn } = fmtDate(d);
-  allActivity.push({
-    dateRaw: d, dateZh, dateEn,
-    icon: "✍️", statZh: "灵力", statEn: "Spirit", exp: 10,
-    descZh: `著文《${post.data.title}》`, descEn: `Published \"${post.data.title}\"`,
-    type: "post",
-  });
+  const d = new Date(post.data.publishDate); const { dateZh, dateEn } = fmtDate(d);
+  allActivity.push({ dateRaw: d, dateZh, dateEn, icon: "✍️", statZh: "灵力", statEn: "Spirit", exp: 10, descZh: `著文《${post.data.title}》`, descEn: `Published \"${post.data.title}\"`, type: "post" });
 }
-
 for (const log of builderLogs) {
-  const d = new Date(log.data.date);
-  const { dateZh, dateEn } = fmtDate(d);
-  allActivity.push({
-    dateRaw: d, dateZh, dateEn,
-    icon: "🛠️", statZh: "武术", statEn: "Martial", exp: 8,
-    descZh: log.data.title_zh ?? log.data.title, descEn: log.data.title,
-    type: "builder-log",
-  });
+  const d = new Date(log.data.date); const { dateZh, dateEn } = fmtDate(d);
+  allActivity.push({ dateRaw: d, dateZh, dateEn, icon: "🛠️", statZh: "武术", statEn: "Martial", exp: 8, descZh: log.data.title_zh ?? log.data.title, descEn: log.data.title, type: "builder-log" });
 }
-
 for (const digest of digests) {
-  const d = new Date(digest.data.date);
-  const { dateZh, dateEn } = fmtDate(d);
-  allActivity.push({
-    dateRaw: d, dateZh, dateEn,
-    icon: "📜", statZh: "身法", statEn: "Agility", exp: 2,
-    descZh: digest.data.title_zh ?? digest.data.title, descEn: digest.data.title,
-    type: "digest",
-  });
+  const d = new Date(digest.data.date); const { dateZh, dateEn } = fmtDate(d);
+  allActivity.push({ dateRaw: d, dateZh, dateEn, icon: "📜", statZh: "身法", statEn: "Agility", exp: 2, descZh: digest.data.title_zh ?? digest.data.title, descEn: digest.data.title, type: "digest" });
 }
-
 allActivity.sort((a, b) => b.dateRaw.getTime() - a.dateRaw.getTime());
 const activityForClient = allActivity.map(({ dateRaw, ...rest }) => rest);
+
+const journey = journeyData as any;
+const quests = {
+  ...journey.quests,
+  main: (journey.quests.main ?? []).map((quest: any) => {
+    if (quest.id === "fame") return { ...quest, current: followers };
+    if (quest.id === "wander") return { ...quest, current: nomadCities.length, status: nomadCities.length >= (quest.goal ?? 0) ? "completed" : quest.status };
+    return quest;
+  }),
+};
 
 const meta = {
   title: "Player Stats — Rex's Open-World Adventure Dashboard",
@@ -402,27 +239,15 @@ const meta = {
 <PageLayout meta={meta}>
   <section class="mb-8">
     <div class="mb-4">
-      <button
-        onclick="history.back()"
-        class="group flex items-center gap-1 font-serif text-sm text-gray-500 transition-colors hover:text-[#8953d1] dark:hover:text-[#a175e8]"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="transition-transform group-hover:-translate-x-1">
-          <polyline points="15 18 9 12 15 6"></polyline>
-        </svg>
+      <button onclick="history.back()" class="group flex items-center gap-1 font-serif text-sm text-gray-500 transition-colors hover:text-[#8953d1] dark:hover:text-[#a175e8]">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="transition-transform group-hover:-translate-x-1"><polyline points="15 18 9 12 15 6"></polyline></svg>
         Back
       </button>
     </div>
 
-    <h1 class="hero-reveal-text mb-3 font-serif text-4xl font-bold dark:text-white">
-      <span class="lang-en">Player Stats</span>
-      <span class="lang-zh">江湖档案</span>
-    </h1>
-    <p class="hero-reveal-subtitle lang-en max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">
-      Your open-world adventure dashboard. Every stat from real data, no manual input.
-    </p>
-    <p class="hero-reveal-subtitle lang-zh max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">
-      开放世界江湖面板。所有数值来自真实数据，无手动设置。
-    </p>
+    <h1 class="hero-reveal-text mb-3 font-serif text-4xl font-bold dark:text-white"><span class="lang-en">Player Stats</span><span class="lang-zh">江湖档案</span></h1>
+    <p class="hero-reveal-subtitle lang-en max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">Your open-world adventure dashboard. Every stat from real data, no manual input.</p>
+    <p class="hero-reveal-subtitle lang-zh max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">开放世界江湖面板。所有数值来自真实数据，无手动设置。</p>
   </section>
 
   <PlayerStats
@@ -447,21 +272,18 @@ const meta = {
     cities={cities.map(c => ({ id: c.id, name: c.name, nameCN: c.nameCN, lat: c.lat, lng: c.lng }))}
     achievements={achievements}
     retainers={retainers}
-    quests={(journeyData as any).quests}
-    equipment={(journeyData as any).equipment}
+    quests={quests}
+    equipment={journey.equipment}
     activityLog={activityForClient}
+    chapters={journey.chapters}
+    relationships={journey.relationships}
+    statFormulas={statFormulas}
+    expFormula={expFormula}
+    levelFormula={levelFormula}
   />
 
   <section class="mt-16 border-t border-gray-100 pt-8 dark:border-gray-800">
-    <p class="font-serif text-sm text-gray-400 dark:text-gray-500">
-      <span class="lang-en">All stats are auto-calculated from content collections. Only the X follower count remains manually set. Updates on every build.</span>
-      <span class="lang-zh">所有属性自动计算（X 粉丝数除外），每次构建更新。</span>
-    </p>
-    <div class="mt-3">
-      <a href="/lab/" class="font-serif text-sm text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]">
-        <span class="lang-en">← Back to Lab</span>
-        <span class="lang-zh">← 返回 Lab</span>
-      </a>
-    </div>
+    <p class="font-serif text-sm text-gray-400 dark:text-gray-500"><span class="lang-en">All stats are auto-calculated from content collections and dashboard data. Updates on every build.</span><span class="lang-zh">所有属性自动计算，并在每次构建时更新。</span></p>
+    <div class="mt-3"><a href="/lab/" class="font-serif text-sm text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]"><span class="lang-en">← Back to Lab</span><span class="lang-zh">← 返回 Lab</span></a></div>
   </section>
 </PageLayout>

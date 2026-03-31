@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 
 export interface RetainerData {
   id: string;
@@ -53,6 +52,47 @@ export interface EquipmentData {
   article: string | null;
 }
 
+export interface ChapterData {
+  id: string;
+  titleCN: string;
+  titleEN: string;
+  period: string;
+  location: string;
+  summary: string;
+  summaryEN: string;
+  articles: string[];
+  boss?: {
+    name: string;
+    nameEN: string;
+    description?: string;
+    descriptionEN?: string;
+    defeated: boolean;
+    reward: string;
+    rewardEN: string;
+  } | null;
+  rewards: string[];
+  rewardsEN: string[];
+}
+
+export interface RelationshipData {
+  id: string;
+  nameCN: string;
+  nameEN: string;
+  roleCN: string;
+  roleEN: string;
+  impactCN: string;
+  impactEN: string;
+  article: string | null;
+}
+
+export interface StatFormulaData {
+  labelZh: string;
+  labelEn: string;
+  value: number;
+  formulaZh: string;
+  formulaEn: string;
+}
+
 export interface PlayerStatsProps {
   stats: {
     vitality: number;
@@ -81,10 +121,7 @@ export interface PlayerStatsProps {
   cities: Array<{ id: string; name: string; nameCN: string; lat: number; lng: number }>;
   achievements: AchievementData[];
   retainers: RetainerData[];
-  quests: {
-    main: QuestData[];
-    side: QuestData[];
-  };
+  quests: { main: QuestData[]; side: QuestData[] };
   equipment: EquipmentData[];
   activityLog: Array<{
     dateEn: string;
@@ -97,12 +134,18 @@ export interface PlayerStatsProps {
     descEn: string;
     type: string;
   }>;
+  chapters: ChapterData[];
+  relationships: RelationshipData[];
+  statFormulas: Record<string, StatFormulaData>;
+  expFormula: { zh: string; en: string };
+  levelFormula: { zh: string; en: string; nextLevel: string };
 }
+
+const PURPLE = "#8953d1";
 
 function isDarkMode(): boolean {
   if (typeof document === "undefined") return true;
-  return document.documentElement.getAttribute("data-theme") === "dark"
-    || document.documentElement.classList.contains("dark");
+  return document.documentElement.getAttribute("data-theme") === "dark" || document.documentElement.classList.contains("dark");
 }
 
 function useTheme() {
@@ -119,7 +162,7 @@ function useTheme() {
 function usePrefersReducedMotion() {
   const [reduced, setReduced] = useState(false);
   useEffect(() => {
-    if (typeof window === "undefined" || !("matchMedia" in window)) return;
+    if (typeof window === "undefined") return;
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
     const update = () => setReduced(media.matches);
     update();
@@ -129,1058 +172,371 @@ function usePrefersReducedMotion() {
   return reduced;
 }
 
-function useInView<T extends HTMLElement>(threshold = 0.22) {
+function useInView<T extends HTMLElement>(threshold = 0.18) {
   const ref = useRef<T | null>(null);
   const [inView, setInView] = useState(false);
-
   useEffect(() => {
     if (!ref.current || typeof IntersectionObserver === "undefined") {
       setInView(true);
       return;
     }
     const el = ref.current;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setInView(true);
-          observer.disconnect();
-        }
-      },
-      { threshold, rootMargin: "0px 0px -10% 0px" },
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
+    const ob = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setInView(true);
+        ob.disconnect();
+      }
+    }, { threshold, rootMargin: "0px 0px -8% 0px" });
+    ob.observe(el);
+    return () => ob.disconnect();
   }, [threshold]);
-
   return { ref, inView };
 }
 
-function useCountUp(target: number, duration = 1200, enabled = true) {
+function useCountUp(target: number, duration = 700, enabled = true) {
+  const reduced = usePrefersReducedMotion();
   const [value, setValue] = useState(enabled ? 0 : target);
-  const reducedMotion = usePrefersReducedMotion();
-
   useEffect(() => {
-    if (!enabled || reducedMotion) {
+    if (!enabled || reduced) {
       setValue(target);
       return;
     }
-    const start = performance.now();
     let raf = 0;
+    const start = performance.now();
     const step = (now: number) => {
       const t = Math.min((now - start) / duration, 1);
-      const ease = 1 - Math.pow(1 - t, 3);
-      setValue(Math.round(ease * target));
+      const eased = 1 - Math.pow(1 - t, 3);
+      setValue(target * eased);
       if (t < 1) raf = requestAnimationFrame(step);
     };
     raf = requestAnimationFrame(step);
     return () => cancelAnimationFrame(raf);
-  }, [target, duration, enabled, reducedMotion]);
-
+  }, [target, duration, enabled, reduced]);
   return value;
 }
 
-function PixelBar({ value, dark, color = "#8953d1", segments = 20, animate = true }: { value: number; dark: boolean; color?: string; segments?: number; animate?: boolean }) {
-  const animated = useCountUp(value, 1000, animate);
-  const filled = Math.round((animated / 100) * segments);
+function TooltipWrap({ content, children }: { content: React.ReactNode; children: React.ReactNode }) {
+  const [open, setOpen] = useState(false);
   return (
-    <div style={{ display: "flex", gap: 3, alignItems: "center" }}>
-      {Array.from({ length: segments }, (_, i) => (
-        <div
-          key={i}
-          style={{
-            width: 7,
-            height: 12,
-            borderRadius: 999,
-            background: i < filled
-              ? `linear-gradient(180deg, ${color}, rgba(137,83,209,0.66))`
-              : (dark ? "rgba(255,255,255,0.08)" : "rgba(60,20,90,0.08)"),
-            boxShadow: i < filled ? "0 0 10px rgba(137,83,209,0.22)" : "none",
-            transition: "background 0.2s ease, box-shadow 0.2s ease",
-          }}
-        />
-      ))}
-      <span style={{ marginLeft: 8, fontFamily: "monospace", fontSize: 13, color, fontWeight: 700 }}>
-        {animated}
-      </span>
-    </div>
-  );
-}
-
-function DecorativeSection({ children, dark, className, reveal = true, delay = 0 }: { children: ReactNode; dark: boolean; className?: string; reveal?: boolean; delay?: number }) {
-  const { ref, inView } = useInView<HTMLDivElement>(0.15);
-  const reducedMotion = usePrefersReducedMotion();
-  const bg = dark
-    ? "linear-gradient(180deg, rgba(19,16,32,0.98), rgba(12,10,24,0.98))"
-    : "linear-gradient(180deg, rgba(253,250,255,0.96), rgba(248,243,255,0.96))";
-  const border = dark ? "rgba(137,83,209,0.28)" : "rgba(137,83,209,0.16)";
-  const visible = !reveal || reducedMotion || inView;
-
-  return (
-    <div
-      ref={ref}
-      className={className}
-      style={{
-        position: "relative",
-        overflow: "hidden",
-        border: `1px solid ${border}`,
-        borderRadius: 20,
-        padding: "1.5rem",
-        background: bg,
-        boxShadow: dark ? "0 20px 50px rgba(0,0,0,0.28)" : "0 18px 40px rgba(137,83,209,0.08)",
-        backdropFilter: "blur(6px)",
-        opacity: visible ? 1 : 0,
-        transform: visible ? "translateY(0)" : "translateY(20px)",
-        transition: `opacity 720ms cubic-bezier(0.22, 1, 0.36, 1) ${delay}ms, transform 720ms cubic-bezier(0.22, 1, 0.36, 1) ${delay}ms`,
-      }}
+    <span
+      style={{ position: "relative", display: "block" }}
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
+      onFocus={() => setOpen(true)}
+      onBlur={() => setOpen(false)}
+      onTouchStart={() => setOpen(v => !v)}
+      tabIndex={0}
     >
-      <div style={{ position: "absolute", inset: 0, pointerEvents: "none", opacity: dark ? 0.18 : 0.3, backgroundImage: "radial-gradient(circle at 1px 1px, rgba(137,83,209,0.22) 1px, transparent 0)", backgroundSize: "14px 14px", mixBlendMode: dark ? "screen" : "multiply" }} />
-      <div style={{ position: "absolute", inset: 0, pointerEvents: "none", opacity: dark ? 0.1 : 0.18, background: "repeating-linear-gradient(8deg, transparent 0 10px, rgba(137,83,209,0.08) 10px 11px, transparent 11px 20px)" }} />
-      <div style={{ position: "absolute", top: -40, right: -10, width: 180, height: 180, borderRadius: "50%", background: "radial-gradient(circle, rgba(137,83,209,0.16), transparent 68%)", filter: "blur(4px)", pointerEvents: "none" }} />
-      <div style={{ position: "absolute", bottom: -70, left: -30, width: 220, height: 180, background: "radial-gradient(circle, rgba(137,83,209,0.12), transparent 70%)", pointerEvents: "none" }} />
-      <div style={{ position: "relative", zIndex: 1 }}>{children}</div>
-    </div>
-  );
-}
-
-function VerticalSeal({ text, dark }: { text: string; dark: boolean }) {
-  return (
-    <div style={{
-      writingMode: "vertical-rl",
-      textOrientation: "upright",
-      letterSpacing: "0.15em",
-      padding: "10px 6px",
-      borderRadius: 999,
-      border: `1px solid ${dark ? "rgba(137,83,209,0.26)" : "rgba(137,83,209,0.2)"}`,
-      background: dark ? "rgba(137,83,209,0.08)" : "rgba(137,83,209,0.06)",
-      color: "#8953d1",
-      fontSize: 11,
-      fontFamily: "Georgia, Cambria, serif",
-      alignSelf: "stretch",
-      display: "flex",
-      justifyContent: "center",
-    }}>
-      {text}
-    </div>
-  );
-}
-
-function InfoTag({ icon, zh, en, dark }: { icon: string; zh: string; en: string; dark: boolean }) {
-  return (
-    <span style={{
-      display: "inline-flex",
-      alignItems: "center",
-      gap: 6,
-      padding: "6px 10px",
-      borderRadius: 999,
-      border: `1px solid ${dark ? "rgba(137,83,209,0.28)" : "rgba(137,83,209,0.2)"}`,
-      background: dark ? "rgba(137,83,209,0.1)" : "rgba(137,83,209,0.06)",
-      fontFamily: "Georgia, Cambria, serif",
-      fontSize: "0.76rem",
-      color: dark ? "#f4ecff" : "#6c3fa8",
-      boxShadow: "inset 0 1px 0 rgba(255,255,255,0.04)",
-    }}>
-      <span>{icon}</span>
-      <span className="lang-zh">{zh}</span>
-      <span className="lang-en">{en}</span>
+      {children}
+      <span style={{
+        position: "absolute",
+        left: 0,
+        top: "calc(100% + 10px)",
+        zIndex: 20,
+        width: "min(320px, calc(100vw - 48px))",
+        padding: "10px 12px",
+        borderRadius: 14,
+        border: `1px solid ${PURPLE}`,
+        background: "rgba(12,10,20,0.96)",
+        color: "#f5efff",
+        fontFamily: "monospace",
+        fontSize: 11,
+        lineHeight: 1.55,
+        pointerEvents: open ? "auto" : "none",
+        opacity: open ? 1 : 0,
+        transform: open ? "translateY(0)" : "translateY(-4px)",
+        transition: "opacity 180ms ease, transform 180ms ease",
+        boxShadow: "0 18px 40px rgba(0,0,0,0.32)"
+      }}>{content}</span>
     </span>
   );
 }
 
-function HeroCard({ rank, level, totalExp, expInLevel, expNeeded, expProgress, currentCity, travelDays, dark, animate }: {
-  rank: { zh: string; en: string };
-  level: number;
-  totalExp: number;
-  expInLevel: number;
-  expNeeded: number;
-  expProgress: number;
-  currentCity: { name: string; nameCN: string };
-  travelDays: number;
-  dark: boolean;
-  animate: boolean;
-}) {
-  const animatedLevel = useCountUp(level, 1400, animate);
-  const animatedExp = useCountUp(totalExp, 1800, animate);
-  const animatedProgress = useCountUp(expProgress, 1300, animate);
-  const animatedTravelDays = useCountUp(travelDays, 1400, animate);
-  const textPrimary = dark ? "#ffffff" : "#22172f";
-  const textSecondary = dark ? "#b9b1c9" : "#6f657d";
-
-  return (
-    <div style={{ display: "grid", gridTemplateColumns: "auto 1fr auto", gap: "1rem", alignItems: "stretch" }} className="player-hero-grid">
-      <div style={{ position: "relative", width: 132, minHeight: 160, justifySelf: "center" }}>
-        <div style={{
-          width: 132,
-          height: 160,
-          borderRadius: 18,
-          overflow: "hidden",
-          border: "1px solid rgba(137,83,209,0.34)",
-          background: dark ? "linear-gradient(180deg, rgba(35,25,59,0.95), rgba(12,10,24,0.95))" : "linear-gradient(180deg, rgba(240,232,255,0.95), rgba(252,248,255,0.98))",
-          boxShadow: "0 12px 30px rgba(137,83,209,0.16)",
-        }}>
-          <img src="/images/rex-avatar.png" alt="Rex Liu avatar" width={132} height={160} style={{ width: "100%", height: "100%", objectFit: "cover", imageRendering: "pixelated" }} />
-        </div>
-        <div style={{ position: "absolute", inset: -8, borderRadius: 24, border: "1px solid rgba(137,83,209,0.2)", pointerEvents: "none" }} />
-        <div style={{ position: "absolute", left: "50%", bottom: -10, transform: "translateX(-50%)", whiteSpace: "nowrap", padding: "4px 12px", borderRadius: 999, border: "1px solid rgba(137,83,209,0.26)", background: dark ? "rgba(10,10,22,0.92)" : "rgba(255,252,255,0.92)", fontFamily: "monospace", fontSize: 12, color: "#8953d1", fontWeight: 700 }}>Lv.{animatedLevel}</div>
-      </div>
-
-      <div style={{ minWidth: 0, alignSelf: "center" }}>
-        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
-          <div>
-            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "baseline", gap: 10 }}>
-              <h2 style={{ margin: 0, fontFamily: "Georgia, Cambria, serif", fontSize: "2rem", fontWeight: 700, color: textPrimary }}>Rex Liu</h2>
-              <span style={{ color: "#8953d1", fontFamily: "monospace", fontWeight: 700, fontSize: 12, letterSpacing: "0.16em" }}>PLAYER STATS</span>
-            </div>
-            <p style={{ margin: "0.5rem 0 0", color: textSecondary, fontFamily: "Georgia, Cambria, serif", fontSize: "0.92rem", lineHeight: 1.7 }}>
-              <span className="lang-en">Sword intent in writing, inner strength in systems, footsteps across cities.</span>
-              <span className="lang-zh">文章为剑，系统为功，城市为路。</span>
-            </p>
-          </div>
-          <div style={{ display: "flex", alignItems: "stretch", gap: 12 }}>
-            <VerticalSeal text="江湖档案" dark={dark} />
-          </div>
-        </div>
-
-        <div style={{ marginTop: 16, display: "flex", flexWrap: "wrap", gap: 8 }}>
-          <InfoTag icon="⚔️" zh={rank.zh} en={rank.en} dark={dark} />
-          <InfoTag icon="🏔️" zh="逍遥道统" en="Xiaoyao Lineage" dark={dark} />
-          <InfoTag icon="📍" zh={currentCity.nameCN} en={currentCity.name} dark={dark} />
-          <InfoTag icon="🗓️" zh={`游历 ${animatedTravelDays} 天`} en={`Day ${animatedTravelDays}`} dark={dark} />
-        </div>
-
-        <div style={{ marginTop: 18 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", gap: 8, marginBottom: 8, flexWrap: "wrap" }}>
-            <span style={{ fontFamily: "monospace", fontSize: 12, color: "#8953d1", fontWeight: 700 }}>TOTAL EXP {animatedExp.toLocaleString()}</span>
-            <span style={{ fontFamily: "monospace", fontSize: 11, color: textSecondary }}>{expInLevel} / {expNeeded}</span>
-          </div>
-          <div style={{ position: "relative", height: 18, borderRadius: 999, overflow: "hidden", border: `1px solid ${dark ? "rgba(137,83,209,0.28)" : "rgba(137,83,209,0.2)"}`, background: dark ? "rgba(255,255,255,0.05)" : "rgba(60,20,90,0.06)" }}>
-            <div style={{ position: "absolute", inset: 0, background: "repeating-linear-gradient(90deg, transparent 0 18px, rgba(137,83,209,0.08) 18px 19px)" }} />
-            <div style={{
-              height: "100%",
-              width: `${animatedProgress}%`,
-              background: "linear-gradient(90deg, rgba(137,83,209,0.95), rgba(137,83,209,0.55))",
-              boxShadow: "0 0 18px rgba(137,83,209,0.35)",
-              transition: "width 0.2s linear",
-              position: "relative",
-            }}>
-              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(255,255,255,0.28), transparent)" }} />
-            </div>
-          </div>
-        </div>
-
-        <p style={{ margin: "0.9rem 0 0", fontFamily: "Georgia, Cambria, serif", fontSize: "0.84rem", color: textSecondary, fontStyle: "italic" }}>
-          <span className="lang-en">“Simplify the complex. Repeat the simple.”</span>
-          <span className="lang-zh">“复杂问题简单化，简单事情重复做。”</span>
-        </p>
-      </div>
-
-      <div style={{ alignSelf: "center", justifySelf: "end", minWidth: 120 }} className="hero-side-stats">
-        <div style={{ borderRadius: 16, border: `1px solid ${dark ? "rgba(137,83,209,0.24)" : "rgba(137,83,209,0.15)"}`, background: dark ? "rgba(137,83,209,0.08)" : "rgba(137,83,209,0.04)", padding: 14 }}>
-          <div style={{ fontFamily: "monospace", fontSize: 11, color: dark ? "#bdb4cb" : "#7d6c95" }}>Realm</div>
-          <div style={{ fontFamily: "Georgia, Cambria, serif", fontSize: 26, color: "#8953d1", fontWeight: 700, lineHeight: 1.1 }}>{rank.zh}</div>
-          <div style={{ fontFamily: "monospace", fontSize: 11, color: dark ? "#8f859f" : "#91839f", marginTop: 8 }}>Progress</div>
-          <div style={{ fontFamily: "monospace", fontSize: 22, color: dark ? "#ffffff" : "#2d203a", fontWeight: 700 }}>{animatedProgress}%</div>
-        </div>
-      </div>
-    </div>
-  );
+function Section({ dark, children }: { dark: boolean; children: React.ReactNode }) {
+  return <section style={{ border: `1px solid ${dark ? "rgba(137,83,209,0.24)" : "rgba(137,83,209,0.14)"}`, borderRadius: 22, padding: "1.4rem", background: dark ? "linear-gradient(180deg, rgba(18,14,29,0.98), rgba(10,8,18,0.98))" : "linear-gradient(180deg, rgba(255,255,255,0.96), rgba(248,242,255,0.96))", boxShadow: dark ? "0 18px 42px rgba(0,0,0,0.22)" : "0 18px 34px rgba(137,83,209,0.08)" }}>{children}</section>;
 }
 
-function RadarChart({ stats, dark, animate }: { stats: PlayerStatsProps["stats"]; dark: boolean; animate: boolean }) {
-  const reducedMotion = usePrefersReducedMotion();
-  const [animated, setAnimated] = useState({ vitality: 0, wisdom: 0, renown: 0, command: 0, craft: 0, insight: 0 });
-  const [hovered, setHovered] = useState<string | null>(null);
-  const [tooltip, setTooltip] = useState<{ key: string; x: number; y: number } | null>(null);
+function SectionHeader({ icon, zh, en, dark }: { icon: string; zh: string; en: string; dark: boolean }) {
+  return <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 18 }}><span style={{ width: 34, height: 34, borderRadius: 999, display: "grid", placeItems: "center", border: `1px solid ${dark ? "rgba(137,83,209,0.26)" : "rgba(137,83,209,0.18)"}`, background: dark ? "rgba(137,83,209,0.1)" : "rgba(137,83,209,0.06)" }}>{icon}</span><div style={{ fontFamily: "Georgia, Cambria, serif", fontWeight: 700, color: dark ? "#fff" : "#261a33", fontSize: "1.06rem" }}><span className="lang-zh">{zh}</span><span className="lang-en">{en}</span></div><div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, rgba(137,83,209,0.34), transparent)` }} /></div>;
+}
 
-  useEffect(() => {
-    if (!animate || reducedMotion) {
-      setAnimated(stats);
-      return;
-    }
-    const duration = 1500;
-    const start = performance.now();
-    let raf = 0;
-    const step = (now: number) => {
-      const t = Math.min((now - start) / duration, 1);
-      const ease = 1 - Math.pow(1 - t, 3);
-      setAnimated({
-        vitality: stats.vitality * ease,
-        wisdom: stats.wisdom * ease,
-        renown: stats.renown * ease,
-        command: stats.command * ease,
-        craft: stats.craft * ease,
-        insight: stats.insight * ease,
-      });
-      if (t < 1) raf = requestAnimationFrame(step);
-    };
-    raf = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(raf);
-  }, [stats, animate, reducedMotion]);
-
-  const size = 280;
-  const cx = size / 2;
-  const cy = size / 2;
-  const maxR = 102;
-  const axes = [
-    { key: "vitality", zh: "体力", en: "HP", angle: -90 },
-    { key: "wisdom", zh: "灵力", en: "Spirit", angle: -30 },
-    { key: "craft", zh: "武术", en: "Martial", angle: 30 },
-    { key: "command", zh: "统御", en: "Command", angle: 90 },
-    { key: "renown", zh: "声望", en: "Renown", angle: 150 },
-    { key: "insight", zh: "身法", en: "Agility", angle: 210 },
-  ] as const;
-
-  const statFormulas: Record<string, { zh: string; en: string }> = {
-    vitality: { zh: "游历城池 → mid=50 渐近缩放", en: "cities explored → mid=50 asymptotic" },
-    wisdom: { zh: "文章 + 书影音×0.3 → mid=120", en: "posts + library×0.3 → mid=120" },
-    renown: { zh: "关注数 → mid=15000", en: "followers → mid=15000" },
-    command: { zh: "门客×8 + 项目×2 → mid=80", en: "retainers×8 + projects×2 → mid=80" },
-    craft: { zh: "造物日志 → mid=50", en: "builder logs → mid=50" },
-    insight: { zh: "书影音 + 精读×0.2 → mid=100", en: "library + digests×0.2 → mid=100" },
-  };
-
-  function polar(angle: number, r: number) {
-    const rad = (angle * Math.PI) / 180;
-    return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
-  }
-
-  function hexPath(r: number) {
-    return axes.map(a => polar(a.angle, (r / 100) * maxR)).map((p, i) => `${i === 0 ? "M" : "L"}${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(" ") + " Z";
-  }
-
-  function statsPath() {
-    return axes.map(a => {
-      const v = animated[a.key as keyof typeof animated];
-      return polar(a.angle, (v / 100) * maxR);
-    }).map((p, i) => `${i === 0 ? "M" : "L"}${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(" ") + " Z";
-  }
-
-  const activeKey = hovered ?? tooltip?.key ?? axes[0].key;
-  const activeAxis = axes.find(a => a.key === activeKey) ?? axes[0];
-  const activeValue = stats[activeAxis.key as keyof typeof stats];
-
-  return (
-    <div style={{ display: "flex", flexWrap: "wrap", gap: "1.5rem", alignItems: "center", justifyContent: "center" }}>
-      <div style={{ flex: "0 0 auto", position: "relative" }}>
-        <div style={{ position: "absolute", inset: 24, borderRadius: "50%", background: "radial-gradient(circle, rgba(137,83,209,0.12), transparent 72%)", filter: "blur(8px)" }} />
-        <svg width={size} height={size} style={{ overflow: "visible", position: "relative" }}>
-          {[20, 40, 60, 80, 100].map(lvl => <path key={lvl} d={hexPath(lvl)} fill="none" stroke={dark ? "rgba(137,83,209,0.14)" : "rgba(137,83,209,0.16)"} strokeWidth={1} />)}
-          {axes.map(a => {
-            const end = polar(a.angle, maxR);
-            return <line key={a.key} x1={cx} y1={cy} x2={end.x} y2={end.y} stroke={dark ? "rgba(137,83,209,0.22)" : "rgba(137,83,209,0.2)"} strokeWidth={1} />;
-          })}
-          <path d={statsPath()} fill="rgba(137,83,209,0.18)" stroke="#8953d1" strokeWidth={2.2} />
-          {axes.map(a => {
-            const v = animated[a.key as keyof typeof animated];
-            const p = polar(a.angle, (v / 100) * maxR);
-            const isHovered = hovered === a.key;
-            return (
-              <g key={a.key}>
-                <circle
-                  cx={p.x}
-                  cy={p.y}
-                  r={isHovered ? 8 : 5.5}
-                  fill="#8953d1"
-                  stroke={dark ? "#140f20" : "#fff"}
-                  strokeWidth={2}
-                  style={{ cursor: "default" }}
-                  onMouseEnter={() => {
-                    setHovered(a.key);
-                    setTooltip({ key: a.key, x: p.x, y: p.y - 22 });
-                  }}
-                  onMouseLeave={() => {
-                    setHovered(null);
-                    setTooltip(null);
-                  }}
-                />
-              </g>
-            );
-          })}
-          {axes.map(a => {
-            const p = polar(a.angle, maxR + 28);
-            const isHovered = hovered === a.key;
-            return (
-              <g
-                key={a.key}
-                style={{ cursor: "default" }}
-                onMouseEnter={() => setHovered(a.key)}
-                onMouseLeave={() => setHovered(null)}
-              >
-                <text x={p.x} y={p.y - 4} textAnchor="middle" fontFamily="Georgia, Cambria, serif" fontSize={12} fontWeight={isHovered ? 700 : 500} fill={isHovered ? "#8953d1" : (dark ? "#ddd4ee" : "#443150")}>{a.zh}</text>
-                <text x={p.x} y={p.y + 12} textAnchor="middle" fontFamily="monospace" fontSize={10} fill={dark ? "#8f85a0" : "#8b7999"}>{Math.round(animated[a.key as keyof typeof animated])}</text>
-              </g>
-            );
-          })}
-          {tooltip && (
-            <g pointerEvents="none">
-              <rect x={tooltip.x - 58} y={tooltip.y - 28} width={116} height={24} rx={12} fill={dark ? "rgba(19,16,30,0.96)" : "rgba(255,255,255,0.96)"} stroke="rgba(137,83,209,0.28)" strokeWidth={1} />
-              <text x={tooltip.x} y={tooltip.y - 12} textAnchor="middle" fontFamily="monospace" fontSize={10} fill="#8953d1">{activeAxis.zh} · {stats[tooltip.key as keyof typeof stats]}</text>
-            </g>
-          )}
-        </svg>
-      </div>
-
-      <div style={{ flex: 1, minWidth: 240, maxWidth: 380 }}>
-        <div style={{ marginBottom: 12, padding: "10px 12px", borderRadius: 14, border: `1px solid ${dark ? "rgba(137,83,209,0.22)" : "rgba(137,83,209,0.16)"}`, background: dark ? "rgba(137,83,209,0.08)" : "rgba(137,83,209,0.05)" }}>
-          <div style={{ fontFamily: "Georgia, Cambria, serif", fontSize: 13, fontWeight: 700, color: dark ? "#fff" : "#2d203a" }}>{activeAxis.zh} <span style={{ fontSize: 11, color: dark ? "#8f85a0" : "#8b7999" }}>/ {activeAxis.en}</span></div>
-          <div style={{ marginTop: 6, fontFamily: "monospace", fontSize: 18, color: "#8953d1", fontWeight: 700 }}>{activeValue}</div>
-          <div className="lang-zh" style={{ marginTop: 6, fontFamily: "monospace", fontSize: 11, color: dark ? "#ccb7f7" : "#7a51b7" }}>{statFormulas[activeAxis.key]?.zh}</div>
-          <div className="lang-en" style={{ fontFamily: "monospace", fontSize: 11, color: dark ? "#ccb7f7" : "#7a51b7" }}>{statFormulas[activeAxis.key]?.en}</div>
+function HeroCard({ dark, rank, level, totalExp, expInLevel, expNeeded, expProgress, currentCity, travelDays, expFormula, levelFormula }: {
+  dark: boolean; rank: { zh: string; en: string }; level: number; totalExp: number; expInLevel: number; expNeeded: number; expProgress: number; currentCity: { name: string; nameCN: string }; travelDays: number; expFormula: { zh: string; en: string }; levelFormula: { zh: string; en: string; nextLevel: string };
+}) {
+  const expAnimated = Math.round(useCountUp(totalExp, 900, true));
+  const progressAnimated = Math.round(useCountUp(expProgress, 900, true));
+  const levelAnimated = Math.round(useCountUp(level, 900, true));
+  return <div className="hero-grid" style={{ display: "grid", gridTemplateColumns: "132px 1fr auto", gap: "1rem", alignItems: "center" }}>
+    <div style={{ position: "relative" }}>
+      <img src="/images/rex-avatar.png" alt="Rex avatar" width={132} height={160} style={{ width: 132, height: 160, objectFit: "cover", imageRendering: "pixelated", borderRadius: 18, border: `1px solid rgba(137,83,209,0.34)`, boxShadow: "0 12px 28px rgba(137,83,209,0.14)" }} />
+      <TooltipWrap content={<><div>{levelFormula.zh}</div><div style={{ color: "#ccb7f7" }}>{levelFormula.en}</div><div style={{ marginTop: 6, color: "#fff" }}>{levelFormula.nextLevel}</div></>}><div style={{ position: "absolute", left: "50%", bottom: -12, transform: "translateX(-50%)", padding: "4px 12px", borderRadius: 999, background: dark ? "rgba(10,10,18,0.94)" : "rgba(255,255,255,0.94)", border: `1px solid rgba(137,83,209,0.26)`, color: PURPLE, fontFamily: "monospace", fontWeight: 700 }}>Lv.{levelAnimated}</div></TooltipWrap>
+    </div>
+    <div>
+      <div style={{ display: "flex", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
+        <div>
+          <h2 style={{ margin: 0, color: dark ? "#fff" : "#261a33", fontSize: "2rem", fontFamily: "Georgia, Cambria, serif" }}>Rex Liu</h2>
+          <div style={{ marginTop: 6, color: PURPLE, fontFamily: "monospace", fontSize: 12, fontWeight: 700 }}>PLAYER STATS</div>
+          <p style={{ margin: "10px 0 0", color: dark ? "#bcb2cb" : "#6f657d", lineHeight: 1.7 }}><span className="lang-en">Sword intent in writing, inner strength in systems, footsteps across cities.</span><span className="lang-zh">文章为剑，系统为功，城市为路。</span></p>
         </div>
-
-        {axes.map(a => {
-          const value = stats[a.key as keyof typeof stats];
-          const isHovered = hovered === a.key;
-          return (
-            <div key={a.key} onMouseEnter={() => setHovered(a.key)} onMouseLeave={() => setHovered(null)} style={{ marginBottom: 10, padding: "10px 12px", borderRadius: 14, border: `1px solid ${isHovered ? "rgba(137,83,209,0.3)" : (dark ? "rgba(255,255,255,0.06)" : "rgba(80,40,120,0.08)")}`, background: isHovered ? "rgba(137,83,209,0.08)" : (dark ? "rgba(255,255,255,0.02)" : "rgba(255,255,255,0.4)"), transition: "all 0.2s ease" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6, gap: 8, alignItems: "center" }}>
-                <span style={{ fontFamily: "Georgia, Cambria, serif", fontSize: 13, color: isHovered ? "#8953d1" : (dark ? "#fff" : "#2d203a"), fontWeight: 700 }}>{a.zh} <span style={{ fontSize: 11, color: dark ? "#8f85a0" : "#8b7999" }}>/ {a.en}</span></span>
-              </div>
-              <PixelBar value={value} dark={dark} animate={animate} />
-            </div>
-          );
-        })}
+        <div style={{ writingMode: "vertical-rl", textOrientation: "upright", letterSpacing: "0.12em", color: PURPLE, border: `1px solid rgba(137,83,209,0.22)`, borderRadius: 999, padding: "10px 6px", background: dark ? "rgba(137,83,209,0.08)" : "rgba(137,83,209,0.05)" }}>江湖档案</div>
+      </div>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 14 }}>
+        {[`⚔️ ${rank.zh}`, `📍 ${currentCity.nameCN}`, `🗓️ 游历 ${travelDays} 天`].map(item => <span key={item} style={{ padding: "6px 10px", borderRadius: 999, border: `1px solid rgba(137,83,209,0.2)`, color: dark ? "#e9ddff" : "#6f46a3", background: dark ? "rgba(137,83,209,0.1)" : "rgba(137,83,209,0.06)", fontSize: 12 }}>{item}</span>)}
+      </div>
+      <div style={{ marginTop: 16 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8, gap: 10, flexWrap: "wrap" }}>
+          <TooltipWrap content={<><div>{expFormula.zh}</div><div style={{ color: "#ccb7f7" }}>{expFormula.en}</div></>}><span style={{ color: PURPLE, fontFamily: "monospace", fontWeight: 700, fontSize: 12 }}>TOTAL EXP {expAnimated.toLocaleString()}</span></TooltipWrap>
+          <span style={{ color: dark ? "#bcb2cb" : "#6f657d", fontFamily: "monospace", fontSize: 12 }}>{expInLevel} / {expNeeded}</span>
+        </div>
+        <TooltipWrap content={<><div>{expFormula.zh}</div><div style={{ color: "#ccb7f7" }}>{expFormula.en}</div></>}><div style={{ height: 16, borderRadius: 999, overflow: "hidden", border: `1px solid rgba(137,83,209,0.22)`, background: dark ? "rgba(255,255,255,0.05)" : "rgba(60,20,90,0.06)" }}><div style={{ height: "100%", width: `${progressAnimated}%`, background: `linear-gradient(90deg, ${PURPLE}, rgba(137,83,209,0.56))`, boxShadow: "0 0 18px rgba(137,83,209,0.32)" }} /></div></TooltipWrap>
       </div>
     </div>
-  );
+    <div className="hero-side" style={{ minWidth: 120 }}>
+      <div style={{ borderRadius: 18, padding: 16, border: `1px solid rgba(137,83,209,0.22)`, background: dark ? "rgba(137,83,209,0.08)" : "rgba(137,83,209,0.05)" }}>
+        <div style={{ fontFamily: "monospace", fontSize: 11, color: dark ? "#bcb2cb" : "#7a6d89" }}>Realm</div>
+        <div style={{ color: PURPLE, fontWeight: 700, fontSize: 26, fontFamily: "Georgia, Cambria, serif" }}>{rank.zh}</div>
+        <div style={{ fontFamily: "monospace", fontSize: 11, color: dark ? "#bcb2cb" : "#7a6d89", marginTop: 10 }}>Progress</div>
+        <div style={{ color: dark ? "#fff" : "#261a33", fontSize: 22, fontWeight: 700, fontFamily: "monospace" }}>{progressAnimated}%</div>
+      </div>
+    </div>
+  </div>;
+}
+
+function Timeline({ chapters, dark }: { chapters: ChapterData[]; dark: boolean }) {
+  const [openId, setOpenId] = useState(chapters.find(c => c.id === "current")?.id ?? chapters[0]?.id);
+  const reduced = usePrefersReducedMotion();
+  return <div className="timeline-scroll" style={{ display: "grid", gridAutoFlow: "column", gridAutoColumns: "minmax(280px, 320px)", gap: 14, overflowX: "auto", paddingBottom: 4 }}>
+    {chapters.map((chapter, i) => {
+      const active = openId === chapter.id;
+      const isCurrent = chapter.id === "current";
+      return <button key={chapter.id} type="button" onClick={() => setOpenId(active ? "" : chapter.id)} style={{ textAlign: "left", borderRadius: 18, padding: 16, border: `1px solid ${active ? PURPLE : (dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.12)")}`, background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.72)", color: "inherit", cursor: "pointer", opacity: 1, transform: "translateY(0)", animation: reduced ? undefined : `chapterFade 520ms ease ${i * 70}ms both`, boxShadow: isCurrent ? "0 0 0 1px rgba(137,83,209,0.12), 0 0 22px rgba(137,83,209,0.2)" : undefined }} className={isCurrent ? "chapter-current" : undefined}>
+        <div style={{ display: "flex", justifyContent: "space-between", gap: 8, alignItems: "flex-start" }}>
+          <div>
+            <div style={{ color: PURPLE, fontSize: 11, fontFamily: "monospace" }}>{chapter.period}</div>
+            <div style={{ marginTop: 4, color: dark ? "#fff" : "#261a33", fontWeight: 700, fontSize: 16, fontFamily: "Georgia, Cambria, serif" }}>{chapter.titleCN}</div>
+            <div style={{ marginTop: 4, color: dark ? "#bcb2cb" : "#6f657d", fontSize: 12 }}>{chapter.location}</div>
+          </div>
+          {chapter.boss?.defeated && <span style={{ whiteSpace: "nowrap", color: PURPLE, fontSize: 11, fontFamily: "monospace" }}>✅ 已击败</span>}
+        </div>
+        <p style={{ margin: "12px 0 0", color: dark ? "#d3cae0" : "#6f657d", lineHeight: 1.65, fontSize: 13 }}>{chapter.summary}</p>
+        {active && <div style={{ marginTop: 12, paddingTop: 12, borderTop: `1px solid ${dark ? "rgba(137,83,209,0.14)" : "rgba(137,83,209,0.12)"}` }}>
+          {chapter.boss && <div style={{ fontSize: 12, marginBottom: 8, color: dark ? "#f0e8ff" : "#4a2d74" }}><strong>Boss：</strong>{chapter.boss.name}{chapter.boss.description ? ` · ${chapter.boss.description}` : ""}</div>}
+          {!!chapter.rewards.length && <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>{chapter.rewards.map(reward => <span key={reward} style={{ padding: "4px 8px", borderRadius: 999, border: `1px solid rgba(137,83,209,0.18)`, background: dark ? "rgba(137,83,209,0.1)" : "rgba(137,83,209,0.06)", color: PURPLE, fontSize: 11 }}>{reward}</span>)}</div>}
+        </div>}
+      </button>;
+    })}
+  </div>;
+}
+
+function StatBars({ stats, statFormulas, dark }: { stats: PlayerStatsProps["stats"]; statFormulas: Record<string, StatFormulaData>; dark: boolean }) {
+  const { ref, inView } = useInView<HTMLDivElement>(0.2);
+  const labels = [
+    ["vitality", "体力", "HP"],
+    ["wisdom", "灵力", "Spirit"],
+    ["renown", "声望", "Renown"],
+    ["command", "统御", "Command"],
+    ["craft", "武术", "Martial"],
+    ["insight", "身法", "Agility"],
+  ] as const;
+  return <div ref={ref} className="stats-grid" style={{ display: "grid", gridTemplateColumns: "180px 1fr", gap: 20, alignItems: "center" }}>
+    <div style={{ textAlign: "center" }}>
+      <img src="/images/rex-avatar.png" alt="Rex avatar" width={160} height={196} style={{ width: 160, height: 196, objectFit: "cover", imageRendering: "pixelated", borderRadius: 18, border: `1px solid rgba(137,83,209,0.28)`, boxShadow: "0 14px 28px rgba(137,83,209,0.14)" }} />
+    </div>
+    <div style={{ display: "grid", gap: 12 }}>
+      {labels.map(([key, zh, en]) => {
+        const target = stats[key];
+        const animated = Math.round(useCountUp(target, 500, inView));
+        const formula = statFormulas[key];
+        return <TooltipWrap key={key} content={<><div>{formula?.formulaZh}</div><div style={{ color: "#ccb7f7" }}>{formula?.formulaEn}</div></>}><div style={{ borderRadius: 16, padding: "12px 14px", border: `1px solid ${dark ? "rgba(137,83,209,0.16)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.64)" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10, marginBottom: 8 }}>
+            <div style={{ color: dark ? "#fff" : "#261a33", fontFamily: "Georgia, Cambria, serif", fontWeight: 700 }}>{zh} <span style={{ fontSize: 11, color: dark ? "#9f93b1" : "#8a7b97" }}>/ {en}</span></div>
+            <div style={{ color: PURPLE, fontFamily: "monospace", fontWeight: 700 }}>{animated}</div>
+          </div>
+          <div style={{ height: 12, borderRadius: 999, overflow: "hidden", background: dark ? "rgba(255,255,255,0.06)" : "rgba(60,20,90,0.06)" }}><div style={{ width: `${animated}%`, height: "100%", background: `linear-gradient(90deg, ${PURPLE}, rgba(137,83,209,0.5))`, boxShadow: "0 0 16px rgba(137,83,209,0.26)" }} /></div>
+        </div></TooltipWrap>;
+      })}
+    </div>
+  </div>;
+}
+
+function EquipmentRing({ equipment, dark }: { equipment: EquipmentData[]; dark: boolean }) {
+  const positions: CSSProperties[] = [
+    { top: 0, left: "50%", transform: "translate(-50%, 0)" },
+    { top: "22%", right: 0 },
+    { bottom: "22%", right: 0 },
+    { bottom: 0, left: "50%", transform: "translate(-50%, 0)" },
+    { bottom: "22%", left: 0 },
+    { top: "22%", left: 0 },
+  ];
+  return <>
+    <div className="equipment-ring" style={{ position: "relative", minHeight: 420, display: "block" }}>
+      <div style={{ position: "absolute", left: "50%", top: "50%", transform: "translate(-50%, -50%)", width: 148, height: 180, borderRadius: 22, border: `1px solid rgba(137,83,209,0.26)`, overflow: "hidden", boxShadow: "0 0 28px rgba(137,83,209,0.18)" }}><img src="/images/rex-avatar.png" alt="Rex avatar" width={148} height={180} style={{ width: "100%", height: "100%", objectFit: "cover", imageRendering: "pixelated" }} /></div>
+      {equipment.slice(0, 6).map((item, i) => {
+        const card = <div style={{ width: 210, borderRadius: 18, padding: 14, border: `1px solid ${dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(21,16,34,0.96)" : "rgba(255,255,255,0.94)", transition: "transform 200ms ease, box-shadow 200ms ease", boxShadow: "0 10px 24px rgba(137,83,209,0.08)" }} className="equipment-floating">
+          <div style={{ display: "flex", justifyContent: "space-between", gap: 8, alignItems: "center" }}><span style={{ color: PURPLE, fontSize: 11, fontFamily: "monospace", padding: "4px 8px", borderRadius: 999, border: `1px solid rgba(137,83,209,0.2)` }}>{item.slotCN}</span><span style={{ color: dark ? "#ac9fbe" : "#8b7a98", fontFamily: "monospace", fontSize: 10 }}>{item.acquired}</span></div>
+          <div style={{ marginTop: 10, color: dark ? "#fff" : "#261a33", fontWeight: 700, fontFamily: "Georgia, Cambria, serif" }}>{item.nameCN}</div>
+          <TooltipWrap content={<><div>{item.effectCN}</div><div style={{ color: "#ccb7f7" }}>{item.effectEN}</div></>}><div style={{ marginTop: 8, color: dark ? "#d6cdf0" : "#6f46a3", fontSize: 12 }}>{item.effectCN}</div></TooltipWrap>
+        </div>;
+        const wrapped = item.article ? <a href={`/posts/${item.article}/`} style={{ textDecoration: "none" }}>{card}</a> : card;
+        return <div key={item.id} style={{ position: "absolute", ...positions[i] }}>{wrapped}</div>;
+      })}
+    </div>
+    <div className="equipment-mobile-grid" style={{ display: "none", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 12 }}>
+      {equipment.map(item => <TooltipWrap key={item.id} content={<><div>{item.effectCN}</div><div style={{ color: "#ccb7f7" }}>{item.effectEN}</div></>}><a href={item.article ? `/posts/${item.article}/` : undefined} style={{ textDecoration: "none" }}><div style={{ borderRadius: 16, padding: 14, border: `1px solid ${dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(21,16,34,0.96)" : "rgba(255,255,255,0.94)" }}><div style={{ color: PURPLE, fontFamily: "monospace", fontSize: 11 }}>{item.slotCN}</div><div style={{ marginTop: 8, color: dark ? "#fff" : "#261a33", fontWeight: 700 }}>{item.nameCN}</div><div style={{ marginTop: 8, color: dark ? "#d6cdf0" : "#6f46a3", fontSize: 12 }}>{item.effectCN}</div></div></a></TooltipWrap>)}
+    </div>
+  </>;
+}
+
+function QuestPanel({ quests, dark }: { quests: PlayerStatsProps["quests"]; dark: boolean }) {
+  const [tab, setTab] = useState<"main" | "side">("main");
+  return <div style={{ display: "grid", gap: 14 }}>
+    <div style={{ display: "inline-flex", gap: 8, padding: 6, borderRadius: 999, border: `1px solid ${dark ? "rgba(137,83,209,0.22)" : "rgba(137,83,209,0.16)"}` }}>
+      {(["main", "side"] as const).map(key => <button key={key} type="button" onClick={() => setTab(key)} style={{ border: 0, cursor: "pointer", borderRadius: 999, padding: "8px 14px", background: tab === key ? PURPLE : "transparent", color: tab === key ? "#fff" : (dark ? "#d6cdf0" : "#6f657d") }}>{key === "main" ? "主线 / Main" : "支线 / Side"}</button>)}
+    </div>
+    <div style={{ display: "grid", gap: 12 }}>
+      {tab === "main" ? quests.main.map(quest => {
+        const current = Number(quest.current ?? 0);
+        const goal = Number(quest.goal ?? 0);
+        const ratio = quest.status === "completed" ? 100 : Math.max(0, Math.min(100, goal > 0 ? current / goal * 100 : 0));
+        return <TooltipWrap key={quest.id} content={<div>{current} / {goal}{quest.unit ? ` ${quest.unit}` : ""}</div>}><div style={{ borderRadius: 18, padding: 16, border: `1px solid ${dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.7)" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}><div><div style={{ color: dark ? "#fff" : "#261a33", fontWeight: 700 }}>{quest.titleCN}</div>{quest.target && <div style={{ color: dark ? "#ac9fbe" : "#8b7a98", fontFamily: "monospace", fontSize: 11, marginTop: 6 }}>{quest.target}</div>}</div><div style={{ color: quest.status === "completed" ? PURPLE : PURPLE, fontFamily: "monospace", fontWeight: 700 }}>{quest.status === "completed" ? "✅ Completed" : `${Math.round(ratio)}%`}</div></div>
+          <div style={{ marginTop: 12, display: "flex", justifyContent: "space-between", fontFamily: "monospace", fontSize: 11, color: dark ? "#c8bed8" : "#78688a" }}><span>{current}{quest.unit ? ` ${quest.unit}` : ""}</span><span>{goal}{quest.unit ? ` ${quest.unit}` : ""}</span></div>
+          <div style={{ marginTop: 6, height: 12, overflow: "hidden", borderRadius: 999, background: dark ? "rgba(255,255,255,0.05)" : "rgba(60,20,90,0.06)" }}><div style={{ width: `${Math.round(ratio)}%`, height: "100%", background: `linear-gradient(90deg, ${PURPLE}, rgba(137,83,209,0.52))` }} /></div>
+        </div></TooltipWrap>;
+      }) : quests.side.map(quest => <div key={quest.id} style={{ borderRadius: 18, padding: 16, border: `1px solid ${dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.7)", display: "flex", justifyContent: "space-between", gap: 12, alignItems: "center" }}><div><div style={{ color: dark ? "#fff" : "#261a33", fontWeight: 700 }}>{quest.titleCN}</div><div style={{ marginTop: 6, color: dark ? "#ac9fbe" : "#8b7a98", fontFamily: "monospace", fontSize: 11 }}>{quest.progress}</div></div><div style={{ color: PURPLE, fontFamily: "monospace", fontSize: 11 }}>{quest.status}</div></div>)}
+    </div>
+  </div>;
 }
 
 function RetainerPanel({ retainers, dark }: { retainers: RetainerData[]; dark: boolean }) {
-  return (
-    <div className="retainer-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 14 }}>
-      {retainers.map(agent => (
-        <a key={agent.id} href="/lab/agents/" style={{
-          position: "relative",
-          overflow: "hidden",
-          border: `1px solid ${dark ? "rgba(137,83,209,0.24)" : "rgba(137,83,209,0.14)"}`,
-          borderRadius: 18,
-          background: dark ? "linear-gradient(180deg, rgba(24,18,37,0.96), rgba(14,10,24,0.96))" : "linear-gradient(180deg, rgba(255,255,255,0.92), rgba(248,242,255,0.92))",
-          padding: "16px 14px 14px",
-          display: "flex",
-          flexDirection: "column",
-          gap: 10,
-          textDecoration: "none",
-          boxShadow: dark ? "0 10px 26px rgba(0,0,0,0.18)" : "0 12px 22px rgba(137,83,209,0.07)",
-        }}>
-          <div style={{ position: "absolute", inset: 0, pointerEvents: "none", background: "linear-gradient(135deg, rgba(137,83,209,0.1), transparent 45%, rgba(137,83,209,0.05))" }} />
-          <div style={{ display: "flex", gap: 12, alignItems: "center", position: "relative" }}>
-            <div style={{ width: 58, height: 58, borderRadius: 14, overflow: "hidden", border: "1px solid rgba(137,83,209,0.36)", background: dark ? "rgba(137,83,209,0.12)" : "rgba(137,83,209,0.08)", boxShadow: "0 0 18px rgba(137,83,209,0.14)" }}>
-              <img src={agent.sprite} alt={`${agent.name} sprite`} width={58} height={58} style={{ width: "100%", height: "100%", objectFit: "cover", imageRendering: "pixelated" }} />
-            </div>
-            <div style={{ minWidth: 0 }}>
-              <div style={{ fontFamily: "Georgia, Cambria, serif", fontSize: 15, fontWeight: 700, color: dark ? "#fff" : "#2d203a", display: "flex", gap: 6, alignItems: "center", flexWrap: "wrap" }}>{agent.name} <span>{agent.emoji}</span></div>
-              <div style={{ fontFamily: "Georgia, Cambria, serif", fontSize: 11, color: "#8953d1" }}>
-                <span className="lang-zh">{agent.titleZh}</span>
-                <span className="lang-en">{agent.titleEn}</span>
-              </div>
-            </div>
-          </div>
-
-          <div style={{ display: "flex", justifyContent: "space-between", gap: 8, alignItems: "center", position: "relative" }}>
-            <div style={{ padding: "4px 8px", borderRadius: 999, border: "1px solid rgba(137,83,209,0.22)", background: dark ? "rgba(137,83,209,0.12)" : "rgba(137,83,209,0.06)", color: "#8953d1", fontFamily: "monospace", fontSize: 12, fontWeight: 700 }}>
-              <span className="lang-zh">修为</span><span className="lang-en">Lv</span>.{agent.level}
-            </div>
-            <div style={{ fontFamily: "monospace", fontSize: 10, color: dark ? "#a69bb8" : "#8b7999", textAlign: "right" }}>{agent.sessions} sessions</div>
-          </div>
-
-          <div style={{ position: "relative" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
-              <span style={{ fontFamily: "monospace", fontSize: 10, color: dark ? "#bdb4cb" : "#7d6c95" }}>Affinity</span>
-              <span style={{ fontFamily: "monospace", fontSize: 10, color: "#8953d1" }}>{Math.min(100, Math.max(8, agent.level * 6))}%</span>
-            </div>
-            <div style={{ height: 8, borderRadius: 999, overflow: "hidden", background: dark ? "rgba(255,255,255,0.06)" : "rgba(60,20,90,0.06)" }}>
-              <div style={{ width: `${Math.min(100, Math.max(8, agent.level * 6))}%`, height: "100%", background: "linear-gradient(90deg, rgba(137,83,209,0.9), rgba(137,83,209,0.45))" }} />
-            </div>
-          </div>
-        </a>
-      ))}
-    </div>
-  );
+  return <div className="retainer-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 12 }}>{retainers.map(agent => <a key={agent.id} href="/lab/agents/" style={{ textDecoration: "none" }}><div style={{ borderRadius: 18, padding: 14, border: `1px solid ${dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.7)" }}><div style={{ display: "flex", gap: 12, alignItems: "center" }}><img src={agent.sprite} alt={agent.name} width={56} height={56} style={{ width: 56, height: 56, borderRadius: 14, objectFit: "cover", imageRendering: "pixelated", border: `1px solid rgba(137,83,209,0.26)` }} /><div><div style={{ color: dark ? "#fff" : "#261a33", fontWeight: 700 }}>{agent.name} {agent.emoji}</div><div style={{ color: PURPLE, fontSize: 11 }}>{agent.titleZh}</div></div></div><div style={{ marginTop: 12, display: "flex", justifyContent: "space-between", fontFamily: "monospace", fontSize: 11 }}><span style={{ color: dark ? "#c8bed8" : "#78688a" }}>Lv.{agent.level}</span><span style={{ color: PURPLE }}>{agent.sessions} sessions</span></div></div></a>)}</div>;
 }
 
-type SkillNode = {
-  id: string;
-  group: "inner" | "outer";
-  tier: 1 | 2 | 3;
-  row: number;
-  label: string;
-  count: number;
-  url?: string;
-};
-
-function SkillTree({ tagCounts, postCount, builderLogCount, dark }: {
-  tagCounts: Record<string, number>;
-  postCount: number;
-  builderLogCount: number;
-  dark: boolean;
-}) {
-  const [tooltip, setTooltip] = useState<{ text: string; x: number; y: number } | null>(null);
-  const reducedMotion = usePrefersReducedMotion();
-
-  const innerNodes: SkillNode[] = [
-    { id: "i-1", group: "inner", tier: 1, row: 0, label: "周期心法", count: tagCounts.crypto || 0, url: "/tags/crypto/" },
-    { id: "i-2", group: "inner", tier: 2, row: 0, label: "盈亏同源", count: tagCounts.trading || 0 },
-    { id: "i-3", group: "inner", tier: 2, row: 1, label: "先知先觉", count: tagCounts.alpha || 0 },
-    { id: "i-4", group: "inner", tier: 1, row: 2, label: "价值心法", count: tagCounts.investment || 0, url: "/tags/investment/" },
-    { id: "i-5", group: "inner", tier: 2, row: 2, label: "复利之道", count: tagCounts.evergreen || 0, url: "/tags/evergreen/" },
-    { id: "i-6", group: "inner", tier: 2, row: 3, label: "长期主义", count: (tagCounts.investment || 0) + (tagCounts.wealth || 0) },
-    { id: "i-7", group: "inner", tier: 1, row: 4, label: "真元护体", count: tagCounts.wealth || 0, url: "/tags/wealth/" },
-    { id: "i-8", group: "inner", tier: 2, row: 4, label: "读心术", count: tagCounts.macro || 0 },
-    { id: "i-9", group: "inner", tier: 2, row: 5, label: "逍遥心法", count: tagCounts.crypto || 0, url: "/tags/crypto/" },
+function SkillTree({ tagCounts, postCount, builderLogCount, dark }: { tagCounts: Record<string, number>; postCount: number; builderLogCount: number; dark: boolean }) {
+  const [tab, setTab] = useState<"inner" | "outer">("inner");
+  const inner = [
+    { label: "天罡战气", count: tagCounts.crypto || 0, url: "/tags/crypto/" },
+    { label: "金蝉脱壳", count: tagCounts.trading || 0 },
+    { label: "飞龙探云手", count: tagCounts.alpha || 0 },
+    { label: "真元护体", count: tagCounts.investment || 0, url: "/tags/investment/" },
+    { label: "五气朝元", count: tagCounts.evergreen || 0, url: "/tags/evergreen/" },
+    { label: "醉仙望月步", count: (tagCounts.investment || 0) + (tagCounts.wealth || 0) },
+    { label: "金刚咒", count: tagCounts.wealth || 0, url: "/tags/wealth/" },
+    { label: "观音咒", count: tagCounts.macro || 0 },
+    { label: "仙风云体术", count: tagCounts.crypto || 0, url: "/tags/crypto/" },
   ];
-
-  const outerNodes: SkillNode[] = [
-    { id: "o-1", group: "outer", tier: 1, row: 0, label: "御剑·写作", count: postCount, url: "/posts/" },
-    { id: "o-2", group: "outer", tier: 2, row: 0, label: "尘世游记", count: tagCounts.life || 0, url: "/tags/life/" },
-    { id: "o-3", group: "outer", tier: 2, row: 1, label: "人物列传", count: tagCounts.people || 0, url: "/tags/people/" },
-    { id: "o-4", group: "outer", tier: 2, row: 2, label: "长青秘籍", count: tagCounts.evergreen || 0, url: "/tags/evergreen/" },
-    { id: "o-5", group: "outer", tier: 1, row: 3, label: "天工·编程", count: tagCounts.ai || 0, url: "/tags/ai/" },
-    { id: "o-6", group: "outer", tier: 2, row: 3, label: "灵犀一指", count: tagCounts["vibe coding"] || tagCounts.ai || 0, url: "/tags/ai/" },
-    { id: "o-7", group: "outer", tier: 2, row: 4, label: "御灵术", count: builderLogCount, url: "/builder-log/" },
-    { id: "o-8", group: "outer", tier: 1, row: 5, label: "踏雪·探索", count: tagCounts.travel || 0, url: "/tags/travel/" },
-    { id: "o-9", group: "outer", tier: 2, row: 5, label: "游方记", count: tagCounts.travel || 0, url: "/tags/travel/" },
-    { id: "o-10", group: "outer", tier: 2, row: 6, label: "仙风云体", count: tagCounts.travel || 0 },
+  const outer = [
+    { label: "御剑术", count: postCount, url: "/posts/" },
+    { label: "尘世篇", count: tagCounts.life || 0, url: "/tags/life/" },
+    { label: "人物志", count: tagCounts.people || 0, url: "/tags/people/" },
+    { label: "万剑诀", count: tagCounts.evergreen || 0, url: "/tags/evergreen/" },
+    { label: "天剑", count: tagCounts.ai || 0, url: "/tags/ai/" },
+    { label: "剑神", count: tagCounts["vibe coding"] || tagCounts.ai || 0, url: "/tags/ai/" },
+    { label: "灵葫咒", count: builderLogCount, url: "/builder-log/" },
+    { label: "凝神归元", count: tagCounts.travel || 0, url: "/tags/travel/" },
+    { label: "游方篇", count: tagCounts.travel || 0, url: "/tags/travel/" },
+    { label: "仙风云体术", count: tagCounts.travel || 0 },
   ];
-
-  const layout = useMemo(() => {
-    const width = 920;
-    const height = 860;
-    const rootW = 96;
-    const rootH = 50;
-    const nodeW = 132;
-    const nodeH = 46;
-    const tierX = { root: 76, tier1: 248, tier2: 460 };
-    const sectionTop = { inner: 96, outer: 482 };
-    const rowGap = 74;
-
-    const roots = {
-      inner: { x: tierX.root, y: 214, w: rootW, h: rootH, label: "内功心法" },
-      outer: { x: tierX.root, y: 600, w: rootW, h: rootH, label: "外功仙术" },
-    };
-
-    const positions = new Map<string, { x: number; y: number; w: number; h: number }>();
-    [...innerNodes, ...outerNodes].forEach(node => {
-      const x = node.tier === 1 ? tierX.tier1 : tierX.tier2;
-      const y = sectionTop[node.group] + node.row * rowGap;
-      positions.set(node.id, { x, y, w: nodeW, h: nodeH });
-    });
-
-    return { width, height, roots, positions };
-  }, [builderLogCount, postCount, tagCounts]);
-
-  function pointRight(box: { x: number; y: number; w: number; h: number }) { return { x: box.x + box.w, y: box.y + box.h / 2 }; }
-  function pointLeft(box: { x: number; y: number; h: number }) { return { x: box.x, y: box.y + box.h / 2 }; }
-
-  function Connector({ from, to }: { from: { x: number; y: number; w: number; h: number }; to: { x: number; y: number; w: number; h: number } }) {
-    const p1 = pointRight(from);
-    const p2 = pointLeft(to);
-    const curve = `M ${p1.x} ${p1.y} C ${p1.x + 34} ${p1.y}, ${p2.x - 34} ${p2.y}, ${p2.x} ${p2.y}`;
-    return (
-      <>
-        <path d={curve} fill="none" stroke={dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.16)"} strokeWidth={8} strokeLinecap="round" />
-        <path className={reducedMotion ? "" : "meridian-flow"} d={curve} fill="none" stroke="#8953d1" strokeOpacity={0.42} strokeWidth={1.6} strokeLinecap="round" strokeDasharray="5 7" />
-      </>
-    );
-  }
-
-  function NodeBox({ node }: { node: SkillNode }) {
-    const box = layout.positions.get(node.id)!;
-    const active = node.count > 0;
-    const textColor = active ? (dark ? "#f5efff" : "#4a2d74") : (dark ? "#7d738f" : "#9c8dac");
-    const fill = active ? (dark ? "rgba(137,83,209,0.16)" : "rgba(137,83,209,0.08)") : (dark ? "rgba(255,255,255,0.03)" : "rgba(75,35,120,0.03)");
-    const border = active ? "rgba(137,83,209,0.7)" : (dark ? "rgba(255,255,255,0.08)" : "rgba(90,45,140,0.12)");
-
-    return (
-      <g
-        style={{ cursor: active && node.url ? "pointer" : "default" }}
-        onClick={() => { if (active && node.url) window.location.href = node.url; }}
-        onMouseEnter={() => setTooltip({ text: active ? `${node.count} 篇 · 点击前往` : "未点亮 · Locked", x: box.x + box.w / 2, y: box.y - 14 })}
-        onMouseLeave={() => setTooltip(null)}
-      >
-        <rect x={box.x} y={box.y} width={box.w} height={box.h} rx={14} fill={fill} stroke={border} strokeWidth={1.5} style={{ filter: active ? "drop-shadow(0 0 16px rgba(137,83,209,0.14))" : undefined, transition: "all 0.2s ease" }} />
-        <rect x={box.x + 6} y={box.y + 6} width={box.w - 12} height={box.h - 12} rx={10} fill="transparent" stroke={dark ? "rgba(255,255,255,0.04)" : "rgba(137,83,209,0.08)"} strokeWidth={1} />
-        <text x={box.x + box.w / 2} y={box.y + 18} textAnchor="middle" fontFamily="Georgia, Cambria, serif" fontSize={12} fontWeight={700} fill={textColor}>{node.label}</text>
-        <text x={box.x + box.w / 2} y={box.y + 33} textAnchor="middle" fontFamily="monospace" fontSize={10} fontWeight={700} fill={active ? "#8953d1" : (dark ? "#7d738f" : "#ae9fba")}>Lv.{node.count}</text>
-      </g>
-    );
-  }
-
-  function RootBox({ root, label }: { root: { x: number; y: number; w: number; h: number }; label: string }) {
-    return (
-      <g>
-        <rect x={root.x} y={root.y} width={root.w} height={root.h} rx={16} fill={dark ? "rgba(36,22,62,0.95)" : "rgba(241,233,255,0.96)"} stroke="#8953d1" strokeWidth={2} />
-        <rect x={root.x + 6} y={root.y + 6} width={root.w - 12} height={root.h - 12} rx={12} fill="transparent" stroke={dark ? "rgba(255,255,255,0.05)" : "rgba(137,83,209,0.1)"} strokeWidth={1} />
-        <text x={root.x + root.w / 2} y={root.y + root.h / 2 + 4} textAnchor="middle" fontFamily="Georgia, Cambria, serif" fontSize={16} fontWeight={800} fill="#8953d1">{label}</text>
-      </g>
-    );
-  }
-
-  const tier1Inner = innerNodes.filter(node => node.tier === 1);
-  const tier1Outer = outerNodes.filter(node => node.tier === 1);
-
-  return (
-    <div style={{ position: "relative" }}>
-      <div style={{ display: "flex", justifyContent: "center" }}>
-        <div style={{ width: "100%", maxWidth: 920, overflowX: "auto", paddingBottom: 6 }}>
-          <svg width={layout.width} height={layout.height} viewBox={`0 0 ${layout.width} ${layout.height}`} style={{ display: "block", margin: "0 auto", minWidth: layout.width, overflow: "visible" }}>
-            <defs>
-              <radialGradient id="meridianGlow" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" stopColor="rgba(137,83,209,0.28)" />
-                <stop offset="100%" stopColor="rgba(137,83,209,0)" />
-              </radialGradient>
-            </defs>
-            <rect x={0} y={0} width={layout.width} height={layout.height} rx={26} fill={dark ? "rgba(10,8,18,0.32)" : "rgba(255,255,255,0.45)"} stroke={dark ? "rgba(137,83,209,0.12)" : "rgba(137,83,209,0.1)"} />
-            <circle cx={160} cy={240} r={110} fill="url(#meridianGlow)" />
-            <circle cx={160} cy={626} r={110} fill="url(#meridianGlow)" />
-            <text x={78} y={84} fontFamily="Georgia, Cambria, serif" fontSize={14} fontWeight={700} fill="#8953d1">道心脉络</text>
-            <text x={78} y={470} fontFamily="Georgia, Cambria, serif" fontSize={14} fontWeight={700} fill="#8953d1">行技脉络</text>
-
-            <RootBox root={layout.roots.inner} label="内功心法" />
-            <RootBox root={layout.roots.outer} label="外功仙术" />
-
-            {tier1Inner.map(node => <Connector key={`root-inner-${node.id}`} from={layout.roots.inner} to={layout.positions.get(node.id)!} />)}
-            {tier1Outer.map(node => <Connector key={`root-outer-${node.id}`} from={layout.roots.outer} to={layout.positions.get(node.id)!} />)}
-            {innerNodes.filter(node => node.tier === 2).map(node => {
-              const parent = node.row <= 1 ? "i-1" : node.row <= 3 ? "i-4" : "i-7";
-              return <Connector key={`inner-${node.id}`} from={layout.positions.get(parent)!} to={layout.positions.get(node.id)!} />;
-            })}
-            {outerNodes.filter(node => node.tier === 2).map(node => {
-              const parent = node.row <= 2 ? "o-1" : node.row <= 4 ? "o-5" : "o-8";
-              return <Connector key={`outer-${node.id}`} from={layout.positions.get(parent)!} to={layout.positions.get(node.id)!} />;
-            })}
-
-            {[...innerNodes, ...outerNodes].map(node => <NodeBox key={node.id} node={node} />)}
-
-            {tooltip && (
-              <g>
-                <rect x={tooltip.x - 64} y={tooltip.y - 20} width={128} height={24} rx={12} fill={dark ? "rgba(19,16,30,0.96)" : "rgba(255,255,255,0.96)"} stroke="rgba(137,83,209,0.28)" strokeWidth={1} />
-                <text x={tooltip.x} y={tooltip.y - 4} textAnchor="middle" fontFamily="monospace" fontSize={10} fill="#8953d1">{tooltip.text}</text>
-              </g>
-            )}
-          </svg>
-        </div>
-      </div>
+  const list = tab === "inner" ? inner : outer;
+  return <div style={{ display: "grid", gap: 14 }}>
+    <div style={{ display: "inline-flex", gap: 8, padding: 6, borderRadius: 999, border: `1px solid ${dark ? "rgba(137,83,209,0.22)" : "rgba(137,83,209,0.16)"}` }}>{([['inner','内功心法'],['outer','外功仙术']] as const).map(([key, label]) => <button key={key} type="button" onClick={() => setTab(key)} style={{ border: 0, cursor: "pointer", borderRadius: 999, padding: "8px 14px", background: tab === key ? PURPLE : "transparent", color: tab === key ? "#fff" : (dark ? "#d6cdf0" : "#6f657d"), transition: "all 180ms ease" }}>{label}</button>)}</div>
+    <div key={tab} className="skill-fade" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 12 }}>
+      {list.map(node => <TooltipWrap key={node.label} content={<div>{node.count} 篇相关文章 · Lv.{node.count}</div>}><a href={node.url} style={{ textDecoration: "none" }}><div style={{ minHeight: 84, borderRadius: 18, padding: 14, border: `1px solid ${dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.7)", display: "flex", flexDirection: "column", justifyContent: "space-between" }}><div style={{ color: dark ? "#fff" : "#261a33", fontWeight: 700 }}>{node.label}</div><div style={{ color: PURPLE, fontFamily: "monospace", fontSize: 12 }}>Lv.{node.count}</div></div></a></TooltipWrap>)}
     </div>
-  );
+  </div>;
 }
 
-const CATEGORY_META: Record<string, { icon: string; zh: string; en: string }> = {
-  cultivation: { icon: "🗡️", zh: "修行", en: "Cultivation" },
-  jianghu: { icon: "🌍", zh: "江湖", en: "Exploration" },
-  command: { icon: "🤖", zh: "统御", en: "Command" },
-  knowledge: { icon: "📚", zh: "身法", en: "Knowledge" },
-  health: { icon: "💪", zh: "体力", en: "Health" },
-  investment: { icon: "💰", zh: "财修", en: "Investment" },
-  hidden: { icon: "🔮", zh: "奇遇", en: "Hidden" },
-};
-const CATEGORY_ORDER = ["cultivation", "jianghu", "command", "knowledge", "health", "investment", "hidden"];
+function RelationshipPanel({ relationships, dark }: { relationships: RelationshipData[]; dark: boolean }) {
+  return <div className="relationship-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 12 }}>{relationships.map(item => {
+    const card = <div className="relationship-card" style={{ borderRadius: 18, padding: 16, border: `1px solid ${dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.72)", transition: "transform 180ms ease, box-shadow 180ms ease" }}><div style={{ display: "flex", justifyContent: "space-between", gap: 10, alignItems: "center" }}><div style={{ color: dark ? "#fff" : "#261a33", fontWeight: 700 }}>{item.nameCN}</div><span style={{ color: PURPLE, fontSize: 11, padding: "4px 8px", borderRadius: 999, border: `1px solid rgba(137,83,209,0.18)` }}>{item.roleCN}</span></div><p style={{ margin: "10px 0 0", color: dark ? "#d3cae0" : "#6f657d", fontSize: 13, lineHeight: 1.65 }}>{item.impactCN}</p>{item.article && <div style={{ marginTop: 10, color: PURPLE, fontFamily: "monospace", fontSize: 11 }}>↗ /posts/{item.article}/</div>}</div>;
+    return item.article ? <a key={item.id} href={`/posts/${item.article}/`} style={{ textDecoration: "none" }}>{card}</a> : <div key={item.id}>{card}</div>;
+  })}</div>;
+}
+
+const CATEGORY_META: Record<string, { icon: string; zh: string }> = { cultivation: { icon: "🗡️", zh: "修行" }, jianghu: { icon: "🌍", zh: "江湖" }, command: { icon: "🤖", zh: "统御" }, knowledge: { icon: "📚", zh: "身法" }, health: { icon: "💪", zh: "体力" }, investment: { icon: "💰", zh: "财修" }, hidden: { icon: "🔮", zh: "奇遇" } };
 
 function AchievementBadges({ achievements, dark }: { achievements: AchievementData[]; dark: boolean }) {
-  const [selected, setSelected] = useState<string | null>(null);
-  const grouped: Record<string, AchievementData[]> = {};
-  for (const a of achievements) {
-    if (a.hidden && !a.unlocked) continue;
-    const cat = a.category || "hidden";
-    if (!grouped[cat]) grouped[cat] = [];
-    grouped[cat]!.push(a);
-  }
+  const groups = achievements.reduce<Record<string, AchievementData[]>>((acc, item) => {
+    if (item.hidden && !item.unlocked) return acc;
+    (acc[item.category] ||= []).push(item);
+    return acc;
+  }, {});
 
   return (
     <div>
-      {CATEGORY_ORDER.map(cat => {
-        const items = grouped[cat];
-        if (!items?.length) return null;
-        const meta = CATEGORY_META[cat] ?? { icon: "📋", zh: cat, en: cat };
-        return (
-          <div key={cat} style={{ marginBottom: 22 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12, paddingBottom: 8, borderBottom: `1px solid ${dark ? "rgba(137,83,209,0.16)" : "rgba(137,83,209,0.12)"}` }}>
-              <span>{meta.icon}</span>
-              <span style={{ fontFamily: "Georgia, Cambria, serif", fontSize: 13, fontWeight: 700, color: "#8953d1" }}><span className="lang-zh">{meta.zh}</span><span className="lang-en">{meta.en}</span></span>
-              <span style={{ fontFamily: "monospace", fontSize: 11, color: dark ? "#bdb4cb" : "#857593" }}>{items.filter(a => a.unlocked).length}/{items.length}</span>
-            </div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(170px, 1fr))", gap: 12 }}>
-              {items.map(a => {
-                const isSelected = selected === a.id;
-                const border = a.unlocked ? (isSelected ? "rgba(137,83,209,0.46)" : "rgba(137,83,209,0.22)") : (dark ? "rgba(255,255,255,0.08)" : "rgba(70,35,110,0.08)");
-                const bg = a.unlocked ? (dark ? "rgba(137,83,209,0.1)" : "rgba(137,83,209,0.05)") : (dark ? "rgba(255,255,255,0.03)" : "rgba(70,35,110,0.03)");
-                return (
-                  <div key={a.id} onClick={() => setSelected(isSelected ? null : a.id)} className={a.unlocked ? "achievement-unlocked" : undefined} style={{ border: `1px solid ${border}`, borderRadius: 16, background: bg, padding: "12px 14px", cursor: "pointer", opacity: a.unlocked ? 1 : 0.7, boxShadow: a.unlocked ? "0 0 0 rgba(137,83,209,0)" : "none", transition: "transform 0.2s ease, box-shadow 0.2s ease" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
-                      <span style={{ fontSize: 22, filter: a.unlocked ? "none" : "grayscale(1)" }}>{a.icon}</span>
-                      <div style={{ fontFamily: "Georgia, Cambria, serif", fontSize: 12, fontWeight: 700, color: a.unlocked ? (dark ? "#fff" : "#352345") : (dark ? "#a69bb8" : "#8b7999") }}><span className="lang-zh">{a.nameZh}</span><span className="lang-en">{a.nameEn}</span></div>
-                    </div>
-                    <p style={{ margin: 0, fontFamily: "Georgia, Cambria, serif", fontSize: 11, lineHeight: 1.5, color: dark ? "#bdb4cb" : "#857593" }}><span className="lang-zh">{a.descZh}</span><span className="lang-en">{a.descEn}</span></p>
-                    {a.unlocked && a.unlockedDate && <div style={{ marginTop: 8, fontFamily: "monospace", fontSize: 10, color: "#8953d1" }}>✓ {a.unlockedDate}</div>}
-                    {!a.unlocked && a.progress !== undefined && a.max !== undefined && (
-                      <div style={{ marginTop: 8 }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
-                          <span style={{ fontFamily: "monospace", fontSize: 10, color: dark ? "#a69bb8" : "#8b7999" }}>{a.progress}/{a.max}</span>
-                          <span style={{ fontFamily: "monospace", fontSize: 10, color: "#8953d1" }}>{Math.round((a.progress / a.max) * 100)}%</span>
-                        </div>
-                        <div style={{ height: 6, borderRadius: 999, overflow: "hidden", background: dark ? "rgba(255,255,255,0.06)" : "rgba(60,20,90,0.06)" }}>
-                          <div style={{ width: `${Math.min(100, (a.progress / a.max) * 100)}%`, height: "100%", background: "linear-gradient(90deg, rgba(137,83,209,0.9), rgba(137,83,209,0.45))" }} />
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
+      {Object.entries(groups).map(([key, items]) => (
+        <div key={key} style={{ marginBottom: 20 }}>
+          <div style={{ color: PURPLE, fontWeight: 700, marginBottom: 10 }}>
+            {CATEGORY_META[key]?.icon} {CATEGORY_META[key]?.zh}
           </div>
-        );
-      })}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: 12 }}>
+            {items.map(item => (
+              <div
+                key={item.id}
+                style={{
+                  borderRadius: 16,
+                  padding: 14,
+                  border: `1px solid ${item.unlocked ? "rgba(137,83,209,0.24)" : (dark ? "rgba(255,255,255,0.08)" : "rgba(90,45,140,0.08)")}`,
+                  background: item.unlocked ? (dark ? "rgba(137,83,209,0.08)" : "rgba(137,83,209,0.05)") : (dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.7)"),
+                }}
+              >
+                <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                  <span style={{ fontSize: 22 }}>{item.icon}</span>
+                  <div style={{ color: dark ? "#fff" : "#261a33", fontWeight: 700, fontSize: 13 }}>{item.nameZh}</div>
+                </div>
+                <p style={{ margin: "8px 0 0", color: dark ? "#c8bed8" : "#78688a", fontSize: 12, lineHeight: 1.6 }}>{item.descZh}</p>
+                {item.unlocked && item.unlockedDate && (
+                  <div style={{ marginTop: 8, color: PURPLE, fontFamily: "monospace", fontSize: 10 }}>✓ {item.unlockedDate}</div>
+                )}
+                {!item.unlocked && item.progress !== undefined && item.max !== undefined && (
+                  <div style={{ marginTop: 8, color: dark ? "#c8bed8" : "#78688a", fontFamily: "monospace", fontSize: 10 }}>
+                    {item.progress}/{item.max}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
 
 function CultivationLog({ activityLog, dark }: { activityLog: PlayerStatsProps["activityLog"]; dark: boolean }) {
   const [showAll, setShowAll] = useState(false);
-  const { ref, inView } = useInView<HTMLDivElement>(0.18);
-  const reducedMotion = usePrefersReducedMotion();
   const visible = showAll ? activityLog : activityLog.slice(0, 10);
-  const totalExp = activityLog.reduce((sum, item) => sum + item.exp, 0);
-  const animatedTotalExp = useCountUp(totalExp, 1200, inView);
-
-  return (
-    <div ref={ref}>
-      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-        {visible.map((act, i) => {
-          const entered = reducedMotion || inView;
-          return (
-            <div
-              key={`${act.dateEn}-${i}`}
-              style={{
-                display: "grid",
-                gridTemplateColumns: "78px 28px 1fr auto",
-                gap: 10,
-                alignItems: "start",
-                padding: "10px 12px",
-                borderRadius: 14,
-                border: `1px solid ${dark ? "rgba(137,83,209,0.12)" : "rgba(137,83,209,0.1)"}`,
-                background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.58)",
-                opacity: entered ? 1 : 0,
-                transform: entered ? "translateY(0)" : "translateY(16px)",
-                transition: `opacity 520ms ease ${i * 55}ms, transform 520ms ease ${i * 55}ms`,
-              }}
-              className="cultivation-row"
-            >
-              <div style={{ fontFamily: "monospace", fontSize: 11, color: dark ? "#a69bb8" : "#8b7999" }}><span className="lang-zh">{act.dateZh}</span><span className="lang-en">{act.dateEn}</span></div>
-              <span style={{ fontSize: 16 }}>{act.icon}</span>
-              <p style={{ margin: 0, fontFamily: "Georgia, Cambria, serif", fontSize: 12, lineHeight: 1.5, color: dark ? "#fff" : "#2d203a" }}><span className="lang-zh">{act.descZh}</span><span className="lang-en">{act.descEn}</span></p>
-              <span style={{ fontFamily: "monospace", fontSize: 11, color: "#8953d1", fontWeight: 700, whiteSpace: "nowrap", padding: "3px 8px", borderRadius: 999, border: "1px solid rgba(137,83,209,0.2)", background: dark ? "rgba(137,83,209,0.1)" : "rgba(137,83,209,0.06)" }}>+{act.exp} EXP</span>
-            </div>
-          );
-        })}
-      </div>
-      {activityLog.length > 10 && (
-        <button onClick={() => setShowAll(v => !v)} style={{ marginTop: 12, width: "100%", padding: "10px 16px", borderRadius: 999, border: `1px solid ${dark ? "rgba(137,83,209,0.24)" : "rgba(137,83,209,0.18)"}`, background: "transparent", color: "#8953d1", fontFamily: "Georgia, Cambria, serif", fontSize: 13, cursor: "pointer" }}>
-          {showAll ? <><span className="lang-zh">收起</span><span className="lang-en">Show less</span></> : <><span className="lang-zh">查看全部 {activityLog.length} 条记录 ↓</span><span className="lang-en">View all {activityLog.length} entries ↓</span></>}
-        </button>
-      )}
-      <div style={{ marginTop: 14, padding: "12px 14px", borderRadius: 16, border: `1px solid ${dark ? "rgba(137,83,209,0.2)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(137,83,209,0.08)" : "rgba(137,83,209,0.04)", display: "flex", justifyContent: "space-between", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
-        <span style={{ fontFamily: "Georgia, Cambria, serif", fontSize: 12, color: dark ? "#bdb4cb" : "#857593" }}><span className="lang-zh">累计修为</span><span className="lang-en">Total Cultivation</span></span>
-        <span style={{ fontFamily: "monospace", fontSize: 15, color: "#8953d1", fontWeight: 800 }}>{animatedTotalExp.toLocaleString()} EXP</span>
-      </div>
-    </div>
-  );
-}
-
-function MainQuestCard({ quest, dark }: { quest: QuestData; dark: boolean }) {
-  const reducedMotion = usePrefersReducedMotion();
-  const current = quest.current ?? 0;
-  const goal = quest.goal ?? 0;
-  const ratio = quest.status === "completed" ? 100 : Math.max(0, Math.min(100, goal > 0 ? (current / goal) * 100 : 0));
-  const animatedRatio = reducedMotion ? Math.round(ratio) : useCountUp(Math.round(ratio), 500, true);
-  const done = quest.status === "completed";
-
-  return (
-    <div style={{
-      position: "relative",
-      overflow: "hidden",
-      borderRadius: 18,
-      border: `1px solid ${done ? "rgba(36,160,96,0.28)" : (dark ? "rgba(137,83,209,0.24)" : "rgba(137,83,209,0.14)")}`,
-      background: dark ? "linear-gradient(180deg, rgba(22,16,34,0.96), rgba(10,10,20,0.96))" : "linear-gradient(180deg, rgba(255,255,255,0.96), rgba(247,241,255,0.96))",
-      padding: "16px 16px 14px",
-      boxShadow: done ? "0 12px 24px rgba(36,160,96,0.12)" : "0 12px 26px rgba(137,83,209,0.08)",
-    }}>
-      <div style={{ display: "flex", justifyContent: "space-between", gap: 12, alignItems: "flex-start", flexWrap: "wrap" }}>
-        <div>
-          <div style={{ fontFamily: "Georgia, Cambria, serif", fontSize: 15, fontWeight: 700, color: dark ? "#fff" : "#281c35" }}>
-            <span className="lang-zh">{quest.titleCN}</span>
-            <span className="lang-en">{quest.titleEN}</span>
-          </div>
-          {quest.target && <div style={{ marginTop: 6, fontFamily: "monospace", fontSize: 11, color: dark ? "#a99dbc" : "#857593" }}>{quest.target}</div>}
-        </div>
-        <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "6px 10px", borderRadius: 999, border: `1px solid ${done ? "rgba(36,160,96,0.3)" : "rgba(137,83,209,0.2)"}`, background: done ? "rgba(36,160,96,0.12)" : (dark ? "rgba(137,83,209,0.1)" : "rgba(137,83,209,0.06)"), color: done ? "#3bb273" : "#8953d1", fontFamily: "monospace", fontSize: 11, fontWeight: 700 }}>
-          <span>{done ? "✅" : "✦"}</span>
-          <span>{done ? "Completed" : `${animatedRatio}%`}</span>
-        </div>
-      </div>
-      <div style={{ marginTop: 12 }}>
-        <div style={{ display: "flex", justifyContent: "space-between", gap: 8, marginBottom: 6, fontFamily: "monospace", fontSize: 11, color: dark ? "#bdb4cb" : "#7d6c95" }}>
-          <span>{current}{quest.unit ? ` ${quest.unit}` : ""}</span>
-          <span>{goal}{quest.unit ? ` ${quest.unit}` : ""}</span>
-        </div>
-        <div style={{ height: 12, borderRadius: 999, overflow: "hidden", border: `1px solid ${done ? "rgba(36,160,96,0.18)" : (dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.12)")}`, background: dark ? "rgba(255,255,255,0.05)" : "rgba(60,20,90,0.06)" }}>
-          <div style={{ width: `${animatedRatio}%`, height: "100%", background: done ? "linear-gradient(90deg, rgba(36,160,96,0.92), rgba(86,200,130,0.56))" : "linear-gradient(90deg, rgba(137,83,209,0.96), rgba(137,83,209,0.56))", boxShadow: done ? "0 0 16px rgba(36,160,96,0.25)" : "0 0 16px rgba(137,83,209,0.28)", transition: "width 0.16s linear" }} />
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function QuestPanel({ quests, dark }: { quests: PlayerStatsProps["quests"]; dark: boolean }) {
-  const [activeTab, setActiveTab] = useState<"main" | "side">("main");
-
-  return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      <div style={{ display: "inline-flex", gap: 8, padding: 6, borderRadius: 999, border: `1px solid ${dark ? "rgba(137,83,209,0.24)" : "rgba(137,83,209,0.16)"}`, background: dark ? "rgba(14,10,24,0.72)" : "rgba(255,255,255,0.76)", width: "fit-content" }}>
-        {([
-          { key: "main", zh: "主线", en: "Main" },
-          { key: "side", zh: "支线", en: "Side" },
-        ] as const).map(tab => {
-          const selected = activeTab === tab.key;
-          return (
-            <button
-              key={tab.key}
-              type="button"
-              onClick={() => setActiveTab(tab.key)}
-              style={{
-                border: "none",
-                borderRadius: 999,
-                padding: "8px 14px",
-                background: selected ? "linear-gradient(90deg, rgba(137,83,209,0.95), rgba(137,83,209,0.7))" : "transparent",
-                color: selected ? "#fff" : (dark ? "#cbbfe0" : "#6d5c80"),
-                cursor: "pointer",
-                fontFamily: "Georgia, Cambria, serif",
-                fontSize: 13,
-                fontWeight: 700,
-                boxShadow: selected ? "0 8px 20px rgba(137,83,209,0.22)" : "none",
-                transition: "all 0.2s ease",
-              }}
-            >
-              <span className="lang-zh">{tab.zh}</span>
-              <span className="lang-en">{tab.en}</span>
-            </button>
-          );
-        })}
-      </div>
-
-      <div style={{ display: "grid", gap: 12 }}>
-        {activeTab === "main" ? quests.main.map(quest => (
-          <MainQuestCard key={quest.id} quest={quest} dark={dark} />
-        )) : quests.side.map(quest => {
-          const done = quest.status === "completed";
-          return (
-            <div key={quest.id} style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: 12, alignItems: "center", borderRadius: 18, border: `1px solid ${dark ? "rgba(137,83,209,0.22)" : "rgba(137,83,209,0.14)"}`, background: dark ? "linear-gradient(180deg, rgba(22,16,34,0.96), rgba(10,10,20,0.96))" : "linear-gradient(180deg, rgba(255,255,255,0.96), rgba(247,241,255,0.96))", padding: "16px" }} className="quest-side-card">
-              <div>
-                <div style={{ fontFamily: "Georgia, Cambria, serif", fontSize: 15, fontWeight: 700, color: dark ? "#fff" : "#281c35" }}>
-                  <span className="lang-zh">{quest.titleCN}</span>
-                  <span className="lang-en">{quest.titleEN}</span>
-                </div>
-                <div style={{ marginTop: 6, fontFamily: "monospace", fontSize: 11, color: dark ? "#a99dbc" : "#857593" }}>{quest.progress}</div>
-              </div>
-              <div style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", padding: "6px 10px", borderRadius: 999, border: `1px solid ${done ? "rgba(36,160,96,0.3)" : "rgba(137,83,209,0.22)"}`, background: done ? "rgba(36,160,96,0.12)" : (dark ? "rgba(137,83,209,0.1)" : "rgba(137,83,209,0.06)"), color: done ? "#3bb273" : "#8953d1", fontFamily: "monospace", fontSize: 11, fontWeight: 700 }}>
-                {done ? "completed" : "active"}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-function EquipmentPanel({ equipment, dark }: { equipment: EquipmentData[]; dark: boolean }) {
-  return (
-    <div className="equipment-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 14 }}>
-      {equipment.map(item => {
-        const content = (
-          <div style={{
-            position: "relative",
-            height: "100%",
-            overflow: "hidden",
-            borderRadius: 18,
-            border: `1px solid ${dark ? "rgba(137,83,209,0.22)" : "rgba(137,83,209,0.14)"}`,
-            background: dark ? "linear-gradient(180deg, rgba(24,18,37,0.96), rgba(14,10,24,0.96))" : "linear-gradient(180deg, rgba(255,255,255,0.94), rgba(248,242,255,0.94))",
-            padding: "16px",
-            boxShadow: dark ? "0 10px 24px rgba(0,0,0,0.18)" : "0 12px 22px rgba(137,83,209,0.07)",
-            transition: "transform 0.24s ease, box-shadow 0.24s ease, border-color 0.24s ease",
-          }} className="equipment-card">
-            <div style={{ position: "absolute", inset: 0, pointerEvents: "none", background: "linear-gradient(135deg, rgba(137,83,209,0.1), transparent 45%, rgba(137,83,209,0.06))" }} />
-            <div style={{ position: "relative", display: "flex", flexDirection: "column", gap: 10, height: "100%" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
-                <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "5px 10px", borderRadius: 999, border: "1px solid rgba(137,83,209,0.2)", background: dark ? "rgba(137,83,209,0.12)" : "rgba(137,83,209,0.06)", color: "#8953d1", fontFamily: "monospace", fontSize: 11, fontWeight: 700 }}>
-                  <span className="lang-zh">{item.slotCN}</span>
-                  <span className="lang-en">{item.slotEN}</span>
-                </div>
-                <span style={{ fontFamily: "monospace", fontSize: 11, color: dark ? "#b8afc9" : "#867695" }}>{item.acquired}</span>
-              </div>
-              <div style={{ fontFamily: "Georgia, Cambria, serif", fontSize: 16, fontWeight: 700, color: dark ? "#fff" : "#2d203a" }}>
-                <span className="lang-zh">{item.nameCN}</span>
-                <span className="lang-en">{item.nameEN}</span>
-              </div>
-              <div style={{ fontFamily: "Georgia, Cambria, serif", fontSize: 12, lineHeight: 1.6, color: dark ? "#d8cfff" : "#6e4a9d" }}>
-                <span className="lang-zh">{item.effectCN}</span>
-                <span className="lang-en">{item.effectEN}</span>
-              </div>
-              <div style={{ marginTop: "auto", fontFamily: "monospace", fontSize: 10, color: item.article ? "#8953d1" : (dark ? "#8f85a0" : "#8b7999") }}>
-                {item.article ? (<>↗ <span className="lang-zh">查看关联文章</span><span className="lang-en">Open linked post</span></>) : (<>— <span className="lang-zh">暂无关联文章</span><span className="lang-en">No linked post yet</span></>)}
-              </div>
-            </div>
-          </div>
-        );
-
-        if (item.article) {
-          return <a key={item.id} href={`/posts/${item.article}/`} style={{ textDecoration: "none" }}>{content}</a>;
-        }
-
-        return <div key={item.id}>{content}</div>;
-      })}
-    </div>
-  );
-}
-
-function SectionHeader({ icon, zh, en, dark }: { icon: string; zh: string; en: string; dark: boolean }) {
-  return (
-    <div style={{ display: "flex", alignItems: "center", gap: 12, margin: "0 0 1.2rem" }}>
-      <div style={{ width: 34, height: 34, borderRadius: 999, border: `1px solid ${dark ? "rgba(137,83,209,0.28)" : "rgba(137,83,209,0.2)"}`, display: "grid", placeItems: "center", background: dark ? "rgba(137,83,209,0.08)" : "rgba(137,83,209,0.05)" }}>{icon}</div>
-      <div style={{ minWidth: 0 }}>
-        <h2 style={{ margin: 0, fontFamily: "Georgia, Cambria, serif", fontSize: "1.06rem", fontWeight: 700, color: dark ? "#fff" : "#21162d" }}><span className="lang-zh">{zh}</span><span className="lang-en">{en}</span></h2>
-      </div>
-      <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, rgba(137,83,209,0.32), rgba(137,83,209,0))` }} />
-      <div style={{ width: 16, height: 16, borderTop: "1px solid rgba(137,83,209,0.28)", borderRight: "1px solid rgba(137,83,209,0.28)", transform: "rotate(45deg)" }} />
-    </div>
-  );
+  return <div><div style={{ display: "grid", gap: 10 }}>{visible.map((item, i) => <div key={`${item.dateEn}-${i}`} className="cultivation-row" style={{ display: "grid", gridTemplateColumns: "80px 28px 1fr auto", gap: 10, alignItems: "start", borderRadius: 14, padding: "10px 12px", border: `1px solid ${dark ? "rgba(137,83,209,0.14)" : "rgba(137,83,209,0.1)"}`, background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.72)" }}><div style={{ color: dark ? "#ac9fbe" : "#8b7a98", fontFamily: "monospace", fontSize: 11 }}>{item.dateZh}</div><div>{item.icon}</div><div style={{ color: dark ? "#fff" : "#261a33", fontSize: 12 }}>{item.descZh}</div><div style={{ color: PURPLE, fontFamily: "monospace", fontWeight: 700, fontSize: 11 }}>+{item.exp} EXP</div></div>)}</div>{activityLog.length > 10 && <button type="button" onClick={() => setShowAll(v => !v)} style={{ marginTop: 12, borderRadius: 999, border: `1px solid rgba(137,83,209,0.2)`, background: "transparent", color: PURPLE, padding: "10px 16px", cursor: "pointer" }}>{showAll ? "收起" : `查看全部 ${activityLog.length} 条记录`}</button>}</div>;
 }
 
 export default function PlayerStats(props: PlayerStatsProps) {
   const dark = useTheme();
-  const heroReveal = useInView<HTMLDivElement>(0.15);
-  const statsReveal = useInView<HTMLDivElement>(0.2);
-  const { stats, level, totalExp, expInLevel, expNeeded, expProgress, rank, currentCity, travelDays, tagCounts, postCount, builderLogCount, cities, achievements, retainers, quests, equipment, activityLog } = props;
-
-  return (
-    <div style={{ fontFamily: "Georgia, Cambria, serif", maxWidth: 980, margin: "0 auto" }}>
-      <style>{`
-        .player-shell {
-          position: relative;
-          overflow: hidden;
-        }
-        .player-shell::before,
-        .player-shell::after {
-          content: "";
-          position: fixed;
-          pointer-events: none;
-          width: 220px;
-          height: 220px;
-          border-radius: 999px;
-          background: radial-gradient(circle, rgba(137,83,209,0.10), transparent 68%);
-          filter: blur(10px);
-          z-index: 0;
-          animation: playerMist 14s ease-in-out infinite;
-        }
-        .player-shell::before { top: 12%; left: -50px; }
-        .player-shell::after { bottom: 8%; right: -40px; animation-delay: -7s; }
-        @keyframes playerMist {
-          0%, 100% { transform: translate3d(0,0,0) scale(1); opacity: 0.55; }
-          50% { transform: translate3d(18px,-12px,0) scale(1.08); opacity: 0.85; }
-        }
-        .player-stack { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 1.35rem; }
-        .meridian-flow {
-          animation: meridianFlow 8s linear infinite;
-        }
-        @keyframes meridianFlow {
-          from { stroke-dashoffset: 0; }
-          to { stroke-dashoffset: -72; }
-        }
-        .achievement-unlocked:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 0 18px rgba(137,83,209,0.14);
-        }
-        .equipment-card:hover {
-          transform: translateY(-6px);
-          border-color: rgba(137,83,209,0.42) !important;
-          box-shadow: 0 0 0 1px rgba(137,83,209,0.1), 0 18px 34px rgba(137,83,209,0.18), 0 0 24px rgba(137,83,209,0.16);
-        }
-        .quest-side-card { min-height: 92px; }
-        @media (prefers-reduced-motion: reduce) {
-          .player-shell::before,
-          .player-shell::after,
-          .meridian-flow {
-            animation: none !important;
-          }
-        }
-        @media (max-width: 900px) {
-          .player-hero-grid { grid-template-columns: 1fr !important; }
-          .hero-side-stats { justify-self: stretch !important; min-width: 0 !important; }
-        }
-        @media (max-width: 780px) {
-          .retainer-grid, .equipment-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
-          .cultivation-row { grid-template-columns: 1fr !important; }
-        }
-        @media (max-width: 640px) {
-          .quest-side-card { grid-template-columns: 1fr !important; }
-        }
-        @media (max-width: 520px) {
-          .retainer-grid, .equipment-grid { grid-template-columns: 1fr !important; }
-        }
-      `}</style>
-      <div className="player-shell">
-        <div className="player-stack">
-          <div ref={heroReveal.ref}>
-            <DecorativeSection dark={dark} delay={0}>
-              <HeroCard rank={rank} level={level} totalExp={totalExp} expInLevel={expInLevel} expNeeded={expNeeded} expProgress={expProgress} currentCity={currentCity} travelDays={travelDays} dark={dark} animate={heroReveal.inView} />
-            </DecorativeSection>
-          </div>
-
-          <div ref={statsReveal.ref}>
-            <DecorativeSection dark={dark} delay={40}>
-              <SectionHeader icon="📊" zh="六维属性" en="Six Attributes" dark={dark} />
-              <RadarChart stats={stats} dark={dark} animate={statsReveal.inView} />
-            </DecorativeSection>
-          </div>
-
-          <DecorativeSection dark={dark} delay={60}>
-            <SectionHeader icon="🏯" zh="门客" en="Retainers" dark={dark} />
-            <RetainerPanel retainers={retainers} dark={dark} />
-          </DecorativeSection>
-
-          <DecorativeSection dark={dark} delay={70}>
-            <SectionHeader icon="📜" zh="任务系统" en="Quest Board" dark={dark} />
-            <QuestPanel quests={quests} dark={dark} />
-          </DecorativeSection>
-
-          <DecorativeSection dark={dark} delay={75}>
-            <SectionHeader icon="🧰" zh="装备系统" en="Equipment" dark={dark} />
-            <EquipmentPanel equipment={equipment} dark={dark} />
-          </DecorativeSection>
-
-          <DecorativeSection dark={dark} delay={80}>
-            <SectionHeader icon="🌳" zh="技能树" en="Skill Tree" dark={dark} />
-            <SkillTree tagCounts={tagCounts} postCount={postCount} builderLogCount={builderLogCount} dark={dark} />
-          </DecorativeSection>
-
-          <DecorativeSection dark={dark} delay={100}>
-            <a href="/travel/" style={{ display: "flex", gap: "1rem", alignItems: "center", justifyContent: "center", padding: "1.1rem 1.5rem", borderRadius: 20, border: `1px solid ${dark ? "rgba(137,83,209,0.24)" : "rgba(137,83,209,0.14)"}`, background: dark ? "linear-gradient(180deg, rgba(22,16,34,0.98), rgba(12,10,24,0.98))" : "linear-gradient(180deg, rgba(255,255,255,0.95), rgba(248,242,255,0.95))", textDecoration: "none", boxShadow: dark ? "0 12px 30px rgba(0,0,0,0.18)" : "0 12px 26px rgba(137,83,209,0.06)" }}>
-              <span style={{ fontSize: 28 }}>🗺️</span>
-              <div>
-                <div style={{ fontFamily: "Georgia, serif", fontSize: 22, fontWeight: 700, color: "#8953d1" }}>{cities.length} <span style={{ fontSize: 14, fontWeight: 400, color: dark ? "#bdb4cb" : "#6f657d" }}><span className="lang-en">cities explored</span><span className="lang-zh">座城市已游历</span></span></div>
-                <div style={{ fontSize: 12, color: dark ? "#a69bb8" : "#8b7999", fontFamily: "Georgia, serif" }}><span className="lang-en">→ Open full travel map</span><span className="lang-zh">→ 查看完整旅居地图</span></div>
-              </div>
-            </a>
-          </DecorativeSection>
-
-          <DecorativeSection dark={dark} delay={120}>
-            <SectionHeader icon="🏆" zh="功勋录" en="Achievements" dark={dark} />
-            <AchievementBadges achievements={achievements} dark={dark} />
-          </DecorativeSection>
-
-          <DecorativeSection dark={dark} delay={140}>
-            <SectionHeader icon="📜" zh="修行日志" en="Cultivation Log" dark={dark} />
-            <CultivationLog activityLog={activityLog} dark={dark} />
-          </DecorativeSection>
-        </div>
-      </div>
+  const { stats, level, totalExp, expInLevel, expNeeded, expProgress, rank, currentCity, travelDays, tagCounts, postCount, builderLogCount, cities, achievements, retainers, quests, equipment, activityLog, chapters, relationships, statFormulas, expFormula, levelFormula } = props;
+  return <div style={{ maxWidth: 1040, margin: "0 auto", fontFamily: "Georgia, Cambria, serif" }}>
+    <style>{`
+      @keyframes chapterFade { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+      @keyframes pulseGlow { 0%,100% { box-shadow: 0 0 0 0 rgba(137,83,209,0.18); } 50% { box-shadow: 0 0 24px 4px rgba(137,83,209,0.24); } }
+      .chapter-current { animation: pulseGlow 2.4s ease-in-out infinite; }
+      .equipment-floating:hover { transform: translateY(-6px); box-shadow: 0 18px 32px rgba(137,83,209,0.18); }
+      .relationship-card:hover { transform: translateY(-4px); box-shadow: 0 14px 26px rgba(137,83,209,0.12); }
+      .skill-fade { animation: skillFade 180ms ease; }
+      @keyframes skillFade { from { opacity: 0; } to { opacity: 1; } }
+      @media (max-width: 900px) { .hero-grid, .stats-grid { grid-template-columns: 1fr !important; } .hero-side { min-width: 0 !important; } .retainer-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; } }
+      @media (max-width: 760px) { .equipment-ring { display: none !important; } .equipment-mobile-grid { display: grid !important; } .cultivation-row { grid-template-columns: 1fr !important; } }
+      @media (max-width: 640px) { .retainer-grid { grid-template-columns: 1fr !important; } .timeline-scroll { grid-auto-columns: minmax(88vw, 88vw) !important; } }
+      @media (prefers-reduced-motion: reduce) { .chapter-current, .skill-fade { animation: none !important; } }
+    `}</style>
+    <div style={{ display: "grid", gap: 18 }}>
+      <Section dark={dark}><HeroCard dark={dark} rank={rank} level={level} totalExp={totalExp} expInLevel={expInLevel} expNeeded={expNeeded} expProgress={expProgress} currentCity={currentCity} travelDays={travelDays} expFormula={expFormula} levelFormula={levelFormula} /></Section>
+      <Section dark={dark}><SectionHeader icon="🧭" zh="章节时间线" en="Chapter Timeline" dark={dark} /><Timeline chapters={chapters} dark={dark} /></Section>
+      <Section dark={dark}><SectionHeader icon="📊" zh="六维属性" en="Six Attributes" dark={dark} /><StatBars stats={stats} statFormulas={statFormulas} dark={dark} /></Section>
+      <Section dark={dark}><SectionHeader icon="🧰" zh="装备栏" en="Equipment" dark={dark} /><EquipmentRing equipment={equipment} dark={dark} /></Section>
+      <Section dark={dark}><SectionHeader icon="📜" zh="任务面板" en="Quest Board" dark={dark} /><QuestPanel quests={quests} dark={dark} /></Section>
+      <Section dark={dark}><SectionHeader icon="🏯" zh="门客系统" en="Retainers" dark={dark} /><RetainerPanel retainers={retainers} dark={dark} /></Section>
+      <Section dark={dark}><SectionHeader icon="🌳" zh="技能树" en="Skill Tree" dark={dark} /><SkillTree tagCounts={tagCounts} postCount={postCount} builderLogCount={builderLogCount} dark={dark} /></Section>
+      <Section dark={dark}><SectionHeader icon="🤝" zh="江湖关系" en="Relationships" dark={dark} /><RelationshipPanel relationships={relationships} dark={dark} /></Section>
+      <Section dark={dark}><SectionHeader icon="🏆" zh="成就" en="Achievements" dark={dark} /><AchievementBadges achievements={achievements} dark={dark} /></Section>
+      <Section dark={dark}><SectionHeader icon="📜" zh="修行日志" en="Cultivation Log" dark={dark} /><CultivationLog activityLog={activityLog} dark={dark} /></Section>
+      <Section dark={dark}><a href="/travel/" style={{ display: "flex", gap: 14, justifyContent: "center", alignItems: "center", textDecoration: "none" }}><span style={{ fontSize: 28 }}>🗺️</span><div><div style={{ color: PURPLE, fontWeight: 700, fontSize: 24 }}>{cities.length} <span style={{ color: dark ? "#c8bed8" : "#78688a", fontSize: 13, fontWeight: 400 }}>座城市已游历</span></div><div style={{ color: dark ? "#ac9fbe" : "#8b7a98", fontSize: 12 }}>→ 查看完整旅居地图</div></div></a></Section>
     </div>
-  );
+  </div>;
 }
