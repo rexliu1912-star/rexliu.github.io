@@ -155,6 +155,12 @@
   var bgmMuted = false;
   var bgmLoopTimer = null;
 
+  // ── v4 state ───────────────────────────────────────────────
+  var v4AgentLevels = {};       // { agentId: { level, xp } }
+  var v4CelebrationQueue = [];  // agent ids pending ceremony
+  var v4CelebrationState = null;// active ceremony
+  var v4LampPulse = 0;          // lamp glow pulse accumulator
+
   var SOCIAL_LINES_EN = [
     // Greetings
     'Hey!', 'Gm!', "What's up?", 'Yo!', 'Hi there 👋',
@@ -962,51 +968,49 @@
     var now = Date.now();
     if (!force && dayOverlayState && now - dayOverlayState.updatedAt < 60000) return;
 
-    var parts = new Intl.DateTimeFormat('en-GB', {
-      timeZone: 'Asia/Singapore',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false
-    }).formatToParts(new Date(now));
-    var hour = 0, minute = 0;
-    for (var i = 0; i < parts.length; i++) {
-      if (parts[i].type === 'hour') hour = parseInt(parts[i].value, 10) || 0;
-      if (parts[i].type === 'minute') minute = parseInt(parts[i].value, 10) || 0;
-    }
+    // v4: use visitor's local time so day/night reflects their timezone
+    var localNow = new Date(now);
+    var hour = localNow.getHours();
+    var minute = localNow.getMinutes();
 
     var hm = hour + minute / 60;
     var alpha = 0;
     var top = null;
     var bottom = null;
 
-    if (hm >= 6 && hm < 8) {
-      var morningT = clamp((hm - 6) / 2, 0, 1);
-      alpha = lerp(0.08, 0, morningT);
-      top = [255, 200, 100];
-      bottom = [255, 225, 170];
-    } else if (hm >= 8 && hm < 17) {
+    // v4 time phases: dawn 6-9, day 9-18, dusk 18-22, night 22-6
+    if (hm >= 6 && hm < 9) {
+      var morningT = clamp((hm - 6) / 3, 0, 1);
+      alpha = lerp(0.20, 0.0, morningT);
+      top = [255, 190, 80];
+      bottom = [255, 220, 140];
+    } else if (hm >= 9 && hm < 18) {
       alpha = 0;
-    } else if (hm >= 17 && hm < 19) {
-      var sunsetT = clamp((hm - 17) / 2, 0, 1);
-      alpha = lerp(0.05, 0.25, sunsetT);
-      top = [255, 130, 40];
-      bottom = [255, 180, 100];
-    } else if (hm >= 19 && hm < 22) {
-      var duskT = clamp((hm - 19) / 3, 0, 1);
-      alpha = lerp(0.25, 0.45, duskT);
-      top = [lerp(200, 15, duskT), lerp(120, 20, duskT), lerp(40, 60, duskT)];
-      bottom = [lerp(200, 30, duskT), lerp(150, 40, duskT), lerp(80, 90, duskT)];
+    } else if (hm >= 18 && hm < 20) {
+      var sunsetT = clamp((hm - 18) / 2, 0, 1);
+      alpha = lerp(0.08, 0.28, sunsetT);
+      top = [255, 120, 30];
+      bottom = [255, 170, 90];
+    } else if (hm >= 20 && hm < 22) {
+      var duskT = clamp((hm - 20) / 2, 0, 1);
+      alpha = lerp(0.28, 0.50, duskT);
+      top = [lerp(180, 10, duskT), lerp(100, 15, duskT), lerp(30, 55, duskT)];
+      bottom = [lerp(180, 20, duskT), lerp(130, 30, duskT), lerp(60, 80, duskT)];
     } else {
-      alpha = 0.50;
-      top = [10, 15, 40];
-      bottom = [20, 25, 60];
+      // deep night 22-6
+      alpha = 0.52;
+      top = [8, 12, 38];
+      bottom = [16, 22, 56];
     }
 
+    var d = new Date(now);
     dayOverlayState = {
       updatedAt: now,
       alpha: alpha,
       top: top,
-      bottom: bottom
+      bottom: bottom,
+      phase: (hm >= 6 && hm < 9) ? 'dawn' : (hm >= 9 && hm < 18) ? 'day' : (hm >= 18 && hm < 22) ? 'dusk' : 'night',
+      hour: hour
     };
   }
 
@@ -1251,6 +1255,255 @@
     ctx.restore();
   }
 
+  // ── v4: lamp glow for Samantha + Jarvis in deep night ─────
+  function drawNightLamps() {
+    if (!dayOverlayState || dayOverlayState.phase !== 'night') return;
+    if (!agents) return;
+    var lampAgents = ['main', 'coder'];
+    v4LampPulse += 0.025;
+    for (var i = 0; i < agents.length; i++) {
+      var a = agents[i];
+      if (lampAgents.indexOf(a.id) === -1) continue;
+      var pulse = 0.35 + 0.12 * Math.sin(v4LampPulse + i * 1.3);
+      var cx = a.hc * T + T * 1.4;
+      var cy = a.hr * T - T * 0.2;
+      var r = T * 2.0;
+      var g = ctx.createRadialGradient(cx, cy, 2, cx, cy, r);
+      g.addColorStop(0, 'rgba(255,210,100,' + (pulse * 0.55).toFixed(3) + ')');
+      g.addColorStop(0.5, 'rgba(255,180,60,' + (pulse * 0.20).toFixed(3) + ')');
+      g.addColorStop(1, 'rgba(255,150,20,0)');
+      ctx.save();
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.ellipse(cx, cy, r, T * 1.1, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+
+  // ── v4: XP level glow around agent ────────────────────────
+  function drawLevelGlow(a, drawX, drawY, dw, dh) {
+    var info = v4AgentLevels[a.id];
+    if (!info || info.level < 5) return;
+    var level = info.level;
+    var blur = level >= 10 ? 18 : level >= 7 ? 12 : 6;
+    var alpha = level >= 10 ? 0.55 : level >= 7 ? 0.40 : 0.25;
+    var pulse = 0.85 + 0.15 * Math.sin(tick * 0.05 + (a.id.charCodeAt(0) || 0) * 0.4);
+    var cx = drawX + dw / 2;
+    var cy = drawY + dh / 2;
+    ctx.save();
+    ctx.shadowColor = '#8953d1';
+    ctx.shadowBlur = blur;
+    ctx.globalAlpha = alpha * pulse;
+    var gr = ctx.createRadialGradient(cx, cy, 2, cx, cy, dw * 0.9);
+    gr.addColorStop(0, 'rgba(137,83,209,0.5)');
+    gr.addColorStop(0.6, 'rgba(137,83,209,0.15)');
+    gr.addColorStop(1, 'rgba(137,83,209,0)');
+    ctx.fillStyle = gr;
+    ctx.beginPath();
+    ctx.ellipse(cx, cy + 4, dw * 0.65, dh * 0.55, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
+    // Lv10+ purple tint — drawn as screen-blend overlay
+    if (level >= 10) {
+      ctx.save();
+      ctx.globalAlpha = 0.18 * pulse;
+      ctx.fillStyle = '#8953d1';
+      ctx.globalCompositeOperation = 'screen';
+      ctx.fillRect(drawX, drawY, dw, dh);
+      ctx.restore();
+    }
+  }
+
+  // ── v4: Lv badge next to agent ────────────────────────────
+  function drawLevelBadge(a, drawX, drawY, dw) {
+    var info = v4AgentLevels[a.id];
+    if (!info) return;
+    var level = info.level;
+    var label = 'Lv.' + level;
+    ctx.save();
+    ctx.font = 'bold 8px sans-serif';
+    var tw = ctx.measureText(label).width;
+    var pad = 3, bh = 11;
+    var bw = tw + pad * 2;
+    var bx = drawX + dw - 2;
+    var by = drawY - 2;
+    // Badge bg
+    var bgColor = level >= 10 ? 'rgba(137,83,209,0.92)' : level >= 7 ? 'rgba(100,50,180,0.82)' : level >= 5 ? 'rgba(80,30,150,0.78)' : 'rgba(30,30,60,0.75)';
+    ctx.fillStyle = bgColor;
+    ctx.beginPath();
+    ctx.roundRect(bx, by, bw, bh, 3);
+    ctx.fill();
+    // Crown for Lv10+
+    if (level >= 10) {
+      ctx.fillStyle = '#fbbf24';
+      ctx.font = '7px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('♛', bx + bw / 2, by - 4);
+    }
+    ctx.fillStyle = level >= 5 ? '#e9d5ff' : '#a0a0c8';
+    ctx.font = 'bold 8px sans-serif';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(label, bx + pad, by + bh / 2);
+    ctx.restore();
+  }
+
+  // ── v4: celebration fireworks ──────────────────────────────
+  var v4FWParticles = [];
+  function spawnFireworkBurst(cx, cy, color) {
+    for (var i = 0; i < 14; i++) {
+      var angle = (i / 14) * Math.PI * 2;
+      var speed = randFloat(30, 90);
+      var life = randFloat(0.7, 1.2);
+      v4FWParticles.push({
+        x: cx, y: cy,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed - 20,
+        life: life, maxLife: life,
+        color: color,
+        size: randFloat(2, 4)
+      });
+    }
+  }
+
+  function updateAndDrawFireworks(dt) {
+    for (var i = v4FWParticles.length - 1; i >= 0; i--) {
+      var p = v4FWParticles[i];
+      p.life -= dt;
+      if (p.life <= 0) { v4FWParticles.splice(i, 1); continue; }
+      p.x += p.vx * dt;
+      p.y += p.vy * dt;
+      p.vy += 60 * dt; // gravity
+      var a = clamp(p.life / p.maxLife, 0, 1);
+      ctx.save();
+      ctx.globalAlpha = a * 0.9;
+      ctx.fillStyle = p.color;
+      ctx.fillRect(Math.round(p.x), Math.round(p.y), Math.max(1, Math.round(p.size)), Math.max(1, Math.round(p.size)));
+      ctx.restore();
+    }
+  }
+
+  // ── v4: celebration ceremony state machine ─────────────────
+  function updateCelebration(dt) {
+    if (!v4CelebrationState) {
+      if (!v4CelebrationQueue.length) return;
+      var next = v4CelebrationQueue.shift();
+      v4CelebrationState = {
+        agentId: next.agentId,
+        level: next.level,
+        phase: 'pillar',   // pillar → fireworks → done
+        timer: 0,
+        pillarDur: 1.0,
+        fireworksDur: 2.2,
+        fwSpawnTimer: 0
+      };
+      return;
+    }
+
+    var cs = v4CelebrationState;
+    cs.timer += dt;
+
+    if (cs.phase === 'pillar') {
+      if (cs.timer >= cs.pillarDur) {
+        cs.phase = 'fireworks';
+        cs.timer = 0;
+      }
+    } else if (cs.phase === 'fireworks') {
+      cs.fwSpawnTimer -= dt;
+      if (cs.fwSpawnTimer <= 0) {
+        var colors = ['#8953d1', '#a78bfa', '#f59e0b', '#4ade80', '#fb7185'];
+        var leftX = CANVAS_W * randFloat(0.08, 0.35);
+        var rightX = CANVAS_W * randFloat(0.65, 0.92);
+        var fy = CANVAS_H * randFloat(0.15, 0.50);
+        spawnFireworkBurst(leftX, fy, colors[randInt(0, colors.length - 1)]);
+        spawnFireworkBurst(rightX, fy, colors[randInt(0, colors.length - 1)]);
+        cs.fwSpawnTimer = randFloat(0.25, 0.50);
+      }
+      if (cs.timer >= cs.fireworksDur) {
+        cs.phase = 'done';
+        v4CelebrationState = null;
+      }
+    }
+  }
+
+  function drawCelebrationPillar(dt) {
+    if (!v4CelebrationState || v4CelebrationState.phase !== 'pillar') return;
+    if (!agents) return;
+    var cs = v4CelebrationState;
+    var a = null;
+    for (var i = 0; i < agents.length; i++) {
+      if (agents[i].id === cs.agentId) { a = agents[i]; break; }
+    }
+    if (!a) return;
+    var progress = clamp(cs.timer / cs.pillarDur, 0, 1);
+    var alpha = progress < 0.5 ? progress * 2 : (1 - progress) * 2;
+    var cx = a.hc * T + T / 2;
+    var pillarH = CANVAS_H * 0.7;
+    var pillarW = 18;
+    ctx.save();
+    ctx.globalAlpha = alpha * 0.82;
+    var pg = ctx.createLinearGradient(cx, CANVAS_H, cx, CANVAS_H - pillarH);
+    pg.addColorStop(0, '#8953d1');
+    pg.addColorStop(0.5, '#c084fc');
+    pg.addColorStop(1, 'rgba(137,83,209,0)');
+    ctx.fillStyle = pg;
+    ctx.fillRect(cx - pillarW / 2, CANVAS_H - pillarH, pillarW, pillarH);
+    ctx.restore();
+  }
+
+  function drawCelebrationSign() {
+    if (!v4CelebrationState || v4CelebrationState.phase !== 'fireworks') return;
+    var cs = v4CelebrationState;
+    var progress = clamp(cs.timer / cs.fireworksDur, 0, 1);
+    // Fade in during first 0.3, fade out during last 0.3
+    var alpha = progress < 0.2 ? progress / 0.2 : progress > 0.8 ? (1 - progress) / 0.2 : 1.0;
+    var isZh = document && document.documentElement && document.documentElement.getAttribute('data-lang') === 'zh';
+    var LEVEL_TITLES_EN = {1:'Rookie',2:'Novice',3:'Skilled',5:'Expert',7:'Elite',10:'Legend'};
+    var LEVEL_TITLES_ZH = {1:'新人',2:'入门',3:'熟练',5:'专家',7:'精英',10:'传奇'};
+    var titles = isZh ? LEVEL_TITLES_ZH : LEVEL_TITLES_EN;
+    var titleKey = [10,7,5,3,2,1].find(function(k){ return cs.level >= k; }) || 1;
+    var title = titles[titleKey] || '';
+    var agentName = cs.agentId;
+    if (agents) {
+      var ag = agents.find(function(a){ return a.id === cs.agentId; });
+      if (ag) agentName = (ag.emoji || '') + ' ' + ag.name;
+    }
+    var line1 = isZh ? agentName + ' 升级了！' : agentName + ' leveled up!';
+    var line2 = '→ Lv.' + cs.level + ' ' + title;
+
+    var cx = CANVAS_W / 2;
+    var cy = CANVAS_H * 0.78;
+    var padX = 18, padY = 10;
+    ctx.save();
+    ctx.font = 'bold 13px sans-serif';
+    var w1 = ctx.measureText(line1).width;
+    ctx.font = '11px sans-serif';
+    var w2 = ctx.measureText(line2).width;
+    var bw = Math.max(w1, w2) + padX * 2;
+    var bh = 46;
+    ctx.globalAlpha = alpha * 0.95;
+    // Sign bg
+    ctx.fillStyle = 'rgba(137,83,209,0.92)';
+    ctx.beginPath();
+    ctx.roundRect(cx - bw / 2, cy - bh / 2, bw, bh, 6);
+    ctx.fill();
+    ctx.strokeStyle = '#e9d5ff';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    // Text
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 13px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(line1, cx, cy - 10);
+    ctx.font = '11px sans-serif';
+    ctx.fillStyle = '#e9d5ff';
+    ctx.fillText(line2, cx, cy + 10);
+    ctx.restore();
+  }
+
   function drawDayOverlay() {
     if (!dayOverlayState || !dayOverlayState.alpha || !dayOverlayState.top) return;
     var top = dayOverlayState.top;
@@ -1410,6 +1663,10 @@
     if (a.status === 'busy' && a.task) drawTaskBubble(a, drawX, drawY, dw);
     // drawHoverCard(a, drawX, drawY, dw); // disabled per Rex
     if (a.status === 'offline') drawZzz(a);
+
+    // v4: level glow + badge
+    drawLevelGlow(a, drawX, drawY, dw, dh);
+    drawLevelBadge(a, drawX, drawY, dw);
   }
 
   function drawTaskBubble(a, drawX, drawY, dw) {
@@ -1593,6 +1850,12 @@
     drawSocialBubble();
     drawHeadquartersSign();
     drawDayOverlay();
+    drawNightLamps();
+    // v4 celebration
+    updateCelebration(dt);
+    drawCelebrationPillar(dt);
+    updateAndDrawFireworks(dt);
+    drawCelebrationSign();
     drawBGMIcon();
     if (entryOverlay && !entryOverlay.done) {
       entryOverlay.alpha -= dt / 0.8;
@@ -1630,6 +1893,12 @@
       bgmGain = null;
       bgmMuted = false;
       clearBGMLoopTimer();
+      // v4 reset
+      v4AgentLevels = {};
+      v4CelebrationQueue = [];
+      v4CelebrationState = null;
+      v4FWParticles = [];
+      v4LampPulse = 0;
       updateDayOverlay(true);
 
       // Mouse hover listener
@@ -1679,12 +1948,33 @@
       bgmPlaying = false;
       bgmGain = null;
       bgmMuted = false;
+      // v4 reset
+      v4AgentLevels = {};
+      v4CelebrationQueue = [];
+      v4CelebrationState = null;
+      v4FWParticles = [];
+      v4LampPulse = 0;
     },
 
     getAgentAt: function (cx, cy) {
       if (!agents) return null;
       var foundAgent = getAgentFromCanvasPoint(cx, cy);
       return foundAgent ? foundAgent.id : null;
+    },
+
+    // v4: set XP level info for an agent (used by page-level XP system)
+    setAgentLevel: function (agentId, level, xp) {
+      v4AgentLevels[agentId] = { level: level, xp: xp };
+    },
+
+    // v4: trigger upgrade ceremony for an agent
+    queueCelebration: function (agentId, newLevel) {
+      v4CelebrationQueue.push({ agentId: agentId, level: newLevel });
+    },
+
+    // v4: get current day phase (for external use)
+    getDayPhase: function () {
+      return dayOverlayState ? dayOverlayState.phase : 'day';
     }
   };
 })();

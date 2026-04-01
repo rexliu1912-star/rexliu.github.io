@@ -96,6 +96,8 @@ const meta = {
 					<span class="live-dot"></span>
 					<span class="lang-en">Live</span><span class="lang-zh">实时</span>
 				</div>
+				<!-- v4: emotion bubble overlay -->
+				<div id="v4-bubble-overlay" aria-hidden="true"></div>
 			</div>
 		</div>
 	</section>
@@ -354,6 +356,51 @@ const meta = {
 		margin-right: 0.3rem;
 	}
 
+	/* ══ v4: Emotion Bubble Overlay ══════════════════════════════ */
+	#v4-bubble-overlay {
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+		overflow: hidden;
+	}
+	.v4-bubble {
+		position: absolute;
+		display: flex;
+		align-items: center;
+		gap: 3px;
+		padding: 4px 7px;
+		border-radius: 12px;
+		background: rgba(255,255,255,0.92);
+		border: 1px solid rgba(137,83,209,0.25);
+		font-size: 14px;
+		line-height: 1;
+		box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+		white-space: nowrap;
+		transform: translateX(-50%);
+		animation: v4-float-up 2.8s ease-out forwards;
+		z-index: 10;
+	}
+	:global([data-theme="dark"]) .v4-bubble,
+	.dark .v4-bubble {
+		background: rgba(25,25,45,0.92);
+		border-color: rgba(137,83,209,0.40);
+		color: #e5e7eb;
+	}
+	/* Respect system dark mode too */
+	@media (prefers-color-scheme: dark) {
+		.v4-bubble {
+			background: rgba(25,25,45,0.92);
+			border-color: rgba(137,83,209,0.40);
+			color: #e5e7eb;
+		}
+	}
+	@keyframes v4-float-up {
+		0%   { opacity: 0; transform: translateX(-50%) translateY(0px);  }
+		15%  { opacity: 1; transform: translateX(-50%) translateY(-4px);  }
+		70%  { opacity: 1; transform: translateX(-50%) translateY(-22px); }
+		100% { opacity: 0; transform: translateX(-50%) translateY(-36px); }
+	}
+
 	/* ── Team Workload ──────────────────────────────────────────── */
 	.workload-chart {
 		display: flex;
@@ -483,7 +530,7 @@ const meta = {
 	}
 </style>
 
-<script is:inline src="/assets/pixel-office/engine.js?v=14scale"></script>
+<script is:inline src="/assets/pixel-office/engine.js?v=15v4"></script>
 <script is:inline>
 (function() {
 	'use strict';
@@ -993,5 +1040,266 @@ const meta = {
 		}
 	});
 
+})();
+</script>
+
+<!-- ══ Pixel Office v4 — Phase 1 + Phase 2 ══════════════════════ -->
+<script is:inline>
+(function () {
+  'use strict';
+
+  /* ── XP / Level config ──────────────────────────────────────── */
+  var XP_THRESHOLDS = [
+    { level: 10, xp: 500, titleEn: 'Legend',  titleZh: '传奇' },
+    { level: 7,  xp: 200, titleEn: 'Elite',   titleZh: '精英' },
+    { level: 5,  xp: 100, titleEn: 'Expert',  titleZh: '专家' },
+    { level: 3,  xp: 50,  titleEn: 'Skilled', titleZh: '熟练' },
+    { level: 2,  xp: 20,  titleEn: 'Novice',  titleZh: '入门' },
+    { level: 1,  xp: 0,   titleEn: 'Rookie',  titleZh: '新人' },
+  ];
+
+  function calcLevel(xp) {
+    for (var i = 0; i < XP_THRESHOLDS.length; i++) {
+      if (xp >= XP_THRESHOLDS[i].xp) return XP_THRESHOLDS[i];
+    }
+    return XP_THRESHOLDS[XP_THRESHOLDS.length - 1];
+  }
+
+  /* ── Agent emotion bubble config ────────────────────────────── */
+  var BUBBLE_CONFIG = {
+    main:       { label: 'Samantha', emojis: ['🧡', '😓', '📋', '✨', '🌟'] },
+    writer:     { label: 'Loki',     emojis: ['✍️', '💭', '📝', '🐍', '💡'] },
+    researcher: { label: 'Vision',   emojis: ['⚡', '👁️', '🔍', '📡', '🎯'] },
+    coder:      { label: 'Jarvis',   emojis: ['✅', '🎉', '⚙️', '💻', '🔧'] },
+    designer:   { label: 'Shuri',    emojis: ['🎨', '✨', '🖌️', '💎', '🌸'] },
+    analyst:    { label: 'Friday',   emojis: ['📊', '📈', '💹', '🔢', '📉'] },
+  };
+
+  /* Agent pixel positions (hc/hr × T) — match engine.js AGENTS_CFG
+     T = 32 (TILE*ZOOM), canvas = 768×448
+     Position = center of character sprite above head */
+  var AGENT_CANVAS_POS = {
+    main:       { cx: 11 * 32 + 16, cy: 5  * 32 - 10 },
+    writer:     { cx: 7  * 32 + 16, cy: 8  * 32 - 10 },
+    researcher: { cx: 12 * 32 + 16, cy: 8  * 32 - 10 },
+    coder:      { cx: 17 * 32 + 16, cy: 8  * 32 - 10 },
+    designer:   { cx: 9  * 32 + 16, cy: 11 * 32 - 10 },
+    analyst:    { cx: 15 * 32 + 16, cy: 11 * 32 - 10 },
+  };
+
+  /* Scheduled next bubble time per agent */
+  var nextBubbleAt = {};
+  var v4Intervals = [];
+
+  /* ── Activity feed data (filled on fetch) ───────────────────── */
+  var recentActivities = [];
+
+  /* ── Emotion bubble picker (based on activity feed) ─────────── */
+  function pickEmoji(agentId) {
+    var cfg = BUBBLE_CONFIG[agentId];
+    if (!cfg) return '✨';
+    // Find most recent activity for this agent
+    var recent = null;
+    for (var i = 0; i < recentActivities.length; i++) {
+      if (recentActivities[i].agentId === agentId) { recent = recentActivities[i]; break; }
+    }
+    if (recent) {
+      var desc = (recent.descEn || '').toLowerCase();
+      if (agentId === 'main') {
+        if (desc.indexOf('fail') >= 0 || desc.indexOf('error') >= 0 || desc.indexOf('retry') >= 0) return '😓';
+        if (desc.indexOf('brief') >= 0 || desc.indexOf('report') >= 0) return '📋';
+        return '🧡';
+      }
+      if (agentId === 'writer') {
+        if (desc.indexOf('skip') >= 0 || desc.indexOf('reject') >= 0) return '💭';
+        if (desc.indexOf('draft') >= 0 || desc.indexOf('post') >= 0) return '✍️';
+        return '📝';
+      }
+      if (agentId === 'researcher') {
+        if (desc.indexOf('signal') >= 0 || desc.indexOf('alpha') >= 0) return '⚡';
+        return '👁️';
+      }
+      if (agentId === 'coder') {
+        if (desc.indexOf('commit') >= 0 || desc.indexOf('push') >= 0) return '✅';
+        if (desc.indexOf('merge') >= 0 || desc.indexOf('deploy') >= 0) return '🎉';
+        return '⚙️';
+      }
+    }
+    // Fallback: random from pool
+    var pool = cfg.emojis;
+    return pool[Math.floor(Math.random() * pool.length)];
+  }
+
+  /* ── Spawn a bubble div ─────────────────────────────────────── */
+  function spawnBubble(agentId) {
+    var pos = AGENT_CANVAS_POS[agentId];
+    if (!pos) return;
+    var overlay = document.getElementById('v4-bubble-overlay');
+    if (!overlay) return;
+
+    // Scale canvas position to actual rendered size
+    var canvas = document.getElementById('office-canvas');
+    if (!canvas) return;
+    var rect = canvas.getBoundingClientRect();
+    var scaleX = rect.width / 768;
+    var scaleY = rect.height / 448;
+
+    var emoji = pickEmoji(agentId);
+    var div = document.createElement('div');
+    div.className = 'v4-bubble';
+    div.textContent = emoji;
+    div.style.left = Math.round(pos.cx * scaleX) + 'px';
+    div.style.top  = Math.round(pos.cy * scaleY) + 'px';
+    // Check dark mode
+    var isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+    if (isDark) div.classList.add('dark');
+    overlay.appendChild(div);
+    // Remove after animation ends
+    setTimeout(function () {
+      if (div.parentNode) div.parentNode.removeChild(div);
+    }, 3000);
+  }
+
+  /* ── Schedule emotion bubbles per agent (async, not synchronized) */
+  function scheduleBubble(agentId) {
+    var delay = 30000 + Math.random() * 30000; // 30-60s
+    var id = setTimeout(function () {
+      spawnBubble(agentId);
+      scheduleBubble(agentId);
+    }, delay);
+    v4Intervals.push(id);
+  }
+
+  /* ── XP + level system ───────────────────────────────────────── */
+  var XP_LS_KEY = 'pov4-agent-levels';
+
+  function getStoredLevels() {
+    try {
+      return JSON.parse(localStorage.getItem(XP_LS_KEY) || '{}');
+    } catch (e) { return {}; }
+  }
+
+  function storeLevels(data) {
+    try { localStorage.setItem(XP_LS_KEY, JSON.stringify(data)); } catch (e) {}
+  }
+
+  var CELEBRATED_KEY = 'pov4-celebrated';
+  function getCelebrated() {
+    try { return JSON.parse(localStorage.getItem(CELEBRATED_KEY) || '{}'); } catch (e) { return {}; }
+  }
+  function storeCelebrated(data) {
+    try { localStorage.setItem(CELEBRATED_KEY, JSON.stringify(data)); } catch (e) {}
+  }
+
+  function applyXpToEngine(agentXp) {
+    if (!window.PixelOffice) return;
+    var prevLevels = getStoredLevels();
+    var celebrated = getCelebrated();
+    var newLevels = {};
+
+    Object.keys(agentXp).forEach(function (agentId) {
+      var xp = agentXp[agentId];
+      var levelInfo = calcLevel(xp);
+      newLevels[agentId] = levelInfo.level;
+
+      // Push level to engine
+      window.PixelOffice.setAgentLevel(agentId, levelInfo.level, xp);
+
+      // Check if this is a new level-up
+      var prevLevel = prevLevels[agentId] || 1;
+      var celebKey = agentId + ':' + levelInfo.level;
+      if (levelInfo.level > prevLevel && !celebrated[celebKey]) {
+        // Trigger ceremony
+        window.PixelOffice.queueCelebration(agentId, levelInfo.level);
+        celebrated[celebKey] = true;
+        storeCelebrated(celebrated);
+      }
+    });
+
+    storeLevels(newLevels);
+  }
+
+  /* ── Fetch activity feed and compute XP ─────────────────────── */
+  var CONVEX_ACTIVITY_URL = 'https://shiny-butterfly-744.convex.cloud';
+
+  async function fetchAndComputeXp() {
+    try {
+      var controller = new AbortController();
+      var t = setTimeout(function () { controller.abort(); }, 6000);
+      var resp = await fetch(CONVEX_ACTIVITY_URL + '/api/query', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ path: 'activity:recent', args: { limit: 200 }, format: 'json' }),
+        signal: controller.signal
+      });
+      clearTimeout(t);
+      var data = await resp.json();
+      if (data.status !== 'success' || !Array.isArray(data.value)) return;
+      var activities = data.value;
+      recentActivities = activities.slice(0, 20); // keep recent for bubble logic
+
+      // Tally XP per agent (1 XP per activity)
+      var xpMap = {};
+      activities.forEach(function (a) {
+        if (a.agentId && a.agentId !== 'team') {
+          xpMap[a.agentId] = (xpMap[a.agentId] || 0) + 1;
+        }
+      });
+
+      // Also pull from workload sessions as secondary source
+      try {
+        var wresp = await fetch('/data/agent-workload.json?_=' + Math.floor(Date.now() / 300000));
+        if (wresp.ok) {
+          var wdata = await wresp.json();
+          (wdata.agents || []).forEach(function (ag) {
+            if (ag.id && ag.sessions) {
+              // sessions add bonus XP (don't double-count but can supplement)
+              var bonusXp = Math.floor(ag.sessions * 0.3);
+              xpMap[ag.id] = (xpMap[ag.id] || 0) + bonusXp;
+            }
+          });
+        }
+      } catch (we) { /* ignore workload bonus if fails */ }
+
+      applyXpToEngine(xpMap);
+    } catch (e) {
+      console.warn('[v4] XP fetch failed:', e);
+    }
+  }
+
+  /* ── Init v4 ─────────────────────────────────────────────────── */
+  function initV4() {
+    // Clean up previous
+    v4Intervals.forEach(function (id) { clearTimeout(id); });
+    v4Intervals = [];
+
+    var overlay = document.getElementById('v4-bubble-overlay');
+    if (overlay) overlay.innerHTML = '';
+
+    // Wait a bit for engine to init, then start bubbles + XP
+    setTimeout(function () {
+      // Start emotion bubbles with staggered offsets
+      var agentIds = Object.keys(BUBBLE_CONFIG);
+      agentIds.forEach(function (id, idx) {
+        var initialDelay = 5000 + idx * 4000 + Math.random() * 8000;
+        var tid = setTimeout(function () {
+          spawnBubble(id);
+          scheduleBubble(id);
+        }, initialDelay);
+        v4Intervals.push(tid);
+      });
+
+      // Compute XP + levels
+      fetchAndComputeXp();
+    }, 2000);
+  }
+
+  /* ── Bootstrap ──────────────────────────────────────────────── */
+  initV4();
+  document.addEventListener('astro:page-load', function () {
+    if (document.getElementById('office-canvas')) {
+      initV4();
+    }
+  });
 })();
 </script>
