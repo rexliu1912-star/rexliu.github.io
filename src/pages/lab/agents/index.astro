@@ -814,7 +814,20 @@ const meta = {
 			});
 		}
 
+		async function fetchActivityFromLocalFallback() {
+			var resp = await fetch('/data/activity-feed.json?_=' + Math.floor(Date.now() / 300000));
+			if (!resp.ok) throw new Error('activity-feed.json HTTP ' + resp.status);
+			var activities = await resp.json();
+			if (Array.isArray(activities) && activities.length > 0) {
+				console.log('[feed] Using local activity-feed.json fallback');
+				renderFeed(activities);
+				return true;
+			}
+			return false;
+		}
+
 		async function fetchActivity() {
+			var convexOk = false;
 			try {
 				var controller = new AbortController();
 				var timeout = setTimeout(function() { controller.abort(); }, 5000);
@@ -828,25 +841,37 @@ const meta = {
 				var data = await resp.json();
 				if (data.status === 'success' && data.value) {
 					var activities = Array.isArray(data.value) ? data.value.slice() : [];
-					var latestTs = activities.length ? new Date(activities[0].timestamp).getTime() : 0;
-					var sixHoursAgo = Date.now() - 6 * 60 * 60 * 1000;
-					if (latestTs < sixHoursAgo) {
-						var nowItem = {
-							agentId: 'main',
-							agentName: 'Team',
-							color: '#8953d1',
-							descEn: 'Pixel Office v3 — sprites, animations, interactions in progress',
-							descZh: 'Pixel Office v3 — 角色精修、进场动画、互动系统持续开发中',
-							timestamp: new Date().toISOString()
-						};
-						activities.unshift(nowItem);
+					if (activities.length > 0) {
+						var latestTs = new Date(activities[0].timestamp).getTime();
+						var sixHoursAgo = Date.now() - 6 * 60 * 60 * 1000;
+						if (latestTs < sixHoursAgo) {
+							var nowItem = {
+								agentId: 'main',
+								agentName: 'Team',
+								color: '#8953d1',
+								descEn: 'Pixel Office v4 — emotion bubbles + XP system live',
+								descZh: 'Pixel Office v4 — 情感气泡 + XP 系统已上线',
+								timestamp: new Date().toISOString()
+							};
+							activities.unshift(nowItem);
+						}
+						renderFeed(activities);
+						convexOk = true;
 					}
-					renderFeed(activities);
 				}
 			} catch (e) {
-				console.error('Activity feed fetch failed:', e);
-				if (feedList && feedList.querySelector('.feed-loading')) {
-					feedList.innerHTML = '<div class="feed-empty font-serif text-xs text-gray-500"><span class="lang-en">Unable to load \u2014 will retry</span><span class="lang-zh">\u52a0\u8f7d\u5931\u8d25\uff0c\u7a0d\u540e\u91cd\u8bd5</span></div>';
+				console.warn('Activity feed Convex fetch failed, trying local fallback:', e.message);
+			}
+
+			// Fallback to local activity-feed.json if Convex failed or returned empty
+			if (!convexOk) {
+				try {
+					await fetchActivityFromLocalFallback();
+				} catch (fe) {
+					console.error('Local activity fallback also failed:', fe);
+					if (feedList && feedList.querySelector('.feed-loading')) {
+						feedList.innerHTML = '<div class="feed-empty font-serif text-xs text-gray-500"><span class="lang-en">No recent activity</span><span class="lang-zh">\u6682\u65e0\u52a8\u6001</span></div>';
+					}
 				}
 			}
 		}
@@ -1137,19 +1162,12 @@ const meta = {
     var overlay = document.getElementById('v4-bubble-overlay');
     if (!overlay) return;
 
-    // Scale canvas position to actual rendered size
-    var canvas = document.getElementById('office-canvas');
-    if (!canvas) return;
-    var rect = canvas.getBoundingClientRect();
-    var scaleX = rect.width / 768;
-    var scaleY = rect.height / 448;
-
     var emoji = pickEmoji(agentId);
     var div = document.createElement('div');
     div.className = 'v4-bubble';
     div.textContent = emoji;
-    div.style.left = Math.round(pos.cx * scaleX) + 'px';
-    div.style.top  = Math.round(pos.cy * scaleY) + 'px';
+    div.style.left = pos.cx + 'px';
+    div.style.top  = pos.cy + 'px';
     // Check dark mode
     var isDark = document.documentElement.getAttribute('data-theme') !== 'light';
     if (isDark) div.classList.add('dark');
@@ -1222,7 +1240,25 @@ const meta = {
   /* ── Fetch activity feed and compute XP ─────────────────────── */
   var CONVEX_ACTIVITY_URL = 'https://shiny-butterfly-744.convex.cloud';
 
+  async function fetchXpFromWorkload() {
+    var wresp = await fetch('/data/agent-workload.json?_=' + Math.floor(Date.now() / 300000));
+    if (!wresp.ok) throw new Error('workload HTTP ' + wresp.status);
+    var wdata = await wresp.json();
+    var xpMap = {};
+    (wdata.agents || []).forEach(function (ag) {
+      if (ag.id && ag.sessions) {
+        // sessions count directly as XP — reliable daily-updated source
+        xpMap[ag.id] = (xpMap[ag.id] || 0) + ag.sessions;
+      }
+    });
+    return xpMap;
+  }
+
   async function fetchAndComputeXp() {
+    var xpMap = {};
+    var convexOk = false;
+
+    // 1. Try Convex first
     try {
       var controller = new AbortController();
       var t = setTimeout(function () { controller.abort(); }, 6000);
@@ -1234,36 +1270,48 @@ const meta = {
       });
       clearTimeout(t);
       var data = await resp.json();
-      if (data.status !== 'success' || !Array.isArray(data.value)) return;
-      var activities = data.value;
-      recentActivities = activities.slice(0, 20); // keep recent for bubble logic
+      if (data.status === 'success' && Array.isArray(data.value) && data.value.length > 0) {
+        var activities = data.value;
+        recentActivities = activities.slice(0, 20); // keep recent for bubble logic
+        // Tally XP per agent (1 XP per activity)
+        activities.forEach(function (a) {
+          if (a.agentId && a.agentId !== 'team') {
+            xpMap[a.agentId] = (xpMap[a.agentId] || 0) + 1;
+          }
+        });
+        convexOk = true;
+        console.log('[v4] XP from Convex:', xpMap);
+      }
+    } catch (e) {
+      console.warn('[v4] Convex XP fetch failed, using workload fallback:', e.message);
+    }
 
-      // Tally XP per agent (1 XP per activity)
-      var xpMap = {};
-      activities.forEach(function (a) {
-        if (a.agentId && a.agentId !== 'team') {
-          xpMap[a.agentId] = (xpMap[a.agentId] || 0) + 1;
-        }
-      });
-
-      // Also pull from workload sessions as secondary source
+    // 2. Fallback to workload.json if Convex failed or returned empty
+    if (!convexOk) {
       try {
-        var wresp = await fetch('/data/agent-workload.json?_=' + Math.floor(Date.now() / 300000));
-        if (wresp.ok) {
-          var wdata = await wresp.json();
-          (wdata.agents || []).forEach(function (ag) {
+        xpMap = await fetchXpFromWorkload();
+        console.log('[v4] XP from workload.json fallback:', xpMap);
+      } catch (we) {
+        console.warn('[v4] workload.json fallback also failed:', we.message);
+      }
+    } else {
+      // Also pull from workload sessions as bonus XP supplement
+      try {
+        var wresp2 = await fetch('/data/agent-workload.json?_=' + Math.floor(Date.now() / 300000));
+        if (wresp2.ok) {
+          var wdata2 = await wresp2.json();
+          (wdata2.agents || []).forEach(function (ag) {
             if (ag.id && ag.sessions) {
-              // sessions add bonus XP (don't double-count but can supplement)
               var bonusXp = Math.floor(ag.sessions * 0.3);
               xpMap[ag.id] = (xpMap[ag.id] || 0) + bonusXp;
             }
           });
         }
       } catch (we) { /* ignore workload bonus if fails */ }
+    }
 
+    if (Object.keys(xpMap).length > 0) {
       applyXpToEngine(xpMap);
-    } catch (e) {
-      console.warn('[v4] XP fetch failed:', e);
     }
   }
 
