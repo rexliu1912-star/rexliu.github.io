@@ -1283,6 +1283,7 @@
 
   // ── v4: XP level glow around agent ────────────────────────
   function drawLevelGlow(a, drawX, drawY, dw, dh) {
+    return; // 等级显示已移至弹出卡片
     var info = v4AgentLevels[a.id];
     if (!info || info.level < 5) return;
     var level = info.level;
@@ -1318,6 +1319,7 @@
 
   // ── v4: Lv badge next to agent ────────────────────────────
   function drawLevelBadge(a, drawX, drawY, dw) {
+    return; // 等级显示已移至弹出卡片
     var info = v4AgentLevels[a.id];
     if (!info) return;
     var level = info.level;
@@ -1970,6 +1972,11 @@
     // v4: trigger upgrade ceremony for an agent
     queueCelebration: function (agentId, newLevel) {
       v4CelebrationQueue.push({ agentId: agentId, level: newLevel });
+    },
+
+    // v4: get level info for an agent (used by detail card)
+    getAgentLevel: function (agentId) {
+      return v4AgentLevels[agentId] || { level: 1, xp: 0 };
     },
 
     // v4: get current day phase (for external use)

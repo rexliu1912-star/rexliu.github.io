@@ -79,6 +79,7 @@ const meta = {
 				<span class="detail-dot" id="detail-dot"></span>
 				<span class="detail-name font-serif" id="detail-name"></span>
 				<span class="detail-role font-serif" id="detail-role"></span>
+				<span class="detail-level font-serif" id="detail-level"></span>
 			</div>
 			<p class="detail-stats font-serif" id="detail-stats"></p>
 			<p class="detail-desc font-serif" id="detail-desc"></p>
@@ -289,6 +290,16 @@ const meta = {
 		text-transform: uppercase;
 		letter-spacing: 0.08em;
 	}
+	.detail-level {
+		font-family: monospace;
+		font-size: 12px;
+		color: #8953d1;
+		margin-left: auto;
+		padding: 3px 8px;
+		border: 1px solid rgba(137,83,209,0.35);
+		border-radius: 999px;
+		white-space: nowrap;
+	}
 	.detail-stats {
 		font-size: 0.8rem;
 		font-weight: 600;
@@ -359,9 +370,12 @@ const meta = {
 	/* ══ v4: Emotion Bubble Overlay ══════════════════════════════ */
 	#v4-bubble-overlay {
 		position: absolute;
-		inset: 0;
+		top: 0;
+		left: 0;
+		width: 768px;
+		height: 448px;
 		pointer-events: none;
-		overflow: hidden;
+		overflow: visible;
 	}
 	.v4-bubble {
 		position: absolute;
@@ -698,6 +712,22 @@ const meta = {
 			document.getElementById('detail-dot').style.boxShadow = '0 0 8px ' + d.color + '88';
 			document.getElementById('detail-name').textContent = d.name;
 			document.getElementById('detail-role').textContent = d.role;
+
+			// 显示等级信息（从 engine 读，fallback 到 localStorage）
+			var levelEl = document.getElementById("detail-level");
+			if (levelEl) {
+				var lvInfo = (window.PixelOffice && window.PixelOffice.getAgentLevel)
+					? window.PixelOffice.getAgentLevel(agentId)
+					: null;
+				if (!lvInfo) {
+					try {
+						var stored = JSON.parse(localStorage.getItem("pov4-agent-levels") || "{}");
+						lvInfo = { level: stored[agentId] || 1 };
+					} catch(e) { lvInfo = { level: 1 }; }
+				}
+				levelEl.textContent = "Lv." + (lvInfo.level || 1);
+			}
+
 			document.getElementById('detail-desc').textContent = isZh ? d.descZh : d.descEn;
 
 			var statsEl = document.getElementById('detail-stats');
@@ -1211,12 +1241,17 @@ const meta = {
 
   function applyXpToEngine(agentXp) {
     if (!window.PixelOffice) return;
+    // 确保所有 agent 都有至少 0 XP（避免 Shuri 这种 sessions=0 的被漏掉）
+    var fullXp = {};
+    Object.keys(BUBBLE_CONFIG).forEach(function(id) { fullXp[id] = 0; });
+    Object.keys(agentXp).forEach(function(id) { fullXp[id] = agentXp[id]; });
+
     var prevLevels = getStoredLevels();
     var celebrated = getCelebrated();
     var newLevels = {};
 
-    Object.keys(agentXp).forEach(function (agentId) {
-      var xp = agentXp[agentId];
+    Object.keys(fullXp).forEach(function (agentId) {
+      var xp = fullXp[agentId];
       var levelInfo = calcLevel(xp);
       newLevels[agentId] = levelInfo.level;
 
@@ -1235,6 +1270,7 @@ const meta = {
     });
 
     storeLevels(newLevels);
+    console.log('[v4] fullXp applied:', fullXp);
   }
 
   /* ── Fetch activity feed and compute XP ─────────────────────── */
@@ -1246,9 +1282,9 @@ const meta = {
     var wdata = await wresp.json();
     var xpMap = {};
     (wdata.agents || []).forEach(function (ag) {
-      if (ag.id && ag.sessions) {
-        // sessions count directly as XP — reliable daily-updated source
-        xpMap[ag.id] = (xpMap[ag.id] || 0) + ag.sessions;
+      if (ag.id) {
+        // sessions=0 也要给 XP 让 engine 知道这个 agent 存在（显示 Lv.1）
+        xpMap[ag.id] = (xpMap[ag.id] || 0) + (ag.sessions || 0);
       }
     });
     return xpMap;
