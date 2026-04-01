@@ -954,6 +954,663 @@ function BezierJourney() {
 }
 
 // ============================================================
+// Experiment 5: Law of Large Numbers
+// ============================================================
+function LawOfLargeNumbers() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const animRef = useRef<number>(0);
+  const doneRef = useRef(false);
+  const samplesRef = useRef<number[]>([]);
+  const runningMeanRef = useRef<number[]>([]);
+
+  const [n, setN] = useState(200);
+  const [p, setP] = useState(0.5);
+  const [sigma, setSigma] = useState(1); // 1=low, 2=med, 3=high
+  const tc = useThemeColors();
+
+  const sigmaMap: Record<number, number> = { 1: 0.05, 2: 0.15, 3: 0.3 };
+  const sigmaLabels: Record<number, string> = { 1: "low", 2: "medium", 3: "high" };
+
+  const resetAnimation = useCallback(() => {
+    samplesRef.current = [];
+    runningMeanRef.current = [];
+    doneRef.current = false;
+  }, []);
+
+  useEffect(() => {
+    resetAnimation();
+  }, [n, p, sigma, resetAnimation]);
+
+  const draw = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    const W = canvas.offsetWidth;
+    const H = canvas.offsetHeight;
+    const sigVal = sigmaMap[sigma] ?? 0.15;
+
+    // Add batch samples per frame
+    if (!doneRef.current) {
+      const batchSize = Math.max(1, Math.floor(n / 80));
+      for (let i = 0; i < batchSize; i++) {
+        if (samplesRef.current.length >= n) { doneRef.current = true; break; }
+        // Bernoulli with noise
+        const sample = (Math.random() < p ? 1 : 0) + (Math.random() - 0.5) * sigVal * 2;
+        samplesRef.current.push(sample);
+        const prev = runningMeanRef.current.length > 0 ? runningMeanRef.current[runningMeanRef.current.length - 1]! : sample;
+        const k = samplesRef.current.length;
+        runningMeanRef.current.push(prev + (sample - prev) / k);
+      }
+    }
+
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = getCanvasBg();
+    ctx.fillRect(0, 0, W, H);
+
+    // Grid
+    ctx.strokeStyle = getGridColor();
+    ctx.lineWidth = 1;
+    for (let y = 0; y <= H; y += 40) {
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+    }
+    for (let x = 0; x <= W; x += 60) {
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+    }
+
+    const padL = 40, padR = 20, padT = 20, padB = 30;
+    const drawW = W - padL - padR;
+    const drawH = H - padT - padB;
+
+    // Map value [0,1] range to canvas Y
+    const toY = (v: number) => padT + drawH - (Math.max(0, Math.min(1, v)) * drawH);
+    const toX = (i: number, total: number) => padL + (i / Math.max(1, total - 1)) * drawW;
+
+    // Y-axis labels
+    const dark = isDarkMode();
+    ctx.fillStyle = dark ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.35)";
+    ctx.font = "10px system-ui";
+    ctx.textAlign = "right";
+    ctx.fillText("1.0", padL - 4, padT + 4);
+    ctx.fillText("0.5", padL - 4, padT + drawH / 2 + 4);
+    ctx.fillText("0.0", padL - 4, padT + drawH + 4);
+
+    // True mean reference line (dashed)
+    const refY = toY(p);
+    ctx.setLineDash([6, 6]);
+    ctx.strokeStyle = dark ? "rgba(255,255,255,0.18)" : "rgba(0,0,0,0.18)";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(padL, refY);
+    ctx.lineTo(W - padR, refY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Label for true mean
+    ctx.fillStyle = dark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.45)";
+    ctx.font = "10px system-ui";
+    ctx.textAlign = "left";
+    ctx.fillText(`μ=${p.toFixed(2)}`, W - padR - 52, refY - 4);
+
+    // Scatter dots (recent batch only — last 60)
+    const dots = samplesRef.current;
+    const visibleDots = dots.slice(-60);
+    const startIdx = Math.max(0, dots.length - 60);
+    for (let i = 0; i < visibleDots.length; i++) {
+      const realI = startIdx + i;
+      const x = toX(realI, n);
+      const y = toY(visibleDots[i]!);
+      ctx.beginPath();
+      ctx.arc(x, y, 2, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(161,117,232,${0.25 + (i / visibleDots.length) * 0.35})`;
+      ctx.fill();
+    }
+
+    // Running mean convergence line
+    const means = runningMeanRef.current;
+    if (means.length > 1) {
+      ctx.beginPath();
+      ctx.moveTo(toX(0, n), toY(means[0]!));
+      for (let i = 1; i < means.length; i++) {
+        ctx.lineTo(toX(i, n), toY(means[i]!));
+      }
+      const grad = ctx.createLinearGradient(padL, 0, padL + drawW, 0);
+      grad.addColorStop(0, `${PURPLE}99`);
+      grad.addColorStop(1, PURPLE_LIGHT);
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = 2.5;
+      ctx.shadowBlur = 8;
+      ctx.shadowColor = PURPLE;
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+
+      // Endpoint dot
+      const lastX = toX(means.length - 1, n);
+      const lastY = toY(means[means.length - 1]!);
+      ctx.beginPath();
+      ctx.arc(lastX, lastY, 5, 0, Math.PI * 2);
+      ctx.fillStyle = PURPLE_LIGHT;
+      ctx.shadowBlur = 12;
+      ctx.shadowColor = PURPLE_LIGHT;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      // Current mean label
+      ctx.fillStyle = PURPLE_LIGHT;
+      ctx.font = "bold 10px system-ui";
+      ctx.textAlign = "left";
+      ctx.fillText(`X̄=${(means[means.length - 1]!).toFixed(3)}`, Math.min(lastX + 8, W - 80), lastY - 4);
+    }
+
+    // n progress label
+    ctx.fillStyle = dark ? "rgba(255,255,255,0.25)" : "rgba(0,0,0,0.25)";
+    ctx.font = "10px system-ui";
+    ctx.textAlign = "center";
+    ctx.fillText(`n = ${dots.length}`, padL + drawW / 2, H - 4);
+
+    if (!doneRef.current) {
+      animRef.current = requestAnimationFrame(draw);
+    }
+  }, [n, p, sigma]);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const dpr = window.devicePixelRatio;
+    const resize = () => {
+      canvas.width = canvas.offsetWidth * dpr;
+      canvas.height = canvas.offsetHeight * dpr;
+      const ctx = canvas.getContext("2d");
+      if (ctx) ctx.scale(dpr, dpr);
+    };
+    resize();
+    const ro = new ResizeObserver(resize);
+    ro.observe(canvas);
+    return () => ro.disconnect();
+  }, []);
+
+  useEffect(() => {
+    cancelAnimationFrame(animRef.current);
+    animRef.current = requestAnimationFrame(draw);
+    return () => cancelAnimationFrame(animRef.current);
+  }, [draw]);
+
+  return (
+    <div className="experiment-card">
+      <div className="exp-header">
+        <span className="exp-num">05</span>
+        <div>
+          <h2 className="exp-title" style={{color: tc.title}}>
+            <span className="lang-en">Law of Large Numbers</span>
+            <span className="lang-zh">大数定律</span>
+          </h2>
+          <p className="exp-subtitle" style={{color: tc.subtitle}}>
+            <span className="lang-en">In the short run, luck. In the long run, distribution.</span>
+            <span className="lang-zh">短期看运气，长期看分布。</span>
+          </p>
+        </div>
+      </div>
+
+      <canvas ref={canvasRef} className="exp-canvas" style={{ width: "100%", height: "240px" }} />
+
+      <div className="exp-controls">
+        <div className="control-group">
+          <label>
+            <span className="lang-en">Samples n</span>
+            <span className="lang-zh">样本数 n</span>
+            <span className="control-val">{n}</span>
+          </label>
+          <input type="range" min={10} max={1000} step={10} value={n} onChange={(e) => setN(Number(e.target.value))} />
+        </div>
+        <div className="control-group">
+          <label>
+            <span className="lang-en">Win rate p</span>
+            <span className="lang-zh">胜率 p</span>
+            <span className="control-val">{p.toFixed(2)}</span>
+          </label>
+          <input type="range" min={0.1} max={0.9} step={0.05} value={p} onChange={(e) => setP(Number(e.target.value))} />
+        </div>
+        <div className="control-group">
+          <label>
+            <span className="lang-en">Noise σ</span>
+            <span className="lang-zh">波动 σ</span>
+            <span className="control-val">{sigmaLabels[sigma]}</span>
+          </label>
+          <input type="range" min={1} max={3} value={sigma} onChange={(e) => setSigma(Number(e.target.value))} />
+        </div>
+      </div>
+
+      <div className="exp-formula">
+        <pre>{`X̄ₙ → μ  (n → ∞)\n\nX̄ₙ = (1/n) Σ Xᵢ    sample mean 样本均值\nμ   = p             true mean  真实均值\n\n当 n 足够大，X̄ₙ 必然收敛到 μ`}</pre>
+      </div>
+
+      <div className="exp-explain">
+        <p className="lang-en">A single outcome proves almost nothing. In ten trials, fluctuation feels like fate; in a thousand, structure begins to emerge. The law of large numbers reminds us that the world does not reward correctness immediately — it reveals patterns only after enough repetition. Investing, writing, relationships: all of them bow to distribution in the end.</p>
+        <p className="lang-zh">单次结果几乎说明不了什么。十次实验，波动像命运；一千次实验，结构开始浮现。大数定律提醒我们：世界不是立刻奖励正确，而是在足够多次重复后显露规律。投资如此，写作如此，关系经营也是如此。短期里你会怀疑自己，长期里分布会替你说话。</p>
+      </div>
+
+      <div className="exp-quote">
+        <blockquote>
+          <span className="lang-en">"One win or loss tells you almost nothing. Edge only reveals itself through repetition." — Rex Liu</span>
+          <span className="lang-zh">「一次输赢不说明你对了还是错了。重复足够多次，优势才会显形。」— Rex Liu</span>
+        </blockquote>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// Experiment 6: Fractal Echo
+// ============================================================
+function FractalEcho() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const animRef = useRef<number>(0);
+  const windRef = useRef(0);
+  const windTargetRef = useRef(0);
+  const windTimerRef = useRef(0);
+  const lastRenderRef = useRef(0);
+
+  const [depth, setDepth] = useState(7);
+  const [angle, setAngle] = useState(25);
+  const [scale, setScale] = useState(0.68);
+  const [jitter, setJitter] = useState(0.3);
+  const tc = useThemeColors();
+
+  // Seeded pseudo-random for stable jitter
+  const seededRand = (seed: number): number => {
+    const x = Math.sin(seed + 1) * 43758.5453;
+    return x - Math.floor(x);
+  };
+
+  const drawBranch = useCallback(
+    (
+      ctx: CanvasRenderingContext2D,
+      x: number,
+      y: number,
+      length: number,
+      ang: number,
+      d: number,
+      seed: number,
+      maxDepth: number,
+      dark: boolean,
+    ) => {
+      if (d === 0 || length < 1) return;
+
+      const depthFrac = d / maxDepth; // 1 = root, near 0 = tip
+
+      // Color interpolation: root = deep purple, tip = light purple/lavender
+      const r1 = 89, g1 = 53, b1 = 209; // PURPLE root #8953d1
+      const r2 = dark ? 210 : 180;
+      const g2 = dark ? 180 : 155;
+      const b2 = dark ? 255 : 240; // tip lavender
+      const t = 1 - depthFrac;
+      const r = Math.round(r1 + (r2 - r1) * t);
+      const g = Math.round(g1 + (g2 - g1) * t);
+      const b = Math.round(b1 + (b2 - b1) * t);
+      const alpha = dark ? 0.55 + depthFrac * 0.45 : 0.45 + depthFrac * 0.55;
+      ctx.strokeStyle = `rgba(${r},${g},${b},${alpha})`;
+      ctx.lineWidth = Math.max(0.5, depthFrac * 3);
+
+      const nx = x + Math.cos(ang) * length;
+      const ny = y + Math.sin(ang) * length;
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(nx, ny);
+      ctx.stroke();
+
+      const jitterAmt = jitter * (seededRand(seed) - 0.5) * 0.6;
+      const angRad = ((angle + windRef.current) * Math.PI) / 180;
+
+      drawBranch(ctx, nx, ny, length * scale, ang - angRad + jitterAmt, d - 1, seed * 1.618, maxDepth, dark);
+      drawBranch(ctx, nx, ny, length * scale, ang + angRad + jitterAmt * 0.8, d - 1, seed * 2.718, maxDepth, dark);
+    },
+    [angle, scale, jitter],
+  );
+
+  const render = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    const W = canvas.offsetWidth;
+    const H = canvas.offsetHeight;
+    const dark = isDarkMode();
+
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = getCanvasBg();
+    ctx.fillRect(0, 0, W, H);
+
+    // Grid
+    ctx.strokeStyle = getGridColor();
+    ctx.lineWidth = 1;
+    for (let y = 0; y <= H; y += 40) {
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+    }
+    for (let x = 0; x <= W; x += 60) {
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+    }
+
+    const startX = W / 2;
+    const startY = H * 0.92;
+    const trunkLength = H * 0.22;
+
+    drawBranch(ctx, startX, startY, trunkLength, -Math.PI / 2, depth, 42, depth, dark);
+  }, [depth, drawBranch]);
+
+  // Wind effect: gentle angle oscillation
+  useEffect(() => {
+    const tick = (now: number) => {
+      windTimerRef.current += 1;
+      if (windTimerRef.current > 180) {
+        windTimerRef.current = 0;
+        windTargetRef.current = (Math.random() - 0.5) * 4;
+      }
+      windRef.current += (windTargetRef.current - windRef.current) * 0.008;
+
+      const elapsed = now - lastRenderRef.current;
+      if (elapsed > 100) { // ~10fps for wind updates
+        lastRenderRef.current = now;
+        render();
+      }
+
+      animRef.current = requestAnimationFrame(tick);
+    };
+    animRef.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(animRef.current);
+  }, [render]);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const dpr = window.devicePixelRatio;
+    const resize = () => {
+      canvas.width = canvas.offsetWidth * dpr;
+      canvas.height = canvas.offsetHeight * dpr;
+      const ctx = canvas.getContext("2d");
+      if (ctx) ctx.scale(dpr, dpr);
+      render();
+    };
+    resize();
+    const ro = new ResizeObserver(resize);
+    ro.observe(canvas);
+    return () => ro.disconnect();
+  }, [render]);
+
+  return (
+    <div className="experiment-card">
+      <div className="exp-header">
+        <span className="exp-num">06</span>
+        <div>
+          <h2 className="exp-title" style={{color: tc.title}}>
+            <span className="lang-en">Fractal Echo</span>
+            <span className="lang-zh">分形回声</span>
+          </h2>
+          <p className="exp-subtitle" style={{color: tc.subtitle}}>
+            <span className="lang-en">The whole hides inside the part.</span>
+            <span className="lang-zh">局部里藏着整体。</span>
+          </p>
+        </div>
+      </div>
+
+      <canvas ref={canvasRef} className="exp-canvas" style={{ width: "100%", height: "280px" }} />
+
+      <div className="exp-controls">
+        <div className="control-group">
+          <label>
+            <span className="lang-en">Depth</span>
+            <span className="lang-zh">迭代层数</span>
+            <span className="control-val">{depth}</span>
+          </label>
+          <input type="range" min={3} max={9} value={depth} onChange={(e) => setDepth(Number(e.target.value))} />
+        </div>
+        <div className="control-group">
+          <label>
+            <span className="lang-en">Angle</span>
+            <span className="lang-zh">分支角度</span>
+            <span className="control-val">{angle}°</span>
+          </label>
+          <input type="range" min={10} max={50} value={angle} onChange={(e) => setAngle(Number(e.target.value))} />
+        </div>
+        <div className="control-group">
+          <label>
+            <span className="lang-en">Scale</span>
+            <span className="lang-zh">缩放比例</span>
+            <span className="control-val">{scale.toFixed(2)}</span>
+          </label>
+          <input type="range" min={0.55} max={0.8} step={0.01} value={scale} onChange={(e) => setScale(Number(e.target.value))} />
+        </div>
+        <div className="control-group">
+          <label>
+            <span className="lang-en">Jitter</span>
+            <span className="lang-zh">扰动</span>
+            <span className="control-val">{jitter.toFixed(1)}</span>
+          </label>
+          <input type="range" min={0} max={1} step={0.1} value={jitter} onChange={(e) => setJitter(Number(e.target.value))} />
+        </div>
+      </div>
+
+      <div className="exp-formula">
+        <pre>{`Self-similarity across scale\n\nN = r^(-D)\nN = 自相似副本数  number of self-similar copies\nr = 缩放比例      scale factor\nD = 分形维度      fractal dimension`}</pre>
+      </div>
+
+      <div className="exp-explain">
+        <p className="lang-en">Many complex systems are not chaotic at all — they repeat the same structure across scales. Markets do this. Habits do this. Even life's recurring dilemmas do this. What feels like a new problem is often just an old pattern enlarged. The beauty of fractals lies not in complexity itself, but in the strange familiarity hidden inside it.</p>
+        <p className="lang-zh">很多复杂系统并不是杂乱无章，而是在不同尺度重复同一种模式。市场像这样，人的习惯像这样，人生的困境也常常像这样。你以为自己换了一个新问题，放大看，往往只是旧结构的再现。分形之美，不在复杂，而在复杂背后那种令人惊讶的熟悉感。</p>
+      </div>
+
+      <div className="exp-quote">
+        <blockquote>
+          <span className="lang-en">"Are you facing a new problem — or just an enlarged version of an old pattern?" — Rex Liu</span>
+          <span className="lang-zh">「你看到的是新问题，还是旧模式的放大版？」— Rex Liu</span>
+        </blockquote>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// Experiment 7: Fourier Decomposition
+// ============================================================
+function FourierDecomposition() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const animRef = useRef<number>(0);
+  const tRef = useRef(0);
+
+  const [base, setBase] = useState(2);
+  const [harmonics, setHarmonics] = useState(4);
+  const [decay, setDecay] = useState(0.6);
+  const [showComponents, setShowComponents] = useState(true);
+  const tc = useThemeColors();
+
+  const COMPONENT_COLORS = ["#c9a3ff", "#a175e8", "#8953d1", "#7040b8", "#5c30a0", "#4a2288", "#3a1870"] as const;
+
+  const draw = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    const W = canvas.offsetWidth;
+    const H = canvas.offsetHeight;
+    const dark = isDarkMode();
+
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = getCanvasBg();
+    ctx.fillRect(0, 0, W, H);
+
+    // Grid
+    ctx.strokeStyle = getGridColor();
+    ctx.lineWidth = 1;
+    for (let y = 0; y <= H; y += 40) {
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+    }
+    for (let x = 0; x <= W; x += 60) {
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+    }
+
+    const padT = 20, padB = 20;
+    const cy = H / 2;
+    const amp = (H - padT - padB) * 0.38;
+    const t = tRef.current;
+
+    // Draw component waves (underneath)
+    if (showComponents) {
+      for (let h = 1; h <= harmonics; h++) {
+        const freq = h * base;
+        const amplitude = amp / Math.pow(h, decay);
+        const color = COMPONENT_COLORS[h - 1] ?? "#8953d1";
+
+        ctx.beginPath();
+        for (let x = 0; x < W; x++) {
+          const phase = (x / W) * Math.PI * 2 * freq - t * base * 0.8;
+          const y = cy + amplitude * Math.sin(phase);
+          if (x === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = color + (dark ? "55" : "44");
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+    }
+
+    // Composite wave (main signal)
+    ctx.beginPath();
+    for (let x = 0; x < W; x++) {
+      let y = 0;
+      for (let h = 1; h <= harmonics; h++) {
+        const freq = h * base;
+        const amplitude = amp / Math.pow(h, decay);
+        const phase = (x / W) * Math.PI * 2 * freq - t * base * 0.8;
+        y += amplitude * Math.sin(phase);
+      }
+      if (x === 0) ctx.moveTo(x, cy + y);
+      else ctx.lineTo(x, cy + y);
+    }
+    const grad = ctx.createLinearGradient(0, 0, W, 0);
+    grad.addColorStop(0, `${PURPLE}aa`);
+    grad.addColorStop(0.5, PURPLE_LIGHT);
+    grad.addColorStop(1, `${PURPLE}aa`);
+    ctx.strokeStyle = grad;
+    ctx.lineWidth = 2.5;
+    ctx.shadowBlur = 10;
+    ctx.shadowColor = PURPLE;
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // Center baseline
+    ctx.setLineDash([4, 8]);
+    ctx.strokeStyle = dark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(0, cy);
+    ctx.lineTo(W, cy);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Harmonics label
+    ctx.fillStyle = dark ? "rgba(255,255,255,0.25)" : "rgba(0,0,0,0.25)";
+    ctx.font = "10px system-ui";
+    ctx.textAlign = "right";
+    ctx.fillText(`n=${harmonics} harmonics · base=${base}`, W - 12, padT + 12);
+
+    tRef.current += 0.025;
+    animRef.current = requestAnimationFrame(draw);
+  }, [base, harmonics, decay, showComponents]);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const dpr = window.devicePixelRatio;
+    const resize = () => {
+      canvas.width = canvas.offsetWidth * dpr;
+      canvas.height = canvas.offsetHeight * dpr;
+      const ctx = canvas.getContext("2d");
+      if (ctx) ctx.scale(dpr, dpr);
+    };
+    resize();
+    const ro = new ResizeObserver(resize);
+    ro.observe(canvas);
+    return () => ro.disconnect();
+  }, []);
+
+  useEffect(() => {
+    cancelAnimationFrame(animRef.current);
+    animRef.current = requestAnimationFrame(draw);
+    return () => cancelAnimationFrame(animRef.current);
+  }, [draw]);
+
+  return (
+    <div className="experiment-card">
+      <div className="exp-header">
+        <span className="exp-num">07</span>
+        <div>
+          <h2 className="exp-title" style={{color: tc.title}}>
+            <span className="lang-en">Fourier Decomposition</span>
+            <span className="lang-zh">傅里叶分解</span>
+          </h2>
+          <p className="exp-subtitle" style={{color: tc.subtitle}}>
+            <span className="lang-en">Complexity is often the sum of simple patterns.</span>
+            <span className="lang-zh">复杂，往往只是多个简单模式的叠加。</span>
+          </p>
+        </div>
+      </div>
+
+      <canvas ref={canvasRef} className="exp-canvas" style={{ width: "100%", height: "220px" }} />
+
+      <div className="exp-controls">
+        <div className="control-group">
+          <label>
+            <span className="lang-en">Base freq</span>
+            <span className="lang-zh">基频 base</span>
+            <span className="control-val">{base}</span>
+          </label>
+          <input type="range" min={1} max={5} value={base} onChange={(e) => setBase(Number(e.target.value))} />
+        </div>
+        <div className="control-group">
+          <label>
+            <span className="lang-en">Harmonics</span>
+            <span className="lang-zh">谐波数量</span>
+            <span className="control-val">{harmonics}</span>
+          </label>
+          <input type="range" min={1} max={7} value={harmonics} onChange={(e) => setHarmonics(Number(e.target.value))} />
+        </div>
+        <div className="control-group">
+          <label>
+            <span className="lang-en">Decay</span>
+            <span className="lang-zh">衰减</span>
+            <span className="control-val">{decay.toFixed(1)}</span>
+          </label>
+          <input type="range" min={0.2} max={1.0} step={0.1} value={decay} onChange={(e) => setDecay(Number(e.target.value))} />
+        </div>
+        <div className="control-group">
+          <label>
+            <span className="lang-en">Show components</span>
+            <span className="lang-zh">显示分量</span>
+            <span className="control-val" style={{color: showComponents ? "#8953d1" : "#999"}}>{showComponents ? "on" : "off"}</span>
+          </label>
+          <input type="range" min={0} max={1} step={1} value={showComponents ? 1 : 0} onChange={(e) => setShowComponents(Number(e.target.value) === 1)} />
+        </div>
+      </div>
+
+      <div className="exp-formula">
+        <pre>{`f(x) = Σ [sin(n·base·x) / nᵈᵉᶜᵃʸ]\n       n=1 to harmonics\n\n复杂信号 = 多个简单波形的叠加\nComplex signal = sum of simple sinusoids`}</pre>
+      </div>
+
+      <div className="exp-explain">
+        <p className="lang-en">What appears complex is often just many simple rules happening at once. Noise, cycles, trends, emotion — layered together, they become the market. Impulse, habit, environment, purpose — layered together, they become a life. The beauty of Fourier decomposition is this: complexity is not beyond understanding, if you are willing to break it apart.</p>
+        <p className="lang-zh">表面上的复杂，很多时候只是多个简单规律同时发生。噪音、周期、趋势、情绪，叠在一起，就像市场；冲动、习惯、环境、目标，叠在一起，就像人生。傅里叶分解的美，在于它提醒我们：复杂不一定不可理解，只要你愿意拆开看。</p>
+      </div>
+
+      <div className="exp-quote">
+        <blockquote>
+          <span className="lang-en">"Complexity is not beyond understanding. You just haven't broken it apart yet." — Rex Liu</span>
+          <span className="lang-zh">「复杂不是无法理解，只是你还没拆开它。」— Rex Liu</span>
+        </blockquote>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
 // Main export
 // ============================================================
 export default function VisualExperiments() {
@@ -963,6 +1620,9 @@ export default function VisualExperiments() {
       <NeuralPulse />
       <CompoundGrowth />
       <BezierJourney />
+      <LawOfLargeNumbers />
+      <FractalEcho />
+      <FourierDecomposition />
     </div>
   );
 }
