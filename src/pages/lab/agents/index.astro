@@ -1162,19 +1162,12 @@ const meta = {
     var overlay = document.getElementById('v4-bubble-overlay');
     if (!overlay) return;
 
-    // Scale canvas position to actual rendered size
-    var canvas = document.getElementById('office-canvas');
-    if (!canvas) return;
-    var rect = canvas.getBoundingClientRect();
-    var scaleX = rect.width / 768;
-    var scaleY = rect.height / 448;
-
     var emoji = pickEmoji(agentId);
     var div = document.createElement('div');
     div.className = 'v4-bubble';
     div.textContent = emoji;
-    div.style.left = Math.round(pos.cx * scaleX) + 'px';
-    div.style.top  = Math.round(pos.cy * scaleY) + 'px';
+    div.style.left = pos.cx + 'px';
+    div.style.top  = pos.cy + 'px';
     // Check dark mode
     var isDark = document.documentElement.getAttribute('data-theme') !== 'light';
     if (isDark) div.classList.add('dark');

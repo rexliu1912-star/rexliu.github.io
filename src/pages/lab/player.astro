@@ -51,6 +51,15 @@ function logScale(val: number, mid: number, cap = 95): number {
   return Math.min(cap, Math.round(100 * val / (val + mid)));
 }
 
+function sessionToLevel(sessions: number): number {
+  if (sessions >= 500) return 10;
+  if (sessions >= 200) return 7;
+  if (sessions >= 100) return 5;
+  if (sessions >= 50)  return 3;
+  if (sessions >= 20)  return 2;
+  return 1;
+}
+
 const vitalityInput = cityCount;
 const wisdomInput = postCount + libraryCount * 0.3;
 const renownInput = followers;
@@ -196,7 +205,7 @@ if (!agentIds.has("artist")) allAgents.push({ id: "artist", name: "Shuri", token
 
 const retainers = allAgents.map(a => {
   const meta = agentMeta[a.id] ?? { emoji: "🤖", titleZh: "门客", titleEn: "Retainer", sprite: "/assets/pixel-office/characters/char_0.png" };
-  const agentLevel = Math.floor(logScale(a.sessions, 200) / 2);
+  const agentLevel = sessionToLevel(a.sessions);
   return { id: a.id, name: a.name, emoji: meta.emoji, titleZh: meta.titleZh, titleEn: meta.titleEn, sprite: meta.sprite, level: agentLevel, sessions: a.sessions, tokens: a.tokens, model: a.model };
 });
 
