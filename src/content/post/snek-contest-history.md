@@ -44,6 +44,8 @@ I went back through every single $SNEK community contest since April 2023. Here 
 | 23 | 2025-11-05 | Crypto.com $300K Campaign | CEX Promo | $300K in SNEK |
 | 24 | 2026-04-02 | **Snek Raid Contest** | **Raid** | **5M SNEK** |
 
+![SNEK Contest History Table](./2026-04-02-snek-contest-table.png)
+
 ## By the Numbers
 
 - **Total events**: 24 across 35 months
@@ -64,6 +66,8 @@ I went back through every single $SNEK community contest since April 2023. Here 
 | Giveaways / Celebrations | 2 | 8% | 1B ADA volume milestone, 58K followers |
 | Puzzles | 1 | 4% | Halloween Scavenger Hunt |
 | Raid contests | 1 | 4% | Current (April 2026) |
+
+![SNEK Activity Type Distribution](./2026-04-02-snek-type-distribution.png)
 
 ## Four Patterns
 
