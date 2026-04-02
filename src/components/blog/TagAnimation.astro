@@ -5,13 +5,14 @@ interface Props {
 
 const { tags } = Astro.props;
 
-type AnimationType = "crypto" | "ai" | "investment" | "travel" | "none";
+type AnimationType = "crypto" | "ai" | "investment" | "travel" | "philosophy" | "none";
 
 function detectType(tags: string[]): AnimationType {
   const t = tags.map((s) => s.toLowerCase()).join(" ");
   if (/crypto|bitcoin|btc|snek|cardano|ada|defi|web3|nft/.test(t)) return "crypto";
   if (/ai|artificial|machine.learning|vibe.coding|vibe-coding|agent|llm|gpt|claude|coding/.test(t)) return "ai";
   if (/invest|gold|etf|stock|wealth|finance|portfolio|market|trading/.test(t)) return "investment";
+  if (/philosophy|growth|life|books|mindset|freedom/.test(t)) return "philosophy";
   if (/travel|nomad|lifestyle|family|city/.test(t)) return "travel";
   return "none";
 }
@@ -120,6 +121,37 @@ const snakePath = type === "crypto" ? buildSnakePath() : "";
             <animate attributeName="r" values="5;7;5" dur="1.2s" begin="2s" repeatCount="indefinite"/>
           </circle>
           <text x="572" y="16" fill={PURPLE} font-size="18" opacity="0.85">↗</text>
+        </svg>
+      )}
+
+      {type === "philosophy" && (
+        <svg class="tag-anim-svg" viewBox="0 0 600 60" preserveAspectRatio="xMidYMid meet">
+          {/* Center reference line */}
+          <line x1="10" y1="30" x2="560" y2="30" stroke={PURPLE} stroke-width="0.5" opacity="0.25"/>
+          {/* 5 dots doing random walks converging toward y=30 */}
+          {([
+            { cx: 80, dur: "3.2s", r: 3.5, opacity: 0.9 },
+            { cx: 170, dur: "2.7s", r: 3, opacity: 0.75 },
+            { cx: 280, dur: "3.8s", r: 4, opacity: 0.85 },
+            { cx: 390, dur: "2.4s", r: 3, opacity: 0.7 },
+            { cx: 480, dur: "3.5s", r: 3.5, opacity: 0.8 },
+          ] as const).map((dot, i) => (
+            <circle cx={dot.cx} cy="30" r={dot.r} fill={i % 2 === 0 ? PURPLE : PURPLE_LIGHT} opacity={dot.opacity}>
+              <animate attributeName="cy"
+                values={`${14 + i * 3};${38 - i * 2};${24 + i};30;${36 - i};${22 + i * 2};30`}
+                dur={dot.dur} repeatCount="indefinite" calcMode="spline"
+                keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
+            </circle>
+          ))}
+          {/* Connecting dashed polyline */}
+          <polyline fill="none" stroke={PURPLE} stroke-width="1" stroke-dasharray="4,4" opacity="0.3">
+            <animate attributeName="points"
+              values="80,14 170,38 280,24 390,36 480,22;80,38 170,24 280,30 390,22 480,36;80,27 170,33 280,30 390,28 480,30;80,38 170,24 280,30 390,22 480,36;80,14 170,38 280,24 390,36 480,22"
+              dur="3.5s" repeatCount="indefinite" calcMode="spline"
+              keySplines="0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"/>
+          </polyline>
+          {/* Infinity symbol */}
+          <text x="556" y="36" fill={PURPLE} font-size="20" opacity="0.7">∞</text>
         </svg>
       )}
 
