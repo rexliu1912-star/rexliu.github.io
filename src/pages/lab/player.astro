@@ -238,7 +238,7 @@ const quests = {
   }),
 };
 
-const articleMeta = Object.fromEntries(posts.map(post => [post.slug, { title: post.data.title, titleZh: post.data.title_zh ?? null }]));
+const articleMeta = Object.fromEntries(posts.map(post => [post.id.replace(/\.(md|mdx)$/, ""), { title: post.data.title, titleZh: null }]));
 
 const meta = {
   title: "Player Stats — Rex's Open-World Adventure Dashboard",

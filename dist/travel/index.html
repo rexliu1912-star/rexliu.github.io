@@ -1,6 +1,6 @@
 <!DOCTYPE html><html class="scroll-smooth" lang="zh-CN"> <head><script>
 			(function(){try{var l=localStorage.getItem("rex-lang")||"en";document.documentElement.setAttribute("data-lang",l)}catch(e){document.documentElement.setAttribute("data-lang","en")}})();
-		</script><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><title>Travel - Rex Liu</title><meta name="theme-color" content="#8953d1"><link rel="icon" href="/favicon-32x32.png" type="image/png"><link href="/icons/apple-touch-icon.png" rel="apple-touch-icon"><link href="/manifest.webmanifest" rel="manifest"><link href="https://rexliu.io/travel/" rel="canonical"><meta content="Travel - Rex Liu" name="title"><meta content="An interactive map of Rex Liu's digital nomad journey across China." name="description"><meta content="Rex Liu" name="author"><meta content="website" property="og:type"><meta content="Travel - Rex Liu" property="og:title"><meta content="An interactive map of Rex Liu's digital nomad journey across China." property="og:description"><meta content="https://rexliu.io/travel/" property="og:url"><meta content="Rex Liu" property="og:site_name"><meta content="zh_CN" property="og:locale"><meta content="https://rexliu.io/social-card-v2.png?v=20260401" property="og:image"><meta content="1200" property="og:image:width"><meta content="630" property="og:image:height"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:url" content="https://rexliu.io/travel/"><meta name="twitter:title" content="Travel - Rex Liu"><meta name="twitter:description" content="An interactive map of Rex Liu's digital nomad journey across China."><meta name="twitter:image" content="https://rexliu.io/social-card-v2.png?v=20260401"><meta name="twitter:site" content="@rexliu"><meta name="twitter:creator" content="@rexliu"><link href="/sitemap-index.xml" rel="sitemap"><link href="/rss.xml" title="Blog" rel="alternate" type="application/rss+xml"><meta content="Astro v5.16.3" name="generator"><script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Rex Liu","description":"Be The Sovereign Individual You Want To See In The World","url":"https://rexliu.io/","author":{"@type":"Person","name":"Rex Liu","url":"https://rexliu.io/"}}</script><link rel="icon" href="/avatar.png" type="image/png"><link rel="apple-touch-icon" href="/avatar.png"><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="animate"><script type="module" src="/_astro/ClientRouter.astro_astro_type_script_index_0_lang.QW52Ox2j.js"></script><!-- Defer GA to after page load --><script>(function(){const GA_ID = "G-1EC76EZ517";
+		</script><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><title>Travel - Rex Liu</title><meta name="theme-color" content="#8953d1"><link rel="icon" href="/favicon-32x32.png" type="image/png"><link href="/icons/apple-touch-icon.png" rel="apple-touch-icon"><link href="/manifest.webmanifest" rel="manifest"><link href="https://rexliu.io/travel/" rel="canonical"><meta content="Travel - Rex Liu" name="title"><meta content="An interactive map of Rex Liu's digital nomad journey across China." name="description"><meta content="Rex Liu" name="author"><meta content="website" property="og:type"><meta content="Travel - Rex Liu" property="og:title"><meta content="An interactive map of Rex Liu's digital nomad journey across China." property="og:description"><meta content="https://rexliu.io/travel/" property="og:url"><meta content="Rex Liu" property="og:site_name"><meta content="zh_CN" property="og:locale"><meta content="https://rexliu.io/social-card-v2.png?v=20260402" property="og:image"><meta content="1200" property="og:image:width"><meta content="630" property="og:image:height"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:url" content="https://rexliu.io/travel/"><meta name="twitter:title" content="Travel - Rex Liu"><meta name="twitter:description" content="An interactive map of Rex Liu's digital nomad journey across China."><meta name="twitter:image" content="https://rexliu.io/social-card-v2.png?v=20260402"><meta name="twitter:site" content="@rexliu"><meta name="twitter:creator" content="@rexliu"><link href="/sitemap-index.xml" rel="sitemap"><link href="/rss.xml" title="Blog" rel="alternate" type="application/rss+xml"><meta content="Astro v5.16.3" name="generator"><script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Rex Liu","description":"Be The Sovereign Individual You Want To See In The World","url":"https://rexliu.io/","author":{"@type":"Person","name":"Rex Liu","url":"https://rexliu.io/"}}</script><link rel="icon" href="/avatar.png" type="image/png"><link rel="apple-touch-icon" href="/avatar.png"><link rel="preconnect" href="https://www.googletagmanager.com"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="animate"><script type="module" src="/_astro/ClientRouter.astro_astro_type_script_index_0_lang.QW52Ox2j.js"></script><!-- Defer GA to after page load --><script>(function(){const GA_ID = "G-1EC76EZ517";
 
 			window.addEventListener('load', function() {
 				var s = document.createElement('script');
@@ -97,7 +97,6 @@ OS
     const TILE_LIGHT  = "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png";
     const TILE_DARK   = "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
     const PURPLE      = "#8953d1";
-    const NEXT_CITY   = null; // no upcoming destination
 
     // Region color palette — brand-adjacent but lively
     const REGION_COLORS = {
@@ -441,6 +440,8 @@ OS
       _data = await fetch("/data/travel.json").then(r => r.json());
       const cities = _data.cities;
       const priorCities = _data.priorCities || [];
+      const upcomingTrips = (_data.meta && _data.meta.upcomingTrips) ? _data.meta.upcomingTrips : [];
+      const nextTrip = upcomingTrips[0] || null;
 
       // Pre-build visit merge map on _data for renderStoryCard
       _data._visitMergeMap = {};
@@ -686,34 +687,53 @@ OS
 
       // ---- Next Stop Badge ----
       const nextBadge = document.getElementById("next-stop-badge");
-      if (NEXT_CITY && nextBadge) {
+      if (nextTrip && nextBadge) {
         const isZh = getLang() === "zh";
-        const daysUntil = Math.ceil((new Date(NEXT_CITY.date) - new Date()) / 86400000);
-        const inStr = daysUntil > 0
-          ? (isZh ? `${daysUntil} 天后出发` : `in ${daysUntil} day${daysUntil===1?"":"s"}`)
-          : (isZh ? "今天出发！" : "Today!");
+        const today0 = new Date();
+        today0.setHours(0,0,0,0);
+        const upcomingSummary = upcomingTrips.map((trip, idx) => {
+          const tripDate = new Date(trip.date + "T00:00:00+08:00");
+          const daysUntil = Math.ceil((tripDate - today0) / 86400000);
+          const when = daysUntil > 0
+            ? (isZh ? `${daysUntil} 天后` : `in ${daysUntil}d`)
+            : (isZh ? "今天" : "today");
+          const label = isZh ? trip.nameCN : trip.name;
+          const dateLabel = isZh
+            ? `${trip.date.slice(5).replace('-', '.')}`
+            : tripDate.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+          return idx === 0
+            ? `<strong>${label}</strong> · ${dateLabel} · ${when}`
+            : `${label} · ${dateLabel}`;
+        }).join(isZh ? `　→　` : ` → `);
+
         nextBadge.innerHTML = isZh
-          ? `下一站 → <strong>${NEXT_CITY.nameCN}</strong> · ${inStr}`
-          : `Next → <strong>${NEXT_CITY.name}</strong> · ${inStr}`;
+          ? `后续行程 → ${upcomingSummary}`
+          : `Upcoming → ${upcomingSummary}`;
         nextBadge.classList.add("is-visible");
-        // Draw dashed preview line to Xi'an
+
         if (_currentCityItem) {
-          L.polyline(
-            [[_currentCityItem.lat, _currentCityItem.lng], [NEXT_CITY.lat, NEXT_CITY.lng]],
-            { color: PURPLE, weight: 2, opacity: 0.38, dashArray: "4 9" }
-          ).addTo(_map);
-          const nextIcon = L.divIcon({
-            html: `<svg width="44" height="44" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="22" cy="22" r="10" fill="${PURPLE}" opacity="0.08"/>
-              <circle cx="22" cy="22" r="6" fill="none" stroke="${PURPLE}" stroke-width="2" stroke-dasharray="3 3" opacity="0.7"/>
-            </svg>`,
-            className: "", iconSize: [MARKER_SIZE, MARKER_SIZE], iconAnchor: [MARKER_CENTER, MARKER_CENTER]
+          const tripPoints = [[_currentCityItem.lat, _currentCityItem.lng], ...upcomingTrips.map(t => [t.lat, t.lng])];
+          for (let i = 0; i < tripPoints.length - 1; i++) {
+            L.polyline(
+              [tripPoints[i], tripPoints[i + 1]],
+              { color: PURPLE, weight: 2, opacity: 0.38, dashArray: "4 9" }
+            ).addTo(_map);
+          }
+
+          upcomingTrips.forEach((trip, idx) => {
+            const nextIcon = L.divIcon({
+              html: `<svg width="44" height="44" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="22" cy="22" r="10" fill="${PURPLE}" opacity="0.08"/>
+                <circle cx="22" cy="22" r="6" fill="none" stroke="${PURPLE}" stroke-width="2" stroke-dasharray="3 3" opacity="0.7"/>
+              </svg>`,
+              className: "", iconSize: [MARKER_SIZE, MARKER_SIZE], iconAnchor: [MARKER_CENTER, MARKER_CENTER]
+            });
+            const nextMarker = L.marker([trip.lat, trip.lng], { icon: nextIcon, interactive: false }).addTo(_map);
+            const tooltipText = isZh
+              ? `${idx === 0 ? '下一站' : '后续'} · ${trip.nameCN}`
+              : `${idx === 0 ? 'Next' : 'Later'} · ${trip.name}`;
+            nextMarker.bindTooltip(`<span style="color:${PURPLE};font-size:0.75rem">${tooltipText}</span>`, { permanent: true, direction: "right", offset: [8, 0], className: "next-stop-tooltip" });
           });
-          const nextMarker = L.marker([NEXT_CITY.lat, NEXT_CITY.lng], { icon: nextIcon, interactive: false }).addTo(_map);
-          const tooltip = isZh
-            ? `<span style="color:${PURPLE};font-size:0.75rem">下一站 · ${NEXT_CITY.nameCN}</span>`
-            : `<span style="color:${PURPLE};font-size:0.75rem">Next · ${NEXT_CITY.name}</span>`;
-          nextMarker.bindTooltip(tooltip, { permanent: true, direction: "right", offset: [8, 0], className: "next-stop-tooltip" });
         }
       }
 
