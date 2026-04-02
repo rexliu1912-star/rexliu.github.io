@@ -343,40 +343,115 @@ const SectionHeader = memo(function SectionHeader({ icon, zh, en, dark }: { icon
 const HeroCard = memo(function HeroCard({ dark, rank, level, totalExp, expInLevel, expNeeded, expProgress, currentCity, travelDays, expFormula, levelFormula }: {
   dark: boolean; rank: { zh: string; en: string }; level: number; totalExp: number; expInLevel: number; expNeeded: number; expProgress: number; currentCity: { name: string; nameCN: string }; travelDays: number; expFormula: { zh: string; en: string }; levelFormula: { zh: string; en: string; nextLevel: string };
 }) {
+  const reduced = usePrefersReducedMotion();
+  const [revealed, setRevealed] = useState(false);
   const expAnimated = Math.round(useCountUp(totalExp, 900, true));
   const progressAnimated = Math.round(useCountUp(expProgress, 900, true));
   const levelAnimated = Math.round(useCountUp(level, 900, true));
+  const filledBlocks = Math.round(expProgress / 10);
+
+  useEffect(() => {
+    if (reduced) { setRevealed(true); return; }
+    const timer = setTimeout(() => setRevealed(true), 30);
+    return () => clearTimeout(timer);
+  }, [reduced]);
+
+  const stagger = (delayMs: number): CSSProperties => reduced ? { opacity: 1, transform: "none" } : {
+    opacity: revealed ? 1 : 0,
+    transform: revealed ? "translateY(0)" : "translateY(12px)",
+    transition: `opacity 380ms cubic-bezier(0.22, 1, 0.36, 1) ${delayMs}ms, transform 380ms cubic-bezier(0.22, 1, 0.36, 1) ${delayMs}ms`,
+  };
+
+  const cornerStyle = (pos: "tl" | "tr" | "bl" | "br"): CSSProperties => ({
+    position: "absolute",
+    width: 12, height: 12,
+    color: PURPLE, fontSize: 10, lineHeight: 1, fontWeight: 700, opacity: 0.6,
+    ...(pos === "tl" ? { top: -2, left: -2 } : pos === "tr" ? { top: -2, right: -2 } : pos === "bl" ? { bottom: -2, left: -2 } : { bottom: -2, right: -2 }),
+  });
+
   return <div className="hero-grid" style={{ display: "grid", gridTemplateColumns: "132px 1fr auto", gap: "1rem", alignItems: "center" }}>
-    <div style={{ position: "relative" }}>
-      <img src="/images/rex-avatar.png" alt="Rex avatar" width={132} height={160} style={{ width: 132, height: 160, objectFit: "cover", imageRendering: "pixelated", borderRadius: 18, border: "1px solid rgba(137,83,209,0.28)", boxShadow: "0 8px 18px rgba(137,83,209,0.12)" }} />
-      <TooltipWrap content={<><div className="lang-zh">{levelFormula.zh}</div><div className="lang-en" style={{ color: "#ccb7f7" }}>{levelFormula.en}</div><div style={{ marginTop: 6, color: "#fff" }}>{levelFormula.nextLevel}</div></>} align="center"><div style={{ position: "absolute", left: "50%", bottom: -12, transform: "translateX(-50%)", padding: "4px 12px", borderRadius: 999, background: dark ? "rgba(10,10,18,0.94)" : "rgba(255,255,255,0.94)", border: "1px solid rgba(137,83,209,0.24)", color: PURPLE, fontFamily: "monospace", fontWeight: 700 }}>Lv.{levelAnimated}</div></TooltipWrap>
+    {/* Left: avatar with RPG corner decorations */}
+    <div style={{ position: "relative", ...stagger(0) }}>
+      <div style={{ position: "relative" }}>
+        <div style={cornerStyle("tl")}>◤</div>
+        <div style={cornerStyle("tr")}>◥</div>
+        <div style={cornerStyle("bl")}>◣</div>
+        <div style={cornerStyle("br")}>◢</div>
+        <img src="/images/rex-avatar.png" alt="Rex avatar" width={132} height={160} style={{ width: 132, height: 160, objectFit: "cover", imageRendering: "pixelated", borderRadius: 18, border: "1px solid rgba(137,83,209,0.28)", boxShadow: "0 8px 18px rgba(137,83,209,0.12)" }} />
+      </div>
+      <TooltipWrap content={<><div className="lang-zh">{levelFormula.zh}</div><div className="lang-en" style={{ color: "#ccb7f7" }}>{levelFormula.en}</div><div style={{ marginTop: 6, color: "#fff" }}>{levelFormula.nextLevel}</div></>} align="center"><div style={{ position: "absolute", left: "50%", bottom: -12, transform: "translateX(-50%)", padding: "4px 14px", borderRadius: 6, background: dark ? "rgba(10,10,18,0.94)" : "rgba(255,255,255,0.94)", border: "1px solid rgba(137,83,209,0.24)", color: PURPLE, fontFamily: "monospace", fontWeight: 700 }}>Lv.{levelAnimated}</div></TooltipWrap>
     </div>
+    {/* Center: info */}
     <div>
       <div style={{ display: "flex", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
         <div>
-          <h2 style={{ margin: 0, color: dark ? "#fff" : "#261a33", fontSize: "2rem", fontFamily: "Georgia, Cambria, serif" }}>Rex Liu</h2>
-          <div style={{ marginTop: 6, color: PURPLE, fontFamily: "monospace", fontSize: 12, fontWeight: 700 }}>PLAYER STATS</div>
-          <p style={{ margin: "10px 0 0", color: dark ? "#bcb2cb" : "#6f657d", lineHeight: 1.7 }}><span className="lang-en">A living dossier of Rex — writing, systems, travel, and the way one life keeps compounding into another.</span><span className="lang-zh">这不是通用面板，是你自己的实时人物页：写作、系统、旅居、投资与人生章节，都在这里慢慢长出来。</span></p>
+          <h2 style={{ margin: 0, color: dark ? "#fff" : "#261a33", fontSize: "2rem", fontFamily: "Georgia, Cambria, serif", ...stagger(80) }}>Rex Liu</h2>
+          <div style={{ marginTop: 6, display: "flex", alignItems: "center", gap: 10, ...stagger(80) }}>
+            <span style={{ color: PURPLE, fontFamily: "monospace", fontSize: 12, fontWeight: 700 }}>PLAYER STATS</span>
+            <span style={{ fontFamily: "monospace", fontSize: 10, color: "#4caf50", letterSpacing: "0.04em" }}>● ACTIVE</span>
+          </div>
+          <p style={{ margin: "10px 0 0", color: dark ? "#bcb2cb" : "#6f657d", lineHeight: 1.7, fontSize: 13, ...stagger(160) }}>
+            <span className="lang-en">Sword intent in writing, inner strength in systems, footsteps across cities.</span>
+            <span className="lang-zh">文章为剑，系统为功，城市为路。</span>
+          </p>
         </div>
         <div style={{ writingMode: "vertical-rl", textOrientation: "upright", letterSpacing: "0.12em", color: PURPLE, border: "1px solid rgba(137,83,209,0.2)", borderRadius: 999, padding: "10px 6px", background: dark ? "rgba(137,83,209,0.06)" : "rgba(137,83,209,0.04)" }}><span className="lang-zh">江湖档案</span><span className="lang-en">DOSSIER</span></div>
       </div>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 14 }}>
-        {[`⚔️ ${rank.zh}`, `📍 ${currentCity.nameCN}`, `🗓️ 游历 ${travelDays} 天`].map(item => <span key={item} style={{ padding: "6px 10px", borderRadius: 999, border: "1px solid rgba(137,83,209,0.18)", color: dark ? "#e9ddff" : "#6f46a3", background: dark ? "rgba(137,83,209,0.08)" : "rgba(137,83,209,0.05)", fontSize: 12 }}>{item}</span>)}
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 14, ...stagger(240) }}>
+        {[
+          { label: rank.zh, labelEn: rank.en },
+          { label: currentCity.nameCN, labelEn: currentCity.name },
+          { label: `游历 ${travelDays} 天`, labelEn: `${travelDays}d nomad` },
+        ].map((item, i) => <span key={i} style={{ padding: "6px 10px", borderRadius: 6, border: "1px solid rgba(137,83,209,0.18)", color: dark ? "#e9ddff" : "#6f46a3", background: dark ? "rgba(137,83,209,0.08)" : "rgba(137,83,209,0.05)", fontSize: 12, fontFamily: "monospace", display: "flex", alignItems: "center", gap: 6 }}>
+          <span style={{ color: PURPLE, fontWeight: 700 }}>|</span>
+          <span className="lang-zh">{item.label}</span>
+          <span className="lang-en">{item.labelEn}</span>
+        </span>)}
       </div>
-      <div style={{ marginTop: 16 }}>
+      <div style={{ marginTop: 16, ...stagger(300) }}>
         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8, gap: 10, flexWrap: "wrap" }}>
           <TooltipWrap content={<><div className="lang-zh">{expFormula.zh}</div><div className="lang-en" style={{ color: "#ccb7f7" }}>{expFormula.en}</div></>}><span style={{ color: PURPLE, fontFamily: "monospace", fontWeight: 700, fontSize: 12 }}>TOTAL EXP {expAnimated.toLocaleString()}</span></TooltipWrap>
           <span style={{ color: dark ? "#bcb2cb" : "#6f657d", fontFamily: "monospace", fontSize: 12 }}>{expInLevel} / {expNeeded}</span>
         </div>
-        <TooltipWrap content={<><div className="lang-zh">{expFormula.zh}</div><div className="lang-en" style={{ color: "#ccb7f7" }}>{expFormula.en}</div></>}><div style={{ height: 16, borderRadius: 999, overflow: "hidden", border: "1px solid rgba(137,83,209,0.2)", background: dark ? "rgba(255,255,255,0.05)" : "rgba(60,20,90,0.06)" }}><div style={{ height: "100%", width: `${progressAnimated}%`, background: `linear-gradient(90deg, ${PURPLE}, rgba(137,83,209,0.56))` }} /></div></TooltipWrap>
+        <TooltipWrap content={<><div className="lang-zh">{expFormula.zh}</div><div className="lang-en" style={{ color: "#ccb7f7" }}>{expFormula.en}</div></>}><div style={{ display: "flex", gap: 3 }}>
+          {Array(10).fill(0).map((_, i) => <span key={i} style={{
+            flex: 1, height: 16, borderRadius: 3,
+            background: i < filledBlocks ? PURPLE : (dark ? "rgba(255,255,255,0.08)" : "rgba(60,20,90,0.08)"),
+            transition: reduced ? undefined : `background 60ms ease ${300 + i * 90}ms`,
+          }} />)}
+        </div></TooltipWrap>
       </div>
     </div>
-    <div className="hero-side" style={{ minWidth: 120 }}>
-      <div style={{ borderRadius: 18, padding: 16, border: "1px solid rgba(137,83,209,0.2)", background: dark ? "rgba(137,83,209,0.06)" : "rgba(137,83,209,0.04)" }}>
-        <div style={{ fontFamily: "monospace", fontSize: 11, color: dark ? "#bcb2cb" : "#7a6d89" }}>Realm</div>
-        <div style={{ color: PURPLE, fontWeight: 700, fontSize: 26, fontFamily: "Georgia, Cambria, serif" }}>{rank.zh}</div>
-        <div style={{ fontFamily: "monospace", fontSize: 11, color: dark ? "#bcb2cb" : "#7a6d89", marginTop: 10 }}>Progress</div>
-        <div style={{ color: dark ? "#fff" : "#261a33", fontSize: 22, fontWeight: 700, fontFamily: "monospace" }}>{progressAnimated}%</div>
+    {/* Right: side panel */}
+    <div className="hero-side" style={{ minWidth: 140 }}>
+      <div style={{ borderRadius: 12, border: "1px solid rgba(137,83,209,0.2)", background: dark ? "rgba(137,83,209,0.06)" : "rgba(137,83,209,0.04)", overflow: "hidden", fontFamily: "monospace" }}>
+        <div style={{ padding: "12px 14px", borderBottom: "1px solid rgba(137,83,209,0.12)", ...stagger(80) }}>
+          <div style={{ fontSize: 10, color: dark ? "#bcb2cb" : "#7a6d89", letterSpacing: "0.08em" }}>REALM</div>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 8, marginTop: 4 }}>
+            <span style={{ color: PURPLE, fontWeight: 700, fontSize: 16, fontFamily: "Georgia, Cambria, serif" }}><span className="lang-zh">{rank.zh}</span><span className="lang-en">{rank.en}</span></span>
+            <span style={{ color: dark ? "#bcb2cb" : "#7a6d89", fontSize: 11 }}>Lv.{levelAnimated}</span>
+          </div>
+        </div>
+        <div style={{ padding: "12px 14px", borderBottom: "1px solid rgba(137,83,209,0.12)", ...stagger(160) }}>
+          <div style={{ display: "flex", gap: 3, marginBottom: 6 }}>
+            {Array(10).fill(0).map((_, i) => <span key={i} style={{
+              flex: 1, height: 10, borderRadius: 2,
+              background: i < filledBlocks ? PURPLE : (dark ? "rgba(255,255,255,0.08)" : "rgba(60,20,90,0.08)"),
+            }} />)}
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <span style={{ fontSize: 12, fontWeight: 700, color: dark ? "#fff" : "#261a33" }}>{progressAnimated}%</span>
+            <span style={{ fontSize: 10, color: dark ? "#bcb2cb" : "#7a6d89" }}>{expInLevel}/{expNeeded} EXP</span>
+          </div>
+        </div>
+        <div style={{ padding: "10px 14px", display: "grid", gap: 4, ...stagger(240) }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: dark ? "#d3cae0" : "#6f657d" }}>
+            <span>📍</span><span className="lang-zh">{currentCity.nameCN}</span><span className="lang-en">{currentCity.name}</span>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: dark ? "#d3cae0" : "#6f657d" }}>
+            <span>🗓</span><span>{travelDays}d</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>;
