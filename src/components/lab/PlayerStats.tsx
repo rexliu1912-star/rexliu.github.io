@@ -346,7 +346,7 @@ const HeroCard = memo(function HeroCard({ dark, rank, level, totalExp, expInLeve
   const expAnimated = Math.round(useCountUp(totalExp, 900, true));
   const progressAnimated = Math.round(useCountUp(expProgress, 900, true));
   const levelAnimated = Math.round(useCountUp(level, 900, true));
-  return <div className="hero-grid" style={{ display: "grid", gridTemplateColumns: "132px 1fr auto", gap: "1rem", alignItems: "center" }}>
+  return <div className="hero-grid" style={{ display: "grid", gridTemplateColumns: "132px 1fr minmax(188px, 220px)", gap: "1rem", alignItems: "center" }}>
     <div style={{ position: "relative" }}>
       <img src="/images/rex-avatar.png" alt="Rex avatar" width={132} height={160} style={{ width: 132, height: 160, objectFit: "cover", imageRendering: "pixelated", borderRadius: 18, border: "1px solid rgba(137,83,209,0.28)", boxShadow: "0 8px 18px rgba(137,83,209,0.12)" }} />
       <TooltipWrap content={<><div className="lang-zh">{levelFormula.zh}</div><div className="lang-en" style={{ color: "#ccb7f7" }}>{levelFormula.en}</div><div style={{ marginTop: 6, color: "#fff" }}>{levelFormula.nextLevel}</div></>} align="center"><div style={{ position: "absolute", left: "50%", bottom: -12, transform: "translateX(-50%)", padding: "4px 12px", borderRadius: 999, background: dark ? "rgba(10,10,18,0.94)" : "rgba(255,255,255,0.94)", border: "1px solid rgba(137,83,209,0.24)", color: PURPLE, fontFamily: "monospace", fontWeight: 700 }}>Lv.{levelAnimated}</div></TooltipWrap>
@@ -371,12 +371,43 @@ const HeroCard = memo(function HeroCard({ dark, rank, level, totalExp, expInLeve
         <TooltipWrap content={<><div className="lang-zh">{expFormula.zh}</div><div className="lang-en" style={{ color: "#ccb7f7" }}>{expFormula.en}</div></>}><div style={{ height: 16, borderRadius: 999, overflow: "hidden", border: "1px solid rgba(137,83,209,0.2)", background: dark ? "rgba(255,255,255,0.05)" : "rgba(60,20,90,0.06)" }}><div style={{ height: "100%", width: `${progressAnimated}%`, background: `linear-gradient(90deg, ${PURPLE}, rgba(137,83,209,0.56))` }} /></div></TooltipWrap>
       </div>
     </div>
-    <div className="hero-side" style={{ minWidth: 120 }}>
-      <div style={{ borderRadius: 18, padding: 16, border: "1px solid rgba(137,83,209,0.2)", background: dark ? "rgba(137,83,209,0.06)" : "rgba(137,83,209,0.04)" }}>
-        <div style={{ fontFamily: "monospace", fontSize: 11, color: dark ? "#bcb2cb" : "#7a6d89" }}>Realm</div>
-        <div style={{ color: PURPLE, fontWeight: 700, fontSize: 26, fontFamily: "Georgia, Cambria, serif" }}>{rank.zh}</div>
-        <div style={{ fontFamily: "monospace", fontSize: 11, color: dark ? "#bcb2cb" : "#7a6d89", marginTop: 10 }}>Progress</div>
-        <div style={{ color: dark ? "#fff" : "#261a33", fontSize: 22, fontWeight: 700, fontFamily: "monospace" }}>{progressAnimated}%</div>
+    <div className="hero-side" style={{ minWidth: 0 }}>
+      <div style={{ position: "relative", borderRadius: 22, padding: 16, border: "1px solid rgba(137,83,209,0.22)", background: dark ? "linear-gradient(180deg, rgba(28,20,44,0.98), rgba(14,10,24,0.98))" : "linear-gradient(180deg, rgba(255,255,255,0.98), rgba(246,238,255,0.98))", boxShadow: dark ? "0 14px 28px rgba(0,0,0,0.18)" : "0 12px 24px rgba(137,83,209,0.10)", overflow: "hidden" }}>
+        <div style={{ position: "absolute", inset: 0, background: "radial-gradient(circle at 82% 14%, rgba(137,83,209,0.18), transparent 34%)", pointerEvents: "none" }} />
+        <div style={{ position: "relative", display: "grid", gap: 12 }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
+            <div>
+              <div style={{ fontFamily: "monospace", fontSize: 11, letterSpacing: "0.14em", color: dark ? "#bcb2cb" : "#7a6d89" }}>REALM</div>
+              <div style={{ color: PURPLE, fontWeight: 700, fontSize: 24, fontFamily: "Georgia, Cambria, serif", marginTop: 4 }}>{rank.zh}</div>
+            </div>
+            <div style={{ width: 54, height: 54, borderRadius: 14, display: "grid", placeItems: "center", border: "1px solid rgba(137,83,209,0.22)", background: dark ? "rgba(137,83,209,0.08)" : "rgba(137,83,209,0.06)", color: PURPLE, fontFamily: "monospace", fontWeight: 700 }}>Lv.{levelAnimated}</div>
+          </div>
+
+          <div style={{ borderRadius: 16, padding: 12, border: "1px solid rgba(137,83,209,0.16)", background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.65)" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
+              <div style={{ fontFamily: "monospace", fontSize: 11, letterSpacing: "0.14em", color: dark ? "#bcb2cb" : "#7a6d89" }}>PROGRESS</div>
+              <div style={{ color: dark ? "#fff" : "#261a33", fontSize: 20, fontWeight: 700, fontFamily: "monospace" }}>{progressAnimated}%</div>
+            </div>
+            <div style={{ marginTop: 10, height: 8, borderRadius: 999, overflow: "hidden", background: dark ? "rgba(255,255,255,0.08)" : "rgba(60,20,90,0.08)", border: "1px solid rgba(137,83,209,0.12)" }}>
+              <div style={{ width: `${progressAnimated}%`, height: "100%", borderRadius: 999, background: `linear-gradient(90deg, ${PURPLE}, rgba(137,83,209,0.52))` }} />
+            </div>
+            <div style={{ marginTop: 8, display: "flex", justifyContent: "space-between", gap: 8, fontFamily: "monospace", fontSize: 10.5, color: dark ? "#ac9fbe" : "#8b7a98" }}>
+              <span>{expInLevel} EXP</span>
+              <span>Next in {Math.max(expNeeded - expInLevel, 0)} EXP</span>
+            </div>
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 10 }}>
+            <div style={{ borderRadius: 14, padding: 10, border: "1px solid rgba(137,83,209,0.14)", background: dark ? "rgba(255,255,255,0.025)" : "rgba(255,255,255,0.6)" }}>
+              <div style={{ fontFamily: "monospace", fontSize: 10.5, color: dark ? "#9f93b1" : "#8b7a98" }}>TITLE</div>
+              <div style={{ marginTop: 4, color: dark ? "#efe7ff" : "#261a33", fontSize: 13, fontWeight: 700 }}>{rank.en}</div>
+            </div>
+            <div style={{ borderRadius: 14, padding: 10, border: "1px solid rgba(137,83,209,0.14)", background: dark ? "rgba(255,255,255,0.025)" : "rgba(255,255,255,0.6)" }}>
+              <div style={{ fontFamily: "monospace", fontSize: 10.5, color: dark ? "#9f93b1" : "#8b7a98" }}>STATUS</div>
+              <div style={{ marginTop: 4, color: dark ? "#efe7ff" : "#261a33", fontSize: 13, fontWeight: 700 }}>On the road</div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>;
@@ -497,24 +528,48 @@ const StatRadar = memo(function StatRadar({ stats, statFormulas, dark }: { stats
 });
 
 const StatLegend = memo(function StatLegend({ dark }: { dark: boolean }) {
+  const [openId, setOpenId] = useState<string | null>(null);
   const items = [
-    { zh: "体力", en: "HP", descZh: "看移动与旅居密度，越能扛长线生活，数值越高。", descEn: "Mobility and travel endurance." },
-    { zh: "灵力", en: "Spirit", descZh: "看写作与输入强度，文章与阅读越多，灵力越高。", descEn: "Writing output plus sustained input." },
-    { zh: "武术", en: "Martial", descZh: "看造物能力，产品、系统、代码做得越多，武术越高。", descEn: "Build power across product and code." },
-    { zh: "身法", en: "Agility", descZh: "看知识调度与吸收速度，读得越广，转身越快。", descEn: "Knowledge range and adaptive speed." },
-    { zh: "声望", en: "Renown", descZh: "看影响力积累，不是吵闹，是长期被看见。", descEn: "Reputation accumulated over time." },
-    { zh: "统御", en: "Command", descZh: "看系统与 Agent 协同能力，盘子越大，统御越高。", descEn: "Systems orchestration and agent command." },
+    { id: "vitality", zh: "体力", en: "HP", descZh: "看移动与旅居密度，越能扛长线生活，数值越高。", descEn: "Mobility and travel endurance." },
+    { id: "wisdom", zh: "灵力", en: "Spirit", descZh: "看写作与输入强度，文章与阅读越多，灵力越高。", descEn: "Writing output plus sustained input." },
+    { id: "craft", zh: "武术", en: "Martial", descZh: "看造物能力，产品、系统、代码做得越多，武术越高。", descEn: "Build power across product and code." },
+    { id: "insight", zh: "身法", en: "Agility", descZh: "看知识调度与吸收速度，读得越广，转身越快。", descEn: "Knowledge range and adaptive speed." },
+    { id: "renown", zh: "声望", en: "Renown", descZh: "看影响力积累，不是吵闹，是长期被看见。", descEn: "Reputation accumulated over time." },
+    { id: "command", zh: "统御", en: "Command", descZh: "看系统与 Agent 协同能力，盘子越大，统御越高。", descEn: "Systems orchestration and agent command." },
   ];
 
-  return <div className="stat-legend-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 12, marginTop: 18 }}>
-    {items.map(item => <div key={item.zh} style={{ borderRadius: 16, padding: 14, border: `1px solid ${dark ? "rgba(137,83,209,0.16)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.72)" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", gap: 8, alignItems: "baseline" }}>
-        <div style={{ color: dark ? "#fff" : "#261a33", fontWeight: 700 }}>{item.zh}</div>
-        <div style={{ color: PURPLE, fontFamily: "monospace", fontSize: 11 }}>{item.en}</div>
+  return <div style={{ marginTop: 18 }}>
+    <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+      {items.map(item => {
+        const open = openId === item.id;
+        return <div key={item.id} style={{ minWidth: 0 }}>
+          <button
+            type="button"
+            onClick={() => setOpenId(current => current === item.id ? null : item.id)}
+            style={{ borderRadius: 999, border: `1px solid ${open ? "rgba(137,83,209,0.34)" : dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.14)"}`, background: open ? (dark ? "rgba(137,83,209,0.12)" : "rgba(137,83,209,0.08)") : (dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.72)"), color: open ? PURPLE : (dark ? "#e8def8" : "#4b2d78"), padding: "9px 12px", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 8, fontWeight: 700 }}
+          >
+            <span>{item.zh}</span>
+            <span style={{ fontFamily: "monospace", fontSize: 11, opacity: 0.8 }}>{item.en}</span>
+            <span style={{ fontFamily: "monospace", fontSize: 11 }}>{open ? "−" : "+"}</span>
+          </button>
+        </div>;
+      })}
+    </div>
+    <div style={{ display: "grid", gridTemplateRows: openId ? "1fr" : "0fr", transition: "grid-template-rows 220ms cubic-bezier(0.22, 1, 0.36, 1)", marginTop: 12 }}>
+      <div style={{ overflow: "hidden" }}>
+        {items.map(item => {
+          const open = openId === item.id;
+          return <div key={`${item.id}-panel`} style={{ display: open ? "block" : "none", borderRadius: 16, padding: 14, border: `1px solid ${dark ? "rgba(137,83,209,0.16)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.72)" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", gap: 8, alignItems: "baseline", flexWrap: "wrap" }}>
+              <div style={{ color: dark ? "#fff" : "#261a33", fontWeight: 700 }}>{item.zh}</div>
+              <div style={{ color: PURPLE, fontFamily: "monospace", fontSize: 11 }}>{item.en}</div>
+            </div>
+            <div className="lang-zh" style={{ marginTop: 8, color: dark ? "#cfc4df" : "#6f657d", fontSize: 12.5, lineHeight: 1.7 }}>{item.descZh}</div>
+            <div className="lang-en" style={{ marginTop: 8, color: dark ? "#cfc4df" : "#6f657d", fontSize: 12.5, lineHeight: 1.7 }}>{item.descEn}</div>
+          </div>;
+        })}
       </div>
-      <div className="lang-zh" style={{ marginTop: 8, color: dark ? "#cfc4df" : "#6f657d", fontSize: 12, lineHeight: 1.65 }}>{item.descZh}</div>
-      <div className="lang-en" style={{ marginTop: 8, color: dark ? "#cfc4df" : "#6f657d", fontSize: 12, lineHeight: 1.65 }}>{item.descEn}</div>
-    </div>)}
+    </div>
   </div>;
 });
 
