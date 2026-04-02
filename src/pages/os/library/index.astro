@@ -173,8 +173,11 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
       <button type="button" class="lib-tab border-b-2 border-[#8953d1] pb-3 font-medium text-[#8953d1] dark:text-[#a175e8]" data-tab="books" aria-pressed="true">
         <span class="lang-en">📚 Books ({books.length})</span><span class="lang-zh">📚 书籍 ({books.length})</span>
       </button>
-      <button type="button" class="lib-tab border-b-2 border-transparent pb-3 text-gray-400 hover:text-[#8953d1] dark:text-gray-500" data-tab="film-tv" aria-pressed="false">
-        <span class="lang-en">🎬 Film & TV ({films.length + series.length})</span><span class="lang-zh">🎬 影视 ({films.length + series.length})</span>
+      <button type="button" class="lib-tab border-b-2 border-transparent pb-3 text-gray-400 hover:text-[#8953d1] dark:text-gray-500" data-tab="films" aria-pressed="false">
+        <span class="lang-en">🎬 Films ({films.length})</span><span class="lang-zh">🎬 电影 ({films.length})</span>
+      </button>
+      <button type="button" class="lib-tab border-b-2 border-transparent pb-3 text-gray-400 hover:text-[#8953d1] dark:text-gray-500" data-tab="series" aria-pressed="false">
+        <span class="lang-en">📺 Series ({series.length})</span><span class="lang-zh">📺 剧集 ({series.length})</span>
       </button>
       <button type="button" class="lib-tab border-b-2 border-transparent pb-3 text-gray-400 hover:text-[#8953d1] dark:text-gray-500" data-tab="variety" aria-pressed="false">
         <span class="lang-en">🎭 Variety ({variety.length})</span><span class="lang-zh">🎭 综艺 ({variety.length})</span>
@@ -387,115 +390,113 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
     </div>
   </section>
 
-  <!-- ===== FILM & TV PANEL ===== -->
-  <section data-panel="film-tv" class="lib-panel hidden">
-    {films.length > 0 && (
-      <div class="mb-10">
-        <h2 class="mb-4 font-serif text-lg font-medium text-black dark:text-white">
-          <span class="lang-en">🎬 Films</span><span class="lang-zh">🎬 电影</span>
-        </h2>
-        <div class="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
-          {films.map((item) => (
-            <Fragment>
-              <article class="lib-card group cursor-pointer overflow-hidden rounded-xl transition-all lib-card-surface" data-id={item.id} data-tags={JSON.stringify(item.tags)} data-group="film-tv" data-quote={getReactionQuote(item)}>{hasNotes(item) && <span class="lib-bookmark" aria-hidden="true"></span>}
+  <!-- ===== FILMS PANEL ===== -->
+  <section data-panel="films" class="lib-panel hidden">
+    {films.length > 0 ? (
+      <div class="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
+        {films.map((item) => (
+          <Fragment>
+            <article class="lib-card group cursor-pointer overflow-hidden rounded-xl transition-all lib-card-surface" data-id={item.id} data-tags={JSON.stringify(item.tags)} data-group="films" data-quote={getReactionQuote(item)}>{hasNotes(item) && <span class="lib-bookmark" aria-hidden="true"></span>}
+              {item.cover ? (
+                <img src={item.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="block w-full aspect-[2/3] object-cover object-center transition-transform duration-500 ease-out group-hover:scale-[1.05]" />
+              ) : (
+                <div class={`flex w-full aspect-[2/3] items-center justify-center px-3 text-center ${item.coverClass}`}><span class="font-serif text-sm font-semibold leading-snug text-white drop-shadow">{item.title}</span></div>
+              )}
+              <div class="p-3">
+                <h3 class="font-serif text-sm font-medium text-black dark:text-white line-clamp-2">{item.title}</h3>
+                <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Film</span><span class="lang-zh">电影</span> · {item.year || "—"}</p>
+                <div class="lib-reaction" style="margin-top:6px;">
+              <button
+                type="button"
+                class="lib-react-btn font-serif"
+                data-item-id={item.id}
+                aria-label="我也看过"
+                style="background:none; border:none; cursor:pointer; color:#9ca3af; font-size:11px; padding:0; transition:color 0.2s; display:inline-flex; align-items:center; gap:4px;"
+              >
+                <span class="react-icon">📖</span>
+                <span class="react-label font-serif" data-zh="我也看过" data-en="Read it too">我也看过</span>
+                <span class="react-count font-serif" data-item-id={item.id}></span>
+              </button>
+            </div>
+              </div>
+            </article>
+            <div class="lib-detail hidden" data-detail={item.id}>
+              <div class="flex flex-col sm:flex-row gap-5">
                 {item.cover ? (
-                  <img src={item.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="block w-full aspect-[2/3] object-cover object-center transition-transform duration-500 ease-out group-hover:scale-[1.05]" />
+                  <img src={item.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="w-28 sm:w-36 aspect-[2/3] rounded-md object-cover shrink-0 shadow-lg" />
                 ) : (
-                  <div class={`flex w-full aspect-[2/3] items-center justify-center px-3 text-center ${item.coverClass}`}><span class="font-serif text-sm font-semibold leading-snug text-white drop-shadow">{item.title}</span></div>
+                  <div class={`w-28 sm:w-36 aspect-[2/3] flex items-center justify-center rounded-md shrink-0 shadow-lg ${item.coverClass}`}><span class="font-serif text-sm text-white">{item.title}</span></div>
                 )}
-                <div class="p-3">
-                  <h3 class="font-serif text-sm font-medium text-black dark:text-white line-clamp-2">{item.title}</h3>
-                  <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Film</span><span class="lang-zh">电影</span> · {item.year || "—"}</p>
-                  <div class="lib-reaction" style="margin-top:6px;">
-                <button
-                  type="button"
-                  class="lib-react-btn font-serif"
-                  data-item-id={item.id}
-                  aria-label="我也看过"
-                  style="background:none; border:none; cursor:pointer; color:#9ca3af; font-size:11px; padding:0; transition:color 0.2s; display:inline-flex; align-items:center; gap:4px;"
-                >
-                  <span class="react-icon">📖</span>
-                  <span class="react-label font-serif" data-zh="我也看过" data-en="Read it too">我也看过</span>
-                  <span class="react-count font-serif" data-item-id={item.id}></span>
-                </button>
-              </div>
-                </div>
-              </article>
-              <div class="lib-detail hidden" data-detail={item.id}>
-                <div class="flex flex-col sm:flex-row gap-5">
-                  {item.cover ? (
-                    <img src={item.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="w-28 sm:w-36 aspect-[2/3] rounded-md object-cover shrink-0 shadow-lg" />
-                  ) : (
-                    <div class={`w-28 sm:w-36 aspect-[2/3] flex items-center justify-center rounded-md shrink-0 shadow-lg ${item.coverClass}`}><span class="font-serif text-sm text-white">{item.title}</span></div>
-                  )}
-                  <div class="flex-1 min-w-0">
-                    <h3 class="font-serif text-lg font-medium text-black dark:text-white">{item.title}</h3>
-                    <p class="mt-1 font-serif text-sm text-gray-400">{item.year || "—"} · {item.tags.join(" · ")}</p>
-                    {hasNotes(item) && item.year && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-zh">看于 {item.year}</span><span class="lang-en">Watched {item.year}</span></p>}
-                    {item.notes?.quotes && item.notes.quotes.length > 0 && (<div class="mt-4 space-y-3">{item.notes.quotes.map((q) => (<blockquote class="border-l-2 border-[#8953d1] pl-4 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300 dark:border-[#a175e8]">{q}</blockquote>))}</div>)}
-                    {item.notes?.core_ideas && item.notes.core_ideas.length > 0 && (<ul class="mt-4 space-y-2 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300">{item.notes.core_ideas.map((idea) => (<li class="flex gap-2"><span class="text-[#8953d1] dark:text-[#a175e8]">•</span><span>{idea}</span></li>))}</ul>)}
-                    {!hasNotes(item) && <p class="mt-4 font-serif text-sm text-gray-500"><span class="lang-en">No notes yet.</span><span class="lang-zh">暂无笔记。</span></p>}
-                  </div>
+                <div class="flex-1 min-w-0">
+                  <h3 class="font-serif text-lg font-medium text-black dark:text-white">{item.title}</h3>
+                  <p class="mt-1 font-serif text-sm text-gray-400">{item.year || "—"} · {item.tags.join(" · ")}</p>
+                  {hasNotes(item) && item.year && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-zh">看于 {item.year}</span><span class="lang-en">Watched {item.year}</span></p>}
+                  {item.notes?.quotes && item.notes.quotes.length > 0 && (<div class="mt-4 space-y-3">{item.notes.quotes.map((q) => (<blockquote class="border-l-2 border-[#8953d1] pl-4 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300 dark:border-[#a175e8]">{q}</blockquote>))}</div>)}
+                  {item.notes?.core_ideas && item.notes.core_ideas.length > 0 && (<ul class="mt-4 space-y-2 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300">{item.notes.core_ideas.map((idea) => (<li class="flex gap-2"><span class="text-[#8953d1] dark:text-[#a175e8]">•</span><span>{idea}</span></li>))}</ul>)}
+                  {!hasNotes(item) && <p class="mt-4 font-serif text-sm text-gray-500"><span class="lang-en">No notes yet.</span><span class="lang-zh">暂无笔记。</span></p>}
                 </div>
               </div>
-            </Fragment>
-          ))}
-        </div>
+            </div>
+          </Fragment>
+        ))}
       </div>
+    ) : (
+      <p class="font-serif text-sm text-gray-400"><span class="lang-en">Coming soon.</span><span class="lang-zh">敬请期待。</span></p>
     )}
-    {series.length > 0 && (
-      <div>
-        <h2 class="mb-4 font-serif text-lg font-medium text-black dark:text-white">
-          <span class="lang-en">📺 Series</span><span class="lang-zh">📺 剧集</span>
-        </h2>
-        <div class="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
-          {series.map((item) => (
-            <Fragment>
-              <article class="lib-card group cursor-pointer overflow-hidden rounded-xl transition-all lib-card-surface" data-id={item.id} data-tags={JSON.stringify(item.tags)} data-group="film-tv" data-quote={getReactionQuote(item)}>{hasNotes(item) && <span class="lib-bookmark" aria-hidden="true"></span>}
+  </section>
+
+  <!-- ===== SERIES PANEL ===== -->
+  <section data-panel="series" class="lib-panel hidden">
+    {series.length > 0 ? (
+      <div class="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
+        {series.map((item) => (
+          <Fragment>
+            <article class="lib-card group cursor-pointer overflow-hidden rounded-xl transition-all lib-card-surface" data-id={item.id} data-tags={JSON.stringify(item.tags)} data-group="series" data-quote={getReactionQuote(item)}>{hasNotes(item) && <span class="lib-bookmark" aria-hidden="true"></span>}
+              {item.cover ? (
+                <img src={item.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="block w-full aspect-[2/3] object-cover object-center transition-transform duration-500 ease-out group-hover:scale-[1.05]" />
+              ) : (
+                <div class={`flex w-full aspect-[2/3] items-center justify-center px-3 text-center ${item.coverClass}`}><span class="font-serif text-sm font-semibold leading-snug text-white drop-shadow">{item.title}</span></div>
+              )}
+              <div class="p-3">
+                <h3 class="font-serif text-sm font-medium text-black dark:text-white line-clamp-2">{item.title}</h3>
+                <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Series</span><span class="lang-zh">剧集</span> · {item.year || "—"}</p>
+                <div class="lib-reaction" style="margin-top:6px;">
+              <button
+                type="button"
+                class="lib-react-btn font-serif"
+                data-item-id={item.id}
+                aria-label="我也看过"
+                style="background:none; border:none; cursor:pointer; color:#9ca3af; font-size:11px; padding:0; transition:color 0.2s; display:inline-flex; align-items:center; gap:4px;"
+              >
+                <span class="react-icon">📖</span>
+                <span class="react-label font-serif" data-zh="我也看过" data-en="Read it too">我也看过</span>
+                <span class="react-count font-serif" data-item-id={item.id}></span>
+              </button>
+            </div>
+              </div>
+            </article>
+            <div class="lib-detail hidden" data-detail={item.id}>
+              <div class="flex flex-col sm:flex-row gap-5">
                 {item.cover ? (
-                  <img src={item.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="block w-full aspect-[2/3] object-cover object-center transition-transform duration-500 ease-out group-hover:scale-[1.05]" />
+                  <img src={item.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="w-28 sm:w-36 aspect-[2/3] rounded-md object-cover shrink-0 shadow-lg" />
                 ) : (
-                  <div class={`flex w-full aspect-[2/3] items-center justify-center px-3 text-center ${item.coverClass}`}><span class="font-serif text-sm font-semibold leading-snug text-white drop-shadow">{item.title}</span></div>
+                  <div class={`w-28 sm:w-36 aspect-[2/3] flex items-center justify-center rounded-md shrink-0 shadow-lg ${item.coverClass}`}><span class="font-serif text-sm text-white">{item.title}</span></div>
                 )}
-                <div class="p-3">
-                  <h3 class="font-serif text-sm font-medium text-black dark:text-white line-clamp-2">{item.title}</h3>
-                  <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Series</span><span class="lang-zh">剧集</span> · {item.year || "—"}</p>
-                  <div class="lib-reaction" style="margin-top:6px;">
-                <button
-                  type="button"
-                  class="lib-react-btn font-serif"
-                  data-item-id={item.id}
-                  aria-label="我也看过"
-                  style="background:none; border:none; cursor:pointer; color:#9ca3af; font-size:11px; padding:0; transition:color 0.2s; display:inline-flex; align-items:center; gap:4px;"
-                >
-                  <span class="react-icon">📖</span>
-                  <span class="react-label font-serif" data-zh="我也看过" data-en="Read it too">我也看过</span>
-                  <span class="react-count font-serif" data-item-id={item.id}></span>
-                </button>
-              </div>
-                </div>
-              </article>
-              <div class="lib-detail hidden" data-detail={item.id}>
-                <div class="flex flex-col sm:flex-row gap-5">
-                  {item.cover ? (
-                    <img src={item.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="w-28 sm:w-36 aspect-[2/3] rounded-md object-cover shrink-0 shadow-lg" />
-                  ) : (
-                    <div class={`w-28 sm:w-36 aspect-[2/3] flex items-center justify-center rounded-md shrink-0 shadow-lg ${item.coverClass}`}><span class="font-serif text-sm text-white">{item.title}</span></div>
-                  )}
-                  <div class="flex-1 min-w-0">
-                    <h3 class="font-serif text-lg font-medium text-black dark:text-white">{item.title}</h3>
-                    <p class="mt-1 font-serif text-sm text-gray-400">{item.year || "—"} · {item.tags.join(" · ")}</p>
-                    {hasNotes(item) && item.year && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-zh">看于 {item.year}</span><span class="lang-en">Watched {item.year}</span></p>}
-                    {item.notes?.quotes && item.notes.quotes.length > 0 && (<div class="mt-4 space-y-3">{item.notes.quotes.map((q) => (<blockquote class="border-l-2 border-[#8953d1] pl-4 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300 dark:border-[#a175e8]">{q}</blockquote>))}</div>)}
-                    {item.notes?.core_ideas && item.notes.core_ideas.length > 0 && (<ul class="mt-4 space-y-2 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300">{item.notes.core_ideas.map((idea) => (<li class="flex gap-2"><span class="text-[#8953d1] dark:text-[#a175e8]">•</span><span>{idea}</span></li>))}</ul>)}
-                    {!hasNotes(item) && <p class="mt-4 font-serif text-sm text-gray-500"><span class="lang-en">No notes yet.</span><span class="lang-zh">暂无笔记。</span></p>}
-                  </div>
+                <div class="flex-1 min-w-0">
+                  <h3 class="font-serif text-lg font-medium text-black dark:text-white">{item.title}</h3>
+                  <p class="mt-1 font-serif text-sm text-gray-400">{item.year || "—"} · {item.tags.join(" · ")}</p>
+                  {hasNotes(item) && item.year && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-zh">看于 {item.year}</span><span class="lang-en">Watched {item.year}</span></p>}
+                  {item.notes?.quotes && item.notes.quotes.length > 0 && (<div class="mt-4 space-y-3">{item.notes.quotes.map((q) => (<blockquote class="border-l-2 border-[#8953d1] pl-4 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300 dark:border-[#a175e8]">{q}</blockquote>))}</div>)}
+                  {item.notes?.core_ideas && item.notes.core_ideas.length > 0 && (<ul class="mt-4 space-y-2 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300">{item.notes.core_ideas.map((idea) => (<li class="flex gap-2"><span class="text-[#8953d1] dark:text-[#a175e8]">•</span><span>{idea}</span></li>))}</ul>)}
+                  {!hasNotes(item) && <p class="mt-4 font-serif text-sm text-gray-500"><span class="lang-en">No notes yet.</span><span class="lang-zh">暂无笔记。</span></p>}
                 </div>
               </div>
-            </Fragment>
-          ))}
-        </div>
+            </div>
+          </Fragment>
+        ))}
       </div>
+    ) : (
+      <p class="font-serif text-sm text-gray-400"><span class="lang-en">Coming soon.</span><span class="lang-zh">敬请期待。</span></p>
     )}
   </section>
 
@@ -970,7 +971,7 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
     const tabs   = document.querySelectorAll('.lib-tab');
     const panels = document.querySelectorAll('.lib-panel');
 
-    const TAB_ORDER = ['books', 'film-tv', 'variety', 'documentary'];
+    const TAB_ORDER = ['books', 'films', 'series', 'variety', 'documentary'];
 
     function switchTab(tab) {
       const prevIdx = TAB_ORDER.indexOf(activeTab);
