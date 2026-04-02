@@ -346,37 +346,76 @@ const HeroCard = memo(function HeroCard({ dark, rank, level, totalExp, expInLeve
   const expAnimated = Math.round(useCountUp(totalExp, 900, true));
   const progressAnimated = Math.round(useCountUp(expProgress, 900, true));
   const levelAnimated = Math.round(useCountUp(level, 900, true));
-  return <div className="hero-grid" style={{ display: "grid", gridTemplateColumns: "132px 1fr auto", gap: "1rem", alignItems: "center" }}>
-    <div style={{ position: "relative" }}>
-      <img src="/images/rex-avatar.png" alt="Rex avatar" width={132} height={160} style={{ width: 132, height: 160, objectFit: "cover", imageRendering: "pixelated", borderRadius: 18, border: "1px solid rgba(137,83,209,0.28)", boxShadow: "0 8px 18px rgba(137,83,209,0.12)" }} />
-      <TooltipWrap content={<><div className="lang-zh">{levelFormula.zh}</div><div className="lang-en" style={{ color: "#ccb7f7" }}>{levelFormula.en}</div><div style={{ marginTop: 6, color: "#fff" }}>{levelFormula.nextLevel}</div></>} align="center"><div style={{ position: "absolute", left: "50%", bottom: -12, transform: "translateX(-50%)", padding: "4px 12px", borderRadius: 999, background: dark ? "rgba(10,10,18,0.94)" : "rgba(255,255,255,0.94)", border: "1px solid rgba(137,83,209,0.24)", color: PURPLE, fontFamily: "monospace", fontWeight: 700 }}>Lv.{levelAnimated}</div></TooltipWrap>
+  const nextLevelExp = expNeeded - expInLevel;
+
+  const cornerStyle: CSSProperties = { position: "absolute", width: 10, height: 10, borderColor: PURPLE, opacity: 0.5 };
+
+  return <div className="hero-grid" style={{ display: "grid", gridTemplateColumns: "148px 1fr", gap: "1.2rem", alignItems: "start" }}>
+    {/* Left: Avatar */}
+    <div style={{ position: "relative", display: "flex", flexDirection: "column", alignItems: "center" }}>
+      <div style={{ position: "relative", padding: 6 }}>
+        {/* Corner decorations */}
+        <div style={{ ...cornerStyle, top: 0, left: 0, borderTop: "2px solid", borderLeft: "2px solid" }} />
+        <div style={{ ...cornerStyle, top: 0, right: 0, borderTop: "2px solid", borderRight: "2px solid" }} />
+        <div style={{ ...cornerStyle, bottom: 0, left: 0, borderBottom: "2px solid", borderLeft: "2px solid" }} />
+        <div style={{ ...cornerStyle, bottom: 0, right: 0, borderBottom: "2px solid", borderRight: "2px solid" }} />
+        <img src="/images/rex-avatar.png" alt="Rex avatar" width={132} height={160} style={{ width: 132, height: 160, objectFit: "cover", imageRendering: "pixelated", borderRadius: 4, border: "1px solid rgba(137,83,209,0.28)" }} />
+      </div>
+      <TooltipWrap content={<><div className="lang-zh">{levelFormula.zh}</div><div className="lang-en" style={{ color: "#ccb7f7" }}>{levelFormula.en}</div><div style={{ marginTop: 6, color: "#fff" }}>{levelFormula.nextLevel}</div></>} align="center">
+        <div style={{ marginTop: 8, padding: "3px 14px", background: PURPLE, color: "#fff", fontFamily: "monospace", fontWeight: 700, fontSize: 13, borderRadius: 2, letterSpacing: "0.04em" }}>Lv.{levelAnimated}</div>
+      </TooltipWrap>
     </div>
-    <div>
-      <div style={{ display: "flex", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
-        <div>
-          <h2 style={{ margin: 0, color: dark ? "#fff" : "#261a33", fontSize: "2rem", fontFamily: "Georgia, Cambria, serif" }}>Rex Liu</h2>
-          <div style={{ marginTop: 6, color: PURPLE, fontFamily: "monospace", fontSize: 12, fontWeight: 700 }}>PLAYER STATS</div>
-          <p style={{ margin: "10px 0 0", color: dark ? "#bcb2cb" : "#6f657d", lineHeight: 1.7 }}><span className="lang-en">A living dossier of Rex — writing, systems, travel, and the way one life keeps compounding into another.</span><span className="lang-zh">这不是通用面板，是你自己的实时人物页：写作、系统、旅居、投资与人生章节，都在这里慢慢长出来。</span></p>
+
+    {/* Right column */}
+    <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+      {/* Info fields + status badge */}
+      <div style={{ position: "relative" }}>
+        <div style={{ position: "absolute", top: 0, right: 0, fontFamily: "monospace", fontSize: 11, color: "#4ade80", fontWeight: 700, letterSpacing: "0.04em" }}>● ACTIVE</div>
+        <div style={{ fontFamily: "monospace", fontSize: 13, lineHeight: 2, color: dark ? "#c8bed8" : "#6f657d" }}>
+          <div><span style={{ opacity: 0.5 }}>NAME &nbsp;&nbsp;&nbsp;:</span> <span style={{ color: dark ? "#fff" : "#261a33", fontWeight: 700 }}>Rex Liu</span></div>
+          <div><span style={{ opacity: 0.5 }}>TITLE &nbsp;&nbsp;:</span> <span style={{ color: PURPLE }}><span className="lang-zh">{rank.zh}</span><span className="lang-en">{rank.en}</span></span></div>
+          <div><span style={{ opacity: 0.5 }}>REALM &nbsp;&nbsp;:</span> <span style={{ color: PURPLE }}>{rank.zh}</span></div>
+          <div><span style={{ opacity: 0.5 }}>LOC &nbsp;&nbsp;&nbsp;&nbsp;:</span> <span className="lang-zh">{currentCity.nameCN}</span><span className="lang-en">{currentCity.name}</span></div>
+          <div><span style={{ opacity: 0.5 }}>DAYS &nbsp;&nbsp;&nbsp;:</span> {travelDays}d on the road</div>
         </div>
-        <div style={{ writingMode: "vertical-rl", textOrientation: "upright", letterSpacing: "0.12em", color: PURPLE, border: "1px solid rgba(137,83,209,0.2)", borderRadius: 999, padding: "10px 6px", background: dark ? "rgba(137,83,209,0.06)" : "rgba(137,83,209,0.04)" }}><span className="lang-zh">江湖档案</span><span className="lang-en">DOSSIER</span></div>
       </div>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 14 }}>
-        {[`⚔️ ${rank.zh}`, `📍 ${currentCity.nameCN}`, `🗓️ 游历 ${travelDays} 天`].map(item => <span key={item} style={{ padding: "6px 10px", borderRadius: 999, border: "1px solid rgba(137,83,209,0.18)", color: dark ? "#e9ddff" : "#6f46a3", background: dark ? "rgba(137,83,209,0.08)" : "rgba(137,83,209,0.05)", fontSize: 12 }}>{item}</span>)}
-      </div>
-      <div style={{ marginTop: 16 }}>
-        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8, gap: 10, flexWrap: "wrap" }}>
-          <TooltipWrap content={<><div className="lang-zh">{expFormula.zh}</div><div className="lang-en" style={{ color: "#ccb7f7" }}>{expFormula.en}</div></>}><span style={{ color: PURPLE, fontFamily: "monospace", fontWeight: 700, fontSize: 12 }}>TOTAL EXP {expAnimated.toLocaleString()}</span></TooltipWrap>
-          <span style={{ color: dark ? "#bcb2cb" : "#6f657d", fontFamily: "monospace", fontSize: 12 }}>{expInLevel} / {expNeeded}</span>
+
+      {/* EXP bar */}
+      <div>
+        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6, fontFamily: "monospace", fontSize: 11, color: dark ? "#bcb2cb" : "#6f657d" }}>
+          <TooltipWrap content={<><div className="lang-zh">{expFormula.zh}</div><div className="lang-en" style={{ color: "#ccb7f7" }}>{expFormula.en}</div></>}>
+            <span style={{ color: PURPLE, fontWeight: 700 }}>EXP TOTAL: {expAnimated.toLocaleString()}</span>
+          </TooltipWrap>
+          <span>NEXT LV — {nextLevelExp.toLocaleString()} EXP</span>
         </div>
-        <TooltipWrap content={<><div className="lang-zh">{expFormula.zh}</div><div className="lang-en" style={{ color: "#ccb7f7" }}>{expFormula.en}</div></>}><div style={{ height: 16, borderRadius: 999, overflow: "hidden", border: "1px solid rgba(137,83,209,0.2)", background: dark ? "rgba(255,255,255,0.05)" : "rgba(60,20,90,0.06)" }}><div style={{ height: "100%", width: `${progressAnimated}%`, background: `linear-gradient(90deg, ${PURPLE}, rgba(137,83,209,0.56))` }} /></div></TooltipWrap>
+        <TooltipWrap content={<><div className="lang-zh">{expFormula.zh}</div><div className="lang-en" style={{ color: "#ccb7f7" }}>{expFormula.en}</div></>}>
+          <div style={{ height: 20, borderRadius: 2, overflow: "hidden", border: "1px solid rgba(137,83,209,0.2)", borderBottom: "1px solid rgba(137,83,209,0.33)", background: dark ? "rgba(255,255,255,0.05)" : "rgba(60,20,90,0.06)", position: "relative" }}>
+            <div style={{ height: "100%", width: `${progressAnimated}%`, background: PURPLE, borderRadius: 2 }} />
+            {/* Tick marks every 10% */}
+            {[10, 20, 30, 40, 50, 60, 70, 80, 90].map(pct => (
+              <div key={pct} style={{ position: "absolute", top: 0, bottom: 0, left: `${pct}%`, width: 1, background: dark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)" }} />
+            ))}
+          </div>
+        </TooltipWrap>
       </div>
-    </div>
-    <div className="hero-side" style={{ minWidth: 120 }}>
-      <div style={{ borderRadius: 18, padding: 16, border: "1px solid rgba(137,83,209,0.2)", background: dark ? "rgba(137,83,209,0.06)" : "rgba(137,83,209,0.04)" }}>
-        <div style={{ fontFamily: "monospace", fontSize: 11, color: dark ? "#bcb2cb" : "#7a6d89" }}>Realm</div>
-        <div style={{ color: PURPLE, fontWeight: 700, fontSize: 26, fontFamily: "Georgia, Cambria, serif" }}>{rank.zh}</div>
-        <div style={{ fontFamily: "monospace", fontSize: 11, color: dark ? "#bcb2cb" : "#7a6d89", marginTop: 10 }}>Progress</div>
-        <div style={{ color: dark ? "#fff" : "#261a33", fontSize: 22, fontWeight: 700, fontFamily: "monospace" }}>{progressAnimated}%</div>
+
+      {/* 2x2 info grid */}
+      <div className="hero-info-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+        {[
+          { label: "CLASS", valueZh: rank.en, valueEn: rank.en, sub: rank.zh },
+          { label: "STATUS", valueZh: "旅居中", valueEn: "On the road", sub: null },
+          { label: "LOCATION", valueZh: currentCity.nameCN, valueEn: currentCity.name, sub: null },
+          { label: "DAYS", valueZh: `${travelDays}d`, valueEn: `${travelDays}d`, sub: null },
+        ].map(cell => (
+          <div key={cell.label} style={{ padding: "8px 10px", borderRadius: 4, border: `1px solid ${dark ? "rgba(137,83,209,0.16)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(137,83,209,0.04)" : "rgba(137,83,209,0.02)" }}>
+            <div style={{ fontFamily: "monospace", fontSize: 10, color: dark ? "#8a7fa0" : "#9a8fb0", fontWeight: 700, letterSpacing: "0.06em", marginBottom: 2 }}>{cell.label}</div>
+            <div style={{ fontFamily: "monospace", fontSize: 13, color: dark ? "#e9ddff" : "#4a3866", fontWeight: 600 }}>
+              <span className="lang-zh">{cell.valueZh}</span>
+              <span className="lang-en">{cell.valueEn}</span>
+            </div>
+            {cell.sub && <div style={{ fontFamily: "monospace", fontSize: 11, color: PURPLE, opacity: 0.7, marginTop: 1 }}>{cell.sub}</div>}
+          </div>
+        ))}
       </div>
     </div>
   </div>;
@@ -969,7 +1008,6 @@ export default function PlayerStats(props: PlayerStatsProps) {
       .relationship-card.is-clickable { cursor: pointer; }
       @media (max-width: 960px) {
         .hero-grid { grid-template-columns: 1fr !important; }
-        .hero-side { min-width: 0 !important; }
         .stats-grid { grid-template-columns: 1fr !important; }
         .radar-wrap { grid-template-columns: 1fr !important; }
         .retainer-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
@@ -981,7 +1019,7 @@ export default function PlayerStats(props: PlayerStatsProps) {
         .quest-main-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
       }
       @media (max-width: 640px) {
-        .retainer-grid, .relationship-grid, .stat-legend-grid { grid-template-columns: 1fr !important; }
+        .retainer-grid, .relationship-grid, .stat-legend-grid, .hero-info-grid { grid-template-columns: 1fr !important; }
         .ps-section { padding: 0.8rem !important; }
         .quest-main-grid { grid-template-columns: 1fr !important; }
         .chapter-nav-btn { width: 32px !important; height: 32px !important; min-width: 32px !important; }
@@ -991,7 +1029,7 @@ export default function PlayerStats(props: PlayerStatsProps) {
       }
     `}</style>
     <div style={{ display: "grid", gap: 18 }}>
-      <Section dark={dark}><HeroCard dark={dark} rank={rank} level={level} totalExp={totalExp} expInLevel={expInLevel} expNeeded={expNeeded} expProgress={expProgress} currentCity={currentCity} travelDays={travelDays} expFormula={expFormula} levelFormula={levelFormula} /></Section>
+      <section className="ps-section" style={{ width: "100%", maxWidth: 1200, margin: "0 auto", border: `1px solid ${dark ? "rgba(137,83,209,0.26)" : "rgba(137,83,209,0.14)"}`, borderRadius: 24, padding: "1.35rem", background: dark ? "rgba(14,10,24,0.99)" : "rgba(252,248,255,0.98)", boxShadow: "0 0 0 1px rgba(137,83,209,0.26), 0 0 22px rgba(137,83,209,0.10)" }}><HeroCard dark={dark} rank={rank} level={level} totalExp={totalExp} expInLevel={expInLevel} expNeeded={expNeeded} expProgress={expProgress} currentCity={currentCity} travelDays={travelDays} expFormula={expFormula} levelFormula={levelFormula} /></section>
       <Section dark={dark}><SectionHeader icon="🧭" zh="人生章节" en="Chapter Archive" dark={dark} /><ChapterCarousel chapters={chapters} articleMeta={articleMeta} dark={dark} /></Section>
       <Section dark={dark}><a href="/travel/" style={{ display: "flex", gap: 14, justifyContent: "center", alignItems: "center", textDecoration: "none" }}><span style={{ fontSize: 28 }}>🗺️</span><div><div style={{ color: PURPLE, fontWeight: 700, fontSize: 24 }}>{cities.length} <span style={{ color: dark ? "#c8bed8" : "#78688a", fontSize: 13, fontWeight: 400 }}>座城市已游历</span></div><div style={{ color: dark ? "#ac9fbe" : "#8b7a98", fontSize: 12 }}>→ 查看完整旅居地图</div></div></a></Section>
       <Section dark={dark}><SectionHeader icon="📊" zh="六维属性" en="Six Attributes" dark={dark} /><StatRadar stats={stats} statFormulas={statFormulas} dark={dark} /><StatLegend dark={dark} /></Section>
