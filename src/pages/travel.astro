@@ -772,7 +772,6 @@ const meta = {
     const TILE_LIGHT  = "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png";
     const TILE_DARK   = "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
     const PURPLE      = "#8953d1";
-    const NEXT_CITY   = null; // no upcoming destination
 
     // Region color palette — brand-adjacent but lively
     const REGION_COLORS = {
@@ -1116,6 +1115,8 @@ const meta = {
       _data = await fetch("/data/travel.json").then(r => r.json());
       const cities = _data.cities;
       const priorCities = _data.priorCities || [];
+      const upcomingTrips = (_data.meta && _data.meta.upcomingTrips) ? _data.meta.upcomingTrips : [];
+      const nextTrip = upcomingTrips[0] || null;
 
       // Pre-build visit merge map on _data for renderStoryCard
       _data._visitMergeMap = {};
@@ -1361,34 +1362,53 @@ const meta = {
 
       // ---- Next Stop Badge ----
       const nextBadge = document.getElementById("next-stop-badge");
-      if (NEXT_CITY && nextBadge) {
+      if (nextTrip && nextBadge) {
         const isZh = getLang() === "zh";
-        const daysUntil = Math.ceil((new Date(NEXT_CITY.date) - new Date()) / 86400000);
-        const inStr = daysUntil > 0
-          ? (isZh ? `${daysUntil} 天后出发` : `in ${daysUntil} day${daysUntil===1?"":"s"}`)
-          : (isZh ? "今天出发！" : "Today!");
+        const today0 = new Date();
+        today0.setHours(0,0,0,0);
+        const upcomingSummary = upcomingTrips.map((trip, idx) => {
+          const tripDate = new Date(trip.date + "T00:00:00+08:00");
+          const daysUntil = Math.ceil((tripDate - today0) / 86400000);
+          const when = daysUntil > 0
+            ? (isZh ? `${daysUntil} 天后` : `in ${daysUntil}d`)
+            : (isZh ? "今天" : "today");
+          const label = isZh ? trip.nameCN : trip.name;
+          const dateLabel = isZh
+            ? `${trip.date.slice(5).replace('-', '.')}`
+            : tripDate.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+          return idx === 0
+            ? `<strong>${label}</strong> · ${dateLabel} · ${when}`
+            : `${label} · ${dateLabel}`;
+        }).join(isZh ? `　→　` : ` → `);
+
         nextBadge.innerHTML = isZh
-          ? `下一站 → <strong>${NEXT_CITY.nameCN}</strong> · ${inStr}`
-          : `Next → <strong>${NEXT_CITY.name}</strong> · ${inStr}`;
+          ? `后续行程 → ${upcomingSummary}`
+          : `Upcoming → ${upcomingSummary}`;
         nextBadge.classList.add("is-visible");
-        // Draw dashed preview line to Xi'an
+
         if (_currentCityItem) {
-          L.polyline(
-            [[_currentCityItem.lat, _currentCityItem.lng], [NEXT_CITY.lat, NEXT_CITY.lng]],
-            { color: PURPLE, weight: 2, opacity: 0.38, dashArray: "4 9" }
-          ).addTo(_map);
-          const nextIcon = L.divIcon({
-            html: `<svg width="44" height="44" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="22" cy="22" r="10" fill="${PURPLE}" opacity="0.08"/>
-              <circle cx="22" cy="22" r="6" fill="none" stroke="${PURPLE}" stroke-width="2" stroke-dasharray="3 3" opacity="0.7"/>
-            </svg>`,
-            className: "", iconSize: [MARKER_SIZE, MARKER_SIZE], iconAnchor: [MARKER_CENTER, MARKER_CENTER]
+          const tripPoints = [[_currentCityItem.lat, _currentCityItem.lng], ...upcomingTrips.map(t => [t.lat, t.lng])];
+          for (let i = 0; i < tripPoints.length - 1; i++) {
+            L.polyline(
+              [tripPoints[i], tripPoints[i + 1]],
+              { color: PURPLE, weight: 2, opacity: 0.38, dashArray: "4 9" }
+            ).addTo(_map);
+          }
+
+          upcomingTrips.forEach((trip, idx) => {
+            const nextIcon = L.divIcon({
+              html: `<svg width="44" height="44" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="22" cy="22" r="10" fill="${PURPLE}" opacity="0.08"/>
+                <circle cx="22" cy="22" r="6" fill="none" stroke="${PURPLE}" stroke-width="2" stroke-dasharray="3 3" opacity="0.7"/>
+              </svg>`,
+              className: "", iconSize: [MARKER_SIZE, MARKER_SIZE], iconAnchor: [MARKER_CENTER, MARKER_CENTER]
+            });
+            const nextMarker = L.marker([trip.lat, trip.lng], { icon: nextIcon, interactive: false }).addTo(_map);
+            const tooltipText = isZh
+              ? `${idx === 0 ? '下一站' : '后续'} · ${trip.nameCN}`
+              : `${idx === 0 ? 'Next' : 'Later'} · ${trip.name}`;
+            nextMarker.bindTooltip(`<span style="color:${PURPLE};font-size:0.75rem">${tooltipText}</span>`, { permanent: true, direction: "right", offset: [8, 0], className: "next-stop-tooltip" });
           });
-          const nextMarker = L.marker([NEXT_CITY.lat, NEXT_CITY.lng], { icon: nextIcon, interactive: false }).addTo(_map);
-          const tooltip = isZh
-            ? `<span style="color:${PURPLE};font-size:0.75rem">下一站 · ${NEXT_CITY.nameCN}</span>`
-            : `<span style="color:${PURPLE};font-size:0.75rem">Next · ${NEXT_CITY.name}</span>`;
-          nextMarker.bindTooltip(tooltip, { permanent: true, direction: "right", offset: [8, 0], className: "next-stop-tooltip" });
         }
       }
 
