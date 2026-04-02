@@ -140,6 +140,7 @@ export interface PlayerStatsProps {
   }>;
   chapters: ChapterData[];
   relationships: RelationshipData[];
+  articleMeta: Record<string, { title: string; titleZh?: string | null }>;
   statFormulas: Record<string, StatFormulaData>;
   expFormula: { zh: string; en: string };
   levelFormula: { zh: string; en: string; nextLevel: string };
@@ -355,9 +356,9 @@ const HeroCard = memo(function HeroCard({ dark, rank, level, totalExp, expInLeve
         <div>
           <h2 style={{ margin: 0, color: dark ? "#fff" : "#261a33", fontSize: "2rem", fontFamily: "Georgia, Cambria, serif" }}>Rex Liu</h2>
           <div style={{ marginTop: 6, color: PURPLE, fontFamily: "monospace", fontSize: 12, fontWeight: 700 }}>PLAYER STATS</div>
-          <p style={{ margin: "10px 0 0", color: dark ? "#bcb2cb" : "#6f657d", lineHeight: 1.7 }}><span className="lang-en">Sword intent in writing, inner strength in systems, footsteps across cities.</span><span className="lang-zh">文章为剑，系统为功，城市为路。</span></p>
+          <p style={{ margin: "10px 0 0", color: dark ? "#bcb2cb" : "#6f657d", lineHeight: 1.7 }}><span className="lang-en">A living dossier of Rex — writing, systems, travel, and the way one life keeps compounding into another.</span><span className="lang-zh">这不是通用面板，是你自己的实时人物页：写作、系统、旅居、投资与人生章节，都在这里慢慢长出来。</span></p>
         </div>
-        <div style={{ writingMode: "vertical-rl", textOrientation: "upright", letterSpacing: "0.12em", color: PURPLE, border: "1px solid rgba(137,83,209,0.2)", borderRadius: 999, padding: "10px 6px", background: dark ? "rgba(137,83,209,0.06)" : "rgba(137,83,209,0.04)" }}>江湖档案</div>
+        <div style={{ writingMode: "vertical-rl", textOrientation: "upright", letterSpacing: "0.12em", color: PURPLE, border: "1px solid rgba(137,83,209,0.2)", borderRadius: 999, padding: "10px 6px", background: dark ? "rgba(137,83,209,0.06)" : "rgba(137,83,209,0.04)" }}><span className="lang-zh">江湖档案</span><span className="lang-en">DOSSIER</span></div>
       </div>
       <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 14 }}>
         {[`⚔️ ${rank.zh}`, `📍 ${currentCity.nameCN}`, `🗓️ 游历 ${travelDays} 天`].map(item => <span key={item} style={{ padding: "6px 10px", borderRadius: 999, border: "1px solid rgba(137,83,209,0.18)", color: dark ? "#e9ddff" : "#6f46a3", background: dark ? "rgba(137,83,209,0.08)" : "rgba(137,83,209,0.05)", fontSize: 12 }}>{item}</span>)}
@@ -381,7 +382,7 @@ const HeroCard = memo(function HeroCard({ dark, rank, level, totalExp, expInLeve
   </div>;
 });
 
-const ChapterCarousel = memo(function ChapterCarousel({ chapters, dark }: { chapters: ChapterData[]; dark: boolean }) {
+const ChapterCarousel = memo(function ChapterCarousel({ chapters, articleMeta, dark }: { chapters: ChapterData[]; articleMeta: Record<string, { title: string; titleZh?: string | null }>; dark: boolean }) {
   const reduced = usePrefersReducedMotion();
   const initialIndex = Math.max(0, chapters.findIndex(c => c.id === "current"));
   const [index, setIndex] = useState(initialIndex >= 0 ? initialIndex : Math.max(chapters.length - 1, 0));
@@ -430,7 +431,11 @@ const ChapterCarousel = memo(function ChapterCarousel({ chapters, dark }: { chap
               <div style={{ paddingTop: 14, display: "grid", gap: 12, borderTop: "1px solid rgba(137,83,209,0.1)" }}>
                 {active.boss && <div style={{ borderRadius: 16, padding: 14, border: "1px solid rgba(137,83,209,0.14)", background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.7)" }}><div style={{ color: PURPLE, fontFamily: "monospace", fontSize: 11 }}>Boss</div><div style={{ marginTop: 6, color: dark ? "#fff" : "#261a33", fontWeight: 700 }}>{active.boss.name}</div><div style={{ marginTop: 6, color: dark ? "#d3cae0" : "#6f657d", fontSize: 13 }}>{active.boss.description || active.boss.reward}</div></div>}
                 {!!active.rewards.length && <div><div style={{ color: PURPLE, fontFamily: "monospace", fontSize: 11, marginBottom: 8 }}>Rewards</div><div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>{active.rewards.map(reward => <span key={reward} style={{ padding: "6px 10px", borderRadius: 999, border: "1px solid rgba(137,83,209,0.16)", background: dark ? "rgba(137,83,209,0.06)" : "rgba(137,83,209,0.04)", color: PURPLE, fontSize: 12 }}>{reward}</span>)}</div></div>}
-                {!!active.articles.length && <div><div style={{ color: PURPLE, fontFamily: "monospace", fontSize: 11, marginBottom: 8 }}>Articles</div><div style={{ display: "grid", gap: 8 }}>{active.articles.map(article => <a key={article} href={`/posts/${article}/`} style={{ textDecoration: "none", borderRadius: 14, padding: "12px 14px", border: "1px solid rgba(137,83,209,0.12)", background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.74)", color: dark ? "#ece3ff" : "#4b2d78", fontFamily: "monospace", fontSize: 12 }}>↗ /posts/{article}/</a>)}</div></div>}
+                {!!active.articles.length && <div><div style={{ color: PURPLE, fontFamily: "monospace", fontSize: 11, marginBottom: 8 }}>Articles</div><div style={{ display: "grid", gap: 8 }}>{active.articles.map(article => {
+                  const meta = articleMeta[article];
+                  const label = meta?.titleZh || meta?.title || article;
+                  return <a key={article} href={`/posts/${article}/`} style={{ textDecoration: "none", borderRadius: 14, padding: "12px 14px", border: "1px solid rgba(137,83,209,0.12)", background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.74)", color: dark ? "#ece3ff" : "#4b2d78", fontSize: 13, lineHeight: 1.5 }}><span style={{ color: PURPLE, marginRight: 8, fontFamily: "monospace", fontSize: 11 }}>↗</span>{label}</a>;
+                })}</div></div>}
               </div>
             </div>
           </div>
@@ -491,6 +496,28 @@ const StatRadar = memo(function StatRadar({ stats, statFormulas, dark }: { stats
   </div>;
 });
 
+const StatLegend = memo(function StatLegend({ dark }: { dark: boolean }) {
+  const items = [
+    { zh: "体力", en: "HP", descZh: "看移动与旅居密度，越能扛长线生活，数值越高。", descEn: "Mobility and travel endurance." },
+    { zh: "灵力", en: "Spirit", descZh: "看写作与输入强度，文章与阅读越多，灵力越高。", descEn: "Writing output plus sustained input." },
+    { zh: "武术", en: "Martial", descZh: "看造物能力，产品、系统、代码做得越多，武术越高。", descEn: "Build power across product and code." },
+    { zh: "身法", en: "Agility", descZh: "看知识调度与吸收速度，读得越广，转身越快。", descEn: "Knowledge range and adaptive speed." },
+    { zh: "声望", en: "Renown", descZh: "看影响力积累，不是吵闹，是长期被看见。", descEn: "Reputation accumulated over time." },
+    { zh: "统御", en: "Command", descZh: "看系统与 Agent 协同能力，盘子越大，统御越高。", descEn: "Systems orchestration and agent command." },
+  ];
+
+  return <div className="stat-legend-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 12, marginTop: 18 }}>
+    {items.map(item => <div key={item.zh} style={{ borderRadius: 16, padding: 14, border: `1px solid ${dark ? "rgba(137,83,209,0.16)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.72)" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", gap: 8, alignItems: "baseline" }}>
+        <div style={{ color: dark ? "#fff" : "#261a33", fontWeight: 700 }}>{item.zh}</div>
+        <div style={{ color: PURPLE, fontFamily: "monospace", fontSize: 11 }}>{item.en}</div>
+      </div>
+      <div className="lang-zh" style={{ marginTop: 8, color: dark ? "#cfc4df" : "#6f657d", fontSize: 12, lineHeight: 1.65 }}>{item.descZh}</div>
+      <div className="lang-en" style={{ marginTop: 8, color: dark ? "#cfc4df" : "#6f657d", fontSize: 12, lineHeight: 1.65 }}>{item.descEn}</div>
+    </div>)}
+  </div>;
+});
+
 const EquipmentRing = memo(function EquipmentRing({ equipment, dark }: { equipment: EquipmentData[]; dark: boolean }) {
   const positions = [
     { top: 18, left: "50%", transform: "translate(-50%, 0)" },
@@ -512,12 +539,28 @@ const EquipmentRing = memo(function EquipmentRing({ equipment, dark }: { equipme
           <div style={{ color: dark ? "#bcb2cb" : "#6f657d", fontFamily: "monospace", fontSize: 11 }}>6 SLOTS ORBITING</div>
         </div>
       </div>
-      <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
-        {positions.map((_, index) => {
-          const angle = index * 60 - 90;
-          return <div key={`line-${index}`} className="equipment-line" style={{ position: "absolute", left: "50%", top: "50%", width: 180, height: 2, transform: `translate(-50%, -50%) rotate(${angle}deg)`, transformOrigin: "left center", background: "linear-gradient(90deg, rgba(137,83,209,0.24), rgba(137,83,209,0.04))" }} />;
-        })}
-      </div>
+      <svg aria-hidden="true" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none", overflow: "visible" }} viewBox="0 0 1000 560" preserveAspectRatio="none">
+        {[
+          [500, 280, 500, 92],
+          [500, 280, 820, 152],
+          [500, 280, 820, 408],
+          [500, 280, 500, 468],
+          [500, 280, 180, 408],
+          [500, 280, 180, 152],
+        ].map(([x1, y1, x2, y2], index) => (
+          <line
+            key={`line-${index}`}
+            className="equipment-line"
+            x1={x1}
+            y1={y1}
+            x2={x2}
+            y2={y2}
+            stroke="rgba(137,83,209,0.22)"
+            strokeWidth="1.6"
+            strokeLinecap="round"
+          />
+        ))}
+      </svg>
       {equipment.slice(0, 6).map((item, i) => {
         const card = <div className="equipment-floating" style={{ width: 196, borderRadius: 20, padding: 14, border: `1px solid ${dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(21,16,34,0.96)" : "rgba(255,255,255,0.94)", boxShadow: "0 8px 18px rgba(137,83,209,0.08)", position: "relative", zIndex: 2, willChange: "transform" }}>
           <div style={{ display: "flex", justifyContent: "space-between", gap: 8, alignItems: "center" }}><span style={{ color: PURPLE, fontSize: 11, fontFamily: "monospace", padding: "4px 8px", borderRadius: 999, border: "1px solid rgba(137,83,209,0.18)" }}>{item.slotCN}</span><span style={{ color: dark ? "#ac9fbe" : "#8b7a98", fontFamily: "monospace", fontSize: 10 }}>{item.acquired}</span></div>
@@ -604,9 +647,9 @@ type SkillTreeEdge = {
 
 function buildSkillTreeLayout(rootLabel: string, groups: SkillGroup[]) {
   const rootWidth = 152;
-  const branchWidth = 140;
-  const leafWidth = 158;
-  const nodeHeight = 54;
+  const branchWidth = 152;
+  const leafWidth = 176;
+  const nodeHeight = 68;
   const rootX = 20;
   const branchX = 270;
   const leafX = 520;
@@ -679,9 +722,9 @@ function buildSkillTreeLayout(rootLabel: string, groups: SkillGroup[]) {
     id: "root",
     depth: 0,
     x: rootX,
-    y: rootCenterY - 54 / 2,
+    y: rootCenterY - nodeHeight / 2,
     width: rootWidth,
-    height: 54,
+    height: nodeHeight,
   };
   nodes.push(rootNode);
 
@@ -738,9 +781,9 @@ const SkillTreePanel = memo(function SkillTreePanel({ title, subtitle, rootLabel
             <rect x={node.x} y={node.y} rx={16} ry={16} width={node.width} height={node.height} fill={cardFill} stroke={border} strokeWidth={active ? 1.3 : 1.1} />
             <text x={node.x + 14} y={node.y + 18} fill={labelColor} style={{ fontSize: node.depth === 0 ? 14 : 13, fontWeight: 700, fontFamily: 'Georgia, Cambria, serif', pointerEvents: 'none' }}>
               <tspan x={node.x + 14} dy="0.95em">{node.label}</tspan>
-              <tspan x={node.x + 14} dy="1.15em" fill={dark ? "#a895c4" : "#7a6d89"} style={{ fontSize: 10.5, fontFamily: 'system-ui, sans-serif', fontWeight: 500 }}>{node.desc}</tspan>
+              <tspan x={node.x + 14} dy="1.38em" fill={dark ? "#a895c4" : "#7a6d89"} style={{ fontSize: 10.5, fontFamily: 'system-ui, sans-serif', fontWeight: 500 }}>{node.desc}</tspan>
             </text>
-            <text x={node.x + 14} y={node.y + node.height - 10} fill={countColor} style={{ fontSize: 11, fontFamily: 'monospace', pointerEvents: 'none' }}>{node.depth === 0 ? `TOTAL ${node.count}` : `${node.count} 篇 · Lv.${node.count}`}</text>
+            <text x={node.x + 14} y={node.y + node.height - 12} fill={countColor} style={{ fontSize: 11, fontFamily: 'monospace', pointerEvents: 'none' }}>{node.depth === 0 ? `TOTAL ${node.count}` : `${node.count} 篇 · Lv.${node.count}`}</text>
             {isHovered && node.depth !== 0 && <g style={{ pointerEvents: 'none' }}>
               <rect x={Math.min(node.x + node.width + 12, layout.width - 248)} y={Math.max(node.y - 10, 10)} width={236} height={70} rx={14} ry={14} fill="rgba(12,10,20,0.98)" stroke="rgba(137,83,209,0.34)" strokeWidth={1.1} />
               <text x={Math.min(node.x + node.width + 26, layout.width - 234)} y={Math.max(node.y + 12, 24)} fill="#f5efff" style={{ fontSize: 12, fontFamily: 'Georgia, Cambria, serif' }}>{node.desc}</text>
@@ -907,7 +950,7 @@ const CultivationLog = memo(function CultivationLog({ activityLog, dark }: { act
 
 export default function PlayerStats(props: PlayerStatsProps) {
   const dark = useTheme();
-  const { stats, level, totalExp, expInLevel, expNeeded, expProgress, rank, currentCity, travelDays, tagCounts, postCount, builderLogCount, cities, achievements, retainers, quests, equipment, activityLog, chapters, relationships, statFormulas, expFormula, levelFormula } = props;
+  const { stats, level, totalExp, expInLevel, expNeeded, expProgress, rank, currentCity, travelDays, tagCounts, postCount, builderLogCount, cities, achievements, retainers, quests, equipment, activityLog, chapters, relationships, articleMeta, statFormulas, expFormula, levelFormula } = props;
   return <div style={{ width: "100%", maxWidth: 1200, margin: "0 auto", fontFamily: "Georgia, Cambria, serif", paddingInline: 12 }}>
     <style>{`
       @keyframes chapterSlide { from { opacity: 0; transform: translateX(26px); } to { opacity: 1; transform: translateX(0); } }
@@ -930,6 +973,7 @@ export default function PlayerStats(props: PlayerStatsProps) {
         .stats-grid { grid-template-columns: 1fr !important; }
         .radar-wrap { grid-template-columns: 1fr !important; }
         .retainer-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+        .stat-legend-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
       }
       @media (max-width: 760px) {
         .equipment-ring { display: none !important; }
@@ -937,7 +981,7 @@ export default function PlayerStats(props: PlayerStatsProps) {
         .quest-main-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
       }
       @media (max-width: 640px) {
-        .retainer-grid, .relationship-grid { grid-template-columns: 1fr !important; }
+        .retainer-grid, .relationship-grid, .stat-legend-grid { grid-template-columns: 1fr !important; }
         .ps-section { padding: 0.8rem !important; }
         .quest-main-grid { grid-template-columns: 1fr !important; }
         .chapter-nav-btn { width: 32px !important; height: 32px !important; min-width: 32px !important; }
@@ -948,8 +992,9 @@ export default function PlayerStats(props: PlayerStatsProps) {
     `}</style>
     <div style={{ display: "grid", gap: 18 }}>
       <Section dark={dark}><HeroCard dark={dark} rank={rank} level={level} totalExp={totalExp} expInLevel={expInLevel} expNeeded={expNeeded} expProgress={expProgress} currentCity={currentCity} travelDays={travelDays} expFormula={expFormula} levelFormula={levelFormula} /></Section>
-      <Section dark={dark}><SectionHeader icon="🧭" zh="人生章节" en="Chapter Archive" dark={dark} /><ChapterCarousel chapters={chapters} dark={dark} /></Section>
-      <Section dark={dark}><SectionHeader icon="📊" zh="六维属性" en="Six Attributes" dark={dark} /><StatRadar stats={stats} statFormulas={statFormulas} dark={dark} /></Section>
+      <Section dark={dark}><SectionHeader icon="🧭" zh="人生章节" en="Chapter Archive" dark={dark} /><ChapterCarousel chapters={chapters} articleMeta={articleMeta} dark={dark} /></Section>
+      <Section dark={dark}><a href="/travel/" style={{ display: "flex", gap: 14, justifyContent: "center", alignItems: "center", textDecoration: "none" }}><span style={{ fontSize: 28 }}>🗺️</span><div><div style={{ color: PURPLE, fontWeight: 700, fontSize: 24 }}>{cities.length} <span style={{ color: dark ? "#c8bed8" : "#78688a", fontSize: 13, fontWeight: 400 }}>座城市已游历</span></div><div style={{ color: dark ? "#ac9fbe" : "#8b7a98", fontSize: 12 }}>→ 查看完整旅居地图</div></div></a></Section>
+      <Section dark={dark}><SectionHeader icon="📊" zh="六维属性" en="Six Attributes" dark={dark} /><StatRadar stats={stats} statFormulas={statFormulas} dark={dark} /><StatLegend dark={dark} /></Section>
       <Section dark={dark}><SectionHeader icon="🧰" zh="装备栏" en="Equipment" dark={dark} /><EquipmentRing equipment={equipment} dark={dark} /></Section>
       <Section dark={dark}><SectionHeader icon="📜" zh="任务面板" en="Quest Board" dark={dark} /><QuestPanel quests={quests} dark={dark} /></Section>
       <Section dark={dark}><SectionHeader icon="🏯" zh="门客系统" en="Retainers" dark={dark} /><RetainerPanel retainers={retainers} dark={dark} /></Section>
@@ -957,7 +1002,6 @@ export default function PlayerStats(props: PlayerStatsProps) {
       <Section dark={dark}><SectionHeader icon="🤝" zh="江湖关系" en="Relationships" dark={dark} /><RelationshipPanel relationships={relationships} dark={dark} /></Section>
       <Section dark={dark}><SectionHeader icon="🏆" zh="成就" en="Achievements" dark={dark} /><AchievementBadges achievements={achievements} dark={dark} /></Section>
       <Section dark={dark}><SectionHeader icon="📜" zh="修行日志" en="Cultivation Log" dark={dark} /><CultivationLog activityLog={activityLog} dark={dark} /></Section>
-      <Section dark={dark}><a href="/travel/" style={{ display: "flex", gap: 14, justifyContent: "center", alignItems: "center", textDecoration: "none" }}><span style={{ fontSize: 28 }}>🗺️</span><div><div style={{ color: PURPLE, fontWeight: 700, fontSize: 24 }}>{cities.length} <span style={{ color: dark ? "#c8bed8" : "#78688a", fontSize: 13, fontWeight: 400 }}>座城市已游历</span></div><div style={{ color: dark ? "#ac9fbe" : "#8b7a98", fontSize: 12 }}>→ 查看完整旅居地图</div></div></a></Section>
     </div>
   </div>;
 }

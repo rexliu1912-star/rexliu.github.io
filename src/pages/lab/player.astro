@@ -238,6 +238,8 @@ const quests = {
   }),
 };
 
+const articleMeta = Object.fromEntries(posts.map(post => [post.slug, { title: post.data.title, titleZh: post.data.title_zh ?? null }]));
+
 const meta = {
   title: "Player Stats — Rex's Open-World Adventure Dashboard",
   description: "A live player-stats page for Rex Liu, translating real content, travel, projects, and agent activity into an open-world adventure dashboard.",
@@ -255,8 +257,8 @@ const meta = {
     </div>
 
     <h1 class="hero-reveal-text mb-3 font-serif text-4xl font-bold dark:text-white"><span class="lang-en">Player Stats</span><span class="lang-zh">江湖档案</span></h1>
-    <p class="hero-reveal-subtitle lang-en max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">Your open-world adventure dashboard. Every stat from real data, no manual input.</p>
-    <p class="hero-reveal-subtitle lang-zh max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">开放世界江湖面板。所有数值来自真实数据，无手动设置。</p>
+    <p class="hero-reveal-subtitle lang-en max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">A live character sheet built around Rex Liu — chapters, travel, systems, writing, and the slow accumulation of one real life.</p>
+    <p class="hero-reveal-subtitle lang-zh max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">这是围绕 Rex 本人展开的实时人物页，不是抽象 demo。文章、旅居、系统、项目和人生章节，都在这里同步生长。</p>
   </section>
 
   <PlayerStats
@@ -299,6 +301,7 @@ const meta = {
       platformCN: item.platformCN ?? null,
       platformEN: item.platformEN ?? null,
     }))}
+    articleMeta={articleMeta}
     statFormulas={statFormulas}
     expFormula={expFormula}
     levelFormula={levelFormula}
