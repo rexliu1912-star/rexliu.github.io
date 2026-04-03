@@ -1064,25 +1064,34 @@ const CultivationLog = memo(function CultivationLog({ activityLog, dark }: { act
     <div style={{ display: "grid", gap: 12 }}>{visible.map((item, i) => <div key={`${item.dateEn}-${i}`} style={{ position: "relative", paddingLeft: 18 }}><span style={{ position: "absolute", left: -1, top: 10, width: 8, height: 8, borderRadius: "50%", background: PURPLE }} /><div style={{ borderRadius: 16, padding: "12px 14px", border: `1px solid ${dark ? "rgba(137,83,209,0.14)" : "rgba(137,83,209,0.1)"}`, background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.72)" }}><div style={{ display: "flex", justifyContent: "space-between", gap: 10, flexWrap: "wrap" }}><div style={{ color: dark ? "#ac9fbe" : "#8b7a98", fontFamily: "monospace", fontSize: 11 }}>{item.dateZh}</div><div style={{ color: PURPLE, fontFamily: "monospace", fontWeight: 700, fontSize: 11 }}>+{item.exp} EXP</div></div><div style={{ marginTop: 8, display: "grid", gridTemplateColumns: "26px 1fr", gap: 10, alignItems: "start" }}><div>{item.icon}</div><div style={{ color: dark ? "#fff" : "#261a33", fontSize: 12, lineHeight: 1.7 }}>{item.descZh}</div></div></div></div>)}</div></div>;
 });
 
-const SaveFooter = memo(function SaveFooter({ dark, travelDays, mediaCount, bookCount }: {
-  dark: boolean; travelDays: number; mediaCount: number; bookCount: number;
+const SaveFooter = memo(function SaveFooter({ dark, travelDays, mediaCount, bookCount, postCount, cityCount, level }: {
+  dark: boolean; travelDays: number; mediaCount: number; bookCount: number; postCount: number; cityCount: number; level: number;
 }) {
   const buildDate = new Date().toISOString().slice(0, 10);
+  const stats = [
+    { label: "POSTS", value: postCount, icon: "✍️" },
+    { label: "MEDIA", value: mediaCount, icon: "🎬" },
+    { label: "BOOKS", value: bookCount, icon: "📚" },
+    { label: "CITIES", value: cityCount, icon: "📍" },
+    { label: "DAYS", value: travelDays, icon: "🗓️" },
+    { label: "LEVEL", value: level, icon: "⚔️" },
+  ];
   return (
-    <div style={{
-      fontFamily: "monospace", fontSize: 11, lineHeight: 1.8,
-      color: dark ? "#7a6d89" : "#8b7a98",
-      border: `1px solid ${dark ? "rgba(137,83,209,0.16)" : "rgba(137,83,209,0.12)"}`,
-      borderRadius: 14, padding: "12px 16px",
-      background: dark ? "rgba(255,255,255,0.02)" : "rgba(255,255,255,0.6)",
-      maxWidth: 420
-    }}>
-      <div>── SAVE DATA ──────────────────</div>
-      <div>Last build : {buildDate}</div>
-      <div>Media      : {mediaCount} titles</div>
-      <div>Books      : {bookCount} titles</div>
-      <div>Playtime   : {travelDays}d</div>
-      <div>────────────────────────────────</div>
+    <div style={{ textAlign: "center", display: "grid", gap: 16 }}>
+      <div className="save-footer-grid" style={{ display: "grid", gridTemplateColumns: "repeat(6, minmax(0, 1fr))", gap: 10 }}>
+        {stats.map(s => (
+          <div key={s.label} style={{ borderRadius: 16, padding: "14px 8px", border: `1px solid ${dark ? "rgba(137,83,209,0.16)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.7)" }}>
+            <div style={{ fontSize: 20, marginBottom: 6 }}>{s.icon}</div>
+            <div style={{ color: PURPLE, fontFamily: "monospace", fontWeight: 700, fontSize: 18 }}>{s.value.toLocaleString()}</div>
+            <div style={{ color: dark ? "#9f93b1" : "#8b7a98", fontFamily: "monospace", fontSize: 10, marginTop: 4, letterSpacing: "0.06em" }}>{s.label}</div>
+          </div>
+        ))}
+      </div>
+      <div style={{ fontFamily: "monospace", fontSize: 11, color: dark ? "#7a6d89" : "#8b7a98", display: "flex", justifyContent: "center", gap: 16, flexWrap: "wrap" }}>
+        <span><span className="lang-en">All stats auto-calculated</span><span className="lang-zh">所有属性自动计算</span></span>
+        <span>·</span>
+        <span>Last build: {buildDate}</span>
+      </div>
     </div>
   );
 });
@@ -1117,6 +1126,7 @@ export default function PlayerStats(props: PlayerStatsProps) {
         .radar-wrap { grid-template-columns: 1fr !important; }
         .retainer-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
         .stat-legend-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+        .save-footer-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
       }
       @media (max-width: 760px) {
         .equipment-ring { display: none !important; }
@@ -1125,6 +1135,7 @@ export default function PlayerStats(props: PlayerStatsProps) {
       }
       @media (max-width: 640px) {
         .retainer-grid, .relationship-grid, .stat-legend-grid { grid-template-columns: 1fr !important; }
+        .save-footer-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
         .ps-section { padding: 0.8rem !important; }
         .quest-main-grid { grid-template-columns: 1fr !important; }
         .chapter-nav-btn { width: 32px !important; height: 32px !important; min-width: 32px !important; }
@@ -1145,7 +1156,7 @@ export default function PlayerStats(props: PlayerStatsProps) {
       <Section dark={dark}><SectionHeader icon="🤝" zh="江湖关系" en="Relationships" dark={dark} /><RelationshipPanel relationships={relationships} dark={dark} /></Section>
       <Section dark={dark}><SectionHeader icon="🏆" zh="成就" en="Achievements" dark={dark} /><AchievementBadges achievements={achievements} dark={dark} /></Section>
       <Section dark={dark}><SectionHeader icon="📜" zh="修行日志" en="Cultivation Log" dark={dark} /><CultivationLog activityLog={activityLog} dark={dark} /></Section>
-      <SaveFooter dark={dark} travelDays={travelDays} mediaCount={mediaCount} bookCount={bookCount} />
+      <Section dark={dark}><SaveFooter dark={dark} travelDays={travelDays} mediaCount={mediaCount} bookCount={bookCount} postCount={postCount} cityCount={cities.length} level={level} /></Section>
     </div>
   </div>;
 }
