@@ -40,7 +40,11 @@ const cityCount = cities.length;
 const agents = 6;
 const followers = Number((dashboardData as any).heroStats?.currentFollowers ?? 0);
 
-const totalExp = postCount * 10 + libraryCount * 3 + cityCount * 5 + builderLogCount * 8 + digestCount * 2;
+// EXP 体系：高心力（需要人学习/思考/经历）> 低心力（AI 可辅助生成）
+// 高心力：文章(20)、书籍(15)、城市(20)、builder-log(12)
+// 中心力：书影音(5)
+// 低心力：digest(2) — AI 生成精读
+const totalExp = postCount * 20 + libraryCount * 5 + cityCount * 20 + builderLogCount * 12 + digestCount * 2;
 const level = Math.min(99, Math.floor(Math.sqrt(totalExp / 10)));
 const currentLevelExp = level * level * 10;
 const nextLevelExp = (level + 1) * (level + 1) * 10;
@@ -89,8 +93,8 @@ const statFormulas = {
 };
 
 const expFormula = {
-  zh: `EXP = 文章${postCount}×10 + 书影音${libraryCount}×3 + 城市${cityCount}×5 + 造物日志${builderLogCount}×8 + digest${digestCount}×2 = ${totalExp}`,
-  en: `EXP = posts ${postCount}×10 + library ${libraryCount}×3 + cities ${cityCount}×5 + builder logs ${builderLogCount}×8 + digests ${digestCount}×2 = ${totalExp}`,
+  zh: `EXP = 文章${postCount}×20 + 书影音${libraryCount}×5 + 城市${cityCount}×20 + 造物日志${builderLogCount}×12 + digest${digestCount}×2 = ${totalExp}`,
+  en: `EXP = posts ${postCount}×20 + library ${libraryCount}×5 + cities ${cityCount}×20 + builder logs ${builderLogCount}×12 + digests ${digestCount}×2 = ${totalExp}`,
 };
 
 const nextLevelTarget = (level + 1) * (level + 1) * 10;
@@ -217,11 +221,11 @@ const months = ["一月","二月","三月","四月","五月","六月","七月","
 function fmtDate(d: Date) { return { dateZh: `${d.getFullYear()}年${months[d.getMonth()]}${d.getDate()}日`, dateEn: d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }) }; }
 for (const post of posts) {
   const d = new Date(post.data.publishDate); const { dateZh, dateEn } = fmtDate(d);
-  allActivity.push({ dateRaw: d, dateZh, dateEn, icon: "✍️", statZh: "灵力", statEn: "Spirit", exp: 10, descZh: `著文《${post.data.title}》`, descEn: `Published \"${post.data.title}\"`, type: "post" });
+  allActivity.push({ dateRaw: d, dateZh, dateEn, icon: "✍️", statZh: "灵力", statEn: "Spirit", exp: 20, descZh: `著文《${post.data.title}》`, descEn: `Published \"${post.data.title}\"`, type: "post" });
 }
 for (const log of builderLogs) {
   const d = new Date(log.data.date); const { dateZh, dateEn } = fmtDate(d);
-  allActivity.push({ dateRaw: d, dateZh, dateEn, icon: "🛠️", statZh: "武术", statEn: "Martial", exp: 8, descZh: log.data.title_zh ?? log.data.title, descEn: log.data.title, type: "builder-log" });
+  allActivity.push({ dateRaw: d, dateZh, dateEn, icon: "🛠️", statZh: "武术", statEn: "Martial", exp: 12, descZh: log.data.title_zh ?? log.data.title, descEn: log.data.title, type: "builder-log" });
 }
 for (const digest of digests) {
   const d = new Date(digest.data.date); const { dateZh, dateEn } = fmtDate(d);
@@ -234,7 +238,7 @@ for (const item of (mediaData as any[])) {
   const { dateZh, dateEn } = fmtDate(d);
   const typeLabel = item.type === "movie" ? "观影" : item.type === "series" ? "追剧" : item.type === "documentary" ? "纪录片" : "综艺";
   const typeLabelEn = item.type === "movie" ? "Watched film" : item.type === "series" ? "Watched series" : item.type === "documentary" ? "Watched documentary" : "Watched show";
-  allActivity.push({ dateRaw: d, dateZh, dateEn, icon: "🎬", statZh: "身法", statEn: "Agility", exp: 3, descZh: `${typeLabel}《${item.title}》`, descEn: `${typeLabelEn} "${item.titleEn || item.title}"`, type: "media" });
+  allActivity.push({ dateRaw: d, dateZh, dateEn, icon: "🎬", statZh: "身法", statEn: "Agility", exp: 5, descZh: `${typeLabel}《${item.title}》`, descEn: `${typeLabelEn} "${item.titleEn || item.title}"`, type: "media" });
 }
 // 书籍
 for (const book of (booksData as any[])) {
@@ -243,14 +247,14 @@ for (const book of (booksData as any[])) {
   const d = new Date(dateStr);
   if (isNaN(d.getTime())) continue;
   const { dateZh, dateEn } = fmtDate(d);
-  allActivity.push({ dateRaw: d, dateZh, dateEn, icon: "📚", statZh: "身法", statEn: "Agility", exp: 3, descZh: `读完《${book.title}》`, descEn: `Finished "${book.titleEn || book.title}"`, type: "book" });
+  allActivity.push({ dateRaw: d, dateZh, dateEn, icon: "📚", statZh: "身法", statEn: "Agility", exp: 15, descZh: `读完《${book.title}》`, descEn: `Finished "${book.titleEn || book.title}"`, type: "book" });
 }
 // 城市
 for (const city of nomadCities) {
   if (!city.arrival) continue;
   const d = new Date(city.arrival);
   const { dateZh, dateEn } = fmtDate(d);
-  allActivity.push({ dateRaw: d, dateZh, dateEn, icon: "📍", statZh: "体力", statEn: "HP", exp: 5, descZh: `抵达${city.nameCN}`, descEn: `Arrived in ${city.name}`, type: "travel" });
+  allActivity.push({ dateRaw: d, dateZh, dateEn, icon: "📍", statZh: "体力", statEn: "HP", exp: 20, descZh: `抵达${city.nameCN}`, descEn: `Arrived in ${city.name}`, type: "travel" });
 }
 allActivity.sort((a, b) => b.dateRaw.getTime() - a.dateRaw.getTime());
 const activityForClient = allActivity.map(({ dateRaw, ...rest }) => rest);
@@ -285,7 +289,7 @@ const meta = {
 
     <h1 class="mb-3 font-serif text-4xl font-bold dark:text-white"><span class="lang-en">Player Stats</span><span class="lang-zh">江湖档案</span></h1>
     <p class="lang-en max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">A live character sheet built around Rex Liu — chapters, travel, systems, writing, and the slow accumulation of one real life.</p>
-    <p class="lang-zh max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">这是围绕 Rex 本人展开的实时人物页，不是抽象 demo。文章、旅居、系统、项目和人生章节，都在这里同步生长。</p>
+    <p class="lang-zh max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">以文铸剑，以行入道。此卷记吾所历、所学、所造，皆实数也。</p>
     <div style="font-family:monospace;font-size:11px;margin-top:8px;display:flex;gap:12px;align-items:center;flex-wrap:wrap">
       <span style="color:#5c8f68">● ACTIVE</span>
       <span style="color:#8953d1;opacity:0.7">AUTO-CALCULATED</span>

@@ -435,7 +435,7 @@ const HeroCard = memo(function HeroCard({ dark, rank, level, totalExp, expInLeve
           </div>
           <p style={{ margin: "10px 0 0", color: dark ? "#bcb2cb" : "#6f657d", lineHeight: 1.7, fontSize: 13, ...stagger(160) }}>
             <span className="lang-en">Sword intent in writing, inner strength in systems, footsteps across cities.</span>
-            <span className="lang-zh">文章为剑，系统为功，城市为路。</span>
+            <span className="lang-zh">以文铸剑，以行入道，以器御世。</span>
           </p>
         </div>
         <div style={{ writingMode: "vertical-rl", textOrientation: "upright", letterSpacing: "0.12em", color: PURPLE, border: "1px solid rgba(137,83,209,0.2)", borderRadius: 999, padding: "10px 6px", background: dark ? "rgba(137,83,209,0.06)" : "rgba(137,83,209,0.04)" }}><span className="lang-zh">江湖档案</span><span className="lang-en">DOSSIER</span></div>
@@ -448,12 +448,8 @@ const HeroCard = memo(function HeroCard({ dark, rank, level, totalExp, expInLeve
         <span style={{ opacity: 0.35, margin: "0 4px" }}>·</span>
         <span><span style={{ opacity: 0.5 }}>DAYS:</span> <span style={{ fontWeight: 700, color: dark ? "#e9ddff" : "#6f46a3" }}>{travelDays}d</span></span>
       </div>
-      {/* A6: PowerRating */}
-      <div style={{ marginTop: 16, ...stagger(320) }}>
-        <span style={{ fontFamily: "monospace", fontSize: 13, fontWeight: 700, color: PURPLE }}>POWER RATING: {powerAnimated.toLocaleString()}</span>
-      </div>
       {/* EXP bar */}
-      <div style={{ marginTop: 10, ...stagger(400) }}>
+      <div style={{ marginTop: 16, ...stagger(320) }}>
         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8, gap: 10, flexWrap: "wrap" }}>
           <TooltipWrap content={<><div className="lang-zh">{expFormula.zh}</div><div className="lang-en" style={{ color: "#ccb7f7" }}>{expFormula.en}</div></>}><span style={{ color: PURPLE, fontFamily: "monospace", fontWeight: 700, fontSize: 12 }}>TOTAL EXP {expAnimated.toLocaleString()}</span></TooltipWrap>
           <span style={{ color: dark ? "#bcb2cb" : "#6f657d", fontFamily: "monospace", fontSize: 12 }}>{expInLevel} / {expNeeded}</span>
@@ -467,28 +463,23 @@ const HeroCard = memo(function HeroCard({ dark, rank, level, totalExp, expInLeve
         </div></TooltipWrap>
       </div>
     </div>
-    {/* Right: side panel (A4) — realm + segmented bar + EXP + status only */}
+    {/* Right: side panel — compact stats only, no duplication with center */}
     <div className="hero-side" style={{ minWidth: 140, ...sideStagger(300) }}>
-      <div style={{ borderRadius: 12, border: "1px solid rgba(137,83,209,0.2)", background: dark ? "rgba(137,83,209,0.06)" : "rgba(137,83,209,0.04)", overflow: "hidden", fontFamily: "monospace" }}>
-        <div style={{ padding: "12px 14px", borderBottom: "1px solid rgba(137,83,209,0.12)" }}>
-          <div style={{ fontSize: 10, color: dark ? "#bcb2cb" : "#7a6d89", letterSpacing: "0.08em", opacity: 0.5 }}>REALM</div>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 8, marginTop: 4 }}>
-            <span style={{ color: PURPLE, fontWeight: 700, fontSize: 16, fontFamily: "Georgia, Cambria, serif" }}><span className="lang-zh">{rank.zh}</span><span className="lang-en">{rank.en}</span></span>
-            <span style={{ color: dark ? "#bcb2cb" : "#7a6d89", fontSize: 11 }}>Lv.{levelAnimated}</span>
-          </div>
+      <div style={{ borderRadius: 16, border: "1px solid rgba(137,83,209,0.2)", background: dark ? "rgba(137,83,209,0.06)" : "rgba(137,83,209,0.04)", padding: 16, fontFamily: "monospace", display: "grid", gap: 14 }}>
+        <div style={{ textAlign: "center" }}>
+          <div style={{ color: PURPLE, fontWeight: 700, fontSize: 28, fontFamily: "Georgia, Cambria, serif" }}>{powerAnimated.toLocaleString()}</div>
+          <div style={{ fontSize: 10, color: dark ? "#bcb2cb" : "#7a6d89", letterSpacing: "0.08em", marginTop: 4 }}>POWER RATING</div>
         </div>
-        <div style={{ padding: "12px 14px", borderBottom: "1px solid rgba(137,83,209,0.12)" }}>
-          <SegmentedBar progress={expProgress} dark={dark} />
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 6 }}>
-            <span style={{ fontSize: 12, fontWeight: 700, color: dark ? "#fff" : "#261a33" }}>{progressAnimated}%</span>
-            <span style={{ fontSize: 10, color: dark ? "#bcb2cb" : "#7a6d89" }}>{expInLevel}/{expNeeded} EXP</span>
+        <div style={{ height: 1, background: "rgba(137,83,209,0.12)" }} />
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+          <div>
+            <div style={{ fontSize: 10, color: dark ? "#9f93b1" : "#8b7a98", opacity: 0.6 }}>NEXT LV</div>
+            <div style={{ color: dark ? "#fff" : "#261a33", fontWeight: 700, fontSize: 14, marginTop: 2 }}>{Math.max(expNeeded - expInLevel, 0)} EXP</div>
           </div>
-        </div>
-        <div style={{ padding: "10px 14px", display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: dark ? "#d3cae0" : "#6f657d" }}>
-          <span style={{ color: SUCCESS }}>●</span>
-          <span>ACTIVE</span>
-          <span style={{ opacity: 0.4 }}>·</span>
-          <span>{travelDays}d</span>
+          <div>
+            <div style={{ fontSize: 10, color: dark ? "#9f93b1" : "#8b7a98", opacity: 0.6 }}>AVG STAT</div>
+            <div style={{ color: dark ? "#fff" : "#261a33", fontWeight: 700, fontSize: 14, marginTop: 2 }}>{avgStat}</div>
+          </div>
         </div>
       </div>
     </div>
