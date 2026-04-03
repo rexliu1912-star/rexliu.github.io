@@ -7,6 +7,7 @@ import mediaData from "../../data/media.json";
 import agentWorkload from "../../../public/data/agent-workload.json";
 import journeyData from "../../../public/data/journey.json";
 import dashboardData from "../../../public/data/dashboard.json";
+import booksData from "../../data/books.json";
 
 const posts = await getCollection("post");
 const digests = await getCollection("digest");
@@ -34,6 +35,7 @@ const digestCount = digests.length;
 const builderLogCount = builderLogs.length;
 const projectCount = projects.length;
 const libraryCount = (mediaData as any[]).length;
+const bookCount = (booksData as any[]).length;
 const cityCount = cities.length;
 const agents = 6;
 const followers = Number((dashboardData as any).heroStats?.currentFollowers ?? 0);
@@ -259,8 +261,10 @@ const meta = {
     <h1 class="mb-3 font-serif text-4xl font-bold dark:text-white"><span class="lang-en">Player Stats</span><span class="lang-zh">江湖档案</span></h1>
     <p class="lang-en max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">A live character sheet built around Rex Liu — chapters, travel, systems, writing, and the slow accumulation of one real life.</p>
     <p class="lang-zh max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">这是围绕 Rex 本人展开的实时人物页，不是抽象 demo。文章、旅居、系统、项目和人生章节，都在这里同步生长。</p>
-    <div style="font-family:monospace;font-size:11px;color:#8953d1;margin-top:8px;opacity:0.8">
-      ● SAVE FILE ACTIVE &nbsp;·&nbsp; AUTO-CALCULATED &nbsp;·&nbsp; UPDATES ON BUILD
+    <div style="font-family:monospace;font-size:11px;margin-top:8px;display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+      <span style="color:#5c8f68">● ACTIVE</span>
+      <span style="color:#8953d1;opacity:0.7">AUTO-CALCULATED</span>
+      <span style="color:#8953d1;opacity:0.7">UPDATES ON BUILD</span>
     </div>
   </section>
 
@@ -308,6 +312,8 @@ const meta = {
     statFormulas={statFormulas}
     expFormula={expFormula}
     levelFormula={levelFormula}
+    mediaCount={libraryCount}
+    bookCount={bookCount}
   />
 
   <section class="mt-16 border-t border-gray-100 pt-8 dark:border-gray-800">

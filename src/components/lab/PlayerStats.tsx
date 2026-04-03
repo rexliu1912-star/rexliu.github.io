@@ -144,6 +144,8 @@ export interface PlayerStatsProps {
   statFormulas: Record<string, StatFormulaData>;
   expFormula: { zh: string; en: string };
   levelFormula: { zh: string; en: string; nextLevel: string };
+  mediaCount: number;
+  bookCount: number;
 }
 
 const PURPLE = "#8953d1";
@@ -232,6 +234,36 @@ function useCountUp(target: number, duration = 700, enabled = true) {
     return () => cancelAnimationFrame(raf);
   }, [target, duration, enabled, reduced]);
   return value;
+}
+
+function SegmentedBar({ progress, dark }: { progress: number; dark: boolean }) {
+  const filled = Math.round(progress / 10);
+  return (
+    <div style={{ display: "flex", gap: 2 }}>
+      {Array.from({ length: 10 }, (_, i) => (
+        <div key={i} style={{
+          flex: 1, height: 16, borderRadius: 3,
+          background: i < filled ? PURPLE : (dark ? "rgba(255,255,255,0.08)" : "rgba(60,20,90,0.08)"),
+          transition: "background 300ms ease"
+        }} />
+      ))}
+    </div>
+  );
+}
+
+function AchievementRing({ progress, max }: { progress: number; max: number }) {
+  const ratio = max > 0 ? progress / max : 0;
+  const r = 14;
+  const circumference = 2 * Math.PI * r;
+  const offset = circumference - ratio * circumference;
+  return (
+    <svg width="36" height="36" viewBox="0 0 36 36" style={{ display: "block" }}>
+      <circle cx="18" cy="18" r={r} fill="none" stroke="rgba(137,83,209,0.15)" strokeWidth="3" />
+      <circle cx="18" cy="18" r={r} fill="none" stroke={PURPLE} strokeWidth="3"
+        strokeLinecap="round" strokeDasharray={circumference} strokeDashoffset={offset}
+        transform="rotate(-90 18 18)" />
+    </svg>
+  );
 }
 
 function TooltipWrap({ content, children, align = "left" }: { content: React.ReactNode; children: React.ReactNode; align?: "left" | "center" | "right" }) {
@@ -332,34 +364,42 @@ function TooltipWrap({ content, children, align = "left" }: { content: React.Rea
   );
 }
 
-const Section = memo(function Section({ dark, children }: { dark: boolean; children: React.ReactNode }) {
-  return <section className="ps-section" style={{ width: "100%", maxWidth: 1200, margin: "0 auto", border: `1px solid ${dark ? "rgba(137,83,209,0.22)" : "rgba(137,83,209,0.14)"}`, borderRadius: 24, padding: "1.35rem", background: dark ? "linear-gradient(180deg, rgba(18,14,29,0.98), rgba(10,8,18,0.98))" : "linear-gradient(180deg, rgba(255,255,255,0.96), rgba(248,242,255,0.96))", boxShadow: dark ? "0 10px 24px rgba(0,0,0,0.18)" : "0 10px 20px rgba(137,83,209,0.08)" }}>{children}</section>;
+const Section = memo(function Section({ dark, children, hero }: { dark: boolean; children: React.ReactNode; hero?: boolean }) {
+  return <section className="ps-section" style={{ width: "100%", maxWidth: 1200, margin: "0 auto", border: `1px solid ${dark ? "rgba(137,83,209,0.22)" : "rgba(137,83,209,0.14)"}`, borderRadius: 24, padding: "1.35rem", background: hero ? (dark ? "linear-gradient(180deg, rgba(16,12,26,0.99), rgba(10,8,18,0.99))" : "linear-gradient(180deg, rgba(255,255,255,0.98), rgba(250,246,255,0.98))") : (dark ? "linear-gradient(180deg, rgba(18,14,29,0.98), rgba(10,8,18,0.98))" : "linear-gradient(180deg, rgba(255,255,255,0.96), rgba(248,242,255,0.96))"), boxShadow: hero ? `0 0 0 1px rgba(137,83,209,0.22), 0 0 24px rgba(137,83,209,0.08)` : (dark ? "0 10px 24px rgba(0,0,0,0.18)" : "0 10px 20px rgba(137,83,209,0.08)") }}>{children}</section>;
 });
 
 const SectionHeader = memo(function SectionHeader({ icon, zh, en, dark }: { icon: string; zh: string; en: string; dark: boolean }) {
   return <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 18 }}><span style={{ width: 34, height: 34, borderRadius: 999, display: "grid", placeItems: "center", border: `1px solid ${dark ? "rgba(137,83,209,0.24)" : "rgba(137,83,209,0.18)"}`, background: dark ? "rgba(137,83,209,0.08)" : "rgba(137,83,209,0.05)" }}>{icon}</span><div style={{ fontFamily: "Georgia, Cambria, serif", fontWeight: 700, color: dark ? "#fff" : "#261a33", fontSize: "1.06rem" }}><span className="lang-zh">{zh}</span><span className="lang-en">{en}</span></div><div style={{ flex: 1, height: 1, background: "linear-gradient(90deg, rgba(137,83,209,0.28), transparent)" }} /></div>;
 });
 
-const HeroCard = memo(function HeroCard({ dark, rank, level, totalExp, expInLevel, expNeeded, expProgress, currentCity, travelDays, expFormula, levelFormula }: {
-  dark: boolean; rank: { zh: string; en: string }; level: number; totalExp: number; expInLevel: number; expNeeded: number; expProgress: number; currentCity: { name: string; nameCN: string }; travelDays: number; expFormula: { zh: string; en: string }; levelFormula: { zh: string; en: string; nextLevel: string };
+const HeroCard = memo(function HeroCard({ dark, rank, level, totalExp, expInLevel, expNeeded, expProgress, avgStat, currentCity, travelDays, expFormula, levelFormula }: {
+  dark: boolean; rank: { zh: string; en: string }; level: number; totalExp: number; expInLevel: number; expNeeded: number; expProgress: number; avgStat: number; currentCity: { name: string; nameCN: string }; travelDays: number; expFormula: { zh: string; en: string }; levelFormula: { zh: string; en: string; nextLevel: string };
 }) {
   const reduced = usePrefersReducedMotion();
   const [revealed, setRevealed] = useState(false);
   const expAnimated = Math.round(useCountUp(totalExp, 900, true));
   const progressAnimated = Math.round(useCountUp(expProgress, 900, true));
   const levelAnimated = Math.round(useCountUp(level, 900, true));
+  const powerRating = Math.round(avgStat * level * 1.5);
+  const powerAnimated = Math.round(useCountUp(powerRating, 1200, revealed));
   const filledBlocks = Math.round(expProgress / 10);
 
   useEffect(() => {
     if (reduced) { setRevealed(true); return; }
-    const timer = setTimeout(() => setRevealed(true), 30);
+    const timer = setTimeout(() => setRevealed(true), 50);
     return () => clearTimeout(timer);
   }, [reduced]);
 
   const stagger = (delayMs: number): CSSProperties => reduced ? { opacity: 1, transform: "none" } : {
     opacity: revealed ? 1 : 0,
     transform: revealed ? "translateY(0)" : "translateY(12px)",
-    transition: `opacity 380ms cubic-bezier(0.22, 1, 0.36, 1) ${delayMs}ms, transform 380ms cubic-bezier(0.22, 1, 0.36, 1) ${delayMs}ms`,
+    transition: `opacity 400ms cubic-bezier(0.22, 1, 0.36, 1) ${delayMs}ms, transform 400ms cubic-bezier(0.22, 1, 0.36, 1) ${delayMs}ms`,
+  };
+
+  const sideStagger = (delayMs: number): CSSProperties => reduced ? { opacity: 1, transform: "none" } : {
+    opacity: revealed ? 1 : 0,
+    transform: revealed ? "translateX(0)" : "translateX(16px)",
+    transition: `opacity 400ms cubic-bezier(0.22, 1, 0.36, 1) ${delayMs}ms, transform 400ms cubic-bezier(0.22, 1, 0.36, 1) ${delayMs}ms`,
   };
 
   const cornerStyle = (pos: "tl" | "tr" | "bl" | "br"): CSSProperties => ({
@@ -386,9 +426,12 @@ const HeroCard = memo(function HeroCard({ dark, rank, level, totalExp, expInLeve
       <div style={{ display: "flex", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
         <div>
           <h2 style={{ margin: 0, color: dark ? "#fff" : "#261a33", fontSize: "2rem", fontFamily: "Georgia, Cambria, serif", ...stagger(80) }}>Rex Liu</h2>
-          <div style={{ marginTop: 6, display: "flex", alignItems: "center", gap: 10, ...stagger(80) }}>
-            <span style={{ color: PURPLE, fontFamily: "monospace", fontSize: 12, fontWeight: 700 }}>PLAYER STATS</span>
-            <span style={{ fontFamily: "monospace", fontSize: 10, color: "#4caf50", letterSpacing: "0.04em" }}>● ACTIVE</span>
+          <div style={{ marginTop: 6, display: "flex", alignItems: "center", gap: 6, fontFamily: "monospace", fontSize: 11, ...stagger(80) }}>
+            <span style={{ color: PURPLE, fontWeight: 700 }}>PLAYER STATS</span>
+            <span style={{ opacity: 0.4 }}>|</span>
+            <span style={{ color: dark ? "#bcb2cb" : "#6f657d" }}>Lv.{levelAnimated}</span>
+            <span style={{ opacity: 0.4 }}>|</span>
+            <span style={{ color: SUCCESS, letterSpacing: "0.04em" }}>● ACTIVE</span>
           </div>
           <p style={{ margin: "10px 0 0", color: dark ? "#bcb2cb" : "#6f657d", lineHeight: 1.7, fontSize: 13, ...stagger(160) }}>
             <span className="lang-en">Sword intent in writing, inner strength in systems, footsteps across cities.</span>
@@ -397,18 +440,20 @@ const HeroCard = memo(function HeroCard({ dark, rank, level, totalExp, expInLeve
         </div>
         <div style={{ writingMode: "vertical-rl", textOrientation: "upright", letterSpacing: "0.12em", color: PURPLE, border: "1px solid rgba(137,83,209,0.2)", borderRadius: 999, padding: "10px 6px", background: dark ? "rgba(137,83,209,0.06)" : "rgba(137,83,209,0.04)" }}><span className="lang-zh">江湖档案</span><span className="lang-en">DOSSIER</span></div>
       </div>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 14, ...stagger(240) }}>
-        {[
-          { label: rank.zh, labelEn: rank.en },
-          { label: currentCity.nameCN, labelEn: currentCity.name },
-          { label: `游历 ${travelDays} 天`, labelEn: `${travelDays}d nomad` },
-        ].map((item, i) => <span key={i} style={{ padding: "6px 10px", borderRadius: 6, border: "1px solid rgba(137,83,209,0.18)", color: dark ? "#e9ddff" : "#6f46a3", background: dark ? "rgba(137,83,209,0.08)" : "rgba(137,83,209,0.05)", fontSize: 12, fontFamily: "monospace", display: "flex", alignItems: "center", gap: 6 }}>
-          <span style={{ color: PURPLE, fontWeight: 700 }}>|</span>
-          <span className="lang-zh">{item.label}</span>
-          <span className="lang-en">{item.labelEn}</span>
-        </span>)}
+      {/* A3: KEY:VALUE badges */}
+      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 4, marginTop: 14, fontFamily: "monospace", fontSize: 12, ...stagger(240) }}>
+        <span><span style={{ opacity: 0.5 }}>REALM:</span> <span className="lang-zh" style={{ fontWeight: 700, color: dark ? "#e9ddff" : "#6f46a3" }}>{rank.zh}</span><span className="lang-en" style={{ fontWeight: 700, color: dark ? "#e9ddff" : "#6f46a3" }}>{rank.en}</span></span>
+        <span style={{ opacity: 0.35, margin: "0 4px" }}>·</span>
+        <span><span style={{ opacity: 0.5 }}>LOC:</span> <span className="lang-zh" style={{ fontWeight: 700, color: dark ? "#e9ddff" : "#6f46a3" }}>{currentCity.nameCN}</span><span className="lang-en" style={{ fontWeight: 700, color: dark ? "#e9ddff" : "#6f46a3" }}>{currentCity.name}</span></span>
+        <span style={{ opacity: 0.35, margin: "0 4px" }}>·</span>
+        <span><span style={{ opacity: 0.5 }}>DAYS:</span> <span style={{ fontWeight: 700, color: dark ? "#e9ddff" : "#6f46a3" }}>{travelDays}d</span></span>
       </div>
-      <div style={{ marginTop: 16, ...stagger(300) }}>
+      {/* A6: PowerRating */}
+      <div style={{ marginTop: 16, ...stagger(320) }}>
+        <span style={{ fontFamily: "monospace", fontSize: 13, fontWeight: 700, color: PURPLE }}>POWER RATING: {powerAnimated.toLocaleString()}</span>
+      </div>
+      {/* EXP bar */}
+      <div style={{ marginTop: 10, ...stagger(400) }}>
         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8, gap: 10, flexWrap: "wrap" }}>
           <TooltipWrap content={<><div className="lang-zh">{expFormula.zh}</div><div className="lang-en" style={{ color: "#ccb7f7" }}>{expFormula.en}</div></>}><span style={{ color: PURPLE, fontFamily: "monospace", fontWeight: 700, fontSize: 12 }}>TOTAL EXP {expAnimated.toLocaleString()}</span></TooltipWrap>
           <span style={{ color: dark ? "#bcb2cb" : "#6f657d", fontFamily: "monospace", fontSize: 12 }}>{expInLevel} / {expNeeded}</span>
@@ -422,35 +467,28 @@ const HeroCard = memo(function HeroCard({ dark, rank, level, totalExp, expInLeve
         </div></TooltipWrap>
       </div>
     </div>
-    {/* Right: side panel */}
-    <div className="hero-side" style={{ minWidth: 140 }}>
+    {/* Right: side panel (A4) — realm + segmented bar + EXP + status only */}
+    <div className="hero-side" style={{ minWidth: 140, ...sideStagger(300) }}>
       <div style={{ borderRadius: 12, border: "1px solid rgba(137,83,209,0.2)", background: dark ? "rgba(137,83,209,0.06)" : "rgba(137,83,209,0.04)", overflow: "hidden", fontFamily: "monospace" }}>
-        <div style={{ padding: "12px 14px", borderBottom: "1px solid rgba(137,83,209,0.12)", ...stagger(80) }}>
-          <div style={{ fontSize: 10, color: dark ? "#bcb2cb" : "#7a6d89", letterSpacing: "0.08em" }}>REALM</div>
+        <div style={{ padding: "12px 14px", borderBottom: "1px solid rgba(137,83,209,0.12)" }}>
+          <div style={{ fontSize: 10, color: dark ? "#bcb2cb" : "#7a6d89", letterSpacing: "0.08em", opacity: 0.5 }}>REALM</div>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 8, marginTop: 4 }}>
             <span style={{ color: PURPLE, fontWeight: 700, fontSize: 16, fontFamily: "Georgia, Cambria, serif" }}><span className="lang-zh">{rank.zh}</span><span className="lang-en">{rank.en}</span></span>
             <span style={{ color: dark ? "#bcb2cb" : "#7a6d89", fontSize: 11 }}>Lv.{levelAnimated}</span>
           </div>
         </div>
-        <div style={{ padding: "12px 14px", borderBottom: "1px solid rgba(137,83,209,0.12)", ...stagger(160) }}>
-          <div style={{ display: "flex", gap: 3, marginBottom: 6 }}>
-            {Array(10).fill(0).map((_, i) => <span key={i} style={{
-              flex: 1, height: 10, borderRadius: 2,
-              background: i < filledBlocks ? PURPLE : (dark ? "rgba(255,255,255,0.08)" : "rgba(60,20,90,0.08)"),
-            }} />)}
-          </div>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div style={{ padding: "12px 14px", borderBottom: "1px solid rgba(137,83,209,0.12)" }}>
+          <SegmentedBar progress={expProgress} dark={dark} />
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 6 }}>
             <span style={{ fontSize: 12, fontWeight: 700, color: dark ? "#fff" : "#261a33" }}>{progressAnimated}%</span>
             <span style={{ fontSize: 10, color: dark ? "#bcb2cb" : "#7a6d89" }}>{expInLevel}/{expNeeded} EXP</span>
           </div>
         </div>
-        <div style={{ padding: "10px 14px", display: "grid", gap: 4, ...stagger(240) }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: dark ? "#d3cae0" : "#6f657d" }}>
-            <span>📍</span><span className="lang-zh">{currentCity.nameCN}</span><span className="lang-en">{currentCity.name}</span>
-          </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: dark ? "#d3cae0" : "#6f657d" }}>
-            <span>🗓</span><span>{travelDays}d</span>
-          </div>
+        <div style={{ padding: "10px 14px", display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: dark ? "#d3cae0" : "#6f657d" }}>
+          <span style={{ color: SUCCESS }}>●</span>
+          <span>ACTIVE</span>
+          <span style={{ opacity: 0.4 }}>·</span>
+          <span>{travelDays}d</span>
         </div>
       </div>
     </div>
@@ -504,7 +542,7 @@ const ChapterCarousel = memo(function ChapterCarousel({ chapters, articleMeta, d
           <div className="chapter-detail-grid" style={{ display: "grid", gridTemplateRows: expanded ? "1fr" : "0fr", transition: reduced ? undefined : "grid-template-rows 240ms cubic-bezier(0.22, 1, 0.36, 1)" }}>
             <div style={{ overflow: "hidden" }}>
               <div style={{ paddingTop: 14, display: "grid", gap: 12, borderTop: "1px solid rgba(137,83,209,0.1)" }}>
-                {active.boss && <div style={{ borderRadius: 16, padding: 14, border: "1px solid rgba(137,83,209,0.14)", background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.7)" }}><div style={{ color: PURPLE, fontFamily: "monospace", fontSize: 11 }}>Boss</div><div style={{ marginTop: 6, color: dark ? "#fff" : "#261a33", fontWeight: 700 }}>{active.boss.name}</div><div style={{ marginTop: 6, color: dark ? "#d3cae0" : "#6f657d", fontSize: 13 }}>{active.boss.description || active.boss.reward}</div></div>}
+                {active.boss && <div style={{ borderRadius: 16, padding: 14, border: "1px solid rgba(137,83,209,0.14)", background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.7)", position: "relative" }}><div style={{ color: PURPLE, fontFamily: "monospace", fontSize: 11 }}>Boss</div><div style={{ marginTop: 6, color: dark ? "#fff" : "#261a33", fontWeight: 700 }}>{active.boss.defeated ? <span className={expanded ? "boss-defeated-name" : ""}>{active.boss.name}</span> : active.boss.name}</div><div style={{ marginTop: 6, color: dark ? "#d3cae0" : "#6f657d", fontSize: 13 }}>{active.boss.description || active.boss.reward}</div>{active.boss.defeated && expanded && <div className="boss-stamp" style={{ position: "absolute", top: 8, right: 8, transform: "rotate(-12deg)", border: "2px solid #c94040", borderRadius: 6, padding: "2px 8px", color: "#c94040", fontFamily: "monospace", fontWeight: 700, fontSize: 11, letterSpacing: "0.1em", animation: reduced ? undefined : "stampReveal 300ms ease-out 500ms forwards", opacity: reduced ? 1 : 0 }}>DEFEATED</div>}</div>}
                 {!!active.rewards.length && <div><div style={{ color: PURPLE, fontFamily: "monospace", fontSize: 11, marginBottom: 8 }}>Rewards</div><div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>{active.rewards.map(reward => <span key={reward} style={{ padding: "6px 10px", borderRadius: 999, border: "1px solid rgba(137,83,209,0.16)", background: dark ? "rgba(137,83,209,0.06)" : "rgba(137,83,209,0.04)", color: PURPLE, fontSize: 12 }}>{reward}</span>)}</div></div>}
                 {!!active.articles.length && <div><div style={{ color: PURPLE, fontFamily: "monospace", fontSize: 11, marginBottom: 8 }}>Articles</div><div style={{ display: "grid", gap: 8 }}>{active.articles.map(article => {
                   const meta = articleMeta[article];
@@ -696,7 +734,7 @@ const RetainerPanel = memo(function RetainerPanel({ retainers, dark }: { retaine
   const maxSessions = Math.max(...retainers.map(agent => agent.sessions), 1);
   return <div className="retainer-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 12 }}>{retainers.map(agent => {
     const ratio = Math.max(6, Math.round(agent.sessions / maxSessions * 100));
-    return <a key={agent.id} href="/lab/agents/" style={{ textDecoration: "none" }}><div style={{ borderRadius: 18, padding: 14, border: `1px solid ${dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.7)" }}><div style={{ display: "flex", gap: 12, alignItems: "center" }}><img src={agent.sprite} alt={agent.name} width={56} height={56} style={{ width: 56, height: 56, borderRadius: 14, objectFit: "cover", imageRendering: "pixelated", border: "1px solid rgba(137,83,209,0.24)" }} /><div><div style={{ color: dark ? "#fff" : "#261a33", fontWeight: 700 }}>{agent.name} {agent.emoji}</div><div style={{ color: PURPLE, fontSize: 11 }}>{agent.titleZh}</div></div></div><div style={{ marginTop: 12, display: "flex", justifyContent: "space-between", fontFamily: "monospace", fontSize: 11 }}><span style={{ color: dark ? "#c8bed8" : "#78688a" }}>Lv.{agent.level}</span><span style={{ color: PURPLE }}>{agent.sessions} sessions</span></div><div style={{ marginTop: 10, height: 4, borderRadius: 999, background: dark ? "rgba(255,255,255,0.07)" : "rgba(60,20,90,0.08)", overflow: "hidden" }}><div style={{ width: `${ratio}%`, height: "100%", borderRadius: 999, background: PURPLE }} /></div></div></a>;
+    return <a key={agent.id} href="/lab/agents/" style={{ textDecoration: "none" }}><div style={{ borderRadius: 18, padding: 14, border: `1px solid ${dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.7)" }}><div style={{ display: "flex", gap: 12, alignItems: "center" }}><img src={agent.sprite} alt={agent.name} width={56} height={56} style={{ width: 56, height: 56, borderRadius: 14, objectFit: "cover", imageRendering: "pixelated", border: "1px solid rgba(137,83,209,0.24)" }} /><div><div style={{ color: dark ? "#fff" : "#261a33", fontWeight: 700 }}>{agent.name} {agent.emoji}</div><div style={{ color: PURPLE, fontSize: 11 }}>{agent.titleZh}</div></div></div><div style={{ marginTop: 12, display: "flex", justifyContent: "space-between", fontFamily: "monospace", fontSize: 11 }}><span style={{ color: dark ? "#c8bed8" : "#78688a" }}>Lv.{agent.level}</span><span style={{ color: PURPLE }}>{agent.sessions} sessions</span></div><div style={{ marginTop: 10, height: 6, borderRadius: 999, background: dark ? "rgba(255,255,255,0.07)" : "rgba(60,20,90,0.08)", overflow: "hidden" }}><div style={{ width: `${ratio}%`, height: "100%", borderRadius: 999, background: PURPLE, boxShadow: ratio >= 100 ? "2px 0 8px rgba(137,83,209,0.4)" : undefined }} /></div></div></a>;
   })}</div>;
 });
 
@@ -1003,8 +1041,11 @@ const AchievementBadges = memo(function AchievementBadges({ achievements, dark }
                     <div style={{ marginTop: 8, color: PURPLE, fontFamily: "monospace", fontSize: 10 }}>✓ {item.unlockedDate}</div>
                   )}
                   {!item.unlocked && item.progress !== undefined && item.max !== undefined && (
-                    <div style={{ marginTop: 8, color: dark ? "#c8bed8" : "#78688a", fontFamily: "monospace", fontSize: 10 }}>
-                      {item.progress}/{item.max}
+                    <div style={{ marginTop: 8, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                      <div style={{ color: dark ? "#c8bed8" : "#78688a", fontFamily: "monospace", fontSize: 10 }}>
+                        {item.progress}/{item.max}
+                      </div>
+                      <AchievementRing progress={item.progress} max={item.max} />
                     </div>
                   )}
                 </div>
@@ -1023,12 +1064,39 @@ const CultivationLog = memo(function CultivationLog({ activityLog, dark }: { act
     <div style={{ display: "grid", gap: 12 }}>{visible.map((item, i) => <div key={`${item.dateEn}-${i}`} style={{ position: "relative", paddingLeft: 18 }}><span style={{ position: "absolute", left: -1, top: 10, width: 8, height: 8, borderRadius: "50%", background: PURPLE }} /><div style={{ borderRadius: 16, padding: "12px 14px", border: `1px solid ${dark ? "rgba(137,83,209,0.14)" : "rgba(137,83,209,0.1)"}`, background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.72)" }}><div style={{ display: "flex", justifyContent: "space-between", gap: 10, flexWrap: "wrap" }}><div style={{ color: dark ? "#ac9fbe" : "#8b7a98", fontFamily: "monospace", fontSize: 11 }}>{item.dateZh}</div><div style={{ color: PURPLE, fontFamily: "monospace", fontWeight: 700, fontSize: 11 }}>+{item.exp} EXP</div></div><div style={{ marginTop: 8, display: "grid", gridTemplateColumns: "26px 1fr", gap: 10, alignItems: "start" }}><div>{item.icon}</div><div style={{ color: dark ? "#fff" : "#261a33", fontSize: 12, lineHeight: 1.7 }}>{item.descZh}</div></div></div></div>)}</div></div>;
 });
 
+const SaveFooter = memo(function SaveFooter({ dark, travelDays, mediaCount, bookCount }: {
+  dark: boolean; travelDays: number; mediaCount: number; bookCount: number;
+}) {
+  const buildDate = new Date().toISOString().slice(0, 10);
+  return (
+    <div style={{
+      fontFamily: "monospace", fontSize: 11, lineHeight: 1.8,
+      color: dark ? "#7a6d89" : "#8b7a98",
+      border: `1px solid ${dark ? "rgba(137,83,209,0.16)" : "rgba(137,83,209,0.12)"}`,
+      borderRadius: 14, padding: "12px 16px",
+      background: dark ? "rgba(255,255,255,0.02)" : "rgba(255,255,255,0.6)",
+      maxWidth: 420
+    }}>
+      <div>── SAVE DATA ──────────────────</div>
+      <div>Last build : {buildDate}</div>
+      <div>Media      : {mediaCount} titles</div>
+      <div>Books      : {bookCount} titles</div>
+      <div>Playtime   : {travelDays}d</div>
+      <div>────────────────────────────────</div>
+    </div>
+  );
+});
+
 export default function PlayerStats(props: PlayerStatsProps) {
   const dark = useTheme();
-  const { stats, level, totalExp, expInLevel, expNeeded, expProgress, rank, currentCity, travelDays, tagCounts, postCount, builderLogCount, cities, achievements, retainers, quests, equipment, activityLog, chapters, relationships, articleMeta, statFormulas, expFormula, levelFormula } = props;
+  const { stats, level, totalExp, expInLevel, expNeeded, expProgress, rank, avgStat, currentCity, travelDays, tagCounts, postCount, builderLogCount, cities, achievements, retainers, quests, equipment, activityLog, chapters, relationships, articleMeta, statFormulas, expFormula, levelFormula, mediaCount, bookCount } = props;
   return <div style={{ width: "100%", maxWidth: 1200, margin: "0 auto", fontFamily: "Georgia, Cambria, serif", paddingInline: 12 }}>
     <style>{`
       @keyframes chapterSlide { from { opacity: 0; transform: translateX(26px); } to { opacity: 1; transform: translateX(0); } }
+      @keyframes strikethrough { from { width: 0; } to { width: 100%; } }
+      @keyframes stampReveal { from { opacity: 0; transform: rotate(-12deg) scale(1.4); } to { opacity: 1; transform: rotate(-12deg) scale(1); } }
+      .boss-defeated-name { position: relative; display: inline-block; }
+      .boss-defeated-name::after { content: ""; position: absolute; left: 0; top: 50%; height: 2px; background: #c94040; animation: strikethrough 400ms ease-out 200ms forwards; width: 0; }
       @keyframes lineFlow { from { stroke-dashoffset: 180; } to { stroke-dashoffset: 0; } }
       @keyframes radarPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.01); } }
       .radar-wrap.is-active > :first-child { animation: radarPulse 4s ease-in-out infinite; transform-origin: center; will-change: transform; }
@@ -1062,11 +1130,11 @@ export default function PlayerStats(props: PlayerStatsProps) {
         .chapter-nav-btn { width: 32px !important; height: 32px !important; min-width: 32px !important; }
       }
       @media (prefers-reduced-motion: reduce) {
-        .chapter-slide-card, .equipment-floating, .equipment-line, .skill-tree-flow, .radar-wrap.is-active > :first-child, .achievement-badge { animation: none !important; transition: none !important; }
+        .chapter-slide-card, .equipment-floating, .equipment-line, .skill-tree-flow, .radar-wrap.is-active > :first-child, .achievement-badge, .boss-defeated-name::after, .boss-stamp { animation: none !important; transition: none !important; opacity: 1 !important; }
       }
     `}</style>
     <div style={{ display: "grid", gap: 18 }}>
-      <Section dark={dark}><HeroCard dark={dark} rank={rank} level={level} totalExp={totalExp} expInLevel={expInLevel} expNeeded={expNeeded} expProgress={expProgress} currentCity={currentCity} travelDays={travelDays} expFormula={expFormula} levelFormula={levelFormula} /></Section>
+      <Section dark={dark} hero><HeroCard dark={dark} rank={rank} level={level} totalExp={totalExp} expInLevel={expInLevel} expNeeded={expNeeded} expProgress={expProgress} avgStat={avgStat} currentCity={currentCity} travelDays={travelDays} expFormula={expFormula} levelFormula={levelFormula} /></Section>
       <Section dark={dark}><SectionHeader icon="🧭" zh="人生章节" en="Chapter Archive" dark={dark} /><ChapterCarousel chapters={chapters} articleMeta={articleMeta} dark={dark} /></Section>
       <Section dark={dark}><a href="/travel/" style={{ display: "flex", gap: 14, justifyContent: "center", alignItems: "center", textDecoration: "none" }}><span style={{ fontSize: 28 }}>🗺️</span><div><div style={{ color: PURPLE, fontWeight: 700, fontSize: 24 }}>{cities.length} <span style={{ color: dark ? "#c8bed8" : "#78688a", fontSize: 13, fontWeight: 400 }}>座城市已游历</span></div><div style={{ color: dark ? "#ac9fbe" : "#8b7a98", fontSize: 12 }}>→ 查看完整旅居地图</div></div></a></Section>
       <Section dark={dark}><SectionHeader icon="📊" zh="六维属性" en="Six Attributes" dark={dark} /><StatRadar stats={stats} statFormulas={statFormulas} dark={dark} /><StatLegend dark={dark} /></Section>
@@ -1077,6 +1145,7 @@ export default function PlayerStats(props: PlayerStatsProps) {
       <Section dark={dark}><SectionHeader icon="🤝" zh="江湖关系" en="Relationships" dark={dark} /><RelationshipPanel relationships={relationships} dark={dark} /></Section>
       <Section dark={dark}><SectionHeader icon="🏆" zh="成就" en="Achievements" dark={dark} /><AchievementBadges achievements={achievements} dark={dark} /></Section>
       <Section dark={dark}><SectionHeader icon="📜" zh="修行日志" en="Cultivation Log" dark={dark} /><CultivationLog activityLog={activityLog} dark={dark} /></Section>
+      <SaveFooter dark={dark} travelDays={travelDays} mediaCount={mediaCount} bookCount={bookCount} />
     </div>
   </div>;
 }
