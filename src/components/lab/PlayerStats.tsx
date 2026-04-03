@@ -1059,9 +1059,18 @@ const AchievementBadges = memo(function AchievementBadges({ achievements, dark }
 });
 
 const CultivationLog = memo(function CultivationLog({ activityLog, dark }: { activityLog: PlayerStatsProps["activityLog"]; dark: boolean }) {
-  const visible = activityLog.slice(0, 20);
+  const [showAll, setShowAll] = useState(false);
+  const visible = showAll ? activityLog : activityLog.slice(0, 20);
+  const hasMore = activityLog.length > 20;
   return <div style={{ position: "relative", paddingLeft: 22 }}><div style={{ position: "absolute", left: 7, top: 6, bottom: 6, width: 2, background: PURPLE, opacity: 0.45 }} />
-    <div style={{ display: "grid", gap: 12 }}>{visible.map((item, i) => <div key={`${item.dateEn}-${i}`} style={{ position: "relative", paddingLeft: 18 }}><span style={{ position: "absolute", left: -1, top: 10, width: 8, height: 8, borderRadius: "50%", background: PURPLE }} /><div style={{ borderRadius: 16, padding: "12px 14px", border: `1px solid ${dark ? "rgba(137,83,209,0.14)" : "rgba(137,83,209,0.1)"}`, background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.72)" }}><div style={{ display: "flex", justifyContent: "space-between", gap: 10, flexWrap: "wrap" }}><div style={{ color: dark ? "#ac9fbe" : "#8b7a98", fontFamily: "monospace", fontSize: 11 }}>{item.dateZh}</div><div style={{ color: PURPLE, fontFamily: "monospace", fontWeight: 700, fontSize: 11 }}>+{item.exp} EXP</div></div><div style={{ marginTop: 8, display: "grid", gridTemplateColumns: "26px 1fr", gap: 10, alignItems: "start" }}><div>{item.icon}</div><div style={{ color: dark ? "#fff" : "#261a33", fontSize: 12, lineHeight: 1.7 }}>{item.descZh}</div></div></div></div>)}</div></div>;
+    <div style={{ display: "grid", gap: 12 }}>
+      {visible.map((item, i) => <div key={`${item.dateEn}-${i}`} style={{ position: "relative", paddingLeft: 18 }}><span style={{ position: "absolute", left: -1, top: 10, width: 8, height: 8, borderRadius: "50%", background: PURPLE }} /><div style={{ borderRadius: 16, padding: "12px 14px", border: `1px solid ${dark ? "rgba(137,83,209,0.14)" : "rgba(137,83,209,0.1)"}`, background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.72)" }}><div style={{ display: "flex", justifyContent: "space-between", gap: 10, flexWrap: "wrap" }}><div style={{ color: dark ? "#ac9fbe" : "#8b7a98", fontFamily: "monospace", fontSize: 11 }}>{item.dateZh}</div><div style={{ color: PURPLE, fontFamily: "monospace", fontWeight: 700, fontSize: 11 }}>+{item.exp} EXP</div></div><div style={{ marginTop: 8, display: "grid", gridTemplateColumns: "26px 1fr", gap: 10, alignItems: "start" }}><div>{item.icon}</div><div style={{ color: dark ? "#fff" : "#261a33", fontSize: 12, lineHeight: 1.7 }}>{item.descZh}</div></div></div></div>)}
+      {hasMore && <div style={{ display: "flex", justifyContent: "center", paddingTop: 8 }}>
+        <button type="button" onClick={() => setShowAll(v => !v)} style={{ borderRadius: 999, border: `1px solid rgba(137,83,209,0.2)`, background: showAll ? PURPLE : "transparent", color: showAll ? "#fff" : PURPLE, padding: "10px 20px", cursor: "pointer", fontWeight: 700, fontFamily: "monospace", fontSize: 12 }}>
+          {showAll ? (<><span className="lang-zh">收起</span><span className="lang-en">Show less</span></>) : (<><span className="lang-zh">查看全部 ({activityLog.length})</span><span className="lang-en">View all ({activityLog.length})</span></>)}
+        </button>
+      </div>}
+    </div></div>;
 });
 
 const SaveFooter = memo(function SaveFooter({ dark, travelDays, mediaCount, bookCount, postCount, cityCount, level }: {

@@ -227,6 +227,31 @@ for (const digest of digests) {
   const d = new Date(digest.data.date); const { dateZh, dateEn } = fmtDate(d);
   allActivity.push({ dateRaw: d, dateZh, dateEn, icon: "📜", statZh: "身法", statEn: "Agility", exp: 2, descZh: digest.data.title_zh ?? digest.data.title, descEn: digest.data.title, type: "digest" });
 }
+// 书影音
+for (const item of (mediaData as any[])) {
+  if (!item.year) continue;
+  const d = new Date(`${item.year}-06-01`);
+  const { dateZh, dateEn } = fmtDate(d);
+  const typeLabel = item.type === "movie" ? "观影" : item.type === "series" ? "追剧" : item.type === "documentary" ? "纪录片" : "综艺";
+  const typeLabelEn = item.type === "movie" ? "Watched film" : item.type === "series" ? "Watched series" : item.type === "documentary" ? "Watched documentary" : "Watched show";
+  allActivity.push({ dateRaw: d, dateZh, dateEn, icon: "🎬", statZh: "身法", statEn: "Agility", exp: 3, descZh: `${typeLabel}《${item.title}》`, descEn: `${typeLabelEn} "${item.titleEn || item.title}"`, type: "media" });
+}
+// 书籍
+for (const book of (booksData as any[])) {
+  const dateStr = book.endDate && book.endDate !== "-" ? book.endDate : book.addedDate;
+  if (!dateStr) continue;
+  const d = new Date(dateStr);
+  if (isNaN(d.getTime())) continue;
+  const { dateZh, dateEn } = fmtDate(d);
+  allActivity.push({ dateRaw: d, dateZh, dateEn, icon: "📚", statZh: "身法", statEn: "Agility", exp: 3, descZh: `读完《${book.title}》`, descEn: `Finished "${book.titleEn || book.title}"`, type: "book" });
+}
+// 城市
+for (const city of nomadCities) {
+  if (!city.arrival) continue;
+  const d = new Date(city.arrival);
+  const { dateZh, dateEn } = fmtDate(d);
+  allActivity.push({ dateRaw: d, dateZh, dateEn, icon: "📍", statZh: "体力", statEn: "HP", exp: 5, descZh: `抵达${city.nameCN}`, descEn: `Arrived in ${city.name}`, type: "travel" });
+}
 allActivity.sort((a, b) => b.dateRaw.getTime() - a.dateRaw.getTime());
 const activityForClient = allActivity.map(({ dateRaw, ...rest }) => rest);
 
