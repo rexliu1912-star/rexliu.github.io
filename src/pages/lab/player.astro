@@ -231,21 +231,26 @@ for (const digest of digests) {
   const d = new Date(digest.data.date); const { dateZh, dateEn } = fmtDate(d);
   allActivity.push({ dateRaw: d, dateZh, dateEn, icon: "📜", statZh: "身法", statEn: "Agility", exp: 2, descZh: digest.data.title_zh ?? digest.data.title, descEn: digest.data.title, type: "digest" });
 }
-// 书影音
+// 书影音 — 用发行年份，日期只精确到年，显示为 YYYY年
 for (const item of (mediaData as any[])) {
   if (!item.year) continue;
-  const d = new Date(`${item.year}-06-01`);
-  const { dateZh, dateEn } = fmtDate(d);
+  const yr = parseInt(item.year);
+  if (isNaN(yr) || yr > new Date().getFullYear()) continue; // 跳过未来年份
+  const d = new Date(`${yr}-01-01`);
+  const dateZh = `${yr}年`;
+  const dateEn = `${yr}`;
   const typeLabel = item.type === "movie" ? "观影" : item.type === "series" ? "追剧" : item.type === "documentary" ? "纪录片" : "综艺";
   const typeLabelEn = item.type === "movie" ? "Watched film" : item.type === "series" ? "Watched series" : item.type === "documentary" ? "Watched documentary" : "Watched show";
   allActivity.push({ dateRaw: d, dateZh, dateEn, icon: "🎬", statZh: "身法", statEn: "Agility", exp: 5, descZh: `${typeLabel}《${item.title}》`, descEn: `${typeLabelEn} "${item.titleEn || item.title}"`, type: "media" });
 }
-// 书籍
+// 书籍 — 用实际读完日期（已有的话），否则用 addedDate 年份
 for (const book of (booksData as any[])) {
   const dateStr = book.endDate && book.endDate !== "-" ? book.endDate : book.addedDate;
   if (!dateStr) continue;
   const d = new Date(dateStr);
   if (isNaN(d.getTime())) continue;
+  const yr = d.getFullYear();
+  if (yr > new Date().getFullYear()) continue; // 跳过未来年份
   const { dateZh, dateEn } = fmtDate(d);
   allActivity.push({ dateRaw: d, dateZh, dateEn, icon: "📚", statZh: "身法", statEn: "Agility", exp: 15, descZh: `读完《${book.title}》`, descEn: `Finished "${book.titleEn || book.title}"`, type: "book" });
 }
