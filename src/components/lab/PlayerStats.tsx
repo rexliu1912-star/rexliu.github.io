@@ -236,21 +236,6 @@ function useCountUp(target: number, duration = 700, enabled = true) {
   return value;
 }
 
-function SegmentedBar({ progress, dark }: { progress: number; dark: boolean }) {
-  const filled = Math.round(progress / 10);
-  return (
-    <div style={{ display: "flex", gap: 2 }}>
-      {Array.from({ length: 10 }, (_, i) => (
-        <div key={i} style={{
-          flex: 1, height: 16, borderRadius: 3,
-          background: i < filled ? PURPLE : (dark ? "rgba(255,255,255,0.08)" : "rgba(60,20,90,0.08)"),
-          transition: "background 300ms ease"
-        }} />
-      ))}
-    </div>
-  );
-}
-
 function AchievementRing({ progress, max }: { progress: number; max: number }) {
   const ratio = max > 0 ? progress / max : 0;
   const r = 14;
@@ -378,7 +363,8 @@ const HeroCard = memo(function HeroCard({ dark, rank, level, totalExp, expInLeve
   const reduced = usePrefersReducedMotion();
   const [revealed, setRevealed] = useState(false);
   const expAnimated = Math.round(useCountUp(totalExp, 900, true));
-  const progressAnimated = Math.round(useCountUp(expProgress, 900, true));
+  // expProgress used in EXP bar width below
+  void useCountUp(expProgress, 900, true);
   const levelAnimated = Math.round(useCountUp(level, 900, true));
   const powerRating = Math.round(avgStat * level * 1.5);
   const powerAnimated = Math.round(useCountUp(powerRating, 1200, revealed));
