@@ -227,12 +227,12 @@ for (const post of posts) {
 for (const log of builderLogs) {
   const d = new Date(log.data.date); const { dateZh, dateEn } = fmtDate(d);
   const slug = log.id.replace(/\.(md|mdx)$/, "");
-  allActivity.push({ dateRaw: d, dateZh, dateEn, icon: "🛠️", statZh: "武术", statEn: "Martial", exp: 12, descZh: log.data.title_zh ?? log.data.title, descEn: log.data.title, type: "builder-log", link: `/builder-log/${slug}/` });
+  allActivity.push({ dateRaw: d, dateZh, dateEn, icon: "🛠️", statZh: "武术", statEn: "Martial", exp: 12, descZh: log.data.title_zh ?? log.data.title, descEn: log.data.title, type: "builder-log", link: `/lab/builder-log/${slug}/` });
 }
 for (const digest of digests) {
   const d = new Date(digest.data.date); const { dateZh, dateEn } = fmtDate(d);
   const slug = digest.id.replace(/\.(md|mdx)$/, "");
-  allActivity.push({ dateRaw: d, dateZh, dateEn, icon: "📜", statZh: "身法", statEn: "Agility", exp: 2, descZh: digest.data.title_zh ?? digest.data.title, descEn: digest.data.title, type: "digest", link: `/digest/${slug}/` });
+  allActivity.push({ dateRaw: d, dateZh, dateEn, icon: "📜", statZh: "身法", statEn: "Agility", exp: 2, descZh: digest.data.title_zh ?? digest.data.title, descEn: digest.data.title, type: "digest", link: `/lab/digest/${slug}/` });
 }
 // 书影音 — 用发行年份，日期只精确到年，显示为 YYYY年
 for (const item of (mediaData as any[])) {
