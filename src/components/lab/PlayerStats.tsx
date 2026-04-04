@@ -137,6 +137,7 @@ export interface PlayerStatsProps {
     descZh: string;
     descEn: string;
     type: string;
+    link?: string;
   }>;
   chapters: ChapterData[];
   relationships: RelationshipData[];
@@ -350,7 +351,19 @@ function TooltipWrap({ content, children, align = "left" }: { content: React.Rea
 }
 
 const Section = memo(function Section({ dark, children, hero }: { dark: boolean; children: React.ReactNode; hero?: boolean }) {
-  return <section className="ps-section" style={{ width: "100%", maxWidth: 1200, margin: "0 auto", border: `1px solid ${dark ? "rgba(137,83,209,0.22)" : "rgba(137,83,209,0.14)"}`, borderRadius: 24, padding: "1.35rem", background: hero ? (dark ? "linear-gradient(180deg, rgba(16,12,26,0.99), rgba(10,8,18,0.99))" : "linear-gradient(180deg, rgba(255,255,255,0.98), rgba(250,246,255,0.98))") : (dark ? "linear-gradient(180deg, rgba(18,14,29,0.98), rgba(10,8,18,0.98))" : "linear-gradient(180deg, rgba(255,255,255,0.96), rgba(248,242,255,0.96))"), boxShadow: hero ? `0 0 0 1px rgba(137,83,209,0.22), 0 0 24px rgba(137,83,209,0.08)` : (dark ? "0 10px 24px rgba(0,0,0,0.18)" : "0 10px 20px rgba(137,83,209,0.08)") }}>{children}</section>;
+  const reduced = usePrefersReducedMotion();
+  const { ref, inView } = useInView<HTMLElement>(0.1, true);
+  const style: CSSProperties = {
+    width: "100%", maxWidth: 1200, margin: "0 auto",
+    border: `1px solid ${dark ? "rgba(137,83,209,0.22)" : "rgba(137,83,209,0.14)"}`,
+    borderRadius: 24, padding: "1.35rem",
+    background: hero ? (dark ? "linear-gradient(180deg, rgba(16,12,26,0.99), rgba(10,8,18,0.99))" : "linear-gradient(180deg, rgba(255,255,255,0.98), rgba(250,246,255,0.98))") : (dark ? "linear-gradient(180deg, rgba(18,14,29,0.98), rgba(10,8,18,0.98))" : "linear-gradient(180deg, rgba(255,255,255,0.96), rgba(248,242,255,0.96))"),
+    boxShadow: hero ? `0 0 0 1px rgba(137,83,209,0.22), 0 0 24px rgba(137,83,209,0.08)` : (dark ? "0 10px 24px rgba(0,0,0,0.18)" : "0 10px 20px rgba(137,83,209,0.08)"),
+    opacity: reduced ? 1 : (inView ? 1 : 0),
+    transform: reduced ? "none" : (inView ? "translateY(0)" : "translateY(18px)"),
+    transition: reduced ? undefined : "opacity 500ms cubic-bezier(0.22,1,0.36,1), transform 500ms cubic-bezier(0.22,1,0.36,1)",
+  };
+  return <section ref={ref} className="ps-section" style={style}>{children}</section>;
 });
 
 const SectionHeader = memo(function SectionHeader({ icon, zh, en, dark }: { icon: string; zh: string; en: string; dark: boolean }) {
@@ -500,27 +513,27 @@ const ChapterCarousel = memo(function ChapterCarousel({ chapters, articleMeta, d
           <div style={{ display: "flex", justifyContent: "space-between", gap: 14, alignItems: "flex-start", flexWrap: "wrap" }}>
             <div>
               <div style={{ color: PURPLE, fontFamily: "monospace", fontSize: 11 }}>{active.period}</div>
-              <div style={{ marginTop: 6, color: dark ? "#fff" : "#261a33", fontWeight: 700, fontSize: 26, fontFamily: "Georgia, Cambria, serif" }}>{active.titleCN}</div>
+              <div style={{ marginTop: 6, color: dark ? "#fff" : "#261a33", fontWeight: 700, fontSize: 26, fontFamily: "Georgia, Cambria, serif" }}><span className="lang-zh">{active.titleCN}</span><span className="lang-en">{active.titleEN}</span></div>
               <div style={{ marginTop: 6, color: dark ? "#bcb2cb" : "#6f657d", fontSize: 13 }}>{active.location}</div>
             </div>
             <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "flex-end" }}>
               {active.id === "current" && <span style={{ padding: "6px 10px", borderRadius: 999, border: "1px solid rgba(137,83,209,0.22)", background: "rgba(137,83,209,0.08)", color: PURPLE, fontFamily: "monospace", fontSize: 11 }}>CURRENT</span>}
-              {active.boss?.defeated && <span style={{ padding: "6px 10px", borderRadius: 999, border: `1px solid ${SUCCESS}55`, background: `${SUCCESS}18`, color: SUCCESS, fontFamily: "monospace", fontSize: 11 }}>✅ 已击败</span>}
+              {active.boss?.defeated && <span style={{ padding: "6px 10px", borderRadius: 999, border: `1px solid ${SUCCESS}55`, background: `${SUCCESS}18`, color: SUCCESS, fontFamily: "monospace", fontSize: 11 }}><span className="lang-zh">✅ 已击败</span><span className="lang-en">✅ Defeated</span></span>}
             </div>
           </div>
 
-          <p style={{ margin: 0, color: dark ? "#d3cae0" : "#6f657d", lineHeight: 1.8, fontSize: 14 }}>{active.summary}</p>
+          <p style={{ margin: 0, color: dark ? "#d3cae0" : "#6f657d", lineHeight: 1.8, fontSize: 14 }}><span className="lang-zh">{active.summary}</span><span className="lang-en">{active.summaryEN}</span></p>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
             <div className="chapter-dots" style={{ display: "flex", gap: 8, alignItems: "center" }}>
               {chapters.map((chapter, dotIndex) => <button key={chapter.id} type="button" onClick={() => setIndex(dotIndex)} aria-label={`Go to chapter ${dotIndex + 1}`} style={{ width: dotIndex === index ? 26 : 10, height: 10, borderRadius: 999, border: 0, background: dotIndex === index ? PURPLE : (dark ? "rgba(255,255,255,0.18)" : "rgba(137,83,209,0.2)"), cursor: "pointer", transition: "all 180ms ease" }} />)}
             </div>
-            <button type="button" onClick={() => setExpanded(v => !v)} style={{ borderRadius: 999, border: "1px solid rgba(137,83,209,0.18)", background: expanded ? PURPLE : "transparent", color: expanded ? "#fff" : PURPLE, padding: "10px 14px", cursor: "pointer", fontWeight: 700 }}>{expanded ? "收起详情" : "展开详情"}</button>
+            <button type="button" onClick={() => setExpanded(v => !v)} style={{ borderRadius: 999, border: "1px solid rgba(137,83,209,0.18)", background: expanded ? PURPLE : "transparent", color: expanded ? "#fff" : PURPLE, padding: "10px 14px", cursor: "pointer", fontWeight: 700 }}>{expanded ? (<><span className="lang-zh">收起详情</span><span className="lang-en">Collapse</span></>) : (<><span className="lang-zh">展开详情</span><span className="lang-en">Details</span></>)}</button>
           </div>
           <div className="chapter-detail-grid" style={{ display: "grid", gridTemplateRows: expanded ? "1fr" : "0fr", transition: reduced ? undefined : "grid-template-rows 240ms cubic-bezier(0.22, 1, 0.36, 1)" }}>
             <div style={{ overflow: "hidden" }}>
               <div style={{ paddingTop: 14, display: "grid", gap: 12, borderTop: "1px solid rgba(137,83,209,0.1)" }}>
-                {active.boss && <div style={{ borderRadius: 16, padding: 14, border: "1px solid rgba(137,83,209,0.14)", background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.7)", position: "relative" }}><div style={{ color: PURPLE, fontFamily: "monospace", fontSize: 11 }}>Boss</div><div style={{ marginTop: 6, color: dark ? "#fff" : "#261a33", fontWeight: 700 }}>{active.boss.defeated ? <span className={expanded ? "boss-defeated-name" : ""}>{active.boss.name}</span> : active.boss.name}</div><div style={{ marginTop: 6, color: dark ? "#d3cae0" : "#6f657d", fontSize: 13 }}>{active.boss.description || active.boss.reward}</div>{active.boss.defeated && expanded && <div className="boss-stamp" style={{ position: "absolute", top: 8, right: 8, transform: "rotate(-12deg)", border: "2px solid #c94040", borderRadius: 6, padding: "2px 8px", color: "#c94040", fontFamily: "monospace", fontWeight: 700, fontSize: 11, letterSpacing: "0.1em", animation: reduced ? undefined : "stampReveal 300ms ease-out 500ms forwards", opacity: reduced ? 1 : 0 }}>DEFEATED</div>}</div>}
-                {!!active.rewards.length && <div><div style={{ color: PURPLE, fontFamily: "monospace", fontSize: 11, marginBottom: 8 }}>Rewards</div><div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>{active.rewards.map(reward => <span key={reward} style={{ padding: "6px 10px", borderRadius: 999, border: "1px solid rgba(137,83,209,0.16)", background: dark ? "rgba(137,83,209,0.06)" : "rgba(137,83,209,0.04)", color: PURPLE, fontSize: 12 }}>{reward}</span>)}</div></div>}
+                {active.boss && <div style={{ borderRadius: 16, padding: 14, border: "1px solid rgba(137,83,209,0.14)", background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.7)", position: "relative" }}><div style={{ color: PURPLE, fontFamily: "monospace", fontSize: 11 }}>Boss</div><div style={{ marginTop: 6, color: dark ? "#fff" : "#261a33", fontWeight: 700 }}>{active.boss.defeated ? <span className={expanded ? "boss-defeated-name" : ""}><span className="lang-zh">{active.boss.name}</span><span className="lang-en">{active.boss.nameEN}</span></span> : <><span className="lang-zh">{active.boss.name}</span><span className="lang-en">{active.boss.nameEN}</span></>}</div><div style={{ marginTop: 6, color: dark ? "#d3cae0" : "#6f657d", fontSize: 13 }}><span className="lang-zh">{active.boss.description || active.boss.reward}</span><span className="lang-en">{active.boss.descriptionEN || active.boss.rewardEN}</span></div>{active.boss.defeated && expanded && <div className="boss-stamp" style={{ position: "absolute", top: 8, right: 8, transform: "rotate(-12deg)", border: "2px solid #c94040", borderRadius: 6, padding: "2px 8px", color: "#c94040", fontFamily: "monospace", fontWeight: 700, fontSize: 11, letterSpacing: "0.1em", animation: reduced ? undefined : "stampReveal 300ms ease-out 500ms forwards", opacity: reduced ? 1 : 0 }}>DEFEATED</div>}</div>}
+                {!!active.rewards.length && <div><div style={{ color: PURPLE, fontFamily: "monospace", fontSize: 11, marginBottom: 8 }}>Rewards</div><div className="lang-zh" style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>{active.rewards.map(reward => <span key={reward} style={{ padding: "6px 10px", borderRadius: 999, border: "1px solid rgba(137,83,209,0.16)", background: dark ? "rgba(137,83,209,0.06)" : "rgba(137,83,209,0.04)", color: PURPLE, fontSize: 12 }}>{reward}</span>)}</div><div className="lang-en" style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>{active.rewardsEN.map(reward => <span key={reward} style={{ padding: "6px 10px", borderRadius: 999, border: "1px solid rgba(137,83,209,0.16)", background: dark ? "rgba(137,83,209,0.06)" : "rgba(137,83,209,0.04)", color: PURPLE, fontSize: 12 }}>{reward}</span>)}</div></div>}
                 {!!active.articles.length && <div><div style={{ color: PURPLE, fontFamily: "monospace", fontSize: 11, marginBottom: 8 }}>Articles</div><div style={{ display: "grid", gap: 8 }}>{active.articles.map(article => {
                   const meta = articleMeta[article];
                   const label = meta?.titleZh || meta?.title || article;
@@ -625,7 +638,7 @@ const EquipmentRing = memo(function EquipmentRing({ equipment, dark }: { equipme
         <div style={{ position: "absolute", width: 176, height: 176, borderRadius: "50%", border: "1px solid rgba(137,83,209,0.16)" }} />
         <div style={{ textAlign: "center", display: "grid", gap: 10, placeItems: "center" }}>
           <div style={{ width: 92, height: 92, borderRadius: "50%", display: "grid", placeItems: "center", border: "1px solid rgba(137,83,209,0.2)", background: dark ? "rgba(137,83,209,0.06)" : "rgba(137,83,209,0.04)", color: PURPLE, fontSize: 30 }}>令</div>
-          <div style={{ color: dark ? "#fff" : "#261a33", fontWeight: 700, fontFamily: "Georgia, Cambria, serif" }}>江湖装备核心</div>
+          <div style={{ color: dark ? "#fff" : "#261a33", fontWeight: 700, fontFamily: "Georgia, Cambria, serif" }}><span className="lang-zh">江湖装备核心</span><span className="lang-en">Equipment Core</span></div>
           <div style={{ color: dark ? "#bcb2cb" : "#6f657d", fontFamily: "monospace", fontSize: 11 }}>6 SLOTS ORBITING</div>
         </div>
       </div>
@@ -653,16 +666,16 @@ const EquipmentRing = memo(function EquipmentRing({ equipment, dark }: { equipme
       </svg>
       {equipment.slice(0, 6).map((item, i) => {
         const card = <div className="equipment-floating" style={{ width: 196, borderRadius: 20, padding: 14, border: `1px solid ${dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(21,16,34,0.96)" : "rgba(255,255,255,0.94)", boxShadow: "0 8px 18px rgba(137,83,209,0.08)", position: "relative", zIndex: 2, willChange: "transform" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", gap: 8, alignItems: "center" }}><span style={{ color: PURPLE, fontSize: 11, fontFamily: "monospace", padding: "4px 8px", borderRadius: 999, border: "1px solid rgba(137,83,209,0.18)" }}>{item.slotCN}</span><span style={{ color: dark ? "#ac9fbe" : "#8b7a98", fontFamily: "monospace", fontSize: 10 }}>{item.acquired}</span></div>
-          <div style={{ marginTop: 10, color: dark ? "#fff" : "#261a33", fontWeight: 700, fontFamily: "Georgia, Cambria, serif" }}>{item.nameCN}</div>
-          <TooltipWrap content={<><div className="lang-zh">{item.effectCN}</div><div className="lang-en" style={{ color: "#ccb7f7" }}>{item.effectEN}</div></>}><div style={{ marginTop: 8, color: dark ? "#d6cdf0" : "#6f46a3", fontSize: 12 }}>{item.effectCN}</div></TooltipWrap>
+          <div style={{ display: "flex", justifyContent: "space-between", gap: 8, alignItems: "center" }}><span style={{ color: PURPLE, fontSize: 11, fontFamily: "monospace", padding: "4px 8px", borderRadius: 999, border: "1px solid rgba(137,83,209,0.18)" }}><span className="lang-zh">{item.slotCN}</span><span className="lang-en">{item.slotEN}</span></span><span style={{ color: dark ? "#ac9fbe" : "#8b7a98", fontFamily: "monospace", fontSize: 10 }}>{item.acquired}</span></div>
+          <div style={{ marginTop: 10, color: dark ? "#fff" : "#261a33", fontWeight: 700, fontFamily: "Georgia, Cambria, serif" }}><span className="lang-zh">{item.nameCN}</span><span className="lang-en">{item.nameEN}</span></div>
+          <TooltipWrap content={<><div className="lang-zh">{item.effectCN}</div><div className="lang-en" style={{ color: "#ccb7f7" }}>{item.effectEN}</div></>}><div style={{ marginTop: 8, color: dark ? "#d6cdf0" : "#6f46a3", fontSize: 12 }}><span className="lang-zh">{item.effectCN}</span><span className="lang-en">{item.effectEN}</span></div></TooltipWrap>
         </div>;
         const wrapped = item.article ? <a href={`/posts/${item.article}/`} style={{ textDecoration: "none" }}>{card}</a> : card;
         return <div key={item.id} style={{ position: "absolute", ...positions[i] }}>{wrapped}</div>;
       })}
     </div>
     <div className="equipment-mobile-grid" style={{ display: "none", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 12 }}>
-      {equipment.map(item => <TooltipWrap key={item.id} content={<><div className="lang-zh">{item.effectCN}</div><div className="lang-en" style={{ color: "#ccb7f7" }}>{item.effectEN}</div></>}><a href={item.article ? `/posts/${item.article}/` : undefined} style={{ textDecoration: "none" }}><div style={{ borderRadius: 16, padding: 14, border: `1px solid ${dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(21,16,34,0.96)" : "rgba(255,255,255,0.94)" }}><div style={{ color: PURPLE, fontFamily: "monospace", fontSize: 11 }}>{item.slotCN}</div><div style={{ marginTop: 8, color: dark ? "#fff" : "#261a33", fontWeight: 700 }}>{item.nameCN}</div><div style={{ marginTop: 8, color: dark ? "#d6cdf0" : "#6f46a3", fontSize: 12 }}>{item.effectCN}</div></div></a></TooltipWrap>)}
+      {equipment.map(item => <TooltipWrap key={item.id} content={<><div className="lang-zh">{item.effectCN}</div><div className="lang-en" style={{ color: "#ccb7f7" }}>{item.effectEN}</div></>}><a href={item.article ? `/posts/${item.article}/` : undefined} style={{ textDecoration: "none" }}><div style={{ borderRadius: 16, padding: 14, border: `1px solid ${dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(21,16,34,0.96)" : "rgba(255,255,255,0.94)" }}><div style={{ color: PURPLE, fontFamily: "monospace", fontSize: 11 }}><span className="lang-zh">{item.slotCN}</span><span className="lang-en">{item.slotEN}</span></div><div style={{ marginTop: 8, color: dark ? "#fff" : "#261a33", fontWeight: 700 }}><span className="lang-zh">{item.nameCN}</span><span className="lang-en">{item.nameEN}</span></div><div style={{ marginTop: 8, color: dark ? "#d6cdf0" : "#6f46a3", fontSize: 12 }}><span className="lang-zh">{item.effectCN}</span><span className="lang-en">{item.effectEN}</span></div></div></a></TooltipWrap>)}
     </div>
   </>;
 });
@@ -687,7 +700,7 @@ function QuestRing({ quest, dark, active }: { quest: QuestData; dark: boolean; a
       </div>
     </div>
     <div style={{ textAlign: "center" }}>
-      <div style={{ color: dark ? "#fff" : "#261a33", fontWeight: 700 }}>{quest.titleCN}</div>
+      <div style={{ color: dark ? "#fff" : "#261a33", fontWeight: 700 }}><span className="lang-zh">{quest.titleCN}</span><span className="lang-en">{quest.titleEN}</span></div>
       {quest.target && <div style={{ color: dark ? "#ac9fbe" : "#8b7a98", fontFamily: "monospace", fontSize: 11, marginTop: 6 }}>{quest.target}</div>}
       <div style={{ marginTop: 8, color: dark ? "#c8bed8" : "#78688a", fontFamily: "monospace", fontSize: 11 }}>{current}{quest.unit ? ` ${quest.unit}` : ""} / {goal}{quest.unit ? ` ${quest.unit}` : ""}</div>
     </div>
@@ -702,7 +715,7 @@ const QuestPanel = memo(function QuestPanel({ quests, dark }: { quests: PlayerSt
       {(["main", "side"] as const).map(key => <button key={key} type="button" onClick={() => setTab(key)} style={{ border: 0, cursor: "pointer", borderRadius: 999, padding: "8px 14px", background: tab === key ? PURPLE : "transparent", color: tab === key ? "#fff" : (dark ? "#d6cdf0" : "#6f657d") }}>{key === "main" ? `主线 / Main (${quests.main.length})` : `支线 / Side (${quests.side.length})`}</button>)}
     </div>
     <div ref={ref} style={{ display: "grid", gap: 12, maxHeight: tab === "side" ? 720 : undefined, overflowY: tab === "side" ? "auto" : undefined, paddingRight: tab === "side" ? 4 : 0 }}>
-      {tab === "main" ? <div className="quest-main-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))", gap: 12 }}>{quests.main.map(quest => <QuestRing key={quest.id} quest={quest} dark={dark} active={inView} />)}</div> : quests.side.map(quest => <div key={quest.id} style={{ borderRadius: 18, padding: 16, border: `1px solid ${dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.7)", display: "flex", justifyContent: "space-between", gap: 12, alignItems: "flex-start" }}><div style={{ minWidth: 0, flex: 1 }}><div style={{ color: dark ? "#fff" : "#261a33", fontWeight: 700 }}>{quest.titleCN}</div><div style={{ marginTop: 6, color: dark ? "#ac9fbe" : "#8b7a98", fontFamily: "monospace", fontSize: 11, lineHeight: 1.6, wordBreak: "break-word" }}>{quest.progress}</div></div><div style={{ color: quest.status === "completed" ? PURPLE : (dark ? "#d6cdf0" : "#6f657d"), fontFamily: "monospace", fontSize: 11, whiteSpace: "nowrap", paddingTop: 2 }}>{quest.status === "completed" ? "COMPLETED" : "ACTIVE"}</div></div>)}
+      {tab === "main" ? <div className="quest-main-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))", gap: 12 }}>{quests.main.map(quest => <QuestRing key={quest.id} quest={quest} dark={dark} active={inView} />)}</div> : quests.side.map(quest => <div key={quest.id} style={{ borderRadius: 18, padding: 16, border: `1px solid ${dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.7)", display: "flex", justifyContent: "space-between", gap: 12, alignItems: "flex-start" }}><div style={{ minWidth: 0, flex: 1 }}><div style={{ color: dark ? "#fff" : "#261a33", fontWeight: 700 }}><span className="lang-zh">{quest.titleCN}</span><span className="lang-en">{quest.titleEN}</span></div><div style={{ marginTop: 6, color: dark ? "#ac9fbe" : "#8b7a98", fontFamily: "monospace", fontSize: 11, lineHeight: 1.6, wordBreak: "break-word" }}>{quest.progress}</div></div><div style={{ color: quest.status === "completed" ? PURPLE : (dark ? "#d6cdf0" : "#6f657d"), fontFamily: "monospace", fontSize: 11, whiteSpace: "nowrap", paddingTop: 2 }}>{quest.status === "completed" ? "COMPLETED" : "ACTIVE"}</div></div>)}
     </div>
   </div>;
 });
@@ -711,7 +724,7 @@ const RetainerPanel = memo(function RetainerPanel({ retainers, dark }: { retaine
   const maxSessions = Math.max(...retainers.map(agent => agent.sessions), 1);
   return <div className="retainer-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 12 }}>{retainers.map(agent => {
     const ratio = Math.max(6, Math.round(agent.sessions / maxSessions * 100));
-    return <a key={agent.id} href="/lab/agents/" style={{ textDecoration: "none" }}><div style={{ borderRadius: 18, padding: 14, border: `1px solid ${dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.7)" }}><div style={{ display: "flex", gap: 12, alignItems: "center" }}><img src={agent.sprite} alt={agent.name} width={56} height={56} style={{ width: 56, height: 56, borderRadius: 14, objectFit: "cover", imageRendering: "pixelated", border: "1px solid rgba(137,83,209,0.24)" }} /><div><div style={{ color: dark ? "#fff" : "#261a33", fontWeight: 700 }}>{agent.name} {agent.emoji}</div><div style={{ color: PURPLE, fontSize: 11 }}>{agent.titleZh}</div></div></div><div style={{ marginTop: 12, display: "flex", justifyContent: "space-between", fontFamily: "monospace", fontSize: 11 }}><span style={{ color: dark ? "#c8bed8" : "#78688a" }}>Lv.{agent.level}</span><span style={{ color: PURPLE }}>{agent.sessions} sessions</span></div><div style={{ marginTop: 10, height: 6, borderRadius: 999, background: dark ? "rgba(255,255,255,0.07)" : "rgba(60,20,90,0.08)", overflow: "hidden" }}><div style={{ width: `${ratio}%`, height: "100%", borderRadius: 999, background: PURPLE, boxShadow: ratio >= 100 ? "2px 0 8px rgba(137,83,209,0.4)" : undefined }} /></div></div></a>;
+    return <a key={agent.id} href="/lab/agents/" style={{ textDecoration: "none" }}><div style={{ borderRadius: 18, padding: 14, border: `1px solid ${dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.7)" }}><div style={{ display: "flex", gap: 12, alignItems: "center" }}><img src={agent.sprite} alt={agent.name} width={56} height={56} style={{ width: 56, height: 56, borderRadius: 14, objectFit: "cover", imageRendering: "pixelated", border: "1px solid rgba(137,83,209,0.24)" }} /><div><div style={{ color: dark ? "#fff" : "#261a33", fontWeight: 700 }}>{agent.name} {agent.emoji}</div><div style={{ color: PURPLE, fontSize: 11 }}><span className="lang-zh">{agent.titleZh}</span><span className="lang-en">{agent.titleEn}</span></div></div></div><div style={{ marginTop: 12, display: "flex", justifyContent: "space-between", fontFamily: "monospace", fontSize: 11 }}><span style={{ color: dark ? "#c8bed8" : "#78688a" }}>Lv.{agent.level}</span><span style={{ color: PURPLE }}>{agent.sessions} sessions</span></div><div style={{ marginTop: 10, height: 6, borderRadius: 999, background: dark ? "rgba(255,255,255,0.07)" : "rgba(60,20,90,0.08)", overflow: "hidden" }}><div style={{ width: `${ratio}%`, height: "100%", borderRadius: 999, background: PURPLE, boxShadow: ratio >= 100 ? "2px 0 8px rgba(137,83,209,0.4)" : undefined }} /></div></div></a>;
   })}</div>;
 });
 
@@ -933,7 +946,7 @@ const SkillTree = memo(function SkillTree({ tagCounts, postCount, builderLogCoun
   </div>;
 });
 
-const RelationshipPanel = memo(function RelationshipPanel({ relationships, dark }: { relationships: RelationshipData[]; dark: boolean }) {
+const RelationshipPanel = memo(function RelationshipPanel({ relationships, dark, articleMeta }: { relationships: RelationshipData[]; dark: boolean; articleMeta: Record<string, { title: string; titleZh?: string | null }> }) {
   return <div className="relationship-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 12 }}>{relationships.map(item => {
     const hasExternal = Boolean(item.link);
     const card = <div
@@ -965,7 +978,7 @@ const RelationshipPanel = memo(function RelationshipPanel({ relationships, dark 
         <div className="lang-en" style={{ color: dark ? "#d3cae0" : "#6f657d", fontSize: 13, lineHeight: 1.65 }}>{item.impactEN}</div>
       </div>
       {item.article && <div style={{ paddingTop: 8, borderTop: `1px solid ${dark ? "rgba(137,83,209,0.12)" : "rgba(137,83,209,0.08)"}` }}>
-        <a href={`/posts/${item.article}/`} onClick={event => event.stopPropagation()} style={{ color: PURPLE, fontFamily: "monospace", fontSize: 11, textDecoration: "none" }}>↗ /posts/{item.article}/</a>
+        <a href={`/posts/${item.article}/`} onClick={event => event.stopPropagation()} style={{ color: PURPLE, fontFamily: "monospace", fontSize: 11, textDecoration: "none" }}>↗ {(() => { const m = articleMeta[item.article!]; return m?.titleZh || m?.title || item.article; })()}</a>
       </div>}
     </div>;
     return <div key={item.id}>{card}</div>;
@@ -1011,9 +1024,9 @@ const AchievementBadges = memo(function AchievementBadges({ achievements, dark }
                 >
                   <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
                     <span style={{ fontSize: 22 }}>{item.icon}</span>
-                    <div style={{ color: dark ? "#fff" : "#261a33", fontWeight: 700, fontSize: 13 }}>{item.nameZh}</div>
+                    <div style={{ color: dark ? "#fff" : "#261a33", fontWeight: 700, fontSize: 13 }}><span className="lang-zh">{item.nameZh}</span><span className="lang-en">{item.nameEn}</span></div>
                   </div>
-                  <p style={{ margin: "8px 0 0", color: dark ? "#c8bed8" : "#78688a", fontSize: 12, lineHeight: 1.6 }}>{item.descZh}</p>
+                  <p style={{ margin: "8px 0 0", color: dark ? "#c8bed8" : "#78688a", fontSize: 12, lineHeight: 1.6 }}><span className="lang-zh">{item.descZh}</span><span className="lang-en">{item.descEn}</span></p>
                   {item.unlocked && item.unlockedDate && (
                     <div style={{ marginTop: 8, color: PURPLE, fontFamily: "monospace", fontSize: 10 }}>✓ {item.unlockedDate}</div>
                   )}
@@ -1039,15 +1052,51 @@ const CultivationLog = memo(function CultivationLog({ activityLog, dark }: { act
   const [showAll, setShowAll] = useState(false);
   const visible = showAll ? activityLog : activityLog.slice(0, 20);
   const hasMore = activityLog.length > 20;
-  return <div style={{ position: "relative", paddingLeft: 22 }}><div style={{ position: "absolute", left: 7, top: 6, bottom: 6, width: 2, background: PURPLE, opacity: 0.45 }} />
-    <div style={{ display: "grid", gap: 12 }}>
-      {visible.map((item, i) => <div key={`${item.dateEn}-${i}`} style={{ position: "relative", paddingLeft: 18 }}><span style={{ position: "absolute", left: -1, top: 10, width: 8, height: 8, borderRadius: "50%", background: PURPLE }} /><div style={{ borderRadius: 16, padding: "12px 14px", border: `1px solid ${dark ? "rgba(137,83,209,0.14)" : "rgba(137,83,209,0.1)"}`, background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.72)" }}><div style={{ display: "flex", justifyContent: "space-between", gap: 10, flexWrap: "wrap" }}><div style={{ color: dark ? "#ac9fbe" : "#8b7a98", fontFamily: "monospace", fontSize: 11 }}>{item.dateZh}</div><div style={{ color: PURPLE, fontFamily: "monospace", fontWeight: 700, fontSize: 11 }}>+{item.exp} EXP</div></div><div style={{ marginTop: 8, display: "grid", gridTemplateColumns: "26px 1fr", gap: 10, alignItems: "start" }}><div>{item.icon}</div><div style={{ color: dark ? "#fff" : "#261a33", fontSize: 12, lineHeight: 1.7 }}>{item.descZh}</div></div></div></div>)}
-      {hasMore && <div style={{ display: "flex", justifyContent: "center", paddingTop: 8 }}>
-        <button type="button" onClick={() => setShowAll(v => !v)} style={{ borderRadius: 999, border: `1px solid rgba(137,83,209,0.2)`, background: showAll ? PURPLE : "transparent", color: showAll ? "#fff" : PURPLE, padding: "10px 20px", cursor: "pointer", fontWeight: 700, fontFamily: "monospace", fontSize: 12 }}>
-          {showAll ? (<><span className="lang-zh">收起</span><span className="lang-en">Show less</span></>) : (<><span className="lang-zh">查看全部 ({activityLog.length})</span><span className="lang-en">View all ({activityLog.length})</span></>)}
-        </button>
-      </div>}
-    </div></div>;
+  return (
+    <div style={{ position: "relative", paddingLeft: 22 }}>
+      <div style={{ position: "absolute", left: 7, top: 6, bottom: 6, width: 2, background: PURPLE, opacity: 0.45 }} />
+      <div style={{ display: "grid", gap: 12 }}>
+        {visible.map((item, i) => {
+          const cardContent = (
+            <div style={{ borderRadius: 16, padding: "12px 14px", border: `1px solid ${dark ? "rgba(137,83,209,0.14)" : "rgba(137,83,209,0.1)"}`, background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.72)", transition: "box-shadow 150ms ease, border-color 150ms ease" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", gap: 10, flexWrap: "wrap" }}>
+                <div style={{ color: dark ? "#ac9fbe" : "#8b7a98", fontFamily: "monospace", fontSize: 11 }}>
+                  <span className="lang-zh">{item.dateZh}</span>
+                  <span className="lang-en">{item.dateEn}</span>
+                </div>
+                <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                  {item.link && <span style={{ color: PURPLE, fontFamily: "monospace", fontSize: 11, opacity: 0.6 }}>↗</span>}
+                  <div style={{ color: PURPLE, fontFamily: "monospace", fontWeight: 700, fontSize: 11 }}>+{item.exp} EXP</div>
+                </div>
+              </div>
+              <div style={{ marginTop: 8, display: "grid", gridTemplateColumns: "26px 1fr", gap: 10, alignItems: "start" }}>
+                <div>{item.icon}</div>
+                <div style={{ color: dark ? "#fff" : "#261a33", fontSize: 12, lineHeight: 1.7 }}>
+                  <span className="lang-zh">{item.descZh}</span>
+                  <span className="lang-en">{item.descEn}</span>
+                </div>
+              </div>
+            </div>
+          );
+          return (
+            <div key={`${item.dateEn}-${i}`} style={{ position: "relative", paddingLeft: 18 }}>
+              <span style={{ position: "absolute", left: -1, top: 10, width: 8, height: 8, borderRadius: "50%", background: PURPLE }} />
+              {item.link
+                ? <a href={item.link} style={{ textDecoration: "none", display: "block" }}>{cardContent}</a>
+                : cardContent}
+            </div>
+          );
+        })}
+        {hasMore && (
+          <div style={{ display: "flex", justifyContent: "center", paddingTop: 8 }}>
+            <button type="button" onClick={() => setShowAll(v => !v)} style={{ borderRadius: 999, border: `1px solid rgba(137,83,209,0.2)`, background: showAll ? PURPLE : "transparent", color: showAll ? "#fff" : PURPLE, padding: "10px 20px", cursor: "pointer", fontWeight: 700, fontFamily: "monospace", fontSize: 12 }}>
+              {showAll ? (<><span className="lang-zh">收起</span><span className="lang-en">Show less</span></>) : (<><span className="lang-zh">查看全部 ({activityLog.length})</span><span className="lang-en">View all ({activityLog.length})</span></>)}
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 });
 
 const SaveFooter = memo(function SaveFooter({ dark, travelDays, mediaCount, bookCount, postCount, cityCount, level }: {
@@ -1094,7 +1143,8 @@ export default function PlayerStats(props: PlayerStatsProps) {
       .boss-defeated-name::after { content: ""; position: absolute; left: 0; top: 50%; height: 2px; background: #c94040; animation: strikethrough 400ms ease-out 200ms forwards; width: 0; }
       @keyframes lineFlow { from { stroke-dashoffset: 180; } to { stroke-dashoffset: 0; } }
       @keyframes radarPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.01); } }
-      .radar-wrap.is-active > :first-child { animation: radarPulse 4s ease-in-out infinite; transform-origin: center; will-change: transform; }
+      @keyframes radarExpand { from { transform: scale(0.3); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+      .radar-wrap.is-active > :first-child { animation: radarExpand 700ms cubic-bezier(0.22,1,0.36,1) forwards, radarPulse 4s ease-in-out 700ms infinite; transform-origin: center; will-change: transform; }
       .equipment-floating { transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 220ms cubic-bezier(0.22, 1, 0.36, 1), border-color 220ms ease; }
       .equipment-floating:hover { transform: translateY(-6px); box-shadow: 0 12px 22px rgba(137,83,209,0.16); border-color: rgba(137,83,209,0.28); }
       .equipment-ring-core::after { content: ""; position: absolute; inset: 16px; border-radius: 50%; box-shadow: inset 0 0 12px rgba(137,83,209,0.08); }
@@ -1133,13 +1183,13 @@ export default function PlayerStats(props: PlayerStatsProps) {
     <div style={{ display: "grid", gap: 18 }}>
       <Section dark={dark} hero><HeroCard dark={dark} rank={rank} level={level} totalExp={totalExp} expInLevel={expInLevel} expNeeded={expNeeded} expProgress={expProgress} avgStat={avgStat} currentCity={currentCity} travelDays={travelDays} expFormula={expFormula} levelFormula={levelFormula} /></Section>
       <Section dark={dark}><SectionHeader icon="🧭" zh="人生章节" en="Chapter Archive" dark={dark} /><ChapterCarousel chapters={chapters} articleMeta={articleMeta} dark={dark} /></Section>
-      <Section dark={dark}><a href="/travel/" style={{ display: "flex", gap: 14, justifyContent: "center", alignItems: "center", textDecoration: "none" }}><span style={{ fontSize: 28 }}>🗺️</span><div><div style={{ color: PURPLE, fontWeight: 700, fontSize: 24 }}>{cities.length} <span style={{ color: dark ? "#c8bed8" : "#78688a", fontSize: 13, fontWeight: 400 }}>座城市已游历</span></div><div style={{ color: dark ? "#ac9fbe" : "#8b7a98", fontSize: 12 }}>→ 查看完整旅居地图</div></div></a></Section>
+      <Section dark={dark}><a href="/travel/" style={{ display: "flex", gap: 14, justifyContent: "center", alignItems: "center", textDecoration: "none" }}><span style={{ fontSize: 28 }}>🗺️</span><div><div style={{ color: PURPLE, fontWeight: 700, fontSize: 24 }}>{cities.length} <span style={{ color: dark ? "#c8bed8" : "#78688a", fontSize: 13, fontWeight: 400 }}><span className="lang-zh">座城市已游历</span><span className="lang-en">cities explored</span></span></div><div style={{ color: dark ? "#ac9fbe" : "#8b7a98", fontSize: 12 }}><span className="lang-zh">→ 查看完整旅居地图</span><span className="lang-en">→ View full travel map</span></div></div></a></Section>
       <Section dark={dark}><SectionHeader icon="📊" zh="六维属性" en="Six Attributes" dark={dark} /><StatRadar stats={stats} statFormulas={statFormulas} dark={dark} /><StatLegend dark={dark} /></Section>
       <Section dark={dark}><SectionHeader icon="🧰" zh="装备栏" en="Equipment" dark={dark} /><EquipmentRing equipment={equipment} dark={dark} /></Section>
       <Section dark={dark}><SectionHeader icon="📜" zh="任务面板" en="Quest Board" dark={dark} /><QuestPanel quests={quests} dark={dark} /></Section>
       <Section dark={dark}><SectionHeader icon="🏯" zh="门客系统" en="Retainers" dark={dark} /><RetainerPanel retainers={retainers} dark={dark} /></Section>
       <Section dark={dark}><SectionHeader icon="🌳" zh="技能树" en="Skill Tree" dark={dark} /><SkillTree tagCounts={tagCounts} postCount={postCount} builderLogCount={builderLogCount} dark={dark} /></Section>
-      <Section dark={dark}><SectionHeader icon="🤝" zh="江湖关系" en="Relationships" dark={dark} /><RelationshipPanel relationships={relationships} dark={dark} /></Section>
+      <Section dark={dark}><SectionHeader icon="🤝" zh="江湖关系" en="Relationships" dark={dark} /><RelationshipPanel relationships={relationships} dark={dark} articleMeta={articleMeta} /></Section>
       <Section dark={dark}><SectionHeader icon="🏆" zh="成就" en="Achievements" dark={dark} /><AchievementBadges achievements={achievements} dark={dark} /></Section>
       <Section dark={dark}><SectionHeader icon="📜" zh="修行日志" en="Cultivation Log" dark={dark} /><CultivationLog activityLog={activityLog} dark={dark} /></Section>
       <Section dark={dark}><SaveFooter dark={dark} travelDays={travelDays} mediaCount={mediaCount} bookCount={bookCount} postCount={postCount} cityCount={cities.length} level={level} /></Section>

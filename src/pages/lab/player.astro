@@ -215,21 +215,24 @@ const retainers = allAgents.map(a => {
   return { id: a.id, name: a.name, emoji: meta.emoji, titleZh: meta.titleZh, titleEn: meta.titleEn, sprite: meta.sprite, level: agentLevel, sessions: a.sessions, tokens: a.tokens, model: a.model };
 });
 
-type ActivityItem = { dateRaw: Date; dateEn: string; dateZh: string; icon: string; statZh: string; statEn: string; exp: number; descZh: string; descEn: string; type: string };
+type ActivityItem = { dateRaw: Date; dateEn: string; dateZh: string; icon: string; statZh: string; statEn: string; exp: number; descZh: string; descEn: string; type: string; link?: string };
 const allActivity: ActivityItem[] = [];
 const months = ["一月","二月","三月","四月","五月","六月","七月","八月","九月","十月","十一月","十二月"];
 function fmtDate(d: Date) { return { dateZh: `${d.getFullYear()}年${months[d.getMonth()]}${d.getDate()}日`, dateEn: d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }) }; }
 for (const post of posts) {
   const d = new Date(post.data.publishDate); const { dateZh, dateEn } = fmtDate(d);
-  allActivity.push({ dateRaw: d, dateZh, dateEn, icon: "✍️", statZh: "灵力", statEn: "Spirit", exp: 20, descZh: `著文《${post.data.title}》`, descEn: `Published \"${post.data.title}\"`, type: "post" });
+  const slug = post.id.replace(/\.(md|mdx)$/, "");
+  allActivity.push({ dateRaw: d, dateZh, dateEn, icon: "✍️", statZh: "灵力", statEn: "Spirit", exp: 20, descZh: `著文《${post.data.title}》`, descEn: `Published \"${post.data.title}\"`, type: "post", link: `/posts/${slug}/` });
 }
 for (const log of builderLogs) {
   const d = new Date(log.data.date); const { dateZh, dateEn } = fmtDate(d);
-  allActivity.push({ dateRaw: d, dateZh, dateEn, icon: "🛠️", statZh: "武术", statEn: "Martial", exp: 12, descZh: log.data.title_zh ?? log.data.title, descEn: log.data.title, type: "builder-log" });
+  const slug = log.id.replace(/\.(md|mdx)$/, "");
+  allActivity.push({ dateRaw: d, dateZh, dateEn, icon: "🛠️", statZh: "武术", statEn: "Martial", exp: 12, descZh: log.data.title_zh ?? log.data.title, descEn: log.data.title, type: "builder-log", link: `/builder-log/${slug}/` });
 }
 for (const digest of digests) {
   const d = new Date(digest.data.date); const { dateZh, dateEn } = fmtDate(d);
-  allActivity.push({ dateRaw: d, dateZh, dateEn, icon: "📜", statZh: "身法", statEn: "Agility", exp: 2, descZh: digest.data.title_zh ?? digest.data.title, descEn: digest.data.title, type: "digest" });
+  const slug = digest.id.replace(/\.(md|mdx)$/, "");
+  allActivity.push({ dateRaw: d, dateZh, dateEn, icon: "📜", statZh: "身法", statEn: "Agility", exp: 2, descZh: digest.data.title_zh ?? digest.data.title, descEn: digest.data.title, type: "digest", link: `/digest/${slug}/` });
 }
 // 书影音 — 用发行年份，日期只精确到年，显示为 YYYY年
 for (const item of (mediaData as any[])) {
@@ -292,9 +295,9 @@ const meta = {
       </button>
     </div>
 
-    <h1 class="mb-3 font-serif text-4xl font-bold dark:text-white"><span class="lang-en">Player Stats</span><span class="lang-zh">江湖档案</span></h1>
-    <p class="lang-en max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">A live character sheet built around Rex Liu — chapters, travel, systems, writing, and the slow accumulation of one real life.</p>
-    <p class="lang-zh max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">以文铸剑，以行入道。此卷记吾所历、所学、所造，皆实数也。</p>
+    <h1 class="hero-reveal-text mb-3 font-serif text-4xl font-bold dark:text-white"><span class="lang-en">Player Stats</span><span class="lang-zh">江湖档案</span></h1>
+    <p class="hero-reveal-subtitle lang-en max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">A live character sheet built around Rex Liu — chapters, travel, systems, writing, and the slow accumulation of one real life.</p>
+    <p class="hero-reveal-subtitle lang-zh max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">以文铸剑，以行入道。此卷记吾所历、所学、所造，皆实数也。</p>
 
   </section>
 
