@@ -207,7 +207,9 @@ const agentMeta: Record<string, { emoji: string; titleZh: string; titleEn: strin
 const rawAgents = (agentWorkload as any).agents as Array<{ id: string; name: string; tokens: number; sessions: number; model: string }>;
 const agentIds = new Set(rawAgents.map(a => a.id));
 const allAgents = [...rawAgents];
-if (!agentIds.has("artist")) allAgents.push({ id: "artist", name: "Shuri", tokens: 0, sessions: 0, model: "Gemini 2.5" });
+// Deduplicate: Shuri appears as "designer" in agentWorkload.json, skip the duplicate "artist" entry
+const hasShuri = rawAgents.some(a => a.name === "Shuri");
+if (!agentIds.has("artist") && !hasShuri) allAgents.push({ id: "artist", name: "Shuri", tokens: 0, sessions: 0, model: "Gemini 2.5" });
 
 const retainers = allAgents.map(a => {
   const meta = agentMeta[a.id] ?? { emoji: "🤖", titleZh: "门客", titleEn: "Retainer", sprite: "/assets/pixel-office/characters/char_0.png" };
