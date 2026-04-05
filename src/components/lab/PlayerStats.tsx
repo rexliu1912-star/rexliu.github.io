@@ -437,7 +437,6 @@ const HeroCard = memo(function HeroCard({ dark, rank, level, totalExp, expInLeve
             <span className="lang-zh">以文铸剑，以行入道，以器御世。</span>
           </p>
         </div>
-        <div style={{ writingMode: "vertical-rl", textOrientation: "upright", letterSpacing: "0.12em", color: PURPLE, border: "1px solid rgba(137,83,209,0.2)", borderRadius: 999, padding: "10px 6px", background: dark ? "rgba(137,83,209,0.06)" : "rgba(137,83,209,0.04)" }}><span className="lang-zh">江湖档案</span><span className="lang-en">DOSSIER</span></div>
       </div>
       {/* A3: KEY:VALUE badges */}
       <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 4, marginTop: 14, fontFamily: "monospace", fontSize: 12, ...stagger(240) }}>
