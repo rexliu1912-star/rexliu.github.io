@@ -332,7 +332,7 @@ function TooltipWrap({ content, children, align = "left" }: { content: React.Rea
           padding: "10px 12px",
           borderRadius: 14,
           border: `1px solid rgba(137,83,209,0.34)`,
-          background: "rgba(12,10,20,0.96)",
+          background: "rgba(21,21,21,0.98)",
           color: "#f5efff",
           fontFamily: "monospace",
           fontSize: 11,
@@ -357,7 +357,7 @@ const Section = memo(function Section({ dark, children, hero }: { dark: boolean;
     width: "100%", maxWidth: 1200, margin: "0 auto",
     border: `1px solid ${dark ? "rgba(137,83,209,0.22)" : "rgba(137,83,209,0.14)"}`,
     borderRadius: 24, padding: "1.35rem",
-    background: hero ? (dark ? "linear-gradient(180deg, rgba(16,12,26,0.99), rgba(10,8,18,0.99))" : "linear-gradient(180deg, rgba(255,255,255,0.98), rgba(250,246,255,0.98))") : (dark ? "linear-gradient(180deg, rgba(18,14,29,0.98), rgba(10,8,18,0.98))" : "linear-gradient(180deg, rgba(255,255,255,0.96), rgba(248,242,255,0.96))"),
+    background: hero ? (dark ? "rgba(21,21,21,0.99)" : "linear-gradient(180deg, rgba(255,255,255,0.98), rgba(250,246,255,0.98))") : (dark ? "rgba(21,21,21,0.98)" : "linear-gradient(180deg, rgba(255,255,255,0.96), rgba(248,242,255,0.96))"),
     boxShadow: hero ? `0 0 0 1px rgba(137,83,209,0.22), 0 0 24px rgba(137,83,209,0.08)` : (dark ? "0 10px 24px rgba(0,0,0,0.18)" : "0 10px 20px rgba(137,83,209,0.08)"),
     opacity: reduced ? 1 : (inView ? 1 : 0),
     transform: reduced ? "none" : (inView ? "translateY(0)" : "translateY(18px)"),
@@ -507,7 +507,7 @@ const ChapterCarousel = memo(function ChapterCarousel({ chapters, articleMeta, d
     </div>
 
     <div style={{ overflow: "hidden", borderRadius: 22 }}>
-      <div key={active.id} className="chapter-slide-card" style={{ borderRadius: 22, border: `1px solid ${active.id === "current" ? "rgba(137,83,209,0.28)" : dark ? "rgba(137,83,209,0.16)" : "rgba(137,83,209,0.12)"}`, background: dark ? "linear-gradient(180deg, rgba(24,18,40,0.98), rgba(14,10,24,0.98))" : "linear-gradient(180deg, rgba(255,255,255,0.98), rgba(247,240,255,0.98))", boxShadow: active.id === "current" ? "0 10px 22px rgba(137,83,209,0.12)" : undefined, animation: reduced ? undefined : "chapterSlide 260ms cubic-bezier(0.22, 1, 0.36, 1)" }}>
+      <div key={active.id} className="chapter-slide-card" style={{ borderRadius: 22, border: `1px solid ${active.id === "current" ? "rgba(137,83,209,0.28)" : dark ? "rgba(137,83,209,0.16)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(21,21,21,0.98)" : "linear-gradient(180deg, rgba(255,255,255,0.98), rgba(247,240,255,0.98))", boxShadow: active.id === "current" ? "0 10px 22px rgba(137,83,209,0.12)" : undefined, animation: reduced ? undefined : "chapterSlide 260ms cubic-bezier(0.22, 1, 0.36, 1)" }}>
         <div style={{ display: "grid", gap: 16, padding: "1.2rem" }}>
           <div style={{ display: "flex", justifyContent: "space-between", gap: 14, alignItems: "flex-start", flexWrap: "wrap" }}>
             <div>
@@ -632,7 +632,7 @@ const EquipmentRing = memo(function EquipmentRing({ equipment, dark }: { equipme
 
   return <>
     <div className="equipment-ring" style={{ position: "relative", minHeight: 560 }}>
-      <div className="equipment-ring-core" style={{ position: "absolute", left: "50%", top: "50%", transform: "translate(-50%, -50%)", width: 240, height: 240, borderRadius: "50%", border: "1px solid rgba(137,83,209,0.22)", background: dark ? "radial-gradient(circle at 50% 45%, rgba(137,83,209,0.16), rgba(20,15,31,0.96) 68%)" : "radial-gradient(circle at 50% 45%, rgba(137,83,209,0.12), rgba(250,246,255,0.98) 72%)", boxShadow: "0 0 0 1px rgba(137,83,209,0.06), 0 0 18px rgba(137,83,209,0.1)", display: "grid", placeItems: "center", overflow: "hidden" }}>
+      <div className="equipment-ring-core" style={{ position: "absolute", left: "50%", top: "50%", transform: "translate(-50%, -50%)", width: 240, height: 240, borderRadius: "50%", border: "1px solid rgba(137,83,209,0.22)", background: dark ? "radial-gradient(circle at 50% 45%, rgba(137,83,209,0.1), rgba(21,21,21,0.98) 68%)" : "radial-gradient(circle at 50% 45%, rgba(137,83,209,0.12), rgba(250,246,255,0.98) 72%)", boxShadow: "0 0 0 1px rgba(137,83,209,0.06), 0 0 18px rgba(137,83,209,0.1)", display: "grid", placeItems: "center", overflow: "hidden" }}>
         <div style={{ position: "absolute", inset: 18, borderRadius: "50%", border: "1px dashed rgba(137,83,209,0.16)" }} />
         <div style={{ position: "absolute", width: 176, height: 176, borderRadius: "50%", border: "1px solid rgba(137,83,209,0.16)" }} />
         <div style={{ textAlign: "center", display: "grid", gap: 10, placeItems: "center" }}>
@@ -664,7 +664,7 @@ const EquipmentRing = memo(function EquipmentRing({ equipment, dark }: { equipme
         ))}
       </svg>
       {equipment.slice(0, 6).map((item, i) => {
-        const card = <div className="equipment-floating" style={{ width: 196, borderRadius: 20, padding: 14, border: `1px solid ${dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(21,16,34,0.96)" : "rgba(255,255,255,0.94)", boxShadow: "0 8px 18px rgba(137,83,209,0.08)", position: "relative", zIndex: 2, willChange: "transform" }}>
+        const card = <div className="equipment-floating" style={{ width: 196, borderRadius: 20, padding: 14, border: `1px solid ${dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(23,23,23,0.98)" : "rgba(255,255,255,0.94)", boxShadow: "0 8px 18px rgba(137,83,209,0.08)", position: "relative", zIndex: 2, willChange: "transform" }}>
           <div style={{ display: "flex", justifyContent: "space-between", gap: 8, alignItems: "center" }}><span style={{ color: PURPLE, fontSize: 11, fontFamily: "monospace", padding: "4px 8px", borderRadius: 999, border: "1px solid rgba(137,83,209,0.18)" }}><span className="lang-zh">{item.slotCN}</span><span className="lang-en">{item.slotEN}</span></span><span style={{ color: dark ? "#ac9fbe" : "#8b7a98", fontFamily: "monospace", fontSize: 10 }}>{item.acquired}</span></div>
           <div style={{ marginTop: 10, color: dark ? "#fff" : "#261a33", fontWeight: 700, fontFamily: "Georgia, Cambria, serif" }}><span className="lang-zh">{item.nameCN}</span><span className="lang-en">{item.nameEN}</span></div>
           <TooltipWrap content={<><div className="lang-zh">{item.effectCN}</div><div className="lang-en" style={{ color: "#ccb7f7" }}>{item.effectEN}</div></>}><div style={{ marginTop: 8, color: dark ? "#d6cdf0" : "#6f46a3", fontSize: 12 }}><span className="lang-zh">{item.effectCN}</span><span className="lang-en">{item.effectEN}</span></div></TooltipWrap>
@@ -674,7 +674,7 @@ const EquipmentRing = memo(function EquipmentRing({ equipment, dark }: { equipme
       })}
     </div>
     <div className="equipment-mobile-grid" style={{ display: "none", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 12 }}>
-      {equipment.map(item => <TooltipWrap key={item.id} content={<><div className="lang-zh">{item.effectCN}</div><div className="lang-en" style={{ color: "#ccb7f7" }}>{item.effectEN}</div></>}><a href={item.article ? `/posts/${item.article}/` : undefined} style={{ textDecoration: "none" }}><div style={{ borderRadius: 16, padding: 14, border: `1px solid ${dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(21,16,34,0.96)" : "rgba(255,255,255,0.94)" }}><div style={{ color: PURPLE, fontFamily: "monospace", fontSize: 11 }}><span className="lang-zh">{item.slotCN}</span><span className="lang-en">{item.slotEN}</span></div><div style={{ marginTop: 8, color: dark ? "#fff" : "#261a33", fontWeight: 700 }}><span className="lang-zh">{item.nameCN}</span><span className="lang-en">{item.nameEN}</span></div><div style={{ marginTop: 8, color: dark ? "#d6cdf0" : "#6f46a3", fontSize: 12 }}><span className="lang-zh">{item.effectCN}</span><span className="lang-en">{item.effectEN}</span></div></div></a></TooltipWrap>)}
+      {equipment.map(item => <TooltipWrap key={item.id} content={<><div className="lang-zh">{item.effectCN}</div><div className="lang-en" style={{ color: "#ccb7f7" }}>{item.effectEN}</div></>}><a href={item.article ? `/posts/${item.article}/` : undefined} style={{ textDecoration: "none" }}><div style={{ borderRadius: 16, padding: 14, border: `1px solid ${dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(23,23,23,0.98)" : "rgba(255,255,255,0.94)" }}><div style={{ color: PURPLE, fontFamily: "monospace", fontSize: 11 }}><span className="lang-zh">{item.slotCN}</span><span className="lang-en">{item.slotEN}</span></div><div style={{ marginTop: 8, color: dark ? "#fff" : "#261a33", fontWeight: 700 }}><span className="lang-zh">{item.nameCN}</span><span className="lang-en">{item.nameEN}</span></div><div style={{ marginTop: 8, color: dark ? "#d6cdf0" : "#6f46a3", fontSize: 12 }}><span className="lang-zh">{item.effectCN}</span><span className="lang-en">{item.effectEN}</span></div></div></a></TooltipWrap>)}
     </div>
   </>;
 });
@@ -855,7 +855,7 @@ const SkillTreePanel = memo(function SkillTreePanel({ title, subtitle, rootLabel
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const { ref, inView } = useInView<HTMLDivElement>(0.18, false);
 
-  return <div ref={ref} style={{ borderRadius: 24, padding: 18, border: `1px solid ${dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.12)"}`, background: dark ? "linear-gradient(180deg, rgba(22,16,35,0.98), rgba(12,10,20,0.98))" : "linear-gradient(180deg, rgba(255,255,255,0.98), rgba(247,240,255,0.98))", boxShadow: dark ? "0 10px 22px rgba(0,0,0,0.16)" : "0 10px 18px rgba(137,83,209,0.07)" }}>
+  return <div ref={ref} style={{ borderRadius: 24, padding: 18, border: `1px solid ${dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(21,21,21,0.98)" : "linear-gradient(180deg, rgba(255,255,255,0.98), rgba(247,240,255,0.98))", boxShadow: dark ? "0 10px 22px rgba(0,0,0,0.16)" : "0 10px 18px rgba(137,83,209,0.07)" }}>
     <div style={{ display: "flex", justifyContent: "space-between", gap: 12, alignItems: "flex-start", flexWrap: "wrap", marginBottom: 14 }}>
       <div>
         <div style={{ color: PURPLE, fontFamily: "monospace", fontSize: 12 }}>{title}</div>
@@ -887,7 +887,7 @@ const SkillTreePanel = memo(function SkillTreePanel({ title, subtitle, rootLabel
             </text>
             <text x={node.x + 14} y={node.y + node.height - 12} fill={countColor} style={{ fontSize: 11, fontFamily: 'monospace', pointerEvents: 'none' }}>{node.depth === 0 ? `TOTAL ${node.count}` : `${node.count} 篇 · Lv.${node.count}`}</text>
             {isHovered && node.depth !== 0 && <g style={{ pointerEvents: 'none' }}>
-              <rect x={Math.min(node.x + node.width + 12, layout.width - 248)} y={Math.max(node.y - 10, 10)} width={236} height={70} rx={14} ry={14} fill="rgba(12,10,20,0.98)" stroke="rgba(137,83,209,0.34)" strokeWidth={1.1} />
+              <rect x={Math.min(node.x + node.width + 12, layout.width - 248)} y={Math.max(node.y - 10, 10)} width={236} height={70} rx={14} ry={14} fill="rgba(21,21,21,0.98)" stroke="rgba(137,83,209,0.34)" strokeWidth={1.1} />
               <text x={Math.min(node.x + node.width + 26, layout.width - 234)} y={Math.max(node.y + 12, 24)} fill="#f5efff" style={{ fontSize: 12, fontFamily: 'Georgia, Cambria, serif' }}>{node.desc}</text>
               <text x={Math.min(node.x + node.width + 26, layout.width - 234)} y={Math.max(node.y + 38, 50)} fill="#ccb7f7" style={{ fontSize: 11, fontFamily: 'monospace' }}>{`${node.count} 篇相关文章 · Lv.${node.count}`}</text>
             </g>}
