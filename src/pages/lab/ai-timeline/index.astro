@@ -33,7 +33,7 @@ function renderMd(raw: string): string {
 }
 // English body: strip everything after <!-- zh --> marker
 function mdToHtml(md: string): string {
-	const enOnly = md.split(/<!--\s*zh\s*-->/i)[0].trim();
+	const enOnly = (md.split(/<!--\s*zh\s*-->/i)[0] ?? '').trim();
 	return renderMd(enOnly);
 }
 // Chinese body fallback: extract the section after <!-- zh --> marker from body
