@@ -803,21 +803,39 @@ const meta = {
 				feedList.innerHTML = '<div class="feed-empty font-serif text-xs text-gray-500"><span class="lang-en">No recent activity</span><span class="lang-zh">\u6682\u65e0\u52a8\u6001</span></div>';
 				return;
 			}
-			// Deduplicate: if two entries from same agent within 10s, keep the one with distinct EN/ZH
-			var deduped = [];
+			// Deduplicate: merge EN/ZH pairs from same agent within 2min
+			// Strategy: group by (agentId, approx-time-window), merge EN+ZH into one entry
+			var merged = {};
 			for (var i = 0; i < entries.length; i++) {
 				var e = entries[i];
-				var dominated = false;
-				for (var j = 0; j < deduped.length; j++) {
-					var d = deduped[j];
-					if (d.agentId === e.agentId && Math.abs(new Date(d.timestamp) - new Date(e.timestamp)) < 120000) {
-						// Keep the one where descEn != descZh (properly translated)
-						if (d.descEn === d.descZh && e.descEn !== e.descZh) { deduped[j] = e; }
-						dominated = true; break;
+				// Round timestamp to nearest minute for grouping
+				var ts = new Date(e.timestamp).getTime();
+				var bucket = Math.floor(ts / 60000) * 60000; // round to minute
+				var key = e.agentId + '|' + bucket;
+				if (!merged[key]) {
+					merged[key] = { en: null, zh: null, original: e };
+				}
+				// Prefer entry with actual ZH content; keep earliest timestamp
+				if (e.descZh && e.descZh !== e.descEn) {
+					if (!merged[key].zh || new Date(e.timestamp) < new Date(merged[key].zh.timestamp)) {
+						merged[key].zh = e;
 					}
 				}
-				if (!dominated) deduped.push(e);
+				if (!merged[key].en || new Date(e.timestamp) < new Date(merged[key].en.timestamp)) {
+					merged[key].en = e;
+				}
 			}
+			var deduped = [];
+			for (var k in merged) {
+				var m = merged[k];
+				// Use the EN entry as base, graft the ZH desc if available
+				var base = m.zh || m.en || m.original;
+				if (m.en && m.en !== base) {
+					base = Object.assign({}, base, { descEn: m.en.descEn });
+				}
+				deduped.push(base);
+			}
+			deduped.sort(function(a, b) { return new Date(b.timestamp) - new Date(a.timestamp); });
 			entries = deduped;
 			var isZh = document.documentElement.getAttribute('data-lang') === 'zh';
 			feedList.innerHTML = entries.map(function(e) {
