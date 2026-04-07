@@ -24,12 +24,23 @@ const otherCompanies = new Set(
 const hasOthers = otherCompanies.size > 0;
 
 // Simple markdown-to-HTML for event bodies (bold + links)
-function mdToHtml(md: string): string {
-	return md
+function renderMd(raw: string): string {
+	return raw
 		.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
 		.replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
 		.replace(/\n\n/g, '<br/><br/>')
 		.replace(/\n/g, '<br/>');
+}
+// English body: strip everything after <!-- zh --> marker
+function mdToHtml(md: string): string {
+	const enOnly = md.split(/<!--\s*zh\s*-->/i)[0].trim();
+	return renderMd(enOnly);
+}
+// Chinese body fallback: extract the section after <!-- zh --> marker from body
+function mdToHtmlZh(md: string): string {
+	const parts = md.split(/<!--\s*zh\s*-->/i);
+	const zhOnly = parts.length > 1 ? parts.slice(1).join('').trim() : md.trim();
+	return renderMd(zhOnly);
 }
 
 // Group by year then month
@@ -198,7 +209,7 @@ function formatDate(date: Date) {
 										{/* Expandable content */}
 										<div class="timeline-detail mt-2 hidden">
 											<div class="lang-en font-serif text-base leading-relaxed text-gray-600 dark:text-gray-400" set:html={mdToHtml(event.body || '')} />
-											<div class="lang-zh font-serif text-base leading-relaxed text-gray-600 dark:text-gray-400" set:html={mdToHtml(event.data.body_zh || event.body || '')} />
+											<div class="lang-zh font-serif text-base leading-relaxed text-gray-600 dark:text-gray-400" set:html={event.data.body_zh ? renderMd(event.data.body_zh) : mdToHtmlZh(event.body || '')} />
 											{event.data.source && (
 												<a
 													href={event.data.source}
