@@ -1,5 +1,5 @@
 ---
-import { ClientRouter } from "astro:transitions";
+import { ClientRouter, fade } from "astro:transitions";
 import BackToTop from "@/components/BackToTop.astro";
 import BaseHead from "@/components/BaseHead.astro";
 import Footer from "@/components/layout/Footer.astro";
@@ -64,7 +64,7 @@ const GA_ID = "G-1EC76EZ517";
 		<ThemeProvider />
 		<SkipLink />
 		<Header />
-		<main id="main" data-pagefind-body>
+		<main id="main" data-pagefind-body transition:animate={fade({ duration: "0.2s" })}>
 			<slot />
 		</main>
 		<Footer />

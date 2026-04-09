@@ -36,7 +36,7 @@ function formatDate(date: Date) {
 	<section>
 		<div class="space-y-8">
 			{sortedDigests.map((d, i) => (
-				<article class="glow-card fade-in-up" style={`--delay: ${200 + i * 60}ms`}>
+				<article class="glow-card fade-in-up" style={`--delay: ${200 + Math.min(i, 12) * 60}ms`}>
 					<div class="mb-2 flex items-baseline justify-between">
 						<a href={`/lab/digest/${d.id}/`} class="font-serif text-xl font-medium text-black transition-colors hover:text-[#8953d1] dark:text-white dark:hover:text-[#a175e8]">
 							<span class="lang-en">{d.data.title}</span><span class="lang-zh">{d.data.title_zh || d.data.title}</span>
