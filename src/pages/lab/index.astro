@@ -31,7 +31,7 @@ const latestBuilderLog = sortByDate([...allBuilderLogs])[0];
 // Products: exclude Bookmarks and Library (they go in Curated)
 const excludeFromProducts = ["bookmarks", "library", "content-pipeline"];
 const otherProjects = allProjects
-	.filter(p => p.id !== "rex-ai-hq" && !excludeFromProducts.includes(p.id))
+	.filter(p => !excludeFromProducts.includes(p.id))
 	.sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
 
 // Timeline: latest 5
@@ -78,8 +78,6 @@ function formatShortDate(date: Date) {
 	return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
-
-const agentAvatars = ['samantha', 'loki', 'vision', 'jarvis', 'shuri', 'friday'];
 
 const meta = {
 	title: "Lab",
@@ -167,36 +165,6 @@ const meta = {
 		<h2 class="fade-in-up mb-8 font-serif text-xs font-bold tracking-widest text-gray-400 uppercase dark:text-gray-500" style="--delay: 100ms">
 			<span class="lang-en">Products</span><span class="lang-zh">产品</span>
 		</h2>
-
-		<!-- Hero Card: Rex AI HQ -->
-		<a href="/lab/agents/" class="lab-hero-card glow-card fade-in-up group mb-8 block rounded-xl border border-purple-500/20 p-6 transition-all hover:border-purple-500/40 sm:p-8" style="--delay: 150ms">
-			<div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-				<div class="flex-1">
-					<div class="mb-2 flex items-center gap-2">
-						<span class="text-2xl">🏠</span>
-						<h3 class="font-serif text-xl font-bold text-black group-hover:text-[#8953d1] dark:text-white dark:group-hover:text-[#a175e8] sm:text-2xl">
-							Rex AI HQ
-						</h3>
-						<span class="ml-2 inline-flex items-center gap-1 rounded-full bg-green-500/10 px-2 py-0.5 font-serif text-xs font-medium text-green-500">
-							<span class="inline-block h-1.5 w-1.5 rounded-full bg-green-500"></span>
-							<span class="lang-en">running</span><span class="lang-zh">运行中</span>
-						</span>
-					</div>
-					<p class="lang-en font-serif text-base leading-relaxed text-gray-500 dark:text-gray-400">
-						6 AI agents working 24/7 — writing, researching, coding, designing, analyzing.
-					</p>
-					<p class="lang-zh font-serif text-base leading-relaxed text-gray-500 dark:text-gray-400">
-						6 个 AI Agent 全天候运转：写作、研究、开发、设计、分析。
-					</p>
-				</div>
-				<div class="flex items-center gap-2">
-					{agentAvatars.map(avatar => (
-						<img src={`/avatars/${avatar}.png`} alt={avatar} class="h-9 w-9 rounded-full object-cover border border-purple-500/20" />
-					))}
-					<span class="ml-2 font-serif text-sm text-purple-400 opacity-0 transition-opacity group-hover:opacity-100">→</span>
-				</div>
-			</div>
-		</a>
 
 		<!-- Product Grid -->
 		<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
