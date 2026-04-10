@@ -138,6 +138,28 @@ const meta = {
 				<span class="text-gray-400"> 篇 Builder Log</span>
 			</span>
 		</div>
+		<!-- Player Stats — Hero identity card -->
+		<a href="/lab/player/" class="lab-player-card fade-in-up group mt-8 flex flex-col gap-3 rounded-xl border border-purple-500/20 p-5 transition-all hover:border-purple-500/40 sm:flex-row sm:items-center sm:gap-6 sm:p-6" style="--delay: 200ms">
+			<div class="flex items-center gap-3">
+				<span class="text-xl">⚔️</span>
+				<div>
+					<h3 class="font-serif text-base font-bold text-black group-hover:text-[#8953d1] dark:text-white dark:group-hover:text-[#a175e8]">
+						<span class="lang-en">Player Stats</span>
+						<span class="lang-zh">江湖档案</span>
+					</h3>
+					<p class="font-serif text-xs text-gray-400">
+						<span class="lang-en">Open-world cultivation dashboard — real data.</span>
+						<span class="lang-zh">开放世界修行面板——真实数据驱动。</span>
+					</p>
+				</div>
+			</div>
+			<div class="flex items-center gap-1.5 sm:ml-auto">
+				{["体","悟","心","剑","声","统"].map(s => (
+					<span class="inline-flex h-7 w-7 items-center justify-center rounded border border-purple-500/30 bg-purple-500/10 font-serif text-xs text-purple-400">{s}</span>
+				))}
+				<span class="ml-1.5 font-serif text-sm text-purple-400 opacity-0 transition-opacity group-hover:opacity-100">→</span>
+			</div>
+		</a>
 	</section>
 
 	<!-- ====== SECTION 1: PRODUCTS ====== -->
@@ -293,37 +315,6 @@ const meta = {
 				<span class="mt-auto pt-3 font-serif text-sm text-purple-400 opacity-0 transition-opacity group-hover:opacity-100">→</span>
 			</a>
 		</div>
-	</section>
-
-	<!-- ====== SECTION 2.5: PLAYER STATS ====== -->
-	<section class="mb-20">
-		<a href="/lab/player/" class="lab-player-card fade-in-up group block rounded-xl border border-purple-500/20 p-6 transition-all hover:border-purple-500/40 sm:p-8" style="--delay: 150ms">
-			<div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-				<div class="flex-1">
-					<div class="mb-2 flex items-center gap-3">
-						<span class="text-2xl">⚔️</span>
-						<h3 class="font-serif text-xl font-bold text-black group-hover:text-[#8953d1] dark:text-white dark:group-hover:text-[#a175e8] sm:text-2xl">
-							<span class="lang-en">Player Stats</span>
-							<span class="lang-zh">江湖档案</span>
-						</h3>
-					</div>
-					<p class="lang-en font-serif text-base leading-relaxed text-gray-500 dark:text-gray-400">
-						Your open-world cultivation dashboard — all stats from real data.
-					</p>
-					<p class="lang-zh font-serif text-base leading-relaxed text-gray-500 dark:text-gray-400">
-						开放世界修行面板——六维属性、技能树、探索地图，全部来自真实数据。
-					</p>
-				</div>
-				<div class="flex items-center gap-2">
-					<div class="flex gap-1">
-						{["体魄","悟性","心法","剑术","声望","统御"].map(s => (
-							<span class="inline-block h-8 w-8 rounded border border-purple-500/30 bg-purple-500/10 text-center font-serif text-xs leading-8 text-purple-400">{s[0]}</span>
-						))}
-					</div>
-					<span class="ml-2 font-serif text-sm text-purple-400 opacity-0 transition-opacity group-hover:opacity-100">→</span>
-				</div>
-			</div>
-		</a>
 	</section>
 
 	<!-- ====== SECTION 3: DATA STREAMS ====== -->
