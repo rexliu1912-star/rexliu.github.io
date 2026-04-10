@@ -411,6 +411,15 @@ const GA_ID = "G-1EC76EZ517";
 
 					updateUI();
 				}
+
+				// Expose player API for page-specific auto-play
+				window.__player = {
+					play() { if (!state.isPlaying) document.getElementById("play-button")?.click(); },
+					setTrack(idx) { if (idx >= 0 && idx < playlist.length) { currentIndex = idx; updateUI(); } },
+					isPlaying() { return state.isPlaying; },
+					playlist,
+				};
+
 				initPlayer();
 				document.addEventListener("astro:after-swap", initPlayer);
 				document.addEventListener("astro:page-load", updateUI);

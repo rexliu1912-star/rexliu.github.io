@@ -16,6 +16,11 @@ const meta = {
 
   <section class="travel-shell">
 
+    <!-- ====== BIRTHDAY BANNER (hidden by default, shown via JS on 4/11) ====== -->
+    <div class="birthday-banner" id="birthday-banner" aria-hidden="true">
+      <span class="birthday-text">Happy Birthday, My Dear~ 🧡</span>
+    </div>
+
     <!-- ====== HERO ====== -->
     <div class="travel-hero">
       <p class="eyebrow fade-in-up" style="--delay: 40ms" data-i18n-en="Digital Nomad Atlas" data-i18n-zh="数字游牧地图">Digital Nomad Atlas</p>
@@ -185,6 +190,30 @@ const meta = {
       --travel-soft:    #cdc5dc;
       --travel-muted:   #9b90ad;
       --travel-border:  rgba(161, 117, 232, 0.18);
+    }
+
+    /* ---- Birthday Banner ---- */
+    .birthday-banner {
+      display: none;
+      text-align: center;
+      padding: 1rem 1.5rem;
+      border-radius: 1.25rem;
+      background: linear-gradient(135deg, rgba(231,76,111,0.12), rgba(137,83,209,0.12));
+      border: 1px solid rgba(231,76,111,0.25);
+      animation: birthday-glow 3s ease-in-out infinite alternate;
+    }
+    .birthday-banner.is-visible { display: block; }
+    .birthday-text {
+      font-family: Georgia, Cambria, "Times New Roman", Times, serif;
+      font-size: clamp(1.1rem, 2.5vw, 1.6rem);
+      font-style: italic;
+      color: #e74c6f;
+      letter-spacing: 0.04em;
+    }
+    :global(html[data-theme="dark"]) .birthday-text { color: #f9a8c0; }
+    @keyframes birthday-glow {
+      from { box-shadow: 0 0 12px rgba(231,76,111,0.08); }
+      to   { box-shadow: 0 0 24px rgba(231,76,111,0.18); }
     }
 
     /* ---- Hero ---- */
@@ -806,9 +835,33 @@ const meta = {
       return m ? m[1] : "Unknown";
     };
 
+    // Birthday mode: April 11 (UTC+8)
+    const _now = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Shanghai" }));
+    const IS_BIRTHDAY = _now.getMonth() === 3 && _now.getDate() === 11;
+    const HEART_COLOR = "#e74c6f";
+
     const MARKER_SIZE = 56;
     const MARKER_CENTER = 28;
+
+    // Heart SVG path for birthday mode
+    const heartSvg = (current=false, color=null) => {
+      const c = color || HEART_COLOR;
+      const pulse = current
+        ? `<animateTransform attributeName="transform" type="scale" values="1;1.15;1" dur="1.6s" repeatCount="indefinite" additive="sum" transformOrigin="28 28"/>`
+        : `<animateTransform attributeName="transform" type="scale" values="1;1.08;1" dur="2.4s" repeatCount="indefinite" additive="sum" transformOrigin="28 28"/>`;
+      return `<svg width="${MARKER_SIZE}" height="${MARKER_SIZE}" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg">
+        <g transform="translate(28,28) scale(0.42) translate(-28,-28)">
+          <path d="M28 50 C16 40 4 30 4 19 C4 10 11 4 19 4 C23 4 26.5 6 28 9 C29.5 6 33 4 37 4 C45 4 52 10 52 19 C52 30 40 40 28 50Z"
+                fill="${c}" opacity="0.85" stroke="white" stroke-width="2.5"/>
+          ${pulse}
+        </g>
+      </svg>`;
+    };
+
     const markerSvg = (current=false, prior=false, color=null) => {
+      // On birthday, use hearts for all markers
+      if (IS_BIRTHDAY) return heartSvg(current, color || HEART_COLOR);
+
       const c = prior ? "#94a3b8" : (color || PURPLE);
       const pulse = current
         ? `<circle cx="${MARKER_CENTER}" cy="${MARKER_CENTER}" r="20" fill="${c}" opacity="0.16"><animate attributeName="r" values="16;24;16" dur="2s" repeatCount="indefinite"/></circle>`
@@ -1598,6 +1651,26 @@ const meta = {
           if (city) renderStoryCard(city, isPrior);
         }
       }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-lang"] });
+
+      // ---- Birthday Banner ----
+      if (IS_BIRTHDAY) {
+        const banner = document.getElementById("birthday-banner");
+        if (banner) { banner.classList.add("is-visible"); banner.setAttribute("aria-hidden", "false"); }
+      }
+
+      // ---- Auto-play music on first interaction ----
+      if (window.__player && !window.__player.isPlaying()) {
+        // Birthday: 你愿意吗 (index 14) / Normal: Still Moving On (index 1)
+        const trackIdx = IS_BIRTHDAY ? 14 : 1;
+        window.__player.setTrack(trackIdx);
+        const tryPlay = () => {
+          if (window.__player && !window.__player.isPlaying()) window.__player.play();
+          document.removeEventListener("click", tryPlay);
+          document.removeEventListener("scroll", tryPlay);
+        };
+        document.addEventListener("click", tryPlay, { once: true });
+        document.addEventListener("scroll", tryPlay, { once: true });
+      }
     };
 
     initTravel();
