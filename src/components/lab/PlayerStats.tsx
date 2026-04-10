@@ -664,7 +664,7 @@ const EquipmentRing = memo(function EquipmentRing({ equipment, dark }: { equipme
         ))}
       </svg>
       {equipment.slice(0, 6).map((item, i) => {
-        const card = <div className="equipment-floating" style={{ width: 196, borderRadius: 20, padding: 14, border: `1px solid ${dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(23,23,23,0.98)" : "rgba(255,255,255,0.94)", boxShadow: "0 8px 18px rgba(137,83,209,0.08)", position: "relative", zIndex: 2, willChange: "transform" }}>
+        const card = <div className="equipment-floating" style={{ width: 196, borderRadius: 20, padding: 14, border: `1px solid ${dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(23,23,23,0.98)" : "rgba(255,255,255,0.94)", boxShadow: "0 8px 18px rgba(137,83,209,0.08)", position: "relative", zIndex: 2, willChange: "transform", "--float-delay": `${i * 0.6}s` } as CSSProperties}>
           <div style={{ display: "flex", justifyContent: "space-between", gap: 8, alignItems: "center" }}><span style={{ color: PURPLE, fontSize: 11, fontFamily: "monospace", padding: "4px 8px", borderRadius: 999, border: "1px solid rgba(137,83,209,0.18)" }}><span className="lang-zh">{item.slotCN}</span><span className="lang-en">{item.slotEN}</span></span><span style={{ color: dark ? "#ac9fbe" : "#8b7a98", fontFamily: "monospace", fontSize: 10 }}>{item.acquired}</span></div>
           <div style={{ marginTop: 10, color: dark ? "#fff" : "#261a33", fontWeight: 700, fontFamily: "Georgia, Cambria, serif" }}><span className="lang-zh">{item.nameCN}</span><span className="lang-en">{item.nameEN}</span></div>
           <TooltipWrap content={<><div className="lang-zh">{item.effectCN}</div><div className="lang-en" style={{ color: "#ccb7f7" }}>{item.effectEN}</div></>}><div style={{ marginTop: 8, color: dark ? "#d6cdf0" : "#6f46a3", fontSize: 12 }}><span className="lang-zh">{item.effectCN}</span><span className="lang-en">{item.effectEN}</span></div></TooltipWrap>
@@ -855,6 +855,30 @@ const SkillTreePanel = memo(function SkillTreePanel({ title, subtitle, rootLabel
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const { ref, inView } = useInView<HTMLDivElement>(0.18, false);
 
+  // Compute highlighted edge IDs when a node is hovered
+  const highlightedEdgeIds = useMemo(() => {
+    if (!hoveredId) return new Set<string>();
+    const ids = new Set<string>();
+    for (const edge of layout.edges) {
+      if (edge.from.id === hoveredId || edge.to.id === hoveredId) {
+        ids.add(edge.id);
+        // If hovering a leaf, also highlight root→branch edge
+        if (edge.from.depth === 1) {
+          for (const e2 of layout.edges) {
+            if (e2.to.id === edge.from.id) ids.add(e2.id);
+          }
+        }
+        // If hovering a branch, also highlight all branch→leaf edges
+        if (edge.from.depth === 0) {
+          for (const e2 of layout.edges) {
+            if (e2.from.id === hoveredId) ids.add(e2.id);
+          }
+        }
+      }
+    }
+    return ids;
+  }, [hoveredId, layout.edges]);
+
   return <div ref={ref} style={{ borderRadius: 24, padding: 18, border: `1px solid ${dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(21,21,21,0.98)" : "linear-gradient(180deg, rgba(255,255,255,0.98), rgba(247,240,255,0.98))", boxShadow: dark ? "0 10px 22px rgba(0,0,0,0.16)" : "0 10px 18px rgba(137,83,209,0.07)" }}>
     <div style={{ display: "flex", justifyContent: "space-between", gap: 12, alignItems: "flex-start", flexWrap: "wrap", marginBottom: 14 }}>
       <div>
@@ -866,10 +890,12 @@ const SkillTreePanel = memo(function SkillTreePanel({ title, subtitle, rootLabel
     <div style={{ overflowX: "auto", overflowY: "hidden", borderRadius: 18 }}>
       <svg viewBox={`0 0 ${layout.width} ${layout.height}`} style={{ width: "100%", minWidth: 760, height: "auto", display: "block" }}>
         {layout.edges.map(edge => {
-          const stroke = edge.active ? "rgba(137,83,209,0.58)" : (dark ? "rgba(110,102,124,0.46)" : "rgba(160,150,174,0.4)");
+          const isHighlighted = highlightedEdgeIds.has(edge.id);
+          const stroke = isHighlighted ? PURPLE : (edge.active ? "rgba(137,83,209,0.58)" : (dark ? "rgba(110,102,124,0.46)" : "rgba(160,150,174,0.4)"));
+          const strokeW = isHighlighted ? 3.2 : 2;
           return <g key={edge.id}>
-            <path d={edge.path} fill="none" stroke={stroke} strokeWidth={2} strokeLinecap="round" />
-            {edge.active && inView && <path d={edge.path} fill="none" stroke={PURPLE} strokeWidth={2.2} strokeLinecap="round" className="skill-tree-flow" />}
+            <path d={edge.path} fill="none" stroke={stroke} strokeWidth={strokeW} strokeLinecap="round" style={{ transition: "stroke 200ms ease, stroke-width 200ms ease" }} />
+            {edge.active && inView && <path d={edge.path} fill="none" stroke={isHighlighted ? "#b88aef" : PURPLE} strokeWidth={isHighlighted ? 3 : 2.2} strokeLinecap="round" className={`skill-tree-flow${isHighlighted ? " is-highlight-flow" : ""}`} />}
           </g>;
         })}
         {layout.nodes.map(node => {
@@ -1144,14 +1170,18 @@ export default function PlayerStats(props: PlayerStatsProps) {
       @keyframes radarPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.01); } }
       @keyframes radarExpand { from { transform: scale(0.3); opacity: 0; } to { transform: scale(1); opacity: 1; } }
       .radar-wrap.is-active > :first-child { animation: radarExpand 700ms cubic-bezier(0.22,1,0.36,1) forwards, radarPulse 4s ease-in-out 700ms infinite; transform-origin: center; will-change: transform; }
-      .equipment-floating { transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 220ms cubic-bezier(0.22, 1, 0.36, 1), border-color 220ms ease; }
-      .equipment-floating:hover { transform: translateY(-6px); box-shadow: 0 12px 22px rgba(137,83,209,0.16); border-color: rgba(137,83,209,0.28); }
+      @keyframes equipFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+      .equipment-floating { transition: box-shadow 220ms cubic-bezier(0.22, 1, 0.36, 1), border-color 220ms ease; animation: equipFloat 3.5s ease-in-out infinite; animation-delay: var(--float-delay, 0s); }
+      .equipment-floating:hover { transform: translateY(-6px); box-shadow: 0 12px 22px rgba(137,83,209,0.16); border-color: rgba(137,83,209,0.28); animation-play-state: paused; }
+      @keyframes coreOrbit { to { transform: rotate(360deg); } }
       .equipment-ring-core::after { content: ""; position: absolute; inset: 16px; border-radius: 50%; box-shadow: inset 0 0 12px rgba(137,83,209,0.08); }
+      .equipment-ring-core::before { content: ""; position: absolute; inset: 8px; border-radius: 50%; border: 1px dashed rgba(137,83,209,0.12); animation: coreOrbit 60s linear infinite; }
       .equipment-line { animation: lineFlow 3.4s linear infinite; stroke-dasharray: 120; }
       .skill-tree-node { transition: transform 180ms cubic-bezier(0.22, 1, 0.36, 1), opacity 180ms ease; transform-origin: center; cursor: default; will-change: transform; }
       .skill-tree-node.is-link { cursor: pointer; }
       .skill-tree-node:hover { transform: translateY(-2px) scale(1.01); }
-      .skill-tree-flow { stroke-dasharray: 16 164; animation: lineFlow 4.2s linear infinite; }
+      .skill-tree-flow { stroke-dasharray: 16 164; animation: lineFlow 4.2s linear infinite; transition: stroke 200ms ease, stroke-width 200ms ease; }
+      .skill-tree-flow.is-highlight-flow { stroke-dasharray: 24 96; animation-duration: 1.8s; }
       .relationship-card:hover { transform: translateY(-4px); box-shadow: 0 10px 18px rgba(137,83,209,0.1); }
       .relationship-card.is-clickable { cursor: pointer; }
       @media (max-width: 960px) {
@@ -1176,7 +1206,7 @@ export default function PlayerStats(props: PlayerStatsProps) {
         .chapter-nav-btn { width: 32px !important; height: 32px !important; min-width: 32px !important; }
       }
       @media (prefers-reduced-motion: reduce) {
-        .chapter-slide-card, .equipment-floating, .equipment-line, .skill-tree-flow, .radar-wrap.is-active > :first-child, .achievement-badge, .boss-defeated-name::after, .boss-stamp { animation: none !important; transition: none !important; opacity: 1 !important; }
+        .chapter-slide-card, .equipment-floating, .equipment-line, .equipment-ring-core::before, .skill-tree-flow, .skill-tree-flow.is-highlight-flow, .radar-wrap.is-active > :first-child, .achievement-badge, .boss-defeated-name::after, .boss-stamp { animation: none !important; transition: none !important; opacity: 1 !important; }
       }
     `}</style>
     <div style={{ display: "grid", gap: 18 }}>

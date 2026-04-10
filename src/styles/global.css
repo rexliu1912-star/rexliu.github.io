@@ -434,6 +434,13 @@ html[data-lang="zh"] .lang-en {
 ::view-transition-new(root) {
 	animation-duration: 0s;
 }
+::view-transition-old(root) {
+	z-index: 1;
+}
+::view-transition-new(root) {
+	z-index: 9999;
+	mix-blend-mode: normal;
+}
 
 /* Page enter: main content fades up from slight offset */
 @keyframes page-fade-in {

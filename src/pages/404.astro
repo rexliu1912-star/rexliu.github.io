@@ -17,8 +17,8 @@ const popularPosts = allPosts
 
 <PageLayout meta={meta}>
 	<div class="not-found-container">
-		<div class="not-found-content">
-			<h1 class="not-found-title">404</h1>
+		<div class="not-found-content fade-in-up" style="--delay: 0ms">
+			<h1 class="not-found-title" style="animation: glitch404 0.6s ease-out">404</h1>
 			<h2 class="not-found-subtitle">Page Not Found</h2>
 			<p class="not-found-message">
 				抱歉，你访问的页面不存在或已被移除。<br />
@@ -51,7 +51,7 @@ const popularPosts = allPosts
 
 		{
 			popularPosts.length > 0 && (
-				<div class="popular-posts">
+				<div class="popular-posts fade-in-up" style="--delay: 200ms">
 					<h3 class="popular-posts-title">热门文章 / Popular Posts</h3>
 					<ul class="popular-posts-list">
 						{popularPosts.map((post) => (
@@ -237,6 +237,17 @@ const popularPosts = allPosts
 		color: var(--color-global-text);
 		opacity: 0.7;
 		line-height: 1.4;
+	}
+
+	@keyframes glitch404 {
+		0% { opacity: 0; transform: translateY(20px) skewX(-8deg); }
+		40% { opacity: 1; transform: translateY(-4px) skewX(4deg); }
+		60% { transform: translateY(2px) skewX(-2deg); }
+		100% { transform: translateY(0) skewX(0); }
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.not-found-title { animation: none !important; }
 	}
 
 	@media (max-width: 640px) {
