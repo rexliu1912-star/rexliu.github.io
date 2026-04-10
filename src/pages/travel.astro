@@ -1258,11 +1258,47 @@ const meta = {
       const provEl = document.getElementById("province-count");
       if (provEl) provEl.textContent = `across ${provinceSet.size} provinces`;
 
-      // Longest leg — Shanghai → Dali (start of nomad journey)
+      // Longest leg — dynamically calculated across all cities
+      const allChron = [
+        ...priorCities.filter(c => !c.mergeInto).map(c => ({ ...c, _sortDate: parsePriorDate(c.year) })),
+        ...cities.map(c => ({ ...c, _sortDate: new Date(c.arrival) }))
+      ].sort((a, b) => a._sortDate - b._sortDate);
+      let longestLegDist = 0, longestLegFrom = null, longestLegTo = null;
+      for (let i = 1; i < allChron.length; i++) {
+        const d = haversine(allChron[i-1], allChron[i]);
+        if (d > longestLegDist) { longestLegDist = d; longestLegFrom = allChron[i-1]; longestLegTo = allChron[i]; }
+      }
       const legEl = document.getElementById("longest-leg");
       const legNoteEl = document.getElementById("longest-leg-note");
-      if (legEl) legEl.textContent = "2,162 km";
-      if (legNoteEl) legNoteEl.textContent = "Shanghai → Dali";
+      if (legEl) legEl.textContent = `${Math.round(longestLegDist).toLocaleString()} km`;
+      if (legNoteEl && longestLegFrom && longestLegTo) {
+        const isZhLeg = getLang() === "zh";
+        legNoteEl.textContent = isZhLeg
+          ? `${longestLegFrom.nameCN} → ${longestLegTo.nameCN}`
+          : `${longestLegFrom.name} → ${longestLegTo.name}`;
+      }
+
+      // Prior city route — connect prior cities chronologically with subtle dashed line
+      const priorChron = priorCities
+        .filter(c => !c.mergeInto)
+        .map(c => ({ ...c, _sortDate: parsePriorDate(c.year) }))
+        .sort((a, b) => a._sortDate - b._sortDate);
+      if (priorChron.length > 1) {
+        const priorCoords = priorChron.map(c => [c.lat, c.lng]);
+        L.polyline(priorCoords, {
+          color: "#94a3b8", weight: 1.8, opacity: 0.35,
+          dashArray: "6 10", lineCap: "round"
+        }).addTo(routeLayer);
+      }
+      // Connect last prior city to first nomad city
+      if (priorChron.length > 0 && cities.length > 0) {
+        const lastPrior = priorChron[priorChron.length - 1];
+        const firstNomad = [...cities].sort((a,b) => new Date(a.arrival) - new Date(b.arrival))[0];
+        L.polyline([[lastPrior.lat, lastPrior.lng], [firstNomad.lat, firstNomad.lng]], {
+          color: PURPLE, weight: 2, opacity: 0.4,
+          dashArray: "6 10", lineCap: "round"
+        }).addTo(routeLayer);
+      }
 
       // Prior city markers — skip merged cities (rendered via primary)
       priorCities.forEach(city => {
@@ -1471,7 +1507,7 @@ const meta = {
       const replayProgress = document.getElementById("replay-progress");
       const replayFill = document.getElementById("replay-fill");
       const replayLabel = document.getElementById("replay-label");
-      const REPLAY_DELAY = 2200;
+      const REPLAY_DELAY = 4500;
 
       const stopReplay = () => {
         _isReplaying = false;
@@ -1637,7 +1673,11 @@ const meta = {
         const provEl = document.getElementById("province-count");
         if (provEl) provEl.textContent = lang === "zh" ? `横跨 ${provinceSet.size} 个省份` : `across ${provinceSet.size} provinces`;
         const legNoteEl = document.getElementById("longest-leg-note");
-        if (legNoteEl) legNoteEl.textContent = lang === "zh" ? "上海 → 大理" : "Shanghai → Dali";
+        if (legNoteEl && longestLegFrom && longestLegTo) {
+          legNoteEl.textContent = lang === "zh"
+            ? `${longestLegFrom.nameCN} → ${longestLegTo.nameCN}`
+            : `${longestLegFrom.name} → ${longestLegTo.name}`;
+        }
       };
       updateI18n();
 
