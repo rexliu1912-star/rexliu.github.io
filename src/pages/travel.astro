@@ -1188,8 +1188,8 @@ const meta = {
       _currentCityItem = cities.find(c => c.id === _data.meta.currentCity) || cities[cities.length - 1];
       const longestStay  = cities.filter(c => c.stayDays).sort((a,b) => b.stayDays - a.stayDays)[0];
       const shortestStay = cities.filter(c => c.stayDays).sort((a,b) => a.stayDays - b.stayDays)[0];
-      const libraries = cities.flatMap(c => c.spots||[]).filter(s => s.isLibrary).length;
-      const allMeals = cities.filter(c => c.mealCN).map(c => `${c.nameCN} · ${c.mealCN}`);
+      const libraries = [...cities, ...priorCities].flatMap(c => c.spots||[]).filter(s => s.isLibrary).length;
+      const allMeals = [...cities, ...priorCities].filter(c => c.mealCN).map(c => `${c.nameCN} · ${c.mealCN}`);
 
       // Counter animation
       const fillCounter = (sel, val, suffix="") => {
@@ -1379,11 +1379,12 @@ const meta = {
         }, 300 * idx + 160);
       });
 
-      // Fit to nomad route only (not prior cities) for a tighter initial view
-      const nomadBounds = L.latLngBounds([]);
-      sortedCities.forEach(c => nomadBounds.extend([c.lat, c.lng]));
-      if (nomadBounds.isValid()) {
-        _map.fitBounds(nomadBounds.pad(0.25), { maxZoom: 6 });
+      // Fit to full journey (prior + nomad cities) for initial view
+      const allBounds = L.latLngBounds([]);
+      sortedCities.forEach(c => allBounds.extend([c.lat, c.lng]));
+      priorCities.filter(c => !c.mergeInto).forEach(c => allBounds.extend([c.lat, c.lng]));
+      if (allBounds.isValid()) {
+        _map.fitBounds(allBounds.pad(0.2), { maxZoom: 6 });
       }
 
       // Panel close button
