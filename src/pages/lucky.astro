@@ -1,0 +1,980 @@
+---
+import PageLayout from "@/layouts/Base.astro";
+import milestonesData from "@/data/lucky-milestones.json";
+
+const milestones = [...milestonesData.milestones].sort(
+	(a, b) => new Date(a.date).valueOf() - new Date(b.date).valueOf(),
+);
+
+const categoryMeta = {
+	life: { label: "Life", labelZh: "生命", color: "#F59E0B", icon: "🎂" },
+	english: { label: "English", labelZh: "英语", color: "#8953D1", icon: "🇬🇧" },
+	social: { label: "Social", labelZh: "社交", color: "#10B981", icon: "👫" },
+	math: { label: "Math", labelZh: "数学", color: "#3B82F6", icon: "📐" },
+	growth: { label: "Growth", labelZh: "成长", color: "#EC4899", icon: "🌱" },
+} as const;
+
+const fallbackMilestone = {
+	id: "lucky-placeholder",
+	day: 0,
+	date: "2021-01-01",
+	category: "growth",
+	title: "成长开始",
+	title_en: "Growth begins",
+	narrative: "每一段旅程都得先有第一颗星。",
+	narrative_en: "Every journey starts with the first star.",
+	weight: 1,
+	ripple: false,
+} as const;
+
+const totalMilestones = milestones.length;
+const totalConstellations = new Set(milestones.map((item) => item.category)).size;
+const maxDay = Math.max(...milestones.map((item) => item.day));
+const initialMilestone = milestones[milestones.length - 1] ?? milestones[0] ?? fallbackMilestone;
+const milestonesJson = JSON.stringify(milestones);
+const categoryMetaJson = JSON.stringify(categoryMeta);
+
+const meta = {
+	title: "Lucky Growth Star Map",
+	description:
+		"A scroll-driven growth star map of Lucky's milestones — from birth to day 43 of English awakening.",
+};
+---
+
+<PageLayout meta={meta}>
+	<section class="lucky-page">
+		<div class="mb-6">
+			<a
+				href="/lab/"
+				class="font-serif text-sm text-white/60 transition-colors hover:text-[#c9b4f5]"
+			>
+				← Lab
+			</a>
+		</div>
+
+		<section class="lucky-hero">
+			<p class="lucky-eyebrow">
+				<span class="lang-en">Growth Atlas</span>
+				<span class="lang-zh">成长星图</span>
+			</p>
+			<h1 class="font-serif text-4xl font-bold tracking-tight text-white sm:text-5xl">
+				<span class="lang-en">Lucky's Growth Star Map</span>
+				<span class="lang-zh">启芽 · 福福成长星图</span>
+			</h1>
+			<p class="lucky-subtitle font-serif text-lg leading-relaxed text-white/72 sm:text-xl">
+				<span class="lang-en">Every milestone is a star. Scroll to watch them light up.</span>
+				<span class="lang-zh">每个里程碑都是一颗星。往下滚，看它们依次亮起。</span>
+			</p>
+			<div class="lucky-hero-stats" aria-label="Growth star map statistics">
+				<article class="lucky-stat-card">
+					<span class="lucky-stat-label">
+						<span class="lang-en">Milestones</span>
+						<span class="lang-zh">里程碑</span>
+					</span>
+					<strong class="lucky-stat-value font-serif">{totalMilestones}</strong>
+				</article>
+				<article class="lucky-stat-card">
+					<span class="lucky-stat-label">
+						<span class="lang-en">English Streak</span>
+						<span class="lang-zh">英语启蒙</span>
+					</span>
+					<strong class="lucky-stat-value font-serif">Day {maxDay}</strong>
+				</article>
+				<article class="lucky-stat-card">
+					<span class="lucky-stat-label">
+						<span class="lang-en">Constellations</span>
+						<span class="lang-zh">星座类别</span>
+					</span>
+					<strong class="lucky-stat-value font-serif">{totalConstellations}</strong>
+				</article>
+			</div>
+			<div class="lucky-scroll-cue" aria-hidden="true">↓</div>
+		</section>
+
+		<section class="star-scroll" id="star-scroll">
+			<div class="star-stage">
+				<canvas id="lucky-star-canvas" aria-hidden="true"></canvas>
+				<div class="star-stage-top">
+					<div class="star-stage-copy">
+						<p class="star-kicker">
+							<span class="lang-en">Interactive constellation</span>
+							<span class="lang-zh">互动星空</span>
+						</p>
+						<h2 class="font-serif text-2xl font-semibold text-white sm:text-3xl">
+							<span class="lang-en">From birth to the first spontaneous sentence</span>
+							<span class="lang-zh">从出生，到第一句主动说出口的英语</span>
+						</h2>
+						<p class="star-stage-note text-sm leading-6 text-white/65 sm:text-base">
+							<span class="lang-en">Click any star to open the story behind it.</span>
+							<span class="lang-zh">点任意星星，会展开那一刻背后的故事。</span>
+						</p>
+					</div>
+					<div class="star-legend" aria-label="Milestone categories">
+						{Object.entries(categoryMeta).map(([key, value]) => (
+							<span class="star-legend-item" data-category={key}>
+								<span class="star-legend-dot" style={`--legend-color: ${value.color}`}></span>
+								<span class="lang-en">{value.label}</span>
+								<span class="lang-zh">{value.labelZh}</span>
+							</span>
+						))}
+					</div>
+				</div>
+
+				<aside class="milestone-card" id="milestone-card" aria-live="polite">
+					<div class="milestone-card-glow"></div>
+					<div class="milestone-card-head">
+						<div>
+							<p class="milestone-pill" id="milestone-pill">🌱 English · Day 42</p>
+							<time class="milestone-date" id="milestone-date" datetime={initialMilestone.date}>
+								{initialMilestone.date}
+							</time>
+						</div>
+						<button
+							id="milestone-close"
+							type="button"
+							class="milestone-close"
+							aria-label="Close milestone card"
+						>
+							✕
+						</button>
+					</div>
+					<div class="milestone-card-body">
+						<h3 class="font-serif text-2xl font-semibold text-white" id="milestone-title-zh">
+							{initialMilestone.title}
+						</h3>
+						<p class="font-serif text-base text-white/72" id="milestone-title-en">
+							{initialMilestone.title_en}
+						</p>
+						<blockquote class="milestone-quote" id="milestone-narrative-zh">
+							{initialMilestone.narrative}
+						</blockquote>
+						<p class="milestone-narrative-en" id="milestone-narrative-en">
+							{initialMilestone.narrative_en}
+						</p>
+					</div>
+					<div class="milestone-card-nav">
+						<button id="milestone-prev" type="button" class="milestone-nav-btn">←</button>
+						<button id="milestone-next" type="button" class="milestone-nav-btn">→</button>
+					</div>
+				</aside>
+
+				<div class="star-progress" aria-live="polite">
+					<div class="star-progress-track">
+						<div id="star-progress-fill" class="star-progress-fill"></div>
+					</div>
+					<p class="star-progress-meta" id="star-progress-meta">Day 0 → Day {maxDay}</p>
+				</div>
+			</div>
+		</section>
+
+		<section class="timeline-section" id="timeline-section">
+			<div class="timeline-head">
+				<p class="timeline-kicker">
+					<span class="lang-en">Timeline</span>
+					<span class="lang-zh">完整时间线</span>
+				</p>
+				<h2 class="font-serif text-3xl font-semibold text-white">
+					<span class="lang-en">Readable, searchable, shareable</span>
+					<span class="lang-zh">可读、可搜、可分享的文字版</span>
+				</h2>
+				<p class="font-serif text-base leading-7 text-white/70">
+					<span class="lang-en">Canvas is the wow. The timeline is the memory.</span>
+					<span class="lang-zh">星空负责惊艳，时间线负责留存。</span>
+				</p>
+			</div>
+
+			<div class="timeline-list" role="list">
+				{milestones.map((milestone, index) => {
+					const category = categoryMeta[milestone.category as keyof typeof categoryMeta];
+					return (
+						<button
+							type="button"
+							class="timeline-item"
+							role="listitem"
+							data-milestone-index={index}
+							data-milestone-id={milestone.id}
+						>
+							<span class="timeline-item-dot" style={`--item-color: ${category.color}`}>✦</span>
+							<span class="timeline-item-date">{milestone.date.replace(/-/g, ".")}</span>
+							<span class="timeline-item-title">
+								<span class="lang-en">{milestone.title_en}</span>
+								<span class="lang-zh">{milestone.title}</span>
+							</span>
+							<span class="timeline-item-tag" style={`--item-color: ${category.color}`}>
+								{category.icon} <span class="lang-en">{category.label}</span><span class="lang-zh">{category.labelZh}</span>
+							</span>
+						</button>
+					);
+				})}
+			</div>
+		</section>
+	</section>
+
+	<script is:inline id="lucky-milestones-data" type="application/json" set:html={milestonesJson}></script>
+	<script is:inline id="lucky-category-meta" type="application/json" set:html={categoryMetaJson}></script>
+	<script is:inline>
+		function __initLuckyStarMap() {
+			const page = document.querySelector('.lucky-page');
+			if (!page || page.dataset.luckyReady === 'true') return;
+			page.dataset.luckyReady = 'true';
+
+			const milestones = JSON.parse(document.getElementById('lucky-milestones-data')?.textContent || '[]');
+			const categoryMeta = JSON.parse(document.getElementById('lucky-category-meta')?.textContent || '{}');
+			const canvas = document.getElementById('lucky-star-canvas');
+			const card = document.getElementById('milestone-card');
+			const closeBtn = document.getElementById('milestone-close');
+			const prevBtn = document.getElementById('milestone-prev');
+			const nextBtn = document.getElementById('milestone-next');
+			const progressFill = document.getElementById('star-progress-fill');
+			const progressMeta = document.getElementById('star-progress-meta');
+			const starScroll = document.getElementById('star-scroll');
+			const timelineButtons = Array.from(document.querySelectorAll('.timeline-item'));
+			if (!(canvas instanceof HTMLCanvasElement) || !card || !starScroll) return;
+
+			const ctx = canvas.getContext('2d');
+			if (!ctx) return;
+
+			const state = {
+				currentIndex: Math.max(0, milestones.length - 1),
+				selectedIndex: Math.max(0, milestones.length - 1),
+				progress: 1,
+				paused: false,
+				stars: [],
+				particles: [],
+				animationFrame: 0,
+				time: 0,
+			};
+
+			const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+			const isZh = () => (document.documentElement.getAttribute('data-lang') || 'en') === 'zh';
+			const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+			const formatDate = (value) => value.replace(/-/g, '.');
+			const gradientPalette = ['rgba(137,83,209,0.24)', 'rgba(59,130,246,0.18)', 'rgba(236,72,153,0.14)'];
+			const hexToRgba = (hex, alpha) => {
+				const normalized = (hex || '#ffffff').replace('#', '');
+				const safe = normalized.length === 3
+					? normalized.split('').map((char) => char + char).join('')
+					: normalized.padEnd(6, 'f').slice(0, 6);
+				const value = Number.parseInt(safe, 16);
+				const r = (value >> 16) & 255;
+				const g = (value >> 8) & 255;
+				const b = value & 255;
+				return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+			};
+
+			function buildStars() {
+				const width = canvas.clientWidth;
+				const height = canvas.clientHeight;
+				const paddingX = width < 768 ? 48 : 96;
+				const paddingY = width < 768 ? 88 : 120;
+				const usableWidth = Math.max(100, width - paddingX * 2);
+				const usableHeight = Math.max(100, height - paddingY * 2);
+				const categories = Object.keys(categoryMeta);
+				const categoryIndex = Object.fromEntries(categories.map((key, index) => [key, index]));
+				const total = milestones.length - 1 || 1;
+
+				state.stars = milestones.map((milestone, index) => {
+					const progress = total === 0 ? 1 : index / total;
+					const categoryOrder = categoryIndex[milestone.category] ?? 0;
+					const mobile = width < 768;
+					const laneCount = categories.length;
+					const laneRatio = laneCount <= 1 ? 0.5 : categoryOrder / (laneCount - 1);
+					const wave = Math.sin((index + 1) * 1.3) * (mobile ? 16 : 28);
+					const waveY = Math.cos((index + 1) * 0.9) * (mobile ? 14 : 24);
+					const x = mobile
+						? paddingX + usableWidth * (0.18 + laneRatio * 0.64) + wave
+						: paddingX + usableWidth * progress + wave;
+					const y = mobile
+						? paddingY + usableHeight * progress + waveY
+						: height - paddingY - usableHeight * (0.12 + progress * 0.78) - laneRatio * 48 + waveY;
+					const radius = mobile ? 2 + milestone.weight * 1.9 : 2.6 + milestone.weight * 2.4;
+					return {
+						index,
+						x,
+						y,
+						radius,
+						color: categoryMeta[milestone.category]?.color || '#fff',
+						category: milestone.category,
+						milestone,
+					};
+				});
+
+				state.particles = Array.from({ length: width < 768 ? 28 : 48 }, (_, index) => ({
+					x: (width / Math.max(1, (width < 768 ? 28 : 48) - 1)) * index,
+					y: ((index * 61) % height),
+					radius: 0.7 + ((index % 5) * 0.35),
+					speed: 0.06 + ((index % 7) * 0.02),
+					alpha: 0.12 + ((index % 4) * 0.04),
+				}));
+			}
+
+			function resizeCanvas() {
+				const ratio = Math.min(window.devicePixelRatio || 1, 2);
+				const width = canvas.clientWidth;
+				const height = canvas.clientHeight;
+				canvas.width = Math.floor(width * ratio);
+				canvas.height = Math.floor(height * ratio);
+				ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+				buildStars();
+				draw();
+			}
+
+			function drawBackground(width, height) {
+				const gradient = ctx.createLinearGradient(0, 0, 0, height);
+				gradient.addColorStop(0, '#060814');
+				gradient.addColorStop(0.5, '#0d1021');
+				gradient.addColorStop(1, '#0b1120');
+				ctx.fillStyle = gradient;
+				ctx.fillRect(0, 0, width, height);
+
+				gradientPalette.forEach((color, index) => {
+					const glow = ctx.createRadialGradient(
+						width * (0.22 + index * 0.28),
+						height * (0.22 + index * 0.12),
+						0,
+						width * (0.22 + index * 0.28),
+						height * (0.22 + index * 0.12),
+						width * 0.28,
+					);
+					glow.addColorStop(0, color);
+					glow.addColorStop(1, 'rgba(0,0,0,0)');
+					ctx.fillStyle = glow;
+					ctx.fillRect(0, 0, width, height);
+				});
+
+				state.particles.forEach((particle) => {
+					particle.y -= particle.speed;
+					if (particle.y < -8) particle.y = height + 8;
+					ctx.beginPath();
+					ctx.fillStyle = `rgba(255,255,255,${particle.alpha})`;
+					ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
+					ctx.fill();
+				});
+			}
+
+			function drawConnections() {
+				const activeIndex = state.currentIndex;
+				const groups = new Map();
+				state.stars.forEach((star) => {
+					if (!groups.has(star.category)) groups.set(star.category, []);
+					groups.get(star.category).push(star);
+				});
+				groups.forEach((stars, category) => {
+					ctx.save();
+					ctx.strokeStyle = hexToRgba(categoryMeta[category]?.color || '#ffffff', 0.22);
+					ctx.lineWidth = 1;
+					ctx.setLineDash([6, 10]);
+					ctx.beginPath();
+					stars.forEach((star, index) => {
+						if (index === 0) ctx.moveTo(star.x, star.y);
+						else ctx.lineTo(star.x, star.y);
+					});
+					ctx.globalAlpha = 0.2 + activeIndex / Math.max(1, milestones.length - 1) * 0.35;
+					ctx.stroke();
+					ctx.restore();
+				});
+			}
+
+			function drawStars() {
+				const activeIndex = state.currentIndex;
+				const pulse = reduceMotion ? 0 : (Math.sin(state.time / 580) + 1) / 2;
+				state.stars.forEach((star) => {
+					const isActive = star.index <= activeIndex;
+					const isSelected = star.index === state.selectedIndex;
+					const alpha = isActive ? 1 : 0.26;
+					const glowRadius = star.radius * (isSelected ? 7.6 + pulse * 1.4 : isActive ? 4.2 : 2.3);
+					const glow = ctx.createRadialGradient(star.x, star.y, 0, star.x, star.y, glowRadius);
+					glow.addColorStop(0, `${star.color}${isActive ? '66' : '2e'}`);
+					glow.addColorStop(1, 'rgba(0,0,0,0)');
+					ctx.fillStyle = glow;
+					ctx.beginPath();
+					ctx.arc(star.x, star.y, glowRadius, 0, Math.PI * 2);
+					ctx.fill();
+
+					ctx.beginPath();
+					ctx.fillStyle = isActive ? star.color : 'rgba(255,255,255,0.42)';
+					ctx.globalAlpha = alpha;
+					ctx.arc(star.x, star.y, star.radius + (isSelected ? pulse * 0.8 : 0), 0, Math.PI * 2);
+					ctx.fill();
+					ctx.globalAlpha = 1;
+
+					if (star.milestone.ripple && isActive) {
+						const rippleRadius = star.radius * (3.8 + pulse * 1.8);
+						ctx.beginPath();
+						ctx.strokeStyle = `${star.color}${isSelected ? 'aa' : '66'}`;
+						ctx.lineWidth = 1.2;
+						ctx.arc(star.x, star.y, rippleRadius, 0, Math.PI * 2);
+						ctx.stroke();
+					}
+				});
+			}
+
+			function draw() {
+				const width = canvas.clientWidth;
+				const height = canvas.clientHeight;
+				ctx.clearRect(0, 0, width, height);
+				drawBackground(width, height);
+				drawConnections();
+				drawStars();
+			}
+
+			function animate() {
+				state.time += 16;
+				draw();
+				state.animationFrame = requestAnimationFrame(animate);
+			}
+
+			function updateCard(index) {
+				const milestone = milestones[index];
+				if (!milestone) return;
+				state.selectedIndex = index;
+				state.currentIndex = Math.max(state.currentIndex, index);
+				const category = categoryMeta[milestone.category] || categoryMeta.growth;
+				card.classList.add('is-open');
+				card.querySelector('#milestone-pill').textContent = `${category.icon} ${isZh() ? category.labelZh : category.label} · Day ${milestone.day}`;
+				const dateEl = card.querySelector('#milestone-date');
+				dateEl.textContent = formatDate(milestone.date);
+				dateEl.setAttribute('datetime', milestone.date);
+				card.querySelector('#milestone-title-zh').textContent = milestone.title;
+				card.querySelector('#milestone-title-en').textContent = milestone.title_en;
+				card.querySelector('#milestone-narrative-zh').textContent = milestone.narrative;
+				card.querySelector('#milestone-narrative-en').textContent = milestone.narrative_en;
+				prevBtn.disabled = index <= 0;
+				nextBtn.disabled = index >= milestones.length - 1;
+				timelineButtons.forEach((button) => {
+					button.classList.toggle('is-active', Number(button.dataset.milestoneIndex) === index);
+				});
+				updateProgress(state.currentIndex / Math.max(1, milestones.length - 1), true);
+			}
+
+			function updateProgress(progress, freezeIndex = false) {
+				state.progress = clamp(progress, 0, 1);
+				const activeIndex = clamp(Math.round(state.progress * (milestones.length - 1)), 0, milestones.length - 1);
+				if (!freezeIndex) state.currentIndex = activeIndex;
+				progressFill.style.width = `${state.progress * 100}%`;
+				const milestone = milestones[state.currentIndex] || milestones[0];
+				progressMeta.textContent = isZh()
+					? `Day ${milestone.day} · ${milestone.title}`
+					: `Day ${milestone.day} · ${milestone.title_en}`;
+			}
+
+			function updateScrollProgress() {
+				if (state.paused) return;
+				const rect = starScroll.getBoundingClientRect();
+				const total = Math.max(1, starScroll.offsetHeight - window.innerHeight);
+				const progress = clamp(-rect.top / total, 0, 1);
+				updateProgress(progress);
+			}
+
+			function openFromHash() {
+				const hash = decodeURIComponent(window.location.hash.replace(/^#/, ''));
+				if (!hash) return;
+				const index = milestones.findIndex((item) => item.id === hash);
+				if (index >= 0) {
+					state.currentIndex = Math.max(state.currentIndex, index);
+					updateCard(index);
+					starScroll.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+				}
+			}
+
+			canvas.addEventListener('click', (event) => {
+				const rect = canvas.getBoundingClientRect();
+				const x = event.clientX - rect.left;
+				const y = event.clientY - rect.top;
+				const target = state.stars.find((star) => Math.hypot(star.x - x, star.y - y) <= Math.max(16, star.radius + 10));
+				if (!target) return;
+				updateCard(target.index);
+				history.replaceState({}, '', `#${target.milestone.id}`);
+			});
+
+			timelineButtons.forEach((button) => {
+				button.addEventListener('click', () => {
+					const index = Number(button.dataset.milestoneIndex);
+					updateCard(index);
+					history.replaceState({}, '', `#${milestones[index].id}`);
+					starScroll.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+				});
+			});
+
+			closeBtn.addEventListener('click', () => card.classList.remove('is-open'));
+			prevBtn.addEventListener('click', () => updateCard(clamp(state.selectedIndex - 1, 0, milestones.length - 1)));
+			nextBtn.addEventListener('click', () => updateCard(clamp(state.selectedIndex + 1, 0, milestones.length - 1)));
+
+			window.addEventListener('keydown', (event) => {
+				if (event.key === 'Escape') card.classList.remove('is-open');
+				if (event.key === 'ArrowLeft') updateCard(clamp(state.selectedIndex - 1, 0, milestones.length - 1));
+				if (event.key === 'ArrowRight') updateCard(clamp(state.selectedIndex + 1, 0, milestones.length - 1));
+				if (event.code === 'Space') {
+					event.preventDefault();
+					state.paused = !state.paused;
+				}
+			});
+
+			window.addEventListener('resize', resizeCanvas, { passive: true });
+			window.addEventListener('scroll', updateScrollProgress, { passive: true });
+			window.addEventListener('hashchange', openFromHash);
+			document.addEventListener('languagechange', () => updateCard(state.selectedIndex));
+
+			resizeCanvas();
+			updateProgress(1);
+			updateCard(state.selectedIndex);
+			updateScrollProgress();
+			openFromHash();
+			cancelAnimationFrame(state.animationFrame);
+			animate();
+		}
+
+		if (document.readyState === 'loading') {
+			document.addEventListener('DOMContentLoaded', __initLuckyStarMap, { once: true });
+		} else {
+			__initLuckyStarMap();
+		}
+		document.addEventListener('astro:page-load', __initLuckyStarMap);
+	</script>
+
+	<style>
+		:global(body) {
+			background:
+				radial-gradient(circle at top left, rgba(137, 83, 209, 0.2), transparent 26%),
+				radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.16), transparent 24%),
+				#070a14;
+		}
+
+		.lucky-page {
+			--lucky-border: rgba(201, 180, 245, 0.16);
+			--lucky-card: rgba(10, 14, 27, 0.84);
+			--lucky-card-strong: rgba(15, 21, 40, 0.92);
+			--lucky-text-soft: rgba(255, 255, 255, 0.72);
+			--lucky-text-faint: rgba(255, 255, 255, 0.56);
+			display: grid;
+			gap: 2.5rem;
+			padding-bottom: 4rem;
+			color: white;
+		}
+
+		.lucky-hero {
+			display: grid;
+			gap: 1rem;
+			padding: 1.5rem 0 0.5rem;
+		}
+
+		.lucky-eyebrow,
+		.star-kicker,
+		.timeline-kicker {
+			margin: 0;
+			font-size: 0.76rem;
+			letter-spacing: 0.24em;
+			text-transform: uppercase;
+			color: rgba(201, 180, 245, 0.88);
+		}
+
+		.lucky-subtitle,
+		.star-stage-note {
+			max-width: 44rem;
+		}
+
+		.lucky-hero-stats {
+			display: grid;
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+			gap: 0.9rem;
+			margin-top: 0.35rem;
+		}
+
+		.lucky-stat-card,
+		.timeline-item,
+		.milestone-card,
+		.star-legend,
+		.star-progress {
+			border: 1px solid var(--lucky-border);
+			background: color-mix(in srgb, var(--lucky-card) 94%, transparent);
+			backdrop-filter: blur(20px);
+			-webkit-backdrop-filter: blur(20px);
+		}
+
+		.lucky-stat-card {
+			border-radius: 1.25rem;
+			padding: 1rem 1.15rem;
+		}
+
+		.lucky-stat-label {
+			display: block;
+			margin-bottom: 0.45rem;
+			font-size: 0.72rem;
+			letter-spacing: 0.16em;
+			text-transform: uppercase;
+			color: var(--lucky-text-faint);
+		}
+
+		.lucky-stat-value {
+			font-size: clamp(1.5rem, 3vw, 2.2rem);
+			line-height: 1.05;
+		}
+
+		.lucky-scroll-cue {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			width: 2.5rem;
+			height: 2.5rem;
+			border-radius: 999px;
+			border: 1px solid var(--lucky-border);
+			background: rgba(255, 255, 255, 0.05);
+			color: rgba(255, 255, 255, 0.84);
+			animation: lucky-bounce 2s infinite;
+		}
+
+		.star-scroll {
+			height: 300vh;
+			position: relative;
+		}
+
+		.star-stage {
+			position: sticky;
+			top: 0;
+			height: 100vh;
+			border-radius: 2rem;
+			overflow: hidden;
+			border: 1px solid rgba(201, 180, 245, 0.14);
+			background: rgba(2, 6, 23, 0.88);
+			box-shadow: 0 24px 80px rgba(5, 8, 18, 0.45);
+		}
+
+		#lucky-star-canvas {
+			position: absolute;
+			inset: 0;
+			width: 100%;
+			height: 100%;
+			cursor: pointer;
+		}
+
+		.star-stage-top {
+			position: absolute;
+			top: 1.5rem;
+			left: 1.5rem;
+			right: 1.5rem;
+			z-index: 2;
+			display: flex;
+			justify-content: space-between;
+			gap: 1rem;
+			align-items: flex-start;
+		}
+
+		.star-stage-copy {
+			max-width: 32rem;
+			display: grid;
+			gap: 0.55rem;
+		}
+
+		.star-legend {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.65rem 0.9rem;
+			padding: 0.85rem 1rem;
+			border-radius: 1.2rem;
+			max-width: min(26rem, 40vw);
+		}
+
+		.star-legend-item {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.4rem;
+			font-size: 0.78rem;
+			color: rgba(255, 255, 255, 0.74);
+		}
+
+		.star-legend-dot {
+			width: 0.6rem;
+			height: 0.6rem;
+			border-radius: 999px;
+			background: var(--legend-color);
+			box-shadow: 0 0 18px var(--legend-color);
+		}
+
+		.milestone-card {
+			position: absolute;
+			right: 1.5rem;
+			bottom: 4.75rem;
+			z-index: 3;
+			width: min(28rem, calc(100% - 3rem));
+			padding: 1.15rem;
+			border-radius: 1.5rem;
+			background: color-mix(in srgb, var(--lucky-card-strong) 96%, transparent);
+			box-shadow: 0 18px 64px rgba(2, 6, 23, 0.42);
+			transform: translateY(12px);
+			opacity: 0.92;
+			transition: transform 0.28s ease, opacity 0.28s ease;
+		}
+
+		.milestone-card.is-open {
+			transform: translateY(0);
+			opacity: 1;
+		}
+
+		.milestone-card-glow {
+			position: absolute;
+			inset: -20% auto auto -10%;
+			width: 70%;
+			height: 60%;
+			background: radial-gradient(circle, rgba(137, 83, 209, 0.24), transparent 70%);
+			pointer-events: none;
+		}
+
+		.milestone-card-head,
+		.milestone-card-nav {
+			position: relative;
+			z-index: 1;
+			display: flex;
+			align-items: flex-start;
+			justify-content: space-between;
+			gap: 0.8rem;
+		}
+
+		.milestone-pill {
+			margin: 0;
+			font-size: 0.76rem;
+			letter-spacing: 0.14em;
+			text-transform: uppercase;
+			color: rgba(201, 180, 245, 0.9);
+		}
+
+		.milestone-date {
+			display: inline-block;
+			margin-top: 0.4rem;
+			font-size: 0.84rem;
+			color: var(--lucky-text-faint);
+		}
+
+		.milestone-close,
+		.milestone-nav-btn {
+			border: 1px solid var(--lucky-border);
+			background: rgba(255, 255, 255, 0.04);
+			color: rgba(255, 255, 255, 0.82);
+			border-radius: 999px;
+			cursor: pointer;
+			transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+		}
+
+		.milestone-close {
+			width: 2rem;
+			height: 2rem;
+			font-size: 0.8rem;
+		}
+
+		.milestone-card-body {
+			position: relative;
+			z-index: 1;
+			display: grid;
+			gap: 0.6rem;
+			margin-top: 1rem;
+		}
+
+		.milestone-quote {
+			margin: 0.3rem 0 0;
+			padding-left: 1rem;
+			border-left: 2px solid rgba(201, 180, 245, 0.32);
+			color: rgba(255, 255, 255, 0.88);
+			font-size: 1rem;
+			line-height: 1.75;
+		}
+
+		.milestone-narrative-en {
+			margin: 0;
+			font-size: 0.95rem;
+			line-height: 1.7;
+			color: var(--lucky-text-soft);
+		}
+
+		.milestone-card-nav {
+			margin-top: 1rem;
+		}
+
+		.milestone-nav-btn {
+			width: 2.5rem;
+			height: 2.5rem;
+			font-size: 1rem;
+		}
+
+		.milestone-nav-btn:disabled {
+			opacity: 0.35;
+			cursor: not-allowed;
+		}
+
+		.star-progress {
+			position: absolute;
+			left: 50%;
+			bottom: 1.2rem;
+			transform: translateX(-50%);
+			z-index: 3;
+			width: min(34rem, calc(100% - 3rem));
+			padding: 0.9rem 1rem 0.85rem;
+			border-radius: 999px;
+		}
+
+		.star-progress-track {
+			height: 0.38rem;
+			border-radius: 999px;
+			background: rgba(255, 255, 255, 0.08);
+			overflow: hidden;
+		}
+
+		.star-progress-fill {
+			height: 100%;
+			width: 0;
+			border-radius: inherit;
+			background: linear-gradient(90deg, #f59e0b 0%, #8953d1 45%, #10b981 100%);
+			box-shadow: 0 0 24px rgba(137, 83, 209, 0.36);
+			transition: width 0.18s ease;
+		}
+
+		.star-progress-meta {
+			margin: 0.55rem 0 0;
+			font-size: 0.82rem;
+			letter-spacing: 0.05em;
+			text-align: center;
+			color: rgba(255, 255, 255, 0.76);
+		}
+
+		.timeline-section {
+			display: grid;
+			gap: 1.4rem;
+		}
+
+		.timeline-head {
+			display: grid;
+			gap: 0.7rem;
+		}
+
+		.timeline-list {
+			display: grid;
+			gap: 0.8rem;
+		}
+
+		.timeline-item {
+			display: grid;
+			grid-template-columns: auto auto minmax(0, 1fr) auto;
+			align-items: center;
+			gap: 0.85rem;
+			padding: 1rem 1.1rem;
+			border-radius: 1.15rem;
+			text-align: left;
+			cursor: pointer;
+			transition: transform 0.22s ease, border-color 0.22s ease, background 0.22s ease;
+		}
+
+		.timeline-item:hover,
+		.timeline-item.is-active,
+		.milestone-close:hover,
+		.milestone-nav-btn:hover {
+			transform: translateY(-1px);
+			border-color: rgba(201, 180, 245, 0.34);
+			background: rgba(255, 255, 255, 0.08);
+		}
+
+		.timeline-item-dot {
+			color: var(--item-color);
+			font-size: 1rem;
+			text-shadow: 0 0 18px var(--item-color);
+		}
+
+		.timeline-item-date,
+		.timeline-item-tag {
+			font-size: 0.82rem;
+			color: var(--lucky-text-faint);
+		}
+
+		.timeline-item-title {
+			font-family: Georgia, Cambria, 'Times New Roman', Times, serif;
+			font-size: 1rem;
+			line-height: 1.5;
+			color: rgba(255, 255, 255, 0.9);
+		}
+
+		.timeline-item-tag {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.35rem;
+			padding: 0.35rem 0.6rem;
+			border-radius: 999px;
+			border: 1px solid color-mix(in srgb, var(--item-color) 35%, transparent);
+			background: color-mix(in srgb, var(--item-color) 12%, transparent);
+			color: rgba(255, 255, 255, 0.82);
+		}
+
+		@keyframes lucky-bounce {
+			0%,
+			20%,
+			50%,
+			80%,
+			100% {
+				transform: translateY(0);
+			}
+			40% {
+				transform: translateY(5px);
+			}
+			60% {
+				transform: translateY(2px);
+			}
+		}
+
+		@media (max-width: 1023px) {
+			.star-stage-top {
+				flex-direction: column;
+			}
+
+			.star-legend {
+				max-width: 100%;
+			}
+
+			.milestone-card {
+				left: 1rem;
+				right: 1rem;
+				width: auto;
+			}
+		}
+
+		@media (max-width: 767px) {
+			.lucky-page {
+				gap: 2rem;
+			}
+
+			.lucky-hero-stats {
+				grid-template-columns: 1fr;
+			}
+
+			.star-scroll {
+				height: 260vh;
+			}
+
+			.star-stage {
+				border-radius: 1.5rem;
+			}
+
+			.star-stage-top {
+				top: 1rem;
+				left: 1rem;
+				right: 1rem;
+			}
+
+			.milestone-card {
+				bottom: 4.9rem;
+				border-radius: 1.35rem;
+				padding: 1rem;
+			}
+
+			.star-progress {
+				width: calc(100% - 1.5rem);
+				padding-inline: 0.8rem;
+			}
+
+			.timeline-item {
+				grid-template-columns: auto 1fr;
+				gap: 0.6rem 0.8rem;
+			}
+
+			.timeline-item-date,
+			.timeline-item-tag {
+				grid-column: 2;
+			}
+		}
+	</style>
+</PageLayout>
