@@ -1,5 +1,6 @@
 ---
 import PageLayout from "@/layouts/Base.astro";
+import LibraryMasonry from "@/components/library/LibraryMasonry";
 import booksData from "@/data/books.json";
 import mediaData from "@/data/media.json";
 
@@ -147,6 +148,47 @@ const meta = {
 
 const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m => hasNotes(m)).length;
 
+// Prepare items for Masonry views — plain serializable objects passed to React islands
+const masonryBooks = books.map(b => ({
+  id: b.id,
+  title: b.title,
+  titleEn: b.titleEn,
+  subtitle: b.subtitle,
+  cover: b.cover,
+  coverClass: b.coverClass,
+  rating: b.rating,
+  tags: b.tags,
+  sortDate: b.sortDate,
+  sortYear: undefined,
+  notes: b.notes,
+  reviewSlug: b.reviewSlug,
+  hasNotes: hasNotes(b),
+}));
+
+function mediaSubtitle(m: LibraryItem): string {
+  const label = m.format === "movie" ? "Film" : m.format === "series" ? "Series" : m.format === "variety" ? "Variety" : "Documentary";
+  return m.year ? `${label} · ${m.year}` : label;
+}
+function toMasonryMedia(m: LibraryItem) {
+  return {
+    id: m.id,
+    title: m.title,
+    titleEn: m.titleEn,
+    subtitle: mediaSubtitle(m),
+    cover: m.cover,
+    coverClass: m.coverClass,
+    rating: m.rating,
+    tags: m.tags,
+    sortDate: undefined,
+    sortYear: m.year,
+    notes: m.notes,
+    reviewSlug: undefined,
+    hasNotes: hasNotes(m),
+  };
+}
+const masonryFilms = films.map(toMasonryMedia);
+const masonrySeries = series.map(toMasonryMedia);
+
 
 ---
 
@@ -208,7 +250,10 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
           <option value="notes" data-zh="有笔记" data-en="With Notes">有笔记</option>
         </select>
         <div class="inline-flex items-center rounded-full border border-purple-500/20 bg-white/70 p-1 text-sm shadow-sm backdrop-blur dark:border-purple-500/15 dark:bg-gray-900/60">
-          <button type="button" id="view-btn-grid" class="lib-view-toggle rounded-full bg-[#8953d1] px-3 py-1.5 font-serif text-xs text-white dark:bg-[#a175e8] dark:text-black" aria-pressed="true">
+          <button type="button" id="view-btn-masonry" class="lib-view-toggle rounded-full bg-[#8953d1] px-3 py-1.5 font-serif text-xs text-white dark:bg-[#a175e8] dark:text-black" aria-pressed="true">
+            <span class="lang-en">📝 Masonry</span><span class="lang-zh">📝 札记</span>
+          </button>
+          <button type="button" id="view-btn-grid" class="lib-view-toggle rounded-full px-3 py-1.5 font-serif text-xs text-gray-500 hover:text-[#8953d1] dark:text-gray-400 dark:hover:text-[#a175e8]" aria-pressed="false">
             <span class="lang-en">📚 Grid</span><span class="lang-zh">📚 网格</span>
           </button>
           <button type="button" id="view-btn-shelf" class="lib-view-toggle rounded-full px-3 py-1.5 font-serif text-xs text-gray-500 hover:text-[#8953d1] dark:text-gray-400 dark:hover:text-[#a175e8]" aria-pressed="false">
@@ -216,6 +261,11 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
           </button>
         </div>
       </div>
+    </div>
+
+    <!-- Masonry view (default) -->
+    <div id="books-masonry-view" class="books-masonry-view active">
+      <LibraryMasonry client:idle items={masonryBooks} scope="books" />
     </div>
 
     <!-- Grid view -->
@@ -393,6 +443,26 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
   <!-- ===== FILMS PANEL ===== -->
   <section data-panel="films" class="lib-panel hidden">
     {films.length > 0 ? (
+      <>
+        <!-- View toggle (Films) -->
+        <div class="mb-5 flex items-center justify-end gap-3">
+          <div class="inline-flex items-center rounded-full border border-purple-500/20 bg-white/70 p-1 text-sm shadow-sm backdrop-blur dark:border-purple-500/15 dark:bg-gray-900/60">
+            <button type="button" id="view-btn-films-masonry" class="lib-view-toggle lib-view-toggle-films rounded-full bg-[#8953d1] px-3 py-1.5 font-serif text-xs text-white dark:bg-[#a175e8] dark:text-black" data-view="masonry" aria-pressed="true">
+              <span class="lang-en">📝 Masonry</span><span class="lang-zh">📝 札记</span>
+            </button>
+            <button type="button" id="view-btn-films-grid" class="lib-view-toggle lib-view-toggle-films rounded-full px-3 py-1.5 font-serif text-xs text-gray-500 hover:text-[#8953d1] dark:text-gray-400 dark:hover:text-[#a175e8]" data-view="grid" aria-pressed="false">
+              <span class="lang-en">📚 Grid</span><span class="lang-zh">📚 网格</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Masonry view (Films, default) -->
+        <div id="films-masonry-view" class="films-masonry-view active">
+          <LibraryMasonry client:idle items={masonryFilms} scope="films" />
+        </div>
+
+        <!-- Grid view (Films) -->
+        <div id="films-grid-view" class="films-grid-view">
       <div class="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
         {films.map((item) => (
           <Fragment>
@@ -440,6 +510,8 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
           </Fragment>
         ))}
       </div>
+        </div>{/* end films-grid-view */}
+      </>
     ) : (
       <p class="font-serif text-sm text-gray-400"><span class="lang-en">Coming soon.</span><span class="lang-zh">敬请期待。</span></p>
     )}
@@ -448,6 +520,26 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
   <!-- ===== SERIES PANEL ===== -->
   <section data-panel="series" class="lib-panel hidden">
     {series.length > 0 ? (
+      <>
+        <!-- View toggle (Series) -->
+        <div class="mb-5 flex items-center justify-end gap-3">
+          <div class="inline-flex items-center rounded-full border border-purple-500/20 bg-white/70 p-1 text-sm shadow-sm backdrop-blur dark:border-purple-500/15 dark:bg-gray-900/60">
+            <button type="button" id="view-btn-series-masonry" class="lib-view-toggle lib-view-toggle-series rounded-full bg-[#8953d1] px-3 py-1.5 font-serif text-xs text-white dark:bg-[#a175e8] dark:text-black" data-view="masonry" aria-pressed="true">
+              <span class="lang-en">📝 Masonry</span><span class="lang-zh">📝 札记</span>
+            </button>
+            <button type="button" id="view-btn-series-grid" class="lib-view-toggle lib-view-toggle-series rounded-full px-3 py-1.5 font-serif text-xs text-gray-500 hover:text-[#8953d1] dark:text-gray-400 dark:hover:text-[#a175e8]" data-view="grid" aria-pressed="false">
+              <span class="lang-en">📚 Grid</span><span class="lang-zh">📚 网格</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Masonry view (Series, default) -->
+        <div id="series-masonry-view" class="series-masonry-view active">
+          <LibraryMasonry client:idle items={masonrySeries} scope="series" />
+        </div>
+
+        <!-- Grid view (Series) -->
+        <div id="series-grid-view" class="series-grid-view">
       <div class="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
         {series.map((item) => (
           <Fragment>
@@ -495,6 +587,8 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
           </Fragment>
         ))}
       </div>
+        </div>{/* end series-grid-view */}
+      </>
     ) : (
       <p class="font-serif text-sm text-gray-400"><span class="lang-en">Coming soon.</span><span class="lang-zh">敬请期待。</span></p>
     )}
@@ -794,9 +888,20 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
 
     /* ── Shelf view ── */
     :global(.lib-view-toggle) { transition: all 0.18s ease; }
-    .books-shelf-view { display: none; }
-    .books-shelf-view.active { display: block; }
-    .books-grid-view.hidden-view { display: none; }
+    .books-masonry-view,
+    .books-grid-view,
+    .books-shelf-view,
+    .films-masonry-view,
+    .films-grid-view,
+    .series-masonry-view,
+    .series-grid-view { display: none; }
+    .books-masonry-view.active,
+    .books-grid-view.active,
+    .books-shelf-view.active,
+    .films-masonry-view.active,
+    .films-grid-view.active,
+    .series-masonry-view.active,
+    .series-grid-view.active { display: block; }
 
     /* ── View-switch keyframes ── */
     @keyframes libFlyOut {
@@ -1082,6 +1187,10 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
       });
       // Re-layout shelf if active
       if (activeTab === 'books' && activeView === 'shelf') organizeShelf();
+      // Notify masonry view (React island) — scoped by active tab
+      window.dispatchEvent(new CustomEvent(`library:${activeTab}:tag-filter`, {
+        detail: { tag: activeTag === '全部' ? null : activeTag }
+      }));
     }
 
     // ── Frosted-glass Modal ───────────────────────────────────
@@ -1160,16 +1269,18 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
       // Backdrop
       if (e.target.id === 'lib-modal-backdrop') { closeModal(); return; }
       // Card
-      const card = e.target.closest('.lib-card');
+      const card = e.target.closest('.lib-card, .library-masonry-card');
       if (card) { e.preventDefault(); openModal(card); }
     });
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
-    // ── Shelf view ───────────────────────────────────────────
-    let activeView = 'grid';
+    // ── View switching (masonry / grid / shelf) ──────────────
+    let activeView = 'masonry';
+    const masonryView = document.getElementById('books-masonry-view');
     const gridView  = document.getElementById('books-grid-view');
     const shelfView = document.getElementById('books-shelf-view');
     const shelfStage = document.getElementById('lib-shelf-stage');
+    const btnMasonry = document.getElementById('view-btn-masonry');
     const btnGrid  = document.getElementById('view-btn-grid');
     const btnShelf = document.getElementById('view-btn-shelf');
 
@@ -1213,30 +1324,41 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
     const sleep = ms => new Promise(r => setTimeout(r, ms));
 
     function updateViewBtns(view) {
-      const toShelf = view === 'shelf';
-      btnGrid.classList.toggle('bg-[#8953d1]', !toShelf);
-      btnGrid.classList.toggle('text-white',    !toShelf);
-      btnGrid.classList.toggle('dark:bg-[#a175e8]', !toShelf);
-      btnGrid.classList.toggle('dark:text-black',   !toShelf);
-      btnGrid.classList.toggle('text-gray-500', toShelf);
-      btnShelf.classList.toggle('bg-[#8953d1]', toShelf);
-      btnShelf.classList.toggle('text-white',    toShelf);
-      btnShelf.classList.toggle('dark:bg-[#a175e8]', toShelf);
-      btnShelf.classList.toggle('dark:text-black',   toShelf);
-      btnShelf.classList.toggle('text-gray-500', !toShelf);
+      const btns = { masonry: btnMasonry, grid: btnGrid, shelf: btnShelf };
+      Object.entries(btns).forEach(([key, btn]) => {
+        if (!btn) return;
+        const active = key === view;
+        btn.classList.toggle('bg-[#8953d1]', active);
+        btn.classList.toggle('text-white', active);
+        btn.classList.toggle('dark:bg-[#a175e8]', active);
+        btn.classList.toggle('dark:text-black', active);
+        btn.classList.toggle('text-gray-500', !active);
+        btn.setAttribute('aria-pressed', String(active));
+      });
     }
 
     async function switchView(view) {
       if (view === activeView || _switchLock) return;
       _switchLock = true;
+      const prevView = activeView;
       activeView = view;
       updateViewBtns(view);
 
-      const STAGGER = 14; // ms per item
-      const CAP     = 180; // max total stagger delay (ms)
+      const STAGGER = 14;
+      const CAP     = 180;
 
+      // Masonry transitions use simple class toggle (no dramatic animation)
+      if (prevView === 'masonry' || view === 'masonry') {
+        [masonryView, gridView, shelfView].forEach(el => el && el.classList.remove('active'));
+        const target = view === 'masonry' ? masonryView : view === 'grid' ? gridView : shelfView;
+        if (target) target.classList.add('active');
+        if (view === 'shelf') organizeShelf();
+        _switchLock = false;
+        return;
+      }
+
+      // Grid ↔ Shelf: original fly-out/fly-in animation
       if (view === 'shelf') {
-        // 1. Fly out grid cards in a wave
         const cards = [...gridView.querySelectorAll('.lib-card')]
           .filter(c => c.style.display !== 'none' && c.offsetParent !== null);
         cards.forEach((c, i) => {
@@ -1246,13 +1368,11 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
         });
         await sleep(Math.min(cards.length * STAGGER, CAP) + 230);
 
-        // 2. Hide grid, show shelf
-        gridView.classList.add('hidden-view');
+        gridView.classList.remove('active');
         cards.forEach(c => { c.style.animation = ''; });
         shelfView.classList.add('active');
         organizeShelf();
 
-        // 3. Spine books spring up
         const spines = [...document.querySelectorAll('.shelf-entry')];
         spines.forEach((s, i) => {
           const d = Math.min(i * 10, CAP);
@@ -1260,9 +1380,7 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
         });
         await sleep(Math.min(spines.length * 10, CAP) + 380);
         spines.forEach(s => { s.style.animation = ''; });
-
       } else {
-        // 1. Fly out spine books
         const spines = [...document.querySelectorAll('.shelf-entry')];
         spines.forEach((s, i) => {
           const d = Math.min(i * 8, 120);
@@ -1270,12 +1388,10 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
         });
         await sleep(Math.min(spines.length * 8, 120) + 180);
 
-        // 2. Hide shelf, show grid
         shelfView.classList.remove('active');
         spines.forEach(s => { s.style.animation = ''; });
-        gridView.classList.remove('hidden-view');
+        gridView.classList.add('active');
 
-        // 3. Cards spring in with stagger
         const cards = [...gridView.querySelectorAll('.lib-card')]
           .filter(c => c.style.display !== 'none');
         cards.forEach((c, i) => {
@@ -1294,8 +1410,36 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
       _switchLock = false;
     }
 
-    if (btnGrid)  btnGrid.addEventListener('click',  () => switchView('grid'));
-    if (btnShelf) btnShelf.addEventListener('click', () => switchView('shelf'));
+    if (btnMasonry) btnMasonry.addEventListener('click', () => switchView('masonry'));
+    if (btnGrid)    btnGrid.addEventListener('click',    () => switchView('grid'));
+    if (btnShelf)   btnShelf.addEventListener('click',   () => switchView('shelf'));
+
+    // ── Films / Series two-view toggle (masonry + grid) ──────
+    function wireMediaToggle(tabKey) {
+      const masonry = document.getElementById(`${tabKey}-masonry-view`);
+      const grid    = document.getElementById(`${tabKey}-grid-view`);
+      const btnM    = document.getElementById(`view-btn-${tabKey}-masonry`);
+      const btnG    = document.getElementById(`view-btn-${tabKey}-grid`);
+      if (!masonry || !grid || !btnM || !btnG) return;
+      const activate = (view) => {
+        const isM = view === 'masonry';
+        masonry.classList.toggle('active',  isM);
+        grid.classList.toggle('active',    !isM);
+        [btnM, btnG].forEach((btn, i) => {
+          const active = (i === 0) === isM;
+          btn.classList.toggle('bg-[#8953d1]', active);
+          btn.classList.toggle('text-white', active);
+          btn.classList.toggle('dark:bg-[#a175e8]', active);
+          btn.classList.toggle('dark:text-black', active);
+          btn.classList.toggle('text-gray-500', !active);
+          btn.setAttribute('aria-pressed', String(active));
+        });
+      };
+      btnM.addEventListener('click', () => activate('masonry'));
+      btnG.addEventListener('click', () => activate('grid'));
+    }
+    wireMediaToggle('films');
+    wireMediaToggle('series');
 
     // Shelf book click → open modal
     document.addEventListener('click', (e) => {
@@ -1329,6 +1473,10 @@ const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m =>
 
     function applySortFilter() {
       const sort = booksSortEl ? booksSortEl.value : 'date';
+      // Notify books masonry (React island) — sort only applies to books
+      window.dispatchEvent(new CustomEvent('library:books:sort-change', {
+        detail: { sortBy: sort }
+      }));
       if (!booksGridEl) return;
       if (sort === 'notes') {
         allBookCards.forEach(c => {
