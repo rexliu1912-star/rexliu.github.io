@@ -39,6 +39,8 @@ const meta = {
 	description:
 		"A scroll-driven growth star map of Lucky's milestones — from birth to day 43 of English awakening.",
 };
+
+const timelineMilestones = [...milestones].reverse();
 ---
 
 <PageLayout meta={meta}>
@@ -120,38 +122,32 @@ const meta = {
 					</div>
 				</div>
 
-				<aside class="milestone-card" id="milestone-card" aria-live="polite">
-					<div class="milestone-card-glow"></div>
-					<div class="milestone-card-head">
-						<div>
-							<p class="milestone-pill" id="milestone-pill">🌱 English · Day 42</p>
-							<time class="milestone-date" id="milestone-date" datetime={initialMilestone.date}>
-								{initialMilestone.date}
-							</time>
-						</div>
-						<button
-							id="milestone-close"
-							type="button"
-							class="milestone-close"
-							aria-label="Close milestone card"
-						>
-							✕
-						</button>
+		<aside class="milestone-card" id="milestone-card" aria-live="polite">
+				<div class="milestone-card-glow"></div>
+				<div class="milestone-card-head">
+					<div>
+						<p class="milestone-pill" id="milestone-pill">🌱 English · Day 42</p>
+						<time class="milestone-date" id="milestone-date" datetime={initialMilestone.date}>
+							{initialMilestone.date}
+						</time>
 					</div>
-					<div class="milestone-card-body">
-						<h3 class="font-serif text-2xl font-semibold text-white" id="milestone-title-zh">
-							{initialMilestone.title}
-						</h3>
-						<p class="font-serif text-base text-white/72" id="milestone-title-en">
-							{initialMilestone.title_en}
-						</p>
-						<blockquote class="milestone-quote" id="milestone-narrative-zh">
-							{initialMilestone.narrative}
-						</blockquote>
-						<p class="milestone-narrative-en" id="milestone-narrative-en">
-							{initialMilestone.narrative_en}
-						</p>
-					</div>
+					<button
+						id="milestone-close"
+						type="button"
+						class="milestone-close"
+						aria-label="Close milestone card"
+					>
+						✕
+					</button>
+				</div>
+				<div class="milestone-card-body">
+					<h3 class="milestone-title font-serif text-2xl font-semibold text-white" id="milestone-title">
+						{initialMilestone.title}
+					</h3>
+					<blockquote class="milestone-quote" id="milestone-narrative">
+						{initialMilestone.narrative}
+					</blockquote>
+				</div>
 					<div class="milestone-card-nav">
 						<button id="milestone-prev" type="button" class="milestone-nav-btn">←</button>
 						<button id="milestone-next" type="button" class="milestone-nav-btn">→</button>
@@ -162,7 +158,7 @@ const meta = {
 					<div class="star-progress-track">
 						<div id="star-progress-fill" class="star-progress-fill"></div>
 					</div>
-					<p class="star-progress-meta" id="star-progress-meta">Day 0 → Day {maxDay}</p>
+					<p class="star-progress-meta" id="star-progress-meta">Scroll to explore → Day {maxDay}</p>
 				</div>
 			</div>
 		</section>
@@ -184,14 +180,15 @@ const meta = {
 			</div>
 
 			<div class="timeline-list" role="list">
-				{milestones.map((milestone, index) => {
+				{timelineMilestones.map((milestone) => {
+					const originalIndex = milestones.indexOf(milestone);
 					const category = categoryMeta[milestone.category as keyof typeof categoryMeta];
 					return (
 						<button
 							type="button"
 							class="timeline-item"
 							role="listitem"
-							data-milestone-index={index}
+							data-milestone-index={originalIndex}
 							data-milestone-id={milestone.id}
 						>
 							<span class="timeline-item-dot" style={`--item-color: ${category.color}`}>✦</span>
@@ -430,15 +427,14 @@ const meta = {
 				state.selectedIndex = index;
 				state.currentIndex = Math.max(state.currentIndex, index);
 				const category = categoryMeta[milestone.category] || categoryMeta.growth;
+				const zh = isZh();
 				card.classList.add('is-open');
-				card.querySelector('#milestone-pill').textContent = `${category.icon} ${isZh() ? category.labelZh : category.label} · Day ${milestone.day}`;
+				card.querySelector('#milestone-pill').textContent = `${category.icon} ${zh ? category.labelZh : category.label}${milestone.day > 0 ? ` · Day ${milestone.day}` : ''}`;
 				const dateEl = card.querySelector('#milestone-date');
 				dateEl.textContent = formatDate(milestone.date);
 				dateEl.setAttribute('datetime', milestone.date);
-				card.querySelector('#milestone-title-zh').textContent = milestone.title;
-				card.querySelector('#milestone-title-en').textContent = milestone.title_en;
-				card.querySelector('#milestone-narrative-zh').textContent = milestone.narrative;
-				card.querySelector('#milestone-narrative-en').textContent = milestone.narrative_en;
+				card.querySelector('#milestone-title').textContent = zh ? milestone.title : milestone.title_en;
+				card.querySelector('#milestone-narrative').textContent = zh ? milestone.narrative : milestone.narrative_en;
 				prevBtn.disabled = index <= 0;
 				nextBtn.disabled = index >= milestones.length - 1;
 				timelineButtons.forEach((button) => {
@@ -453,9 +449,16 @@ const meta = {
 				if (!freezeIndex) state.currentIndex = activeIndex;
 				progressFill.style.width = `${state.progress * 100}%`;
 				const milestone = milestones[state.currentIndex] || milestones[0];
+				const birthDate = new Date('2021-10-02T00:00:00Z');
+				const milestoneDate = new Date(`${milestone.date}T00:00:00Z`);
+				const ageDays = Math.floor((milestoneDate - birthDate) / (1000 * 60 * 60 * 24));
+				const ageLabel = ageDays < 365
+					? `${Math.floor(ageDays / 30)}m${ageDays % 30}d`
+					: `${Math.floor(ageDays / 365)}y${Math.floor((ageDays % 365) / 30)}m`;
+				const dayLabel = milestone.day > 0 ? `Day ${milestone.day}` : ageLabel;
 				progressMeta.textContent = isZh()
-					? `Day ${milestone.day} · ${milestone.title}`
-					: `Day ${milestone.day} · ${milestone.title_en}`;
+					? `${dayLabel} · ${milestone.title}`
+					: `${dayLabel} · ${milestone.title_en}`;
 			}
 
 			function updateScrollProgress() {
@@ -535,13 +538,13 @@ const meta = {
 	<style>
 		:global(body) {
 			background:
-				radial-gradient(circle at top left, rgba(137, 83, 209, 0.2), transparent 26%),
+				radial-gradient(circle at top left, rgba(137, 83, 209, 0.22), transparent 26%),
 				radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.16), transparent 24%),
 				#070a14;
 		}
 
 		.lucky-page {
-			--lucky-border: rgba(201, 180, 245, 0.16);
+			--lucky-border: rgba(137, 83, 209, 0.18);
 			--lucky-card: rgba(10, 14, 27, 0.84);
 			--lucky-card-strong: rgba(15, 21, 40, 0.92);
 			--lucky-text-soft: rgba(255, 255, 255, 0.72);
@@ -565,7 +568,7 @@ const meta = {
 			font-size: 0.76rem;
 			letter-spacing: 0.24em;
 			text-transform: uppercase;
-			color: rgba(201, 180, 245, 0.88);
+			color: rgba(137, 83, 209, 0.88);
 		}
 
 		.lucky-subtitle,
@@ -634,7 +637,7 @@ const meta = {
 			height: 100vh;
 			border-radius: 2rem;
 			overflow: hidden;
-			border: 1px solid rgba(201, 180, 245, 0.14);
+			border: 1px solid rgba(137, 83, 209, 0.16);
 			background: rgba(2, 6, 23, 0.88);
 			box-shadow: 0 24px 80px rgba(5, 8, 18, 0.45);
 		}
@@ -734,7 +737,7 @@ const meta = {
 			font-size: 0.76rem;
 			letter-spacing: 0.14em;
 			text-transform: uppercase;
-			color: rgba(201, 180, 245, 0.9);
+			color: rgba(137, 83, 209, 0.9);
 		}
 
 		.milestone-date {
@@ -771,7 +774,7 @@ const meta = {
 		.milestone-quote {
 			margin: 0.3rem 0 0;
 			padding-left: 1rem;
-			border-left: 2px solid rgba(201, 180, 245, 0.32);
+			border-left: 2px solid rgba(137, 83, 209, 0.4);
 			color: rgba(255, 255, 255, 0.88);
 			font-size: 1rem;
 			line-height: 1.75;
@@ -844,6 +847,10 @@ const meta = {
 			gap: 0.7rem;
 		}
 
+		.timeline-head h2 {
+			color: #e7ddf6;
+		}
+
 		.timeline-list {
 			display: grid;
 			gap: 0.8rem;
@@ -855,10 +862,12 @@ const meta = {
 			align-items: center;
 			gap: 0.85rem;
 			padding: 1rem 1.1rem;
-			border-radius: 1.15rem;
+			border-radius: 1.25rem;
+			border: 1px solid rgba(137, 83, 209, 0.14);
+			background: rgba(137, 83, 209, 0.04);
 			text-align: left;
 			cursor: pointer;
-			transition: transform 0.22s ease, border-color 0.22s ease, background 0.22s ease;
+			transition: transform 0.22s ease, border-color 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
 		}
 
 		.timeline-item:hover,
@@ -866,8 +875,14 @@ const meta = {
 		.milestone-close:hover,
 		.milestone-nav-btn:hover {
 			transform: translateY(-1px);
-			border-color: rgba(201, 180, 245, 0.34);
-			background: rgba(255, 255, 255, 0.08);
+			border-color: rgba(137, 83, 209, 0.32);
+			background: rgba(137, 83, 209, 0.08);
+			box-shadow: 0 8px 32px rgba(137, 83, 209, 0.1);
+		}
+
+		.timeline-item.is-active {
+			border-color: rgba(137, 83, 209, 0.4);
+			background: rgba(137, 83, 209, 0.12);
 		}
 
 		.timeline-item-dot {
@@ -876,17 +891,17 @@ const meta = {
 			text-shadow: 0 0 18px var(--item-color);
 		}
 
-		.timeline-item-date,
-		.timeline-item-tag {
-			font-size: 0.82rem;
-			color: var(--lucky-text-faint);
+		.timeline-item-date {
+			font-size: 0.78rem;
+			letter-spacing: 0.04em;
+			color: rgba(255, 255, 255, 0.5);
 		}
 
 		.timeline-item-title {
 			font-family: Georgia, Cambria, 'Times New Roman', Times, serif;
 			font-size: 1rem;
 			line-height: 1.5;
-			color: rgba(255, 255, 255, 0.9);
+			color: rgba(255, 255, 255, 0.92);
 		}
 
 		.timeline-item-tag {
@@ -898,6 +913,7 @@ const meta = {
 			border: 1px solid color-mix(in srgb, var(--item-color) 35%, transparent);
 			background: color-mix(in srgb, var(--item-color) 12%, transparent);
 			color: rgba(255, 255, 255, 0.82);
+			font-size: 0.78rem;
 		}
 
 		@keyframes lucky-bounce {
