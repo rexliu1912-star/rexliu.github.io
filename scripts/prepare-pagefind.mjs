@@ -1,10 +1,12 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { glob } from "node:fs/promises";
+import { fileURLToPath } from "node:url";
 import path from "node:path";
 
 const distDir = new URL("../dist/", import.meta.url);
+const distPath = fileURLToPath(distDir);
 
-for await (const rel of glob("**/*.html", { cwd: distDir })) {
+for await (const rel of glob("**/*.html", { cwd: distPath })) {
   const file = new URL(rel, distDir);
   let html = await readFile(file, "utf8");
 

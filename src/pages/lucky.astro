@@ -1,6 +1,6 @@
 ---
-import PageLayout from "@/layouts/Base.astro";
 import milestonesData from "@/data/lucky-milestones.json";
+import PageLayout from "@/layouts/Base.astro";
 
 const milestones = [...milestonesData.milestones].sort(
 	(a, b) => new Date(a.date).valueOf() - new Date(b.date).valueOf(),
@@ -33,6 +33,19 @@ const maxDay = Math.max(...milestones.map((item) => item.day));
 const initialMilestone = milestones[milestones.length - 1] ?? milestones[0] ?? fallbackMilestone;
 const milestonesJson = JSON.stringify(milestones);
 const categoryMetaJson = JSON.stringify(categoryMeta);
+
+// Build-time dynamic stats
+const birthDate = new Date("2021-10-02T00:00:00Z");
+const now = new Date();
+const msPerDay = 1000 * 60 * 60 * 24;
+const totalDaysAlive = Math.floor((now.getTime() - birthDate.getTime()) / msPerDay);
+const yearsAlive = Math.floor(totalDaysAlive / 365);
+const monthsRemainder = Math.floor((totalDaysAlive % 365) / 30);
+const ageLabel = `${yearsAlive}y ${monthsRemainder}m`;
+const lastMilestoneDate = new Date(
+	`${milestones[milestones.length - 1]?.date ?? "2021-10-02"}T00:00:00Z`,
+);
+const daysSinceLastMilestone = Math.floor((now.getTime() - lastMilestoneDate.getTime()) / msPerDay);
 
 const meta = {
 	title: "Lucky Growth Star Map",
@@ -70,6 +83,20 @@ const timelineMilestones = [...milestones].reverse();
 			<div class="lucky-hero-stats" aria-label="Growth star map statistics">
 				<article class="lucky-stat-card">
 					<span class="lucky-stat-label">
+						<span class="lang-en">Age</span>
+						<span class="lang-zh">年龄</span>
+					</span>
+					<strong class="lucky-stat-value font-serif">{ageLabel}</strong>
+				</article>
+				<article class="lucky-stat-card">
+					<span class="lucky-stat-label">
+						<span class="lang-en">Days Alive</span>
+						<span class="lang-zh">来到世界</span>
+					</span>
+					<strong class="lucky-stat-value font-serif">{totalDaysAlive.toLocaleString()}</strong>
+				</article>
+				<article class="lucky-stat-card">
+					<span class="lucky-stat-label">
 						<span class="lang-en">Milestones</span>
 						<span class="lang-zh">里程碑</span>
 					</span>
@@ -88,6 +115,13 @@ const timelineMilestones = [...milestones].reverse();
 						<span class="lang-zh">星座类别</span>
 					</span>
 					<strong class="lucky-stat-value font-serif">{totalConstellations}</strong>
+				</article>
+				<article class="lucky-stat-card">
+					<span class="lucky-stat-label">
+						<span class="lang-en">Last Milestone</span>
+						<span class="lang-zh">上次里程碑</span>
+					</span>
+					<strong class="lucky-stat-value font-serif">{daysSinceLastMilestone}d ago</strong>
 				</article>
 			</div>
 			<div class="lucky-scroll-cue" aria-hidden="true">↓</div>
@@ -244,6 +278,7 @@ const timelineMilestones = [...milestones].reverse();
 
 			const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 			const isZh = () => (document.documentElement.getAttribute('data-lang') || 'en') === 'zh';
+			const isLight = () => document.documentElement.getAttribute('data-theme') === 'light';
 			const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
 			const formatDate = (value) => value.replace(/-/g, '.');
 			const gradientPalette = ['rgba(137,83,209,0.24)', 'rgba(59,130,246,0.18)', 'rgba(236,72,153,0.14)'];
@@ -317,14 +352,24 @@ const timelineMilestones = [...milestones].reverse();
 			}
 
 			function drawBackground(width, height) {
+				const light = isLight();
 				const gradient = ctx.createLinearGradient(0, 0, 0, height);
-				gradient.addColorStop(0, '#060814');
-				gradient.addColorStop(0.5, '#0d1021');
-				gradient.addColorStop(1, '#0b1120');
+				if (light) {
+					gradient.addColorStop(0, '#f5f2eb');
+					gradient.addColorStop(0.5, '#faf8f3');
+					gradient.addColorStop(1, '#f0ede5');
+				} else {
+					gradient.addColorStop(0, '#060814');
+					gradient.addColorStop(0.5, '#0d1021');
+					gradient.addColorStop(1, '#0b1120');
+				}
 				ctx.fillStyle = gradient;
 				ctx.fillRect(0, 0, width, height);
 
-				gradientPalette.forEach((color, index) => {
+				const palette = light
+					? ['rgba(137,83,209,0.08)', 'rgba(59,130,246,0.06)', 'rgba(236,72,153,0.05)']
+					: gradientPalette;
+				palette.forEach((color, index) => {
 					const glow = ctx.createRadialGradient(
 						width * (0.22 + index * 0.28),
 						height * (0.22 + index * 0.12),
@@ -334,16 +379,17 @@ const timelineMilestones = [...milestones].reverse();
 						width * 0.28,
 					);
 					glow.addColorStop(0, color);
-					glow.addColorStop(1, 'rgba(0,0,0,0)');
+					glow.addColorStop(1, light ? 'rgba(255,255,255,0)' : 'rgba(0,0,0,0)');
 					ctx.fillStyle = glow;
 					ctx.fillRect(0, 0, width, height);
 				});
 
+				const particleColor = light ? 'rgba(137,83,209,' : 'rgba(255,255,255,';
 				state.particles.forEach((particle) => {
 					particle.y -= particle.speed;
 					if (particle.y < -8) particle.y = height + 8;
 					ctx.beginPath();
-					ctx.fillStyle = `rgba(255,255,255,${particle.alpha})`;
+					ctx.fillStyle = `${particleColor}${light ? particle.alpha * 0.5 : particle.alpha})`;
 					ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
 					ctx.fill();
 				});
@@ -389,7 +435,7 @@ const timelineMilestones = [...milestones].reverse();
 					ctx.fill();
 
 					ctx.beginPath();
-					ctx.fillStyle = isActive ? star.color : 'rgba(255,255,255,0.42)';
+					ctx.fillStyle = isActive ? star.color : (isLight() ? 'rgba(137,83,209,0.28)' : 'rgba(255,255,255,0.42)');
 					ctx.globalAlpha = alpha;
 					ctx.arc(star.x, star.y, star.radius + (isSelected ? pulse * 0.8 : 0), 0, Math.PI * 2);
 					ctx.fill();
@@ -543,6 +589,13 @@ const timelineMilestones = [...milestones].reverse();
 				#070a14;
 		}
 
+		:global(html[data-theme="light"]) body {
+			background:
+				radial-gradient(circle at top left, rgba(137, 83, 209, 0.08), transparent 26%),
+				radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.06), transparent 24%),
+				#f8f6f1;
+		}
+
 		.lucky-page {
 			--lucky-border: rgba(137, 83, 209, 0.18);
 			--lucky-card: rgba(10, 14, 27, 0.84);
@@ -553,6 +606,31 @@ const timelineMilestones = [...milestones].reverse();
 			gap: 2.5rem;
 			padding-bottom: 4rem;
 			color: white;
+		}
+
+		:global(html[data-theme="light"]) .lucky-page {
+			--lucky-border: rgba(137, 83, 209, 0.2);
+			--lucky-card: rgba(255, 255, 255, 0.82);
+			--lucky-card-strong: rgba(255, 255, 255, 0.92);
+			--lucky-text-soft: rgba(30, 20, 50, 0.72);
+			--lucky-text-faint: rgba(30, 20, 50, 0.52);
+			color: #1a1025;
+		}
+
+		:global(html[data-theme="light"]) .lucky-hero h1 {
+			color: #1a1025;
+		}
+
+		:global(html[data-theme="light"]) .lucky-hero .lucky-subtitle {
+			color: rgba(30, 20, 50, 0.72);
+		}
+
+		:global(html[data-theme="light"]) .lucky-page a[href="/lab/"] {
+			color: rgba(30, 20, 50, 0.5);
+		}
+
+		:global(html[data-theme="light"]) .lucky-page a[href="/lab/"]:hover {
+			color: #8953d1;
 		}
 
 		.lucky-hero {
@@ -571,6 +649,12 @@ const timelineMilestones = [...milestones].reverse();
 			color: rgba(137, 83, 209, 0.88);
 		}
 
+		:global(html[data-theme="light"]) .lucky-eyebrow,
+		:global(html[data-theme="light"]) .star-kicker,
+		:global(html[data-theme="light"]) .timeline-kicker {
+			color: #8953d1;
+		}
+
 		.lucky-subtitle,
 		.star-stage-note {
 			max-width: 44rem;
@@ -581,6 +665,12 @@ const timelineMilestones = [...milestones].reverse();
 			grid-template-columns: repeat(3, minmax(0, 1fr));
 			gap: 0.9rem;
 			margin-top: 0.35rem;
+		}
+
+		@media (min-width: 768px) {
+			.lucky-hero-stats {
+				grid-template-columns: repeat(3, minmax(0, 1fr));
+			}
 		}
 
 		.lucky-stat-card,
@@ -624,6 +714,11 @@ const timelineMilestones = [...milestones].reverse();
 			background: rgba(255, 255, 255, 0.05);
 			color: rgba(255, 255, 255, 0.84);
 			animation: lucky-bounce 2s infinite;
+		}
+
+		:global(html[data-theme="light"]) .lucky-scroll-cue {
+			background: rgba(137, 83, 209, 0.06);
+			color: rgba(30, 20, 50, 0.6);
 		}
 
 		.star-scroll {
@@ -914,6 +1009,95 @@ const timelineMilestones = [...milestones].reverse();
 			background: color-mix(in srgb, var(--item-color) 12%, transparent);
 			color: rgba(255, 255, 255, 0.82);
 			font-size: 0.78rem;
+		}
+
+		/* ===== Light Theme Overrides ===== */
+
+		:global(html[data-theme="light"]) .star-stage {
+			background: rgba(245, 242, 235, 0.92);
+			border-color: rgba(137, 83, 209, 0.15);
+			box-shadow: 0 24px 80px rgba(0, 0, 0, 0.06);
+		}
+
+		:global(html[data-theme="light"]) .star-stage h2 {
+			color: #1a1025;
+		}
+
+		:global(html[data-theme="light"]) .star-stage-note {
+			color: rgba(30, 20, 50, 0.6);
+		}
+
+		:global(html[data-theme="light"]) .star-legend-item {
+			color: rgba(30, 20, 50, 0.7);
+		}
+
+		:global(html[data-theme="light"]) .milestone-card {
+			box-shadow: 0 18px 64px rgba(0, 0, 0, 0.08);
+		}
+
+		:global(html[data-theme="light"]) .milestone-pill {
+			color: #8953d1;
+		}
+
+		:global(html[data-theme="light"]) .milestone-title {
+			color: #1a1025;
+		}
+
+		:global(html[data-theme="light"]) .milestone-quote {
+			color: rgba(30, 20, 50, 0.82);
+			border-left-color: rgba(137, 83, 209, 0.3);
+		}
+
+		:global(html[data-theme="light"]) .milestone-close,
+		:global(html[data-theme="light"]) .milestone-nav-btn {
+			background: rgba(137, 83, 209, 0.06);
+			color: rgba(30, 20, 50, 0.7);
+		}
+
+		:global(html[data-theme="light"]) .milestone-close:hover,
+		:global(html[data-theme="light"]) .milestone-nav-btn:hover {
+			background: rgba(137, 83, 209, 0.12);
+			border-color: rgba(137, 83, 209, 0.3);
+		}
+
+		:global(html[data-theme="light"]) .star-progress-meta {
+			color: rgba(30, 20, 50, 0.6);
+		}
+
+		:global(html[data-theme="light"]) .timeline-head h2 {
+			color: #1a1025;
+		}
+
+		:global(html[data-theme="light"]) .timeline-head p {
+			color: rgba(30, 20, 50, 0.6);
+		}
+
+		:global(html[data-theme="light"]) .timeline-item {
+			border-color: rgba(137, 83, 209, 0.12);
+			background: rgba(137, 83, 209, 0.03);
+		}
+
+		:global(html[data-theme="light"]) .timeline-item:hover,
+		:global(html[data-theme="light"]) .timeline-item.is-active {
+			border-color: rgba(137, 83, 209, 0.3);
+			background: rgba(137, 83, 209, 0.06);
+			box-shadow: 0 8px 32px rgba(137, 83, 209, 0.06);
+		}
+
+		:global(html[data-theme="light"]) .timeline-item-date {
+			color: rgba(30, 20, 50, 0.45);
+		}
+
+		:global(html[data-theme="light"]) .timeline-item-title {
+			color: rgba(30, 20, 50, 0.88);
+		}
+
+		:global(html[data-theme="light"]) .timeline-item-tag {
+			color: rgba(30, 20, 50, 0.7);
+		}
+
+		:global(html[data-theme="light"]) .star-progress-track {
+			background: rgba(30, 20, 50, 0.08);
 		}
 
 		@keyframes lucky-bounce {
