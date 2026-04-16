@@ -1,0 +1,160 @@
+{
+  "_meta": {
+    "description": "Editorial source-of-truth for the public portfolio page. Hand-maintained by Rex. Merged with Convex structural data at build time by scripts/build-portfolio-public.mjs.",
+    "last_updated": "2026-04-16"
+  },
+  "allocation": {
+    "categories": [
+      {
+        "id": "stablecoin",
+        "label_en": "Stablecoin Yield",
+        "label_zh": "稳定币生息",
+        "target_pct": 35,
+        "current_pct": 40,
+        "drift_pp": 5,
+        "color": "#10b981",
+        "sub_tags_en": ["USDT", "USDC", "5% APY"],
+        "sub_tags_zh": ["USDT", "USDC", "5% 年化"],
+        "note_en": "Base layer — yield-producing, low beta, recession-resistant",
+        "note_zh": "底座层——带息、低 beta、抗衰退"
+      },
+      {
+        "id": "funds",
+        "label_en": "Funds & ETFs",
+        "label_zh": "基金组合 & ETF",
+        "target_pct": 25,
+        "current_pct": 27,
+        "drift_pp": 2,
+        "color": "#3b82f6",
+        "sub_tags_en": ["Bonds", "QDII", "Robo-advisor"],
+        "sub_tags_zh": ["债券", "QDII", "且慢组合"],
+        "note_en": "Diversified defensive layer — bond core + overseas equity tilt",
+        "note_zh": "分散防御层——债券核心 + 海外权益倾斜"
+      },
+      {
+        "id": "stocks",
+        "label_en": "Stocks",
+        "label_zh": "股票",
+        "target_pct": 25,
+        "current_pct": 22,
+        "drift_pp": -3,
+        "color": "#8953d1",
+        "sub_tags_en": ["AI Power", "Core CN Infra", "US Megacap"],
+        "sub_tags_zh": ["AI 电力", "核心基建", "美股大盘"],
+        "note_en": "Growth + conviction layer — concentrated in AI-electricity megatrend",
+        "note_zh": "成长 + 信念层——集中押注 AI 电力主线",
+        "sub": [
+          { "id": "cn", "label_en": "A-share", "label_zh": "A 股", "pct": 12 },
+          { "id": "hk", "label_en": "Hong Kong", "label_zh": "港股", "pct": 4 },
+          { "id": "us", "label_en": "US", "label_zh": "美股", "pct": 6 }
+        ]
+      },
+      {
+        "id": "crypto",
+        "label_en": "Crypto",
+        "label_zh": "加密敞口",
+        "target_pct": 15,
+        "current_pct": 11,
+        "drift_pp": -4,
+        "color": "#f59e0b",
+        "sub_tags_en": ["BTC", "ADA", "SNEK"],
+        "sub_tags_zh": ["BTC", "ADA", "SNEK"],
+        "note_en": "Asymmetric bet — long-duration, non-correlated, high-volatility core",
+        "note_zh": "不对称下注——长久期、低相关、高波动核心"
+      }
+    ]
+  },
+  "positions": {
+    "600089": {
+      "sector_tags_en": ["UHV", "Grid Equipment"],
+      "sector_tags_zh": ["特高压", "电网设备"],
+      "thesis_en": "UHV export boom: overseas orders + margin expansion + electrification tailwind. SOTP undervalued.",
+      "thesis_zh": "特高压出海：海外订单 + 毛利扩张 + 电气化顺风。分部估值偏低。",
+      "stage": 7,
+      "status_en": "Core position",
+      "status_zh": "底仓",
+      "entry_year": 2026,
+      "conviction": "high"
+    },
+    "600900": {
+      "sector_tags_en": ["Hydropower", "Stable Cash Flow"],
+      "sector_tags_zh": ["水电", "稳定现金流"],
+      "thesis_en": "The bond-like utility with AI-era optionality — Yangtze hydro base + potential data-center PPA upside.",
+      "thesis_zh": "类债券属性 + AI 时代期权：长江水电基荷 + 潜在数据中心 PPA 增量。",
+      "stage": 7,
+      "status_en": "Core position",
+      "status_zh": "底仓",
+      "entry_year": 2026,
+      "conviction": "high"
+    },
+    "01816": {
+      "sector_tags_en": ["Nuclear Power", "Clean Base Load"],
+      "sector_tags_zh": ["核电", "清洁基荷"],
+      "thesis_en": "Structural nuclear gap ahead — approvals accelerating, 5-8 year physical build-out, AI demand backstops price.",
+      "thesis_zh": "结构性核电空窗——核准加速、5-8 年物理建设周期、AI 需求背书电价。",
+      "stage": 7,
+      "status_en": "Building",
+      "status_zh": "建仓中",
+      "entry_year": 2026,
+      "conviction": "high"
+    },
+    "CEG": {
+      "sector_tags_en": ["AI Power", "Nuclear", "PPA"],
+      "sector_tags_zh": ["AI 电力", "核电", "长协"],
+      "thesis_en": "Pure-play nuclear with AI data-center PPAs signed. Long-duration cash flow, structural undervaluation vs infra peers.",
+      "thesis_zh": "纯核电 + AI 数据中心 PPA 已签。长久期现金流，相对基建同业结构性低估。",
+      "stage": 7,
+      "status_en": "Core position",
+      "status_zh": "底仓",
+      "entry_year": 2026,
+      "conviction": "high"
+    },
+    "AAPL": {
+      "sector_tags_en": ["US Megacap", "Consumer Tech"],
+      "sector_tags_zh": ["美股大盘", "消费科技"],
+      "thesis_en": "Cash flow moat + AI on-device optionality + buyback compound. Hold-forever core.",
+      "thesis_zh": "现金流护城河 + 端侧 AI 期权 + 回购复利。永远不卖核心。",
+      "stage": 7,
+      "status_en": "Core position",
+      "status_zh": "底仓",
+      "entry_year": 2024,
+      "conviction": "high"
+    },
+    "HOOD": {
+      "sector_tags_en": ["Fintech", "Prediction Markets"],
+      "sector_tags_zh": ["金融科技", "预测市场"],
+      "thesis_en": "Prediction market + crypto + retail trading flywheel. Speculative but high-asymmetry on regulatory path.",
+      "thesis_zh": "预测市场 + 加密 + 零售交易飞轮。监管路径高度不对称，投机性强。",
+      "stage": 6,
+      "status_en": "Opportunistic",
+      "status_zh": "机会主义",
+      "entry_year": 2025,
+      "conviction": "medium"
+    }
+  },
+  "roundtables": [
+    {
+      "date": "2026-04-13",
+      "cadence": "ad-hoc",
+      "title_en": "AI Electricity Megatrend — 6-Guest Roundtable",
+      "title_zh": "AI 电力主线 · 六人圆桌",
+      "guests": ["黄仁勋", "段永平", "达利欧", "张五常", "芒格", "耶金"],
+      "guest_roles_en": ["Track Expert", "Value", "Macro", "Institutional", "Value", "Energy"],
+      "guest_roles_zh": ["赛道专家", "价值派", "宏观派", "制度派", "价值派", "能源专家"],
+      "verdict_en": "Full conviction on AI-electricity basket. Hold CN core (长江电力/中广核/特变) + US exposure (CEG). Add LNG on pullback below $230.",
+      "verdict_zh": "AI 电力整组满仓信念。持有 A 股核心（长江电力/中广核/特变）+ 美股敞口（CEG）。LNG 跌破 $230 加仓。",
+      "full_doc_url": null
+    }
+  ],
+  "macro_signals_fallback": {
+    "_note": "Used by build script when thermometer-history.jsonl is empty (cron hasn't populated yet). Once 7+ days of real history exist, build script ignores this and reads the real jsonl.",
+    "signals": {
+      "tnx": { "label": "10Y UST", "value": "4.28%", "light": "yellow" },
+      "dxy": { "label": "DXY", "value": "98.18", "light": "green" },
+      "vix": { "label": "VIX", "value": "18.24", "light": "yellow" },
+      "naaim": { "label": "NAAIM", "value": "69.4", "light": "yellow" },
+      "policy": { "label": "Policy", "value": "胶着", "light": "yellow" }
+    },
+    "regime": { "label": "防御期", "label_en": "Defensive", "aggression": "低", "green_count": 1 }
+  }
+}

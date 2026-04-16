@@ -1,0 +1,2009 @@
+---
+import portfolioData from "@/data/portfolio-public.json";
+import PageLayout from "@/layouts/Base.astro";
+
+const {
+	regime,
+	allocation,
+	positions,
+	watchlist_heatmap: heatmap,
+	clearances,
+	roundtables,
+	stats,
+	generated_at,
+} = portfolioData;
+
+const regimeColors = {
+	进攻期: "#10b981",
+	中性期: "#f59e0b",
+	防御期: "#ef4444",
+	Offensive: "#10b981",
+	Neutral: "#f59e0b",
+	Defensive: "#ef4444",
+};
+
+const lightColors = { green: "#10b981", yellow: "#f59e0b", red: "#ef4444", gray: "#9ca3af" };
+const conviction = { high: "🔥", medium: "🌱", low: "❄️" };
+
+const dataJson = JSON.stringify({
+	regime,
+	allocation,
+	heatmap,
+	positions,
+	clearances,
+});
+
+const updatedLabel = new Date(generated_at).toISOString().split("T")[0];
+
+const meta = {
+	title: "Portfolio · Rex Liu",
+	description:
+		"Public portfolio dashboard — sectors, theses, stage-gated decisions, and trade replays. No amounts, just conviction.",
+};
+
+// Stage metadata (from investment decision framework v2.0)
+const stages = [
+	{
+		num: 0,
+		title_en: "Macro Thermometer",
+		title_zh: "宏观温度计",
+		purpose_en: "Read market regime: offensive / neutral / defensive",
+		purpose_zh: "判断市场温度：进攻 / 中性 / 防御",
+		automated: true,
+		badge_en: "Daily",
+		badge_zh: "每日",
+	},
+	{
+		num: 1,
+		title_en: "Sector Research",
+		title_zh: "赛道研究",
+		purpose_en: "1-2 day deep report before picking stocks",
+		purpose_zh: "选股之前先做重度赛道报告",
+		automated: false,
+		badge_en: "Manual",
+		badge_zh: "手动",
+	},
+	{
+		num: 2,
+		title_en: "Watchlist Scan",
+		title_zh: "个股池初筛",
+		purpose_en: "15 tickers, 5-dimension filter → 10-20 names",
+		purpose_zh: "15 只标的五维扫描 → 10-20 家观察名单",
+		automated: true,
+		badge_en: "Daily",
+		badge_zh: "每日",
+	},
+	{
+		num: 3,
+		title_en: "Short List",
+		title_zh: "短名单",
+		purpose_en: "Valuation + catalyst + technicals → 3-5 names",
+		purpose_zh: "估值 + 催化 + 技术面 → 3-5 家可操作短名单",
+		automated: true,
+		badge_en: "Daily",
+		badge_zh: "每日",
+	},
+	{
+		num: 4,
+		title_en: "Deep Research",
+		title_zh: "深度研究",
+		purpose_en: "Skill: 4+1 card per company, 3 hard theses",
+		purpose_zh: "Skill：每家公司 4+1 段名片 + 三条硬结论",
+		automated: false,
+		badge_en: "Skill",
+		badge_zh: "Skill",
+	},
+	{
+		num: 5,
+		title_en: "Roundtable",
+		title_zh: "圆桌讨论",
+		purpose_en: "6-seat masters challenge the theses; dissent required",
+		purpose_zh: "6 席位大师挑战结论；反方必选",
+		automated: false,
+		badge_en: "Skill",
+		badge_zh: "Skill",
+	},
+	{
+		num: 6,
+		title_en: "Execution Plan",
+		title_zh: "执行计划",
+		purpose_en: "10-point scorecard ≥7, R:R ≥ 2.0, 3 stop-lines",
+		purpose_zh: "10 分评分卡 ≥7，R:R ≥ 2.0，3 条撤退线",
+		automated: true,
+		badge_en: "Scorecard",
+		badge_zh: "评分卡",
+	},
+	{
+		num: 7,
+		title_en: "Position Management",
+		title_zh: "持仓管理 + 复盘",
+		purpose_en: "L0-L3 monitoring + monthly/quarterly/annual reviews",
+		purpose_zh: "L0-L3 四层监控 + 月/季/年复盘",
+		automated: true,
+		badge_en: "4-tier",
+		badge_zh: "四层",
+	},
+];
+---
+
+<PageLayout meta={meta}>
+	<link
+		slot="head"
+		rel="preload"
+		href="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"
+		as="script"
+	/>
+
+	<section class="portfolio-page">
+		<div class="mb-6">
+			<a
+				href="/lab/"
+				class="font-serif text-sm text-white/60 transition-colors hover:text-[#c9b4f5]"
+			>
+				← Lab
+			</a>
+		</div>
+
+		{/* ═══ Section 0: Hero ═══ */}
+		<section class="portfolio-hero">
+			<p class="portfolio-eyebrow">
+				<span class="lang-en">Build in Public · Portfolio</span>
+				<span class="lang-zh">公开建造 · 持仓驾驶舱</span>
+			</p>
+			<div class="portfolio-hero-row">
+				<div class="portfolio-hero-text">
+					<h1 class="font-serif text-4xl font-bold tracking-tight sm:text-5xl">
+						<span class="lang-en">Portfolio · Conviction on Display</span>
+						<span class="lang-zh">持仓 · 公开的决策</span>
+					</h1>
+					<p class="portfolio-subtitle font-serif text-lg leading-relaxed sm:text-xl">
+						<span class="lang-en">
+							No amounts. Just sectors, theses, stages, and the scorecard behind every position.
+						</span>
+						<span class="lang-zh">
+							不公开金额。只展示板块、逻辑、阶段，以及每个仓位背后的评分卡。
+						</span>
+					</p>
+				</div>
+				<div
+					class="portfolio-regime-badge"
+					style={`--regime-color: ${regimeColors[regime?.current?.label] || "#8953d1"}`}
+				>
+					<span class="portfolio-regime-eyebrow">
+						<span class="lang-en">Current Regime</span>
+						<span class="lang-zh">当前宏观</span>
+					</span>
+					<strong class="portfolio-regime-label font-serif">
+						<span class="lang-en">{regime?.current?.label_en || "—"}</span>
+						<span class="lang-zh">{regime?.current?.label || "—"}</span>
+					</strong>
+					<span class="portfolio-regime-meta">
+						<span class="lang-en">
+							{regime?.current?.green_count ?? 0} / {regime?.current?.total_signals ?? 5} green ·
+							Aggression {regime?.current?.aggression ?? "—"}
+						</span>
+						<span class="lang-zh">
+							{regime?.current?.green_count ?? 0}/{regime?.current?.total_signals ?? 5} 绿灯 ·
+							激进度 {regime?.current?.aggression ?? "—"}
+						</span>
+					</span>
+				</div>
+			</div>
+
+			<div class="portfolio-hero-stats" aria-label="Portfolio statistics">
+				<article class="portfolio-stat-card">
+					<span class="portfolio-stat-label">
+						<span class="lang-en">Active Positions</span>
+						<span class="lang-zh">活跃持仓</span>
+					</span>
+					<strong
+						class="portfolio-stat-value font-serif"
+						data-count-target={stats.active_positions}
+					>
+						{stats.active_positions}
+					</strong>
+				</article>
+				<article class="portfolio-stat-card">
+					<span class="portfolio-stat-label">
+						<span class="lang-en">Markets</span>
+						<span class="lang-zh">市场</span>
+					</span>
+					<strong class="portfolio-stat-value font-serif" data-count-target={stats.markets}>
+						{stats.markets}
+					</strong>
+				</article>
+				<article class="portfolio-stat-card">
+					<span class="portfolio-stat-label">
+						<span class="lang-en">Tracked Rules</span>
+						<span class="lang-zh">监控规则</span>
+					</span>
+					<strong class="portfolio-stat-value font-serif" data-count-target={stats.tracked_rules}>
+						{stats.tracked_rules}
+					</strong>
+				</article>
+				<article class="portfolio-stat-card">
+					<span class="portfolio-stat-label">
+						<span class="lang-en">Upcoming Events</span>
+						<span class="lang-zh">预告事件</span>
+					</span>
+					<strong class="portfolio-stat-value font-serif" data-count-target={stats.upcoming_events}>
+						{stats.upcoming_events}
+					</strong>
+				</article>
+				<article class="portfolio-stat-card">
+					<span class="portfolio-stat-label">
+						<span class="lang-en">Scan Hits (≥5)</span>
+						<span class="lang-zh">扫描信号</span>
+					</span>
+					<strong class="portfolio-stat-value font-serif" data-count-target={stats.weekly_scan_hits}>
+						{stats.weekly_scan_hits}
+					</strong>
+				</article>
+				<article class="portfolio-stat-card">
+					<span class="portfolio-stat-label">
+						<span class="lang-en">Last Clearance</span>
+						<span class="lang-zh">上次清仓</span>
+					</span>
+					<strong
+						class="portfolio-stat-value font-serif"
+						data-count-target={stats.days_since_last_clearance ?? 0}
+						data-count-suffix="d ago"
+					>
+						{stats.days_since_last_clearance ?? "—"}d ago
+					</strong>
+				</article>
+			</div>
+
+			<p class="portfolio-updated">
+				<span class="lang-en">Last updated: {updatedLabel}</span>
+				<span class="lang-zh">最后更新: {updatedLabel}</span>
+			</p>
+		</section>
+
+		{/* ═══ Section 1: Macro Regime ═══ */}
+		<section class="portfolio-section fade-in-up" id="regime-section">
+			<header class="portfolio-section-head">
+				<p class="portfolio-kicker">
+					<span class="lang-en">Stage 0 · Macro Thermometer</span>
+					<span class="lang-zh">阶段 0 · 宏观温度计</span>
+				</p>
+				<h2 class="font-serif text-3xl font-semibold">
+					<span class="lang-en">The market temperature we're trading against</span>
+					<span class="lang-zh">我们在和什么样的市场做交易</span>
+				</h2>
+			</header>
+
+			<div class="regime-lights">
+				{Object.entries(regime?.current?.signals || {}).map(([key, sig]) => (
+					<div class="regime-light-card" style={`--light: ${lightColors[sig.light] || "#9ca3af"}`}>
+						<span class="regime-light-label">{sig.label}</span>
+						<strong class="regime-light-value font-serif">{sig.value}</strong>
+						<span class="regime-light-dot" aria-hidden="true"></span>
+					</div>
+				))}
+			</div>
+
+			<div class="regime-chart-wrap">
+				<div class="regime-chart-head">
+					<h3 class="font-serif text-lg">
+						<span class="lang-en">VIX & Regime · 60 days</span>
+						<span class="lang-zh">VIX 与 Regime · 60 天</span>
+					</h3>
+					<p class="portfolio-note">
+						<span class="lang-en">
+							Shaded bands mark regime transitions (green = offensive, amber = neutral, red =
+							defensive). VIX line is the mood overlay.
+						</span>
+						<span class="lang-zh">
+							色段为 regime 状态（绿=进攻、黄=中性、红=防御）。VIX 折线是情绪指标。
+						</span>
+					</p>
+				</div>
+				<div class="regime-chart-canvas-wrap">
+					<canvas id="regimeChart" aria-hidden="true"></canvas>
+					{regime?.history_60d?.length < 7 && (
+						<div class="portfolio-empty-overlay">
+							<span class="lang-en">
+								Accumulating history · need ~7 days before chart renders (daily cron started
+								2026-04-16)
+							</span>
+							<span class="lang-zh">历史数据累积中 · 约 7 天后渲染图表（日度 cron 已启动）</span>
+						</div>
+					)}
+				</div>
+			</div>
+		</section>
+
+		{/* ═══ Section 2: Allocation ═══ */}
+		<section class="portfolio-section fade-in-up" id="allocation-section">
+			<header class="portfolio-section-head">
+				<p class="portfolio-kicker">
+					<span class="lang-en">Allocation · Target vs Current</span>
+					<span class="lang-zh">资产配置 · 目标 vs 当前</span>
+				</p>
+				<h2 class="font-serif text-3xl font-semibold">
+					<span class="lang-en">Four buckets, five percentage points of drift</span>
+					<span class="lang-zh">四桶资产，五个百分点的偏移</span>
+				</h2>
+				<p class="portfolio-note">
+					<span class="lang-en">
+						Dalio three-bucket framework. Percentages are strategic targets; drift chips show
+						current distance from each target.
+					</span>
+					<span class="lang-zh">
+						达利欧三桶法框架。百分比是战略目标，偏差 chip 显示当前距目标的距离。
+					</span>
+				</p>
+			</header>
+
+			<div class="allocation-bar" aria-label="Target allocation">
+				{allocation.current.categories.map((cat) => (
+					<div
+						class="allocation-segment"
+						style={`flex: ${cat.target_pct}; background: ${cat.color}`}
+					>
+						<span class="allocation-segment-label">
+							<span class="lang-en">{cat.label_en}</span>
+							<span class="lang-zh">{cat.label_zh}</span>
+							<strong class="allocation-segment-pct">{cat.target_pct}%</strong>
+						</span>
+					</div>
+				))}
+			</div>
+
+			<div class="allocation-subcards">
+				{allocation.current.categories.map((cat) => (
+					<article class="allocation-subcard" style={`--cat-color: ${cat.color}`}>
+						<header class="allocation-subcard-head">
+							<span class="allocation-subcard-dot"></span>
+							<h3 class="allocation-subcard-title font-serif">
+								<span class="lang-en">{cat.label_en}</span>
+								<span class="lang-zh">{cat.label_zh}</span>
+							</h3>
+							<span
+								class={`allocation-drift-chip ${cat.drift_pp >= 0 ? "positive" : "negative"}`}
+							>
+								{cat.drift_pp >= 0 ? "+" : ""}
+								{cat.drift_pp}pp
+							</span>
+						</header>
+						<div class="allocation-subcard-stats">
+							<div>
+								<span class="allocation-subcard-eyebrow">
+									<span class="lang-en">Target</span>
+									<span class="lang-zh">目标</span>
+								</span>
+								<strong class="font-serif">{cat.target_pct}%</strong>
+							</div>
+							<div>
+								<span class="allocation-subcard-eyebrow">
+									<span class="lang-en">Current</span>
+									<span class="lang-zh">当前</span>
+								</span>
+								<strong class="font-serif">{cat.current_pct}%</strong>
+							</div>
+						</div>
+						{cat.sub_tags_en && (
+							<div class="allocation-subcard-tags">
+								{cat.sub_tags_en.map((tag, i) => (
+									<span class="allocation-tag">
+										<span class="lang-en">{tag}</span>
+										<span class="lang-zh">{cat.sub_tags_zh[i] || tag}</span>
+									</span>
+								))}
+							</div>
+						)}
+						<p class="allocation-subcard-note">
+							<span class="lang-en">{cat.note_en}</span>
+							<span class="lang-zh">{cat.note_zh}</span>
+						</p>
+						{cat.sub && (
+							<div class="allocation-sub-mini">
+								{cat.sub.map((s) => (
+									<div
+										class="allocation-sub-mini-row"
+										style={`--sub-pct: ${(s.pct / cat.target_pct) * 100}%`}
+									>
+										<span>
+											<span class="lang-en">{s.label_en}</span>
+											<span class="lang-zh">{s.label_zh}</span>
+										</span>
+										<span class="allocation-sub-mini-bar"></span>
+										<strong class="font-serif">{s.pct}%</strong>
+									</div>
+								))}
+							</div>
+						)}
+					</article>
+				))}
+			</div>
+		</section>
+
+		{/* ═══ Section 3: 8-Stage Methodology ═══ */}
+		<section class="portfolio-section fade-in-up" id="methodology-section">
+			<header class="portfolio-section-head">
+				<p class="portfolio-kicker">
+					<span class="lang-en">Methodology · 8-Stage Funnel</span>
+					<span class="lang-zh">方法论 · 八阶段漏斗</span>
+				</p>
+				<h2 class="font-serif text-3xl font-semibold">
+					<span class="lang-en">From macro thermometer to post-trade review</span>
+					<span class="lang-zh">从宏观温度计到持仓复盘</span>
+				</h2>
+				<p class="portfolio-note">
+					<span class="lang-en">
+						Every position passes through these stages. Some are automated cron tasks, some
+						require human judgment. Round-trip is weeks, not days.
+					</span>
+					<span class="lang-zh">
+						每个持仓都要走过这些阶段。部分是自动 cron，部分需要人工判断。完整走一圈以周为单位，不是天。
+					</span>
+				</p>
+			</header>
+
+			<div class="stage-zigzag">
+				{stages.map((s, i) => (
+					<article class={`stage-card ${i % 2 === 0 ? "stage-left" : "stage-right"}`}>
+						<div class="stage-number-wrap">
+							<span class="stage-number font-serif">{s.num}</span>
+						</div>
+						<div class="stage-body">
+							<header class="stage-head">
+								<h3 class="stage-title font-serif">
+									<span class="lang-en">{s.title_en}</span>
+									<span class="lang-zh">{s.title_zh}</span>
+								</h3>
+								<span class={`stage-badge ${s.automated ? "automated" : "manual"}`}>
+									{s.automated ? "✓" : "○"}{" "}
+									<span class="lang-en">{s.badge_en}</span>
+									<span class="lang-zh">{s.badge_zh}</span>
+								</span>
+							</header>
+							<p class="stage-purpose">
+								<span class="lang-en">{s.purpose_en}</span>
+								<span class="lang-zh">{s.purpose_zh}</span>
+							</p>
+							{s.num === 0 && (
+								<div class="stage-inline-thermo">
+									{Object.entries(regime?.current?.signals || {}).map(([key, sig]) => (
+										<span
+											class="stage-inline-light"
+											style={`--mini-light: ${lightColors[sig.light] || "#9ca3af"}`}
+											title={`${sig.label}: ${sig.value}`}
+										></span>
+									))}
+								</div>
+							)}
+							{s.num === 2 && heatmap?.tickers?.length > 0 && (
+								<p class="stage-inline-meta">
+									<span class="lang-en">{heatmap.tickers.length} tickers in scan pool</span>
+									<span class="lang-zh">{heatmap.tickers.length} 只标的在观察池</span>
+								</p>
+							)}
+							{s.num === 6 && (
+								<div class="stage-scorecard">
+									<span class="stage-scorecard-pill">MA200</span>
+									<span class="stage-scorecard-pill">支撑</span>
+									<span class="stage-scorecard-pill">RSI</span>
+									<span class="stage-scorecard-pill">量价</span>
+									<span class="stage-scorecard-pill stage-scorecard-pill-primary">
+										R:R ≥ 2.0
+									</span>
+									<span class="stage-scorecard-hint">
+										<span class="lang-en">Score ≥ 7 / 10 to trade</span>
+										<span class="lang-zh">≥ 7/10 才下单</span>
+									</span>
+								</div>
+							)}
+							{s.num === 7 && (
+								<div class="stage-cadence">
+									<span class="stage-cadence-badge">
+										<span class="lang-en">Monthly</span>
+										<span class="lang-zh">月度</span>
+									</span>
+									<span class="stage-cadence-badge">
+										<span class="lang-en">Quarterly</span>
+										<span class="lang-zh">季度</span>
+									</span>
+									<span class="stage-cadence-badge">
+										<span class="lang-en">Annual</span>
+										<span class="lang-zh">年度</span>
+									</span>
+								</div>
+							)}
+						</div>
+					</article>
+				))}
+			</div>
+		</section>
+
+		{/* ═══ Section 4: Watchlist Heatmap ═══ */}
+		<section class="portfolio-section fade-in-up" id="watchlist-section">
+			<header class="portfolio-section-head">
+				<p class="portfolio-kicker">
+					<span class="lang-en">Stage 2-3 · Watchlist Opportunity Scan</span>
+					<span class="lang-zh">阶段 2-3 · 观察池机会扫描</span>
+				</p>
+				<h2 class="font-serif text-3xl font-semibold">
+					<span class="lang-en">Who's moving into upgrade range</span>
+					<span class="lang-zh">谁在靠近升级区</span>
+				</h2>
+				<p class="portfolio-note">
+					<span class="lang-en">
+						Daily 10-point scan across 15 tickers. Darker = closer to the 7-point upgrade
+						threshold. Empty cells are days before the scan started.
+					</span>
+					<span class="lang-zh">
+						每日对 15 只标的跑 10 分评分卡。颜色越深越接近 7 分升级门槛。空格是扫描启动前的日期。
+					</span>
+				</p>
+			</header>
+
+			{heatmap?.tickers?.length > 0 ? (
+				<div class="heatmap-wrap">
+					<div
+						class="heatmap-grid"
+						style={`grid-template-columns: auto repeat(${heatmap.dates.length}, 1fr)`}
+					>
+						<div class="heatmap-corner"></div>
+						{heatmap.dates.map((d) => (
+							<div class="heatmap-date-label">{d.slice(5)}</div>
+						))}
+						{heatmap.tickers.map((ticker, ti) => (
+							<>
+								<div class="heatmap-ticker-label">
+									{ticker}
+									<small>{heatmap.ticker_names[ticker] || ""}</small>
+								</div>
+								{heatmap.dates.map((d, di) => {
+									const score = heatmap.scores[di]?.[ti] ?? -1;
+									const title = `${ticker} · ${d} · ${score >= 0 ? `${score}/10` : "—"}`;
+									let bg = "transparent";
+									if (score >= 7) bg = `rgba(137, 83, 209, 0.95)`;
+									else if (score >= 5) bg = `rgba(137, 83, 209, ${0.3 + (score - 5) * 0.1})`;
+									else if (score >= 0) bg = `rgba(137, 83, 209, ${0.05 + score * 0.02})`;
+									return (
+										<div class="heatmap-cell" style={`background: ${bg}`} title={title}>
+											{score >= 7 && <span class="heatmap-cell-mark">★</span>}
+										</div>
+									);
+								})}
+							</>
+						))}
+					</div>
+				</div>
+			) : (
+				<div class="portfolio-empty">
+					<span class="lang-en">
+						Scan history index not yet populated. Runs daily at 10:00 — check back in a few days.
+					</span>
+					<span class="lang-zh">扫描历史索引还没累积。每日 10:00 跑一次，几天后回来看。</span>
+				</div>
+			)}
+		</section>
+
+		{/* ═══ Section 5: Current Positions ═══ */}
+		<section class="portfolio-section fade-in-up" id="positions-section">
+			<header class="portfolio-section-head">
+				<p class="portfolio-kicker">
+					<span class="lang-en">Stage 7 · Active Positions</span>
+					<span class="lang-zh">阶段 7 · 当前持仓</span>
+				</p>
+				<h2 class="font-serif text-3xl font-semibold">
+					<span class="lang-en">The 6 names that earned conviction</span>
+					<span class="lang-zh">值得信念的 6 只</span>
+				</h2>
+				<p class="portfolio-note">
+					<span class="lang-en">
+						Each card shows sector tags, one-line thesis, stage badge, distance to stop, and the
+						next catalyst on the calendar.
+					</span>
+					<span class="lang-zh">
+						每张卡片显示板块标签、一句逻辑、阶段徽章、距止损线距离、日历上最近的催化事件。
+					</span>
+				</p>
+			</header>
+
+			<div class="positions-grid">
+				{positions.map((p) => (
+					<article class={`position-card conviction-${p.conviction}`}>
+						<header class="position-head">
+							<div class="position-symbol-row">
+								<strong class="position-symbol font-serif">{p.symbol}</strong>
+								<span class="position-flag" aria-label={p.market}>
+									{p.flag}
+								</span>
+								<span class="position-conviction-icon">
+									{conviction[p.conviction] || ""}
+								</span>
+							</div>
+							<div class="position-tags">
+								{p.sector_tags_en.map((tag, i) => (
+									<span class="position-tag">
+										<span class="lang-en">{tag}</span>
+										<span class="lang-zh">{p.sector_tags_zh[i] || tag}</span>
+									</span>
+								))}
+							</div>
+						</header>
+
+						<p class="position-thesis">
+							<span class="lang-en">{p.thesis_en}</span>
+							<span class="lang-zh">{p.thesis_zh}</span>
+						</p>
+
+						<div class="position-meta">
+							<span class="position-stage-badge">
+								<span class="lang-en">Stage {p.stage}</span>
+								<span class="lang-zh">阶段 {p.stage}</span>
+							</span>
+							<span class="position-status">
+								<span class="lang-en">{p.status_en}</span>
+								<span class="lang-zh">{p.status_zh}</span>
+							</span>
+						</div>
+
+						<footer class="position-foot">
+							{p.stop ? (
+								<span
+									class={`position-stop severity-${p.stop.severity}`}
+									title={p.stop.description || ""}
+								>
+									<span class="lang-en">Stop: {p.stop.level_pct_from_current} away</span>
+									<span class="lang-zh">止损距 {p.stop.level_pct_from_current}</span>
+								</span>
+							) : (
+								<span class="position-stop-empty">
+									<span class="lang-en">No stop rule</span>
+									<span class="lang-zh">无撤退规则</span>
+								</span>
+							)}
+							{p.next_event ? (
+								<span class={`position-event urgency-${p.next_event.urgency}`}>
+									<time>{p.next_event.date}</time>
+									<span>{p.next_event.label}</span>
+								</span>
+							) : (
+								<span class="position-event-empty">
+									<span class="lang-en">No pending events</span>
+									<span class="lang-zh">无预告事件</span>
+								</span>
+							)}
+						</footer>
+					</article>
+				))}
+			</div>
+		</section>
+
+		{/* ═══ Section 6 (skipped, Phase 2): Event Fire Timeline ═══ */}
+
+		{/* ═══ Section 7: Closed Positions Gallery ═══ */}
+		<section class="portfolio-section fade-in-up" id="clearance-section">
+			<header class="portfolio-section-head">
+				<p class="portfolio-kicker">
+					<span class="lang-en">Trade Replays · Closed Positions</span>
+					<span class="lang-zh">交易回放 · 已清仓</span>
+				</p>
+				<h2 class="font-serif text-3xl font-semibold">
+					<span class="lang-en">Wins, near-misses, and the lesson attached to each</span>
+					<span class="lang-zh">每笔清仓都带一条 lesson</span>
+				</h2>
+				<p class="portfolio-note">
+					<span class="lang-en">
+						Trade points marked: first entry, add, sell, stop-triggered exit. The annotation is
+						the reasoning at the time — not edited after the fact.
+					</span>
+					<span class="lang-zh">
+						每个关键交易点都标注：首次建仓、加仓、减仓、触发止损。备注是当时的判断，事后不改。
+					</span>
+				</p>
+			</header>
+
+			<div class="clearance-grid">
+				{clearances.map((c, idx) => (
+					<article
+						class={`clearance-card outcome-${c.outcome_pct_rounded >= 0 ? "win" : "loss"}`}
+					>
+						<header class="clearance-head">
+							<div class="clearance-symbol-row">
+								<strong class="clearance-symbol font-serif">
+									{c.ticker}
+								</strong>
+								<span class="clearance-name font-serif">
+									<span class="lang-en">{c.name_en}</span>
+									<span class="lang-zh">{c.name_zh}</span>
+								</span>
+							</div>
+							<div class="clearance-meta-row">
+								<span class="clearance-pct">
+									{c.outcome_pct_rounded >= 0 ? "+" : ""}
+									{c.outcome_pct_rounded}%
+								</span>
+								<span class="clearance-days">
+									<span class="lang-en">{c.holding_days}d</span>
+									<span class="lang-zh">{c.holding_days}天</span>
+								</span>
+							</div>
+						</header>
+
+						<div class="clearance-tags">
+							{(c.sector_tags_en || []).map((t, i) => (
+								<span class="position-tag">
+									<span class="lang-en">{t}</span>
+									<span class="lang-zh">{(c.sector_tags_zh || [])[i] || t}</span>
+								</span>
+							))}
+						</div>
+
+						<div class="clearance-chart-wrap">
+							<canvas class="clearance-chart" data-clearance-idx={idx}></canvas>
+						</div>
+
+						<div class="clearance-trade-points">
+							{(c.trade_points || []).map((tp) => (
+								<div class="trade-point-row">
+									<time class="trade-point-date">{tp.date}</time>
+									<strong class="trade-point-action">{tp.action}</strong>
+									{tp.price && <span class="trade-point-price">¥{tp.price}</span>}
+									<span class="trade-point-note">{tp.note}</span>
+								</div>
+							))}
+						</div>
+
+						<footer class="clearance-foot">
+							<p class="clearance-reason">
+								<strong>
+									<span class="lang-en">Reason</span>
+									<span class="lang-zh">原因</span>:
+								</strong>{" "}
+								<span class="lang-en">{c.reason_en}</span>
+								<span class="lang-zh">{c.reason_zh}</span>
+							</p>
+							<p class="clearance-lesson">
+								<strong>
+									<span class="lang-en">Lesson</span>
+									<span class="lang-zh">教训</span>:
+								</strong>{" "}
+								<span class="lang-en">{c.lesson_en}</span>
+								<span class="lang-zh">{c.lesson_zh}</span>
+							</p>
+						</footer>
+					</article>
+				))}
+			</div>
+		</section>
+
+		{/* ═══ Section 8: Roundtable Log ═══ */}
+		<section class="portfolio-section fade-in-up" id="roundtable-section">
+			<header class="portfolio-section-head">
+				<p class="portfolio-kicker">
+					<span class="lang-en">Stage 5 · Roundtable Log</span>
+					<span class="lang-zh">阶段 5 · 圆桌档案</span>
+				</p>
+				<h2 class="font-serif text-3xl font-semibold">
+					<span class="lang-en">6 masters stress-test the thesis</span>
+					<span class="lang-zh">6 位大师挑战结论</span>
+				</h2>
+				<p class="portfolio-note">
+					<span class="lang-en">
+						Each roundtable invokes 6 guests — track expert, value, macro, institutional, and at
+						least one dissenter. No dissent = research not done.
+					</span>
+					<span class="lang-zh">
+						每次圆桌请 6 位嘉宾——赛道专家 / 价值派 / 宏观 / 制度 / 必含反方。没有反方 = 调研不够。
+					</span>
+				</p>
+			</header>
+
+			<div class="roundtable-list">
+				{roundtables.map((r) => (
+					<article class="roundtable-card">
+						<header class="roundtable-head">
+							<time class="roundtable-date">{r.date}</time>
+							<span class="roundtable-cadence-tag">{r.cadence}</span>
+							<h3 class="roundtable-title font-serif">
+								<span class="lang-en">{r.title_en}</span>
+								<span class="lang-zh">{r.title_zh}</span>
+							</h3>
+						</header>
+						<div class="roundtable-guests">
+							{r.guests.map((g, i) => (
+								<span class="roundtable-guest">
+									{g}
+									<small>
+										<span class="lang-en">{r.guest_roles_en?.[i] || ""}</span>
+										<span class="lang-zh">{r.guest_roles_zh?.[i] || ""}</span>
+									</small>
+								</span>
+							))}
+						</div>
+						<blockquote class="roundtable-verdict">
+							<span class="lang-en">{r.verdict_en}</span>
+							<span class="lang-zh">{r.verdict_zh}</span>
+						</blockquote>
+					</article>
+				))}
+			</div>
+		</section>
+	</section>
+
+	<script is:inline id="portfolio-data" type="application/json" set:html={dataJson}></script>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+	<script is:inline>
+		function __initPortfolioAnimate() {
+			const page = document.querySelector('.portfolio-page');
+			if (!page || page.dataset.portfolioReady === 'true') return;
+			page.dataset.portfolioReady = 'true';
+			const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+			if (!reduce) {
+				const fadeIn = (el, delay, dur) => {
+					if (!el) return;
+					el.style.opacity = '0';
+					el.style.animation = `lucky-fade-up ${dur || 420}ms ease ${delay}ms forwards`;
+				};
+				fadeIn(page.querySelector('.portfolio-eyebrow'), 280);
+				const title = page.querySelector('.portfolio-hero h1');
+				if (title && !title.dataset.animated) {
+					title.dataset.animated = 'true';
+					const zh = (document.documentElement.getAttribute('data-lang') || 'en') === 'zh';
+					const span = title.querySelector(zh ? '.lang-zh' : '.lang-en');
+					if (span) {
+						const text = span.textContent || '';
+						let d = 460;
+						if (zh) {
+							span.innerHTML = [...text]
+								.map((c) => {
+									if (!c.trim()) return c;
+									const s = `<span style="opacity:0;display:inline-block;animation:lucky-fade-up .38s ease ${d}ms forwards">${c}</span>`;
+									d += 38;
+									return s;
+								})
+								.join('');
+						} else {
+							span.innerHTML = text
+								.trim()
+								.split(/\s+/)
+								.map((w) => {
+									const s = `<span style="opacity:0;display:inline-block;animation:lucky-fade-up .38s ease ${d}ms forwards">${w}</span>`;
+									d += 38;
+									return s;
+								})
+								.join(' ');
+						}
+					}
+				}
+				fadeIn(page.querySelector('.portfolio-subtitle'), 760);
+				fadeIn(page.querySelector('.portfolio-regime-badge'), 820);
+				const cards = Array.from(page.querySelectorAll('.portfolio-stat-card'));
+				cards.forEach((c, i) => fadeIn(c, 900 + i * 62));
+				fadeIn(page.querySelector('.portfolio-updated'), 900 + cards.length * 62 + 80);
+			}
+
+			// CountUp for stat cards
+			setTimeout(() => {
+				if (reduce) return;
+				page.querySelectorAll('.portfolio-stat-value[data-count-target]').forEach((el) => {
+					const target = Number(el.dataset.countTarget);
+					if (!target || Number.isNaN(target)) return;
+					const suffix = el.dataset.countSuffix || '';
+					const prefix = el.dataset.countPrefix || '';
+					const dur = 1100;
+					const t0 = performance.now();
+					el.textContent = `${prefix}0${suffix}`;
+					const tick = (now) => {
+						const p = Math.min((now - t0) / dur, 1);
+						const e = 1 - (1 - p) ** 3;
+						el.textContent = prefix + Math.round(target * e).toLocaleString() + suffix;
+						if (p < 1) requestAnimationFrame(tick);
+					};
+					requestAnimationFrame(tick);
+				});
+			}, 900);
+		}
+
+		function __initPortfolioCharts() {
+			if (typeof window.Chart === 'undefined') return;
+			const dataEl = document.getElementById('portfolio-data');
+			if (!dataEl) return;
+			let data;
+			try {
+				data = JSON.parse(dataEl.textContent || '{}');
+			} catch {
+				return;
+			}
+
+			const isDark = () => document.documentElement.getAttribute('data-theme') !== 'light';
+			const axisColor = () => (isDark() ? 'rgba(255,255,255,0.48)' : 'rgba(30,20,50,0.52)');
+			const gridColor = () => (isDark() ? 'rgba(255,255,255,0.08)' : 'rgba(30,20,50,0.08)');
+
+			// Regime VIX chart
+			const regimeCanvas = document.getElementById('regimeChart');
+			if (regimeCanvas && data.regime?.history_60d?.length >= 2) {
+				if (Chart.getChart(regimeCanvas)) Chart.getChart(regimeCanvas).destroy();
+				const history = data.regime.history_60d;
+				new Chart(regimeCanvas, {
+					type: 'line',
+					data: {
+						labels: history.map((h) => h.date),
+						datasets: [
+							{
+								label: 'VIX',
+								data: history.map((h) => h.vix),
+								borderColor: '#8953d1',
+								backgroundColor: 'rgba(137, 83, 209, 0.15)',
+								fill: true,
+								tension: 0.28,
+								pointRadius: 0,
+								pointHoverRadius: 4,
+								borderWidth: 2,
+							},
+						],
+					},
+					options: {
+						responsive: true,
+						maintainAspectRatio: false,
+						plugins: {
+							legend: { display: false },
+							tooltip: {
+								callbacks: {
+									afterLabel: (ctx) => {
+										const h = history[ctx.dataIndex];
+										return `Regime: ${h.regime} · ${h.green_count}/5 green`;
+									},
+								},
+							},
+						},
+						scales: {
+							x: {
+								ticks: { color: axisColor(), maxTicksLimit: 8 },
+								grid: { color: gridColor() },
+							},
+							y: {
+								ticks: { color: axisColor() },
+								grid: { color: gridColor() },
+							},
+						},
+					},
+				});
+			}
+
+			// Clearance mini-charts (trade-points scatter + connecting line)
+			document.querySelectorAll('.clearance-chart').forEach((canvas) => {
+				const idx = Number(canvas.dataset.clearanceIdx);
+				const c = data.clearances?.[idx];
+				if (!c || !c.trade_points || c.trade_points.length < 2) return;
+				if (Chart.getChart(canvas)) Chart.getChart(canvas).destroy();
+				// Build a price timeline from trade points. Fallback to index-based x if no dates.
+				const pts = c.trade_points
+					.filter((tp) => tp.price != null)
+					.map((tp) => ({ x: tp.date, y: tp.price, label: tp.action }));
+				if (pts.length < 2) {
+					// no prices, draw a % journey from 0 to outcome_pct
+					const start = new Date(c.entry_date).getTime();
+					const end = new Date(c.exit_date).getTime();
+					const steps = 8;
+					const synthetic = Array.from({ length: steps }, (_, i) => {
+						const t = start + ((end - start) * i) / (steps - 1);
+						const pct = (c.outcome_pct_rounded * i) / (steps - 1);
+						return { x: new Date(t).toISOString().split('T')[0], y: pct };
+					});
+					new Chart(canvas, {
+						type: 'line',
+						data: {
+							labels: synthetic.map((p) => p.x),
+							datasets: [
+								{
+									label: `${c.ticker} %`,
+									data: synthetic.map((p) => p.y),
+									borderColor: c.outcome_pct_rounded >= 0 ? '#10b981' : '#ef4444',
+									backgroundColor:
+										c.outcome_pct_rounded >= 0
+											? 'rgba(16, 185, 129, 0.12)'
+											: 'rgba(239, 68, 68, 0.12)',
+									fill: true,
+									tension: 0.35,
+									pointRadius: 0,
+									borderWidth: 2,
+								},
+							],
+						},
+						options: {
+							responsive: true,
+							maintainAspectRatio: false,
+							plugins: { legend: { display: false }, tooltip: { enabled: false } },
+							scales: {
+								x: { display: false },
+								y: {
+									ticks: { color: axisColor(), callback: (v) => `${v}%` },
+									grid: { color: gridColor() },
+								},
+							},
+						},
+					});
+					return;
+				}
+				new Chart(canvas, {
+					type: 'line',
+					data: {
+						labels: pts.map((p) => p.x),
+						datasets: [
+							{
+								label: c.ticker,
+								data: pts.map((p) => p.y),
+								borderColor: '#8953d1',
+								backgroundColor: 'rgba(137, 83, 209, 0.12)',
+								fill: true,
+								tension: 0.3,
+								pointRadius: 5,
+								pointBackgroundColor: (ctx) => {
+									const act = pts[ctx.dataIndex]?.label || '';
+									if (act.includes('建仓') || act.includes('买')) return '#10b981';
+									if (act.includes('清仓') || act.includes('卖')) return '#ef4444';
+									return '#f59e0b';
+								},
+								pointBorderColor: '#fff',
+								pointBorderWidth: 2,
+								borderWidth: 2,
+							},
+						],
+					},
+					options: {
+						responsive: true,
+						maintainAspectRatio: false,
+						plugins: {
+							legend: { display: false },
+							tooltip: {
+								callbacks: {
+									label: (ctx) => `${pts[ctx.dataIndex].label}: ${ctx.parsed.y}`,
+								},
+							},
+						},
+						scales: {
+							x: { ticks: { color: axisColor(), maxTicksLimit: 6 }, grid: { color: gridColor() } },
+							y: { ticks: { color: axisColor() }, grid: { color: gridColor() } },
+						},
+					},
+				});
+			});
+		}
+
+		function __runPortfolio() {
+			__initPortfolioAnimate();
+			__initPortfolioCharts();
+		}
+		if (document.readyState === 'loading') {
+			document.addEventListener('DOMContentLoaded', __runPortfolio, { once: true });
+		} else {
+			__runPortfolio();
+		}
+		document.addEventListener('astro:page-load', __runPortfolio);
+		// Re-init charts on theme change
+		document.addEventListener('themechange', __initPortfolioCharts);
+	</script>
+
+	<style>
+		:global(body) {
+			background:
+				radial-gradient(circle at top left, rgba(137, 83, 209, 0.18), transparent 26%),
+				radial-gradient(circle at 80% 10%, rgba(59, 130, 246, 0.12), transparent 24%),
+				#070a14;
+		}
+		:global(html[data-theme='light']) body {
+			background:
+				radial-gradient(circle at top left, rgba(137, 83, 209, 0.08), transparent 26%),
+				radial-gradient(circle at 80% 10%, rgba(59, 130, 246, 0.05), transparent 24%),
+				#f8f6f1;
+		}
+
+		.portfolio-page {
+			--p-border: rgba(137, 83, 209, 0.18);
+			--p-card: rgba(10, 14, 27, 0.84);
+			--p-card-strong: rgba(15, 21, 40, 0.92);
+			--p-text: rgba(255, 255, 255, 0.88);
+			--p-text-soft: rgba(255, 255, 255, 0.7);
+			--p-text-faint: rgba(255, 255, 255, 0.52);
+			display: grid;
+			gap: 3.5rem;
+			padding-bottom: 5rem;
+			color: var(--p-text);
+		}
+		:global(html[data-theme='light']) .portfolio-page {
+			--p-border: rgba(137, 83, 209, 0.2);
+			--p-card: rgba(255, 255, 255, 0.82);
+			--p-card-strong: rgba(255, 255, 255, 0.92);
+			--p-text: #1a1025;
+			--p-text-soft: rgba(30, 20, 50, 0.72);
+			--p-text-faint: rgba(30, 20, 50, 0.5);
+			color: #1a1025;
+		}
+
+		/* ── Hero ────────────────────────────────── */
+		.portfolio-hero {
+			display: grid;
+			gap: 1.2rem;
+		}
+		.portfolio-eyebrow,
+		.portfolio-kicker {
+			margin: 0;
+			font-size: 0.76rem;
+			letter-spacing: 0.24em;
+			text-transform: uppercase;
+			color: rgba(137, 83, 209, 0.88);
+		}
+		:global(html[data-theme='light']) .portfolio-eyebrow,
+		:global(html[data-theme='light']) .portfolio-kicker {
+			color: #8953d1;
+		}
+		.portfolio-hero-row {
+			display: grid;
+			gap: 1.5rem;
+			grid-template-columns: 1fr;
+			align-items: start;
+		}
+		@media (min-width: 900px) {
+			.portfolio-hero-row {
+				grid-template-columns: 1.6fr 1fr;
+				gap: 2.5rem;
+			}
+		}
+		.portfolio-hero-text {
+			display: grid;
+			gap: 0.85rem;
+		}
+		.portfolio-subtitle {
+			max-width: 44rem;
+			color: var(--p-text-soft);
+		}
+		.portfolio-regime-badge {
+			display: grid;
+			gap: 0.45rem;
+			padding: 1.35rem 1.4rem;
+			border-radius: 1.5rem;
+			border: 1px solid color-mix(in srgb, var(--regime-color, #8953d1) 42%, transparent);
+			background: color-mix(in srgb, var(--regime-color, #8953d1) 12%, var(--p-card));
+			backdrop-filter: blur(20px);
+			box-shadow: 0 12px 40px
+				color-mix(in srgb, var(--regime-color, #8953d1) 18%, transparent);
+		}
+		.portfolio-regime-eyebrow {
+			font-size: 0.72rem;
+			letter-spacing: 0.18em;
+			text-transform: uppercase;
+			color: var(--p-text-faint);
+		}
+		.portfolio-regime-label {
+			font-size: clamp(1.8rem, 4vw, 2.4rem);
+			line-height: 1;
+			color: var(--regime-color, #8953d1);
+		}
+		.portfolio-regime-meta {
+			font-size: 0.84rem;
+			color: var(--p-text-soft);
+		}
+		.portfolio-hero-stats {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 0.85rem;
+		}
+		@media (min-width: 640px) {
+			.portfolio-hero-stats {
+				grid-template-columns: repeat(3, minmax(0, 1fr));
+			}
+		}
+		@media (min-width: 1024px) {
+			.portfolio-hero-stats {
+				grid-template-columns: repeat(6, minmax(0, 1fr));
+			}
+		}
+		.portfolio-stat-card {
+			border: 1px solid var(--p-border);
+			background: color-mix(in srgb, var(--p-card) 94%, transparent);
+			backdrop-filter: blur(16px);
+			border-radius: 1.1rem;
+			padding: 0.9rem 1rem;
+		}
+		.portfolio-stat-label {
+			display: block;
+			margin-bottom: 0.35rem;
+			font-size: 0.68rem;
+			letter-spacing: 0.16em;
+			text-transform: uppercase;
+			color: var(--p-text-faint);
+		}
+		.portfolio-stat-value {
+			font-size: clamp(1.35rem, 2.6vw, 1.85rem);
+			line-height: 1.05;
+		}
+		.portfolio-updated {
+			margin: 0;
+			font-size: 0.78rem;
+			color: var(--p-text-faint);
+		}
+
+		/* ── Section head ────────────────────────── */
+		.portfolio-section {
+			display: grid;
+			gap: 1.5rem;
+		}
+		.portfolio-section-head {
+			display: grid;
+			gap: 0.55rem;
+			max-width: 52rem;
+		}
+		.portfolio-note {
+			margin: 0;
+			color: var(--p-text-soft);
+			font-size: 0.94rem;
+			line-height: 1.7;
+		}
+
+		/* ── Regime lights ───────────────────────── */
+		.regime-lights {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 0.7rem;
+		}
+		@media (min-width: 640px) {
+			.regime-lights {
+				grid-template-columns: repeat(5, minmax(0, 1fr));
+			}
+		}
+		.regime-light-card {
+			position: relative;
+			padding: 0.9rem 1rem;
+			border-radius: 1.15rem;
+			border: 1px solid color-mix(in srgb, var(--light) 35%, var(--p-border));
+			background: color-mix(in srgb, var(--light) 8%, var(--p-card));
+			display: grid;
+			gap: 0.35rem;
+		}
+		.regime-light-label {
+			font-size: 0.72rem;
+			letter-spacing: 0.14em;
+			text-transform: uppercase;
+			color: var(--p-text-faint);
+		}
+		.regime-light-value {
+			font-size: clamp(1.1rem, 2.2vw, 1.4rem);
+			color: var(--p-text);
+		}
+		.regime-light-dot {
+			position: absolute;
+			top: 0.85rem;
+			right: 0.9rem;
+			width: 0.7rem;
+			height: 0.7rem;
+			border-radius: 999px;
+			background: var(--light);
+			box-shadow: 0 0 14px color-mix(in srgb, var(--light) 80%, transparent);
+		}
+
+		.regime-chart-wrap {
+			border: 1px solid var(--p-border);
+			background: color-mix(in srgb, var(--p-card) 94%, transparent);
+			border-radius: 1.25rem;
+			padding: 1.25rem 1.25rem 1rem;
+			display: grid;
+			gap: 0.8rem;
+		}
+		.regime-chart-head {
+			display: grid;
+			gap: 0.4rem;
+		}
+		.regime-chart-canvas-wrap {
+			position: relative;
+			height: 220px;
+		}
+		#regimeChart {
+			width: 100%;
+			height: 100%;
+		}
+		.portfolio-empty-overlay {
+			position: absolute;
+			inset: 0;
+			display: grid;
+			place-items: center;
+			padding: 1rem;
+			text-align: center;
+			font-size: 0.9rem;
+			color: var(--p-text-faint);
+			background: color-mix(in srgb, var(--p-card) 88%, transparent);
+			border-radius: 0.75rem;
+		}
+
+		/* ── Allocation ──────────────────────────── */
+		.allocation-bar {
+			display: flex;
+			height: 3.5rem;
+			border-radius: 1.1rem;
+			overflow: hidden;
+			box-shadow: 0 8px 32px rgba(137, 83, 209, 0.12);
+		}
+		.allocation-segment {
+			position: relative;
+			display: grid;
+			place-items: center;
+			color: #fff;
+			text-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+		}
+		.allocation-segment-label {
+			display: grid;
+			justify-items: center;
+			gap: 0.1rem;
+			font-size: 0.74rem;
+			letter-spacing: 0.08em;
+		}
+		.allocation-segment-pct {
+			font-family: Georgia, serif;
+			font-size: 0.95rem;
+		}
+		.allocation-subcards {
+			display: grid;
+			grid-template-columns: 1fr;
+			gap: 1rem;
+		}
+		@media (min-width: 768px) {
+			.allocation-subcards {
+				grid-template-columns: repeat(2, minmax(0, 1fr));
+			}
+		}
+		@media (min-width: 1100px) {
+			.allocation-subcards {
+				grid-template-columns: repeat(4, minmax(0, 1fr));
+			}
+		}
+		.allocation-subcard {
+			border: 1px solid color-mix(in srgb, var(--cat-color) 25%, var(--p-border));
+			background: color-mix(in srgb, var(--cat-color) 5%, var(--p-card));
+			border-radius: 1.15rem;
+			padding: 1rem 1.1rem;
+			display: grid;
+			gap: 0.65rem;
+		}
+		.allocation-subcard-head {
+			display: flex;
+			align-items: center;
+			gap: 0.5rem;
+			flex-wrap: wrap;
+		}
+		.allocation-subcard-dot {
+			width: 0.6rem;
+			height: 0.6rem;
+			border-radius: 999px;
+			background: var(--cat-color);
+			box-shadow: 0 0 12px var(--cat-color);
+		}
+		.allocation-subcard-title {
+			margin: 0;
+			font-size: 1.05rem;
+			flex: 1;
+		}
+		.allocation-drift-chip {
+			font-size: 0.72rem;
+			padding: 0.2rem 0.55rem;
+			border-radius: 999px;
+			font-weight: 600;
+		}
+		.allocation-drift-chip.positive {
+			color: #10b981;
+			background: rgba(16, 185, 129, 0.12);
+		}
+		.allocation-drift-chip.negative {
+			color: #ef4444;
+			background: rgba(239, 68, 68, 0.12);
+		}
+		.allocation-subcard-stats {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 0.6rem;
+		}
+		.allocation-subcard-stats > div {
+			display: grid;
+			gap: 0.2rem;
+		}
+		.allocation-subcard-eyebrow {
+			font-size: 0.66rem;
+			letter-spacing: 0.12em;
+			text-transform: uppercase;
+			color: var(--p-text-faint);
+		}
+		.allocation-subcard-stats strong {
+			font-size: 1.4rem;
+			line-height: 1;
+		}
+		.allocation-subcard-tags {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.35rem;
+		}
+		.allocation-tag {
+			font-size: 0.72rem;
+			padding: 0.2rem 0.55rem;
+			border-radius: 999px;
+			background: color-mix(in srgb, var(--cat-color) 16%, transparent);
+			color: var(--p-text-soft);
+		}
+		.allocation-subcard-note {
+			margin: 0;
+			font-size: 0.85rem;
+			color: var(--p-text-soft);
+			line-height: 1.55;
+		}
+		.allocation-sub-mini {
+			display: grid;
+			gap: 0.35rem;
+			padding-top: 0.55rem;
+			border-top: 1px dashed color-mix(in srgb, var(--cat-color) 30%, transparent);
+		}
+		.allocation-sub-mini-row {
+			display: grid;
+			grid-template-columns: auto 1fr auto;
+			align-items: center;
+			gap: 0.5rem;
+			font-size: 0.78rem;
+			color: var(--p-text-soft);
+		}
+		.allocation-sub-mini-bar {
+			height: 0.45rem;
+			border-radius: 999px;
+			background: linear-gradient(
+				90deg,
+				var(--cat-color) 0,
+				var(--cat-color) var(--sub-pct, 0%),
+				color-mix(in srgb, var(--cat-color) 14%, transparent) var(--sub-pct, 0%)
+			);
+		}
+
+		/* ── 8-Stage Zigzag ──────────────────────── */
+		.stage-zigzag {
+			display: grid;
+			gap: 1.1rem;
+		}
+		.stage-card {
+			display: grid;
+			grid-template-columns: auto 1fr;
+			gap: 1rem;
+			padding: 1.15rem 1.25rem;
+			border: 1px solid var(--p-border);
+			background: color-mix(in srgb, var(--p-card) 94%, transparent);
+			border-radius: 1.25rem;
+			backdrop-filter: blur(18px);
+		}
+		@media (min-width: 900px) {
+			.stage-card.stage-left {
+				margin-right: 18%;
+			}
+			.stage-card.stage-right {
+				margin-left: 18%;
+			}
+		}
+		.stage-number-wrap {
+			display: grid;
+			place-items: center;
+			width: 3.2rem;
+			height: 3.2rem;
+			border-radius: 1rem;
+			background: linear-gradient(135deg, rgba(137, 83, 209, 0.25), rgba(137, 83, 209, 0.05));
+			border: 1px solid rgba(137, 83, 209, 0.35);
+		}
+		.stage-number {
+			font-size: 1.8rem;
+			line-height: 1;
+			color: #8953d1;
+		}
+		.stage-body {
+			display: grid;
+			gap: 0.55rem;
+		}
+		.stage-head {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			gap: 0.6rem;
+		}
+		.stage-title {
+			margin: 0;
+			font-size: 1.15rem;
+		}
+		.stage-badge {
+			font-size: 0.72rem;
+			padding: 0.18rem 0.55rem;
+			border-radius: 999px;
+			letter-spacing: 0.04em;
+		}
+		.stage-badge.automated {
+			background: rgba(16, 185, 129, 0.15);
+			color: #10b981;
+			border: 1px solid rgba(16, 185, 129, 0.3);
+		}
+		.stage-badge.manual {
+			background: rgba(156, 163, 175, 0.15);
+			color: #9ca3af;
+			border: 1px solid rgba(156, 163, 175, 0.3);
+		}
+		.stage-purpose {
+			margin: 0;
+			color: var(--p-text-soft);
+			font-size: 0.92rem;
+			line-height: 1.6;
+		}
+		.stage-inline-thermo {
+			display: flex;
+			gap: 0.35rem;
+			margin-top: 0.35rem;
+		}
+		.stage-inline-light {
+			width: 0.8rem;
+			height: 0.8rem;
+			border-radius: 999px;
+			background: var(--mini-light);
+			box-shadow: 0 0 10px color-mix(in srgb, var(--mini-light) 70%, transparent);
+		}
+		.stage-inline-meta {
+			margin: 0.35rem 0 0;
+			font-size: 0.82rem;
+			color: var(--p-text-faint);
+		}
+		.stage-scorecard {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.35rem;
+			align-items: center;
+			margin-top: 0.3rem;
+		}
+		.stage-scorecard-pill {
+			font-size: 0.7rem;
+			padding: 0.2rem 0.55rem;
+			border-radius: 999px;
+			background: rgba(137, 83, 209, 0.12);
+			color: var(--p-text-soft);
+			border: 1px solid rgba(137, 83, 209, 0.2);
+		}
+		.stage-scorecard-pill-primary {
+			background: rgba(137, 83, 209, 0.28);
+			color: #fff;
+			border-color: rgba(137, 83, 209, 0.5);
+		}
+		.stage-scorecard-hint {
+			font-size: 0.74rem;
+			color: var(--p-text-faint);
+		}
+		.stage-cadence {
+			display: flex;
+			gap: 0.4rem;
+			margin-top: 0.3rem;
+		}
+		.stage-cadence-badge {
+			font-size: 0.74rem;
+			padding: 0.22rem 0.65rem;
+			border-radius: 999px;
+			background: rgba(137, 83, 209, 0.14);
+			color: var(--p-text-soft);
+		}
+
+		/* ── Heatmap ─────────────────────────────── */
+		.heatmap-wrap {
+			overflow-x: auto;
+			border: 1px solid var(--p-border);
+			background: color-mix(in srgb, var(--p-card) 94%, transparent);
+			border-radius: 1.25rem;
+			padding: 0.9rem;
+		}
+		.heatmap-grid {
+			display: grid;
+			gap: 3px;
+			min-width: fit-content;
+		}
+		.heatmap-corner {
+			grid-column: 1;
+			grid-row: 1;
+		}
+		.heatmap-date-label {
+			font-size: 0.62rem;
+			color: var(--p-text-faint);
+			text-align: center;
+			writing-mode: vertical-rl;
+			transform: rotate(180deg);
+			padding: 0.2rem 0;
+			min-width: 1.2rem;
+		}
+		.heatmap-ticker-label {
+			font-size: 0.78rem;
+			font-weight: 600;
+			color: var(--p-text);
+			padding-right: 0.6rem;
+			text-align: right;
+			white-space: nowrap;
+			display: grid;
+			align-items: center;
+		}
+		.heatmap-ticker-label small {
+			display: block;
+			font-size: 0.64rem;
+			font-weight: 400;
+			color: var(--p-text-faint);
+		}
+		.heatmap-cell {
+			min-width: 1.2rem;
+			height: 1.8rem;
+			border-radius: 3px;
+			position: relative;
+			display: grid;
+			place-items: center;
+		}
+		.heatmap-cell-mark {
+			color: #fff;
+			font-size: 0.6rem;
+			line-height: 1;
+		}
+
+		/* ── Positions Grid ──────────────────────── */
+		.positions-grid {
+			display: grid;
+			grid-template-columns: 1fr;
+			gap: 1rem;
+		}
+		@media (min-width: 720px) {
+			.positions-grid {
+				grid-template-columns: repeat(2, minmax(0, 1fr));
+			}
+		}
+		@media (min-width: 1100px) {
+			.positions-grid {
+				grid-template-columns: repeat(3, minmax(0, 1fr));
+			}
+		}
+		.position-card {
+			border: 1px solid var(--p-border);
+			background: color-mix(in srgb, var(--p-card) 94%, transparent);
+			border-radius: 1.25rem;
+			padding: 1.1rem 1.15rem;
+			display: grid;
+			gap: 0.7rem;
+			transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+		}
+		.position-card:hover {
+			transform: translateY(-2px);
+			border-color: rgba(137, 83, 209, 0.35);
+			box-shadow: 0 12px 40px rgba(137, 83, 209, 0.12);
+		}
+		.position-card.conviction-high {
+			border-color: rgba(137, 83, 209, 0.28);
+		}
+		.position-head {
+			display: grid;
+			gap: 0.55rem;
+		}
+		.position-symbol-row {
+			display: flex;
+			align-items: baseline;
+			gap: 0.5rem;
+		}
+		.position-symbol {
+			font-size: 1.55rem;
+			line-height: 1;
+		}
+		.position-flag {
+			font-size: 1rem;
+		}
+		.position-conviction-icon {
+			margin-left: auto;
+			font-size: 1rem;
+		}
+		.position-tags {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.3rem;
+		}
+		.position-tag {
+			font-size: 0.7rem;
+			padding: 0.18rem 0.5rem;
+			border-radius: 999px;
+			background: rgba(137, 83, 209, 0.13);
+			color: var(--p-text-soft);
+			border: 1px solid rgba(137, 83, 209, 0.2);
+		}
+		.position-thesis {
+			margin: 0;
+			font-size: 0.9rem;
+			line-height: 1.6;
+			color: var(--p-text-soft);
+			border-left: 2px solid rgba(137, 83, 209, 0.4);
+			padding-left: 0.85rem;
+		}
+		.position-meta {
+			display: flex;
+			gap: 0.5rem;
+			flex-wrap: wrap;
+		}
+		.position-stage-badge {
+			font-size: 0.72rem;
+			padding: 0.2rem 0.55rem;
+			border-radius: 999px;
+			background: rgba(137, 83, 209, 0.2);
+			color: #c9b4f5;
+		}
+		.position-status {
+			font-size: 0.72rem;
+			padding: 0.2rem 0.55rem;
+			border-radius: 999px;
+			background: rgba(255, 255, 255, 0.08);
+			color: var(--p-text-faint);
+		}
+		:global(html[data-theme='light']) .position-status {
+			background: rgba(30, 20, 50, 0.06);
+		}
+		.position-foot {
+			display: flex;
+			flex-direction: column;
+			gap: 0.45rem;
+			padding-top: 0.55rem;
+			border-top: 1px dashed var(--p-border);
+			font-size: 0.82rem;
+		}
+		.position-stop {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.4rem;
+		}
+		.position-stop.severity-red {
+			color: #ef4444;
+		}
+		.position-stop.severity-yellow {
+			color: #f59e0b;
+		}
+		.position-stop.severity-gray {
+			color: var(--p-text-faint);
+		}
+		.position-stop-empty,
+		.position-event-empty {
+			color: var(--p-text-faint);
+			font-size: 0.78rem;
+		}
+		.position-event {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.5rem;
+			color: var(--p-text-soft);
+		}
+		.position-event time {
+			font-weight: 600;
+		}
+		.position-event.urgency-3 time {
+			color: #ef4444;
+		}
+
+		/* ── Clearance Gallery ───────────────────── */
+		.clearance-grid {
+			display: grid;
+			grid-template-columns: 1fr;
+			gap: 1.25rem;
+		}
+		@media (min-width: 900px) {
+			.clearance-grid {
+				grid-template-columns: repeat(2, minmax(0, 1fr));
+			}
+		}
+		.clearance-card {
+			border: 1px solid var(--p-border);
+			background: color-mix(in srgb, var(--p-card) 94%, transparent);
+			border-radius: 1.35rem;
+			padding: 1.3rem;
+			display: grid;
+			gap: 0.95rem;
+		}
+		.clearance-card.outcome-win {
+			border-color: rgba(16, 185, 129, 0.28);
+		}
+		.clearance-card.outcome-loss {
+			border-color: rgba(239, 68, 68, 0.28);
+		}
+		.clearance-head {
+			display: grid;
+			gap: 0.5rem;
+		}
+		.clearance-symbol-row {
+			display: flex;
+			align-items: baseline;
+			gap: 0.65rem;
+		}
+		.clearance-symbol {
+			font-size: 1.4rem;
+			color: var(--p-text);
+		}
+		.clearance-name {
+			font-size: 0.95rem;
+			color: var(--p-text-soft);
+		}
+		.clearance-meta-row {
+			display: flex;
+			align-items: center;
+			gap: 0.7rem;
+		}
+		.clearance-pct {
+			font-family: Georgia, serif;
+			font-size: 1.6rem;
+			font-weight: 700;
+			line-height: 1;
+		}
+		.clearance-card.outcome-win .clearance-pct {
+			color: #10b981;
+		}
+		.clearance-card.outcome-loss .clearance-pct {
+			color: #ef4444;
+		}
+		.clearance-days {
+			font-size: 0.82rem;
+			color: var(--p-text-faint);
+			padding: 0.22rem 0.6rem;
+			border-radius: 999px;
+			background: rgba(255, 255, 255, 0.05);
+		}
+		:global(html[data-theme='light']) .clearance-days {
+			background: rgba(30, 20, 50, 0.06);
+		}
+		.clearance-tags {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.35rem;
+		}
+		.clearance-chart-wrap {
+			height: 180px;
+			position: relative;
+		}
+		.clearance-chart {
+			width: 100% !important;
+			height: 100% !important;
+		}
+		.clearance-trade-points {
+			display: grid;
+			gap: 0.35rem;
+			padding: 0.75rem 0.8rem;
+			border-radius: 0.85rem;
+			background: rgba(137, 83, 209, 0.05);
+		}
+		.trade-point-row {
+			display: grid;
+			grid-template-columns: auto auto auto 1fr;
+			gap: 0.55rem;
+			align-items: baseline;
+			font-size: 0.76rem;
+		}
+		@media (max-width: 600px) {
+			.trade-point-row {
+				grid-template-columns: auto 1fr;
+				grid-template-areas: 'd a' 'p n' 'n n';
+			}
+			.trade-point-row time {
+				grid-area: d;
+			}
+			.trade-point-row strong {
+				grid-area: a;
+			}
+		}
+		.trade-point-date {
+			color: var(--p-text-faint);
+			font-family: Georgia, serif;
+		}
+		.trade-point-action {
+			color: var(--p-text);
+			font-weight: 600;
+		}
+		.trade-point-price {
+			color: var(--p-text-soft);
+			font-family: Georgia, serif;
+		}
+		.trade-point-note {
+			color: var(--p-text-faint);
+			font-size: 0.74rem;
+		}
+		.clearance-foot {
+			display: grid;
+			gap: 0.55rem;
+			padding-top: 0.9rem;
+			border-top: 1px dashed var(--p-border);
+		}
+		.clearance-foot p {
+			margin: 0;
+			font-size: 0.86rem;
+			line-height: 1.6;
+			color: var(--p-text-soft);
+		}
+		.clearance-foot strong {
+			color: var(--p-text);
+		}
+
+		/* ── Roundtable ──────────────────────────── */
+		.roundtable-list {
+			display: grid;
+			gap: 1rem;
+		}
+		.roundtable-card {
+			border: 1px solid var(--p-border);
+			background: color-mix(in srgb, var(--p-card) 94%, transparent);
+			border-radius: 1.25rem;
+			padding: 1.3rem;
+			display: grid;
+			gap: 0.85rem;
+		}
+		.roundtable-head {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: baseline;
+			gap: 0.7rem;
+		}
+		.roundtable-date {
+			font-family: Georgia, serif;
+			font-size: 1.1rem;
+			color: var(--p-text-soft);
+		}
+		.roundtable-cadence-tag {
+			font-size: 0.7rem;
+			padding: 0.15rem 0.5rem;
+			border-radius: 999px;
+			background: rgba(137, 83, 209, 0.18);
+			color: #c9b4f5;
+			text-transform: uppercase;
+			letter-spacing: 0.08em;
+		}
+		.roundtable-title {
+			margin: 0;
+			flex: 1;
+			font-size: 1.2rem;
+		}
+		.roundtable-guests {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.4rem;
+		}
+		.roundtable-guest {
+			font-size: 0.84rem;
+			padding: 0.4rem 0.7rem;
+			border-radius: 0.75rem;
+			background: rgba(137, 83, 209, 0.1);
+			color: var(--p-text-soft);
+			display: grid;
+			gap: 0.1rem;
+		}
+		.roundtable-guest small {
+			font-size: 0.66rem;
+			letter-spacing: 0.08em;
+			color: var(--p-text-faint);
+			text-transform: uppercase;
+		}
+		.roundtable-verdict {
+			margin: 0;
+			padding: 0.8rem 1rem;
+			border-left: 3px solid rgba(137, 83, 209, 0.5);
+			font-size: 0.95rem;
+			line-height: 1.7;
+			color: var(--p-text);
+			background: rgba(137, 83, 209, 0.06);
+			border-radius: 0 0.75rem 0.75rem 0;
+		}
+
+		/* ── Empty state ─────────────────────────── */
+		.portfolio-empty {
+			padding: 2.5rem 1.5rem;
+			text-align: center;
+			border: 1px dashed var(--p-border);
+			border-radius: 1.25rem;
+			background: color-mix(in srgb, var(--p-card) 70%, transparent);
+			color: var(--p-text-faint);
+			font-size: 0.9rem;
+		}
+
+		/* ── Fade-in-up animation (shared with lucky) ── */
+		@keyframes lucky-fade-up {
+			from {
+				opacity: 0;
+				transform: translateY(12px);
+			}
+			to {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
+	</style>
+</PageLayout>

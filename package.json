@@ -7,6 +7,7 @@
 		"postinstall": "npm rebuild sharp --force",
 		"dev": "astro dev",
 		"start": "astro dev",
+		"prebuild": "node scripts/build-portfolio-public.mjs && node scripts/preflight/portfolio-privacy-check.mjs",
 		"build": "astro build",
 		"postbuild": "node scripts/prepare-pagefind.mjs && pagefind --site dist",
 		"preview": "astro preview",
