@@ -1,6 +1,86 @@
 ---
-import portfolioData from "@/data/portfolio-public.json";
+import rawPortfolioData from "@/data/portfolio-public.json";
 import PageLayout from "@/layouts/Base.astro";
+
+// ─── Public portfolio shape ──────────────────────────────
+// The generated JSON has many optional/null fields (stop=null when no stop
+// rule, watchlist_heatmap=null until scan data accrues, etc.). TypeScript's
+// inference from the JSON literal would lock these into `null` types and
+// break narrowing at every call site; so we hand-type the surface we use.
+interface PortfolioSignal {
+	label: string;
+	value: string;
+	light: string;
+}
+interface PortfolioStop {
+	level_pct_from_current: string;
+	severity: string;
+	description?: string;
+}
+interface PortfolioNextEvent {
+	date: string;
+	label: string;
+	urgency: string;
+}
+interface PortfolioPosition {
+	symbol: string;
+	market: string;
+	flag: string;
+	sector_tags_en: string[];
+	sector_tags_zh: string[];
+	thesis_en: string;
+	thesis_zh: string;
+	stage: number;
+	status_en: string;
+	status_zh: string;
+	conviction: string;
+	entry_year?: number;
+	horizon?: string;
+	stop?: PortfolioStop | null;
+	next_event?: PortfolioNextEvent | null;
+}
+interface PortfolioHeatmap {
+	tickers: string[];
+	dates: string[];
+	scores: (number | null)[][];
+	ticker_names: Record<string, string>;
+}
+interface PortfolioRegimeCurrent {
+	label: string;
+	label_en: string;
+	aggression: string;
+	green_count: number;
+	total_signals?: number;
+	signals: Record<string, PortfolioSignal>;
+}
+interface PortfolioRegimeHistoryPoint {
+	date: string;
+	regime: string;
+	green_count: number;
+	vix: number | null;
+}
+interface PortfolioData {
+	regime: { current: PortfolioRegimeCurrent; history_60d: PortfolioRegimeHistoryPoint[] };
+	allocation: { current: { categories: any[] } };
+	positions: PortfolioPosition[];
+	watchlist_heatmap: PortfolioHeatmap | null;
+	clearances: any[];
+	roundtables: any[];
+	sector_research?: any[];
+	deep_research?: any[];
+	short_list?: any[];
+	stats: {
+		active_positions: number;
+		markets: number;
+		tracked_rules: number;
+		upcoming_events: number;
+		weekly_scan_hits: number;
+		days_since_last_clearance: number | null;
+	};
+	generated_at: string;
+}
+
+const portfolioData = rawPortfolioData as unknown as PortfolioData;
 
 const {
 	regime,
@@ -15,7 +95,7 @@ const {
 	generated_at,
 } = portfolioData;
 
-const regimeColors = {
+const regimeColors: Record<string, string> = {
 	进攻期: "#10b981",
 	中性期: "#f59e0b",
 	防御期: "#ef4444",
@@ -24,8 +104,13 @@ const regimeColors = {
 	Defensive: "#ef4444",
 };
 
-const lightColors = { green: "#10b981", yellow: "#f59e0b", red: "#ef4444", gray: "#9ca3af" };
-const conviction = { high: "🔥", medium: "🌱", low: "❄️" };
+const lightColors: Record<string, string> = {
+	green: "#10b981",
+	yellow: "#f59e0b",
+	red: "#ef4444",
+	gray: "#9ca3af",
+};
+const conviction: Record<string, string> = { high: "🔥", medium: "🌱", low: "❄️" };
 
 const dataJson = JSON.stringify({
 	regime,
@@ -276,7 +361,7 @@ const stages = [
 			</header>
 
 			<div class="regime-lights">
-				{Object.entries(regime?.current?.signals || {}).map(([key, sig]) => (
+				{Object.entries(regime?.current?.signals || {}).map(([, sig]) => (
 					<div class="regime-light-card" style={`--light: ${lightColors[sig.light] || "#9ca3af"}`}>
 						<span class="regime-light-label">{sig.label}</span>
 						<strong class="regime-light-value font-serif">{sig.value}</strong>
@@ -387,7 +472,7 @@ const stages = [
 						</div>
 						{cat.sub_tags_en && (
 							<div class="allocation-subcard-tags">
-								{cat.sub_tags_en.map((tag, i) => (
+								{cat.sub_tags_en.map((tag: string, i: number) => (
 									<span class="allocation-tag">
 										<span class="lang-en">{tag}</span>
 										<span class="lang-zh">{cat.sub_tags_zh[i] || tag}</span>
@@ -401,7 +486,7 @@ const stages = [
 						</p>
 						{cat.sub && (
 							<div class="allocation-sub-mini">
-								{cat.sub.map((s) => (
+								{cat.sub.map((s: any) => (
 									<div
 										class="allocation-sub-mini-row"
 										style={`--sub-pct: ${(s.pct / cat.target_pct) * 100}%`}
@@ -467,7 +552,7 @@ const stages = [
 							</p>
 							{s.num === 0 && (
 								<div class="stage-inline-thermo">
-									{Object.entries(regime?.current?.signals || {}).map(([key, sig]) => (
+									{Object.entries(regime?.current?.signals || {}).map(([, sig]) => (
 										<span
 											class="stage-inline-light"
 											style={`--mini-light: ${lightColors[sig.light] || "#9ca3af"}`}
@@ -476,7 +561,7 @@ const stages = [
 									))}
 								</div>
 							)}
-							{s.num === 2 && heatmap?.tickers?.length > 0 && (
+							{s.num === 2 && heatmap && heatmap.tickers.length > 0 && (
 								<p class="stage-inline-meta">
 									<span class="lang-en">{heatmap.tickers.length} tickers in scan pool</span>
 									<span class="lang-zh">{heatmap.tickers.length} 只标的在观察池</span>
@@ -572,7 +657,7 @@ const stages = [
 							</p>
 							{s.layers_en && s.layers_en.length > 0 && (
 								<div class="sector-card-layers">
-									{s.layers_en.map((layer, i) => (
+									{s.layers_en.map((layer: string, i: number) => (
 										<span class="sector-layer-chip">
 											<span class="lang-en">{layer}</span>
 											<span class="lang-zh">
@@ -610,24 +695,24 @@ const stages = [
 				</p>
 			</header>
 
-			{heatmap?.tickers?.length > 0 ? (
+			{heatmap && heatmap.tickers.length > 0 ? (
 				<div class="heatmap-wrap">
 					<div
 						class="heatmap-grid"
 						style={`grid-template-columns: auto repeat(${heatmap.dates.length}, 1fr)`}
 					>
 						<div class="heatmap-corner"></div>
-						{heatmap.dates.map((d) => (
+						{heatmap.dates.map((d: string) => (
 							<div class="heatmap-date-label">{d.slice(5)}</div>
 						))}
-						{heatmap.tickers.map((ticker, ti) => (
+						{heatmap.tickers.map((ticker: string, ti: number) => (
 							<>
 								<div class="heatmap-ticker-label">
 									{ticker}
-									<small>{heatmap.ticker_names[ticker] || ""}</small>
+									<small>{heatmap!.ticker_names[ticker] || ""}</small>
 								</div>
-								{heatmap.dates.map((d, di) => {
-									const score = heatmap.scores[di]?.[ti] ?? -1;
+								{heatmap!.dates.map((d: string, di: number) => {
+									const score = heatmap!.scores[di]?.[ti] ?? -1;
 									const title = `${ticker} · ${d} · ${score >= 0 ? `${score}/10` : "—"}`;
 									let bg = "transparent";
 									if (score >= 7) bg = `rgba(137, 83, 209, 0.95)`;
@@ -898,7 +983,7 @@ const stages = [
 						</header>
 
 						<div class="clearance-tags">
-							{(c.sector_tags_en || []).map((t, i) => (
+							{(c.sector_tags_en || []).map((t: string, i: number) => (
 								<span class="position-tag">
 									<span class="lang-en">{t}</span>
 									<span class="lang-zh">{(c.sector_tags_zh || [])[i] || t}</span>
@@ -913,7 +998,7 @@ const stages = [
 									<span class="lang-zh">组合成分</span>
 								</span>
 								<div class="clearance-sub-list">
-									{c.sub_tickers.map((st) => (
+									{c.sub_tickers.map((st: any) => (
 										<span class="clearance-sub-item">
 											<strong class="clearance-sub-ticker font-serif">{st.ticker}</strong>
 											<span class="clearance-sub-name">
@@ -953,7 +1038,7 @@ const stages = [
 						</div>
 
 						<div class="clearance-trade-points">
-							{(c.trade_points || []).map((tp) => (
+							{(c.trade_points || []).map((tp: any) => (
 								<div class={`trade-point-row kind-${tp.kind || "generic"}`}>
 									<time class="trade-point-date">{tp.date}</time>
 									<strong class="trade-point-action">
@@ -1038,7 +1123,7 @@ const stages = [
 						)}
 
 						<div class="roundtable-guest-grid">
-							{r.guests.map((g) => {
+							{r.guests.map((g: any) => {
 								if (typeof g === "string") {
 									return (
 										<span class="roundtable-guest-pill">{g}</span>
@@ -1067,7 +1152,7 @@ const stages = [
 
 						{r.rounds && r.rounds.length > 0 && (
 							<ol class="roundtable-rounds">
-								{r.rounds.map((rd, idx) => (
+								{r.rounds.map((rd: any, idx: number) => (
 									<li class="round-card">
 										<header class="round-head">
 											<span class="round-index font-serif">{idx + 1}</span>
@@ -1114,7 +1199,7 @@ const stages = [
 									<span class="lang-zh">可执行结论</span>
 								</h4>
 								<ul class="roundtable-implications-list">
-									{(r.implications_en || r.implications_zh || []).map((_, i) => (
+									{(r.implications_en || r.implications_zh || []).map((_: any, i: number) => (
 										<li class="roundtable-implication">
 											<span class="lang-en">
 												{r.implications_en?.[i] || r.implications_zh?.[i] || ""}
