@@ -93,35 +93,35 @@ const timelineMilestones = [...milestones].reverse();
 						<span class="lang-en">Days Alive</span>
 						<span class="lang-zh">来到世界</span>
 					</span>
-					<strong class="lucky-stat-value font-serif">{totalDaysAlive.toLocaleString()}</strong>
+					<strong class="lucky-stat-value font-serif" data-count-target={totalDaysAlive}>{totalDaysAlive.toLocaleString()}</strong>
 				</article>
 				<article class="lucky-stat-card">
 					<span class="lucky-stat-label">
 						<span class="lang-en">Milestones</span>
 						<span class="lang-zh">里程碑</span>
 					</span>
-					<strong class="lucky-stat-value font-serif">{totalMilestones}</strong>
+					<strong class="lucky-stat-value font-serif" data-count-target={totalMilestones}>{totalMilestones}</strong>
 				</article>
 				<article class="lucky-stat-card">
 					<span class="lucky-stat-label">
 						<span class="lang-en">English Streak</span>
 						<span class="lang-zh">英语启蒙</span>
 					</span>
-					<strong class="lucky-stat-value font-serif">Day {maxDay}</strong>
+					<strong class="lucky-stat-value font-serif" data-count-target={maxDay} data-count-prefix="Day ">Day {maxDay}</strong>
 				</article>
 				<article class="lucky-stat-card">
 					<span class="lucky-stat-label">
 						<span class="lang-en">Constellations</span>
 						<span class="lang-zh">星座类别</span>
 					</span>
-					<strong class="lucky-stat-value font-serif">{totalConstellations}</strong>
+					<strong class="lucky-stat-value font-serif" data-count-target={totalConstellations}>{totalConstellations}</strong>
 				</article>
 				<article class="lucky-stat-card">
 					<span class="lucky-stat-label">
 						<span class="lang-en">Last Milestone</span>
 						<span class="lang-zh">上次里程碑</span>
 					</span>
-					<strong class="lucky-stat-value font-serif">{daysSinceLastMilestone}d ago</strong>
+					<strong class="lucky-stat-value font-serif" data-count-target={daysSinceLastMilestone} data-count-suffix="d ago">{daysSinceLastMilestone}d ago</strong>
 				</article>
 			</div>
 			<div class="lucky-scroll-cue" aria-hidden="true">↓</div>
@@ -244,6 +244,70 @@ const timelineMilestones = [...milestones].reverse();
 	<script is:inline id="lucky-milestones-data" type="application/json" set:html={milestonesJson}></script>
 	<script is:inline id="lucky-category-meta" type="application/json" set:html={categoryMetaJson}></script>
 	<script is:inline>
+		function __initHeroAnimate() {
+			const page = document.querySelector('.lucky-page');
+			if (!page || page.dataset.heroReady === 'true') return;
+			page.dataset.heroReady = 'true';
+			const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+			if (!reduceMotion) {
+				const fadeIn = (el, delay, dur) => {
+					if (!el) return;
+					el.style.opacity = '0';
+					el.style.animation = `lucky-fade-up ${dur || 420}ms ease ${delay}ms forwards`;
+				};
+				fadeIn(page.querySelector('.lucky-eyebrow'), 300);
+				const heroTitle = page.querySelector('.lucky-hero h1');
+				if (heroTitle && !heroTitle.dataset.animated) {
+					heroTitle.dataset.animated = 'true';
+					const zh = (document.documentElement.getAttribute('data-lang') || 'en') === 'zh';
+					const span = heroTitle.querySelector(zh ? '.lang-zh' : '.lang-en');
+					if (span) {
+						const text = span.textContent || '';
+						let charDelay = 480;
+						if (zh) {
+							span.innerHTML = [...text].map((c) => {
+								if (!c.trim()) return c;
+								const s = `<span style="opacity:0;display:inline-block;animation:lucky-fade-up 0.38s ease ${charDelay}ms forwards">${c}</span>`;
+								charDelay += 38;
+								return s;
+							}).join('');
+						} else {
+							span.innerHTML = text.trim().split(/\s+/).map((w) => {
+								const s = `<span style="opacity:0;display:inline-block;animation:lucky-fade-up 0.38s ease ${charDelay}ms forwards">${w}</span>`;
+								charDelay += 38;
+								return s;
+							}).join(' ');
+						}
+					}
+				}
+				fadeIn(page.querySelector('.lucky-subtitle'), 780);
+				const statCards = Array.from(page.querySelectorAll('.lucky-stat-card'));
+				statCards.forEach((card, i) => fadeIn(card, 920 + i * 65));
+				fadeIn(page.querySelector('.lucky-scroll-cue'), 920 + statCards.length * 65 + 80);
+			}
+
+			setTimeout(() => {
+				if (reduceMotion) return;
+				page.querySelectorAll('.lucky-stat-value[data-count-target]').forEach((el) => {
+					const target = Number(el.dataset.countTarget);
+					if (!target || Number.isNaN(target)) return;
+					const prefix = el.dataset.countPrefix || '';
+					const suffix = el.dataset.countSuffix || '';
+					const dur = 1100;
+					const t0 = performance.now();
+					el.textContent = `${prefix}0${suffix}`;
+					const tick = (now) => {
+						const p = Math.min((now - t0) / dur, 1);
+						const e = 1 - (1 - p) ** 3;
+						el.textContent = prefix + Math.round(target * e).toLocaleString() + suffix;
+						if (p < 1) requestAnimationFrame(tick);
+					};
+					requestAnimationFrame(tick);
+				});
+			}, 900);
+		}
+
 		function __initLuckyStarMap() {
 			const page = document.querySelector('.lucky-page');
 			if (!page || page.dataset.luckyReady === 'true') return;
@@ -573,12 +637,16 @@ const timelineMilestones = [...milestones].reverse();
 			animate();
 		}
 
-		if (document.readyState === 'loading') {
-			document.addEventListener('DOMContentLoaded', __initLuckyStarMap, { once: true });
-		} else {
+		function __runLucky() {
+			__initHeroAnimate();
 			__initLuckyStarMap();
 		}
-		document.addEventListener('astro:page-load', __initLuckyStarMap);
+		if (document.readyState === 'loading') {
+			document.addEventListener('DOMContentLoaded', __runLucky, { once: true });
+		} else {
+			__runLucky();
+		}
+		document.addEventListener('astro:page-load', __runLucky);
 	</script>
 
 	<style>
@@ -1098,6 +1166,17 @@ const timelineMilestones = [...milestones].reverse();
 
 		:global(html[data-theme="light"]) .star-progress-track {
 			background: rgba(30, 20, 50, 0.08);
+		}
+
+		@keyframes lucky-fade-up {
+			from {
+				opacity: 0;
+				transform: translateY(12px);
+			}
+			to {
+				opacity: 1;
+				transform: translateY(0);
+			}
 		}
 
 		@keyframes lucky-bounce {
