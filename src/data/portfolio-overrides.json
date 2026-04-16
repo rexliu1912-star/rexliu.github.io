@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "description": "Editorial source-of-truth for the public portfolio page. Hand-maintained by Rex. Merged with Convex structural data at build time by scripts/build-portfolio-public.mjs.",
+    "description": "Editorial source-of-truth for the public portfolio page. Hand-maintained by Rex. Merged with Convex structural data at build time.",
     "last_updated": "2026-04-16"
   },
   "allocation": {
@@ -39,10 +39,10 @@
         "current_pct": 22,
         "drift_pp": -3,
         "color": "#8953d1",
-        "sub_tags_en": ["AI Power", "Core CN Infra", "US Megacap"],
+        "sub_tags_en": ["AI Power", "Core Infra", "US Megacap"],
         "sub_tags_zh": ["AI 电力", "核心基建", "美股大盘"],
-        "note_en": "Growth + conviction layer — concentrated in AI-electricity megatrend",
-        "note_zh": "成长 + 信念层——集中押注 AI 电力主线",
+        "note_en": "Long + swing mix — AI-electricity core with opportunistic overlays",
+        "note_zh": "长期 + 波段组合——AI 电力核心 + 机会主义叠加",
         "sub": [
           { "id": "cn", "label_en": "A-share", "label_zh": "A 股", "pct": 12 },
           { "id": "hk", "label_en": "Hong Kong", "label_zh": "港股", "pct": 4 },
@@ -71,21 +71,23 @@
       "thesis_en": "UHV export boom: overseas orders + margin expansion + electrification tailwind. SOTP undervalued.",
       "thesis_zh": "特高压出海：海外订单 + 毛利扩张 + 电气化顺风。分部估值偏低。",
       "stage": 7,
-      "status_en": "Core position",
-      "status_zh": "底仓",
+      "status_en": "Long · Core",
+      "status_zh": "长期 · 底仓",
       "entry_year": 2026,
-      "conviction": "high"
+      "conviction": "high",
+      "horizon": "long"
     },
     "600900": {
       "sector_tags_en": ["Hydropower", "Stable Cash Flow"],
       "sector_tags_zh": ["水电", "稳定现金流"],
-      "thesis_en": "The bond-like utility with AI-era optionality — Yangtze hydro base + potential data-center PPA upside.",
+      "thesis_en": "Bond-like utility with AI-era optionality — Yangtze hydro base + potential data-center PPA upside.",
       "thesis_zh": "类债券属性 + AI 时代期权：长江水电基荷 + 潜在数据中心 PPA 增量。",
       "stage": 7,
-      "status_en": "Core position",
-      "status_zh": "底仓",
+      "status_en": "Long · Core",
+      "status_zh": "长期 · 底仓",
       "entry_year": 2026,
-      "conviction": "high"
+      "conviction": "high",
+      "horizon": "long"
     },
     "01816": {
       "sector_tags_en": ["Nuclear Power", "Clean Base Load"],
@@ -93,10 +95,11 @@
       "thesis_en": "Structural nuclear gap ahead — approvals accelerating, 5-8 year physical build-out, AI demand backstops price.",
       "thesis_zh": "结构性核电空窗——核准加速、5-8 年物理建设周期、AI 需求背书电价。",
       "stage": 7,
-      "status_en": "Building",
-      "status_zh": "建仓中",
+      "status_en": "Long · Building",
+      "status_zh": "长期 · 建仓中",
       "entry_year": 2026,
-      "conviction": "high"
+      "conviction": "high",
+      "horizon": "long"
     },
     "CEG": {
       "sector_tags_en": ["AI Power", "Nuclear", "PPA"],
@@ -104,10 +107,11 @@
       "thesis_en": "Pure-play nuclear with AI data-center PPAs signed. Long-duration cash flow, structural undervaluation vs infra peers.",
       "thesis_zh": "纯核电 + AI 数据中心 PPA 已签。长久期现金流，相对基建同业结构性低估。",
       "stage": 7,
-      "status_en": "Core position",
-      "status_zh": "底仓",
+      "status_en": "Long · Core",
+      "status_zh": "长期 · 底仓",
       "entry_year": 2026,
-      "conviction": "high"
+      "conviction": "high",
+      "horizon": "long"
     },
     "AAPL": {
       "sector_tags_en": ["US Megacap", "Consumer Tech"],
@@ -115,39 +119,259 @@
       "thesis_en": "Cash flow moat + AI on-device optionality + buyback compound. Hold-forever core.",
       "thesis_zh": "现金流护城河 + 端侧 AI 期权 + 回购复利。永远不卖核心。",
       "stage": 7,
-      "status_en": "Core position",
-      "status_zh": "底仓",
+      "status_en": "Long · Core",
+      "status_zh": "长期 · 底仓",
       "entry_year": 2024,
-      "conviction": "high"
+      "conviction": "high",
+      "horizon": "long"
     },
     "HOOD": {
       "sector_tags_en": ["Fintech", "Prediction Markets"],
       "sector_tags_zh": ["金融科技", "预测市场"],
-      "thesis_en": "Prediction market + crypto + retail trading flywheel. Speculative but high-asymmetry on regulatory path.",
-      "thesis_zh": "预测市场 + 加密 + 零售交易飞轮。监管路径高度不对称，投机性强。",
+      "thesis_en": "Prediction market + crypto + retail trading flywheel. High-asymmetry swing on regulatory path.",
+      "thesis_zh": "预测市场 + 加密 + 零售交易飞轮。监管路径高度不对称，波段仓位。",
       "stage": 6,
-      "status_en": "Opportunistic",
-      "status_zh": "机会主义",
+      "status_en": "Swing · Building",
+      "status_zh": "波段 · 建仓中",
       "entry_year": 2025,
-      "conviction": "medium"
+      "conviction": "medium",
+      "horizon": "swing"
     }
   },
+  "sector_research": [
+    {
+      "slug": "ai-electricity-five-layers",
+      "title_en": "AI Electricity · The Five-Layer Cake",
+      "title_zh": "AI 电力 · 五层蛋糕",
+      "date": "2026-04",
+      "scope_en": "Full-stack AI power map: chips → interconnect → power conversion → data centers → baseload generation",
+      "scope_zh": "AI 电力全栈：芯片 → 互联 → 电源转换 → 数据中心 → 基荷发电",
+      "key_conclusion_en": "Electricity is the physical entry ticket for AI. 2026 data-center capex ~$400B already contracted. Bottleneck = 5-8 year window.",
+      "key_conclusion_zh": "电力是 AI 时代的物理准入门票。2026 全球数据中心 Capex ~$4000 亿已签合同。瓶颈窗口期 5-8 年。",
+      "layers_en": ["L1 Baseload (Hydro/Nuclear/Gas)", "L2 Transmission (UHV/Grid)", "L3 Conversion (Transformers/Power Equip)", "L4 Data Center (Cooling/HVAC)", "L5 Compute"],
+      "layers_zh": ["L1 基荷（水核气）", "L2 输配（特高压/电网）", "L3 转换（变压/电力设备）", "L4 数据中心（温控/HVAC）", "L5 算力"]
+    },
+    {
+      "slug": "equipment-export-chain",
+      "title_en": "Equipment Export Transmission Chain",
+      "title_zh": "产能设备传导链",
+      "date": "2026-03",
+      "scope_en": "CN machinery export play: 三一 / 恒立 / 工程机械 ETF — annual report catalyst + tariff risk",
+      "scope_zh": "中国装备出海线索：三一 / 恒立 / 工程机械 ETF，年报催化 + 关税风险",
+      "key_conclusion_en": "Backtest shows only RSI<30 + 52w drawdown>20% co-signal has 82% hit rate. Don't pre-position on theme alone.",
+      "key_conclusion_zh": "回测证明唯一有效的共振信号是 RSI<30 + 52 周回撤>20%（17 次样本 82% 胜率）。别在主题上提前布局。"
+    },
+    {
+      "slug": "stablecoin-yield-map",
+      "title_en": "Stablecoin Yield Exposure Map",
+      "title_zh": "稳定币收益率地图",
+      "date": "2026-03",
+      "scope_en": "CLARITY Act impact: yield-bearing stablecoin legal carve-out + platform risk matrix",
+      "scope_zh": "CLARITY 法案影响：稳定币收益豁免 + 平台风险矩阵",
+      "key_conclusion_en": "Keep USDT/USDC base as yield core, diversify across 2-3 trustworthy venues. Watch for yield erosion post-regulation.",
+      "key_conclusion_zh": "保持 USDT/USDC 作为收益底座，分散 2-3 个可信平台。关注监管后收益率压缩。"
+    },
+    {
+      "slug": "us-growth-individual-stocks",
+      "title_en": "US Growth · Individual Stock Picks",
+      "title_zh": "美股成长个股研究",
+      "date": "2026-04",
+      "scope_en": "Beyond ETF: HOOD / AAPL / megacap concentration vs diversified growth basket",
+      "scope_zh": "跳出 ETF：HOOD / AAPL / 大盘集中 vs 成长分散篮子",
+      "key_conclusion_en": "Swing on prediction-market exposure via HOOD, hold AAPL for compound. Size swing <5% of stocks book.",
+      "key_conclusion_zh": "HOOD 作为预测市场波段，AAPL 长期复利。波段仓位 <5% 股票盘。"
+    }
+  ],
+  "deep_research": [
+    {
+      "ticker": "600900",
+      "name_en": "Yangtze Power",
+      "name_zh": "长江电力",
+      "market": "cn",
+      "sector_en": "Hydropower (L1 Baseload)",
+      "sector_zh": "水电（L1 基荷）",
+      "thesis_en": "Bond-like utility with AI-era optionality. Bottom line is three-gorges cash flow, upside is data-center PPA.",
+      "thesis_zh": "类债券公用事业 + AI 期权。下限是三峡现金流，上限是数据中心 PPA。",
+      "confidence": 5,
+      "in_portfolio": true
+    },
+    {
+      "ticker": "01816",
+      "name_en": "China General Nuclear",
+      "name_zh": "中国广核",
+      "market": "hk",
+      "sector_en": "Nuclear (L1 Baseload)",
+      "sector_zh": "核电（L1 基荷）",
+      "thesis_en": "20 reactors under construction + approval acceleration. Regulated utility = electricity bond, not AI-tax-base.",
+      "thesis_zh": "20 台在建 + 核准加速。管制定价 = 电力债，不是 AI 税基。",
+      "confidence": 4,
+      "in_portfolio": true
+    },
+    {
+      "ticker": "600089",
+      "name_en": "TBEA (UHV)",
+      "name_zh": "特变电工",
+      "market": "cn",
+      "sector_en": "Grid Equipment (L2 Transmission)",
+      "sector_zh": "电网设备（L2 输配）",
+      "thesis_en": "UHV + overseas orders + transformer shortage. SOTP > market cap, not AI-dependent.",
+      "thesis_zh": "特高压 + 海外订单 + 变压器短缺。分部估值 > 市值，不依赖 AI。",
+      "confidence": 4,
+      "in_portfolio": true
+    },
+    {
+      "ticker": "CEG",
+      "name_en": "Constellation Energy",
+      "name_zh": "星座能源",
+      "market": "us",
+      "sector_en": "Nuclear (L1 Baseload)",
+      "sector_zh": "核电（L1 基荷）",
+      "thesis_en": "Non-regulated nuclear with Microsoft/AWS PPA signed. Long-protocol cash flow, AI-tax-base in the US model.",
+      "thesis_zh": "非管制核电 + 微软/AWS PPA 已签。长协锁定现金流，美式\"电力税基\"载体。",
+      "confidence": 5,
+      "in_portfolio": true
+    },
+    {
+      "ticker": "LNG",
+      "name_en": "Cheniere Energy",
+      "name_zh": "Cheniere 液化天然气",
+      "market": "us",
+      "sector_en": "LNG Export (Energy)",
+      "sector_zh": "LNG 出口（能源）",
+      "thesis_en": "US largest LNG exporter. PE 11x, FCF +42%, long-term contracts, buyback compound. AI-agnostic.",
+      "thesis_zh": "美国最大 LNG 出口商。PE 11x、FCF +42%、长协锁定、回购复利。与 AI 无关。",
+      "confidence": 5,
+      "in_portfolio": false
+    },
+    {
+      "ticker": "ETN",
+      "name_en": "Eaton",
+      "name_zh": "伊顿电气",
+      "market": "us",
+      "sector_en": "Electrical (L3 Conversion)",
+      "sector_zh": "电力设备（L3 转换）",
+      "thesis_en": "866 named data-center projects. RSI overbought → waiting for R:R ≥ 2.0 on pullback.",
+      "thesis_zh": "866 个有名有姓的数据中心项目。RSI 超买 → 等待回调后 R:R ≥ 2.0。",
+      "confidence": 3,
+      "in_portfolio": false
+    },
+    {
+      "ticker": "HUBB",
+      "name_en": "Hubbell",
+      "name_zh": "Hubbell 电气",
+      "market": "us",
+      "sector_en": "Electrical (L3 Conversion)",
+      "sector_zh": "电力设备（L3 转换）",
+      "thesis_en": "Grid components with data-center exposure. R:R failed at current price, back on watchlist until <$480.",
+      "thesis_zh": "电网组件 + 数据中心敞口。当前价 R:R 不达标，回观察池等 <$480。",
+      "confidence": 3,
+      "in_portfolio": false
+    }
+  ],
   "roundtables": [
     {
       "date": "2026-04-13",
       "cadence": "ad-hoc",
-      "title_en": "AI Electricity Megatrend — 6-Guest Roundtable",
-      "title_zh": "AI 电力主线 · 六人圆桌",
-      "guests": ["黄仁勋", "段永平", "达利欧", "张五常", "芒格", "耶金"],
-      "guest_roles_en": ["Track Expert", "Value", "Macro", "Institutional", "Value", "Energy"],
-      "guest_roles_zh": ["赛道专家", "价值派", "宏观派", "制度派", "价值派", "能源专家"],
-      "verdict_en": "Full conviction on AI-electricity basket. Hold CN core (长江电力/中广核/特变) + US exposure (CEG). Add LNG on pullback below $230.",
-      "verdict_zh": "AI 电力整组满仓信念。持有 A 股核心（长江电力/中广核/特变）+ 美股敞口（CEG）。LNG 跌破 $230 加仓。",
-      "full_doc_url": null
+      "topic_en": "AI era — will electricity become the new tax base?",
+      "topic_zh": "AI 时代，电力是否会成为新税基？",
+      "title_en": "AI Electricity · 6-Master Roundtable",
+      "title_zh": "AI 电力 · 六人圆桌",
+      "guests": [
+        {
+          "name": "查理·芒格",
+          "role_en": "Value",
+          "role_zh": "价值派",
+          "mbti": "INTJ",
+          "position_en": "Physical facts ≠ good investments — price is the only variable that determines return",
+          "position_zh": "物理事实 ≠ 好投资——价格才是决定回报的唯一变量"
+        },
+        {
+          "name": "黄仁勋",
+          "role_en": "Track Expert",
+          "role_zh": "赛道专家",
+          "mbti": "ENTJ",
+          "position_en": "Electricity is the physical entry ticket for AI. 1000W per GB200, $400B data-center capex in 2026",
+          "position_zh": "电力是 AI 算力的物理准入门票。单颗 GB200 1000W，2026 Capex $4000 亿"
+        },
+        {
+          "name": "丹尼尔·耶金",
+          "role_en": "Energy",
+          "role_zh": "能源专家",
+          "mbti": "ISTJ",
+          "position_en": "Energy-history pattern: every bottleneck eventually gets routed around. Electricity tax-base is a 5-8 year transitional window",
+          "position_zh": "能源史规律：卡脖子的逻辑越成立，被绕过的速度就越快。电力税基是 5-8 年过渡性的"
+        },
+        {
+          "name": "瑞·达利欧",
+          "role_en": "Macro",
+          "role_zh": "宏观派",
+          "mbti": "INTJ",
+          "position_en": "Logic-right ≠ timing-right. NAAIM 80+, Fed still QT — 58% cash suddenly going all-in on electricity is the danger signal",
+          "position_zh": "逻辑对 ≠ 时机对。NAAIM 80+、美联储缩表——58% 现金突然 all in 电力本身就是危险信号"
+        },
+        {
+          "name": "张五常",
+          "role_en": "Institutional",
+          "role_zh": "制度派",
+          "mbti": "ENTP",
+          "position_en": "Governments tax what's easiest to see. Tokens are easier to measure than electricity — AI tax-base is a bottleneck premium, not a tax",
+          "position_zh": "政府收税看\"什么最容易被看见\"——token 比电表更容易计量。电力是瓶颈溢价，不是税基"
+        },
+        {
+          "name": "段永平",
+          "role_en": "Value",
+          "role_zh": "价值派",
+          "mbti": "ISTJ",
+          "position_en": "Three questions only — good business, good management, fair price. LNG / 003816 / MOD all say yes",
+          "position_zh": "只问三件事——生意好、管理行、价格便宜。LNG / 003816 / MOD 三个都答\"是\""
+        }
+      ],
+      "rounds": [
+        {
+          "title_en": "Round 1 · Definition",
+          "title_zh": "第一轮 · 定义",
+          "core_tension_en": "Is electricity an 'institutional tax-base' (permanent power node) or a 'cyclical bottleneck premium' (temporary supply-demand gap)?",
+          "core_tension_zh": "电力是\"制度性税基\"（永久性权力节点）还是\"周期性瓶颈溢价\"（过渡性供需失衡）？",
+          "fork_en": "Tax-base → hold 10yr+, high PE OK, heavy nuclear (003816/CEG). Bottleneck → 5-8yr window, low PE only, cash-flow names (LNG/TLN/MOD)",
+          "fork_zh": "若是税基 → 长持 10 年+、接受高 PE、重仓核电（003816/CEG）；若是瓶颈 → 5-8 年窗口、只买低 PE、重仓现金流（LNG/TLN/MOD）"
+        },
+        {
+          "title_en": "Round 2 · Target Selection",
+          "title_zh": "第二轮 · 标的筛选",
+          "core_tension_en": "Of 24 candidates, which survive the 'if AI thesis fails' stress test? All-weather: LNG / 003816 / 600900 / WMB / 600089. PE-stretched: PWR / ETN / CCJ",
+          "core_tension_zh": "24 个标的中，哪些能扛过\"AI 叙事不成立也值这个价\"压力测试？全天候：LNG / 003816 / 600900 / WMB / 600089。PE 偏高：PWR / ETN / CCJ",
+          "fork_en": "Zhang: CN regulated electricity is a bond, US non-regulated (TLN/CEG) is the real 'AI tax-right' — can't mix",
+          "fork_zh": "张五常：中国管制电力是债券，美国非监管（TLN/CEG）才是真正\"AI 收税权\"——不能混配"
+        },
+        {
+          "title_en": "Round 3 · Execution",
+          "title_zh": "第三轮 · 执行节奏",
+          "core_tension_en": "Three-bucket method: defensive base (长电/WMB, bond-like) + core offense (003816/600089, dollar-cost) + opportunistic (LNG/MOD/TLN, wait for signal)",
+          "core_tension_zh": "三桶法：防御底座（长电+WMB 类债券）+ 核心进攻（003816+600089 分月）+ 机会主义（LNG/MOD/TLN 等信号）",
+          "fork_en": "Dalio: pace matters more than size. Don't all-in, don't stay all-cash — hedged, staged, event-driven",
+          "fork_zh": "达利欧：节奏比仓位更重要。不要 all-in，也不要 all-cash——对冲、分批、事件驱动"
+        }
+      ],
+      "final_verdict_en": "Full conviction on the AI-electricity basket, but structural: CN hydro/nuclear as bond-like base, US non-regulated nuclear (CEG) as pure-play AI-rev. Don't pay 80x PE for cyclical names. Three-bucket execution.",
+      "final_verdict_zh": "AI 电力整组信念成立，但分层：A 股水电/核电做类债券底座、美股非监管核电（CEG）做纯 AI 收入敞口。别为周期股付 80x PE。三桶法分批。",
+      "implications_en": [
+        "Long 长江电力 (600900) + 中国广核 (01816): bond-like base, hold-forever",
+        "Long CEG: US AI-PPA pure-play, high conviction",
+        "Long 特变 (600089): UHV + overseas, not AI-dependent",
+        "Watch LNG: add on pullback below $230 with R:R ≥ 2",
+        "Avoid CCJ (PE 117) and SMR (unprofitable): narrative-driven overpricing"
+      ],
+      "implications_zh": [
+        "长江电力 (600900) + 中国广核 (01816) 长期持有：类债券底座",
+        "CEG 长期：美式 AI-PPA 纯敞口、高信念",
+        "特变 (600089) 长期：特高压 + 海外订单，不依赖 AI",
+        "LNG 观察：$230 以下 + R:R ≥ 2 加仓",
+        "避开 CCJ（PE 117）和 SMR（亏损）：叙事驱动过度定价"
+      ]
     }
   ],
   "macro_signals_fallback": {
-    "_note": "Used by build script when thermometer-history.jsonl is empty (cron hasn't populated yet). Once 7+ days of real history exist, build script ignores this and reads the real jsonl.",
+    "_note": "Used by build script when thermometer-history.jsonl is empty.",
     "signals": {
       "tnx": { "label": "10Y UST", "value": "4.28%", "light": "yellow" },
       "dxy": { "label": "DXY", "value": "98.18", "light": "green" },

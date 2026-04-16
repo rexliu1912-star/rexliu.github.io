@@ -15,19 +15,21 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import os from "node:os";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, "..");
-const HOME = os.homedir();
+// Workspace root: rexliu-website/../.. — works on both Mac Mini (~/clawd/) and
+// MacBook (~/Clawd Workspace/) since the script is located identically under
+// projects/rexliu-website/scripts/ on each machine.
+const WORKSPACE_ROOT = path.resolve(ROOT, "../..");
 
 // ─── Paths ───────────────────────────────────────────────
 const OVERRIDES_PATH = path.join(ROOT, "src/data/portfolio-overrides.json");
 const OUTPUT_PATH = path.join(ROOT, "src/data/portfolio-public.json");
-const THERMOMETER_HISTORY = path.join(HOME, "clawd/knowledge/output/research/investment-strategy/macro/thermometer-history.jsonl");
-const WATCHLIST_INDEX = path.join(HOME, "clawd/knowledge/output/research/investment-strategy/macro/watchlist-scan-index.json");
-const TRADELOG_INDEX = path.join(HOME, "clawd/output/research/trade-log/archive/index.json");
+const THERMOMETER_HISTORY = path.join(WORKSPACE_ROOT, "output/research/investment-strategy/macro/thermometer-history.jsonl");
+const WATCHLIST_INDEX = path.join(WORKSPACE_ROOT, "output/research/investment-strategy/macro/watchlist-scan-index.json");
+const TRADELOG_INDEX = path.join(WORKSPACE_ROOT, "output/research/trade-log/archive/index.json");
 
 const CONVEX_URL = "https://fleet-heron-880.convex.cloud";
 const FETCH_TIMEOUT_MS = 5000;
@@ -223,6 +225,7 @@ function buildPositions(convexPositions, convexRules, convexEvents, overrides) {
       status_en: override.status_en || "Active",
       status_zh: override.status_zh || "持有中",
       conviction: override.conviction || "medium",
+      horizon: override.horizon || "long",
       entry_year: override.entry_year ?? null,
       stop,
       next_event: nextEvent,
@@ -286,6 +289,26 @@ async function main() {
   const clearances = tradelog?.clearances || [];
   const roundtables = overrides.roundtables || [];
 
+  // Aggregate trade stats across clearances
+  const totalTrades = clearances.reduce((sum, c) => sum + (c.trade_count || 0), 0);
+  const wins = clearances.filter((c) => (c.outcome_pct_rounded ?? 0) > 0).length;
+  const totalClosed = clearances.length;
+  const winRate = totalClosed > 0 ? Math.round((wins / totalClosed) * 100) : 0;
+  const realizedPnlPct = clearances.reduce((sum, c) => sum + (c.outcome_pct_rounded || 0), 0);
+
+  // Short list: tickers at latest scan score >= 7
+  const shortList = (() => {
+    if (!watchlistIndex?.scores?.length) return [];
+    const lastRow = watchlistIndex.scores.at(-1) || [];
+    const out = [];
+    (watchlistIndex.tickers || []).forEach((t, i) => {
+      if ((lastRow[i] ?? -1) >= 7) {
+        out.push({ ticker: t, name: watchlistIndex.ticker_names?.[t] || "", score: lastRow[i] });
+      }
+    });
+    return out;
+  })();
+
   const stats = {
     active_positions: publicPositions.length,
     markets: new Set(publicPositions.map((p) => p.market)).size,
@@ -297,6 +320,10 @@ async function main() {
           return lastScoresRow.filter((s) => s >= 5).length;
         })()
       : 0,
+    total_trades: totalTrades,
+    closed_positions: totalClosed,
+    win_rate_pct: winRate,
+    realized_pnl_pct: realizedPnlPct,
     days_since_last_clearance: clearances[0]?.exit_date
       ? Math.floor((Date.now() - new Date(clearances[0].exit_date).getTime()) / 86400000)
       : null,
@@ -306,8 +333,11 @@ async function main() {
     generated_at: new Date().toISOString(),
     regime,
     allocation: { current: overrides.allocation },
+    sector_research: overrides.sector_research || [],
+    deep_research: overrides.deep_research || [],
     positions: publicPositions,
     watchlist_heatmap: heatmap,
+    short_list: shortList,
     clearances,
     roundtables,
     stats,
