@@ -632,16 +632,25 @@ const stages = [
 						<div class="clearance-trade-points">
 							{(c.trade_points || []).map((tp: any) => (
 								<div class={`trade-point-row kind-${tp.kind || "generic"}`}>
-									<time class="trade-point-date">{tp.date}</time>
+									<div class="trade-point-top">
+										<time class="trade-point-date">{tp.date}</time>
+										{tp.kind && (
+											<span class="trade-point-kind">{tp.kind}</span>
+										)}
+										{tp.price != null && (
+											<span class="trade-point-price">¥{tp.price}</span>
+										)}
+									</div>
 									<strong class="trade-point-action">
 										<span class="lang-en">{tp.action_en || ""}</span>
 										<span class="lang-zh">{tp.action_zh || tp.action_en || ""}</span>
 									</strong>
-									{tp.price != null && <span class="trade-point-price">¥{tp.price}</span>}
-									<span class="trade-point-note">
-										<span class="lang-en">{tp.note_en || ""}</span>
-										<span class="lang-zh">{tp.note_zh || tp.note_en || ""}</span>
-									</span>
+									{(tp.note_en || tp.note_zh) && (
+										<span class="trade-point-note">
+											<span class="lang-en">{tp.note_en || ""}</span>
+											<span class="lang-zh">{tp.note_zh || tp.note_en || ""}</span>
+										</span>
+									)}
 								</div>
 							))}
 						</div>
@@ -2457,12 +2466,18 @@ const stages = [
 			gap: 0.3rem;
 		}
 		.position-tag {
+			display: inline-flex;
+			align-items: center;
+			align-self: center;
+			flex: 0 0 auto;
 			font-size: 0.7rem;
-			padding: 0.18rem 0.5rem;
+			line-height: 1.3;
+			padding: 0.22rem 0.6rem;
 			border-radius: 999px;
 			background: rgba(137, 83, 209, 0.13);
 			color: var(--p-text-soft);
 			border: 1px solid rgba(137, 83, 209, 0.2);
+			white-space: nowrap;
 		}
 		.position-thesis {
 			margin: 0;
@@ -2625,45 +2640,77 @@ const stages = [
 		}
 		.clearance-trade-points {
 			display: grid;
-			gap: 0.35rem;
+			gap: 0.5rem;
 			padding: 0.75rem 0.8rem;
 			border-radius: 0.85rem;
 			background: rgba(137, 83, 209, 0.05);
 		}
+		/* Each trade point is a compact stacked card rather than a cramped
+		   3-column grid. Top row: date + kind chip + price; action bold
+		   under it; note as secondary smaller text. Left-border stripe
+		   colors each row by kind. */
 		.trade-point-row {
 			display: grid;
-			grid-template-columns: auto auto auto 1fr;
-			gap: 0.55rem;
-			align-items: baseline;
-			font-size: 0.76rem;
+			gap: 0.2rem;
+			padding: 0.55rem 0.75rem;
+			border-radius: 0.55rem;
+			background: color-mix(in srgb, var(--p-card) 85%, transparent);
+			border-left: 3px solid rgba(137, 83, 209, 0.35);
 		}
-		@media (max-width: 600px) {
-			.trade-point-row {
-				grid-template-columns: auto 1fr;
-				grid-template-areas: 'd a' 'p n' 'n n';
-			}
-			.trade-point-row time {
-				grid-area: d;
-			}
-			.trade-point-row strong {
-				grid-area: a;
-			}
+		.trade-point-row.kind-entry,
+		.trade-point-row.kind-add {
+			border-left-color: rgba(16, 185, 129, 0.55);
+		}
+		.trade-point-row.kind-exit,
+		.trade-point-row.kind-sell,
+		.trade-point-row.kind-trim,
+		.trade-point-row.kind-stopped {
+			border-left-color: rgba(239, 68, 68, 0.55);
+		}
+		.trade-point-row.kind-catalyst,
+		.trade-point-row.kind-external {
+			border-left-color: rgba(245, 158, 11, 0.55);
+		}
+		.trade-point-row.kind-methodology {
+			border-left-color: rgba(137, 83, 209, 0.55);
+		}
+		.trade-point-top {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: baseline;
+			gap: 0.5rem;
+			font-size: 0.72rem;
 		}
 		.trade-point-date {
 			color: var(--p-text-faint);
 			font-family: Georgia, serif;
 		}
-		.trade-point-action {
-			color: var(--p-text);
+		.trade-point-kind {
+			font-size: 0.6rem;
+			padding: 0.1rem 0.45rem;
+			border-radius: 999px;
+			letter-spacing: 0.08em;
+			text-transform: uppercase;
+			background: rgba(137, 83, 209, 0.14);
+			color: var(--p-text-soft);
 			font-weight: 600;
 		}
 		.trade-point-price {
-			color: var(--p-text-soft);
+			margin-left: auto;
+			color: var(--p-text);
 			font-family: Georgia, serif;
+			font-weight: 600;
+		}
+		.trade-point-action {
+			font-size: 0.88rem;
+			font-weight: 600;
+			color: var(--p-text);
+			line-height: 1.45;
 		}
 		.trade-point-note {
-			color: var(--p-text-faint);
-			font-size: 0.74rem;
+			font-size: 0.78rem;
+			color: var(--p-text-soft);
+			line-height: 1.55;
 		}
 		.clearance-foot {
 			display: grid;

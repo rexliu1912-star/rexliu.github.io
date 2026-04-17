@@ -94,10 +94,16 @@ function buildRegime(history, fallback) {
     const signals = {};
     for (const [k, v] of Object.entries(latest.signals || {})) {
       if (!v) continue;
+      // Fallback to the hand-edited override value (e.g. Policy → "胶着")
+      // when the thermometer scrape doesn't produce a numeric/string value
+      // for this signal — avoids a bare "-" on the page.
+      const fallbackValue = fallback?.signals?.[k]?.value;
+      let value = formatSignalValue(k, v);
+      if ((value === "-" || value === "") && fallbackValue) value = fallbackValue;
       signals[k] = {
         label: labelForSignal(k),
-        value: formatSignalValue(k, v),
-        light: v.light || "yellow",
+        value,
+        light: v.light || fallback?.signals?.[k]?.light || "yellow",
       };
     }
     current = {
