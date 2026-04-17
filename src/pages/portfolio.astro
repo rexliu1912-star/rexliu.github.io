@@ -112,6 +112,59 @@ const lightColors: Record<string, string> = {
 };
 const conviction: Record<string, string> = { high: "🔥", medium: "🌱", low: "❄️" };
 
+// Signal ordering + labels for the regime 5×N history grid (used when
+// less than ~7 days of thermometer history are available — before the
+// full 60-day line chart kicks in).
+const SIGNAL_ORDER = ["tnx", "dxy", "vix", "naaim", "policy"] as const;
+const SIGNAL_LABELS: Record<string, string> = {
+	tnx: "10Y",
+	dxy: "DXY",
+	vix: "VIX",
+	naaim: "NAAIM",
+	policy: "Policy",
+};
+
+// Deterministic per-position trajectory SVG path (visual filler — NOT
+// financial data). Seeded off the ticker so each card gets a stable,
+// unique-looking smooth curve; conviction nudges the end-point upward.
+// Height / width are the SVG viewport values.
+function trajectoryPath(seed: string, conviction: string, w: number, h: number): string {
+	let hash = 0;
+	for (let i = 0; i < seed.length; i++) hash = ((hash * 31 + seed.charCodeAt(i)) >>> 0) >>> 0;
+	const steps = 12;
+	const raw: number[] = [];
+	for (let i = 0; i < steps; i++) {
+		hash = (hash * 1103515245 + 12345) >>> 0;
+		raw.push((hash % 10000) / 10000);
+	}
+	// Light smoothing (3-point moving average)
+	const smooth = raw.map((_, i) => {
+		const a = raw[Math.max(0, i - 1)];
+		const b = raw[i];
+		const c = raw[Math.min(raw.length - 1, i + 1)];
+		return (a + b + c) / 3;
+	});
+	// Bias: high conviction = rising, medium = gentle rise, low = flat-ish.
+	const bias = conviction === "high" ? 0.4 : conviction === "medium" ? 0.2 : 0.05;
+	const biased = smooth.map((v, i) => v * (1 - bias) + (i / (smooth.length - 1)) * bias);
+	// Pad top/bottom so stroke doesn't touch edge
+	const pad = 4;
+	const inner = h - pad * 2;
+	return biased
+		.map((v, i) => {
+			const x = (i / (biased.length - 1)) * w;
+			const y = pad + (1 - v) * inner;
+			return `${i === 0 ? "M" : "L"}${x.toFixed(1)},${y.toFixed(1)}`;
+		})
+		.join(" ");
+}
+
+const convictionStroke: Record<string, string> = {
+	high: "#8953d1",
+	medium: "#10b981",
+	low: "#9ca3af",
+};
+
 const dataJson = JSON.stringify({
 	regime,
 	allocation,
@@ -225,7 +278,7 @@ const stages = [
 		<div class="mb-6">
 			<a
 				href="/lab/"
-				class="font-serif text-sm text-white/60 transition-colors hover:text-[#c9b4f5]"
+				class="portfolio-breadcrumb font-serif text-sm transition-colors"
 			>
 				← Lab
 			</a>
@@ -347,485 +400,6 @@ const stages = [
 			</p>
 		</section>
 
-		{/* ═══ Section 1: Macro Regime ═══ */}
-		<section class="portfolio-section fade-in-up" id="regime-section">
-			<header class="portfolio-section-head">
-				<p class="portfolio-kicker">
-					<span class="lang-en">Stage 0 · Macro Thermometer</span>
-					<span class="lang-zh">阶段 0 · 宏观温度计</span>
-				</p>
-				<h2 class="font-serif text-3xl font-semibold">
-					<span class="lang-en">The market temperature we're trading against</span>
-					<span class="lang-zh">我们在和什么样的市场做交易</span>
-				</h2>
-			</header>
-
-			<div class="regime-lights">
-				{Object.entries(regime?.current?.signals || {}).map(([, sig]) => (
-					<div class="regime-light-card" style={`--light: ${lightColors[sig.light] || "#9ca3af"}`}>
-						<span class="regime-light-label">{sig.label}</span>
-						<strong class="regime-light-value font-serif">{sig.value}</strong>
-						<span class="regime-light-dot" aria-hidden="true"></span>
-					</div>
-				))}
-			</div>
-
-			<div class="regime-chart-wrap">
-				<div class="regime-chart-head">
-					<h3 class="font-serif text-lg">
-						<span class="lang-en">VIX & Regime · 60 days</span>
-						<span class="lang-zh">VIX 与 Regime · 60 天</span>
-					</h3>
-					<p class="portfolio-note">
-						<span class="lang-en">
-							Shaded bands mark regime transitions (green = offensive, amber = neutral, red =
-							defensive). VIX line is the mood overlay.
-						</span>
-						<span class="lang-zh">
-							色段为 regime 状态（绿=进攻、黄=中性、红=防御）。VIX 折线是情绪指标。
-						</span>
-					</p>
-				</div>
-				<div class="regime-chart-canvas-wrap">
-					<canvas id="regimeChart" aria-hidden="true"></canvas>
-					{regime?.history_60d?.length < 7 && (
-						<div class="portfolio-empty-overlay">
-							<span class="lang-en">
-								Accumulating history · need ~7 days before chart renders (daily cron started
-								2026-04-16)
-							</span>
-							<span class="lang-zh">历史数据累积中 · 约 7 天后渲染图表（日度 cron 已启动）</span>
-						</div>
-					)}
-				</div>
-			</div>
-		</section>
-
-		{/* ═══ Section 2: Allocation ═══ */}
-		<section class="portfolio-section fade-in-up" id="allocation-section">
-			<header class="portfolio-section-head">
-				<p class="portfolio-kicker">
-					<span class="lang-en">Allocation · Target vs Current</span>
-					<span class="lang-zh">资产配置 · 目标 vs 当前</span>
-				</p>
-				<h2 class="font-serif text-3xl font-semibold">
-					<span class="lang-en">Four buckets, five percentage points of drift</span>
-					<span class="lang-zh">四桶资产，五个百分点的偏移</span>
-				</h2>
-				<p class="portfolio-note">
-					<span class="lang-en">
-						Dalio three-bucket framework. Percentages are strategic targets; drift chips show
-						current distance from each target.
-					</span>
-					<span class="lang-zh">
-						达利欧三桶法框架。百分比是战略目标，偏差 chip 显示当前距目标的距离。
-					</span>
-				</p>
-			</header>
-
-			<div class="allocation-bar" aria-label="Target allocation">
-				{allocation.current.categories.map((cat) => (
-					<div
-						class="allocation-segment"
-						style={`flex: ${cat.target_pct}; background: ${cat.color}`}
-					>
-						<span class="allocation-segment-label">
-							<span class="lang-en">{cat.label_en}</span>
-							<span class="lang-zh">{cat.label_zh}</span>
-							<strong class="allocation-segment-pct">{cat.target_pct}%</strong>
-						</span>
-					</div>
-				))}
-			</div>
-
-			<div class="allocation-subcards">
-				{allocation.current.categories.map((cat) => (
-					<article class="allocation-subcard" style={`--cat-color: ${cat.color}`}>
-						<header class="allocation-subcard-head">
-							<span class="allocation-subcard-dot"></span>
-							<h3 class="allocation-subcard-title font-serif">
-								<span class="lang-en">{cat.label_en}</span>
-								<span class="lang-zh">{cat.label_zh}</span>
-							</h3>
-							<span
-								class={`allocation-drift-chip ${cat.drift_pp >= 0 ? "positive" : "negative"}`}
-							>
-								{cat.drift_pp >= 0 ? "+" : ""}
-								{cat.drift_pp}pp
-							</span>
-						</header>
-						<div class="allocation-subcard-stats">
-							<div>
-								<span class="allocation-subcard-eyebrow">
-									<span class="lang-en">Target</span>
-									<span class="lang-zh">目标</span>
-								</span>
-								<strong class="font-serif">{cat.target_pct}%</strong>
-							</div>
-							<div>
-								<span class="allocation-subcard-eyebrow">
-									<span class="lang-en">Current</span>
-									<span class="lang-zh">当前</span>
-								</span>
-								<strong class="font-serif">{cat.current_pct}%</strong>
-							</div>
-						</div>
-						{cat.sub_tags_en && (
-							<div class="allocation-subcard-tags">
-								{cat.sub_tags_en.map((tag: string, i: number) => (
-									<span class="allocation-tag">
-										<span class="lang-en">{tag}</span>
-										<span class="lang-zh">{cat.sub_tags_zh[i] || tag}</span>
-									</span>
-								))}
-							</div>
-						)}
-						<p class="allocation-subcard-note">
-							<span class="lang-en">{cat.note_en}</span>
-							<span class="lang-zh">{cat.note_zh}</span>
-						</p>
-						{cat.sub && (
-							<div class="allocation-sub-mini">
-								{cat.sub.map((s: any) => (
-									<div
-										class="allocation-sub-mini-row"
-										style={`--sub-pct: ${(s.pct / cat.target_pct) * 100}%`}
-									>
-										<span>
-											<span class="lang-en">{s.label_en}</span>
-											<span class="lang-zh">{s.label_zh}</span>
-										</span>
-										<span class="allocation-sub-mini-bar"></span>
-										<strong class="font-serif">{s.pct}%</strong>
-									</div>
-								))}
-							</div>
-						)}
-					</article>
-				))}
-			</div>
-		</section>
-
-		{/* ═══ Section 3: 8-Stage Methodology ═══ */}
-		<section class="portfolio-section fade-in-up" id="methodology-section">
-			<header class="portfolio-section-head">
-				<p class="portfolio-kicker">
-					<span class="lang-en">Methodology · 8-Stage Funnel</span>
-					<span class="lang-zh">方法论 · 八阶段漏斗</span>
-				</p>
-				<h2 class="font-serif text-3xl font-semibold">
-					<span class="lang-en">From macro thermometer to post-trade review</span>
-					<span class="lang-zh">从宏观温度计到持仓复盘</span>
-				</h2>
-				<p class="portfolio-note">
-					<span class="lang-en">
-						Every position passes through these stages. Some are automated cron tasks, some
-						require human judgment. Round-trip is weeks, not days.
-					</span>
-					<span class="lang-zh">
-						每个持仓都要走过这些阶段。部分是自动 cron，部分需要人工判断。完整走一圈以周为单位，不是天。
-					</span>
-				</p>
-			</header>
-
-			<div class="stage-zigzag">
-				{stages.map((s, i) => (
-					<article class={`stage-card ${i % 2 === 0 ? "stage-left" : "stage-right"}`}>
-						<div class="stage-number-wrap">
-							<span class="stage-number font-serif">{s.num}</span>
-						</div>
-						<div class="stage-body">
-							<header class="stage-head">
-								<h3 class="stage-title font-serif">
-									<span class="lang-en">{s.title_en}</span>
-									<span class="lang-zh">{s.title_zh}</span>
-								</h3>
-								<span class={`stage-badge ${s.automated ? "automated" : "manual"}`}>
-									{s.automated ? "✓" : "○"}{" "}
-									<span class="lang-en">{s.badge_en}</span>
-									<span class="lang-zh">{s.badge_zh}</span>
-								</span>
-							</header>
-							<p class="stage-purpose">
-								<span class="lang-en">{s.purpose_en}</span>
-								<span class="lang-zh">{s.purpose_zh}</span>
-							</p>
-							{s.num === 0 && (
-								<div class="stage-inline-thermo">
-									{Object.entries(regime?.current?.signals || {}).map(([, sig]) => (
-										<span
-											class="stage-inline-light"
-											style={`--mini-light: ${lightColors[sig.light] || "#9ca3af"}`}
-											title={`${sig.label}: ${sig.value}`}
-										></span>
-									))}
-								</div>
-							)}
-							{s.num === 2 && heatmap && heatmap.tickers.length > 0 && (
-								<p class="stage-inline-meta">
-									<span class="lang-en">{heatmap.tickers.length} tickers in scan pool</span>
-									<span class="lang-zh">{heatmap.tickers.length} 只标的在观察池</span>
-								</p>
-							)}
-							{s.num === 6 && (
-								<div class="stage-scorecard">
-									<span class="stage-scorecard-pill">MA200</span>
-									<span class="stage-scorecard-pill">支撑</span>
-									<span class="stage-scorecard-pill">RSI</span>
-									<span class="stage-scorecard-pill">量价</span>
-									<span class="stage-scorecard-pill stage-scorecard-pill-primary">
-										R:R ≥ 2.0
-									</span>
-									<span class="stage-scorecard-hint">
-										<span class="lang-en">Score ≥ 7 / 10 to trade</span>
-										<span class="lang-zh">≥ 7/10 才下单</span>
-									</span>
-								</div>
-							)}
-							{s.num === 7 && (
-								<div class="stage-cadence">
-									<span class="stage-cadence-badge">
-										<span class="lang-en">Monthly</span>
-										<span class="lang-zh">月度</span>
-									</span>
-									<span class="stage-cadence-badge">
-										<span class="lang-en">Quarterly</span>
-										<span class="lang-zh">季度</span>
-									</span>
-									<span class="stage-cadence-badge">
-										<span class="lang-en">Annual</span>
-										<span class="lang-zh">年度</span>
-									</span>
-								</div>
-							)}
-						</div>
-					</article>
-				))}
-			</div>
-		</section>
-
-		{/* ═══ Section 3.5: Sector Research (Stage 1) ═══ */}
-		{sector_research && sector_research.length > 0 && (
-			<section class="portfolio-section fade-in-up" id="sector-research-section">
-				<header class="portfolio-section-head">
-					<p class="portfolio-kicker">
-						<span class="lang-en">Stage 1 · Sector Research</span>
-						<span class="lang-zh">阶段 1 · 赛道研究</span>
-					</p>
-					<h2 class="font-serif text-3xl font-semibold">
-						<span class="lang-en">Heavy-weight reports before picking names</span>
-						<span class="lang-zh">选股之前先做重度赛道报告</span>
-					</h2>
-					<p class="portfolio-note">
-						<span class="lang-en">
-							1-2 day deep-dive per theme. One hard conclusion, one paragraph of scope, and the
-							structural layers when relevant.
-						</span>
-						<span class="lang-zh">
-							每个主题 1-2 天深度研究。一句硬结论 + 一段研究范围 + 必要时的结构分层。
-						</span>
-					</p>
-				</header>
-
-				<div class="sector-research-grid">
-					{sector_research.map((s) => (
-						<article class="sector-card">
-							<header class="sector-card-head">
-								<time class="sector-card-date">{s.date}</time>
-								<h3 class="sector-card-title font-serif">
-									<span class="lang-en">{s.title_en}</span>
-									<span class="lang-zh">{s.title_zh}</span>
-								</h3>
-							</header>
-							{(s.scope_en || s.scope_zh) && (
-								<p class="sector-card-scope">
-									<span class="sector-card-eyebrow">
-										<span class="lang-en">Scope</span>
-										<span class="lang-zh">研究范围</span>
-									</span>
-									<span class="lang-en">{s.scope_en}</span>
-									<span class="lang-zh">{s.scope_zh}</span>
-								</p>
-							)}
-							<p class="sector-card-conclusion">
-								<span class="sector-card-eyebrow">
-									<span class="lang-en">Key Conclusion</span>
-									<span class="lang-zh">硬结论</span>
-								</span>
-								<span class="lang-en">{s.key_conclusion_en}</span>
-								<span class="lang-zh">{s.key_conclusion_zh}</span>
-							</p>
-							{s.layers_en && s.layers_en.length > 0 && (
-								<div class="sector-card-layers">
-									{s.layers_en.map((layer: string, i: number) => (
-										<span class="sector-layer-chip">
-											<span class="lang-en">{layer}</span>
-											<span class="lang-zh">
-												{(s.layers_zh && s.layers_zh[i]) || layer}
-											</span>
-										</span>
-									))}
-								</div>
-							)}
-						</article>
-					))}
-				</div>
-			</section>
-		)}
-
-		{/* ═══ Section 4: Watchlist Heatmap ═══ */}
-		<section class="portfolio-section fade-in-up" id="watchlist-section">
-			<header class="portfolio-section-head">
-				<p class="portfolio-kicker">
-					<span class="lang-en">Stage 2-3 · Watchlist Opportunity Scan</span>
-					<span class="lang-zh">阶段 2-3 · 观察池机会扫描</span>
-				</p>
-				<h2 class="font-serif text-3xl font-semibold">
-					<span class="lang-en">Who's moving into upgrade range</span>
-					<span class="lang-zh">谁在靠近升级区</span>
-				</h2>
-				<p class="portfolio-note">
-					<span class="lang-en">
-						Daily 10-point scan across 15 tickers. Darker = closer to the 7-point upgrade
-						threshold. Empty cells are days before the scan started.
-					</span>
-					<span class="lang-zh">
-						每日对 15 只标的跑 10 分评分卡。颜色越深越接近 7 分升级门槛。空格是扫描启动前的日期。
-					</span>
-				</p>
-			</header>
-
-			{heatmap && heatmap.tickers.length > 0 ? (
-				<div class="heatmap-wrap">
-					<div
-						class="heatmap-grid"
-						style={`grid-template-columns: auto repeat(${heatmap.dates.length}, 1fr)`}
-					>
-						<div class="heatmap-corner"></div>
-						{heatmap.dates.map((d: string) => (
-							<div class="heatmap-date-label">{d.slice(5)}</div>
-						))}
-						{heatmap.tickers.map((ticker: string, ti: number) => (
-							<>
-								<div class="heatmap-ticker-label">
-									{ticker}
-									<small>{heatmap!.ticker_names[ticker] || ""}</small>
-								</div>
-								{heatmap!.dates.map((d: string, di: number) => {
-									const score = heatmap!.scores[di]?.[ti] ?? -1;
-									const title = `${ticker} · ${d} · ${score >= 0 ? `${score}/10` : "—"}`;
-									let bg = "transparent";
-									if (score >= 7) bg = `rgba(137, 83, 209, 0.95)`;
-									else if (score >= 5) bg = `rgba(137, 83, 209, ${0.3 + (score - 5) * 0.1})`;
-									else if (score >= 0) bg = `rgba(137, 83, 209, ${0.05 + score * 0.02})`;
-									return (
-										<div class="heatmap-cell" style={`background: ${bg}`} title={title}>
-											{score >= 7 && <span class="heatmap-cell-mark">★</span>}
-										</div>
-									);
-								})}
-							</>
-						))}
-					</div>
-				</div>
-			) : (
-				<div class="portfolio-empty">
-					<span class="lang-en">
-						Scan history index not yet populated. Runs daily at 10:00 — check back in a few days.
-					</span>
-					<span class="lang-zh">扫描历史索引还没累积。每日 10:00 跑一次，几天后回来看。</span>
-				</div>
-			)}
-		</section>
-
-		{/* ═══ Section 4.5: Deep Research (Stage 4) ═══ */}
-		{deep_research && deep_research.length > 0 && (
-			<section class="portfolio-section fade-in-up" id="deep-research-section">
-				<header class="portfolio-section-head">
-					<p class="portfolio-kicker">
-						<span class="lang-en">Stage 4 · Deep Research</span>
-						<span class="lang-zh">阶段 4 · 深度研究</span>
-					</p>
-					<h2 class="font-serif text-3xl font-semibold">
-						<span class="lang-en">4+1 cards · one-line thesis per name</span>
-						<span class="lang-zh">4+1 名片 · 每家公司一句硬逻辑</span>
-					</h2>
-					<p class="portfolio-note">
-						<span class="lang-en">
-							Each name that clears Stage 3 gets a full deep-research card. Five-star confidence
-							scale. Badge marks those currently held.
-						</span>
-						<span class="lang-zh">
-							通过 Stage 3 的标的会写成深度研究名片。五星置信度，徽章标注当前是否持仓。
-						</span>
-					</p>
-				</header>
-
-				<div class="deep-research-grid">
-					{deep_research.map((d) => (
-						<article class={`deep-card ${d.in_portfolio ? "held" : "watching"}`}>
-							<header class="deep-card-head">
-								<div class="deep-card-ticker-row">
-									<strong class="deep-card-ticker font-serif">{d.ticker}</strong>
-									{d.market && (
-										<span class="deep-card-market">{d.market.toUpperCase()}</span>
-									)}
-									<span
-										class={`deep-card-status ${d.in_portfolio ? "held" : "watching"}`}
-									>
-										<span class="lang-en">
-											{d.in_portfolio ? "Held" : "Watching"}
-										</span>
-										<span class="lang-zh">
-											{d.in_portfolio ? "持仓" : "观察"}
-										</span>
-									</span>
-								</div>
-								<span class="deep-card-name font-serif">
-									<span class="lang-en">{d.name_en}</span>
-									<span class="lang-zh">{d.name_zh}</span>
-								</span>
-							</header>
-
-							{(d.sector_en || d.sector_zh) && (
-								<span class="deep-card-sector">
-									<span class="lang-en">{d.sector_en}</span>
-									<span class="lang-zh">{d.sector_zh}</span>
-								</span>
-							)}
-
-							<p class="deep-card-thesis">
-								<span class="lang-en">{d.thesis_en}</span>
-								<span class="lang-zh">{d.thesis_zh}</span>
-							</p>
-
-							{d.confidence != null && (
-								<footer class="deep-card-foot">
-									<span class="deep-card-conf-label">
-										<span class="lang-en">Confidence</span>
-										<span class="lang-zh">置信度</span>
-									</span>
-									<span
-										class="deep-card-stars"
-										aria-label={`Confidence ${d.confidence} of 5`}
-									>
-										{[1, 2, 3, 4, 5].map((n) => (
-											<span
-												class={`deep-card-star ${n <= d.confidence ? "filled" : ""}`}
-												aria-hidden="true"
-											>
-												★
-											</span>
-										))}
-									</span>
-								</footer>
-							)}
-						</article>
-					))}
-				</div>
-			</section>
-		)}
-
 		{/* ═══ Section 5: Current Positions ═══ */}
 		<section class="portfolio-section fade-in-up" id="positions-section">
 			<header class="portfolio-section-head">
@@ -876,6 +450,24 @@ const stages = [
 							<span class="lang-zh">{p.thesis_zh}</span>
 						</p>
 
+						<svg
+							class="position-trajectory"
+							viewBox="0 0 200 40"
+							preserveAspectRatio="none"
+							role="img"
+							aria-label="Conviction trajectory"
+						>
+							<path
+								d={trajectoryPath(p.symbol, p.conviction, 200, 40)}
+								fill="none"
+								stroke={convictionStroke[p.conviction] || "#9ca3af"}
+								stroke-width="1.6"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								opacity="0.85"
+							/>
+						</svg>
+
 						<div class="position-meta">
 							<span class="position-stage-badge">
 								<span class="lang-en">Stage {p.stage}</span>
@@ -918,8 +510,6 @@ const stages = [
 				))}
 			</div>
 		</section>
-
-		{/* ═══ Section 6 (skipped, Phase 2): Event Fire Timeline ═══ */}
 
 		{/* ═══ Section 7: Closed Positions Gallery ═══ */}
 		<section class="portfolio-section fade-in-up" id="clearance-section">
@@ -1077,6 +667,488 @@ const stages = [
 			</div>
 		</section>
 
+		{/* ═══ Section 2: Allocation ═══ */}
+		<section class="portfolio-section fade-in-up" id="allocation-section">
+			<header class="portfolio-section-head">
+				<p class="portfolio-kicker">
+					<span class="lang-en">Allocation · Target vs Current</span>
+					<span class="lang-zh">资产配置 · 目标 vs 当前</span>
+				</p>
+				<h2 class="font-serif text-3xl font-semibold">
+					<span class="lang-en">Four buckets, five percentage points of drift</span>
+					<span class="lang-zh">四桶资产，五个百分点的偏移</span>
+				</h2>
+				<p class="portfolio-note">
+					<span class="lang-en">
+						Dalio three-bucket framework. Percentages are strategic targets; drift chips show
+						current distance from each target.
+					</span>
+					<span class="lang-zh">
+						达利欧三桶法框架。百分比是战略目标，偏差 chip 显示当前距目标的距离。
+					</span>
+				</p>
+			</header>
+
+			<div class="allocation-donut-wrap" aria-label="Target vs current allocation">
+				<svg class="allocation-donut" viewBox="0 0 240 240" role="img">
+					{/* Outer ring = target allocation */}
+					{(() => {
+						const cats = allocation.current.categories;
+						let cum = 0;
+						return cats.map((cat: any) => {
+							const offset = -cum;
+							cum += cat.target_pct;
+							return (
+								<circle
+									class="allocation-arc-outer"
+									cx="120"
+									cy="120"
+									r="92"
+									pathLength="100"
+									fill="none"
+									stroke={cat.color}
+									stroke-width="22"
+									stroke-dasharray={`${cat.target_pct} 100`}
+									stroke-dashoffset={offset}
+									transform="rotate(-90 120 120)"
+								/>
+							);
+						});
+					})()}
+					{/* Inner ring = current allocation */}
+					{(() => {
+						const cats = allocation.current.categories;
+						let cum = 0;
+						return cats.map((cat: any) => {
+							const offset = -cum;
+							cum += cat.current_pct;
+							return (
+								<circle
+									class="allocation-arc-inner"
+									cx="120"
+									cy="120"
+									r="58"
+									pathLength="100"
+									fill="none"
+									stroke={cat.color}
+									stroke-opacity="0.55"
+									stroke-width="16"
+									stroke-dasharray={`${cat.current_pct} 100`}
+									stroke-dashoffset={offset}
+									transform="rotate(-90 120 120)"
+								/>
+							);
+						});
+					})()}
+					{/* Center labels */}
+					<text x="120" y="114" class="allocation-donut-label-top" text-anchor="middle">
+						TARGET
+					</text>
+					<text x="120" y="134" class="allocation-donut-label-bot" text-anchor="middle">
+						vs CURRENT
+					</text>
+				</svg>
+				<div class="allocation-donut-legend">
+					{allocation.current.categories.map((cat: any) => (
+						<div class="allocation-legend-item" style={`--cat-color: ${cat.color}`}>
+							<span class="allocation-legend-dot"></span>
+							<span class="allocation-legend-label">
+								<span class="lang-en">{cat.label_en}</span>
+								<span class="lang-zh">{cat.label_zh}</span>
+							</span>
+							<span class="allocation-legend-target">{cat.target_pct}%</span>
+							<span
+								class={`allocation-legend-drift ${cat.drift_pp >= 0 ? "positive" : "negative"}`}
+							>
+								{cat.drift_pp >= 0 ? "+" : ""}
+								{cat.drift_pp}pp
+							</span>
+						</div>
+					))}
+				</div>
+			</div>
+
+			<div class="allocation-subcards">
+				{allocation.current.categories.map((cat) => (
+					<article class="allocation-subcard" style={`--cat-color: ${cat.color}`}>
+						<header class="allocation-subcard-head">
+							<span class="allocation-subcard-dot"></span>
+							<h3 class="allocation-subcard-title font-serif">
+								<span class="lang-en">{cat.label_en}</span>
+								<span class="lang-zh">{cat.label_zh}</span>
+							</h3>
+							<span
+								class={`allocation-drift-chip ${cat.drift_pp >= 0 ? "positive" : "negative"}`}
+							>
+								{cat.drift_pp >= 0 ? "+" : ""}
+								{cat.drift_pp}pp
+							</span>
+						</header>
+						<div class="allocation-subcard-stats">
+							<div>
+								<span class="allocation-subcard-eyebrow">
+									<span class="lang-en">Target</span>
+									<span class="lang-zh">目标</span>
+								</span>
+								<strong class="font-serif">{cat.target_pct}%</strong>
+							</div>
+							<div>
+								<span class="allocation-subcard-eyebrow">
+									<span class="lang-en">Current</span>
+									<span class="lang-zh">当前</span>
+								</span>
+								<strong class="font-serif">{cat.current_pct}%</strong>
+							</div>
+						</div>
+						{cat.sub_tags_en && (
+							<div class="allocation-subcard-tags">
+								{cat.sub_tags_en.map((tag: string, i: number) => (
+									<span class="allocation-tag">
+										<span class="lang-en">{tag}</span>
+										<span class="lang-zh">{cat.sub_tags_zh[i] || tag}</span>
+									</span>
+								))}
+							</div>
+						)}
+						<p class="allocation-subcard-note">
+							<span class="lang-en">{cat.note_en}</span>
+							<span class="lang-zh">{cat.note_zh}</span>
+						</p>
+						{cat.sub && (
+							<div class="allocation-sub-mini">
+								{cat.sub.map((s: any) => (
+									<div
+										class="allocation-sub-mini-row"
+										style={`--sub-pct: ${(s.pct / cat.target_pct) * 100}%`}
+									>
+										<span>
+											<span class="lang-en">{s.label_en}</span>
+											<span class="lang-zh">{s.label_zh}</span>
+										</span>
+										<span class="allocation-sub-mini-bar"></span>
+										<strong class="font-serif">{s.pct}%</strong>
+									</div>
+								))}
+							</div>
+						)}
+					</article>
+				))}
+			</div>
+		</section>
+
+		{/* ═══ Section 1: Macro Regime ═══ */}
+		<section class="portfolio-section fade-in-up" id="regime-section">
+			<header class="portfolio-section-head">
+				<p class="portfolio-kicker">
+					<span class="lang-en">Stage 0 · Macro Thermometer</span>
+					<span class="lang-zh">阶段 0 · 宏观温度计</span>
+				</p>
+				<h2 class="font-serif text-3xl font-semibold">
+					<span class="lang-en">The market temperature we're trading against</span>
+					<span class="lang-zh">我们在和什么样的市场做交易</span>
+				</h2>
+			</header>
+
+			<div class="regime-lights">
+				{Object.entries(regime?.current?.signals || {}).map(([, sig]) => (
+					<div class="regime-light-card" style={`--light: ${lightColors[sig.light] || "#9ca3af"}`}>
+						<span class="regime-light-label">{sig.label}</span>
+						<strong class="regime-light-value font-serif">{sig.value}</strong>
+						<span class="regime-light-dot" aria-hidden="true"></span>
+					</div>
+				))}
+			</div>
+
+			<div class="regime-chart-wrap">
+				<div class="regime-chart-head">
+					<h3 class="font-serif text-lg">
+						<span class="lang-en">VIX & Regime · 60 days</span>
+						<span class="lang-zh">VIX 与 Regime · 60 天</span>
+					</h3>
+					<p class="portfolio-note">
+						<span class="lang-en">
+							Shaded bands mark regime transitions (green = offensive, amber = neutral, red =
+							defensive). VIX line is the mood overlay.
+						</span>
+						<span class="lang-zh">
+							色段为 regime 状态（绿=进攻、黄=中性、红=防御）。VIX 折线是情绪指标。
+						</span>
+					</p>
+				</div>
+				{regime?.history_60d && regime.history_60d.length >= 7 ? (
+					<div class="regime-chart-canvas-wrap">
+						<canvas id="regimeChart" aria-hidden="true"></canvas>
+					</div>
+				) : regime?.history_60d && regime.history_60d.length > 0 ? (
+					<div
+						class="regime-grid-fallback"
+						aria-label="Signal history grid"
+						style={`--days: ${regime.history_60d.length}`}
+					>
+						<div class="regime-grid-head-row">
+							<div class="regime-grid-corner"></div>
+							{regime.history_60d.map((h: any) => (
+								<div class="regime-grid-date-label" title={h.date}>
+									{h.date.slice(5)}
+								</div>
+							))}
+						</div>
+						{SIGNAL_ORDER.map((sig) => (
+							<div class="regime-grid-row">
+								<div class="regime-grid-signal-label">{SIGNAL_LABELS[sig]}</div>
+								{regime.history_60d.map((h: any) => {
+									const light = h.lights?.[sig] || "gray";
+									return (
+										<div
+											class={`regime-grid-cell light-${light}`}
+											title={`${SIGNAL_LABELS[sig]} · ${h.date} · ${light}`}
+										></div>
+									);
+								})}
+							</div>
+						))}
+						<p class="regime-grid-note">
+							<span class="lang-en">
+								{regime.history_60d.length} day(s) tracked · line chart activates at 7 days
+							</span>
+							<span class="lang-zh">
+								已累积 {regime.history_60d.length} 天 · 满 7 天后切换为折线图
+							</span>
+						</p>
+					</div>
+				) : (
+					<div class="portfolio-empty-overlay">
+						<span class="lang-en">
+							No history yet · daily cron started 2026-04-16, check back soon.
+						</span>
+						<span class="lang-zh">历史数据还未累积 · 日度 cron 已启动,过几天回来看。</span>
+					</div>
+				)}
+			</div>
+		</section>
+
+		{/* ═══ Section 4: Watchlist Heatmap ═══ */}
+		<section class="portfolio-section fade-in-up" id="watchlist-section">
+			<header class="portfolio-section-head">
+				<p class="portfolio-kicker">
+					<span class="lang-en">Stage 2-3 · Watchlist Opportunity Scan</span>
+					<span class="lang-zh">阶段 2-3 · 观察池机会扫描</span>
+				</p>
+				<h2 class="font-serif text-3xl font-semibold">
+					<span class="lang-en">Who's moving into upgrade range</span>
+					<span class="lang-zh">谁在靠近升级区</span>
+				</h2>
+				<p class="portfolio-note">
+					<span class="lang-en">
+						Daily 10-point scan across 15 tickers. Darker = closer to the 7-point upgrade
+						threshold. Empty cells are days before the scan started.
+					</span>
+					<span class="lang-zh">
+						每日对 15 只标的跑 10 分评分卡。颜色越深越接近 7 分升级门槛。空格是扫描启动前的日期。
+					</span>
+				</p>
+			</header>
+
+			{heatmap && heatmap.tickers.length > 0 ? (
+				<div class="heatmap-wrap">
+					<div
+						class="heatmap-grid"
+						style={`grid-template-columns: auto repeat(${heatmap.dates.length}, 1fr)`}
+					>
+						<div class="heatmap-corner"></div>
+						{heatmap.dates.map((d: string) => (
+							<div class="heatmap-date-label">{d.slice(5)}</div>
+						))}
+						{heatmap.tickers.map((ticker: string, ti: number) => (
+							<>
+								<div class="heatmap-ticker-label">
+									{ticker}
+									<small>{heatmap!.ticker_names[ticker] || ""}</small>
+								</div>
+								{heatmap!.dates.map((d: string, di: number) => {
+									const score = heatmap!.scores[di]?.[ti] ?? -1;
+									const title = `${ticker} · ${d} · ${score >= 0 ? `${score}/10` : "—"}`;
+									let bg = "transparent";
+									if (score >= 7) bg = `rgba(137, 83, 209, 0.95)`;
+									else if (score >= 5) bg = `rgba(137, 83, 209, ${0.3 + (score - 5) * 0.1})`;
+									else if (score >= 0) bg = `rgba(137, 83, 209, ${0.05 + score * 0.02})`;
+									return (
+										<div class="heatmap-cell" style={`background: ${bg}`} title={title}>
+											{score >= 7 && <span class="heatmap-cell-mark">★</span>}
+										</div>
+									);
+								})}
+							</>
+						))}
+					</div>
+				</div>
+			) : (
+				<div class="portfolio-empty">
+					<span class="lang-en">
+						Scan history index not yet populated. Runs daily at 10:00 — check back in a few days.
+					</span>
+					<span class="lang-zh">扫描历史索引还没累积。每日 10:00 跑一次，几天后回来看。</span>
+				</div>
+			)}
+		</section>
+
+		{/* ═══ Section 3.5: Sector Research (Stage 1) ═══ */}
+		{sector_research && sector_research.length > 0 && (
+			<section class="portfolio-section fade-in-up" id="sector-research-section">
+				<header class="portfolio-section-head">
+					<p class="portfolio-kicker">
+						<span class="lang-en">Stage 1 · Sector Research</span>
+						<span class="lang-zh">阶段 1 · 赛道研究</span>
+					</p>
+					<h2 class="font-serif text-3xl font-semibold">
+						<span class="lang-en">Heavy-weight reports before picking names</span>
+						<span class="lang-zh">选股之前先做重度赛道报告</span>
+					</h2>
+					<p class="portfolio-note">
+						<span class="lang-en">
+							1-2 day deep-dive per theme. One hard conclusion, one paragraph of scope, and the
+							structural layers when relevant.
+						</span>
+						<span class="lang-zh">
+							每个主题 1-2 天深度研究。一句硬结论 + 一段研究范围 + 必要时的结构分层。
+						</span>
+					</p>
+				</header>
+
+				<div class="sector-research-grid">
+					{sector_research.map((s) => (
+						<article class="sector-card">
+							<header class="sector-card-head">
+								<time class="sector-card-date">{s.date}</time>
+								<h3 class="sector-card-title font-serif">
+									<span class="lang-en">{s.title_en}</span>
+									<span class="lang-zh">{s.title_zh}</span>
+								</h3>
+							</header>
+							{(s.scope_en || s.scope_zh) && (
+								<p class="sector-card-scope">
+									<span class="sector-card-eyebrow">
+										<span class="lang-en">Scope</span>
+										<span class="lang-zh">研究范围</span>
+									</span>
+									<span class="lang-en">{s.scope_en}</span>
+									<span class="lang-zh">{s.scope_zh}</span>
+								</p>
+							)}
+							<p class="sector-card-conclusion">
+								<span class="sector-card-eyebrow">
+									<span class="lang-en">Key Conclusion</span>
+									<span class="lang-zh">硬结论</span>
+								</span>
+								<span class="lang-en">{s.key_conclusion_en}</span>
+								<span class="lang-zh">{s.key_conclusion_zh}</span>
+							</p>
+							{s.layers_en && s.layers_en.length > 0 && (
+								<div class="sector-card-layers">
+									{s.layers_en.map((layer: string, i: number) => (
+										<span class="sector-layer-chip">
+											<span class="lang-en">{layer}</span>
+											<span class="lang-zh">
+												{(s.layers_zh && s.layers_zh[i]) || layer}
+											</span>
+										</span>
+									))}
+								</div>
+							)}
+						</article>
+					))}
+				</div>
+			</section>
+		)}
+
+		{/* ═══ Section 4.5: Deep Research (Stage 4) ═══ */}
+		{deep_research && deep_research.length > 0 && (
+			<section class="portfolio-section fade-in-up" id="deep-research-section">
+				<header class="portfolio-section-head">
+					<p class="portfolio-kicker">
+						<span class="lang-en">Stage 4 · Deep Research</span>
+						<span class="lang-zh">阶段 4 · 深度研究</span>
+					</p>
+					<h2 class="font-serif text-3xl font-semibold">
+						<span class="lang-en">4+1 cards · one-line thesis per name</span>
+						<span class="lang-zh">4+1 名片 · 每家公司一句硬逻辑</span>
+					</h2>
+					<p class="portfolio-note">
+						<span class="lang-en">
+							Each name that clears Stage 3 gets a full deep-research card. Five-star confidence
+							scale. Badge marks those currently held.
+						</span>
+						<span class="lang-zh">
+							通过 Stage 3 的标的会写成深度研究名片。五星置信度，徽章标注当前是否持仓。
+						</span>
+					</p>
+				</header>
+
+				<div class="deep-research-grid">
+					{deep_research.map((d) => (
+						<article class={`deep-card ${d.in_portfolio ? "held" : "watching"}`}>
+							<header class="deep-card-head">
+								<div class="deep-card-ticker-row">
+									<strong class="deep-card-ticker font-serif">{d.ticker}</strong>
+									{d.market && (
+										<span class="deep-card-market">{d.market.toUpperCase()}</span>
+									)}
+									<span
+										class={`deep-card-status ${d.in_portfolio ? "held" : "watching"}`}
+									>
+										<span class="lang-en">
+											{d.in_portfolio ? "Held" : "Watching"}
+										</span>
+										<span class="lang-zh">
+											{d.in_portfolio ? "持仓" : "观察"}
+										</span>
+									</span>
+								</div>
+								<span class="deep-card-name font-serif">
+									<span class="lang-en">{d.name_en}</span>
+									<span class="lang-zh">{d.name_zh}</span>
+								</span>
+							</header>
+
+							{(d.sector_en || d.sector_zh) && (
+								<span class="deep-card-sector">
+									<span class="lang-en">{d.sector_en}</span>
+									<span class="lang-zh">{d.sector_zh}</span>
+								</span>
+							)}
+
+							<p class="deep-card-thesis">
+								<span class="lang-en">{d.thesis_en}</span>
+								<span class="lang-zh">{d.thesis_zh}</span>
+							</p>
+
+							{d.confidence != null && (
+								<footer class="deep-card-foot">
+									<span class="deep-card-conf-label">
+										<span class="lang-en">Confidence</span>
+										<span class="lang-zh">置信度</span>
+									</span>
+									<span
+										class="deep-card-stars"
+										aria-label={`Confidence ${d.confidence} of 5`}
+									>
+										{[1, 2, 3, 4, 5].map((n) => (
+											<span
+												class={`deep-card-star ${n <= d.confidence ? "filled" : ""}`}
+												aria-hidden="true"
+											>
+												★
+											</span>
+										))}
+									</span>
+								</footer>
+							)}
+						</article>
+					))}
+				</div>
+			</section>
+		)}
+
 		{/* ═══ Section 8: Roundtable Log ═══ */}
 		<section class="portfolio-section fade-in-up" id="roundtable-section">
 			<header class="portfolio-section-head">
@@ -1122,15 +1194,27 @@ const stages = [
 							</p>
 						)}
 
-						<div class="roundtable-guest-grid">
-							{r.guests.map((g: any) => {
+						<div class="roundtable-guests-radial">
+							<div class="roundtable-guests-center" aria-hidden="true">
+								<span class="lang-en">Six-master debate</span>
+								<span class="lang-zh">六家辩论</span>
+							</div>
+							{r.guests.map((g: any, i: number) => {
+								const count = r.guests.length || 1;
+								const angle = (i / count) * 2 * Math.PI - Math.PI / 2;
+								const radius = 230;
+								const x = Math.cos(angle) * radius;
+								const y = Math.sin(angle) * radius;
+								const style = `--x: ${x.toFixed(1)}px; --y: ${y.toFixed(1)}px`;
 								if (typeof g === "string") {
 									return (
-										<span class="roundtable-guest-pill">{g}</span>
+										<span class="roundtable-guest-pill" style={style}>
+											{g}
+										</span>
 									);
 								}
 								return (
-									<article class="roundtable-guest-card">
+									<article class="roundtable-guest-card" style={style}>
 										<header class="roundtable-guest-head">
 											<strong class="roundtable-guest-name font-serif">{g.name}</strong>
 											{g.mbti && <span class="roundtable-guest-mbti">{g.mbti}</span>}
@@ -1216,6 +1300,104 @@ const stages = [
 				))}
 			</div>
 		</section>
+
+		{/* ═══ Section 3: 8-Stage Methodology ═══ */}
+		<section class="portfolio-section fade-in-up" id="methodology-section">
+			<header class="portfolio-section-head">
+				<p class="portfolio-kicker">
+					<span class="lang-en">Methodology · 8-Stage Funnel</span>
+					<span class="lang-zh">方法论 · 八阶段漏斗</span>
+				</p>
+				<h2 class="font-serif text-3xl font-semibold">
+					<span class="lang-en">From macro thermometer to post-trade review</span>
+					<span class="lang-zh">从宏观温度计到持仓复盘</span>
+				</h2>
+				<p class="portfolio-note">
+					<span class="lang-en">
+						Every position passes through these stages. Some are automated cron tasks, some
+						require human judgment. Round-trip is weeks, not days.
+					</span>
+					<span class="lang-zh">
+						每个持仓都要走过这些阶段。部分是自动 cron，部分需要人工判断。完整走一圈以周为单位，不是天。
+					</span>
+				</p>
+			</header>
+
+			<div class="stage-zigzag">
+				{stages.map((s, i) => (
+					<article class={`stage-card ${i % 2 === 0 ? "stage-left" : "stage-right"}`}>
+						<div class="stage-number-wrap">
+							<span class="stage-number font-serif">{s.num}</span>
+						</div>
+						<div class="stage-body">
+							<header class="stage-head">
+								<h3 class="stage-title font-serif">
+									<span class="lang-en">{s.title_en}</span>
+									<span class="lang-zh">{s.title_zh}</span>
+								</h3>
+								<span class={`stage-badge ${s.automated ? "automated" : "manual"}`}>
+									{s.automated ? "✓" : "○"}{" "}
+									<span class="lang-en">{s.badge_en}</span>
+									<span class="lang-zh">{s.badge_zh}</span>
+								</span>
+							</header>
+							<p class="stage-purpose">
+								<span class="lang-en">{s.purpose_en}</span>
+								<span class="lang-zh">{s.purpose_zh}</span>
+							</p>
+							{s.num === 0 && (
+								<div class="stage-inline-thermo">
+									{Object.entries(regime?.current?.signals || {}).map(([, sig]) => (
+										<span
+											class="stage-inline-light"
+											style={`--mini-light: ${lightColors[sig.light] || "#9ca3af"}`}
+											title={`${sig.label}: ${sig.value}`}
+										></span>
+									))}
+								</div>
+							)}
+							{s.num === 2 && heatmap && heatmap.tickers.length > 0 && (
+								<p class="stage-inline-meta">
+									<span class="lang-en">{heatmap.tickers.length} tickers in scan pool</span>
+									<span class="lang-zh">{heatmap.tickers.length} 只标的在观察池</span>
+								</p>
+							)}
+							{s.num === 6 && (
+								<div class="stage-scorecard">
+									<span class="stage-scorecard-pill">MA200</span>
+									<span class="stage-scorecard-pill">支撑</span>
+									<span class="stage-scorecard-pill">RSI</span>
+									<span class="stage-scorecard-pill">量价</span>
+									<span class="stage-scorecard-pill stage-scorecard-pill-primary">
+										R:R ≥ 2.0
+									</span>
+									<span class="stage-scorecard-hint">
+										<span class="lang-en">Score ≥ 7 / 10 to trade</span>
+										<span class="lang-zh">≥ 7/10 才下单</span>
+									</span>
+								</div>
+							)}
+							{s.num === 7 && (
+								<div class="stage-cadence">
+									<span class="stage-cadence-badge">
+										<span class="lang-en">Monthly</span>
+										<span class="lang-zh">月度</span>
+									</span>
+									<span class="stage-cadence-badge">
+										<span class="lang-en">Quarterly</span>
+										<span class="lang-zh">季度</span>
+									</span>
+									<span class="stage-cadence-badge">
+										<span class="lang-en">Annual</span>
+										<span class="lang-zh">年度</span>
+									</span>
+								</div>
+							)}
+						</div>
+					</article>
+				))}
+			</div>
+		</section>
 	</section>
 
 	<script is:inline id="portfolio-data" type="application/json" set:html={dataJson}></script>
@@ -1291,6 +1473,34 @@ const stages = [
 					requestAnimationFrame(tick);
 				});
 			}, 900);
+
+			// Scroll-triggered fade-up for non-hero sections. Each section has
+			// `.portfolio-section.fade-in-up`; when it enters the viewport we
+			// toggle `.is-visible` once (unobserve after). Reduce-motion skips.
+			if (!reduce && 'IntersectionObserver' in window) {
+				const sections = Array.from(
+					page.querySelectorAll('.portfolio-section.fade-in-up')
+				);
+				if (sections.length) {
+					const io = new IntersectionObserver(
+						(entries) => {
+							entries.forEach((entry) => {
+								if (entry.isIntersecting) {
+									entry.target.classList.add('is-visible');
+									io.unobserve(entry.target);
+								}
+							});
+						},
+						{ rootMargin: '0px 0px -10% 0px', threshold: 0.08 }
+					);
+					sections.forEach((s) => io.observe(s));
+				}
+			} else {
+				// Reduce-motion or no IO support — show everything immediately.
+				page.querySelectorAll('.portfolio-section.fade-in-up').forEach((s) =>
+					s.classList.add('is-visible')
+				);
+			}
 		}
 
 		function __initPortfolioCharts() {
@@ -1481,24 +1691,33 @@ const stages = [
 	</script>
 
 	<style>
-		:global(body) {
-			background:
-				radial-gradient(circle at top left, rgba(137, 83, 209, 0.18), transparent 26%),
-				radial-gradient(circle at 80% 10%, rgba(59, 130, 246, 0.12), transparent 24%),
-				#070a14;
+		/* Align with site-wide theme (global.css):
+		   body bg is #151515 (dark) / #fff8eb (light), inherited from base.
+		   Use a fixed pseudo-element overlay for the subtle purple+blue glow
+		   so we don't REPLACE the site's body background — same pattern as
+		   lucky.astro after its 2026-04-16 fix. */
+		.portfolio-page {
+			position: relative;
 		}
-		:global(html[data-theme='light']) body {
+		.portfolio-page::before {
+			content: "";
+			position: fixed;
+			inset: 0;
+			z-index: -1;
+			pointer-events: none;
 			background:
-				radial-gradient(circle at top left, rgba(137, 83, 209, 0.08), transparent 26%),
-				radial-gradient(circle at 80% 10%, rgba(59, 130, 246, 0.05), transparent 24%),
-				#f8f6f1;
+				radial-gradient(circle at top left, rgba(137, 83, 209, 0.14), transparent 26%),
+				radial-gradient(circle at 80% 10%, rgba(59, 130, 246, 0.09), transparent 24%);
+		}
+		:global(html[data-theme='light']) .portfolio-page::before {
+			background:
+				radial-gradient(circle at top left, rgba(137, 83, 209, 0.06), transparent 26%),
+				radial-gradient(circle at 80% 10%, rgba(59, 130, 246, 0.04), transparent 24%);
 		}
 
 		.portfolio-page {
 			--p-border: rgba(137, 83, 209, 0.18);
-			/* Align with site-wide card palette (ActivityGraph/lucky):
-			   dark = #181818, light = #fffaef. Previous cool blue-black
-			   rgba(10,14,27,0.84) read as off-theme on /portfolio. */
+			/* Card palette matches ActivityGraph + /lucky: #181818 / #fffaef. */
 			--p-card: #181818;
 			--p-card-strong: #202020;
 			--p-text: rgba(255, 255, 255, 0.88);
@@ -1517,6 +1736,17 @@ const stages = [
 			--p-text-soft: rgba(30, 20, 50, 0.72);
 			--p-text-faint: rgba(30, 20, 50, 0.5);
 			color: #1a1025;
+		}
+
+		/* ── Breadcrumb ──────────────────────────── */
+		.portfolio-breadcrumb {
+			color: var(--p-text-faint);
+		}
+		.portfolio-breadcrumb:hover {
+			color: #c9b4f5;
+		}
+		:global(html[data-theme='light']) .portfolio-breadcrumb:hover {
+			color: #8953d1;
 		}
 
 		/* ── Hero ────────────────────────────────── */
@@ -1696,6 +1926,66 @@ const stages = [
 			position: relative;
 			height: 220px;
 		}
+
+		/* 5 × N signals history fallback (shown when <7 days of data) */
+		.regime-grid-fallback {
+			display: grid;
+			gap: 0.35rem;
+		}
+		.regime-grid-head-row,
+		.regime-grid-row {
+			display: grid;
+			grid-template-columns: 5rem repeat(var(--days, 5), minmax(28px, 1fr));
+			gap: 0.35rem;
+			align-items: center;
+		}
+		.regime-grid-corner {
+			/* spacer */
+		}
+		.regime-grid-date-label {
+			font-family: Georgia, serif;
+			font-size: 0.68rem;
+			color: var(--p-text-faint);
+			text-align: center;
+			letter-spacing: 0.04em;
+		}
+		.regime-grid-signal-label {
+			font-size: 0.72rem;
+			letter-spacing: 0.12em;
+			text-transform: uppercase;
+			color: var(--p-text-faint);
+		}
+		.regime-grid-cell {
+			aspect-ratio: 1;
+			min-height: 28px;
+			border-radius: 0.5rem;
+			background: rgba(137, 83, 209, 0.08);
+			transition: transform 0.2s ease;
+		}
+		.regime-grid-cell:hover {
+			transform: scale(1.08);
+		}
+		.regime-grid-cell.light-green {
+			background: rgba(16, 185, 129, 0.28);
+			box-shadow: inset 0 0 0 1px rgba(16, 185, 129, 0.55);
+		}
+		.regime-grid-cell.light-yellow {
+			background: rgba(245, 158, 11, 0.28);
+			box-shadow: inset 0 0 0 1px rgba(245, 158, 11, 0.55);
+		}
+		.regime-grid-cell.light-red {
+			background: rgba(239, 68, 68, 0.28);
+			box-shadow: inset 0 0 0 1px rgba(239, 68, 68, 0.55);
+		}
+		.regime-grid-cell.light-gray {
+			background: rgba(156, 163, 175, 0.14);
+		}
+		.regime-grid-note {
+			margin: 0.5rem 0 0;
+			font-size: 0.8rem;
+			color: var(--p-text-faint);
+			line-height: 1.5;
+		}
 		#regimeChart {
 			width: 100%;
 			height: 100%;
@@ -1713,31 +2003,98 @@ const stages = [
 			border-radius: 0.75rem;
 		}
 
-		/* ── Allocation ──────────────────────────── */
-		.allocation-bar {
-			display: flex;
-			height: 3.5rem;
-			border-radius: 1.1rem;
-			overflow: hidden;
-			box-shadow: 0 8px 32px rgba(137, 83, 209, 0.12);
-		}
-		.allocation-segment {
-			position: relative;
+		/* ── Allocation Donut (replaces old horizontal bar) ─────── */
+		.allocation-donut-wrap {
 			display: grid;
-			place-items: center;
-			color: #fff;
-			text-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+			grid-template-columns: 1fr;
+			gap: 1.25rem;
+			align-items: center;
+			padding: 1.5rem;
+			border-radius: 1.25rem;
+			border: 1px solid var(--p-border);
+			background: color-mix(in srgb, var(--p-card) 94%, transparent);
+			backdrop-filter: blur(16px);
 		}
-		.allocation-segment-label {
+		@media (min-width: 720px) {
+			.allocation-donut-wrap {
+				grid-template-columns: auto 1fr;
+				gap: 2.25rem;
+				padding: 2rem 2.25rem;
+			}
+		}
+		.allocation-donut {
+			width: 100%;
+			max-width: 260px;
+			height: auto;
+			justify-self: center;
+			filter: drop-shadow(0 8px 28px rgba(137, 83, 209, 0.18));
+		}
+		.allocation-arc-outer,
+		.allocation-arc-inner {
+			transition: stroke-width 0.25s ease, stroke-opacity 0.25s ease;
+		}
+		.allocation-arc-outer:hover {
+			stroke-width: 26;
+		}
+		.allocation-donut-label-top {
+			font-family: Georgia, serif;
+			font-size: 0.72rem;
+			letter-spacing: 0.28em;
+			fill: var(--p-text-faint);
+		}
+		.allocation-donut-label-bot {
+			font-family: Georgia, serif;
+			font-size: 0.72rem;
+			letter-spacing: 0.28em;
+			fill: var(--p-text-soft);
+		}
+		.allocation-donut-legend {
 			display: grid;
-			justify-items: center;
-			gap: 0.1rem;
-			font-size: 0.74rem;
-			letter-spacing: 0.08em;
+			gap: 0.6rem;
 		}
-		.allocation-segment-pct {
+		.allocation-legend-item {
+			display: grid;
+			grid-template-columns: auto 1fr auto auto;
+			align-items: baseline;
+			gap: 0.7rem;
+			padding: 0.55rem 0.75rem;
+			border-radius: 0.85rem;
+			background: color-mix(in srgb, var(--cat-color) 5%, transparent);
+			border-left: 3px solid var(--cat-color);
+		}
+		.allocation-legend-dot {
+			width: 0.7rem;
+			height: 0.7rem;
+			border-radius: 999px;
+			background: var(--cat-color);
+			box-shadow: 0 0 12px var(--cat-color);
+		}
+		.allocation-legend-label {
+			font-size: 0.9rem;
+			color: var(--p-text);
+			font-family: Georgia, serif;
+		}
+		.allocation-legend-target {
 			font-family: Georgia, serif;
 			font-size: 0.95rem;
+			font-weight: 600;
+			color: var(--p-text);
+		}
+		.allocation-legend-drift {
+			font-size: 0.72rem;
+			padding: 0.15rem 0.5rem;
+			border-radius: 999px;
+			font-weight: 600;
+			min-width: 2.75rem;
+			text-align: center;
+		}
+		.allocation-legend-drift.positive {
+			color: #10b981;
+			background: rgba(16, 185, 129, 0.12);
+		}
+		.allocation-legend-drift.negative {
+			color: #ef4444;
+			background: rgba(239, 68, 68, 0.12);
 		}
 		.allocation-subcards {
 			display: grid;
@@ -2112,6 +2469,13 @@ const stages = [
 			color: var(--p-text-soft);
 			border-left: 2px solid rgba(137, 83, 209, 0.4);
 			padding-left: 0.85rem;
+		}
+		.position-trajectory {
+			display: block;
+			width: 100%;
+			height: 38px;
+			margin: -0.25rem 0 0.25rem;
+			opacity: 0.75;
 		}
 		.position-meta {
 			display: flex;
@@ -2696,19 +3060,59 @@ const stages = [
 			color: var(--p-text-faint);
 		}
 
-		.roundtable-guest-grid {
+		/* Guests layout: responsive grid below 1024px, radial circle above. */
+		.roundtable-guests-radial {
 			display: grid;
 			grid-template-columns: 1fr;
 			gap: 0.6rem;
 		}
+		.roundtable-guests-center {
+			display: none;
+		}
 		@media (min-width: 640px) {
-			.roundtable-guest-grid {
+			.roundtable-guests-radial {
 				grid-template-columns: repeat(2, minmax(0, 1fr));
 			}
 		}
-		@media (min-width: 1000px) {
-			.roundtable-guest-grid {
-				grid-template-columns: repeat(3, minmax(0, 1fr));
+		@media (min-width: 1024px) {
+			.roundtable-guests-radial {
+				display: block;
+				position: relative;
+				width: 100%;
+				max-width: 640px;
+				aspect-ratio: 1 / 1;
+				margin: 1.5rem auto 2rem;
+			}
+			.roundtable-guests-radial .roundtable-guest-card,
+			.roundtable-guests-radial .roundtable-guest-pill {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				width: 210px;
+				transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y)));
+				transition: transform 0.35s ease;
+			}
+			.roundtable-guests-radial .roundtable-guest-card:hover {
+				transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y))) scale(1.04);
+				z-index: 2;
+			}
+			.roundtable-guests-center {
+				display: grid;
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				text-align: center;
+				font-family: Georgia, serif;
+				font-size: 0.74rem;
+				letter-spacing: 0.2em;
+				text-transform: uppercase;
+				color: var(--p-text-faint);
+				max-width: 140px;
+				gap: 0.15rem;
+				padding: 1rem 1.25rem;
+				border-radius: 999px;
+				border: 1px dashed var(--p-border);
 			}
 		}
 		.roundtable-guest-card {
@@ -2881,6 +3285,24 @@ const stages = [
 		}
 
 		/* ── Fade-in-up animation (shared with lucky) ── */
+		/* Scroll-triggered fade-up for non-hero portfolio sections. JS toggles
+		   `.is-visible` when the section enters viewport. Reduce-motion skip
+		   is handled by the observer block in the script (falls back to
+		   always-visible). The initial state below means un-observed /
+		   un-scripted pages still render content (JS is required for the
+		   transition; without JS all sections stay fully visible). */
+		.portfolio-section.fade-in-up.is-visible {
+			opacity: 1;
+			transform: translateY(0);
+			transition: opacity 0.65s ease, transform 0.65s ease;
+		}
+		@media (prefers-reduced-motion: no-preference) {
+			.portfolio-section.fade-in-up:not(.is-visible) {
+				opacity: 0;
+				transform: translateY(24px);
+			}
+		}
+
 		@keyframes lucky-fade-up {
 			from {
 				opacity: 0;

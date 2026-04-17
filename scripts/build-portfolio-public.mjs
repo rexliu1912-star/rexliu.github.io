@@ -119,13 +119,22 @@ function buildRegime(history, fallback) {
     };
   }
 
-  // History for chart (last 60 days)
-  const history60d = parsed.slice(-60).map((r) => ({
-    date: r.date,
-    regime: r.regime,
-    green_count: r.green_count,
-    vix: r.signals?.vix?.value ?? null,
-  }));
+  // History for chart (last 60 days). Include per-signal light so the page
+  // can render a 5-signals × N-days grid when the line-chart doesn't have
+  // enough points yet (< 7 days).
+  const history60d = parsed.slice(-60).map((r) => {
+    const lights = {};
+    for (const [k, v] of Object.entries(r.signals || {})) {
+      if (v && v.light) lights[k] = v.light;
+    }
+    return {
+      date: r.date,
+      regime: r.regime,
+      green_count: r.green_count,
+      vix: r.signals?.vix?.value ?? null,
+      lights,
+    };
+  });
 
   return { current, history_60d: history60d };
 }
