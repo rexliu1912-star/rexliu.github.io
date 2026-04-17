@@ -8671,4 +8671,156 @@ Morgan Housel 给了一个让我释然的答案：所谓「被宠坏」，不过
 
 ---
 
-*Stay Human, Stay Foolish.*</content:encoded></item></channel></rss>
+*Stay Human, Stay Foolish.*</content:encoded></item><item><title>How I Rebuilt My AI Stack After Losing Claude in OpenClaw</title><link>https://rexliu.io/posts/2026-04-07-losing-claude-on-openclaw/</link><guid isPermaLink="true">https://rexliu.io/posts/2026-04-07-losing-claude-on-openclaw/</guid><description>Anthropic cut off ties with OpenClaw, so I rebuilt my workflows around routing, subscriptions, and redundancy. The result: lower cost, less fragility, and a better system.</description><pubDate>Tue, 07 Apr 2026 00:00:00 GMT</pubDate><content:encoded>Anthropic cut off ties with OpenClaw and I had to rebuild my workflows fast.
+
+I was running six agents on Opus and Sonnet. Multiple daily cron jobs. Every tweet, every research report, every morning briefing, all piped through Claude.
+
+Monthly bill: $200 for Claude Max and $20 for GPT Plus.
+
+I spent days learning new models and testing.
+
+Monthly bill now: **$60** across multiple models.
+
+---
+
+## The one-vendor trap
+
+Here is the honest part.
+
+I did not choose Claude because I compared it carefully against everything else. I chose it because it felt best overall, then I kept stacking tasks on top of it.
+
+Two months later I had 23 cron jobs all calling Opus.
+Summarize news? Opus.
+Format a weather report? Opus.
+Answer &quot;is the market open today?&quot; Opus.
+
+I was paying top-tier model prices to run glorified formatting work.
+
+That is what happens when you build around &quot;the best model.&quot;
+You stop asking what each task actually needs.
+Convenience compounds, then the bill compounds faster.
+
+## The rebuild, in numbers
+
+I tested each task against the models I could actually subscribe to. Not benchmarks, my real workflow.
+
+| Role                         | Model             | Price    | What it does                               |
+| ---------------------------- | ----------------- | -------- | ------------------------------------------ |
+| **Main chat**                | MiniMax M2.7      | $10/mo   | Coordinator. Fast routing. Chinese-native. |
+| **Writer / Research / Code** | GPT-5.4           | $20/mo   | Three agents, one model. Boring. Reliable. |
+| **Light ops**                | GLM 5.1           | &lt;$30/yr  | Cleanup, formatting, quick lookups.        |
+| **Deep work (scheduled)**    | Claude Sonnet 4.6 | $20/mo   | Via Claude Desktop, not API.               |
+| **Manual coding**            | Claude Code       | same $20 | MacBook only. Long sessions.               |
+
+Total: **$60/month**.
+
+One month of old spend now funds me for roughly a year.
+
+## The surprise: routing saves more than any single model
+
+I used to believe: use the best model and stop worrying about cost.
+
+That advice is expensive and wrong.
+
+Here is what routing looks like in my stack now:
+
+```text
+Task type                → Model
+───────────────────────────────────
+Chat coordination        → MiniMax (fast, cheap)
+Tweet drafting           → GPT-5.4 (follows Voice DNA)
+Market research          → GPT-5.4 (structured output)
+Code review              → GPT-5.4 (syntax accuracy)
+Weather / formatting     → GLM (costs almost nothing)
+30-min deep analysis     → Claude Sonnet (via subscription)
+Long coding session      → Claude Code (via subscription)
+```
+
+Every task is routed to the cheapest model that can do it correctly.
+Not the smartest model, the cheapest **correct** one.
+
+The savings do not come from downgrading one thing.
+They come from matching everything.
+
+## What to do if you are reading this and nervous
+
+Here is the playbook, in order:
+
+**1. Audit what your &quot;best model&quot; is actually doing.**  
+Pull your logs. Sort by cost. Find the top 10 calls. Most of them will be routine formatting tasks. Those are candidates for a cheaper model tomorrow.
+
+**2. Buy three subscriptions, not one API.**  
+MiniMax ($10), GPT-5.4 ($20), Claude subscription ($20). Total under $60/month. This covers most of what a solo builder needs.
+
+**3. Decouple your agent runtime from your model provider.**  
+If your whole system dies when one vendor changes policy, you do not have a system. You have a rental agreement.
+
+Build routing from day one, even if you start with one model.
+
+**4. Stop confusing &quot;best model&quot; with &quot;best workflow.&quot;**  
+Cheap model + good rails beats expensive model + default prompt.
+
+**5. Save Claude for the work only Claude can do.**  
+Long-context reasoning. Nuanced writing you care about personally. Complex coding sessions. Pay for the subscription, use it there, route everything else away.
+
+## The bigger picture
+
+One model is a single point of failure.
+One vendor is a single point of policy.
+
+The stack I was running last Tuesday looked elegant on paper. In reality it was a Jenga tower with Anthropic holding the middle piece.
+When they pulled it, everything fell.
+
+What I have now is uglier.
+Four models, three subscriptions, one agent framework.
+
+But it is **diversified by design**.
+No single vendor can kill it.
+No single price change can double my bill.
+No single &quot;best model&quot; announcement can force a rewrite.
+
+This is the same principle I use in my crypto portfolio.
+I do not know why it took a broken AI dependency to apply it to my tooling stack.
+
+If you are building on one model, pause for a moment.
+
+You are not just paying for intelligence.
+You are also paying for fragility.
+
+---
+
+*Rex Liu, April 2026. Still building, still writing, still routing.*</content:encoded></item><item><title>AI 时代半年七悟</title><link>https://rexliu.io/posts/2026-04-14-ai-era-seven-insights/</link><guid isPermaLink="true">https://rexliu.io/posts/2026-04-14-ai-era-seven-insights/</guid><description>半年 AI 体验，七条真正改变了我行为的认知</description><pubDate>Tue, 14 Apr 2026 00:00:00 GMT</pubDate><content:encoded>这半年，AI 让我最不舒服的不是技术，是认知。
+
+---
+
+**1. 电力是新时代的燃料**
+
+你需要各种设备 24 小时保持开机状态，这才是你的生产力。
+
+**2. 硬件设备更新加快**
+
+苹果硬件的吸引力遥遥领先。去年底至今，我已经更新了 1 台 Mac Mini、1 台 Macbook Air、1 台 iPhone 17，甚至为了跑优秀的本地模型，我已经在考虑 M5 芯片与迁移。
+
+**3. 模型算力持续供不应求**
+
+付费当然是最好的。按照现在模型迭代的速度，你往后三到六个月，世界可能又变了——自从去年 11 月 Opus 4.5 上线也才过去了 5 个月。你需要有足够强大的云端模型，也可以有足够有性价比的国产模型作为替代，还有更多本地模型作为补充。
+
+**4. Vibe Coding 与真正构建，是两件事**
+
+可能以玩为主，以热爱为主，但当你真正要去构建服务、长期面对用户时，两者有本质不同。你过了最初的猎奇阶段，会把重心更多地放在内容上。
+
+**5. AI 时代更要学会风险管理**
+
+未来绝大多数人赚取的，都将是风险收益。去年十月到现在半年的旅居生活，我拓展了黄金策略、参加推文活动、重构人生维度、深度参与了新模型与应用，在成本可控的范围内拓展边界。商业化进展缓慢，但至少是我喜欢做的事情。
+
+**6. 人类情绪被 AI 所左右**
+
+于我而言，有两个重大的阶段：使用不上 Claude Code 的时候，想尽一切办法进行破解；现在有了 OpenClaw 和 Agent 助手，所有的框架都需要重新设计。这是一个信息打破、重建和适应的过程。
+
+**7. 学会主动思考与批判**
+
+各种模型把现在人类知识都浓缩在 Prompt 里面，你最好有能力还原，并洞悉差别，创造属于自己的人生体验。
+
+---
+
+*半年感悟，行为改变才是真的改变。*</content:encoded></item></channel></rss>

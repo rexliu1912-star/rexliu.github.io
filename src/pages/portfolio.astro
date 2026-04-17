@@ -672,6 +672,12 @@ const stages = [
 								<span class="lang-en">{c.lesson_en}</span>
 								<span class="lang-zh">{c.lesson_zh}</span>
 							</p>
+							{c.article_url && (
+								<a class="clearance-article-link" href={c.article_url}>
+									<span class="lang-en">Full trade review →</span>
+									<span class="lang-zh">完整交易复盘 →</span>
+								</a>
+							)}
 						</footer>
 					</article>
 				))}
@@ -2726,6 +2732,17 @@ const stages = [
 		}
 		.clearance-foot strong {
 			color: var(--p-text);
+		}
+		.clearance-article-link {
+			display: inline-block;
+			margin-top: 0.25rem;
+			font-size: 0.86rem;
+			color: var(--p-accent);
+			text-decoration: none;
+			transition: opacity 0.2s;
+		}
+		.clearance-article-link:hover {
+			opacity: 0.7;
 		}
 
 		/* ── Roundtable ──────────────────────────── */
