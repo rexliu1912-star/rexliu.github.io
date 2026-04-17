@@ -68,13 +68,9 @@ const timelineMilestones = [...milestones].reverse();
 		</div>
 
 		<section class="lucky-hero">
-			<p class="lucky-eyebrow">
-				<span class="lang-en">Growth Atlas</span>
-				<span class="lang-zh">成长星图</span>
-			</p>
 			<h1 class="font-serif text-4xl font-bold tracking-tight text-white sm:text-5xl">
 				<span class="lang-en">Lucky's Growth Star Map</span>
-				<span class="lang-zh">启芽 · 福福成长星图</span>
+				<span class="lang-zh">Lucky 成长星图</span>
 			</h1>
 			<p class="lucky-subtitle font-serif text-lg leading-relaxed text-white/72 sm:text-xl">
 				<span class="lang-en">Every milestone is a star. Scroll to watch them light up.</span>
@@ -671,8 +667,11 @@ const timelineMilestones = [...milestones].reverse();
 
 		.lucky-page {
 			--lucky-border: rgba(137, 83, 209, 0.18);
-			--lucky-card: rgba(10, 14, 27, 0.84);
-			--lucky-card-strong: rgba(15, 21, 40, 0.92);
+			/* Align with site-wide card palette (ActivityGraph.astro):
+			   dark = #181818, light = #fffaef. Previously used a cool
+			   blue-black / pure white that read as off-theme on /lucky. */
+			--lucky-card: #181818;
+			--lucky-card-strong: #202020;
 			--lucky-text-soft: rgba(255, 255, 255, 0.72);
 			--lucky-text-faint: rgba(255, 255, 255, 0.56);
 			display: grid;
@@ -683,8 +682,8 @@ const timelineMilestones = [...milestones].reverse();
 
 		:global(html[data-theme="light"]) .lucky-page {
 			--lucky-border: rgba(137, 83, 209, 0.2);
-			--lucky-card: rgba(255, 255, 255, 0.82);
-			--lucky-card-strong: rgba(255, 255, 255, 0.92);
+			--lucky-card: #fffaef;
+			--lucky-card-strong: #fffdf5;
 			--lucky-text-soft: rgba(30, 20, 50, 0.72);
 			--lucky-text-faint: rgba(30, 20, 50, 0.52);
 			color: #1a1025;
