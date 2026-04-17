@@ -480,12 +480,13 @@ const timelineMilestones = [...milestones].reverse();
 
 			function drawStars() {
 				const activeIndex = state.currentIndex;
-				const pulse = reduceMotion ? 0 : (Math.sin(state.time / 580) + 1) / 2;
+				// Slower, deeper pulse = "breathing". ~1.8s full cycle.
+				const pulse = reduceMotion ? 0 : (Math.sin(state.time / 900) + 1) / 2;
 				state.stars.forEach((star) => {
 					const isActive = star.index <= activeIndex;
 					const isSelected = star.index === state.selectedIndex;
 					const alpha = isActive ? 1 : 0.26;
-					const glowRadius = star.radius * (isSelected ? 7.6 + pulse * 1.4 : isActive ? 4.2 : 2.3);
+					const glowRadius = star.radius * (isSelected ? 7.2 + pulse * 3.2 : isActive ? 4.2 : 2.3);
 					const glow = ctx.createRadialGradient(star.x, star.y, 0, star.x, star.y, glowRadius);
 					glow.addColorStop(0, `${star.color}${isActive ? '66' : '2e'}`);
 					glow.addColorStop(1, 'rgba(0,0,0,0)');
@@ -497,9 +498,20 @@ const timelineMilestones = [...milestones].reverse();
 					ctx.beginPath();
 					ctx.fillStyle = isActive ? star.color : (isLight() ? 'rgba(137,83,209,0.28)' : 'rgba(255,255,255,0.42)');
 					ctx.globalAlpha = alpha;
-					ctx.arc(star.x, star.y, star.radius + (isSelected ? pulse * 0.8 : 0), 0, Math.PI * 2);
+					ctx.arc(star.x, star.y, star.radius + (isSelected ? pulse * 1.6 : 0), 0, Math.PI * 2);
 					ctx.fill();
 					ctx.globalAlpha = 1;
+
+					// Expanding breathing halo ring for the currently selected star —
+					// adds a second layer of motion on top of the pulsing glow.
+					if (isSelected && !reduceMotion) {
+						const ringRadius = star.radius * (5.0 + pulse * 5.5);
+						ctx.beginPath();
+						ctx.strokeStyle = hexToRgba(star.color, 0.35 * (1 - pulse) + 0.08);
+						ctx.lineWidth = 1.4;
+						ctx.arc(star.x, star.y, ringRadius, 0, Math.PI * 2);
+						ctx.stroke();
+					}
 
 					if (star.milestone.ripple && isActive) {
 						const rippleRadius = star.radius * (3.8 + pulse * 1.8);
@@ -527,14 +539,15 @@ const timelineMilestones = [...milestones].reverse();
 				state.animationFrame = requestAnimationFrame(animate);
 			}
 
-			function updateCard(index) {
+			// DOM-only renderer for the milestone card. Shared by click/keyboard/
+			// timeline entry points AND by scroll-driven index changes, so the
+			// card stays in sync with whichever star is currently highlighted
+			// in the canvas.
+			function renderCardDom(index) {
 				const milestone = milestones[index];
 				if (!milestone) return;
-				state.selectedIndex = index;
-				state.currentIndex = Math.max(state.currentIndex, index);
 				const category = categoryMeta[milestone.category] || categoryMeta.growth;
 				const zh = isZh();
-				card.classList.add('is-open');
 				card.querySelector('#milestone-pill').textContent = `${category.icon} ${zh ? category.labelZh : category.label}${milestone.day > 0 ? ` · Day ${milestone.day}` : ''}`;
 				const dateEl = card.querySelector('#milestone-date');
 				dateEl.textContent = formatDate(milestone.date);
@@ -546,14 +559,33 @@ const timelineMilestones = [...milestones].reverse();
 				timelineButtons.forEach((button) => {
 					button.classList.toggle('is-active', Number(button.dataset.milestoneIndex) === index);
 				});
+			}
+
+			function updateCard(index) {
+				const milestone = milestones[index];
+				if (!milestone) return;
+				state.selectedIndex = index;
+				state.currentIndex = Math.max(state.currentIndex, index);
+				card.classList.add('is-open');
+				renderCardDom(index);
 				updateProgress(state.currentIndex / Math.max(1, milestones.length - 1), true);
 			}
 
 			function updateProgress(progress, freezeIndex = false) {
 				state.progress = clamp(progress, 0, 1);
 				const activeIndex = clamp(Math.round(state.progress * (milestones.length - 1)), 0, milestones.length - 1);
+				const prevCurrent = state.currentIndex;
 				if (!freezeIndex) state.currentIndex = activeIndex;
 				progressFill.style.width = `${state.progress * 100}%`;
+				// When scroll (not an explicit click/keyboard) moves us to a new star,
+				// re-render the card so it tracks what the reader is looking at, and
+				// sync selectedIndex so the pulse animation in drawStars() highlights
+				// the currently viewed star.
+				if (!freezeIndex && state.currentIndex !== prevCurrent) {
+					state.selectedIndex = state.currentIndex;
+					renderCardDom(state.currentIndex);
+					card.classList.add('is-open');
+				}
 				const milestone = milestones[state.currentIndex] || milestones[0];
 				const birthDate = new Date('2021-10-02T00:00:00Z');
 				const milestoneDate = new Date(`${milestone.date}T00:00:00Z`);
@@ -794,7 +826,9 @@ const timelineMilestones = [...milestones].reverse();
 		}
 
 		.star-scroll {
-			height: 300vh;
+			/* 220vh: ~1.2 screens of scroll beyond sticky. Was 300vh which
+			   forced readers through 3 full screens before they could move on. */
+			height: 220vh;
 			position: relative;
 		}
 
