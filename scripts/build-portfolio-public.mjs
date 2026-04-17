@@ -242,8 +242,42 @@ function buildPositions(convexPositions, convexRules, convexEvents, overrides) {
 
 // ─── Main ────────────────────────────────────────────────
 
+async function hasWorkspaceExternalData() {
+  // At least one of the 3 external data sources must exist for a meaningful
+  // rebuild. In CI (GitHub Actions checks out only the rexliu-website repo),
+  // none of them are present — regenerating in that case silently wipes
+  // the committed portfolio-public.json (clearances/history/heatmap all go
+  // to []) and the live site renders empty sections. When no external data
+  // is available, trust the committed JSON as the canonical snapshot.
+  const probes = [THERMOMETER_HISTORY, WATCHLIST_INDEX, TRADELOG_INDEX];
+  for (const p of probes) {
+    try {
+      await fs.access(p);
+      return true;
+    } catch {
+      /* missing */
+    }
+  }
+  return false;
+}
+
 async function main() {
   console.log("🔧 Building portfolio-public.json\n");
+
+  // 0. CI guard: skip rebuild when external workspace data isn't accessible.
+  //    Keeps committed snapshot intact instead of overwriting with empties.
+  if (!(await hasWorkspaceExternalData())) {
+    console.log(
+      "⚠️  No workspace-external data found (thermometer / watchlist / tradelog)."
+    );
+    console.log(
+      "   This is expected in CI. Keeping committed src/data/portfolio-public.json as-is."
+    );
+    console.log(
+      "   Locally, run this script from a full workspace checkout to regenerate."
+    );
+    return;
+  }
 
   // 1. Load editorial overrides (required)
   const overrides = await readJson(OVERRIDES_PATH);

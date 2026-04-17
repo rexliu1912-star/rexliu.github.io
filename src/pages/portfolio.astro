@@ -1496,8 +1496,11 @@ const stages = [
 
 		.portfolio-page {
 			--p-border: rgba(137, 83, 209, 0.18);
-			--p-card: rgba(10, 14, 27, 0.84);
-			--p-card-strong: rgba(15, 21, 40, 0.92);
+			/* Align with site-wide card palette (ActivityGraph/lucky):
+			   dark = #181818, light = #fffaef. Previous cool blue-black
+			   rgba(10,14,27,0.84) read as off-theme on /portfolio. */
+			--p-card: #181818;
+			--p-card-strong: #202020;
 			--p-text: rgba(255, 255, 255, 0.88);
 			--p-text-soft: rgba(255, 255, 255, 0.7);
 			--p-text-faint: rgba(255, 255, 255, 0.52);
@@ -1508,8 +1511,8 @@ const stages = [
 		}
 		:global(html[data-theme='light']) .portfolio-page {
 			--p-border: rgba(137, 83, 209, 0.2);
-			--p-card: rgba(255, 255, 255, 0.82);
-			--p-card-strong: rgba(255, 255, 255, 0.92);
+			--p-card: #fffaef;
+			--p-card-strong: #fffdf5;
 			--p-text: #1a1025;
 			--p-text-soft: rgba(30, 20, 50, 0.72);
 			--p-text-faint: rgba(30, 20, 50, 0.5);
