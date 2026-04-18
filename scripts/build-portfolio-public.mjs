@@ -32,7 +32,7 @@ const WATCHLIST_INDEX = path.join(WORKSPACE_ROOT, "output/research/investment-st
 const TRADELOG_INDEX = path.join(WORKSPACE_ROOT, "output/research/trade-log/archive/index.json");
 
 const CONVEX_URL = "https://fleet-heron-880.convex.cloud";
-const FETCH_TIMEOUT_MS = 5000;
+const FETCH_TIMEOUT_MS = 15000;
 
 // ─── Small utilities ─────────────────────────────────────
 
