@@ -17,6 +17,11 @@ interface PortfolioStop {
 	severity: string;
 	description?: string;
 }
+interface PortfolioTarget {
+	price_pct_from_current: string | null;
+	description?: string;
+	optimistic_price?: string | null;
+}
 interface PortfolioNextEvent {
 	date: string;
 	label: string;
@@ -37,6 +42,7 @@ interface PortfolioPosition {
 	entry_year?: number;
 	horizon?: string;
 	stop?: PortfolioStop | null;
+	target?: PortfolioTarget | null;
 	next_event?: PortfolioNextEvent | null;
 }
 interface PortfolioHeatmap {
@@ -481,21 +487,35 @@ const stages = [
 							</span>
 						</div>
 
-						<footer class="position-foot">
-							{p.stop ? (
-								<span
-									class={`position-stop severity-${p.stop.severity}`}
-									title={p.stop.description || ""}
-								>
-									<span class="lang-en">Stop: {p.stop.level_pct_from_current} away</span>
-									<span class="lang-zh">止损距 {p.stop.level_pct_from_current}</span>
-								</span>
-							) : (
-								<span class="position-stop-empty">
-									<span class="lang-en">No stop rule</span>
-									<span class="lang-zh">无撤退规则</span>
-								</span>
-							)}
+					<footer class="position-foot">
+						{p.stop ? (
+							<span
+								class={`position-stop severity-${p.stop.severity}`}
+								title={p.stop.description || ""}
+							>
+								<span class="lang-en">Stop: {p.stop.level_pct_from_current} away</span>
+								<span class="lang-zh">止损距 {p.stop.level_pct_from_current}</span>
+							</span>
+						) : (
+							<span class="position-stop-empty">
+								<span class="lang-en">No stop rule</span>
+								<span class="lang-zh">无撤退规则</span>
+							</span>
+						)}
+						{p.target ? (
+							<span
+								class="position-target"
+								title={p.target.description || ""}
+							>
+								<span class="lang-en">🎯 Target: {p.target.price_pct_from_current || "—"}</span>
+								<span class="lang-zh">🎯 目标 {p.target.price_pct_from_current || "—"}</span>
+							</span>
+						) : (
+							<span class="position-target-empty">
+								<span class="lang-en">No target</span>
+								<span class="lang-zh">无目标价</span>
+							</span>
+						)}
 							{p.next_event ? (
 								<span class={`position-event urgency-${p.next_event.urgency}`}>
 									<time>{p.next_event.date}</time>
@@ -2535,6 +2555,12 @@ const stages = [
 			align-items: center;
 			gap: 0.4rem;
 		}
+		.position-target {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.4rem;
+			color: #10b981;
+		}
 		.position-stop.severity-red {
 			color: #ef4444;
 		}
@@ -2545,6 +2571,7 @@ const stages = [
 			color: var(--p-text-faint);
 		}
 		.position-stop-empty,
+		.position-target-empty,
 		.position-event-empty {
 			color: var(--p-text-faint);
 			font-size: 0.78rem;

@@ -224,6 +224,24 @@ function buildPositions(convexPositions, convexRules, convexEvents, overrides) {
       };
     }
 
+    // Target price: severity=warning is primary 12M target, severity=info is optimistic
+    const targetRules = rules.filter((r) => r.ruleType === "target_price");
+    const primaryTarget = targetRules.find((r) => r.severity === "warning");
+    const optimisticTarget = targetRules.find((r) => r.severity === "info");
+    let target = null;
+    if (primaryTarget) {
+      const targetPrice = Number(primaryTarget.value);
+      const refPrice = p.lastPrice || p.avgCost;
+      const pctAway = refPrice
+        ? ((targetPrice - refPrice) / refPrice) * 100
+        : null;
+      target = {
+        price_pct_from_current: pctAway !== null ? `+${pctAway.toFixed(1)}%` : null,
+        description: primaryTarget.description || null,
+        optimistic_price: optimisticTarget ? optimisticTarget.value : null,
+      };
+    }
+
     const nextEvent = events[0]
       ? {
           date: events[0].eventDate,
@@ -247,6 +265,7 @@ function buildPositions(convexPositions, convexRules, convexEvents, overrides) {
       horizon: override.horizon || "long",
       entry_year: override.entry_year ?? null,
       stop,
+      target,
       next_event: nextEvent,
     };
   });
