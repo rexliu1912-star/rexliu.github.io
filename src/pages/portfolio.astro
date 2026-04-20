@@ -488,46 +488,51 @@ const stages = [
 						</div>
 
 					<footer class="position-foot">
-						{p.stop ? (
-							<span
-								class={`position-stop severity-${p.stop.severity}`}
-								title={p.stop.description || ""}
-							>
-								<span class="lang-en">Stop: {p.stop.level_pct_from_current} away</span>
-								<span class="lang-zh">止损距 {p.stop.level_pct_from_current}</span>
-							</span>
-						) : (
-							<span class="position-stop-empty">
-								<span class="lang-en">No stop rule</span>
-								<span class="lang-zh">无撤退规则</span>
-							</span>
-						)}
-						{p.target ? (
-							<span
-								class="position-target"
-								title={p.target.description || ""}
-							>
-								<span class="lang-en">🎯 Target: {p.target.price_pct_from_current || "—"}</span>
-								<span class="lang-zh">🎯 目标 {p.target.price_pct_from_current || "—"}</span>
-							</span>
-						) : (
-							<span class="position-target-empty">
-								<span class="lang-en">No target</span>
-								<span class="lang-zh">无目标价</span>
-							</span>
-						)}
-							{p.next_event ? (
-								<span class={`position-event urgency-${p.next_event.urgency}`}>
-									<time>{p.next_event.date}</time>
-									<span>{p.next_event.label}</span>
+						<div class="position-rail">
+							{p.stop ? (
+								<span
+									class={`position-stop severity-${p.stop.severity}`}
+									title={p.stop.description || ""}
+								>
+									<svg class="rail-icon" viewBox="0 0 16 16" width="13" height="13"><rect x="2" y="10" width="12" height="2" rx="1" fill="currentColor" opacity="0.7"/><rect x="4" y="13" width="8" height="2" rx="1" fill="currentColor" opacity="0.4"/></svg>
+									<span class="lang-en">{p.stop.level_pct_from_current}</span>
+									<span class="lang-zh">{p.stop.level_pct_from_current}</span>
 								</span>
 							) : (
-								<span class="position-event-empty">
-									<span class="lang-en">No pending events</span>
-									<span class="lang-zh">无预告事件</span>
+								<span class="position-stop-empty">
+									<span class="lang-en">No stop</span>
+									<span class="lang-zh">无止损</span>
 								</span>
 							)}
-						</footer>
+							<span class="rail-sep">·</span>
+							{p.target ? (
+								<span
+									class="position-target"
+									title={p.target.description || ""}
+								>
+									<svg class="rail-icon" viewBox="0 0 16 16" width="13" height="13"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="1.2"/><circle cx="8" cy="8" r="1" fill="currentColor"/></svg>
+									<span class="lang-en">{p.target.price_pct_from_current || "—"}</span>
+									<span class="lang-zh">{p.target.price_pct_from_current || "—"}</span>
+								</span>
+							) : (
+								<span class="position-target-empty">
+									<span class="lang-en">No target</span>
+									<span class="lang-zh">无目标</span>
+								</span>
+							)}
+						</div>
+						{p.next_event ? (
+							<span class={`position-event urgency-${p.next_event.urgency}`}>
+								<time>{p.next_event.date}</time>
+								<span>{p.next_event.label}</span>
+							</span>
+						) : (
+							<span class="position-event-empty">
+								<span class="lang-en">No pending events</span>
+								<span class="lang-zh">无预告事件</span>
+							</span>
+						)}
+					</footer>
 					</article>
 				))}
 			</div>
@@ -2545,21 +2550,36 @@ const stages = [
 		.position-foot {
 			display: flex;
 			flex-direction: column;
-			gap: 0.45rem;
+			gap: 0.35rem;
 			padding-top: 0.55rem;
 			border-top: 1px dashed var(--p-border);
 			font-size: 0.82rem;
 		}
+		.position-rail {
+			display: flex;
+			align-items: center;
+			gap: 0.45rem;
+		}
+		.rail-sep {
+			color: var(--p-border);
+			font-size: 0.7rem;
+		}
+		.rail-icon {
+			flex-shrink: 0;
+			opacity: 0.85;
+		}
 		.position-stop {
 			display: inline-flex;
 			align-items: center;
-			gap: 0.4rem;
+			gap: 0.3rem;
+			font-variant-numeric: tabular-nums;
 		}
 		.position-target {
 			display: inline-flex;
 			align-items: center;
-			gap: 0.4rem;
+			gap: 0.3rem;
 			color: #10b981;
+			font-variant-numeric: tabular-nums;
 		}
 		.position-stop.severity-red {
 			color: #ef4444;
