@@ -187,12 +187,16 @@ function buildHeatmap(index) {
 // ─── Positions transform ─────────────────────────────────
 
 function buildPositions(convexPositions, convexRules, convexEvents, overrides) {
+  const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD in UTC
+
   const rulesBySymbol = {};
   for (const r of convexRules || []) {
     (rulesBySymbol[r.symbol] = rulesBySymbol[r.symbol] || []).push(r);
   }
+  // Only keep future events (eventDate >= today)
+  const futureEvents = (convexEvents || []).filter((e) => (e.eventDate || "") >= today);
   const eventsBySymbol = {};
-  for (const e of convexEvents || []) {
+  for (const e of futureEvents) {
     (eventsBySymbol[e.symbol] = eventsBySymbol[e.symbol] || []).push(e);
   }
 
@@ -334,6 +338,10 @@ async function main() {
   // 5. Transform + merge
   const regime = buildRegime(thermometerHistory, overrides.macro_signals_fallback);
   const heatmap = buildHeatmap(watchlistIndex);
+  // Filter events to future only (consistent with buildPositions)
+  const today = new Date().toISOString().slice(0, 10);
+  const futureEvents = (events || []).filter((e) => (e.eventDate || "") >= today);
+
   const publicPositions = buildPositions(positions, rules, events, overrides);
   const clearances = tradelog?.clearances || [];
   const roundtables = overrides.roundtables || [];
@@ -362,7 +370,7 @@ async function main() {
     active_positions: publicPositions.length,
     markets: new Set(publicPositions.map((p) => p.market)).size,
     tracked_rules: (rules || []).filter((r) => r.active !== false).length,
-    upcoming_events: (events || []).length,
+    upcoming_events: futureEvents.length,
     weekly_scan_hits: watchlistIndex
       ? (() => {
           const lastScoresRow = watchlistIndex.scores?.at(-1) || [];
