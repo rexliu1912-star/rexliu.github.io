@@ -494,9 +494,8 @@ const stages = [
 									class={`position-stop severity-${p.stop.severity}`}
 									title={p.stop.description || ""}
 								>
-									<svg class="rail-icon" viewBox="0 0 16 16" width="13" height="13"><rect x="2" y="10" width="12" height="2" rx="1" fill="currentColor" opacity="0.7"/><rect x="4" y="13" width="8" height="2" rx="1" fill="currentColor" opacity="0.4"/></svg>
-									<span class="lang-en">{p.stop.level_pct_from_current}</span>
-									<span class="lang-zh">{p.stop.level_pct_from_current}</span>
+									<span class="rail-label">Stop</span>
+									<span class="rail-value">{p.stop.level_pct_from_current}</span>
 								</span>
 							) : (
 								<span class="position-stop-empty">
@@ -504,15 +503,14 @@ const stages = [
 									<span class="lang-zh">无止损</span>
 								</span>
 							)}
-							<span class="rail-sep">·</span>
+							<span class="rail-sep">/</span>
 							{p.target ? (
 								<span
 									class="position-target"
 									title={p.target.description || ""}
 								>
-									<svg class="rail-icon" viewBox="0 0 16 16" width="13" height="13"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="1.2"/><circle cx="8" cy="8" r="1" fill="currentColor"/></svg>
-									<span class="lang-en">{p.target.price_pct_from_current || "—"}</span>
-									<span class="lang-zh">{p.target.price_pct_from_current || "—"}</span>
+									<span class="rail-label">Target</span>
+									<span class="rail-value">{p.target.price_pct_from_current || "—"}</span>
 								</span>
 							) : (
 								<span class="position-target-empty">
@@ -2560,9 +2558,20 @@ const stages = [
 			align-items: center;
 			gap: 0.45rem;
 		}
+		.rail-label {
+			font-size: 0.72rem;
+			text-transform: uppercase;
+			letter-spacing: 0.04em;
+			opacity: 0.6;
+		}
+		.rail-value {
+			font-variant-numeric: tabular-nums;
+			font-weight: 600;
+		}
 		.rail-sep {
 			color: var(--p-border);
 			font-size: 0.7rem;
+			margin: 0 0.1rem;
 		}
 		.rail-icon {
 			flex-shrink: 0;
