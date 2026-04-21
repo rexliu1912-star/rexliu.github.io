@@ -559,111 +559,90 @@ const stages = [
 					<span class="lang-zh">从电子到智能</span>
 				</h2>
 			</header>
-			<div class="topology-container">
-				<svg viewBox="0 0 960 380" class="topology-svg" aria-label="Sector supply chain topology">
-					{/* ── Flow arrows ── */}
-					<defs>
-						<marker id="arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-							<path d="M0,0 L8,3 L0,6" fill="rgba(137,83,209,0.35)" />
-						</marker>
-						<linearGradient id="flowGrad" x1="0" y1="0" x2="1" y2="0">
-							<stop offset="0%" stop-color="rgba(137,83,209,0.12)" />
-							<stop offset="100%" stop-color="rgba(137,83,209,0.30)" />
-						</linearGradient>
-					</defs>
-					{/* L1→L2 */}
-					<line x1="220" y1="190" x2="320" y2="190" stroke="url(#flowGrad)" stroke-width="2" marker-end="url(#arrow)" />
-					{/* L2→L3 */}
-					<line x1="490" y1="190" x2="580" y2="190" stroke="url(#flowGrad)" stroke-width="2" marker-end="url(#arrow)" />
-					{/* L3→L4 */}
-					<line x1="720" y1="190" x2="790" y2="190" stroke="url(#flowGrad)" stroke-width="2" marker-end="url(#arrow)" />
-					{/* L4→L5 */}
-					<line x1="860" y1="190" x2="860" y2="80" stroke="url(#flowGrad)" stroke-width="2" marker-end="url(#arrow)" />
-
-					{/* ── L1 Baseload ── */}
-					<g class="topo-layer" transform="translate(0, 0)">
-						<rect x="20" y="130" width="200" height="120" rx="12" class="topo-layer-bg" />
-						<text x="120" y="158" class="topo-layer-label">L1 · <tspan class="lang-en">Baseload</tspan><tspan class="lang-zh">基荷</tspan></text>
-						<g transform="translate(40, 175)">
-							<circle r="14" class="topo-node-held" />
-							<text class="topo-node-ticker" dy="4">600900</text>
-						</g>
-						<g transform="translate(120, 175)">
-							<circle r="14" class="topo-node-held" />
-							<text class="topo-node-ticker" dy="4">01816</text>
-						</g>
-						<g transform="translate(120, 220)">
-							<circle r="14" class="topo-node-held" />
-							<text class="topo-node-ticker" dy="4">003816</text>
-						</g>
-						<g transform="translate(200, 175)">
-							<circle r="14" class="topo-node-held" />
-							<text class="topo-node-ticker" dy="4">CEG</text>
-						</g>
-					</g>
-
-					{/* ── L2 Transmission ── */}
-					<g class="topo-layer" transform="translate(320, 0)">
-						<rect x="0" y="130" width="170" height="120" rx="12" class="topo-layer-bg" />
-						<text x="85" y="158" class="topo-layer-label">L2 · <tspan class="lang-en">Grid</tspan><tspan class="lang-zh">输配</tspan></text>
-						<g transform="translate(85, 195)">
-							<circle r="14" class="topo-node-held" />
-							<text class="topo-node-ticker" dy="4">600089</text>
-						</g>
-					</g>
-
-					{/* ── L3 Conversion ── */}
-					<g class="topo-layer" transform="translate(580, 0)">
-						<rect x="0" y="130" width="140" height="120" rx="12" class="topo-layer-bg" />
-						<text x="70" y="158" class="topo-layer-label">L3 · <tspan class="lang-en">Equip</tspan><tspan class="lang-zh">转换</tspan></text>
-						<g transform="translate(45, 195)">
-							<circle r="14" class="topo-node-watch" />
-							<text class="topo-node-ticker" dy="4">ETN</text>
-						</g>
-						<g transform="translate(95, 195)">
-							<circle r="14" class="topo-node-watch" />
-							<text class="topo-node-ticker" dy="4">HUBB</text>
-						</g>
-					</g>
-
-					{/* ── L4 Data Center ── */}
-					<g class="topo-layer" transform="translate(790, 130)">
-						<rect x="0" y="0" width="140" height="90" rx="12" class="topo-layer-bg topo-layer-ghost" />
-						<text x="70" y="25" class="topo-layer-label">L4 · <tspan class="lang-en">DC</tspan><tspan class="lang-zh">数据中心</tspan></text>
-						<text x="70" y="55" class="topo-layer-sub">
-							<tspan class="lang-en">Demand Driver</tspan>
-							<tspan class="lang-zh">需求引擎</tspan>
-						</text>
-					</g>
-
-					{/* ── L5 Compute ── */}
-					<g class="topo-layer" transform="translate(790, 0)">
-						<rect x="0" y="0" width="140" height="70" rx="12" class="topo-layer-bg" />
-						<text x="70" y="25" class="topo-layer-label">L5 · <tspan class="lang-en">Compute</tspan><tspan class="lang-zh">算力</tspan></text>
-						<g transform="translate(70, 50)">
-							<circle r="14" class="topo-node-held" />
-							<text class="topo-node-ticker" dy="4">AAPL</text>
-						</g>
-					</g>
-				</svg>
-
-				<div class="topology-legend">
-					<span class="legend-item">
-						<span class="legend-dot legend-held"></span>
-						<span class="lang-en">Held</span>
-						<span class="lang-zh">持仓</span>
-					</span>
-					<span class="legend-item">
-						<span class="legend-dot legend-watch"></span>
-						<span class="lang-en">Watchlist</span>
-						<span class="lang-zh">观察</span>
-					</span>
-					<span class="legend-item">
-						<span class="legend-dot legend-ghost"></span>
-						<span class="lang-en">Thematic</span>
-						<span class="lang-zh">主题</span>
-					</span>
+			<div class="topology-pipeline">
+				{/* ── L1 Baseload ── */}
+				<div class="topo-pipe-step topo-held">
+					<div class="topo-pipe-rail">L1</div>
+					<div class="topo-pipe-body">
+						<div class="topo-pipe-label">
+							<span class="lang-en">Baseload Generation</span>
+							<span class="lang-zh">基荷发电</span>
+						</div>
+						<div class="topo-pipe-nodes">
+							<span class="topo-tag topo-tag-held">600900</span>
+							<span class="topo-tag topo-tag-held">01816</span>
+							<span class="topo-tag topo-tag-held">003816</span>
+							<span class="topo-tag topo-tag-held">CEG</span>
+						</div>
+					</div>
 				</div>
+				<div class="topo-pipe-arrow">↓</div>
+
+				{/* ── L2 Grid ── */}
+				<div class="topo-pipe-step topo-held">
+					<div class="topo-pipe-rail">L2</div>
+					<div class="topo-pipe-body">
+						<div class="topo-pipe-label">
+							<span class="lang-en">Transmission &amp; Distribution</span>
+							<span class="lang-zh">输配电</span>
+						</div>
+						<div class="topo-pipe-nodes">
+							<span class="topo-tag topo-tag-held">600089</span>
+						</div>
+					</div>
+				</div>
+				<div class="topo-pipe-arrow">↓</div>
+
+				{/* ── L3 Equipment ── */}
+				<div class="topo-pipe-step topo-watch">
+					<div class="topo-pipe-rail">L3</div>
+					<div class="topo-pipe-body">
+						<div class="topo-pipe-label">
+							<span class="lang-en">Power Equipment</span>
+							<span class="lang-zh">电力设备</span>
+						</div>
+						<div class="topo-pipe-nodes">
+							<span class="topo-tag topo-tag-watch">ETN</span>
+							<span class="topo-tag topo-tag-watch">HUBB</span>
+						</div>
+					</div>
+				</div>
+				<div class="topo-pipe-arrow">↓</div>
+
+				{/* ── L4 Data Center ── */}
+				<div class="topo-pipe-step topo-ghost">
+					<div class="topo-pipe-rail">L4</div>
+					<div class="topo-pipe-body">
+						<div class="topo-pipe-label">
+							<span class="lang-en">Data Centers</span>
+							<span class="lang-zh">数据中心</span>
+							<span class="topo-pipe-sub">
+								<span class="lang-en">Demand Driver</span>
+								<span class="lang-zh">需求引擎</span>
+							</span>
+						</div>
+					</div>
+				</div>
+				<div class="topo-pipe-arrow">↓</div>
+
+				{/* ── L5 Compute ── */}
+				<div class="topo-pipe-step topo-held">
+					<div class="topo-pipe-rail">L5</div>
+					<div class="topo-pipe-body">
+						<div class="topo-pipe-label">
+							<span class="lang-en">AI Compute</span>
+							<span class="lang-zh">AI 算力</span>
+						</div>
+						<div class="topo-pipe-nodes">
+							<span class="topo-tag topo-tag-held">AAPL</span>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="topology-legend">
+				<span class="legend-item"><span class="legend-dot legend-held"></span> <span class="lang-en">Held</span><span class="lang-zh">持仓</span></span>
+				<span class="legend-item"><span class="legend-dot legend-watch"></span> <span class="lang-en">Watchlist</span><span class="lang-zh">观察</span></span>
+				<span class="legend-item"><span class="legend-dot legend-ghost"></span> <span class="lang-en">Thematic</span><span class="lang-zh">主题</span></span>
 			</div>
 		</section>
 
@@ -2088,7 +2067,7 @@ const stages = [
 		.portfolio-page {
 			--p-border: rgba(137, 83, 209, 0.18);
 			/* Card palette matches ActivityGraph + /lucky: #181818 / #fffaef. */
-			--p-card: #181818;
+			--p-card: #151515;
 			--p-card-strong: #202020;
 			--p-text: rgba(255, 255, 255, 0.88);
 			--p-text-soft: rgba(255, 255, 255, 0.7);
@@ -3030,58 +3009,116 @@ const stages = [
 		}
 
 		/* ── Supply Chain Topology ────────────── */
-		.topology-container {
+		/* ── Sector Topology Pipeline ──────────── */
+		.topology-pipeline {
 			display: flex;
 			flex-direction: column;
-			gap: 1rem;
+			align-items: stretch;
+			gap: 0;
+			max-width: 540px;
+			margin: 0 auto;
 		}
-		.topology-svg {
-			width: 100%;
-			height: auto;
-			max-height: 420px;
+		.topo-pipe-step {
+			display: flex;
+			align-items: stretch;
+			gap: 0.75rem;
+			background: var(--p-card);
+			border: 1px solid var(--p-border);
+			border-radius: 10px;
+			padding: 0.75rem 1rem;
+			transition: border-color 0.2s;
 		}
-		.topo-layer-bg {
-			fill: rgba(137, 83, 209, 0.06);
-			stroke: rgba(137, 83, 209, 0.15);
-			stroke-width: 1;
+		.topo-pipe-step:hover {
+			border-color: rgba(137, 83, 209, 0.4);
 		}
-		.topo-layer-ghost {
-			fill: rgba(137, 83, 209, 0.03);
-			stroke-dasharray: 4 4;
-			stroke: rgba(137, 83, 209, 0.10);
+		.topo-pipe-rail {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 2.5rem;
+			min-width: 2.5rem;
+			font-size: 0.65rem;
+			font-weight: 800;
+			letter-spacing: 0.06em;
+			text-transform: uppercase;
+			color: rgba(137, 83, 209, 0.7);
+			border-right: 1px solid var(--p-border);
+			padding-right: 0.75rem;
+			flex-shrink: 0;
 		}
-		.topo-layer-label {
-			font-size: 11px;
+		.topo-pipe-body {
+			display: flex;
+			flex-direction: column;
+			gap: 0.35rem;
+			min-width: 0;
+		}
+		.topo-pipe-label {
+			font-size: 0.82rem;
 			font-weight: 600;
-			fill: rgba(137, 83, 209, 0.65);
-			text-anchor: middle;
-			font-family: var(--font-sans);
+			color: var(--p-text);
 		}
-		.topo-layer-sub {
-			font-size: 9px;
-			fill: var(--p-text-faint);
-			text-anchor: middle;
-			font-family: var(--font-sans);
-			opacity: 0.5;
+		.topo-pipe-sub {
+			font-size: 0.68rem;
+			font-weight: 400;
+			color: var(--p-text-faint);
+			margin-left: 0.5rem;
 		}
-		.topo-node-held {
-			fill: rgba(137, 83, 209, 0.85);
-			stroke: rgba(137, 83, 209, 0.4);
-			stroke-width: 2;
+		.topo-pipe-nodes {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.35rem;
 		}
-		.topo-node-watch {
-			fill: transparent;
-			stroke: rgba(137, 83, 209, 0.5);
-			stroke-width: 2;
-			stroke-dasharray: 3 3;
-		}
-		.topo-node-ticker {
-			font-size: 8px;
+		.topo-tag {
+			display: inline-flex;
+			align-items: center;
+			padding: 0.15rem 0.55rem;
+			border-radius: 6px;
+			font-size: 0.7rem;
 			font-weight: 700;
-			fill: var(--p-text);
-			text-anchor: middle;
 			font-family: var(--font-mono);
-			pointer-events: none;
+			letter-spacing: 0.03em;
+		}
+		.topo-tag-held {
+			background: rgba(137, 83, 209, 0.2);
+			color: rgba(137, 83, 209, 0.95);
+			border: 1px solid rgba(137, 83, 209, 0.3);
+		}
+		.topo-tag-watch {
+			background: transparent;
+			color: rgba(137, 83, 209, 0.6);
+			border: 1px dashed rgba(137, 83, 209, 0.4);
+		}
+		.topo-pipe-arrow {
+			text-align: center;
+			color: rgba(137, 83, 209, 0.3);
+			font-size: 1rem;
+			line-height: 1;
+			padding: 0.15rem 0;
+			user-select: none;
+		}
+		/* State variants */
+		.topo-held .topo-pipe-rail {
+			color: rgba(137, 83, 209, 0.85);
+		}
+		.topo-watch .topo-pipe-rail {
+			color: rgba(137, 83, 209, 0.45);
+		}
+		.topo-ghost .topo-pipe-rail {
+			color: rgba(137, 83, 209, 0.25);
+		}
+		.topo-ghost {
+			opacity: 0.55;
+			border-style: dashed;
+		}
+		/* Light theme */
+		:global(html[data-theme='light']) .topo-tag-held {
+			background: rgba(137, 83, 209, 0.12);
+			color: rgba(100, 50, 170, 0.95);
+			border-color: rgba(137, 83, 209, 0.35);
+		}
+		:global(html[data-theme='light']) .topo-tag-watch {
+			color: rgba(100, 50, 170, 0.5);
+			border-color: rgba(137, 83, 209, 0.3);
 		}
 		.topology-legend {
 			display: flex;
@@ -3089,6 +3126,7 @@ const stages = [
 			justify-content: center;
 			font-size: 0.72rem;
 			opacity: 0.6;
+			margin-top: 0.75rem;
 		}
 		.legend-item {
 			display: flex;
@@ -3110,12 +3148,23 @@ const stages = [
 			background: transparent;
 			border: 2px dashed rgba(137, 83, 209, 0.2);
 		}
-		:global(html[data-theme='light']) .topo-node-held {
-			fill: rgba(137, 83, 209, 0.25);
-			stroke: rgba(137, 83, 209, 0.6);
-		}
-		:global(html[data-theme='light']) .topo-node-ticker {
-			fill: #1a1a2e;
+		/* Desktop: 2-column grid for pipeline */
+		@media (min-width: 768px) {
+			.topology-pipeline {
+				max-width: 100%;
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				gap: 0.5rem 1.5rem;
+			}
+			.topo-pipe-arrow {
+				display: none;
+			}
+			/* Flow arrow between columns — use pseudo-element on odd steps */
+			.topo-pipe-step:nth-child(1) { grid-column: 1; }
+			.topo-pipe-step:nth-child(3) { grid-column: 1; }
+			.topo-pipe-step:nth-child(5) { grid-column: 1; }
+			.topo-pipe-step:nth-child(7) { grid-column: 2; grid-row: 1; }
+			.topo-pipe-step:nth-child(9) { grid-column: 2; grid-row: 2; }
 		}
 		.rail-label {
 			font-size: 0.72rem;
