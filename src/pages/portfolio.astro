@@ -661,7 +661,7 @@ const stages = [
 											<span class="trade-point-kind">{tp.kind}</span>
 										)}
 										{tp.price != null && (
-											<span class="trade-point-price">¥{tp.price}</span>
+											<span class="trade-point-price">{c.market === 'us' ? '$' : '¥'}{tp.price}</span>
 										)}
 									</div>
 									<strong class="trade-point-action">

@@ -218,7 +218,7 @@ function buildPositions(convexPositions, convexRules, convexEvents, overrides) {
       else if (pct < 20) severity = "yellow";
       stop = {
         type: stopRule.ruleType,
-        level_pct_from_current: `+${pct.toFixed(1)}%`,
+        level_pct_from_current: `-${pct.toFixed(1)}%`,
         severity,
         description: stopRule.description || null,
       };
