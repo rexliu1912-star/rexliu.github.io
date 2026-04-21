@@ -472,37 +472,58 @@ const stages = [
 						</div>
 
 					<footer class="position-foot">
-						<div class="position-rail">
-							{p.stop ? (
-								<span
-									class={`position-stop severity-${p.stop.severity}`}
-									title={p.stop.description || ""}
-								>
-									<span class="rail-label">Stop</span>
-									<span class="rail-value">{p.stop.level_pct_from_current}</span>
+						{p.stop && p.target ? (
+							<div class="position-range-track" title={`${p.stop.description || "Stop"} → ${p.target.description || "Target"}`}>
+								<span class="range-label range-stop">
+									<span class="lang-en">Stop</span>
+									<span class="lang-zh">止损</span>
+									{` ${p.stop.level_pct_from_current}`}
 								</span>
-							) : (
-								<span class="position-stop-empty">
-									<span class="lang-en">No stop</span>
-									<span class="lang-zh">无止损</span>
+								<div class="range-bar">
+									<div class="range-bar-danger"></div>
+									<div
+										class="range-marker"
+										style={`left: ${(() => {
+											const stopPct = Math.abs(parseFloat(p.stop.level_pct_from_current));
+											const targetPct = Math.abs(parseFloat(p.target.price_pct_from_current || "0"));
+											const total = stopPct + targetPct;
+											return total > 0 ? `${(stopPct / total * 100).toFixed(1)}%` : "50%";
+										})()}`}
+									></div>
+								</div>
+								<span class="range-label range-target">
+									<span class="lang-en">Target</span>
+									<span class="lang-zh">目标</span>
+									{` ${p.target.price_pct_from_current}`}
 								</span>
-							)}
-							<span class="rail-sep">/</span>
-							{p.target ? (
-								<span
-									class="position-target"
-									title={p.target.description || ""}
-								>
-									<span class="rail-label">Target</span>
-									<span class="rail-value">{p.target.price_pct_from_current || "—"}</span>
-								</span>
-							) : (
-								<span class="position-target-empty">
-									<span class="lang-en">No target</span>
-									<span class="lang-zh">无目标</span>
-								</span>
-							)}
-						</div>
+							</div>
+						) : (
+							<div class="position-rail">
+								{p.stop ? (
+									<span class={`position-stop severity-${p.stop.severity}`} title={p.stop.description || ""}>
+										<span class="rail-label">Stop</span>
+										<span class="rail-value">{p.stop.level_pct_from_current}</span>
+									</span>
+								) : (
+									<span class="position-stop-empty">
+										<span class="lang-en">No stop</span>
+										<span class="lang-zh">无止损</span>
+									</span>
+								)}
+								<span class="rail-sep">/</span>
+								{p.target ? (
+									<span class="position-target" title={p.target.description || ""}>
+										<span class="rail-label">Target</span>
+										<span class="rail-value">{p.target.price_pct_from_current || "—"}</span>
+									</span>
+								) : (
+									<span class="position-target-empty">
+										<span class="lang-en">No target</span>
+										<span class="lang-zh">无目标</span>
+									</span>
+								)}
+							</div>
+						)}
 						{p.next_event ? (
 							<span class={`position-event urgency-${p.next_event.urgency}`}>
 								<time>{p.next_event.date}</time>
@@ -2621,6 +2642,51 @@ const stages = [
 			display: flex;
 			align-items: center;
 			gap: 0.45rem;
+		}
+		/* ── Range Track (Stop → Target) ──────── */
+		.position-range-track {
+			display: flex;
+			align-items: center;
+			gap: 0.5rem;
+			font-size: 0.75rem;
+			font-variant-numeric: tabular-nums;
+		}
+		.range-label {
+			white-space: nowrap;
+			opacity: 0.7;
+			font-size: 0.72rem;
+		}
+		.range-stop { color: #f87171; }
+		.range-target { color: #34d399; }
+		.range-bar {
+			flex: 1;
+			position: relative;
+			height: 5px;
+			border-radius: 999px;
+			background: linear-gradient(to right, rgba(248,113,113,0.25), rgba(52,211,153,0.25));
+			overflow: visible;
+		}
+		.range-bar-danger {
+			position: absolute;
+			left: 0;
+			top: 0;
+			bottom: 0;
+			border-radius: 999px 0 0 999px;
+			background: rgba(248,113,113,0.15);
+			width: var(--danger-width, 50%);
+		}
+		.range-marker {
+			position: absolute;
+			top: 50%;
+			transform: translate(-50%, -50%);
+			width: 9px;
+			height: 9px;
+			border-radius: 50%;
+			background: var(--p-text);
+			border: 2px solid var(--p-bg);
+			box-shadow: 0 0 0 1px rgba(137, 83, 209, 0.5);
+			z-index: 1;
+			transition: left 0.3s ease;
 		}
 		.rail-label {
 			font-size: 0.72rem;
