@@ -1,6 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import PageLayout from "@/layouts/Base.astro";
+import booksData from "@/data/books.json";
 
 // Fetch essays for cross-links
 const allPosts = await getCollection("post");
@@ -80,11 +81,11 @@ const investmentPhilosophies = [
 ];
 
 const contentPillars = [
-  { en: "AI & Vibe Coding", zh: "AI & Vibe Coding", desc_en: "Building in public with AI tools", desc_zh: "用 AI 工具公开创造" },
-  { en: "Crypto Analysis", zh: "加密分析", desc_en: "On-chain data, macro cycles, pattern recognition", desc_zh: "链上数据、宏观周期、模式识别" },
-  { en: "Investment Philosophy", zh: "投资哲学", desc_en: "Frameworks over predictions", desc_zh: "框架大于预测" },
-  { en: "Lifestyle", zh: "生活方式", desc_en: "Digital nomad life, family, travel", desc_zh: "数字游民、家庭、旅行" },
-  { en: "X Growth", zh: "X 增长", desc_en: "What works, what doesn't, transparent metrics", desc_zh: "有用无用皆有、透明数据" },
+  { en: "AI & Vibe Coding", zh: "AI & Vibe Coding", desc_en: "Building in public with AI tools", desc_zh: "用 AI 工具公开创造", posts: ["2026-04-07-losing-claude-on-openclaw", "2026-03-19-stay-human-01-ai-coding-is-gambling", "obsidian-openclaw-knowledge-system"] },
+  { en: "Crypto Analysis", zh: "加密分析", desc_en: "On-chain data, macro cycles, pattern recognition", desc_zh: "链上数据、宏观周期、模式识别", posts: ["2026-02-25-alpha-radar-framework", "hype-investment-thesis", "kol-stance-tracker"] },
+  { en: "Investment Philosophy", zh: "投资哲学", desc_en: "Frameworks over predictions", desc_zh: "框架大于预测", posts: ["gold-etf-trade-review", "2026-wealth-strategy", "xifeng-reading-reflection"] },
+  { en: "Lifestyle", zh: "生活方式", desc_en: "Digital nomad life, family, travel", desc_zh: "数字游民、家庭、旅行", posts: ["travel-in-dali", "2026-02-15-watching-mother-fade", "12-years-annual-review-ai"] },
+  { en: "X Growth", zh: "X 增长", desc_en: "What works, what doesn't, transparent metrics", desc_zh: "有用无用皆有、透明数据", posts: ["how-I-hit-5-million-impressions-in-24-hours", "my-x-growth"] },
 ];
 
 const writingRules = [
@@ -111,7 +112,7 @@ const stackGroups = [
   { label_en: "Writing", label_zh: "写作", value_en: "AI Agent team (Loki) + Rex Ink voice system", value_zh: "AI Agent 团队（Loki）+ Rex Ink 系统" },
   { label_en: "Research", label_zh: "研究", value_en: "Alpha Radar + KOL tracking + 6551 API", value_zh: "Alpha Radar + KOL 追踪 + 6551 API" },
   { label_en: "Building", label_zh: "架构", value_en: "Astro + Tailwind + Cloudflare (Pages, R2, Workers)", value_zh: "Astro + Tailwind + Cloudflare（Pages, R2, Workers）" },
-  { label_en: "Operations", label_zh: "运营", value_en: "OpenClaw + 30+ automated cron jobs", value_zh: "OpenClaw + 30+ 自动化定时任务", link: "/lab/builder-log/", linkEn: "See the build log →", linkZh: "查看构建日志 →" },
+  { label_en: "Operations", label_zh: "运营", value_en: "Hermes + 30+ automated cron jobs", value_zh: "Hermes + 30+ 自动化定时任务", link: "/lab/builder-log/", linkEn: "See the build log →", linkZh: "查看构建日志 →" },
   { label_en: "Finance", label_zh: "理财", value_en: "Multi-exchange portfolio sync", value_zh: "多交易所组合同步" },
 ];
 
@@ -119,6 +120,15 @@ const meta = {
   title: "Operating System — Rex Liu",
   description: "How Rex thinks about investing, content, and life.",
 };
+
+// Build post lookup for content pillar links
+const postMap = new Map(sortedPosts.map(p => [p.id, p]));
+
+// Recent finished books
+const recentBooks = (booksData as any[])
+  .filter(b => b.endDate && (b.status === "done" || b.status === "已读" || b.status === "read"))
+  .sort((a, b) => new Date(b.endDate).getTime() - new Date(a.endDate).getTime())
+  .slice(0, 3);
 ---
 
 <PageLayout meta={meta}>
@@ -185,6 +195,22 @@ const meta = {
         </div>
       </div>
     )}
+
+    <div class="fade-in-up mt-8 rounded-xl border border-gray-200/60 bg-gray-50/50 p-6 dark:border-gray-700/40 dark:bg-[#151515]" style="--delay: 550ms">
+      <a href="/portfolio/" class="group flex items-center justify-between font-serif">
+        <div>
+          <p class="mb-1 text-xs font-bold tracking-widest text-[#8953d1] uppercase dark:text-[#a175e8]">
+            <span class="lang-en">Live Portfolio</span>
+            <span class="lang-zh">实盘持仓</span>
+          </p>
+          <p class="text-sm text-gray-600 dark:text-gray-400">
+            <span class="lang-en">See how these frameworks play out in real positions →</span>
+            <span class="lang-zh">看看这些框架在真实持仓中如何运作 →</span>
+          </p>
+        </div>
+        <span class="text-2xl text-gray-300 transition-transform group-hover:translate-x-1 dark:text-gray-600">→</span>
+      </a>
+    </div>
   </section>
 
   <!-- Content OS -->
@@ -203,21 +229,35 @@ const meta = {
         <span class="lang-en">5 Pillars</span>
         <span class="lang-zh">五大支柱</span>
       </h3>
-      <div class="space-y-4">
+      <div class="space-y-6">
         {contentPillars.map((pillar, index) => (
-          <div class="fade-in-up flex items-baseline gap-3 font-serif" style={`--delay: ${220 + index * 40}ms`}>
-            <span class="text-xs text-gray-400 dark:text-gray-500">0{index + 1}</span>
-            <div>
-              <span class="font-medium dark:text-white">
-                <span class="lang-en">{pillar.en}</span>
-                <span class="lang-zh">{pillar.zh}</span>
-              </span>
-              <span class="text-gray-500 dark:text-gray-400">
-                {" — "}
-                <span class="lang-en">{pillar.desc_en}</span>
-                <span class="lang-zh">{pillar.desc_zh}</span>
-              </span>
+          <div class="fade-in-up" style={`--delay: ${220 + index * 40}ms`}>
+            <div class="flex items-baseline gap-3 font-serif">
+              <span class="text-xs text-gray-400 dark:text-gray-500">0{index + 1}</span>
+              <div>
+                <span class="font-medium dark:text-white">
+                  <span class="lang-en">{pillar.en}</span>
+                  <span class="lang-zh">{pillar.zh}</span>
+                </span>
+                <span class="text-gray-500 dark:text-gray-400">
+                  {" — "}
+                  <span class="lang-en">{pillar.desc_en}</span>
+                  <span class="lang-zh">{pillar.desc_zh}</span>
+                </span>
+              </div>
             </div>
+            {pillar.posts && (
+              <div class="ml-6 mt-2 flex flex-wrap gap-x-4 gap-y-1">
+                {pillar.posts.map((slug: string) => {
+                  const p = postMap.get(slug);
+                  return p ? (
+                    <a href={`/posts/${p.id}/`} class="font-serif text-xs text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]">
+                      {p.data.title}
+                    </a>
+                  ) : null;
+                })}
+              </div>
+            )}
           </div>
         ))}
       </div>
@@ -344,6 +384,22 @@ const meta = {
         </div>
       </div>
     )}
+
+    <div class="fade-in-up mt-8 rounded-xl border border-gray-200/60 bg-gray-50/50 p-6 dark:border-gray-700/40 dark:bg-[#151515]" style="--delay: 360ms">
+      <a href="/travel/" class="group flex items-center justify-between font-serif">
+        <div>
+          <p class="mb-1 text-xs font-bold tracking-widest text-[#8953d1] uppercase dark:text-[#a175e8]">
+            <span class="lang-en">Travel Log</span>
+            <span class="lang-zh">旅行足迹</span>
+          </p>
+          <p class="text-sm text-gray-600 dark:text-gray-400">
+            <span class="lang-en">Dali, Hong Kong, Hulunbuir — where life happens →</span>
+            <span class="lang-zh">大理、香港、呼伦贝尔——生活在别处 →</span>
+          </p>
+        </div>
+        <span class="text-2xl text-gray-300 transition-transform group-hover:translate-x-1 dark:text-gray-600">→</span>
+      </a>
+    </div>
   </section>
 
   <!-- Stack -->
@@ -389,11 +445,84 @@ const meta = {
       <span class="lang-en">What shaped how I think.</span>
       <span class="lang-zh">塑造了我思考方式的输入。</span>
     </p>
-    <a href="/os/library/" class="fade-in-up inline-block font-serif text-sm text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]" style="--delay: 180ms">
-      <span class="lang-en">Browse books, films & shows →</span>
-      <span class="lang-zh">浏览书籍、电影和剧集 →</span>
+
+    {recentBooks.length > 0 && (
+      <div class="fade-in-up mb-6 grid grid-cols-3 gap-4 sm:gap-6" style="--delay: 180ms">
+        {recentBooks.map((book: any) => (
+          <div class="group overflow-hidden rounded-lg border border-gray-200/60 bg-gray-50/50 dark:border-gray-700/40 dark:bg-[#151515]">
+            {book.cover && (
+              <div class="aspect-[3/4] overflow-hidden">
+                <img src={book.cover} alt={book.titleEn || book.title} class="h-full w-full object-cover transition-transform group-hover:scale-105" loading="lazy" />
+              </div>
+            )}
+            <div class="p-3">
+              <p class="font-serif text-xs font-medium leading-tight dark:text-white">
+                {book.titleEn || book.title}
+              </p>
+              {book.author && (
+                <p class="mt-1 font-serif text-[10px] text-gray-400 dark:text-gray-500">{book.author}</p>
+              )}
+              {book.rating && (
+                <p class="mt-1 text-xs">{book.rating}</p>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    )}
+
+    <a href="/os/library/" class="fade-in-up inline-block font-serif text-sm text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]" style="--delay: 220ms">
+      <span class="lang-en">Browse all books, films & shows →</span>
+      <span class="lang-zh">浏览全部书籍、电影和剧集 →</span>
     </a>
   </section>
+
+  <!-- Cross-page Navigation -->
+  <nav class="fade-in-up mt-8 border-t border-gray-200/60 pt-10 dark:border-gray-700/40" style="--delay: 100ms">
+    <p class="mb-6 font-serif text-xs font-bold tracking-widest text-gray-400 uppercase dark:text-gray-500">
+      <span class="lang-en">Continue Exploring</span>
+      <span class="lang-zh">继续探索</span>
+    </p>
+    <div class="grid grid-cols-2 gap-4 sm:grid-cols-4">
+      <a href="/portfolio/" class="group rounded-xl border border-gray-200/60 p-5 transition-colors hover:border-[#8953d1]/40 dark:border-gray-700/40 dark:hover:border-[#a175e8]/40">
+        <p class="mb-1 font-serif text-sm font-medium dark:text-white">Portfolio</p>
+        <p class="font-serif text-xs text-gray-500 dark:text-gray-400">
+          <span class="lang-en">Live positions & regime tracker</span>
+          <span class="lang-zh">实盘持仓与宏观温度计</span>
+        </p>
+      </a>
+      <a href="/lab/agents/" class="group rounded-xl border border-gray-200/60 p-5 transition-colors hover:border-[#8953d1]/40 dark:border-gray-700/40 dark:hover:border-[#a175e8]/40">
+        <p class="mb-1 font-serif text-sm font-medium dark:text-white">
+          <span class="lang-en">AI Lab</span>
+          <span class="lang-zh">AI 实验室</span>
+        </p>
+        <p class="font-serif text-xs text-gray-500 dark:text-gray-400">
+          <span class="lang-en">Agent team & builder log</span>
+          <span class="lang-zh">Agent 团队与构建日志</span>
+        </p>
+      </a>
+      <a href="/posts/" class="group rounded-xl border border-gray-200/60 p-5 transition-colors hover:border-[#8953d1]/40 dark:border-gray-700/40 dark:hover:border-[#a175e8]/40">
+        <p class="mb-1 font-serif text-sm font-medium dark:text-white">
+          <span class="lang-en">Blog</span>
+          <span class="lang-zh">博客</span>
+        </p>
+        <p class="font-serif text-xs text-gray-500 dark:text-gray-400">
+          <span class="lang-en">Essays on investing, crypto & life</span>
+          <span class="lang-zh">投资、加密与生活随笔</span>
+        </p>
+      </a>
+      <a href="/travel/" class="group rounded-xl border border-gray-200/60 p-5 transition-colors hover:border-[#8953d1]/40 dark:border-gray-700/40 dark:hover:border-[#a175e8]/40">
+        <p class="mb-1 font-serif text-sm font-medium dark:text-white">
+          <span class="lang-en">Travel</span>
+          <span class="lang-zh">旅行</span>
+        </p>
+        <p class="font-serif text-xs text-gray-500 dark:text-gray-400">
+          <span class="lang-en">Footnotes from the road</span>
+          <span class="lang-zh">路上的故事</span>
+        </p>
+      </a>
+    </div>
+  </nav>
 
   <style>
     details summary {
