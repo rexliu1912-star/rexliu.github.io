@@ -97,9 +97,19 @@ const {
 	roundtables,
 	sector_research = [],
 	deep_research = [],
+	short_list: shortList = [],
 	stats,
 	generated_at,
 } = portfolioData;
+
+// Group deep research by sector for organized display
+const deepBySector = deep_research.reduce((acc: Record<string, { sector_en: string; sector_zh: string; items: any[] }>, d: any) => {
+	const key = d.sector_en || "Unclassified";
+	if (!acc[key]) acc[key] = { sector_en: d.sector_en || "Unclassified", sector_zh: d.sector_zh || "未分类", items: [] };
+	acc[key].items.push(d);
+	return acc;
+}, {} as Record<string, { sector_en: string; sector_zh: string; items: any[] }>);
+const deepSectors = Object.values(deepBySector);
 
 const regimeColors: Record<string, string> = {
 	进攻期: "#10b981",
@@ -130,43 +140,7 @@ const SIGNAL_LABELS: Record<string, string> = {
 	policy: "Policy",
 };
 
-// Deterministic per-position trajectory SVG path (visual filler — NOT
-// financial data). Seeded off the ticker so each card gets a stable,
-// unique-looking smooth curve; conviction nudges the end-point upward.
-// Height / width are the SVG viewport values.
-function trajectoryPath(seed: string, conviction: string, w: number, h: number): string {
-	let hash = 0;
-	for (let i = 0; i < seed.length; i++) hash = ((hash * 31 + seed.charCodeAt(i)) >>> 0) >>> 0;
-	const steps = 12;
-	const raw: number[] = [];
-	for (let i = 0; i < steps; i++) {
-		hash = (hash * 1103515245 + 12345) >>> 0;
-		raw.push((hash % 10000) / 10000);
-	}
-	// Light smoothing (3-point moving average). Indices are always in bounds
-	// (clamped with Math.max/min) so the `?? 0` fallbacks only satisfy TS's
-	// noUncheckedIndexedAccess — they shouldn't trigger at runtime.
-	const smooth = raw.map((_, i) => {
-		const a = raw[Math.max(0, i - 1)] ?? 0;
-		const b = raw[i] ?? 0;
-		const c = raw[Math.min(raw.length - 1, i + 1)] ?? 0;
-		return (a + b + c) / 3;
-	});
-	// Bias: high conviction = rising, medium = gentle rise, low = flat-ish.
-	const bias = conviction === "high" ? 0.4 : conviction === "medium" ? 0.2 : 0.05;
-	const biased = smooth.map((v, i) => v * (1 - bias) + (i / (smooth.length - 1)) * bias);
-	// Pad top/bottom so stroke doesn't touch edge
-	const pad = 4;
-	const inner = h - pad * 2;
-	return biased
-		.map((v, i) => {
-			const x = (i / (biased.length - 1)) * w;
-			const y = pad + (1 - v) * inner;
-			return `${i === 0 ? "M" : "L"}${x.toFixed(1)},${y.toFixed(1)}`;
-		})
-		.join(" ");
-}
-
+// Conviction bar colors (used for position confidence fill).
 const convictionStroke: Record<string, string> = {
 	high: "#8953d1",
 	medium: "#10b981",
@@ -291,6 +265,19 @@ const stages = [
 				← Lab
 			</a>
 		</div>
+
+		<nav class="portfolio-section-nav" aria-label="Section navigation">
+			<a href="#positions-section">Positions</a>
+			<a href="#clearance-section">Clearance</a>
+			<a href="#allocation-section">Allocation</a>
+			<a href="#regime-section">Regime</a>
+			<a href="#watchlist-section">Watchlist</a>
+			<a href="#shortlist-section">Short List</a>
+			<a href="#sector-research-section">Sectors</a>
+			<a href="#deep-research-section">Research</a>
+			<a href="#roundtable-section">Roundtable</a>
+			<a href="#methodology-section">Methodology</a>
+		</nav>
 
 		{/* ═══ Section 0: Hero ═══ */}
 		<section class="portfolio-hero">
@@ -458,23 +445,20 @@ const stages = [
 							<span class="lang-zh">{p.thesis_zh}</span>
 						</p>
 
-						<svg
-							class="position-trajectory"
-							viewBox="0 0 200 40"
-							preserveAspectRatio="none"
-							role="img"
-							aria-label="Conviction trajectory"
-						>
-							<path
-								d={trajectoryPath(p.symbol, p.conviction, 200, 40)}
-								fill="none"
-								stroke={convictionStroke[p.conviction] || "#9ca3af"}
-								stroke-width="1.6"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								opacity="0.85"
-							/>
-						</svg>
+					<div
+						class="position-conviction-bar"
+						title={`Conviction: ${p.conviction}`}
+						role="meter"
+						aria-valuenow={p.conviction === "high" ? "3" : p.conviction === "medium" ? "2" : "1"}
+						aria-valuemin="1"
+						aria-valuemax="3"
+						aria-label={`Conviction: ${p.conviction}`}
+					>
+						<span
+							class="position-conviction-fill"
+							style={`width: ${p.conviction === "high" ? "100" : p.conviction === "medium" ? "60" : "30"}%; background: ${convictionStroke[p.conviction] || "#9ca3af"}`}
+						></span>
+					</div>
 
 						<div class="position-meta">
 							<span class="position-stage-badge">
@@ -1008,10 +992,11 @@ const stages = [
 								{heatmap!.dates.map((d: string, di: number) => {
 									const score = heatmap!.scores[di]?.[ti] ?? -1;
 									const title = `${ticker} · ${d} · ${score >= 0 ? `${score}/10` : "—"}`;
-									let bg = "transparent";
-									if (score >= 7) bg = `rgba(137, 83, 209, 0.95)`;
-									else if (score >= 5) bg = `rgba(137, 83, 209, ${0.3 + (score - 5) * 0.1})`;
-									else if (score >= 0) bg = `rgba(137, 83, 209, ${0.05 + score * 0.02})`;
+								let bg = "transparent";
+								if (score >= 7) bg = `rgba(137, 83, 209, 0.95)`;
+								else if (score >= 5) bg = `rgba(137, 83, 209, ${0.35 + (score - 5) * 0.2})`;
+								else if (score >= 3) bg = `rgba(137, 83, 209, ${0.12 + (score - 3) * 0.08})`;
+								else if (score >= 0) bg = `rgba(137, 83, 209, 0.04)`;
 									return (
 										<div class="heatmap-cell" style={`background: ${bg}`} title={title}>
 											{score >= 7 && <span class="heatmap-cell-mark">★</span>}
@@ -1031,6 +1016,39 @@ const stages = [
 				</div>
 			)}
 		</section>
+
+		{/* ═══ Section 3.5: Short List (Stage 2-3 filtered) ═══ */}
+		{shortList.length > 0 && (
+			<section class="portfolio-section fade-in-up" id="shortlist-section">
+				<header class="portfolio-section-head">
+					<p class="portfolio-kicker">
+						<span class="lang-en">Stage 2-3 · Short List</span>
+						<span class="lang-zh">阶段 2-3 · 短名单</span>
+					</p>
+					<h2 class="font-serif text-3xl font-semibold">
+						<span class="lang-en">Passed the 7-point threshold</span>
+						<span class="lang-zh">通过 7 分筛选门槛</span>
+					</h2>
+					<p class="portfolio-note">
+						<span class="lang-en">
+							Tickers from the daily watchlist scan that scored ≥ 7 on the latest run. Candidates for deeper research before entry.
+						</span>
+						<span class="lang-zh">
+							每日观察池扫描中最新一期得分 ≥ 7 的标的。入仓前需做更深研究。
+						</span>
+					</p>
+				</header>
+				<div class="shortlist-grid">
+					{shortList.map((s: any) => (
+						<div class="shortlist-card">
+							<strong class="shortlist-ticker">{s.ticker}</strong>
+							<span class="shortlist-name">{s.name}</span>
+							<span class="shortlist-score" title={`Scan score: ${s.score}/10`}>{s.score}/10</span>
+						</div>
+					))}
+				</div>
+			</section>
+		)}
 
 		{/* ═══ Section 3.5: Sector Research (Stage 1) ═══ */}
 		{sector_research && sector_research.length > 0 && (
@@ -1124,68 +1142,70 @@ const stages = [
 					</p>
 				</header>
 
-				<div class="deep-research-grid">
-					{deep_research.map((d) => (
-						<article class={`deep-card ${d.in_portfolio ? "held" : "watching"}`}>
-							<header class="deep-card-head">
-								<div class="deep-card-ticker-row">
-									<strong class="deep-card-ticker font-serif">{d.ticker}</strong>
-									{d.market && (
-										<span class="deep-card-market">{d.market.toUpperCase()}</span>
-									)}
-									<span
-										class={`deep-card-status ${d.in_portfolio ? "held" : "watching"}`}
-									>
-										<span class="lang-en">
-											{d.in_portfolio ? "Held" : "Watching"}
-										</span>
-										<span class="lang-zh">
-											{d.in_portfolio ? "持仓" : "观察"}
-										</span>
-									</span>
-								</div>
-								<span class="deep-card-name font-serif">
-									<span class="lang-en">{d.name_en}</span>
-									<span class="lang-zh">{d.name_zh}</span>
-								</span>
-							</header>
-
-							{(d.sector_en || d.sector_zh) && (
-								<span class="deep-card-sector">
-									<span class="lang-en">{d.sector_en}</span>
-									<span class="lang-zh">{d.sector_zh}</span>
-								</span>
-							)}
-
-							<p class="deep-card-thesis">
-								<span class="lang-en">{d.thesis_en}</span>
-								<span class="lang-zh">{d.thesis_zh}</span>
-							</p>
-
-							{d.confidence != null && (
-								<footer class="deep-card-foot">
-									<span class="deep-card-conf-label">
-										<span class="lang-en">Confidence</span>
-										<span class="lang-zh">置信度</span>
-									</span>
-									<span
-										class="deep-card-stars"
-										aria-label={`Confidence ${d.confidence} of 5`}
-									>
-										{[1, 2, 3, 4, 5].map((n) => (
+				{deepSectors.map((group) => (
+					<div class="deep-research-group">
+						<h3 class="deep-research-group-title">
+							<span class="lang-en">{group.sector_en}</span>
+							<span class="lang-zh">{group.sector_zh}</span>
+							<span class="deep-research-group-count">{group.items.length}</span>
+						</h3>
+						<div class="deep-research-grid">
+							{group.items.map((d: any) => (
+								<article class={`deep-card ${d.in_portfolio ? "held" : "watching"}`}>
+									<header class="deep-card-head">
+										<div class="deep-card-ticker-row">
+											<strong class="deep-card-ticker font-serif">{d.ticker}</strong>
+											{d.market && (
+												<span class="deep-card-market">{d.market.toUpperCase()}</span>
+											)}
 											<span
-												class={`deep-card-star ${n <= d.confidence ? "filled" : ""}`}
-												aria-hidden="true"
+												class={`deep-card-status ${d.in_portfolio ? "held" : "watching"}`}
 											>
-												★
+												<span class="lang-en">
+													{d.in_portfolio ? "Held" : "Watching"}
+												</span>
+												<span class="lang-zh">
+													{d.in_portfolio ? "持仓" : "观察"}
+												</span>
 											</span>
-										))}
-									</span>
-								</footer>
-							)}
-						</article>
-					))}
-				</div>
+										</div>
+										<span class="deep-card-name font-serif">
+											<span class="lang-en">{d.name_en}</span>
+											<span class="lang-zh">{d.name_zh}</span>
+										</span>
+									</header>
+
+									<p class="deep-card-thesis">
+										<span class="lang-en">{d.thesis_en}</span>
+										<span class="lang-zh">{d.thesis_zh}</span>
+									</p>
+
+									{d.confidence != null && (
+										<footer class="deep-card-foot">
+											<span class="deep-card-conf-label">
+												<span class="lang-en">Confidence</span>
+												<span class="lang-zh">置信度</span>
+											</span>
+											<span
+												class="deep-card-stars"
+												aria-label={`Confidence ${d.confidence} of 5`}
+											>
+												{[1, 2, 3, 4, 5].map((n) => (
+													<span
+														class={`deep-card-star ${n <= d.confidence ? "filled" : ""}`}
+														aria-hidden="true"
+													>
+														★
+													</span>
+												))}
+											</span>
+										</footer>
+									)}
+								</article>
+							))}
+						</div>
+					</div>
+				))}
 			</section>
 		)}
 
@@ -1212,8 +1232,9 @@ const stages = [
 			</header>
 
 			<div class="roundtable-list">
-				{roundtables.map((r) => (
-					<article class="roundtable-card">
+				{roundtables.length > 0 ? (
+					roundtables.map((r) => (
+						<article class="roundtable-card">
 						<header class="roundtable-head">
 							<time class="roundtable-date">{r.date}</time>
 							<span class="roundtable-cadence-tag">{r.cadence}</span>
@@ -1337,7 +1358,17 @@ const stages = [
 							</div>
 						)}
 					</article>
-				))}
+				))
+				) : (
+					<div class="portfolio-empty">
+						<span class="lang-en">
+							No roundtables yet. Roundtables are triggered when a position thesis needs stress-testing from multiple perspectives.
+						</span>
+						<span class="lang-zh">
+							还没有圆桌记录。圆桌在持仓逻辑需要多视角压力测试时触发。
+						</span>
+					</div>
+				)}
 			</div>
 		</section>
 
@@ -1789,6 +1820,30 @@ const stages = [
 			color: #8953d1;
 		}
 
+		/* ── Section Nav ────────────────────────── */
+		.portfolio-section-nav {
+			display: flex;
+			gap: 0.15rem;
+			flex-wrap: wrap;
+			padding: 0.5rem 0;
+			margin-bottom: 0.75rem;
+			border-bottom: 1px solid color-mix(in srgb, var(--p-border) 50%, transparent);
+		}
+		.portfolio-section-nav a {
+			font-size: 0.72rem;
+			letter-spacing: 0.04em;
+			text-transform: uppercase;
+			color: var(--p-text-faint);
+			padding: 0.25rem 0.55rem;
+			border-radius: 4px;
+			transition: color 0.2s, background 0.2s;
+			text-decoration: none;
+		}
+		.portfolio-section-nav a:hover {
+			color: var(--p-text);
+			background: color-mix(in srgb, var(--p-accent) 12%, transparent);
+		}
+
 		/* ── Hero ────────────────────────────────── */
 		.portfolio-hero {
 			display: grid;
@@ -1896,6 +1951,7 @@ const stages = [
 		.portfolio-section {
 			display: grid;
 			gap: 1.5rem;
+			scroll-margin-top: 2rem;
 		}
 		.portfolio-section-head {
 			display: grid;
@@ -2516,12 +2572,20 @@ const stages = [
 			border-left: 2px solid rgba(137, 83, 209, 0.4);
 			padding-left: 0.85rem;
 		}
-		.position-trajectory {
+		.position-conviction-bar {
 			display: block;
 			width: 100%;
-			height: 38px;
-			margin: -0.25rem 0 0.25rem;
-			opacity: 0.75;
+			height: 6px;
+			margin: 0.6rem 0 0.3rem;
+			border-radius: 3px;
+			background: color-mix(in srgb, var(--p-text-faint) 25%, transparent);
+			overflow: hidden;
+		}
+		.position-conviction-fill {
+			display: block;
+			height: 100%;
+			border-radius: 3px;
+			transition: width 0.6s ease;
 		}
 		.position-meta {
 			display: flex;
@@ -3040,6 +3104,29 @@ const stages = [
 		}
 
 		/* ── Deep Research (Stage 4) ───────────── */
+		.deep-research-group {
+			display: grid;
+			gap: 0.75rem;
+		}
+		.deep-research-group-title {
+			font-size: 0.82rem;
+			font-weight: 600;
+			letter-spacing: 0.06em;
+			text-transform: uppercase;
+			color: var(--p-text-faint);
+			padding-bottom: 0.3rem;
+			border-bottom: 1px solid color-mix(in srgb, var(--p-border) 40%, transparent);
+			display: flex;
+			align-items: center;
+			gap: 0.5rem;
+		}
+		.deep-research-group-count {
+			font-size: 0.7rem;
+			background: color-mix(in srgb, var(--p-accent) 20%, transparent);
+			color: var(--p-text-soft);
+			padding: 0.1rem 0.45rem;
+			border-radius: 8px;
+		}
 		.deep-research-grid {
 			display: grid;
 			grid-template-columns: 1fr;
@@ -3402,6 +3489,38 @@ const stages = [
 			border: 1px dashed var(--p-border);
 			border-radius: 1.25rem;
 			background: color-mix(in srgb, var(--p-card) 70%, transparent);
+		}
+
+		/* ── Short List grid ────────────────────── */
+		.shortlist-grid {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.6rem;
+		}
+		.shortlist-card {
+			display: flex;
+			align-items: center;
+			gap: 0.5rem;
+			padding: 0.55rem 0.9rem;
+			border-radius: 0.6rem;
+			background: var(--p-card);
+			border: 1px solid var(--p-border);
+		}
+		.shortlist-ticker {
+			font-size: 0.85rem;
+			color: var(--p-text);
+		}
+		.shortlist-name {
+			font-size: 0.78rem;
+			color: var(--p-text-soft);
+		}
+		.shortlist-score {
+			margin-left: auto;
+			font-size: 0.75rem;
+			font-weight: 700;
+			color: rgba(137, 83, 209, 0.85);
+		}
+		.portfolio-empty {
 			color: var(--p-text-faint);
 			font-size: 0.9rem;
 		}
