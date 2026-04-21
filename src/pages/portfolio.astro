@@ -1045,6 +1045,11 @@ const stages = [
 					<div class="regime-chart-canvas-wrap">
 						<canvas id="regimeChart" aria-hidden="true"></canvas>
 					</div>
+					<div id="regimeTooltip" class="regime-tooltip" style="display:none;">
+						<div class="regime-tooltip-date"></div>
+						<div class="regime-tooltip-regime"></div>
+						<div class="regime-tooltip-signals"></div>
+					</div>
 				) : regime?.history_60d && regime.history_60d.length > 0 ? (
 					<div
 						class="regime-grid-fallback"
@@ -1731,11 +1736,122 @@ const stages = [
 			const axisColor = () => (isDark() ? 'rgba(255,255,255,0.48)' : 'rgba(30,20,50,0.52)');
 			const gridColor = () => (isDark() ? 'rgba(255,255,255,0.08)' : 'rgba(30,20,50,0.08)');
 
-			// Regime VIX chart
+			// Regime VIX chart (interactive version)
 			const regimeCanvas = document.getElementById('regimeChart');
 			if (regimeCanvas && data.regime?.history_60d?.length >= 2) {
 				if (Chart.getChart(regimeCanvas)) Chart.getChart(regimeCanvas).destroy();
 				const history = data.regime.history_60d;
+
+				const regimeColors = {
+					'进攻期': { bg: 'rgba(16, 185, 129, 0.10)', border: 'rgba(16, 185, 129, 0.35)', label: 'Offensive' },
+					'中性期': { bg: 'rgba(245, 158, 11, 0.08)', border: 'rgba(245, 158, 11, 0.30)', label: 'Neutral' },
+					'防御期': { bg: 'rgba(239, 68, 68, 0.08)', border: 'rgba(239, 68, 68, 0.30)', label: 'Defensive' },
+				};
+
+				const signalLabels = { tnx: '10Y UST', dxy: 'DXY', vix: 'VIX', naaim: 'NAAIM', policy: 'Policy' };
+				const lightDotColors = { green: '#10b981', yellow: '#f59e0b', red: '#ef4444', gray: '#9ca3af' };
+
+				// Plugin: regime background bands
+				const regimeBandsPlugin = {
+					id: 'regimeBands',
+					beforeDraw(chart) {
+						const { ctx, chartArea, scales } = chart;
+						if (!chartArea) return;
+						const xScale = scales.x;
+
+						// Group consecutive days by regime
+						let segments = [];
+						let segStart = 0;
+						for (let i = 1; i <= history.length; i++) {
+							const curRegime = history[i]?.regime;
+							const prevRegime = history[i - 1]?.regime;
+							if (i === history.length || curRegime !== prevRegime) {
+								segments.push({ start: segStart, end: i - 1, regime: prevRegime });
+								segStart = i;
+							}
+						}
+
+						segments.forEach(seg => {
+							const colors = regimeColors[seg.regime] || regimeColors['中性期'];
+							const x1 = xScale.getPixelForValue(seg.start);
+							const x2 = xScale.getPixelForValue(seg.end);
+							ctx.save();
+							ctx.fillStyle = colors.bg;
+							ctx.fillRect(x1, chartArea.top, x2 - x1, chartArea.bottom - chartArea.top);
+							// Top border line
+							ctx.strokeStyle = colors.border;
+							ctx.lineWidth = 2;
+							ctx.beginPath();
+							ctx.moveTo(x1, chartArea.top);
+							ctx.lineTo(x2, chartArea.top);
+							ctx.stroke();
+							ctx.restore();
+						});
+					}
+				};
+
+				// External HTML tooltip
+				const tooltipEl = document.getElementById('regimeTooltip');
+
+				const externalTooltipHandler = (context) => {
+					const { chart, tooltip } = context;
+					if (tooltip.opacity === 0) {
+						tooltipEl.style.display = 'none';
+						return;
+					}
+
+					const idx = tooltip.dataPoints?.[0]?.dataIndex;
+					if (idx == null) return;
+					const h = history[idx];
+					if (!h) return;
+
+					const colors = regimeColors[h.regime] || regimeColors['中性期'];
+					const isZh = document.documentElement.getAttribute('data-lang') !== 'en';
+
+					// Build signals HTML
+					const signals = h.signalDetails || h.lights || {};
+					let signalsHtml = '';
+					for (const [key, label] of Object.entries(signalLabels)) {
+						const detail = signals[key];
+						const light = detail?.light || 'gray';
+						const value = detail?.value ?? '-';
+						const dotColor = lightDotColors[light] || lightDotColors.gray;
+						signalsHtml += `<div class="regime-signal-row">
+							<span class="regime-signal-dot" style="background:${dotColor}"></span>
+							<span class="regime-signal-name">${label}</span>
+							<span class="regime-signal-value">${value}</span>
+						</div>`;
+					}
+
+					const regimeLabel = isZh ? h.regime : (colors.label || h.regime);
+					const greenInfo = `${h.green_count}/${Object.keys(signals).length || 5} ${isZh ? '绿灯' : 'green'}`;
+
+					tooltipEl.innerHTML = `
+						<div class="regime-tooltip-date">${h.date}</div>
+						<div class="regime-tooltip-regime" style="--regime-color:${colors.border}">
+							<strong>${regimeLabel}</strong> · ${greenInfo}
+						</div>
+						<div class="regime-tooltip-signals">${signalsHtml}</div>
+					`;
+					tooltipEl.style.display = 'block';
+
+					// Position tooltip near the point
+					const canvasRect = chart.canvas.getBoundingClientRect();
+					const tooltipRect = tooltipEl.getBoundingClientRect();
+					let left = canvasRect.left + tooltip.caretX + 12;
+					let top = canvasRect.top + tooltip.caretY - tooltipRect.height / 2;
+
+					// Keep within viewport
+					if (left + tooltipRect.width > window.innerWidth - 16) {
+						left = canvasRect.left + tooltip.caretX - tooltipRect.width - 12;
+					}
+					if (top < 8) top = 8;
+					if (top + tooltipRect.height > window.innerHeight - 8) top = window.innerHeight - tooltipRect.height - 8;
+
+					tooltipEl.style.left = left + 'px';
+					tooltipEl.style.top = top + 'px';
+				};
+
 				new Chart(regimeCanvas, {
 					type: 'line',
 					data: {
@@ -1745,11 +1861,12 @@ const stages = [
 								label: 'VIX',
 								data: history.map((h) => h.vix),
 								borderColor: '#8953d1',
-								backgroundColor: 'rgba(137, 83, 209, 0.15)',
+								backgroundColor: 'rgba(137, 83, 209, 0.12)',
 								fill: true,
 								tension: 0.28,
-								pointRadius: 0,
-								pointHoverRadius: 4,
+								pointRadius: 2,
+								pointHoverRadius: 5,
+								pointHitRadius: 10,
 								borderWidth: 2,
 							},
 						],
@@ -1757,15 +1874,15 @@ const stages = [
 					options: {
 						responsive: true,
 						maintainAspectRatio: false,
+						interaction: {
+							mode: 'index',
+							intersect: false,
+						},
 						plugins: {
 							legend: { display: false },
 							tooltip: {
-								callbacks: {
-									afterLabel: (ctx) => {
-										const h = history[ctx.dataIndex];
-										return `Regime: ${h.regime} · ${h.green_count}/5 green`;
-									},
-								},
+								enabled: false,
+								external: externalTooltipHandler,
 							},
 						},
 						scales: {
@@ -1779,6 +1896,12 @@ const stages = [
 							},
 						},
 					},
+					plugins: [regimeBandsPlugin],
+				});
+
+				// Hide tooltip on mouse leave
+				regimeCanvas.addEventListener('mouseleave', () => {
+					tooltipEl.style.display = 'none';
 				});
 			}
 
@@ -2227,6 +2350,58 @@ const stages = [
 		#regimeChart {
 			width: 100%;
 			height: 100%;
+		}
+		/* Interactive regime tooltip */
+		.regime-tooltip {
+			position: fixed;
+			z-index: 100;
+			background: color-mix(in srgb, var(--p-card) 96%, black);
+			border: 1px solid var(--p-border);
+			border-radius: 0.75rem;
+			padding: 0.75rem 1rem;
+			pointer-events: none;
+			min-width: 180px;
+			box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+			backdrop-filter: blur(8px);
+		}
+		.regime-tooltip-date {
+			font-family: Georgia, serif;
+			font-size: 0.82rem;
+			color: var(--p-text-faint);
+			letter-spacing: 0.04em;
+			margin-bottom: 0.3rem;
+		}
+		.regime-tooltip-regime {
+			font-size: 0.88rem;
+			margin-bottom: 0.5rem;
+			color: var(--regime-color, var(--p-text));
+		}
+		.regime-tooltip-regime strong {
+			color: var(--regime-color, var(--p-text));
+		}
+		.regime-tooltip-signals {
+			display: grid;
+			gap: 0.25rem;
+		}
+		.regime-signal-row {
+			display: flex;
+			align-items: center;
+			gap: 0.4rem;
+			font-size: 0.78rem;
+		}
+		.regime-signal-dot {
+			width: 6px;
+			height: 6px;
+			border-radius: 50%;
+			flex-shrink: 0;
+		}
+		.regime-signal-name {
+			color: var(--p-text-faint);
+			flex: 1;
+		}
+		.regime-signal-value {
+			font-family: Georgia, serif;
+			color: var(--p-text);
 		}
 		.portfolio-empty-overlay {
 			position: absolute;

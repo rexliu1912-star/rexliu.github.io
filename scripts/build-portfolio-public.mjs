@@ -130,15 +130,19 @@ function buildRegime(history, fallback) {
   // enough points yet (< 7 days).
   const history60d = parsed.slice(-60).map((r) => {
     const lights = {};
+    const signalDetails = {};
     for (const [k, v] of Object.entries(r.signals || {})) {
       if (v && v.light) lights[k] = v.light;
+      if (v) signalDetails[k] = { value: v.value, light: v.light || 'gray', status: v.status || null };
     }
     return {
       date: r.date,
       regime: r.regime,
       green_count: r.green_count,
+      aggression: r.aggression || null,
       vix: r.signals?.vix?.value ?? null,
       lights,
+      signalDetails,
     };
   });
 
