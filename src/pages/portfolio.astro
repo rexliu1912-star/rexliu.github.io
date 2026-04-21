@@ -526,9 +526,14 @@ const stages = [
 							</div>
 						)}
 						{p.next_event ? (
-							<span class={`position-event urgency-${p.next_event.urgency}`}>
-								<time>{p.next_event.date}</time>
-								<span>{p.next_event.label}</span>
+							<span
+								class={`position-event urgency-${p.next_event.urgency}`}
+								data-event-date={p.next_event.date}
+								data-event-label={p.next_event.label}
+								data-event-urgency={String(p.next_event.urgency)}
+							>
+								<span class="event-countdown">—</span>
+								<span class="event-label">{p.next_event.label}</span>
 							</span>
 						) : (
 							<span class="position-event-empty">
@@ -2015,6 +2020,7 @@ const stages = [
 		function __runPortfolio() {
 			__initPortfolioAnimate();
 			__initPortfolioCharts();
+			__initCatalystCountdown();
 		}
 		if (document.readyState === 'loading') {
 			document.addEventListener('DOMContentLoaded', __runPortfolio, { once: true });
@@ -2024,6 +2030,34 @@ const stages = [
 		document.addEventListener('astro:page-load', __runPortfolio);
 		// Re-init charts on theme change
 		document.addEventListener('themechange', __initPortfolioCharts);
+
+		function __initCatalystCountdown() {
+			const pills = document.querySelectorAll('.position-event[data-event-date]');
+			const now = new Date();
+			now.setHours(0, 0, 0, 0);
+			const isZh = (document.documentElement.getAttribute('data-lang') || 'en') === 'zh';
+			pills.forEach((pill) => {
+				const d = pill.getAttribute('data-event-date');
+				if (!d) return;
+				const target = new Date(d + 'T00:00:00');
+				const diff = Math.ceil((target - now) / 86400000);
+				const cd = pill.querySelector('.event-countdown');
+				if (!cd) return;
+				if (diff < 0) {
+					pill.classList.add('event-past');
+					return;
+				}
+				if (diff === 0) {
+					cd.textContent = isZh ? '⏱ 今天' : '⏱ Today';
+				} else if (diff === 1) {
+					cd.textContent = isZh ? '⏱ 明天' : '⏱ Tomorrow';
+				} else {
+					cd.textContent = isZh ? `⏱ ${diff}天后` : `⏱ ${diff}d`;
+				}
+				const label = pill.querySelector('.event-label');
+				if (label) label.title = d + ' · ' + (pill.getAttribute('data-event-label') || '');
+			});
+		}
 	</script>
 
 	<style>
@@ -3123,14 +3157,59 @@ const stages = [
 		.position-event {
 			display: inline-flex;
 			align-items: center;
-			gap: 0.5rem;
+			gap: 0.45rem;
+			padding: 0.2rem 0.6rem;
+			border-radius: 999px;
+			font-size: 0.75rem;
+			line-height: 1.3;
+			border: 1px solid var(--p-border);
+			background: color-mix(in srgb, var(--p-card) 90%, transparent);
+			transition: border-color 0.3s, box-shadow 0.3s;
+		}
+		.event-countdown {
+			font-weight: 700;
+			white-space: nowrap;
 			color: var(--p-text-soft);
 		}
-		.position-event time {
-			font-weight: 600;
+		.event-label {
+			color: var(--p-text-faint);
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			max-width: 14ch;
 		}
-		.position-event.urgency-3 time {
+		/* urgency tiers */
+		.position-event.urgency-4,
+		.position-event.urgency-5 {
+			border-color: rgba(251, 146, 60, 0.45);
+		}
+		.position-event.urgency-4 .event-countdown,
+		.position-event.urgency-5 .event-countdown {
+			color: #fb923c;
+		}
+		.position-event.urgency-5 {
+			animation: event-pulse 2.4s ease-in-out infinite;
+		}
+		.position-event.urgency-3 {
+			border-color: rgba(239, 68, 68, 0.3);
+		}
+		.position-event.urgency-3 .event-countdown {
 			color: #ef4444;
+		}
+		.position-event.urgency-1,
+		.position-event.urgency-2 {
+			border-color: rgba(100, 116, 139, 0.25);
+		}
+		.position-event.urgency-1 .event-countdown,
+		.position-event.urgency-2 .event-countdown {
+			color: #64748b;
+		}
+		.position-event.event-past {
+			display: none;
+		}
+		@keyframes event-pulse {
+			0%, 100% { box-shadow: 0 0 0 0 rgba(251, 146, 60, 0); }
+			50% { box-shadow: 0 0 8px 2px rgba(251, 146, 60, 0.25); }
 		}
 
 		/* ── Clearance Gallery ───────────────────── */
