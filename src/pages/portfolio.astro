@@ -559,83 +559,55 @@ const stages = [
 					<span class="lang-zh">从电子到智能</span>
 				</h2>
 			</header>
-			<div class="topology-pipeline">
-				{/* ── L1 Baseload ── */}
-				<div class="topo-pipe-step topo-held">
-					<div class="topo-pipe-rail">L1</div>
-					<div class="topo-pipe-body">
-						<div class="topo-pipe-label">
-							<span class="lang-en">Baseload Generation</span>
-							<span class="lang-zh">基荷发电</span>
-						</div>
-						<div class="topo-pipe-nodes">
-							<span class="topo-tag topo-tag-held">600900</span>
-							<span class="topo-tag topo-tag-held">01816</span>
-							<span class="topo-tag topo-tag-held">003816</span>
-							<span class="topo-tag topo-tag-held">CEG</span>
-						</div>
+			<div class="topology-cake">
+				{/* ── L5 Compute (top, narrowest) ── */}
+				<div class="topo-cake-layer topo-held" style="--cake-w: 32%">
+					<div class="topo-cake-label">
+						L5 · <span class="lang-en">AI Compute</span><span class="lang-zh">AI 算力</span>
+					</div>
+					<div class="topo-cake-nodes">
+						<span class="topo-tag topo-tag-held">AAPL</span>
 					</div>
 				</div>
-				<div class="topo-pipe-arrow">↓</div>
-
-				{/* ── L2 Grid ── */}
-				<div class="topo-pipe-step topo-held">
-					<div class="topo-pipe-rail">L2</div>
-					<div class="topo-pipe-body">
-						<div class="topo-pipe-label">
-							<span class="lang-en">Transmission &amp; Distribution</span>
-							<span class="lang-zh">输配电</span>
-						</div>
-						<div class="topo-pipe-nodes">
-							<span class="topo-tag topo-tag-held">600089</span>
-						</div>
-					</div>
-				</div>
-				<div class="topo-pipe-arrow">↓</div>
-
-				{/* ── L3 Equipment ── */}
-				<div class="topo-pipe-step topo-watch">
-					<div class="topo-pipe-rail">L3</div>
-					<div class="topo-pipe-body">
-						<div class="topo-pipe-label">
-							<span class="lang-en">Power Equipment</span>
-							<span class="lang-zh">电力设备</span>
-						</div>
-						<div class="topo-pipe-nodes">
-							<span class="topo-tag topo-tag-watch">ETN</span>
-							<span class="topo-tag topo-tag-watch">HUBB</span>
-						</div>
-					</div>
-				</div>
-				<div class="topo-pipe-arrow">↓</div>
-
 				{/* ── L4 Data Center ── */}
-				<div class="topo-pipe-step topo-ghost">
-					<div class="topo-pipe-rail">L4</div>
-					<div class="topo-pipe-body">
-						<div class="topo-pipe-label">
-							<span class="lang-en">Data Centers</span>
-							<span class="lang-zh">数据中心</span>
-							<span class="topo-pipe-sub">
-								<span class="lang-en">Demand Driver</span>
-								<span class="lang-zh">需求引擎</span>
-							</span>
-						</div>
+				<div class="topo-cake-layer topo-ghost" style="--cake-w: 44%">
+					<div class="topo-cake-label">
+						L4 · <span class="lang-en">Data Centers</span><span class="lang-zh">数据中心</span>
+						<span class="topo-cake-sub">
+							<span class="lang-en">Demand Driver</span>
+							<span class="lang-zh">需求引擎</span>
+						</span>
 					</div>
 				</div>
-				<div class="topo-pipe-arrow">↓</div>
-
-				{/* ── L5 Compute ── */}
-				<div class="topo-pipe-step topo-held">
-					<div class="topo-pipe-rail">L5</div>
-					<div class="topo-pipe-body">
-						<div class="topo-pipe-label">
-							<span class="lang-en">AI Compute</span>
-							<span class="lang-zh">AI 算力</span>
-						</div>
-						<div class="topo-pipe-nodes">
-							<span class="topo-tag topo-tag-held">AAPL</span>
-						</div>
+				{/* ── L3 Equipment ── */}
+				<div class="topo-cake-layer topo-watch" style="--cake-w: 58%">
+					<div class="topo-cake-label">
+						L3 · <span class="lang-en">Power Equipment</span><span class="lang-zh">电力设备</span>
+					</div>
+					<div class="topo-cake-nodes">
+						<span class="topo-tag topo-tag-watch">ETN</span>
+						<span class="topo-tag topo-tag-watch">HUBB</span>
+					</div>
+				</div>
+				{/* ── L2 Grid ── */}
+				<div class="topo-cake-layer topo-held" style="--cake-w: 74%">
+					<div class="topo-cake-label">
+						L2 · <span class="lang-en">Transmission &amp; Distribution</span><span class="lang-zh">输配电</span>
+					</div>
+					<div class="topo-cake-nodes">
+						<span class="topo-tag topo-tag-held">600089</span>
+					</div>
+				</div>
+				{/* ── L1 Baseload (bottom, widest) ── */}
+				<div class="topo-cake-layer topo-held" style="--cake-w: 100%">
+					<div class="topo-cake-label">
+						L1 · <span class="lang-en">Baseload Generation</span><span class="lang-zh">基荷发电</span>
+					</div>
+					<div class="topo-cake-nodes">
+						<span class="topo-tag topo-tag-held">600900</span>
+						<span class="topo-tag topo-tag-held">01816</span>
+						<span class="topo-tag topo-tag-held">003816</span>
+						<span class="topo-tag topo-tag-held">CEG</span>
 					</div>
 				</div>
 			</div>
@@ -3009,108 +2981,82 @@ const stages = [
 		}
 
 		/* ── Supply Chain Topology ────────────── */
-		/* ── Sector Topology Pipeline ──────────── */
-		.topology-pipeline {
+		/* ── Sector Topology Cake (Layered Pyramid) ─── */
+		.topology-cake {
 			display: flex;
 			flex-direction: column;
-			align-items: stretch;
-			gap: 0;
-			max-width: 540px;
-			margin: 0 auto;
+			align-items: center;
+			gap: 3px;
+			padding: 1rem 0;
 		}
-		.topo-pipe-step {
+		.topo-cake-layer {
+			width: var(--cake-w);
 			display: flex;
-			align-items: stretch;
-			gap: 0.75rem;
-			background: var(--p-card);
-			border: 1px solid var(--p-border);
-			border-radius: 10px;
-			padding: 0.75rem 1rem;
-			transition: border-color 0.2s;
-		}
-		.topo-pipe-step:hover {
-			border-color: rgba(137, 83, 209, 0.4);
-		}
-		.topo-pipe-rail {
-			display: flex;
+			flex-direction: column;
 			align-items: center;
 			justify-content: center;
-			width: 2.5rem;
-			min-width: 2.5rem;
-			font-size: 0.65rem;
-			font-weight: 800;
-			letter-spacing: 0.06em;
-			text-transform: uppercase;
-			color: rgba(137, 83, 209, 0.7);
-			border-right: 1px solid var(--p-border);
-			padding-right: 0.75rem;
-			flex-shrink: 0;
+			gap: 0.3rem;
+			padding: 0.55rem 1rem;
+			background: linear-gradient(180deg, rgba(137,83,209,0.10) 0%, rgba(137,83,209,0.04) 100%);
+			border: 1px solid rgba(137,83,209,0.18);
+			border-radius: 8px;
+			transition: border-color 0.2s, box-shadow 0.2s;
+			text-align: center;
 		}
-		.topo-pipe-body {
-			display: flex;
-			flex-direction: column;
-			gap: 0.35rem;
-			min-width: 0;
+		.topo-cake-layer:hover {
+			border-color: rgba(137,83,209,0.45);
+			box-shadow: 0 0 16px rgba(137,83,209,0.12);
 		}
-		.topo-pipe-label {
-			font-size: 0.82rem;
+		.topo-cake-label {
+			font-size: 0.78rem;
 			font-weight: 600;
 			color: var(--p-text);
+			white-space: nowrap;
 		}
-		.topo-pipe-sub {
-			font-size: 0.68rem;
+		.topo-cake-sub {
+			font-size: 0.65rem;
 			font-weight: 400;
 			color: var(--p-text-faint);
-			margin-left: 0.5rem;
+			margin-left: 0.4rem;
 		}
-		.topo-pipe-nodes {
+		.topo-cake-nodes {
 			display: flex;
 			flex-wrap: wrap;
-			gap: 0.35rem;
+			gap: 0.3rem;
+			justify-content: center;
 		}
 		.topo-tag {
 			display: inline-flex;
 			align-items: center;
-			padding: 0.15rem 0.55rem;
+			padding: 0.12rem 0.5rem;
 			border-radius: 6px;
-			font-size: 0.7rem;
+			font-size: 0.68rem;
 			font-weight: 700;
 			font-family: var(--font-mono);
 			letter-spacing: 0.03em;
 		}
 		.topo-tag-held {
-			background: rgba(137, 83, 209, 0.2);
-			color: rgba(137, 83, 209, 0.95);
-			border: 1px solid rgba(137, 83, 209, 0.3);
+			background: rgba(137, 83, 209, 0.22);
+			color: rgba(190, 160, 240, 0.95);
+			border: 1px solid rgba(137, 83, 209, 0.35);
 		}
 		.topo-tag-watch {
 			background: transparent;
-			color: rgba(137, 83, 209, 0.6);
+			color: rgba(137, 83, 209, 0.55);
 			border: 1px dashed rgba(137, 83, 209, 0.4);
 		}
-		.topo-pipe-arrow {
-			text-align: center;
-			color: rgba(137, 83, 209, 0.3);
-			font-size: 1rem;
-			line-height: 1;
-			padding: 0.15rem 0;
-			user-select: none;
-		}
-		/* State variants */
-		.topo-held .topo-pipe-rail {
-			color: rgba(137, 83, 209, 0.85);
-		}
-		.topo-watch .topo-pipe-rail {
-			color: rgba(137, 83, 209, 0.45);
-		}
-		.topo-ghost .topo-pipe-rail {
-			color: rgba(137, 83, 209, 0.25);
-		}
+		/* Ghost layer (L4) — dashed + dim */
 		.topo-ghost {
-			opacity: 0.55;
+			opacity: 0.5;
 			border-style: dashed;
 		}
-		/* Light theme */
+		/* Watch layer — softer */
+		.topo-watch .topo-cake-label { color: var(--p-text-soft); }
+		/* Light theme overrides */
+		:global(html[data-theme='light']) .topo-cake-layer {
+			background: linear-gradient(180deg, rgba(137,83,209,0.06) 0%, rgba(137,83,209,0.02) 100%);
+			border-color: rgba(137,83,209,0.15);
+		}
 		:global(html[data-theme='light']) .topo-tag-held {
 			background: rgba(137, 83, 209, 0.12);
 			color: rgba(100, 50, 170, 0.95);
@@ -3126,7 +3072,7 @@ const stages = [
 			justify-content: center;
 			font-size: 0.72rem;
 			opacity: 0.6;
-			margin-top: 0.75rem;
+			margin-top: 0.5rem;
 		}
 		.legend-item {
 			display: flex;
@@ -3147,24 +3093,6 @@ const stages = [
 		.legend-ghost {
 			background: transparent;
 			border: 2px dashed rgba(137, 83, 209, 0.2);
-		}
-		/* Desktop: 2-column grid for pipeline */
-		@media (min-width: 768px) {
-			.topology-pipeline {
-				max-width: 100%;
-				display: grid;
-				grid-template-columns: 1fr 1fr;
-				gap: 0.5rem 1.5rem;
-			}
-			.topo-pipe-arrow {
-				display: none;
-			}
-			/* Flow arrow between columns — use pseudo-element on odd steps */
-			.topo-pipe-step:nth-child(1) { grid-column: 1; }
-			.topo-pipe-step:nth-child(3) { grid-column: 1; }
-			.topo-pipe-step:nth-child(5) { grid-column: 1; }
-			.topo-pipe-step:nth-child(7) { grid-column: 2; grid-row: 1; }
-			.topo-pipe-step:nth-child(9) { grid-column: 2; grid-row: 2; }
 		}
 		.rail-label {
 			font-size: 0.72rem;
