@@ -268,7 +268,8 @@ const stages = [
 
 		<nav class="portfolio-section-nav" aria-label="Section navigation">
 			<a href="#positions-section">Positions</a>
-			<a href="#clearance-section">Clearance</a>
+			<a href="#supply-chain-section">Chain</a>
+			<a href="#clearance-section">Trades</a>
 			<a href="#allocation-section">Allocation</a>
 			<a href="#regime-section">Regime</a>
 			<a href="#watchlist-section">Watchlist</a>
@@ -538,6 +539,126 @@ const stages = [
 					</footer>
 					</article>
 				))}
+			</div>
+		</section>
+
+		{/* ═══ Section 5.5: Supply Chain Topology ═══ */}
+		<section class="portfolio-section fade-in-up" id="supply-chain-section">
+			<header class="portfolio-section-head">
+				<p class="portfolio-kicker">
+					<span class="lang-en">Investment Chain · Sector Topology</span>
+					<span class="lang-zh">投资链条 · 板块拓扑</span>
+				</p>
+				<h2 class="font-serif text-2xl font-semibold">
+					<span class="lang-en">From Electrons to Intelligence</span>
+					<span class="lang-zh">从电子到智能</span>
+				</h2>
+			</header>
+			<div class="topology-container">
+				<svg viewBox="0 0 960 380" class="topology-svg" aria-label="Sector supply chain topology">
+					{/* ── Flow arrows ── */}
+					<defs>
+						<marker id="arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+							<path d="M0,0 L8,3 L0,6" fill="rgba(137,83,209,0.35)" />
+						</marker>
+						<linearGradient id="flowGrad" x1="0" y1="0" x2="1" y2="0">
+							<stop offset="0%" stop-color="rgba(137,83,209,0.12)" />
+							<stop offset="100%" stop-color="rgba(137,83,209,0.30)" />
+						</linearGradient>
+					</defs>
+					{/* L1→L2 */}
+					<line x1="220" y1="190" x2="320" y2="190" stroke="url(#flowGrad)" stroke-width="2" marker-end="url(#arrow)" />
+					{/* L2→L3 */}
+					<line x1="490" y1="190" x2="580" y2="190" stroke="url(#flowGrad)" stroke-width="2" marker-end="url(#arrow)" />
+					{/* L3→L4 */}
+					<line x1="720" y1="190" x2="790" y2="190" stroke="url(#flowGrad)" stroke-width="2" marker-end="url(#arrow)" />
+					{/* L4→L5 */}
+					<line x1="860" y1="190" x2="860" y2="80" stroke="url(#flowGrad)" stroke-width="2" marker-end="url(#arrow)" />
+
+					{/* ── L1 Baseload ── */}
+					<g class="topo-layer" transform="translate(0, 0)">
+						<rect x="20" y="130" width="200" height="120" rx="12" class="topo-layer-bg" />
+						<text x="120" y="158" class="topo-layer-label">L1 · <tspan class="lang-en">Baseload</tspan><tspan class="lang-zh">基荷</tspan></text>
+						<g transform="translate(40, 175)">
+							<circle r="14" class="topo-node-held" />
+							<text class="topo-node-ticker" dy="4">600900</text>
+						</g>
+						<g transform="translate(120, 175)">
+							<circle r="14" class="topo-node-held" />
+							<text class="topo-node-ticker" dy="4">01816</text>
+						</g>
+						<g transform="translate(120, 220)">
+							<circle r="14" class="topo-node-held" />
+							<text class="topo-node-ticker" dy="4">003816</text>
+						</g>
+						<g transform="translate(200, 175)">
+							<circle r="14" class="topo-node-held" />
+							<text class="topo-node-ticker" dy="4">CEG</text>
+						</g>
+					</g>
+
+					{/* ── L2 Transmission ── */}
+					<g class="topo-layer" transform="translate(320, 0)">
+						<rect x="0" y="130" width="170" height="120" rx="12" class="topo-layer-bg" />
+						<text x="85" y="158" class="topo-layer-label">L2 · <tspan class="lang-en">Grid</tspan><tspan class="lang-zh">输配</tspan></text>
+						<g transform="translate(85, 195)">
+							<circle r="14" class="topo-node-held" />
+							<text class="topo-node-ticker" dy="4">600089</text>
+						</g>
+					</g>
+
+					{/* ── L3 Conversion ── */}
+					<g class="topo-layer" transform="translate(580, 0)">
+						<rect x="0" y="130" width="140" height="120" rx="12" class="topo-layer-bg" />
+						<text x="70" y="158" class="topo-layer-label">L3 · <tspan class="lang-en">Equip</tspan><tspan class="lang-zh">转换</tspan></text>
+						<g transform="translate(45, 195)">
+							<circle r="14" class="topo-node-watch" />
+							<text class="topo-node-ticker" dy="4">ETN</text>
+						</g>
+						<g transform="translate(95, 195)">
+							<circle r="14" class="topo-node-watch" />
+							<text class="topo-node-ticker" dy="4">HUBB</text>
+						</g>
+					</g>
+
+					{/* ── L4 Data Center ── */}
+					<g class="topo-layer" transform="translate(790, 130)">
+						<rect x="0" y="0" width="140" height="90" rx="12" class="topo-layer-bg topo-layer-ghost" />
+						<text x="70" y="25" class="topo-layer-label">L4 · <tspan class="lang-en">DC</tspan><tspan class="lang-zh">数据中心</tspan></text>
+						<text x="70" y="55" class="topo-layer-sub">
+							<tspan class="lang-en">Demand Driver</tspan>
+							<tspan class="lang-zh">需求引擎</tspan>
+						</text>
+					</g>
+
+					{/* ── L5 Compute ── */}
+					<g class="topo-layer" transform="translate(790, 0)">
+						<rect x="0" y="0" width="140" height="70" rx="12" class="topo-layer-bg" />
+						<text x="70" y="25" class="topo-layer-label">L5 · <tspan class="lang-en">Compute</tspan><tspan class="lang-zh">算力</tspan></text>
+						<g transform="translate(70, 50)">
+							<circle r="14" class="topo-node-held" />
+							<text class="topo-node-ticker" dy="4">AAPL</text>
+						</g>
+					</g>
+				</svg>
+
+				<div class="topology-legend">
+					<span class="legend-item">
+						<span class="legend-dot legend-held"></span>
+						<span class="lang-en">Held</span>
+						<span class="lang-zh">持仓</span>
+					</span>
+					<span class="legend-item">
+						<span class="legend-dot legend-watch"></span>
+						<span class="lang-en">Watchlist</span>
+						<span class="lang-zh">观察</span>
+					</span>
+					<span class="legend-item">
+						<span class="legend-dot legend-ghost"></span>
+						<span class="lang-en">Thematic</span>
+						<span class="lang-zh">主题</span>
+					</span>
+				</div>
 			</div>
 		</section>
 
@@ -2687,6 +2808,95 @@ const stages = [
 			box-shadow: 0 0 0 1px rgba(137, 83, 209, 0.5);
 			z-index: 1;
 			transition: left 0.3s ease;
+		}
+
+		/* ── Supply Chain Topology ────────────── */
+		.topology-container {
+			display: flex;
+			flex-direction: column;
+			gap: 1rem;
+		}
+		.topology-svg {
+			width: 100%;
+			height: auto;
+			max-height: 420px;
+		}
+		.topo-layer-bg {
+			fill: rgba(137, 83, 209, 0.06);
+			stroke: rgba(137, 83, 209, 0.15);
+			stroke-width: 1;
+		}
+		.topo-layer-ghost {
+			fill: rgba(137, 83, 209, 0.03);
+			stroke-dasharray: 4 4;
+			stroke: rgba(137, 83, 209, 0.10);
+		}
+		.topo-layer-label {
+			font-size: 11px;
+			font-weight: 600;
+			fill: rgba(137, 83, 209, 0.65);
+			text-anchor: middle;
+			font-family: var(--font-sans);
+		}
+		.topo-layer-sub {
+			font-size: 9px;
+			fill: var(--p-text-faint);
+			text-anchor: middle;
+			font-family: var(--font-sans);
+			opacity: 0.5;
+		}
+		.topo-node-held {
+			fill: rgba(137, 83, 209, 0.85);
+			stroke: rgba(137, 83, 209, 0.4);
+			stroke-width: 2;
+		}
+		.topo-node-watch {
+			fill: transparent;
+			stroke: rgba(137, 83, 209, 0.5);
+			stroke-width: 2;
+			stroke-dasharray: 3 3;
+		}
+		.topo-node-ticker {
+			font-size: 8px;
+			font-weight: 700;
+			fill: var(--p-text);
+			text-anchor: middle;
+			font-family: var(--font-mono);
+			pointer-events: none;
+		}
+		.topology-legend {
+			display: flex;
+			gap: 1.25rem;
+			justify-content: center;
+			font-size: 0.72rem;
+			opacity: 0.6;
+		}
+		.legend-item {
+			display: flex;
+			align-items: center;
+			gap: 0.35rem;
+		}
+		.legend-dot {
+			width: 10px;
+			height: 10px;
+			border-radius: 50%;
+			flex-shrink: 0;
+		}
+		.legend-held { background: rgba(137, 83, 209, 0.85); }
+		.legend-watch {
+			background: transparent;
+			border: 2px dashed rgba(137, 83, 209, 0.5);
+		}
+		.legend-ghost {
+			background: transparent;
+			border: 2px dashed rgba(137, 83, 209, 0.2);
+		}
+		:global(html[data-theme='light']) .topo-node-held {
+			fill: rgba(137, 83, 209, 0.25);
+			stroke: rgba(137, 83, 209, 0.6);
+		}
+		:global(html[data-theme='light']) .topo-node-ticker {
+			fill: #1a1a2e;
 		}
 		.rail-label {
 			font-size: 0.72rem;
