@@ -47,12 +47,8 @@ function formatShortDate(date: Date) {
 			{categories.map((cat) => (
 				<button
 					data-filter={cat}
-					class:list={[
-						"bookmark-filter-btn rounded-full border px-3 py-1 font-serif text-xs transition-all cursor-pointer",
-						cat === "all"
-							? "border-[#8953d1] bg-[#8953d1]/10 text-[#8953d1] dark:border-[#a175e8] dark:bg-[#a175e8]/10 dark:text-[#a175e8]"
-							: "border-gray-200 text-gray-500 hover:border-[#8953d1] hover:text-[#8953d1] dark:border-gray-700 dark:text-gray-400 dark:hover:border-[#a175e8] dark:hover:text-[#a175e8]",
-					]}
+					data-active={cat === "all" ? "" : undefined}
+					class="bookmark-filter-btn rounded-full border px-3 py-1 font-serif text-xs transition-all cursor-pointer"
 				>
 					<span class="lang-en">{categoryLabels[cat]?.en || cat}</span><span class="lang-zh">{categoryLabels[cat]?.zh || cat}</span>
 				</button>
@@ -147,12 +143,39 @@ function formatShortDate(date: Date) {
 		-webkit-box-orient: vertical;
 		overflow: hidden;
 	}
+	/* Filter buttons */
+	.bookmark-filter-btn {
+		border-color: #e5e7eb;
+		color: #6b7280;
+	}
+	.bookmark-filter-btn:hover {
+		border-color: #8953d1;
+		color: #8953d1;
+	}
+	.bookmark-filter-btn[data-active] {
+		border-color: #8953d1;
+		background: rgba(137, 83, 209, 0.1);
+		color: #8953d1;
+	}
 	.bookmark-card {
 		background: #fffaef;
 		box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
 	}
 	.bookmark-card:hover {
 		box-shadow: 0 4px 12px rgba(137, 83, 209, 0.15);
+	}
+	:global([data-theme="dark"]) .bookmark-filter-btn {
+		border-color: #374151;
+		color: #9ca3af;
+	}
+	:global([data-theme="dark"]) .bookmark-filter-btn:hover {
+		border-color: #a175e8;
+		color: #a175e8;
+	}
+	:global([data-theme="dark"]) .bookmark-filter-btn[data-active] {
+		border-color: #a175e8;
+		background: rgba(161, 117, 232, 0.1);
+		color: #a175e8;
 	}
 	:global([data-theme="dark"]) .bookmark-card {
 		background: #181818;
@@ -173,13 +196,9 @@ function formatShortDate(date: Date) {
 			btn.addEventListener("click", () => {
 				const filter = btn.dataset.filter || "all";
 
-				// Update active state (match AI Timeline style)
-				filters.forEach((b) => {
-					b.classList.remove("border-[#8953d1]", "bg-[#8953d1]/10", "text-[#8953d1]", "dark:border-[#a175e8]", "dark:bg-[#a175e8]/10", "dark:text-[#a175e8]");
-					b.classList.add("border-gray-200", "text-gray-500", "dark:border-gray-700", "dark:text-gray-400");
-				});
-				btn.classList.remove("border-gray-200", "text-gray-500", "dark:border-gray-700", "dark:text-gray-400");
-				btn.classList.add("border-[#8953d1]", "bg-[#8953d1]/10", "text-[#8953d1]", "dark:border-[#a175e8]", "dark:bg-[#a175e8]/10", "dark:text-[#a175e8]");
+				// Update active state via data-active attribute
+				filters.forEach((b) => delete b.dataset.active);
+				btn.dataset.active = "";
 
 				// Filter cards
 				let visibleCount = 0;
