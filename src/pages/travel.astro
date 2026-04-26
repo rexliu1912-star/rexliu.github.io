@@ -1258,11 +1258,11 @@ const meta = {
       const provEl = document.getElementById("province-count");
       if (provEl) provEl.textContent = `across ${provinceSet.size} provinces`;
 
-      // Longest leg — Shanghai → Dali (start of nomad journey)
+      // Longest leg — Chengdu → Yining
       const legEl = document.getElementById("longest-leg");
       const legNoteEl = document.getElementById("longest-leg-note");
-      if (legEl) legEl.textContent = "2,162 km";
-      if (legNoteEl) legNoteEl.textContent = "Shanghai → Dali";
+      if (legEl) legEl.textContent = "2,487 km";
+      if (legNoteEl) legNoteEl.textContent = "Chengdu → Yining";
 
       // Prior city markers — skip merged cities (rendered via primary)
       priorCities.forEach(city => {
@@ -1406,8 +1406,8 @@ const meta = {
           const s = Math.floor(((now - arr) % 60000) / 1000);
           const isZh = getLang() === "zh";
           counterEl.textContent = isZh
-            ? `成都第 ${d}天 ${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`
-            : `Day ${d} in Chengdu · ${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+            ? `${_currentCityItem.nameCN}第 ${d}天 ${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`
+            : `Day ${d} in ${_currentCityItem.name} · ${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
         };
         counterEl.classList.add("is-visible");
         updateCounter();
@@ -1637,7 +1637,7 @@ const meta = {
         const provEl = document.getElementById("province-count");
         if (provEl) provEl.textContent = lang === "zh" ? `横跨 ${provinceSet.size} 个省份` : `across ${provinceSet.size} provinces`;
         const legNoteEl = document.getElementById("longest-leg-note");
-        if (legNoteEl) legNoteEl.textContent = lang === "zh" ? "上海 → 大理" : "Shanghai → Dali";
+        if (legNoteEl) legNoteEl.textContent = lang === "zh" ? "成都 → 伊宁" : "Chengdu → Yining";
       };
       updateI18n();
 
