@@ -126,6 +126,16 @@ const meta = {
         <strong class="font-serif" id="best-meal">—</strong>
         <p id="best-meal-note" data-i18n-en="Every city leaves a taste memory." data-i18n-zh="每座城市都有味道的记忆。">Every city leaves a taste memory.</p>
       </article>
+      <article class="insight-card">
+        <span class="insight-label" data-i18n-en="Flights Taken" data-i18n-zh="飞行次数">Flights Taken</span>
+        <strong class="font-serif" id="flights-taken">—</strong>
+        <p id="flights-note" data-i18n-en="When the road gets too long." data-i18n-zh="路太远，就飞过去。">When the road gets too long.</p>
+      </article>
+      <article class="insight-card insight-card--wide">
+        <span class="insight-label" data-i18n-en="Footprint Extremes" data-i18n-zh="足迹极值">Footprint Extremes</span>
+        <strong class="font-serif" id="footprint-extremes">—</strong>
+        <p id="footprint-note" data-i18n-en="The four corners of the journey." data-i18n-zh="旅途的四极。">The four corners of the journey.</p>
+      </article>
     </div>
   </section>
 
@@ -1218,6 +1228,35 @@ const meta = {
       el("best-meal-note").textContent     = _currentCityItem?.mealCN
         ? (getLang() === "zh" ? `${_currentCityItem.nameCN}当下推荐：${_currentCityItem.mealCN}` : `${_currentCityItem.nameCN} right now: ${_currentCityItem.mealCN}`) : "";
 
+      // Flights taken (>600 km legs)
+      const FLIGHT_THRESHOLD = 600;
+      const sortedForFlights = [...cities].sort((a,b) => new Date(a.arrival) - new Date(b.arrival));
+      let flightCount = 0;
+      for (let i = 1; i < sortedForFlights.length; i++) {
+        if (haversine(sortedForFlights[i-1], sortedForFlights[i]) > FLIGHT_THRESHOLD) flightCount++;
+      }
+      el("flights-taken").textContent = flightCount;
+      el("flights-note").textContent = getLang() === "zh"
+        ? `${flightCount} 次飞行，${cities.length} 座城市间的远途跳跃`
+        : `${flightCount} hops across ${cities.length} cities`;
+
+      // Footprint extremes (all nomad + prior cities)
+      const allPts = [...cities, ...priorCities.filter(c => !c.mergeInto)];
+      const northCity = allPts.reduce((a,b) => a.lat > b.lat ? a : b);
+      const southCity = allPts.reduce((a,b) => a.lat < b.lat ? a : b);
+      const eastCity  = allPts.reduce((a,b) => a.lng > b.lng ? a : b);
+      const westCity  = allPts.reduce((a,b) => a.lng < b.lng ? a : b);
+      const isZhF = getLang() === "zh";
+      const extLabel = (dir, city) => `${dir} ${isZhF ? city.nameCN : city.name}`;
+      el("footprint-extremes").textContent = isZhF
+        ? `北${northCity.nameCN} · 南${southCity.nameCN} · 东${eastCity.nameCN} · 西${westCity.nameCN}`
+        : `N ${northCity.name} · S ${southCity.name} · E ${eastCity.name} · W ${westCity.name}`;
+      const latSpan = (northCity.lat - southCity.lat).toFixed(1);
+      const lngSpan = (eastCity.lng - westCity.lng).toFixed(1);
+      el("footprint-note").textContent = isZhF
+        ? `南北跨度 ${latSpan}°，东西跨越 ${lngSpan}°`
+        : `${latSpan}° lat × ${lngSpan}° lng span`;
+
       // Map init
       _map = L.map(mapNode, { zoomControl: true, attributionControl: true, preferCanvas: true })
                .setView([27.5, 106.1], 5.4);
@@ -1258,11 +1297,21 @@ const meta = {
       const provEl = document.getElementById("province-count");
       if (provEl) provEl.textContent = `across ${provinceSet.size} provinces`;
 
-      // Longest leg — Chengdu → Yining
+      // Longest leg — dynamic from consecutive cities
+      const sortedForLeg = [...cities].sort((a,b) => new Date(a.arrival) - new Date(b.arrival));
+      let longestLegDist = 0, longestLegFrom = null, longestLegTo = null;
+      for (let i = 1; i < sortedForLeg.length; i++) {
+        const d = haversine(sortedForLeg[i-1], sortedForLeg[i]);
+        if (d > longestLegDist) {
+          longestLegDist = d; longestLegFrom = sortedForLeg[i-1]; longestLegTo = sortedForLeg[i];
+        }
+      }
       const legEl = document.getElementById("longest-leg");
       const legNoteEl = document.getElementById("longest-leg-note");
-      if (legEl) legEl.textContent = "2,487 km";
-      if (legNoteEl) legNoteEl.textContent = "Chengdu → Yining";
+      if (legEl && longestLegFrom) legEl.textContent = `${Math.round(longestLegDist).toLocaleString()} km`;
+      if (legNoteEl && longestLegFrom) legNoteEl.textContent = getLang() === "zh"
+        ? `${longestLegFrom.nameCN} → ${longestLegTo.nameCN}`
+        : `${longestLegFrom.name} → ${longestLegTo.name}`;
 
       // Prior city markers — skip merged cities (rendered via primary)
       priorCities.forEach(city => {
@@ -1528,7 +1577,8 @@ const meta = {
       const PROVINCE_CODES = {
         530000: "Yunnan", 450000: "Guangxi", 350000: "Fujian", 510000: "Sichuan",
         500000: "Chongqing", 360000: "Jiangxi", 440000: "Guangdong", 310000: "Shanghai",
-        320000: "Jiangsu", 460000: "Hainan", 330000: "Zhejiang", 150000: "Inner Mongolia"
+        320000: "Jiangsu",        460000: "Hainan", 330000: "Zhejiang", 150000: "Inner Mongolia",
+        650000: "Xinjiang"
       };
       const visitedCityNames = new Set([
         ...cities.map(c => c.nameCN),
@@ -1537,7 +1587,7 @@ const meta = {
       const CITY_ALIASES = {
         "巍山": "大理", "阳朔": "桂林", "武夷山": "南平",
         "虎门": "东莞", "婺源": "上饶", "云和": "丽水",
-        "腾冲": "保山",
+        "腾冲": "保山", "伊宁": "伊犁",
       };
       const aliasParents = new Set();
       Object.entries(CITY_ALIASES).forEach(function(e) {
@@ -1558,6 +1608,7 @@ const meta = {
       if (!REGION_COLORS["Hainan"]) REGION_COLORS["Hainan"] = { main: "#f97316", glow: "rgba(249,115,22,0.22)" };
       if (!REGION_COLORS["Inner Mongolia"]) REGION_COLORS["Inner Mongolia"] = { main: "#a78bfa", glow: "rgba(167,139,250,0.22)" };
       if (!REGION_COLORS["Zhejiang"]) REGION_COLORS["Zhejiang"] = { main: "#22c55e", glow: "rgba(34,197,94,0.22)" };
+      if (!REGION_COLORS["Xinjiang"]) REGION_COLORS["Xinjiang"] = { main: "#eab308", glow: "rgba(234,179,8,0.22)" };
 
       (async function() {
         for (var code in PROVINCE_CODES) {
@@ -1636,8 +1687,30 @@ const meta = {
         // Dynamic texts
         const provEl = document.getElementById("province-count");
         if (provEl) provEl.textContent = lang === "zh" ? `横跨 ${provinceSet.size} 个省份` : `across ${provinceSet.size} provinces`;
-        const legNoteEl = document.getElementById("longest-leg-note");
-        if (legNoteEl) legNoteEl.textContent = lang === "zh" ? "成都 → 伊宁" : "Chengdu → Yining";
+        // legNoteEl — re-render with current language
+        const legNoteEl2 = document.getElementById("longest-leg-note");
+        if (legNoteEl2 && longestLegFrom) legNoteEl2.textContent = lang === "zh"
+          ? `${longestLegFrom.nameCN} → ${longestLegTo.nameCN}`
+          : `${longestLegFrom.name} → ${longestLegTo.name}`;
+        // Flights note
+        const flightsNoteEl = document.getElementById("flights-note");
+        if (flightsNoteEl) flightsNoteEl.textContent = lang === "zh"
+          ? `${flightCount} 次飞行，${cities.length} 座城市间的远途跳跃`
+          : `${flightCount} hops across ${cities.length} cities`;
+        // Footprint extremes
+        const footExtEl = document.getElementById("footprint-extremes");
+        if (footExtEl) footExtEl.textContent = lang === "zh"
+          ? `北${northCity.nameCN} · 南${southCity.nameCN} · 东${eastCity.nameCN} · 西${westCity.nameCN}`
+          : `N ${northCity.name} · S ${southCity.name} · E ${eastCity.name} · W ${westCity.name}`;
+        const footNoteEl = document.getElementById("footprint-note");
+        if (footNoteEl) footNoteEl.textContent = lang === "zh"
+          ? `南北跨度 ${(northCity.lat - southCity.lat).toFixed(1)}°，东西跨越 ${(eastCity.lng - westCity.lng).toFixed(1)}°`
+          : `${(northCity.lat - southCity.lat).toFixed(1)}° lat × ${(eastCity.lng - westCity.lng).toFixed(1)}° lng span`;
+        // Best meal note
+        const mealNoteEl = document.getElementById("best-meal-note");
+        if (mealNoteEl && _currentCityItem?.mealCN) mealNoteEl.textContent = lang === "zh"
+          ? `${_currentCityItem.nameCN}当下推荐：${_currentCityItem.mealCN}`
+          : `${_currentCityItem.nameCN} right now: ${_currentCityItem.mealCN}`;
       };
       updateI18n();
 
