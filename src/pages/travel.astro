@@ -1229,16 +1229,13 @@ const meta = {
         ? (getLang() === "zh" ? `${_currentCityItem.nameCN}当下推荐：${_currentCityItem.mealCN}` : `${_currentCityItem.nameCN} right now: ${_currentCityItem.mealCN}`) : "";
 
       // Flights taken (>600 km legs)
-      const FLIGHT_THRESHOLD = 600;
-      const sortedForFlights = [...cities].sort((a,b) => new Date(a.arrival) - new Date(b.arrival));
-      let flightCount = 0;
-      for (let i = 1; i < sortedForFlights.length; i++) {
-        if (haversine(sortedForFlights[i-1], sortedForFlights[i]) > FLIGHT_THRESHOLD) flightCount++;
-      }
+      const flights = data.flights || [];
+      const flightCount = flights.length;
+      const allCityCount = cities.length + (data.priorCities?.length || 0);
       el("flights-taken").textContent = flightCount;
       el("flights-note").textContent = getLang() === "zh"
-        ? `${flightCount} 次飞行，${cities.length} 座城市间的远途跳跃`
-        : `${flightCount} hops across ${cities.length} cities`;
+        ? `${flightCount} 次飞行，${allCityCount} 座城市间的远途跳跃`
+        : `${flightCount} hops across ${allCityCount} cities`;
 
       // Footprint extremes (all nomad + prior cities)
       const allPts = [...cities, ...priorCities.filter(c => !c.mergeInto)];
@@ -1694,9 +1691,13 @@ const meta = {
           : `${longestLegFrom.name} → ${longestLegTo.name}`;
         // Flights note
         const flightsNoteEl = document.getElementById("flights-note");
-        if (flightsNoteEl) flightsNoteEl.textContent = lang === "zh"
-          ? `${flightCount} 次飞行，${cities.length} 座城市间的远途跳跃`
-          : `${flightCount} hops across ${cities.length} cities`;
+        if (flightsNoteEl) {
+          const fc = (typeof flightCount !== 'undefined') ? flightCount : 0;
+          const ac = (typeof allCityCount !== 'undefined') ? allCityCount : 0;
+          flightsNoteEl.textContent = lang === "zh"
+            ? `${fc} 次飞行，${ac} 座城市间的远途跳跃`
+            : `${fc} hops across ${ac} cities`;
+        }
         // Footprint extremes
         const footExtEl = document.getElementById("footprint-extremes");
         if (footExtEl) footExtEl.textContent = lang === "zh"
