@@ -1229,9 +1229,9 @@ const meta = {
         ? (getLang() === "zh" ? `${_currentCityItem.nameCN}当下推荐：${_currentCityItem.mealCN}` : `${_currentCityItem.nameCN} right now: ${_currentCityItem.mealCN}`) : "";
 
       // Flights taken (>600 km legs)
-      const flights = data.flights || [];
+      const flights = _data.flights || [];
       const flightCount = flights.length;
-      const allCityCount = cities.length + (data.priorCities?.length || 0);
+      const allCityCount = cities.length + (_data.priorCities?.length || 0);
       el("flights-taken").textContent = flightCount;
       el("flights-note").textContent = getLang() === "zh"
         ? `${flightCount} 次飞行，${allCityCount} 座城市间的远途跳跃`
