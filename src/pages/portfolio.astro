@@ -41,6 +41,9 @@ interface PortfolioPosition {
 	conviction: string;
 	entry_year?: number;
 	horizon?: string;
+	layer?: string | null;
+	layer_label_en?: string | null;
+	layer_label_zh?: string | null;
 	stop?: PortfolioStop | null;
 	target?: PortfolioTarget | null;
 	next_event?: PortfolioNextEvent | null;
@@ -146,6 +149,43 @@ const convictionStroke: Record<string, string> = {
 	medium: "#10b981",
 	low: "#9ca3af",
 };
+
+// ─── Topology layer data (dynamic from JSON, not hardcoded) ──
+const TOPO_LAYERS = [
+	{ id: "L5", widthPct: 32, label_en: "AI Compute", label_zh: "AI 算力", sub_en: null, sub_zh: null },
+	{ id: "L4", widthPct: 44, label_en: "Data Centers", label_zh: "数据中心", sub_en: "Demand Driver", sub_zh: "需求引擎" },
+	{ id: "L3", widthPct: 58, label_en: "Power Equipment", label_zh: "电力设备", sub_en: null, sub_zh: null },
+	{ id: "L2", widthPct: 74, label_en: "Transmission & Distribution", label_zh: "输配电", sub_en: null, sub_zh: null },
+	{ id: "L1", widthPct: 100, label_en: "Baseload Generation", label_zh: "基荷发电", sub_en: null, sub_zh: null },
+] as const;
+
+// Build topology nodes from positions that have a layer assignment
+const topoNodesByLayer: Record<string, { symbol: string; status: string }[]> = {};
+for (const p of positions) {
+	if (!p.layer) continue;
+	const layerKey = p.layer;
+	if (!topoNodesByLayer[layerKey]) topoNodesByLayer[layerKey] = [];
+	// Determine tag style: held = active position, watch = watchlist candidate
+	const status = "held";
+	topoNodesByLayer[layerKey].push({ symbol: p.symbol, status });
+}
+
+// Add watchlist tickers that aren't in positions (e.g. ETN, HUBB at L3)
+// These come from deep_research entries marked as in_portfolio=false
+for (const d of deep_research) {
+	if (!d.in_portfolio && d.ticker) {
+		// Extract layer from sector_en like "Electrical (L3 Conversion)"
+		const layerMatch = (d.sector_en || "").match(/\(L(\d)/);
+		const layer = layerMatch ? `L${layerMatch[1]}` : null;
+		if (layer) {
+			if (!topoNodesByLayer[layer]) topoNodesByLayer[layer] = [];
+			// Avoid duplicates
+			if (!topoNodesByLayer[layer].some((n) => n.symbol === d.ticker)) {
+				topoNodesByLayer[layer].push({ symbol: d.ticker, status: "watch" });
+			}
+		}
+	}
+}
 
 const dataJson = JSON.stringify({
 	regime,
@@ -560,56 +600,33 @@ const stages = [
 				</h2>
 			</header>
 			<div class="topology-cake">
-				{/* ── L5 Compute (top, narrowest) ── */}
-				<div class="topo-cake-layer topo-held" style="--cake-w: 32%">
-					<div class="topo-cake-label">
-						L5 · <span class="lang-en">AI Compute</span><span class="lang-zh">AI 算力</span>
-					</div>
-					<div class="topo-cake-nodes">
-						<span class="topo-tag topo-tag-held">AAPL</span>
-					</div>
-				</div>
-				{/* ── L4 Data Center ── */}
-				<div class="topo-cake-layer topo-ghost" style="--cake-w: 44%">
-					<div class="topo-cake-label">
-						L4 · <span class="lang-en">Data Centers</span><span class="lang-zh">数据中心</span>
-						<span class="topo-cake-sub">
-							<span class="lang-en">Demand Driver</span>
-							<span class="lang-zh">需求引擎</span>
-						</span>
-					</div>
-				</div>
-				{/* ── L3 Equipment ── */}
-				<div class="topo-cake-layer topo-watch" style="--cake-w: 58%">
-					<div class="topo-cake-label">
-						L3 · <span class="lang-en">Power Equipment</span><span class="lang-zh">电力设备</span>
-					</div>
-					<div class="topo-cake-nodes">
-						<span class="topo-tag topo-tag-watch">ETN</span>
-						<span class="topo-tag topo-tag-watch">HUBB</span>
-					</div>
-				</div>
-				{/* ── L2 Grid ── */}
-				<div class="topo-cake-layer topo-held" style="--cake-w: 74%">
-					<div class="topo-cake-label">
-						L2 · <span class="lang-en">Transmission &amp; Distribution</span><span class="lang-zh">输配电</span>
-					</div>
-					<div class="topo-cake-nodes">
-						<span class="topo-tag topo-tag-held">600089</span>
-					</div>
-				</div>
-				{/* ── L1 Baseload (bottom, widest) ── */}
-				<div class="topo-cake-layer topo-held" style="--cake-w: 100%">
-					<div class="topo-cake-label">
-						L1 · <span class="lang-en">Baseload Generation</span><span class="lang-zh">基荷发电</span>
-					</div>
-					<div class="topo-cake-nodes">
-						<span class="topo-tag topo-tag-held">600900</span>
-						<span class="topo-tag topo-tag-held">01816</span>
-						<span class="topo-tag topo-tag-held">003816</span>
-						<span class="topo-tag topo-tag-held">CEG</span>
-					</div>
-				</div>
+				{TOPO_LAYERS.map((layer) => {
+					const nodes = topoNodesByLayer[layer.id] || [];
+					// Determine layer style: held = has held nodes, watch = only watch nodes, ghost = empty
+					const hasHeld = nodes.some((n) => n.status === "held");
+					const hasWatch = nodes.some((n) => n.status === "watch");
+					const layerClass = hasHeld ? "topo-held" : hasWatch ? "topo-watch" : "topo-ghost";
+					return (
+						<div class={`topo-cake-layer ${layerClass}`} style={`--cake-w: ${layer.widthPct}%`}>
+							<div class="topo-cake-label">
+								{layer.id} · <span class="lang-en">{layer.label_en}</span><span class="lang-zh">{layer.label_zh}</span>
+								{layer.sub_en && (
+									<span class="topo-cake-sub">
+										<span class="lang-en">{layer.sub_en}</span>
+										<span class="lang-zh">{layer.sub_zh}</span>
+									</span>
+								)}
+							</div>
+							{nodes.length > 0 && (
+								<div class="topo-cake-nodes">
+									{nodes.map((n) => (
+										<span class={`topo-tag topo-tag-${n.status}`}>{n.symbol}</span>
+									))}
+								</div>
+							)}
+						</div>
+					);
+				})}
 			</div>
 			<div class="topology-legend">
 				<span class="legend-item"><span class="legend-dot legend-held"></span> <span class="lang-en">Held</span><span class="lang-zh">持仓</span></span>
@@ -862,12 +879,18 @@ const stages = [
 							);
 						});
 					})()}
-					{/* Center labels */}
-					<text x="120" y="114" class="allocation-donut-label-top" text-anchor="middle">
+					{/* Center labels — bilingual */}
+					<text x="120" y="114" class="allocation-donut-label-top lang-en" text-anchor="middle">
 						TARGET
 					</text>
-					<text x="120" y="134" class="allocation-donut-label-bot" text-anchor="middle">
+					<text x="120" y="114" class="allocation-donut-label-top lang-zh" text-anchor="middle">
+						目标配比
+					</text>
+					<text x="120" y="134" class="allocation-donut-label-bot lang-en" text-anchor="middle">
 						vs CURRENT
+					</text>
+					<text x="120" y="134" class="allocation-donut-label-bot lang-zh" text-anchor="middle">
+						当前持仓
 					</text>
 				</svg>
 				<div class="allocation-donut-legend">
@@ -1046,9 +1069,9 @@ const stages = [
 				) : (
 					<div class="portfolio-empty-overlay">
 						<span class="lang-en">
-							No history yet · daily cron started 2026-04-16, check back soon.
+							No history yet · check back after a few daily runs.
 						</span>
-						<span class="lang-zh">历史数据还未累积 · 日度 cron 已启动,过几天回来看。</span>
+						<span class="lang-zh">历史数据还未累积 · 日度任务跑几天后回来看。</span>
 					</div>
 				)}
 			</div>
@@ -1113,9 +1136,9 @@ const stages = [
 			) : (
 				<div class="portfolio-empty">
 					<span class="lang-en">
-						Scan history index not yet populated. Runs daily at 10:00 — check back in a few days.
+						Scan history not yet populated — check back after a few daily runs.
 					</span>
-					<span class="lang-zh">扫描历史索引还没累积。每日 10:00 跑一次，几天后回来看。</span>
+					<span class="lang-zh">扫描历史索引还没累积——日度任务跑几天后回来看。</span>
 				</div>
 			)}
 		</section>
