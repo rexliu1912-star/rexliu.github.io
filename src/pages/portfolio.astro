@@ -458,6 +458,39 @@ const stages = [
 				</p>
 			</header>
 
+			{/* ── Catalyst Timeline: all upcoming events across positions ── */}
+			{(() => {
+				const allEvents = positions
+					.filter((p) => p.next_event)
+					.map((p) => ({
+						date: p.next_event!.date,
+						label: p.next_event!.label,
+						urgency: p.next_event!.urgency,
+						symbol: p.symbol,
+					}))
+					.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+				if (allEvents.length === 0) return null;
+				return (
+					<div class="catalyst-timeline">
+						<div class="catalyst-timeline-head">
+							<span class="lang-en">Upcoming Catalysts</span>
+							<span class="lang-zh">近期催化事件</span>
+							<span class="catalyst-timeline-count">{allEvents.length}</span>
+						</div>
+						<div class="catalyst-timeline-track">
+							{allEvents.map((ev) => (
+								<div class={`catalyst-timeline-item urgency-${ev.urgency}`} data-catalyst-date={ev.date}>
+									<span class="catalyst-date">{ev.date}</span>
+									<span class="catalyst-symbol">{ev.symbol}</span>
+									<span class="catalyst-label">{ev.label}</span>
+									<span class="catalyst-countdown">—</span>
+								</div>
+							))}
+						</div>
+					</div>
+				);
+			})()}
+
 			<div class="positions-grid">
 				{positions.map((p) => (
 					<article class={`position-card conviction-${p.conviction}`}>
@@ -1917,48 +1950,15 @@ const stages = [
 						kind: tp.kind || '',
 					}));
 				if (pts.length < 2) {
-					// no prices, draw a % journey from 0 to outcome_pct
-					const start = new Date(c.entry_date).getTime();
-					const end = new Date(c.exit_date).getTime();
-					const steps = 8;
-					const synthetic = Array.from({ length: steps }, (_, i) => {
-						const t = start + ((end - start) * i) / (steps - 1);
-						const pct = (c.outcome_pct_rounded * i) / (steps - 1);
-						return { x: new Date(t).toISOString().split('T')[0], y: pct };
-					});
-					new Chart(canvas, {
-						type: 'line',
-						data: {
-							labels: synthetic.map((p) => p.x),
-							datasets: [
-								{
-									label: `${c.ticker} %`,
-									data: synthetic.map((p) => p.y),
-									borderColor: c.outcome_pct_rounded >= 0 ? '#10b981' : '#ef4444',
-									backgroundColor:
-										c.outcome_pct_rounded >= 0
-											? 'rgba(16, 185, 129, 0.12)'
-											: 'rgba(239, 68, 68, 0.12)',
-									fill: true,
-									tension: 0.35,
-									pointRadius: 0,
-									borderWidth: 2,
-								},
-							],
-						},
-						options: {
-							responsive: true,
-							maintainAspectRatio: false,
-							plugins: { legend: { display: false }, tooltip: { enabled: false } },
-							scales: {
-								x: { display: false },
-								y: {
-									ticks: { color: axisColor(), callback: (v) => `${v}%` },
-									grid: { color: gridColor() },
-								},
-							},
-						},
-					});
+					// No price history — show placeholder instead of misleading synthetic curve
+					const wrap = canvas.parentElement;
+					if (wrap) {
+						wrap.innerHTML = `
+							<div class="clearance-chart-empty">
+								<span class="lang-en">No price history</span>
+								<span class="lang-zh">无逐笔价格记录</span>
+							</div>`;
+					}
 					return;
 				}
 				new Chart(canvas, {
@@ -2023,10 +2023,12 @@ const stages = [
 		document.addEventListener('themechange', __initPortfolioCharts);
 
 		function __initCatalystCountdown() {
-			const pills = document.querySelectorAll('.position-event[data-event-date]');
 			const now = new Date();
 			now.setHours(0, 0, 0, 0);
 			const isZh = (document.documentElement.getAttribute('data-lang') || 'en') === 'zh';
+
+			// Position card pills
+			const pills = document.querySelectorAll('.position-event[data-event-date]');
 			pills.forEach((pill) => {
 				const d = pill.getAttribute('data-event-date');
 				if (!d) return;
@@ -2047,6 +2049,26 @@ const stages = [
 				}
 				const label = pill.querySelector('.event-label');
 				if (label) label.title = d + ' · ' + (pill.getAttribute('data-event-label') || '');
+			});
+
+			// Timeline strip countdowns
+			document.querySelectorAll('.catalyst-timeline-item[data-catalyst-date]').forEach((item) => {
+				const d = item.getAttribute('data-catalyst-date');
+				if (!d) return;
+				const target = new Date(d + 'T00:00:00');
+				const diff = Math.ceil((target - now) / 86400000);
+				const cd = item.querySelector('.catalyst-countdown');
+				if (!cd) return;
+				if (diff < 0) {
+					item.classList.add('event-past');
+					cd.textContent = isZh ? '已过' : 'past';
+				} else if (diff === 0) {
+					cd.textContent = isZh ? '今天' : 'today';
+				} else if (diff === 1) {
+					cd.textContent = isZh ? '明天' : '1d';
+				} else {
+					cd.textContent = isZh ? `${diff}天后` : `${diff}d`;
+				}
 			});
 		}
 	</script>
@@ -3239,6 +3261,109 @@ const stages = [
 			50% { box-shadow: 0 0 8px 2px rgba(251, 146, 60, 0.25); }
 		}
 
+		/* ── Catalyst Timeline Strip ─────────────── */
+		.catalyst-timeline {
+			margin: 0.5rem 0 1.25rem;
+			padding: 0.85rem 1rem;
+			border-radius: 0.75rem;
+			border: 1px solid var(--p-border);
+			background: color-mix(in srgb, var(--p-card) 92%, transparent);
+		}
+		.catalyst-timeline-head {
+			display: flex;
+			align-items: center;
+			gap: 0.5rem;
+			font-size: 0.8rem;
+			font-weight: 600;
+			color: var(--p-muted);
+			text-transform: uppercase;
+			letter-spacing: 0.04em;
+			margin-bottom: 0.6rem;
+		}
+		.catalyst-timeline-count {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			min-width: 1.4rem;
+			height: 1.4rem;
+			padding: 0 0.35rem;
+			border-radius: 0.45rem;
+			background: rgba(137, 83, 209, 0.15);
+			color: #8953d1;
+			font-size: 0.7rem;
+			font-weight: 700;
+		}
+		.catalyst-timeline-track {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.5rem;
+		}
+		.catalyst-timeline-item {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.4rem;
+			padding: 0.4rem 0.65rem;
+			border-radius: 0.55rem;
+			border: 1px solid var(--p-border);
+			background: color-mix(in srgb, var(--p-card) 85%, transparent);
+			font-size: 0.8rem;
+			transition: transform 0.15s ease;
+		}
+		.catalyst-timeline-item:hover {
+			transform: translateY(-1px);
+		}
+		.catalyst-date {
+			font-family: var(--font-mono);
+			font-size: 0.72rem;
+			color: var(--p-muted);
+		}
+		.catalyst-symbol {
+			font-weight: 700;
+			font-family: var(--font-serif);
+			color: var(--p-heading);
+		}
+		.catalyst-label {
+			color: var(--p-body);
+			max-width: 180px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+		.catalyst-countdown {
+			font-size: 0.72rem;
+			font-weight: 600;
+			padding: 0.15rem 0.35rem;
+			border-radius: 0.35rem;
+			background: rgba(100, 116, 139, 0.12);
+			color: #64748b;
+		}
+		/* urgency tiers on timeline */
+		.catalyst-timeline-item.urgency-4,
+		.catalyst-timeline-item.urgency-5 {
+			border-color: rgba(251, 146, 60, 0.4);
+			background: rgba(251, 146, 60, 0.06);
+		}
+		.catalyst-timeline-item.urgency-4 .catalyst-countdown,
+		.catalyst-timeline-item.urgency-5 .catalyst-countdown {
+			background: rgba(251, 146, 60, 0.15);
+			color: #fb923c;
+		}
+		.catalyst-timeline-item.urgency-5 {
+			animation: event-pulse 2.4s ease-in-out infinite;
+		}
+		.catalyst-timeline-item.urgency-3 {
+			border-color: rgba(239, 68, 68, 0.3);
+			background: rgba(239, 68, 68, 0.04);
+		}
+		.catalyst-timeline-item.urgency-3 .catalyst-countdown {
+			background: rgba(239, 68, 68, 0.12);
+			color: #ef4444;
+		}
+		.catalyst-timeline-item.event-past {
+			opacity: 0.45;
+			filter: grayscale(0.6);
+		}
+
 		/* ── Clearance Gallery ───────────────────── */
 		.clearance-grid {
 			display: grid;
@@ -3320,6 +3445,16 @@ const stages = [
 		.clearance-chart {
 			width: 100% !important;
 			height: 100% !important;
+		}
+		.clearance-chart-empty {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			height: 100%;
+			color: var(--p-muted);
+			font-size: 0.85rem;
+			gap: 0.25rem;
 		}
 		.clearance-trade-points {
 			display: grid;
