@@ -1084,7 +1084,7 @@ const stages = [
 							))}
 						</div>
 						{SIGNAL_ORDER.map((sig) => {
-							const label = SIGNAL_LABELS[sig];
+							const label = SIGNAL_LABELS[sig] || { en: sig.toUpperCase(), zh: sig.toUpperCase() };
 							return (
 								<div class="regime-grid-row">
 									<div class="regime-grid-signal-label">
