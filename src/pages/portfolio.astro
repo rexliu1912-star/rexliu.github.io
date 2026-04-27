@@ -1083,23 +1083,26 @@ const stages = [
 								</div>
 							))}
 						</div>
-						{SIGNAL_ORDER.map((sig) => (
-							<div class="regime-grid-row">
-							<div class="regime-grid-signal-label">
-								<span class="lang-en">{SIGNAL_LABELS[sig].en}</span>
-								<span class="lang-zh">{SIGNAL_LABELS[sig].zh}</span>
-							</div>
-							{regime.history_60d.map((h: any) => {
-								const light = h.lights?.[sig] || "gray";
-								return (
-									<div
-										class={`regime-grid-cell light-${light}`}
-										title={`${SIGNAL_LABELS[sig].en} · ${h.date} · ${light}`}
-									></div>
-								);
-								})}
-							</div>
-						))}
+						{SIGNAL_ORDER.map((sig) => {
+							const label = SIGNAL_LABELS[sig];
+							return (
+								<div class="regime-grid-row">
+									<div class="regime-grid-signal-label">
+										<span class="lang-en">{label.en}</span>
+										<span class="lang-zh">{label.zh}</span>
+									</div>
+									{regime.history_60d.map((h: any) => {
+										const light = h.lights?.[sig] || "gray";
+										return (
+											<div
+												class={`regime-grid-cell light-${light}`}
+												title={`${label.en} · ${h.date} · ${light}`}
+											></div>
+										);
+									})}
+								</div>
+							);
+							})}
 						<p class="regime-grid-note">
 							<span class="lang-en">
 								{regime.history_60d.length} day(s) tracked · line chart activates at 7 days
