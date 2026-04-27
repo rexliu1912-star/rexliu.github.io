@@ -1449,7 +1449,10 @@ const stages = [
 								return (
 									<article class="roundtable-guest-card" style={style}>
 										<header class="roundtable-guest-head">
-											<strong class="roundtable-guest-name font-serif">{g.name}</strong>
+											<strong class="roundtable-guest-name font-serif">
+												<span class="lang-en">{g.name_en || g.name}</span>
+												<span class="lang-zh">{g.name}</span>
+											</strong>
 											{g.mbti && <span class="roundtable-guest-mbti">{g.mbti}</span>}
 										</header>
 										<span class="roundtable-guest-role">
