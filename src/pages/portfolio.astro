@@ -135,12 +135,12 @@ const conviction: Record<string, string> = { high: "🔥", medium: "🌱", low: 
 // less than ~7 days of thermometer history are available — before the
 // full 60-day line chart kicks in).
 const SIGNAL_ORDER = ["tnx", "dxy", "vix", "naaim", "policy"] as const;
-const SIGNAL_LABELS: Record<string, string> = {
-	tnx: "10Y",
-	dxy: "DXY",
-	vix: "VIX",
-	naaim: "NAAIM",
-	policy: "Policy",
+const SIGNAL_LABELS: Record<string, { en: string; zh: string }> = {
+	tnx: { en: "10Y", zh: "10年美债" },
+	dxy: { en: "DXY", zh: "美元指数" },
+	vix: { en: "VIX", zh: "恐慌指数" },
+	naaim: { en: "NAAIM", zh: "主动管理" },
+	policy: { en: "Policy", zh: "政策" },
 };
 
 // Conviction bar colors (used for position confidence fill).
@@ -306,7 +306,7 @@ const stages = [
 			</a>
 		</div>
 
-		{/* ═══ Section 0: Hero ═══ */}
+		{/* ═══ Hero ═══ */}
 		<section class="portfolio-hero">
 			<p class="portfolio-eyebrow">
 				<span class="lang-en">Build in Public · Portfolio</span>
@@ -436,7 +436,7 @@ const stages = [
 			<a href="#methodology-section">Methodology</a>
 		</nav>
 
-		{/* ═══ Section 5: Current Positions ═══ */}
+		{/* ═══ Current Positions ═══ */}
 		<section class="portfolio-section fade-in-up" id="positions-section">
 			<header class="portfolio-section-head">
 				<p class="portfolio-kicker">
@@ -587,7 +587,7 @@ const stages = [
 			</div>
 		</section>
 
-		{/* ═══ Section 5.5: Supply Chain Topology ═══ */}
+		{/* ═══ Supply Chain Topology ═══ */}
 		<section class="portfolio-section fade-in-up" id="supply-chain-section">
 			<header class="portfolio-section-head">
 				<p class="portfolio-kicker">
@@ -617,11 +617,18 @@ const stages = [
 									</span>
 								)}
 							</div>
-							{nodes.length > 0 && (
+							{nodes.length > 0 ? (
 								<div class="topo-cake-nodes">
 									{nodes.map((n) => (
 										<span class={`topo-tag topo-tag-${n.status}`}>{n.symbol}</span>
 									))}
+								</div>
+							) : (
+								<div class="topo-cake-nodes">
+									<span class="topo-tag topo-tag-ghost">
+										<span class="lang-en">—</span>
+										<span class="lang-zh">暂无</span>
+									</span>
 								</div>
 							)}
 						</div>
@@ -635,7 +642,7 @@ const stages = [
 			</div>
 		</section>
 
-		{/* ═══ Section 7: Closed Positions Gallery ═══ */}
+		{/* ═══ Closed Positions Gallery ═══ */}
 		<section class="portfolio-section fade-in-up" id="clearance-section">
 			<header class="portfolio-section-head">
 				<p class="portfolio-kicker">
@@ -806,7 +813,7 @@ const stages = [
 			</div>
 		</section>
 
-		{/* ═══ Section 2: Allocation ═══ */}
+		{/* ═══ Allocation ═══ */}
 		<section class="portfolio-section fade-in-up" id="allocation-section">
 			<header class="portfolio-section-head">
 				<p class="portfolio-kicker">
@@ -981,7 +988,7 @@ const stages = [
 			</div>
 		</section>
 
-		{/* ═══ Section 1: Macro Regime ═══ */}
+		{/* ═══ Macro Regime ═══ */}
 		<section class="portfolio-section fade-in-up" id="regime-section">
 			<header class="portfolio-section-head">
 				<p class="portfolio-kicker">
@@ -1045,15 +1052,18 @@ const stages = [
 						</div>
 						{SIGNAL_ORDER.map((sig) => (
 							<div class="regime-grid-row">
-								<div class="regime-grid-signal-label">{SIGNAL_LABELS[sig]}</div>
-								{regime.history_60d.map((h: any) => {
-									const light = h.lights?.[sig] || "gray";
-									return (
-										<div
-											class={`regime-grid-cell light-${light}`}
-											title={`${SIGNAL_LABELS[sig]} · ${h.date} · ${light}`}
-										></div>
-									);
+							<div class="regime-grid-signal-label">
+								<span class="lang-en">{SIGNAL_LABELS[sig].en}</span>
+								<span class="lang-zh">{SIGNAL_LABELS[sig].zh}</span>
+							</div>
+							{regime.history_60d.map((h: any) => {
+								const light = h.lights?.[sig] || "gray";
+								return (
+									<div
+										class={`regime-grid-cell light-${light}`}
+										title={`${SIGNAL_LABELS[sig].en} · ${h.date} · ${light}`}
+									></div>
+								);
 								})}
 							</div>
 						))}
@@ -1077,7 +1087,7 @@ const stages = [
 			</div>
 		</section>
 
-		{/* ═══ Section 4: Watchlist Heatmap ═══ */}
+		{/* ═══ Watchlist Heatmap ═══ */}
 		<section class="portfolio-section fade-in-up" id="watchlist-section">
 			<header class="portfolio-section-head">
 				<p class="portfolio-kicker">
@@ -1143,7 +1153,7 @@ const stages = [
 			)}
 		</section>
 
-		{/* ═══ Section 3.5: Short List (Stage 2-3 filtered) ═══ */}
+		{/* ═══ Short List (Stage 2-3 filtered) ═══ */}
 		{shortList.length > 0 && (
 			<section class="portfolio-section fade-in-up" id="shortlist-section">
 				<header class="portfolio-section-head">
@@ -1176,7 +1186,7 @@ const stages = [
 			</section>
 		)}
 
-		{/* ═══ Section 3.5: Sector Research (Stage 1) ═══ */}
+		{/* ═══ Sector Research (Stage 1) ═══ */}
 		{sector_research && sector_research.length > 0 && (
 			<section class="portfolio-section fade-in-up" id="sector-research-section">
 				<header class="portfolio-section-head">
@@ -1245,7 +1255,7 @@ const stages = [
 			</section>
 		)}
 
-		{/* ═══ Section 4.5: Deep Research (Stage 4) ═══ */}
+		{/* ═══ Deep Research (Stage 4) ═══ */}
 		{deep_research && deep_research.length > 0 && (
 			<section class="portfolio-section fade-in-up" id="deep-research-section">
 				<header class="portfolio-section-head">
@@ -1335,7 +1345,7 @@ const stages = [
 			</section>
 		)}
 
-		{/* ═══ Section 8: Roundtable Log ═══ */}
+		{/* ═══ Roundtable Log ═══ */}
 		<section class="portfolio-section fade-in-up" id="roundtable-section">
 			<header class="portfolio-section-head">
 				<p class="portfolio-kicker">
@@ -1498,7 +1508,7 @@ const stages = [
 			</div>
 		</section>
 
-		{/* ═══ Section 3: 8-Stage Methodology ═══ */}
+		{/* ═══ 8-Stage Methodology ═══ */}
 		<section class="portfolio-section fade-in-up" id="methodology-section">
 			<header class="portfolio-section-head">
 				<p class="portfolio-kicker">
@@ -1727,7 +1737,13 @@ const stages = [
 					'防御期': { bg: 'rgba(239, 68, 68, 0.08)', border: 'rgba(239, 68, 68, 0.30)', label: 'Defensive' },
 				};
 
-				const signalLabels = { tnx: '10Y UST', dxy: 'DXY', vix: 'VIX', naaim: 'NAAIM', policy: 'Policy' };
+				const signalLabels = {
+					tnx: { en: '10Y UST', zh: '10年美债' },
+					dxy: { en: 'DXY', zh: '美元指数' },
+					vix: { en: 'VIX', zh: '恐慌指数' },
+					naaim: { en: 'NAAIM', zh: '主动管理' },
+					policy: { en: 'Policy', zh: '政策' },
+				};
 				const lightDotColors = { green: '#10b981', yellow: '#f59e0b', red: '#ef4444', gray: '#9ca3af' };
 
 				// Plugin: regime background bands
@@ -1790,11 +1806,12 @@ const stages = [
 					// Build signals HTML
 					const signals = h.signalDetails || h.lights || {};
 					let signalsHtml = '';
-					for (const [key, label] of Object.entries(signalLabels)) {
+					for (const [key, labelObj] of Object.entries(signalLabels)) {
 						const detail = signals[key];
 						const light = detail?.light || 'gray';
 						const value = detail?.value ?? '-';
 						const dotColor = lightDotColors[light] || lightDotColors.gray;
+						const label = isZh ? labelObj.zh : labelObj.en;
 						signalsHtml += `<div class="regime-signal-row">
 							<span class="regime-signal-dot" style="background:${dotColor}"></span>
 							<span class="regime-signal-name">${label}</span>
