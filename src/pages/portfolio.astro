@@ -77,6 +77,12 @@ interface PortfolioData {
 		positions: {
 			symbol: string;
 			role: "core" | "community";
+			tags_en: string[];
+			tags_zh: string[];
+			thesis_en: string;
+			thesis_zh: string;
+			strategy_en: string;
+			strategy_zh: string;
 		}[];
 	} | null;
 	watchlist_heatmap: PortfolioHeatmap | null;
@@ -634,21 +640,19 @@ const stages = [
 		<section class="portfolio-section fade-in-up" id="crypto-section">
 			<header class="portfolio-section-head">
 				<p class="portfolio-kicker">
-					<span class="lang-en">Asymmetric Bets · Crypto</span>
-					<span class="lang-zh">非对称博弈 · 加密资产</span>
+					<span class="lang-en">Asymmetric Bets</span>
+					<span class="lang-zh">非对称博弈</span>
 				</p>
 				<h2 class="font-serif text-3xl font-semibold">
-					<span class="lang-en">{crypto.positions.length} signal-driven bets</span>
-					<span class="lang-zh">{crypto.positions.length} 个信号驱动的非对称仓位</span>
+					<span class="lang-en">The crypto positions</span>
+					<span class="lang-zh">加密持仓</span>
 				</h2>
 				<p class="portfolio-note">
 					<span class="lang-en">
-						{crypto.positions.filter(p => p.role === "core").map(p => p.symbol).join(", ")} (core)
-						{crypto.positions.filter(p => p.role === "community").length > 0 && ` · ${crypto.positions.filter(p => p.role === "community").map(p => p.symbol).join(", ")} (community)`}
+						Signal-driven, not TA-driven. BTC anchors via bottom-tracker DCA; SNEK tracks Cardano community health.
 					</span>
 					<span class="lang-zh">
-						核心：{crypto.positions.filter(p => p.role === "core").map(p => p.symbol).join("、")}
-						{crypto.positions.filter(p => p.role === "community").length > 0 && ` · 社区：${crypto.positions.filter(p => p.role === "community").map(p => p.symbol).join("、")}`}
+						信号驱动而非技术分析驱动。BTC 通过底部追踪 DCA 锚定；SNEK 跟踪 Cardano 社区健康度。
 					</span>
 				</p>
 			</header>
@@ -665,12 +669,19 @@ const stages = [
 								</span>
 							</div>
 							<div class="position-tags">
-								<span class="position-tag">
-									<span class="lang-en">{cp.role === "core" ? "Core" : "Community"}</span>
-									<span class="lang-zh">{cp.role === "core" ? "核心" : "社区"}</span>
-								</span>
+								{cp.tags_en.map((tag, i) => (
+									<span class="position-tag">
+										<span class="lang-en">{tag}</span>
+										<span class="lang-zh">{cp.tags_zh[i] || tag}</span>
+									</span>
+								))}
 							</div>
 						</header>
+
+						<p class="position-thesis">
+							<span class="lang-en">{cp.thesis_en}</span>
+							<span class="lang-zh">{cp.thesis_zh}</span>
+						</p>
 
 						<div
 							class="position-conviction-bar"
@@ -687,10 +698,21 @@ const stages = [
 							></span>
 						</div>
 
-						<footer class="position-foot">
+						<div class="position-meta">
 							<span class="position-stage-badge">
-								<span class="lang-en">{cp.role === "core" ? "Bottom Tracker" : "Signal-Driven"}</span>
-								<span class="lang-zh">{cp.role === "core" ? "底部追踪" : "信号驱动"}</span>
+								<span class="lang-en">{cp.strategy_en}</span>
+								<span class="lang-zh">{cp.strategy_zh}</span>
+							</span>
+							<span class="position-status">
+								<span class="lang-en">{cp.role === "core" ? "Core" : "Community"}</span>
+								<span class="lang-zh">{cp.role === "core" ? "核心" : "社区"}</span>
+							</span>
+						</div>
+
+						<footer class="position-foot">
+							<span class="position-rail">
+								<span class="lang-en">Signal-only · No price targets</span>
+								<span class="lang-zh">仅信号驱动 · 无目标价</span>
 							</span>
 						</footer>
 					</article>

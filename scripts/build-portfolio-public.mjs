@@ -209,12 +209,33 @@ function sanitizeCrypto(privatePortfolio) {
 
   const PUBLIC_SYMBOLS = ["BTC", "SNEK"];
 
+  // Static thesis data — public-facing, no sensitive info
+  const THESIS = {
+    BTC: {
+      tags_en: ["Digital Gold", "Macro Uncertainty Hedge"],
+      tags_zh: ["数字黄金", "宏观对冲"],
+      thesis_en: "Non-derivative bet on sovereign money. DCA through bottom-tracker signals — the system doesn't predict price, it detects accumulation windows.",
+      thesis_zh: "非衍生品的货币主权押注。通过底部追踪信号 DCA——系统不预测价格，只判断建仓窗口。",
+      strategy_en: "Bottom Tracker",
+      strategy_zh: "底部追踪",
+    },
+    SNEK: {
+      tags_en: ["Cardano Ecosystem", "Community", "Meme"],
+      tags_zh: ["Cardano 生态", "社区驱动", "Meme"],
+      thesis_en: "Cardano ecosystem proxy. Managed by community sentiment, KOL activity, and on-chain health — not traditional TA.",
+      thesis_zh: "Cardano 生态敞口。看社区热度、KOL 活跃度和链上健康度，不走传统技术分析。",
+      strategy_en: "Signal-Driven",
+      strategy_zh: "信号驱动",
+    },
+  };
+
   // Non-stablecoin positions — no dollar amounts, no percentages, no prices
   const positions = crypto.assets
     .filter((a) => PUBLIC_SYMBOLS.includes(a.symbol) && (a.value || 0) >= 1)
     .map((a) => ({
       symbol: a.symbol,
       role: a.symbol === "BTC" ? "core" : "community",
+      ...THESIS[a.symbol],
     }));
 
   return {
