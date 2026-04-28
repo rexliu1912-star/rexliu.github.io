@@ -22,6 +22,8 @@ const FORBIDDEN_KEYS = [
   "quantity", "avgCost", "totalCost", "targetAmount",
   "marketValue", "unrealizedPnl", "costBasis", "realizedPnl",
   "lastPrice", // individual prices leak position size when combined with other public data
+  "source_values", // per-exchange balance breakdown
+  "sources", // exchange name list (reveals distribution)
 ];
 
 // Suspicious patterns (regex) — absolute currency amounts
