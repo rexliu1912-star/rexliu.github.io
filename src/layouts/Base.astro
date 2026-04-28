@@ -57,6 +57,98 @@ const GA_ID = "G-1EC76EZ517";
 				}, 100);
 			})();
 		</script>
+		<script is:inline>
+			(function() {
+				function generateDappledLight() {
+					var W = 960, H = 540;
+					var c = document.createElement('canvas');
+					c.width = W; c.height = H;
+					var ctx = c.getContext('2d');
+
+					// 1) Warm base gradient (top-left to bottom-right)
+					var g1 = ctx.createLinearGradient(0, 0, W, H);
+					g1.addColorStop(0, 'rgba(255,248,235,1)');
+					g1.addColorStop(0.5, 'rgba(255,252,245,1)');
+					g1.addColorStop(1, 'rgba(250,245,235,1)');
+					ctx.fillStyle = g1;
+					ctx.fillRect(0, 0, W, H);
+
+					// 2) Build noise-based light patches using layered circles
+					var seed = 42;
+					function rng() { seed = (seed * 16807 + 0) % 2147483647; return seed / 2147483647; }
+
+					// Large warm glow spots (sunlight breaking through)
+					for (var i = 0; i < 18; i++) {
+						var x = rng() * W;
+						var y = rng() * H * 0.7;
+						var r = 100 + rng() * 280;
+						var a = 0.04 + rng() * 0.10;
+						var golden = rng() > 0.3;
+						var grad = ctx.createRadialGradient(x, y, 0, x, y, r);
+						if (golden) {
+							grad.addColorStop(0, 'rgba(245,188,71,' + a + ')');
+							grad.addColorStop(0.6, 'rgba(255,230,150,' + (a * 0.5) + ')');
+						} else {
+							grad.addColorStop(0, 'rgba(255,255,240,' + a + ')');
+							grad.addColorStop(0.6, 'rgba(255,248,220,' + (a * 0.4) + ')');
+						}
+						grad.addColorStop(1, 'rgba(255,255,255,0)');
+						ctx.fillStyle = grad;
+						ctx.fillRect(0, 0, W, H);
+					}
+
+					// 3) Medium dappled spots (leaf-filtered patches)
+					for (var j = 0; j < 40; j++) {
+						var px = rng() * W;
+						var py = rng() * H * 0.8;
+						var pr = 30 + rng() * 120;
+						var pa = 0.03 + rng() * 0.07;
+						var pGrad = ctx.createRadialGradient(px, py, 0, px, py, pr);
+						pGrad.addColorStop(0, 'rgba(255,240,200,' + pa + ')');
+						pGrad.addColorStop(0.7, 'rgba(255,245,220,' + (pa * 0.3) + ')');
+						pGrad.addColorStop(1, 'rgba(255,255,255,0)');
+						ctx.fillStyle = pGrad;
+						ctx.fillRect(0, 0, W, H);
+					}
+
+					// 4) Small bright highlights (direct sun spots)
+					for (var k = 0; k < 12; k++) {
+						var sx = rng() * W;
+						var sy = rng() * H * 0.5;
+						var sr = 20 + rng() * 60;
+						var sa = 0.06 + rng() * 0.08;
+						var sGrad = ctx.createRadialGradient(sx, sy, 0, sx, sy, sr);
+						sGrad.addColorStop(0, 'rgba(255,250,230,' + sa + ')');
+						sGrad.addColorStop(1, 'rgba(255,255,255,0)');
+						ctx.fillStyle = sGrad;
+						ctx.fillRect(0, 0, W, H);
+					}
+
+					// 5) Very subtle green-tinged patches (leaf shadow edges)
+					for (var m = 0; m < 8; m++) {
+						var gx = rng() * W;
+						var gy = 0.2 * H + rng() * H * 0.5;
+						var gr = 60 + rng() * 150;
+						var ga = 0.02 + rng() * 0.03;
+						var gGrad = ctx.createRadialGradient(gx, gy, 0, gx, gy, gr);
+						gGrad.addColorStop(0, 'rgba(180,210,160,' + ga + ')');
+						gGrad.addColorStop(1, 'rgba(255,255,255,0)');
+						ctx.fillStyle = gGrad;
+						ctx.fillRect(0, 0, W, H);
+					}
+
+					return c.toDataURL('image/png');
+				}
+
+				function applyDappled() {
+					var url = generateDappledLight();
+					document.documentElement.style.setProperty('--dappled-light', 'url(' + url + ')');
+				}
+
+				applyDappled();
+				document.addEventListener('astro:after-swap', applyDappled);
+			})();
+		</script>
 	</head>
 	<body
 		class="bg-global-bg text-global-text mx-auto flex min-h-screen max-w-4xl flex-col px-4 pt-8 font-mono text-sm font-normal antialiased sm:px-8" 
