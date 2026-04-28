@@ -71,6 +71,7 @@ interface PortfolioRegimeHistoryPoint {
 interface PortfolioData {
 	regime: { current: PortfolioRegimeCurrent; history_60d: PortfolioRegimeHistoryPoint[] };
 	allocation: { current: { categories: any[] } };
+	allocation_history?: { month: string; values: number[] }[];
 	positions: PortfolioPosition[];
 	crypto: {
 		updated_at: string;
@@ -812,8 +813,8 @@ const stages = [
 							{/* Grid lines */}
 							{[0,25,50,75,100].map((pct: number) => (
 								<g>
-									<line x1={padL} y1={padT + h * (1 - pct/100)} x2={padL + w} y2={padT + h * (1 - pct/100)} stroke="#374151" strokeWidth="0.5" strokeDasharray="2,2" />
-									<text x={padL - 3} y={padT + h * (1 - pct/100) + 3} textAnchor="end" fontSize="7" fill="#6b7280">{pct}</text>
+									<line x1={padL} y1={padT + h * (1 - pct/100)} x2={padL + w} y2={padT + h * (1 - pct/100)} stroke="#374151" stroke-width="0.5" stroke-dasharray="2,2" />
+									<text x={padL - 3} y={padT + h * (1 - pct/100) + 3} text-anchor="end" font-size="7" fill="#6b7280">{pct}</text>
 								</g>
 							))}
 							{/* Lines for each bucket */}
@@ -821,7 +822,7 @@ const stages = [
 								<polyline
 									fill="none"
 									stroke={colors[bi]}
-									strokeWidth="1.5"
+									stroke-width="1.5"
 									points={allocHistory.map((d: any, i: number) => {
 										const x = padL + (i / (n - 1)) * w;
 										const v = (d.buckets?.[key] ?? 0);
@@ -832,7 +833,7 @@ const stages = [
 							))}
 							{/* X-axis labels */}
 							{allocHistory.map((d: any, i: number) => (
-								<text x={padL + (i / (n - 1)) * w} y={padT + h + 15} textAnchor="middle" fontSize="8" fill="#9ca3af">{d.month}</text>
+								<text x={padL + (i / (n - 1)) * w} y={padT + h + 15} text-anchor="middle" font-size="8" fill="#9ca3af">{d.month}</text>
 							))}
 						</g>;
 					})()}
@@ -1300,30 +1301,27 @@ const stages = [
 							const pts = indicators.map((ind: any, i: number) => {
 								const r = R * (ind.score / 100);
 								return `${cx + r * Math.cos(angleOf(i))},${cy + r * Math.sin(angleOf(i))}`;
-							});
-							const maxPts = indicators.map((_ind: any, i: number) => {
-								return `${cx + R * Math.cos(angleOf(i))},${cy + R * Math.sin(angleOf(i))}`;
-							});
-							const gridLevels = [0.25, 0.5, 0.75, 1];
+		});
+					const gridLevels = [0.25, 0.5, 0.75, 1];
 							return <svg viewBox="0 0 200 200" class="radar-svg">
 								{gridLevels.map((level: number) => {
 									const gp = indicators.map((_ind: any, i: number) => {
 										const r = R * level;
 										return `${cx + r * Math.cos(angleOf(i))},${cy + r * Math.sin(angleOf(i))}`;
 									});
-									return <polygon points={gp.join(" ")} fill="none" stroke="#374151" strokeWidth="0.5" />;
+									return <polygon points={gp.join(" ")} fill="none" stroke="#374151" stroke-width="0.5" />;
 								})}
 								{indicators.map((_ind: any, i: number) => (
-									<line x1={cx} y1={cy} x2={cx + R * Math.cos(angleOf(i))} y2={cy + R * Math.sin(angleOf(i))} stroke="#374151" strokeWidth="0.3" />
+									<line x1={cx} y1={cy} x2={cx + R * Math.cos(angleOf(i))} y2={cy + R * Math.sin(angleOf(i))} stroke="#374151" stroke-width="0.3" />
 								))}
-								<polygon points={pts.join(" ")} fill="rgba(99,102,241,0.2)" stroke="#6366f1" strokeWidth="1.5" />
+								<polygon points={pts.join(" ")} fill="rgba(99,102,241,0.2)" stroke="#6366f1" stroke-width="1.5" />
 								{indicators.map((ind: any, i: number) => {
 									const r = R * (ind.score / 100);
 									const lx = cx + (R + 18) * Math.cos(angleOf(i));
 									const ly = cy + (R + 18) * Math.sin(angleOf(i));
 									return <g>
 										<circle cx={cx + r * Math.cos(angleOf(i))} cy={cy + r * Math.sin(angleOf(i))} r="3" fill={ind.score < 26 ? "#ef4444" : ind.score < 51 ? "#f59e0b" : "#10b981"} />
-										<text x={lx} y={ly} textAnchor="middle" dominantBaseline="middle" fontSize="6" fill="#9ca3af">{ind.name}</text>
+										<text x={lx} y={ly} text-anchor="middle" dominant-baseline="middle" font-size="6" fill="#9ca3af">{ind.name}</text>
 									</g>;
 								})}
 							</svg>;
@@ -1354,7 +1352,7 @@ const stages = [
 									<polyline
 										fill="none"
 										stroke="#6366f1"
-										strokeWidth="1.5"
+										stroke-width="1.5"
 										points={fgi7d.map((v: number, i: number) => `${i * 120/(fgi7d.length-1)},${30 - v * 0.3}`).join(" ")}
 									/>
 								</svg>
