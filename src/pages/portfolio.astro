@@ -305,7 +305,7 @@ const stages = [
 ];
 ---
 
-<PageLayout meta={meta}>
+<PageLayout meta={meta} gradient={true}>
 	<link
 		slot="head"
 		rel="preload"
@@ -2295,7 +2295,7 @@ const stages = [
 			position: sticky;
 			top: 0;
 			z-index: 20;
-			background: var(--color-global-bg);
+			background: color-mix(in srgb, var(--color-global-bg) 88%, transparent);
 			backdrop-filter: blur(8px);
 			-webkit-backdrop-filter: blur(8px);
 		}
