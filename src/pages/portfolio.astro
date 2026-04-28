@@ -1819,6 +1819,31 @@ const stages = [
 				page.querySelectorAll('.portfolio-section.fade-in-up').forEach((s) =>
 					s.classList.add('is-visible')
 				);
+				// Also show animated sub-elements immediately
+				page.querySelectorAll('.allocation-donut-wrap, .heatmap-wrap, .stage-zigzag').forEach((el) =>
+					el.classList.add('is-visible')
+				);
+			}
+
+			// Sub-section scroll animations: donut arcs, heatmap cells, methodology cards
+			if (!reduce && 'IntersectionObserver' in window) {
+				const animEls = Array.from(
+					page.querySelectorAll('.allocation-donut-wrap, .heatmap-wrap, .stage-zigzag')
+				);
+				if (animEls.length) {
+					const aio = new IntersectionObserver(
+						(entries) => {
+							entries.forEach((entry) => {
+								if (entry.isIntersecting) {
+									entry.target.classList.add('is-visible');
+									aio.unobserve(entry.target);
+								}
+							});
+						},
+						{ rootMargin: '0px 0px -8% 0px', threshold: 0.1 }
+					);
+					animEls.forEach((el) => aio.observe(el));
+				}
 			}
 
 		// Collapsible portfolio sections — title-click toggle + summaries.
@@ -4481,15 +4506,214 @@ const stages = [
 			}
 		}
 
-		@keyframes lucky-fade-up {
-			from {
-				opacity: 0;
-				transform: translateY(12px);
-			}
-			to {
-				opacity: 1;
-				transform: translateY(0);
-			}
+	@keyframes lucky-fade-up {
+		from {
+			opacity: 0;
+			transform: translateY(12px);
 		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	/* ── 1. Allocation donut: arcs fade-scale in + legend hover ── */
+	@keyframes donut-arc-in {
+		from { opacity: 0; transform: scale(0.7); }
+		to   { opacity: 1; transform: scale(1); }
+	}
+	.allocation-donut-wrap:not(.is-visible) .allocation-arc-outer,
+	.allocation-donut-wrap:not(.is-visible) .allocation-arc-inner {
+		opacity: 0;
+	}
+	.allocation-donut-wrap.is-visible .allocation-arc-outer,
+	.allocation-donut-wrap.is-visible .allocation-arc-inner {
+		opacity: 0;
+		animation: donut-arc-in 0.9s cubic-bezier(.4,0,.2,1) forwards;
+		transform-origin: 120px 120px;
+	}
+	.allocation-donut-wrap.is-visible .allocation-arc-outer:nth-child(1),
+	.allocation-donut-wrap.is-visible .allocation-arc-inner:nth-child(1) { animation-delay: 100ms; }
+	.allocation-donut-wrap.is-visible .allocation-arc-outer:nth-child(2),
+	.allocation-donut-wrap.is-visible .allocation-arc-inner:nth-child(2) { animation-delay: 200ms; }
+	.allocation-donut-wrap.is-visible .allocation-arc-outer:nth-child(3),
+	.allocation-donut-wrap.is-visible .allocation-arc-inner:nth-child(3) { animation-delay: 300ms; }
+	.allocation-donut-wrap.is-visible .allocation-arc-outer:nth-child(4),
+	.allocation-donut-wrap.is-visible .allocation-arc-inner:nth-child(4) { animation-delay: 400ms; }
+	.allocation-donut-wrap.is-visible .allocation-arc-outer:nth-child(5),
+	.allocation-donut-wrap.is-visible .allocation-arc-inner:nth-child(5) { animation-delay: 500ms; }
+	/* Legend hover → dim other arcs, highlight matching */
+	.allocation-donut-wrap:has(.allocation-legend-item:hover) .allocation-arc-outer,
+	.allocation-donut-wrap:has(.allocation-legend-item:hover) .allocation-arc-inner {
+		stroke-opacity: 0.15;
+		transition: stroke-opacity 0.3s ease;
+	}
+	.allocation-legend-item {
+		transition: background 0.2s ease, transform 0.2s ease;
+		cursor: pointer;
+	}
+	.allocation-legend-item:hover {
+		background: color-mix(in srgb, var(--cat-color, #8953d1) 14%, transparent);
+		transform: translateX(4px);
+	}
+	/* When hovering a legend item, highlight matching arc */
+	.allocation-donut-wrap:has(.allocation-legend-item:nth-child(1):hover) .allocation-arc-outer:nth-child(1),
+	.allocation-donut-wrap:has(.allocation-legend-item:nth-child(1):hover) .allocation-arc-inner:nth-child(1),
+	.allocation-donut-wrap:has(.allocation-legend-item:nth-child(2):hover) .allocation-arc-outer:nth-child(2),
+	.allocation-donut-wrap:has(.allocation-legend-item:nth-child(2):hover) .allocation-arc-inner:nth-child(2),
+	.allocation-donut-wrap:has(.allocation-legend-item:nth-child(3):hover) .allocation-arc-outer:nth-child(3),
+	.allocation-donut-wrap:has(.allocation-legend-item:nth-child(3):hover) .allocation-arc-inner:nth-child(3),
+	.allocation-donut-wrap:has(.allocation-legend-item:nth-child(4):hover) .allocation-arc-outer:nth-child(4),
+	.allocation-donut-wrap:has(.allocation-legend-item:nth-child(4):hover) .allocation-arc-inner:nth-child(4),
+	.allocation-donut-wrap:has(.allocation-legend-item:nth-child(5):hover) .allocation-arc-outer:nth-child(5),
+	.allocation-donut-wrap:has(.allocation-legend-item:nth-child(5):hover) .allocation-arc-inner:nth-child(5) {
+		stroke-opacity: 1 !important;
+		stroke-width: 28;
+		transition: stroke-opacity 0.3s ease, stroke-width 0.3s ease;
+	}
+
+	/* ── 2. Regime: light cards stagger + grid cells ──────────── */
+	@keyframes regime-light-in {
+		from { opacity: 0; transform: scale(0.85) translateY(8px); }
+		to   { opacity: 1; transform: scale(1) translateY(0); }
+	}
+	.regime-section.is-visible .regime-light-card {
+		opacity: 0;
+		animation: regime-light-in 0.5s cubic-bezier(.4,0,.2,1) forwards;
+	}
+	.regime-section.is-visible .regime-light-card:nth-child(1) { animation-delay: 100ms; }
+	.regime-section.is-visible .regime-light-card:nth-child(2) { animation-delay: 180ms; }
+	.regime-section.is-visible .regime-light-card:nth-child(3) { animation-delay: 260ms; }
+	.regime-section.is-visible .regime-light-card:nth-child(4) { animation-delay: 340ms; }
+	.regime-section.is-visible .regime-light-card:nth-child(5) { animation-delay: 420ms; }
+
+	/* Regime grid cells: pulse-in stagger */
+	@keyframes regime-cell-in {
+		from { opacity: 0; transform: scale(0.6); }
+		to   { opacity: 1; transform: scale(1); }
+	}
+	.regime-section.is-visible .regime-grid-cell {
+		opacity: 0;
+		animation: regime-cell-in 0.35s cubic-bezier(.4,0,.2,1) forwards;
+	}
+	/* Stagger by column (via nth-child on the row's cells) */
+	.regime-section.is-visible .regime-grid-row .regime-grid-cell:nth-child(1)  { animation-delay: 80ms; }
+	.regime-section.is-visible .regime-grid-row .regime-grid-cell:nth-child(2)  { animation-delay: 110ms; }
+	.regime-section.is-visible .regime-grid-row .regime-grid-cell:nth-child(3)  { animation-delay: 140ms; }
+	.regime-section.is-visible .regime-grid-row .regime-grid-cell:nth-child(4)  { animation-delay: 170ms; }
+	.regime-section.is-visible .regime-grid-row .regime-grid-cell:nth-child(5)  { animation-delay: 200ms; }
+	.regime-section.is-visible .regime-grid-row .regime-grid-cell:nth-child(6)  { animation-delay: 230ms; }
+	.regime-section.is-visible .regime-grid-row .regime-grid-cell:nth-child(7)  { animation-delay: 260ms; }
+	.regime-section.is-visible .regime-grid-row .regime-grid-cell:nth-child(8)  { animation-delay: 290ms; }
+	.regime-section.is-visible .regime-grid-row .regime-grid-cell:nth-child(9)  { animation-delay: 320ms; }
+	.regime-section.is-visible .regime-grid-row .regime-grid-cell:nth-child(10) { animation-delay: 350ms; }
+
+	/* Regime light cards: glow pulse on the dot */
+	@keyframes light-pulse {
+		0%, 100% { box-shadow: 0 0 0 0 var(--light); }
+		50%      { box-shadow: 0 0 8px 3px var(--light); }
+	}
+	.regime-light-dot {
+		animation: light-pulse 2.5s ease-in-out infinite;
+	}
+
+	/* ── 3. Heatmap: cell stagger + ticker row hover ─────────── */
+	@keyframes heatmap-cell-in {
+		from { opacity: 0; transform: scale(0.5); }
+		to   { opacity: 1; transform: scale(1); }
+	}
+	.heatmap-wrap.is-visible .heatmap-cell {
+		opacity: 0;
+		animation: heatmap-cell-in 0.3s cubic-bezier(.4,0,.2,1) forwards;
+	}
+	/* Stagger by column position using nth-child on the grid */
+	.heatmap-wrap.is-visible .heatmap-cell:nth-child(1)  { animation-delay: 50ms; }
+	.heatmap-wrap.is-visible .heatmap-cell:nth-child(2)  { animation-delay: 70ms; }
+	.heatmap-wrap.is-visible .heatmap-cell:nth-child(3)  { animation-delay: 90ms; }
+	.heatmap-wrap.is-visible .heatmap-cell:nth-child(4)  { animation-delay: 110ms; }
+	.heatmap-wrap.is-visible .heatmap-cell:nth-child(5)  { animation-delay: 130ms; }
+	.heatmap-wrap.is-visible .heatmap-cell:nth-child(6)  { animation-delay: 150ms; }
+	.heatmap-wrap.is-visible .heatmap-cell:nth-child(7)  { animation-delay: 170ms; }
+	.heatmap-wrap.is-visible .heatmap-cell:nth-child(8)  { animation-delay: 190ms; }
+	.heatmap-wrap.is-visible .heatmap-cell:nth-child(9)  { animation-delay: 210ms; }
+	.heatmap-wrap.is-visible .heatmap-cell:nth-child(10) { animation-delay: 230ms; }
+	.heatmap-wrap.is-visible .heatmap-cell:nth-child(11) { animation-delay: 250ms; }
+	.heatmap-wrap.is-visible .heatmap-cell:nth-child(12) { animation-delay: 270ms; }
+	.heatmap-wrap.is-visible .heatmap-cell:nth-child(13) { animation-delay: 290ms; }
+	.heatmap-wrap.is-visible .heatmap-cell:nth-child(14) { animation-delay: 310ms; }
+	.heatmap-wrap.is-visible .heatmap-cell:nth-child(15) { animation-delay: 330ms; }
+
+	/* Heatmap ticker row hover highlight */
+	.heatmap-grid {
+		position: relative;
+	}
+	.heatmap-ticker-label {
+		transition: color 0.2s ease, transform 0.2s ease;
+	}
+	.heatmap-ticker-label:hover {
+		color: #8953d1;
+		transform: translateX(3px);
+	}
+	/* Star cells: subtle pulse */
+	@keyframes star-pulse {
+		0%, 100% { opacity: 1; }
+		50%      { opacity: 0.5; }
+	}
+	.heatmap-cell-mark {
+		animation: star-pulse 2s ease-in-out infinite;
+	}
+
+	/* ── 4. Methodology: stage cards stagger + connector ─────── */
+	@keyframes stage-slide-left {
+		from { opacity: 0; transform: translateX(-40px); }
+		to   { opacity: 1; transform: translateX(0); }
+	}
+	@keyframes stage-slide-right {
+		from { opacity: 0; transform: translateX(40px); }
+		to   { opacity: 1; transform: translateX(0); }
+	}
+	.stage-zigzag.is-visible .stage-card {
+		opacity: 0;
+	}
+	.stage-zigzag.is-visible .stage-card.stage-left {
+		animation: stage-slide-left 0.6s cubic-bezier(.4,0,.2,1) forwards;
+	}
+	.stage-zigzag.is-visible .stage-card.stage-right {
+		animation: stage-slide-right 0.6s cubic-bezier(.4,0,.2,1) forwards;
+	}
+	.stage-zigzag.is-visible .stage-card:nth-child(1) { animation-delay: 80ms; }
+	.stage-zigzag.is-visible .stage-card:nth-child(2) { animation-delay: 160ms; }
+	.stage-zigzag.is-visible .stage-card:nth-child(3) { animation-delay: 240ms; }
+	.stage-zigzag.is-visible .stage-card:nth-child(4) { animation-delay: 320ms; }
+	.stage-zigzag.is-visible .stage-card:nth-child(5) { animation-delay: 400ms; }
+	.stage-zigzag.is-visible .stage-card:nth-child(6) { animation-delay: 480ms; }
+	.stage-zigzag.is-visible .stage-card:nth-child(7) { animation-delay: 560ms; }
+	.stage-zigzag.is-visible .stage-card:nth-child(8) { animation-delay: 640ms; }
+
+	/* Connector line between stage cards */
+	.stage-zigzag .stage-card + .stage-card {
+		position: relative;
+	}
+	.stage-zigzag .stage-card + .stage-card::before {
+		content: '';
+		position: absolute;
+		top: -0.85rem;
+		left: 2.8rem;
+		width: 2px;
+		height: 0.85rem;
+		background: linear-gradient(to bottom, rgba(137, 83, 209, 0.3), rgba(137, 83, 209, 0.08));
+	}
+	/* Stage number glow on hover */
+	.stage-card:hover .stage-number-wrap {
+		box-shadow: 0 0 12px rgba(137, 83, 209, 0.35);
+		transition: box-shadow 0.3s ease;
+	}
+	.stage-card {
+		transition: transform 0.2s ease, box-shadow 0.2s ease;
+	}
+	.stage-card:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 4px 20px rgba(137, 83, 209, 0.12);
+	}
 	</style>
 </PageLayout>
