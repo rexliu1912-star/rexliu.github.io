@@ -342,7 +342,11 @@ function sanitizeMonitorState(monitorState, dcaStatus, marketData = null, bottom
   const bottomTrackerIndicators = (bottomTrackerData?.indicators || []).map((ind) => ({
     name: ind.name,
     status: ind.status, // "red" | "yellow" | "green"
-    detail: ind.data,
+    value: ind.value,
+    signal: ind.signal,
+    weight: ind.weight,
+    score: ind.score ?? ind.weight,
+    detail: (ind.data || "").replace(/\$[\d,.]+/g, "$XXX"),
   }));
 
   // Extract FGI 7-day history from market data file
