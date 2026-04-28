@@ -459,6 +459,106 @@ const stages = [
 		</nav>
 
 		{/* ═══ Allocation ═══ */}
+		<section class="portfolio-section fade-in-up" data-collapse id="regime-section">
+			<header class="portfolio-section-head">
+				<p class="portfolio-kicker">
+					<span class="lang-en">Macro Thermometer</span>
+					<span class="lang-zh">宏观温度计</span>
+				</p>
+				<h2 class="font-serif text-3xl font-semibold">
+					<span class="lang-en">The market temperature we're trading against</span>
+					<span class="lang-zh">我们在和什么样的市场做交易</span>
+				</h2>
+			</header>
+
+			<div class="regime-lights">
+				{Object.entries(regime?.current?.signals || {}).map(([, sig]) => (
+					<div class="regime-light-card" style={`--light: ${lightColors[sig.light] || "#9ca3af"}`}>
+						<span class="regime-light-label">{sig.label}</span>
+						<strong class="regime-light-value font-serif">{sig.value}</strong>
+						<span class="regime-light-dot" aria-hidden="true"></span>
+					</div>
+				))}
+			</div>
+
+			<div class="regime-chart-wrap">
+				<div class="regime-chart-head">
+					<h3 class="font-serif text-lg">
+						<span class="lang-en">VIX & Regime · 60 days</span>
+						<span class="lang-zh">VIX 与 Regime · 60 天</span>
+					</h3>
+					<p class="portfolio-note">
+						<span class="lang-en">
+							Shaded bands mark regime transitions (green = offensive, amber = neutral, red =
+							defensive). VIX line is the mood overlay.
+						</span>
+						<span class="lang-zh">
+							色段为 regime 状态（绿=进攻、黄=中性、红=防御）。VIX 折线是情绪指标。
+						</span>
+					</p>
+				</div>
+				{regime?.history_60d && regime.history_60d.length >= 7 ? (
+					<div class="regime-chart-canvas-wrap">
+						<canvas id="regimeChart" aria-hidden="true"></canvas>
+					</div>
+					<div id="regimeTooltip" class="regime-tooltip" style="display:none;">
+						<div class="regime-tooltip-date"></div>
+						<div class="regime-tooltip-regime"></div>
+						<div class="regime-tooltip-signals"></div>
+					</div>
+				) : regime?.history_60d && regime.history_60d.length > 0 ? (
+					<div
+						class="regime-grid-fallback"
+						aria-label="Signal history grid"
+						style={`--days: ${regime.history_60d.length}`}
+					>
+						<div class="regime-grid-head-row">
+							<div class="regime-grid-corner"></div>
+							{regime.history_60d.map((h: any) => (
+								<div class="regime-grid-date-label" title={h.date}>
+									{h.date.slice(5)}
+								</div>
+							))}
+						</div>
+						{SIGNAL_ORDER.map((sig) => {
+							const label = SIGNAL_LABELS[sig] || { en: sig.toUpperCase(), zh: sig.toUpperCase() };
+							return (
+								<div class="regime-grid-row">
+									<div class="regime-grid-signal-label">
+										<span class="lang-en">{label.en}</span>
+										<span class="lang-zh">{label.zh}</span>
+									</div>
+									{regime.history_60d.map((h: any) => {
+										const light = h.lights?.[sig] || "gray";
+										return (
+											<div
+												class={`regime-grid-cell light-${light}`}
+												title={`${label.en} · ${h.date} · ${light}`}
+											></div>
+										);
+									})}
+								</div>
+							);
+							})}
+						<p class="regime-grid-note">
+							<span class="lang-en">
+								{regime.history_60d.length} day(s) tracked · line chart activates at 7 days
+							</span>
+							<span class="lang-zh">
+								已累积 {regime.history_60d.length} 天 · 满 7 天后切换为折线图
+							</span>
+						</p>
+					</div>
+				) : (
+					<div class="portfolio-empty-overlay">
+						<span class="lang-en">
+							No history yet · check back after a few daily runs.
+						</span>
+						<span class="lang-zh">历史数据还未累积 · 日度任务跑几天后回来看。</span>
+					</div>
+				)}
+			</div>
+		</section>
 		<section class="portfolio-section fade-in-up" data-collapse id="allocation-section">
 			<header class="portfolio-section-head">
 				<p class="portfolio-kicker">
@@ -643,106 +743,6 @@ const stages = [
 						)}
 					</article>
 				))}
-			</div>
-		</section>
-		<section class="portfolio-section fade-in-up" data-collapse id="regime-section">
-			<header class="portfolio-section-head">
-				<p class="portfolio-kicker">
-					<span class="lang-en">Macro Thermometer</span>
-					<span class="lang-zh">宏观温度计</span>
-				</p>
-				<h2 class="font-serif text-3xl font-semibold">
-					<span class="lang-en">The market temperature we're trading against</span>
-					<span class="lang-zh">我们在和什么样的市场做交易</span>
-				</h2>
-			</header>
-
-			<div class="regime-lights">
-				{Object.entries(regime?.current?.signals || {}).map(([, sig]) => (
-					<div class="regime-light-card" style={`--light: ${lightColors[sig.light] || "#9ca3af"}`}>
-						<span class="regime-light-label">{sig.label}</span>
-						<strong class="regime-light-value font-serif">{sig.value}</strong>
-						<span class="regime-light-dot" aria-hidden="true"></span>
-					</div>
-				))}
-			</div>
-
-			<div class="regime-chart-wrap">
-				<div class="regime-chart-head">
-					<h3 class="font-serif text-lg">
-						<span class="lang-en">VIX & Regime · 60 days</span>
-						<span class="lang-zh">VIX 与 Regime · 60 天</span>
-					</h3>
-					<p class="portfolio-note">
-						<span class="lang-en">
-							Shaded bands mark regime transitions (green = offensive, amber = neutral, red =
-							defensive). VIX line is the mood overlay.
-						</span>
-						<span class="lang-zh">
-							色段为 regime 状态（绿=进攻、黄=中性、红=防御）。VIX 折线是情绪指标。
-						</span>
-					</p>
-				</div>
-				{regime?.history_60d && regime.history_60d.length >= 7 ? (
-					<div class="regime-chart-canvas-wrap">
-						<canvas id="regimeChart" aria-hidden="true"></canvas>
-					</div>
-					<div id="regimeTooltip" class="regime-tooltip" style="display:none;">
-						<div class="regime-tooltip-date"></div>
-						<div class="regime-tooltip-regime"></div>
-						<div class="regime-tooltip-signals"></div>
-					</div>
-				) : regime?.history_60d && regime.history_60d.length > 0 ? (
-					<div
-						class="regime-grid-fallback"
-						aria-label="Signal history grid"
-						style={`--days: ${regime.history_60d.length}`}
-					>
-						<div class="regime-grid-head-row">
-							<div class="regime-grid-corner"></div>
-							{regime.history_60d.map((h: any) => (
-								<div class="regime-grid-date-label" title={h.date}>
-									{h.date.slice(5)}
-								</div>
-							))}
-						</div>
-						{SIGNAL_ORDER.map((sig) => {
-							const label = SIGNAL_LABELS[sig] || { en: sig.toUpperCase(), zh: sig.toUpperCase() };
-							return (
-								<div class="regime-grid-row">
-									<div class="regime-grid-signal-label">
-										<span class="lang-en">{label.en}</span>
-										<span class="lang-zh">{label.zh}</span>
-									</div>
-									{regime.history_60d.map((h: any) => {
-										const light = h.lights?.[sig] || "gray";
-										return (
-											<div
-												class={`regime-grid-cell light-${light}`}
-												title={`${label.en} · ${h.date} · ${light}`}
-											></div>
-										);
-									})}
-								</div>
-							);
-							})}
-						<p class="regime-grid-note">
-							<span class="lang-en">
-								{regime.history_60d.length} day(s) tracked · line chart activates at 7 days
-							</span>
-							<span class="lang-zh">
-								已累积 {regime.history_60d.length} 天 · 满 7 天后切换为折线图
-							</span>
-						</p>
-					</div>
-				) : (
-					<div class="portfolio-empty-overlay">
-						<span class="lang-en">
-							No history yet · check back after a few daily runs.
-						</span>
-						<span class="lang-zh">历史数据还未累积 · 日度任务跑几天后回来看。</span>
-					</div>
-				)}
 			</div>
 		</section>
 		<section class="portfolio-section fade-in-up" data-collapse id="positions-section">
