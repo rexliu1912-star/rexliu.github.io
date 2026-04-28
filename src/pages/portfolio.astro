@@ -442,11 +442,10 @@ const stages = [
 		</section>
 
 		<nav class="portfolio-section-nav" aria-label="Section navigation">
-			{cryptoMonitor && <a href="#bucket-overview-section">Overview</a>}
-			<a href="#positions-section">Positions</a>
-			{cryptoMonitor && <a href="#crypto-mgmt-section">Crypto</a>}
 			<a href="#allocation-section">Allocation</a>
 			<a href="#regime-section">Regime</a>
+			<a href="#positions-section">Positions</a>
+			{cryptoMonitor && <a href="#crypto-mgmt-section">Crypto</a>}
 			<a href="#supply-chain-section">Chain</a>
 			<a href="#watchlist-section">Watchlist</a>
 			<a href="#shortlist-section">Short List</a>
@@ -458,364 +457,6 @@ const stages = [
 			<button class="collapse-control" type="button" data-collapse-action="expand">Expand all</button>
 			<button class="collapse-control" type="button" data-collapse-action="collapse">Collapse all</button>
 		</nav>
-
-		{/* ═══ Current Positions ═══ */}
-		<section class="portfolio-section fade-in-up" data-collapse id="regime-section">
-			<header class="portfolio-section-head">
-				<p class="portfolio-kicker">
-					<span class="lang-en">Stage 0 · Macro Thermometer</span>
-					<span class="lang-zh">阶段 0 · 宏观温度计</span>
-				</p>
-				<h2 class="font-serif text-3xl font-semibold">
-					<span class="lang-en">The market temperature we're trading against</span>
-					<span class="lang-zh">我们在和什么样的市场做交易</span>
-				</h2>
-			</header>
-
-			<div class="regime-lights">
-				{Object.entries(regime?.current?.signals || {}).map(([, sig]) => (
-					<div class="regime-light-card" style={`--light: ${lightColors[sig.light] || "#9ca3af"}`}>
-						<span class="regime-light-label">{sig.label}</span>
-						<strong class="regime-light-value font-serif">{sig.value}</strong>
-						<span class="regime-light-dot" aria-hidden="true"></span>
-					</div>
-				))}
-			</div>
-
-			<div class="regime-chart-wrap">
-				<div class="regime-chart-head">
-					<h3 class="font-serif text-lg">
-						<span class="lang-en">VIX & Regime · 60 days</span>
-						<span class="lang-zh">VIX 与 Regime · 60 天</span>
-					</h3>
-					<p class="portfolio-note">
-						<span class="lang-en">
-							Shaded bands mark regime transitions (green = offensive, amber = neutral, red =
-							defensive). VIX line is the mood overlay.
-						</span>
-						<span class="lang-zh">
-							色段为 regime 状态（绿=进攻、黄=中性、红=防御）。VIX 折线是情绪指标。
-						</span>
-					</p>
-				</div>
-				{regime?.history_60d && regime.history_60d.length >= 7 ? (
-					<div class="regime-chart-canvas-wrap">
-						<canvas id="regimeChart" aria-hidden="true"></canvas>
-					</div>
-					<div id="regimeTooltip" class="regime-tooltip" style="display:none;">
-						<div class="regime-tooltip-date"></div>
-						<div class="regime-tooltip-regime"></div>
-						<div class="regime-tooltip-signals"></div>
-					</div>
-				) : regime?.history_60d && regime.history_60d.length > 0 ? (
-					<div
-						class="regime-grid-fallback"
-						aria-label="Signal history grid"
-						style={`--days: ${regime.history_60d.length}`}
-					>
-						<div class="regime-grid-head-row">
-							<div class="regime-grid-corner"></div>
-							{regime.history_60d.map((h: any) => (
-								<div class="regime-grid-date-label" title={h.date}>
-									{h.date.slice(5)}
-								</div>
-							))}
-						</div>
-						{SIGNAL_ORDER.map((sig) => {
-							const label = SIGNAL_LABELS[sig] || { en: sig.toUpperCase(), zh: sig.toUpperCase() };
-							return (
-								<div class="regime-grid-row">
-									<div class="regime-grid-signal-label">
-										<span class="lang-en">{label.en}</span>
-										<span class="lang-zh">{label.zh}</span>
-									</div>
-									{regime.history_60d.map((h: any) => {
-										const light = h.lights?.[sig] || "gray";
-										return (
-											<div
-												class={`regime-grid-cell light-${light}`}
-												title={`${label.en} · ${h.date} · ${light}`}
-											></div>
-										);
-									})}
-								</div>
-							);
-							})}
-						<p class="regime-grid-note">
-							<span class="lang-en">
-								{regime.history_60d.length} day(s) tracked · line chart activates at 7 days
-							</span>
-							<span class="lang-zh">
-								已累积 {regime.history_60d.length} 天 · 满 7 天后切换为折线图
-							</span>
-						</p>
-					</div>
-				) : (
-					<div class="portfolio-empty-overlay">
-						<span class="lang-en">
-							No history yet · check back after a few daily runs.
-						</span>
-						<span class="lang-zh">历史数据还未累积 · 日度任务跑几天后回来看。</span>
-					</div>
-				)}
-			</div>
-		</section>
-		<section class="portfolio-section fade-in-up" data-collapse id="positions-section">
-			<header class="portfolio-section-head">
-				<p class="portfolio-kicker">
-					<span class="lang-en">Stage 7 · Active Positions</span>
-					<span class="lang-zh">阶段 7 · 当前持仓</span>
-				</p>
-				<h2 class="font-serif text-3xl font-semibold">
-					<span class="lang-en">The {activePositionCount} names that earned conviction</span>
-					<span class="lang-zh">值得信念的 {activePositionCount} 只</span>
-				</h2>
-				<p class="portfolio-note">
-					<span class="lang-en">
-						Each card shows sector tags, one-line thesis, stage badge, distance to stop, and the
-						next catalyst on the calendar.
-					</span>
-					<span class="lang-zh">
-						每张卡片显示板块标签、一句逻辑、阶段徽章、距止损线距离、日历上最近的催化事件。
-					</span>
-				</p>
-			</header>
-
-			{/* ── Catalyst Timeline: all upcoming events across positions ── */}
-			{(() => {
-				const allEvents = positions
-					.filter((p) => p.next_event)
-					.map((p) => ({
-						date: p.next_event!.date,
-						label: p.next_event!.label,
-						urgency: p.next_event!.urgency,
-						symbol: p.symbol,
-					}))
-					.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-				if (allEvents.length === 0) return null;
-				return (
-					<div class="catalyst-timeline">
-						<div class="catalyst-timeline-head">
-							<span class="lang-en">Upcoming Catalysts</span>
-							<span class="lang-zh">近期催化事件</span>
-							<span class="catalyst-timeline-count">{allEvents.length}</span>
-						</div>
-						<div class="catalyst-timeline-track">
-							{allEvents.map((ev) => (
-								<div class={`catalyst-timeline-item urgency-${ev.urgency}`} data-catalyst-date={ev.date}>
-									<span class="catalyst-date">{ev.date}</span>
-									<span class="catalyst-symbol">{ev.symbol}</span>
-									<span class="catalyst-label">{ev.label}</span>
-									<span class="catalyst-countdown">—</span>
-								</div>
-							))}
-						</div>
-					</div>
-				);
-			})()}
-
-			<div class="positions-grid">
-				{positions.map((p) => (
-					<article class={`position-card conviction-${p.conviction}`}>
-						<header class="position-head">
-							<div class="position-symbol-row">
-								<strong class="position-symbol font-serif">{p.symbol}</strong>
-								<span class="position-flag" aria-label={p.market}>
-									{p.flag}
-								</span>
-								<span class="position-conviction-icon">
-									{conviction[p.conviction] || ""}
-								</span>
-							</div>
-							<div class="position-tags">
-								{p.sector_tags_en.map((tag, i) => (
-									<span class="position-tag">
-										<span class="lang-en">{tag}</span>
-										<span class="lang-zh">{p.sector_tags_zh[i] || tag}</span>
-									</span>
-								))}
-							</div>
-						</header>
-
-						<p class="position-thesis">
-							<span class="lang-en">{p.thesis_en}</span>
-							<span class="lang-zh">{p.thesis_zh}</span>
-						</p>
-
-					<div
-						class="position-conviction-bar"
-						title={`Conviction: ${p.conviction}`}
-						role="meter"
-						aria-valuenow={p.conviction === "high" ? "3" : p.conviction === "medium" ? "2" : "1"}
-						aria-valuemin="1"
-						aria-valuemax="3"
-						aria-label={`Conviction: ${p.conviction}`}
-					>
-						<span
-							class="position-conviction-fill"
-							style={`width: ${p.conviction === "high" ? "100" : p.conviction === "medium" ? "60" : "30"}%; background: ${convictionStroke[p.conviction] || "#9ca3af"}`}
-						></span>
-					</div>
-
-						<div class="position-meta">
-							<span class="position-stage-badge">
-								<span class="lang-en">Stage {p.stage}</span>
-								<span class="lang-zh">阶段 {p.stage}</span>
-							</span>
-							<span class="position-status">
-								<span class="lang-en">{p.status_en}</span>
-								<span class="lang-zh">{p.status_zh}</span>
-							</span>
-						</div>
-
-					<footer class="position-foot">
-						{p.stop && p.target ? (
-							<div class="position-range-track" title={`${p.stop.description || "Stop"} → ${p.target.description || "Target"}`}>
-								<span class="range-label range-stop">
-									<span class="lang-en">Stop</span>
-									<span class="lang-zh">止损</span>
-									{` ${p.stop.level_pct_from_current}`}
-								</span>
-								<div class="range-bar">
-									<div class="range-bar-danger"></div>
-									<div
-										class="range-marker"
-										style={`left: ${(() => {
-											const stopPct = Math.abs(parseFloat(p.stop.level_pct_from_current));
-											const targetPct = Math.abs(parseFloat(p.target.price_pct_from_current || "0"));
-											const total = stopPct + targetPct;
-											return total > 0 ? `${(stopPct / total * 100).toFixed(1)}%` : "50%";
-										})()}`}
-									></div>
-								</div>
-								<span class="range-label range-target">
-									<span class="lang-en">Target</span>
-									<span class="lang-zh">目标</span>
-									{` ${p.target.price_pct_from_current}`}
-								</span>
-							</div>
-						) : (
-							<div class="position-rail">
-								{p.stop ? (
-									<span class={`position-stop severity-${p.stop.severity}`} title={p.stop.description || ""}>
-										<span class="rail-label">Stop</span>
-										<span class="rail-value">{p.stop.level_pct_from_current}</span>
-									</span>
-								) : (
-									<span class="position-stop-empty">
-										<span class="lang-en">No stop</span>
-										<span class="lang-zh">无止损</span>
-									</span>
-								)}
-								<span class="rail-sep">/</span>
-								{p.target ? (
-									<span class="position-target" title={p.target.description || ""}>
-										<span class="rail-label">Target</span>
-										<span class="rail-value">{p.target.price_pct_from_current || "—"}</span>
-									</span>
-								) : (
-									<span class="position-target-empty">
-										<span class="lang-en">No target</span>
-										<span class="lang-zh">无目标</span>
-									</span>
-								)}
-							</div>
-						)}
-						{p.next_event ? (
-							<span
-								class={`position-event urgency-${p.next_event.urgency}`}
-								data-event-date={p.next_event.date}
-								data-event-label={p.next_event.label}
-								data-event-urgency={String(p.next_event.urgency)}
-							>
-								<span class="event-countdown">—</span>
-								<span class="event-label">{p.next_event.label}</span>
-							</span>
-						) : (
-							<span class="position-event-empty">
-								<span class="lang-en">No pending events</span>
-								<span class="lang-zh">无预告事件</span>
-							</span>
-						)}
-					</footer>
-					</article>
-				))}
-
-				{cryptoPositions.map((cp) => (
-					<article class={`position-card crypto-position-card conviction-${cp.role === "core" ? "high" : "low"}`}>
-						<header class="position-head">
-							<div class="position-symbol-row">
-								<strong class="position-symbol font-serif">{cp.symbol}</strong>
-								<span class="position-flag" aria-label="crypto">₿</span>
-								<span class="position-conviction-icon">
-									{cp.role === "core" ? "◆" : "◇"}
-								</span>
-							</div>
-							<div class="position-tags">
-								{cp.tags_en.map((tag, i) => (
-									<span class="position-tag crypto-position-tag">
-										<span class="lang-en">{tag}</span>
-										<span class="lang-zh">{cp.tags_zh[i] || tag}</span>
-									</span>
-								))}
-							</div>
-						</header>
-
-						<p class="position-thesis">
-							<span class="lang-en">{cp.thesis_en}</span>
-							<span class="lang-zh">{cp.thesis_zh}</span>
-						</p>
-
-						<div
-							class="position-conviction-bar"
-							title={`Crypto role: ${cp.role}`}
-							role="meter"
-							aria-valuenow={cp.role === "core" ? "3" : "1"}
-							aria-valuemin="1"
-							aria-valuemax="3"
-							aria-label={`Crypto role: ${cp.role}`}
-						>
-							<span
-								class="position-conviction-fill crypto-position-fill"
-								style={`width: ${cp.role === "core" ? "100" : "30"}%; background: ${cp.role === "core" ? "#f59e0b" : "#6366f1"}`}
-							></span>
-						</div>
-
-						<div class="position-meta">
-							<span class="position-stage-badge crypto-stage-badge">
-								<span class="lang-en">Crypto · {cp.role}</span>
-								<span class="lang-zh">加密 · {cp.role === "core" ? "核心" : "社区"}</span>
-							</span>
-							<span class="position-status">
-								<span class="lang-en">{cp.strategy_en}</span>
-								<span class="lang-zh">{cp.strategy_zh}</span>
-							</span>
-						</div>
-
-						<footer class="position-foot">
-							<a class="crypto-position-link" href="#positions-section">
-								<span class="lang-en">Signal-only · no price targets</span>
-								<span class="lang-zh">仅信号驱动 · 无目标价</span>
-							</a>
-						</footer>
-					</article>
-				))}
-			</div>
-	</section>
-
-	{/* ═══ Crypto Asset Management ═══ */}
-	{cryptoMonitor && (
-		<section class="portfolio-section fade-in-up" data-collapse id="crypto-mgmt-section">
-			<header class="portfolio-section-head"><p class="portfolio-kicker"><span class="lang-en">P1 Monitoring Loop</span><span class="lang-zh">P1 监控闭环</span></p><h2 class="font-serif text-3xl font-semibold"><span class="lang-en">Crypto Asset Management</span><span class="lang-zh">Crypto 资产管理</span></h2><p class="portfolio-note"><span class="lang-en">Bottom tracker, DCA gate, stablecoin health, and SNEK pulse in one place.</span><span class="lang-zh">底部追踪、DCA 闸门、稳定币健康度、SNEK 脉搏集中到一处。</span></p></header>
-			<div class="crypto-mgmt-grid">
-				<article class="crypto-mgmt-card"><span class="crypto-mgmt-label">Bottom Tracker</span><strong>{cryptoMonitor.bottom_tracker.score ?? "—"}</strong><p>{cryptoMonitor.bottom_tracker.status || "unknown"}</p></article>
-				<article class="crypto-mgmt-card"><span class="crypto-mgmt-label">DCA Gate</span><strong>{cryptoMonitor.dca.status || "—"}</strong><p>{cryptoMonitor.dca.reason || `${cryptoMonitor.dca.met_count}/${cryptoMonitor.dca.min_required} conditions`}</p></article>
-				<article class="crypto-mgmt-card"><span class="crypto-mgmt-label">Stablecoin Health</span><strong>{cryptoMonitor.stablecoin_health.apy_current_pct ? `${cryptoMonitor.stablecoin_health.apy_current_pct}%` : "—"}</strong><p>{cryptoMonitor.stablecoin_health.depeg_alerts.length} depeg alerts</p></article>
-				<article class="crypto-mgmt-card"><span class="crypto-mgmt-label">SNEK Pulse</span><strong>{cryptoMonitor.snek.has_position ? "Tracked" : "Watch"}</strong><p>{cryptoMonitor.snek.note || `${cryptoMonitor.snek.signals.length} signals`}</p></article>
-			</div>
-			<div class="crypto-conditions">{cryptoMonitor.dca.conditions.map((c: any) => <span class={`crypto-condition ${c.met ? "met" : "miss"}`}>{c.met ? "✓" : "·"} {c.detail || c.id}</span>)}</div>
-		</section>
-	)}
 
 		{/* ═══ Allocation ═══ */}
 		<section class="portfolio-section fade-in-up" data-collapse id="allocation-section">
@@ -1004,10 +645,361 @@ const stages = [
 				))}
 			</div>
 		</section>
+		<section class="portfolio-section fade-in-up" data-collapse id="regime-section">
+			<header class="portfolio-section-head">
+				<p class="portfolio-kicker">
+					<span class="lang-en">Macro Thermometer</span>
+					<span class="lang-zh">宏观温度计</span>
+				</p>
+				<h2 class="font-serif text-3xl font-semibold">
+					<span class="lang-en">The market temperature we're trading against</span>
+					<span class="lang-zh">我们在和什么样的市场做交易</span>
+				</h2>
+			</header>
 
-		{/* ═══ Macro Regime ═══ */}
+			<div class="regime-lights">
+				{Object.entries(regime?.current?.signals || {}).map(([, sig]) => (
+					<div class="regime-light-card" style={`--light: ${lightColors[sig.light] || "#9ca3af"}`}>
+						<span class="regime-light-label">{sig.label}</span>
+						<strong class="regime-light-value font-serif">{sig.value}</strong>
+						<span class="regime-light-dot" aria-hidden="true"></span>
+					</div>
+				))}
+			</div>
 
-	{/* ═══ Supply Chain Topology ═══ */}
+			<div class="regime-chart-wrap">
+				<div class="regime-chart-head">
+					<h3 class="font-serif text-lg">
+						<span class="lang-en">VIX & Regime · 60 days</span>
+						<span class="lang-zh">VIX 与 Regime · 60 天</span>
+					</h3>
+					<p class="portfolio-note">
+						<span class="lang-en">
+							Shaded bands mark regime transitions (green = offensive, amber = neutral, red =
+							defensive). VIX line is the mood overlay.
+						</span>
+						<span class="lang-zh">
+							色段为 regime 状态（绿=进攻、黄=中性、红=防御）。VIX 折线是情绪指标。
+						</span>
+					</p>
+				</div>
+				{regime?.history_60d && regime.history_60d.length >= 7 ? (
+					<div class="regime-chart-canvas-wrap">
+						<canvas id="regimeChart" aria-hidden="true"></canvas>
+					</div>
+					<div id="regimeTooltip" class="regime-tooltip" style="display:none;">
+						<div class="regime-tooltip-date"></div>
+						<div class="regime-tooltip-regime"></div>
+						<div class="regime-tooltip-signals"></div>
+					</div>
+				) : regime?.history_60d && regime.history_60d.length > 0 ? (
+					<div
+						class="regime-grid-fallback"
+						aria-label="Signal history grid"
+						style={`--days: ${regime.history_60d.length}`}
+					>
+						<div class="regime-grid-head-row">
+							<div class="regime-grid-corner"></div>
+							{regime.history_60d.map((h: any) => (
+								<div class="regime-grid-date-label" title={h.date}>
+									{h.date.slice(5)}
+								</div>
+							))}
+						</div>
+						{SIGNAL_ORDER.map((sig) => {
+							const label = SIGNAL_LABELS[sig] || { en: sig.toUpperCase(), zh: sig.toUpperCase() };
+							return (
+								<div class="regime-grid-row">
+									<div class="regime-grid-signal-label">
+										<span class="lang-en">{label.en}</span>
+										<span class="lang-zh">{label.zh}</span>
+									</div>
+									{regime.history_60d.map((h: any) => {
+										const light = h.lights?.[sig] || "gray";
+										return (
+											<div
+												class={`regime-grid-cell light-${light}`}
+												title={`${label.en} · ${h.date} · ${light}`}
+											></div>
+										);
+									})}
+								</div>
+							);
+							})}
+						<p class="regime-grid-note">
+							<span class="lang-en">
+								{regime.history_60d.length} day(s) tracked · line chart activates at 7 days
+							</span>
+							<span class="lang-zh">
+								已累积 {regime.history_60d.length} 天 · 满 7 天后切换为折线图
+							</span>
+						</p>
+					</div>
+				) : (
+					<div class="portfolio-empty-overlay">
+						<span class="lang-en">
+							No history yet · check back after a few daily runs.
+						</span>
+						<span class="lang-zh">历史数据还未累积 · 日度任务跑几天后回来看。</span>
+					</div>
+				)}
+			</div>
+		</section>
+		<section class="portfolio-section fade-in-up" data-collapse id="positions-section">
+			<header class="portfolio-section-head">
+				<p class="portfolio-kicker">
+					<span class="lang-en">Active Positions</span>
+					<span class="lang-zh">当前持仓</span>
+				</p>
+				<h2 class="font-serif text-3xl font-semibold">
+					<span class="lang-en">The {activePositionCount} names that earned conviction</span>
+					<span class="lang-zh">值得信念的 {activePositionCount} 只</span>
+				</h2>
+				<p class="portfolio-note">
+					<span class="lang-en">
+						Each card shows sector tags, one-line thesis, stage badge, distance to stop, and the
+						next catalyst on the calendar.
+					</span>
+					<span class="lang-zh">
+						每张卡片显示板块标签、一句逻辑、阶段徽章、距止损线距离、日历上最近的催化事件。
+					</span>
+				</p>
+			</header>
+
+			{/* ── Catalyst Timeline: all upcoming events across positions ── */}
+			{(() => {
+				const allEvents = positions
+					.filter((p) => p.next_event)
+					.map((p) => ({
+						date: p.next_event!.date,
+						label: p.next_event!.label,
+						urgency: p.next_event!.urgency,
+						symbol: p.symbol,
+					}))
+					.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+				if (allEvents.length === 0) return null;
+				return (
+					<div class="catalyst-timeline">
+						<div class="catalyst-timeline-head">
+							<span class="lang-en">Upcoming Catalysts</span>
+							<span class="lang-zh">近期催化事件</span>
+							<span class="catalyst-timeline-count">{allEvents.length}</span>
+						</div>
+						<div class="catalyst-timeline-track">
+							{allEvents.map((ev) => (
+								<div class={`catalyst-timeline-item urgency-${ev.urgency}`} data-catalyst-date={ev.date}>
+									<span class="catalyst-date">{ev.date}</span>
+									<span class="catalyst-symbol">{ev.symbol}</span>
+									<span class="catalyst-label">{ev.label}</span>
+									<span class="catalyst-countdown">—</span>
+								</div>
+							))}
+						</div>
+					</div>
+				);
+			})()}
+
+			<div class="positions-grid">
+				{positions.map((p) => (
+					<article class={`position-card conviction-${p.conviction}`}>
+						<header class="position-head">
+							<div class="position-symbol-row">
+								<strong class="position-symbol font-serif">{p.symbol}</strong>
+								<span class="position-flag" aria-label={p.market}>
+									{p.flag}
+								</span>
+								<span class="position-conviction-icon">
+									{conviction[p.conviction] || ""}
+								</span>
+							</div>
+							<div class="position-tags">
+								{p.sector_tags_en.map((tag, i) => (
+									<span class="position-tag">
+										<span class="lang-en">{tag}</span>
+										<span class="lang-zh">{p.sector_tags_zh[i] || tag}</span>
+									</span>
+								))}
+							</div>
+						</header>
+
+						<p class="position-thesis">
+							<span class="lang-en">{p.thesis_en}</span>
+							<span class="lang-zh">{p.thesis_zh}</span>
+						</p>
+
+					<div
+						class="position-conviction-bar"
+						title={`Conviction: ${p.conviction}`}
+						role="meter"
+						aria-valuenow={p.conviction === "high" ? "3" : p.conviction === "medium" ? "2" : "1"}
+						aria-valuemin="1"
+						aria-valuemax="3"
+						aria-label={`Conviction: ${p.conviction}`}
+					>
+						<span
+							class="position-conviction-fill"
+							style={`width: ${p.conviction === "high" ? "100" : p.conviction === "medium" ? "60" : "30"}%; background: ${convictionStroke[p.conviction] || "#9ca3af"}`}
+						></span>
+					</div>
+
+						<div class="position-meta">
+							<span class="position-stage-badge">
+								<span class="lang-en">Core</span>
+								<span class="lang-zh">核心</span>
+							</span>
+							<span class="position-status">
+								<span class="lang-en">{p.status_en}</span>
+								<span class="lang-zh">{p.status_zh}</span>
+							</span>
+						</div>
+
+					<footer class="position-foot">
+						{p.stop && p.target ? (
+							<div class="position-range-track" title={`${p.stop.description || "Stop"} → ${p.target.description || "Target"}`}>
+								<span class="range-label range-stop">
+									<span class="lang-en">Stop</span>
+									<span class="lang-zh">止损</span>
+									{` ${p.stop.level_pct_from_current}`}
+								</span>
+								<div class="range-bar">
+									<div class="range-bar-danger"></div>
+									<div
+										class="range-marker"
+										style={`left: ${(() => {
+											const stopPct = Math.abs(parseFloat(p.stop.level_pct_from_current));
+											const targetPct = Math.abs(parseFloat(p.target.price_pct_from_current || "0"));
+											const total = stopPct + targetPct;
+											return total > 0 ? `${(stopPct / total * 100).toFixed(1)}%` : "50%";
+										})()}`}
+									></div>
+								</div>
+								<span class="range-label range-target">
+									<span class="lang-en">Target</span>
+									<span class="lang-zh">目标</span>
+									{` ${p.target.price_pct_from_current}`}
+								</span>
+							</div>
+						) : (
+							<div class="position-rail">
+								{p.stop ? (
+									<span class={`position-stop severity-${p.stop.severity}`} title={p.stop.description || ""}>
+										<span class="rail-label">Stop</span>
+										<span class="rail-value">{p.stop.level_pct_from_current}</span>
+									</span>
+								) : (
+									<span class="position-stop-empty">
+										<span class="lang-en">No stop</span>
+										<span class="lang-zh">无止损</span>
+									</span>
+								)}
+								<span class="rail-sep">/</span>
+								{p.target ? (
+									<span class="position-target" title={p.target.description || ""}>
+										<span class="rail-label">Target</span>
+										<span class="rail-value">{p.target.price_pct_from_current || "—"}</span>
+									</span>
+								) : (
+									<span class="position-target-empty">
+										<span class="lang-en">No target</span>
+										<span class="lang-zh">无目标</span>
+									</span>
+								)}
+							</div>
+						)}
+						{p.next_event ? (
+							<span
+								class={`position-event urgency-${p.next_event.urgency}`}
+								data-event-date={p.next_event.date}
+								data-event-label={p.next_event.label}
+								data-event-urgency={String(p.next_event.urgency)}
+							>
+								<span class="event-countdown">—</span>
+								<span class="event-label">{p.next_event.label}</span>
+							</span>
+						) : (
+							<span class="position-event-empty">
+								<span class="lang-en">No pending events</span>
+								<span class="lang-zh">无预告事件</span>
+							</span>
+						)}
+					</footer>
+					</article>
+				))}
+
+				{cryptoPositions.map((cp) => (
+					<article class={`position-card crypto-position-card conviction-${cp.role === "core" ? "high" : "low"}`}>
+						<header class="position-head">
+							<div class="position-symbol-row">
+								<strong class="position-symbol font-serif">{cp.symbol}</strong>
+								<span class="position-flag" aria-label="crypto">₿</span>
+								<span class="position-conviction-icon">
+									{cp.role === "core" ? "◆" : "◇"}
+								</span>
+							</div>
+							<div class="position-tags">
+								{cp.tags_en.map((tag, i) => (
+									<span class="position-tag crypto-position-tag">
+										<span class="lang-en">{tag}</span>
+										<span class="lang-zh">{cp.tags_zh[i] || tag}</span>
+									</span>
+								))}
+							</div>
+						</header>
+
+						<p class="position-thesis">
+							<span class="lang-en">{cp.thesis_en}</span>
+							<span class="lang-zh">{cp.thesis_zh}</span>
+						</p>
+
+						<div
+							class="position-conviction-bar"
+							title={`Crypto role: ${cp.role}`}
+							role="meter"
+							aria-valuenow={cp.role === "core" ? "3" : "1"}
+							aria-valuemin="1"
+							aria-valuemax="3"
+							aria-label={`Crypto role: ${cp.role}`}
+						>
+							<span
+								class="position-conviction-fill crypto-position-fill"
+								style={`width: ${cp.role === "core" ? "100" : "30"}%; background: ${cp.role === "core" ? "#f59e0b" : "#6366f1"}`}
+							></span>
+						</div>
+
+						<div class="position-meta">
+							<span class="position-stage-badge crypto-stage-badge">
+								<span class="lang-en">Crypto · {cp.role}</span>
+								<span class="lang-zh">加密 · {cp.role === "core" ? "核心" : "社区"}</span>
+							</span>
+							<span class="position-status">
+								<span class="lang-en">{cp.strategy_en}</span>
+								<span class="lang-zh">{cp.strategy_zh}</span>
+							</span>
+						</div>
+
+						<footer class="position-foot">
+							<a class="crypto-position-link" href="#positions-section">
+								<span class="lang-en">Signal-only · no price targets</span>
+								<span class="lang-zh">仅信号驱动 · 无目标价</span>
+							</a>
+						</footer>
+					</article>
+				))}
+			</div>
+	</section>
+
+	{/* ═══ Crypto Asset Management ═══ */}
+	{cryptoMonitor && (
+		<section class="portfolio-section fade-in-up" data-collapse id="crypto-mgmt-section">
+			<header class="portfolio-section-head"><p class="portfolio-kicker"><span class="lang-en">P1 Monitoring Loop</span><span class="lang-zh">P1 监控闭环</span></p><h2 class="font-serif text-3xl font-semibold"><span class="lang-en">Crypto Asset Management</span><span class="lang-zh">Crypto 资产管理</span></h2><p class="portfolio-note"><span class="lang-en">Bottom tracker, DCA gate, stablecoin health, and SNEK pulse in one place.</span><span class="lang-zh">底部追踪、DCA 闸门、稳定币健康度、SNEK 脉搏集中到一处。</span></p></header>
+			<div class="crypto-mgmt-grid">
+				<article class="crypto-mgmt-card"><span class="crypto-mgmt-label">Bottom Tracker</span><strong>{cryptoMonitor.bottom_tracker.score ?? "—"}</strong><p>{cryptoMonitor.bottom_tracker.status || "unknown"}</p></article>
+				<article class="crypto-mgmt-card"><span class="crypto-mgmt-label">DCA Gate</span><strong>{cryptoMonitor.dca.status || "—"}</strong><p>{cryptoMonitor.dca.reason || `${cryptoMonitor.dca.met_count}/${cryptoMonitor.dca.min_required} conditions`}</p></article>
+				<article class="crypto-mgmt-card"><span class="crypto-mgmt-label">Stablecoin Health</span><strong>{cryptoMonitor.stablecoin_health.apy_current_pct ? `${cryptoMonitor.stablecoin_health.apy_current_pct}%` : "—"}</strong><p>{cryptoMonitor.stablecoin_health.depeg_alerts.length} depeg alerts</p></article>
+				<article class="crypto-mgmt-card"><span class="crypto-mgmt-label">SNEK Pulse</span><strong>{cryptoMonitor.snek.has_position ? "Tracked" : "Watch"}</strong><p>{cryptoMonitor.snek.note || `${cryptoMonitor.snek.signals.length} signals`}</p></article>
+			</div>
+			<div class="crypto-conditions">{cryptoMonitor.dca.conditions.map((c: any) => <span class={`crypto-condition ${c.met ? "met" : "miss"}`}>{c.met ? "✓" : "·"} {c.detail || c.id}</span>)}</div>
+		</section>
 		<section class="portfolio-section fade-in-up" data-collapse id="supply-chain-section">
 			<header class="portfolio-section-head">
 				<p class="portfolio-kicker">
@@ -1061,13 +1053,11 @@ const stages = [
 				<span class="legend-item"><span class="legend-dot legend-ghost"></span> <span class="lang-en">Thematic</span><span class="lang-zh">主题</span></span>
 			</div>
 		</section>
-
-		{/* ═══ Watchlist Heatmap ═══ */}
 		<section class="portfolio-section fade-in-up" data-collapse id="watchlist-section">
 			<header class="portfolio-section-head">
 				<p class="portfolio-kicker">
-					<span class="lang-en">Stage 2-3 · Watchlist Opportunity Scan</span>
-					<span class="lang-zh">阶段 2-3 · 观察池机会扫描</span>
+					<span class="lang-en">Watchlist Opportunity Scan</span>
+					<span class="lang-zh">观察池机会扫描</span>
 				</p>
 				<h2 class="font-serif text-3xl font-semibold">
 					<span class="lang-en">Who's moving into upgrade range</span>
@@ -1127,14 +1117,11 @@ const stages = [
 				</div>
 			)}
 		</section>
-
-		{/* ═══ Short List (Stage 2-3 filtered) ═══ */}
-		{shortList.length > 0 && (
 			<section class="portfolio-section fade-in-up" data-collapse id="shortlist-section">
 				<header class="portfolio-section-head">
 					<p class="portfolio-kicker">
-						<span class="lang-en">Stage 2-3 · Short List</span>
-						<span class="lang-zh">阶段 2-3 · 短名单</span>
+						<span class="lang-en">Short List</span>
+						<span class="lang-zh">短名单</span>
 					</p>
 					<h2 class="font-serif text-3xl font-semibold">
 						<span class="lang-en">Passed the 7-point threshold</span>
@@ -1161,13 +1148,13 @@ const stages = [
 			</section>
 		)}
 
-		{/* ═══ Sector Research (Stage 1) ═══ */}
+		{/* ═══ Sector Research ═══ */}
 		{sector_research && sector_research.length > 0 && (
 			<section class="portfolio-section fade-in-up" data-collapse id="sector-research-section">
 				<header class="portfolio-section-head">
 					<p class="portfolio-kicker">
-						<span class="lang-en">Stage 1 · Sector Research</span>
-						<span class="lang-zh">阶段 1 · 赛道研究</span>
+						<span class="lang-en">Sector Research</span>
+						<span class="lang-zh">赛道研究</span>
 					</p>
 					<h2 class="font-serif text-3xl font-semibold">
 						<span class="lang-en">Heavy-weight reports before picking names</span>
@@ -1230,13 +1217,13 @@ const stages = [
 			</section>
 		)}
 
-		{/* ═══ Deep Research (Stage 4) ═══ */}
+		{/* ═══ Deep Research ═══ */}
 		{deep_research && deep_research.length > 0 && (
 			<section class="portfolio-section fade-in-up" data-collapse id="deep-research-section">
 				<header class="portfolio-section-head">
 					<p class="portfolio-kicker">
-						<span class="lang-en">Stage 4 · Deep Research</span>
-						<span class="lang-zh">阶段 4 · 深度研究</span>
+						<span class="lang-en">Deep Research</span>
+						<span class="lang-zh">深度研究</span>
 					</p>
 					<h2 class="font-serif text-3xl font-semibold">
 						<span class="lang-en">4+1 cards · one-line thesis per name</span>
@@ -1244,11 +1231,11 @@ const stages = [
 					</h2>
 					<p class="portfolio-note">
 						<span class="lang-en">
-							Each name that clears Stage 3 gets a full deep-research card. Five-star confidence
+							Each name that clears the watchlist gets a full deep-research card. Five-star confidence
 							scale. Badge marks those currently held.
 						</span>
 						<span class="lang-zh">
-							通过 Stage 3 的标的会写成深度研究名片。五星置信度，徽章标注当前是否持仓。
+							通过观察池筛选的标的会写成深度研究名片。五星置信度，徽章标注当前是否持仓。
 						</span>
 					</p>
 				</header>
@@ -1324,8 +1311,8 @@ const stages = [
 		<section class="portfolio-section fade-in-up" data-collapse id="roundtable-section">
 			<header class="portfolio-section-head">
 				<p class="portfolio-kicker">
-					<span class="lang-en">Stage 5 · Roundtable Log</span>
-					<span class="lang-zh">阶段 5 · 圆桌档案</span>
+					<span class="lang-en">Roundtable Log</span>
+					<span class="lang-zh">圆桌档案</span>
 				</p>
 				<h2 class="font-serif text-3xl font-semibold">
 					<span class="lang-en">6 masters stress-test the thesis</span>
@@ -1485,8 +1472,6 @@ const stages = [
 				)}
 			</div>
 		</section>
-
-		{/* ═══ Closed Positions Gallery ═══ */}
 		<section class="portfolio-section fade-in-up" data-collapse id="clearance-section">
 			<header class="portfolio-section-head">
 				<p class="portfolio-kicker">
@@ -1656,8 +1641,6 @@ const stages = [
 				))}
 			</div>
 		</section>
-
-		{/* ═══ 8-Stage Methodology ═══ */}
 		<section class="portfolio-section fade-in-up" data-collapse id="methodology-section">
 			<header class="portfolio-section-head">
 				<p class="portfolio-kicker">
@@ -1863,10 +1846,10 @@ const stages = [
 				page.dataset.portfolioCollapseReady = 'true';
 				const key = 'portfolio-sections';
 				const defaultOpen = new Set([
-					'positions-section',
-					'crypto-mgmt-section',
 					'allocation-section',
 					'regime-section',
+					'positions-section',
+					'crypto-mgmt-section',
 				]);
 				let state = {};
 				try { state = JSON.parse(localStorage.getItem(key) || '{}') || {}; } catch {}
@@ -1884,7 +1867,9 @@ const stages = [
 					const set = (isCollapsed) => {
 						section.classList.toggle('is-collapsed', isCollapsed);
 						btn.setAttribute('aria-expanded', String(!isCollapsed));
-						btn.textContent = isCollapsed ? '+' : '−';
+						btn.innerHTML = isCollapsed
+							? '<span class="collapse-icon">▶</span><span class="collapse-label">Expand</span>'
+							: '<span class="collapse-icon">▼</span><span class="collapse-label">Collapse</span>';
 					};
 					set(!sectionIsOpen(section));
 					head.appendChild(btn);
@@ -1901,7 +1886,12 @@ const stages = [
 						state[section.id] = open;
 						section.classList.toggle('is-collapsed', !open);
 						section.querySelector('.section-collapse-toggle')?.setAttribute('aria-expanded', String(open));
-						if (section.querySelector('.section-collapse-toggle')) section.querySelector('.section-collapse-toggle').textContent = open ? '−' : '+';
+						const toggleBtn = section.querySelector('.section-collapse-toggle');
+						if (toggleBtn) {
+							toggleBtn.innerHTML = open
+								? '<span class="collapse-icon">▼</span><span class="collapse-label">Collapse</span>'
+								: '<span class="collapse-icon">▶</span><span class="collapse-label">Expand</span>';
+						}
 					});
 					persist();
 				}));
@@ -4393,8 +4383,33 @@ const stages = [
 		}
 
 		/* ── Phase 5 portfolio controls ───────────────── */
-		.collapse-control, .section-collapse-toggle { border: 1px solid var(--p-border); border-radius: 999px; background: var(--p-card); color: var(--p-text-soft); padding: .35rem .7rem; font-size: .78rem; cursor: pointer; }
-		.section-collapse-toggle { margin-left: auto; min-width: 2rem; }
+		.collapse-control { border: 1px solid var(--p-border); border-radius: 999px; background: var(--p-card); color: var(--p-text-soft); padding: .35rem .7rem; font-size: .78rem; cursor: pointer; }
+		.section-collapse-toggle {
+			margin-left: auto;
+			border: 1px solid var(--p-border);
+			border-radius: .5rem;
+			background: var(--p-card-strong);
+			color: var(--p-text-soft);
+			padding: .4rem .9rem;
+			font-size: .75rem;
+			font-weight: 500;
+			cursor: pointer;
+			display: inline-flex;
+			align-items: center;
+			gap: .4rem;
+			transition: background .2s, border-color .2s;
+		}
+		.section-collapse-toggle:hover {
+			background: var(--p-card);
+			border-color: rgba(137, 83, 209, 0.35);
+		}
+		.collapse-icon {
+			font-size: .65rem;
+			line-height: 1;
+		}
+		.collapse-label {
+			letter-spacing: .02em;
+		}
 		.portfolio-section-head { position: relative; }
 		.portfolio-section.is-collapsed > *:not(.portfolio-section-head) { display: none !important; }
 		.bucket-bars { display: grid; gap: 1rem; }
