@@ -580,18 +580,41 @@ const stages = [
 				</p>
 			</header>
 
-			{/* Action Signals — global alerts that need Rex attention */}
-			{cryptoMonitor && cryptoMonitor.action_signals.length > 0 && (
+		{/* Action Signals — allocation drift + crypto monitor alerts */}
+		{(() => {
+			/* Rebalancing signals from allocation drift */
+			const rebalanceSignals = allocation.current.categories
+				.filter((c: any) => Math.abs(c.drift_pp) >= 3)
+				.map((c: any) => ({
+					priority: Math.abs(c.drift_pp) >= 5 ? 1 : 2,
+					type: "allocation_drift",
+					detail: `${c.label_en} ${c.current_pct}% (target ${c.target_pct}%), drift ${c.drift_pp >= 0 ? "+" : ""}${c.drift_pp}pp`,
+					href: "#allocation-section",
+				}));
+
+			/* Crypto monitor signals */
+			const cryptoSignals = (cryptoMonitor?.action_signals ?? []).map((sig: any) => ({
+				...sig,
+				href: "#crypto-mgmt-section",
+			}));
+
+			/* Merge & sort: priority 1 (action) first */
+			const allSignals = [...rebalanceSignals, ...cryptoSignals].sort(
+				(a: any, b: any) => a.priority - b.priority,
+			);
+
+			return allSignals.length > 0 ? (
 				<div class="bucket-action-signals">
 					<p class="bucket-signals-title">⚡ Action Signals</p>
-					{cryptoMonitor.action_signals.map((sig: any) => (
-						<a class={`bucket-signal priority-${sig.priority}`} href="#crypto-mgmt-section">
-							<span class="signal-dot"></span>
+					{allSignals.map((sig: any) => (
+						<a class={`bucket-signal priority-${sig.priority}`} href={sig.href}>
+							<span class="signal-dot" />
 							{sig.detail}
 						</a>
 					))}
 				</div>
-			)}
+			) : null;
+		})()}
 
 			<div class="allocation-donut-wrap" aria-label="Target vs current allocation">
 				<svg class="allocation-donut" viewBox="0 0 240 240" role="img">
@@ -4371,8 +4394,15 @@ const stages = [
 		.bucket-note, .bucket-crypto-summary { margin-top: .7rem; color: var(--p-text-soft); font-size: .88rem; }
 		.bucket-action-signals { margin-top: 1rem; display: grid; gap: .55rem; }
 		.bucket-signals-title { font-size: .78rem; letter-spacing: .14em; text-transform: uppercase; color: var(--p-text-faint); }
-		.bucket-signal { display: flex; gap: .5rem; align-items: center; border: 1px solid rgba(245,158,11,.28); background: rgba(245,158,11,.08); border-radius: .8rem; padding: .65rem .8rem; color: var(--p-text); }
-		.signal-dot { width: .45rem; height: .45rem; border-radius: 50%; background: #f59e0b; }
+		.bucket-signal { display: flex; gap: .5rem; align-items: center; border-radius: .8rem; padding: .65rem .8rem; color: var(--p-text); text-decoration: none; transition: background .15s; }
+		.bucket-signal:hover { background: rgba(255,255,255,.04); }
+		.signal-dot { width: .45rem; height: .45rem; border-radius: 50%; flex-shrink: 0; }
+		/* priority-1 = ACTION (≥5pp drift or critical) */
+		.bucket-signal.priority-1 { border: 1px solid rgba(239,68,68,.32); background: rgba(239,68,68,.08); }
+		.bucket-signal.priority-1 .signal-dot { background: #ef4444; box-shadow: 0 0 4px rgba(239,68,68,.4); }
+		/* priority-2 = WATCH (≥3pp drift) */
+		.bucket-signal.priority-2 { border: 1px solid rgba(245,158,11,.28); background: rgba(245,158,11,.08); }
+		.bucket-signal.priority-2 .signal-dot { background: #f59e0b; }
 		.crypto-position-card { border-color: rgba(245,158,11,.24); }
 		.crypto-position-tag, .crypto-stage-badge { background: rgba(245,158,11,.1); color: #92400e; }
 		.crypto-position-link { color: var(--p-accent); font-size: .82rem; }
