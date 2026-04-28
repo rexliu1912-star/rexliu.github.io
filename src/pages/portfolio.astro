@@ -442,20 +442,19 @@ const stages = [
 		</section>
 
 		<nav class="portfolio-section-nav" aria-label="Section navigation">
-			<a href="#allocation-section">Allocation</a>
-			<a href="#regime-section">Regime</a>
-			<a href="#positions-section">Positions</a>
-			{cryptoMonitor && <a href="#crypto-mgmt-section">Crypto</a>}
-			<a href="#supply-chain-section">Chain</a>
-			<a href="#watchlist-section">Watchlist</a>
-			<a href="#shortlist-section">Short List</a>
-			<a href="#sector-research-section">Sectors</a>
-			<a href="#deep-research-section">Research</a>
-			<a href="#roundtable-section">Roundtable</a>
-			<a href="#clearance-section">Trades</a>
-			<a href="#methodology-section">Methodology</a>
-			<button class="collapse-control" type="button" data-collapse-action="expand">Expand all</button>
-			<button class="collapse-control" type="button" data-collapse-action="collapse">Collapse all</button>
+			<a href="#allocation-section"><span class="lang-en">Allocation</span><span class="lang-zh">配置</span></a>
+			<a href="#regime-section"><span class="lang-en">Regime</span><span class="lang-zh">宏观</span></a>
+			<a href="#positions-section"><span class="lang-en">Positions</span><span class="lang-zh">持仓</span></a>
+			{cryptoMonitor && <a href="#crypto-mgmt-section"><span class="lang-en">Crypto</span><span class="lang-zh">加密</span></a>}
+			<a href="#supply-chain-section"><span class="lang-en">Chain</span><span class="lang-zh">链上</span></a>
+			<a href="#watchlist-section"><span class="lang-en">Watchlist</span><span class="lang-zh">观察池</span></a>
+			<a href="#sector-research-section"><span class="lang-en">Sectors</span><span class="lang-zh">行业</span></a>
+			<a href="#deep-research-section"><span class="lang-en">Research</span><span class="lang-zh">深度</span></a>
+			<a href="#roundtable-section"><span class="lang-en">Roundtable</span><span class="lang-zh">圆桌</span></a>
+			<a href="#clearance-section"><span class="lang-en">Trades</span><span class="lang-zh">交易</span></a>
+			<a href="#methodology-section"><span class="lang-en">Methodology</span><span class="lang-zh">方法论</span></a>
+			<button class="collapse-control" type="button" data-collapse-action="expand"><span class="lang-en">Expand all</span><span class="lang-zh">全部展开</span></button>
+			<button class="collapse-control" type="button" data-collapse-action="collapse"><span class="lang-en">Collapse all</span><span class="lang-zh">全部折叠</span></button>
 		</nav>
 
 		{/* ═══ Allocation ═══ */}
@@ -607,7 +606,7 @@ const stages = [
 
 			return allSignals.length > 0 ? (
 				<div class="bucket-action-signals">
-					<p class="bucket-signals-title">⚡ Action Signals</p>
+					<p class="bucket-signals-title">⚡ <span class="lang-en">Action Signals</span><span class="lang-zh">行动信号</span></p>
 					{allSignals.map((sig: any) => (
 						<a class={`bucket-signal priority-${sig.priority}`} href={sig.href}>
 							<span class="signal-dot" />
@@ -909,7 +908,7 @@ const stages = [
 							<div class="position-rail">
 								{p.stop ? (
 									<span class={`position-stop severity-${p.stop.severity}`} title={p.stop.description || ""}>
-										<span class="rail-label">Stop</span>
+										<span class="rail-label"><span class="lang-en">Stop</span><span class="lang-zh">止损</span></span>
 										<span class="rail-value">{p.stop.level_pct_from_current}</span>
 									</span>
 								) : (
@@ -921,7 +920,7 @@ const stages = [
 								<span class="rail-sep">/</span>
 								{p.target ? (
 									<span class="position-target" title={p.target.description || ""}>
-										<span class="rail-label">Target</span>
+										<span class="rail-label"><span class="lang-en">Target</span><span class="lang-zh">目标</span></span>
 										<span class="rail-value">{p.target.price_pct_from_current || "—"}</span>
 									</span>
 								) : (
@@ -1119,7 +1118,7 @@ const stages = [
 
 						{(c.ai_context_en || c.ai_context_zh) && (
 							<p class="clearance-ai-context">
-								<strong class="clearance-ai-badge">AI-guided</strong>
+								<strong class="clearance-ai-badge"><span class="lang-en">AI-guided</span><span class="lang-zh">AI 引导</span></strong>
 								<span class="lang-en">{c.ai_context_en}</span>
 								<span class="lang-zh">{c.ai_context_zh}</span>
 							</p>
@@ -1189,10 +1188,10 @@ const stages = [
 		<section class="portfolio-section fade-in-up" data-collapse id="crypto-mgmt-section">
 			<header class="portfolio-section-head"><p class="portfolio-kicker"><span class="lang-en">P1 Monitoring Loop</span><span class="lang-zh">P1 监控闭环</span></p><h2 class="font-serif text-3xl font-semibold"><span class="lang-en">Crypto Asset Management</span><span class="lang-zh">Crypto 资产管理</span></h2><p class="portfolio-note"><span class="lang-en">Bottom tracker, DCA gate, stablecoin health, and SNEK pulse in one place.</span><span class="lang-zh">底部追踪、DCA 闸门、稳定币健康度、SNEK 脉搏集中到一处。</span></p><span class="section-summary"><span class="lang-en">Bottom 31/100 · DCA closed · stablecoin normal</span><span class="lang-zh">底部评分 31/100 · DCA 暂停 · 稳定币正常</span></span></header>
 			<div class="crypto-mgmt-grid">
-				<article class="crypto-mgmt-card"><span class="crypto-mgmt-label">Bottom Tracker</span><strong>{cryptoMonitor.bottom_tracker.score ?? "—"}</strong><p>{cryptoMonitor.bottom_tracker.status || "unknown"}</p></article>
-				<article class="crypto-mgmt-card"><span class="crypto-mgmt-label">DCA Gate</span><strong>{cryptoMonitor.dca.status || "—"}</strong><p>{cryptoMonitor.dca.reason || `${cryptoMonitor.dca.met_count}/${cryptoMonitor.dca.min_required} conditions`}</p></article>
-				<article class="crypto-mgmt-card"><span class="crypto-mgmt-label">Stablecoin Health</span><strong>{cryptoMonitor.stablecoin_health.apy_current_pct ? `${cryptoMonitor.stablecoin_health.apy_current_pct}%` : "—"}</strong><p>{cryptoMonitor.stablecoin_health.depeg_alerts.length} depeg alerts</p></article>
-				<article class="crypto-mgmt-card"><span class="crypto-mgmt-label">SNEK Pulse</span><strong>{cryptoMonitor.snek.has_position ? "Tracked" : "Watch"}</strong><p>{cryptoMonitor.snek.note || `${cryptoMonitor.snek.signals.length} signals`}</p></article>
+				<article class="crypto-mgmt-card"><span class="crypto-mgmt-label"><span class="lang-en">Bottom Tracker</span><span class="lang-zh">底部追踪</span></span><strong>{cryptoMonitor.bottom_tracker.score ?? "—"}</strong><p>{cryptoMonitor.bottom_tracker.status || "unknown"}</p></article>
+				<article class="crypto-mgmt-card"><span class="crypto-mgmt-label"><span class="lang-en">DCA Gate</span><span class="lang-zh">DCA 闸门</span></span><strong>{cryptoMonitor.dca.status || "—"}</strong><p>{cryptoMonitor.dca.reason || `${cryptoMonitor.dca.met_count}/${cryptoMonitor.dca.min_required} conditions`}</p></article>
+				<article class="crypto-mgmt-card"><span class="crypto-mgmt-label"><span class="lang-en">Stablecoin Health</span><span class="lang-zh">稳定币健康</span></span><strong>{cryptoMonitor.stablecoin_health.apy_current_pct ? `${cryptoMonitor.stablecoin_health.apy_current_pct}%` : "—"}</strong><p>{cryptoMonitor.stablecoin_health.depeg_alerts.length} <span class="lang-en">depeg alerts</span><span class="lang-zh">脱锚警报</span></p></article>
+				<article class="crypto-mgmt-card"><span class="crypto-mgmt-label"><span class="lang-en">SNEK Pulse</span><span class="lang-zh">SNEK 脉搏</span></span><strong>{cryptoMonitor.snek.has_position && <><span class="lang-en">Tracked</span><span class="lang-zh">持仓中</span></>}{!cryptoMonitor.snek.has_position && <><span class="lang-en">Watch</span><span class="lang-zh">观察</span></>}</strong><p>{cryptoMonitor.snek.note || `${cryptoMonitor.snek.signals.length} signals`}</p></article>
 			</div>
 			<div class="crypto-conditions">{cryptoMonitor.dca.conditions.map((c: any) => <span class={`crypto-condition ${c.met ? "met" : "miss"}`}>{c.met ? "✓" : "·"} {c.detail || c.id}</span>)}</div>
 		</section>
@@ -1261,36 +1260,6 @@ const stages = [
 				</div>
 			)}
 		</section>
-			<section class="portfolio-section fade-in-up" data-collapse id="shortlist-section">
-				<header class="portfolio-section-head">
-					<p class="portfolio-kicker">
-						<span class="lang-en">Short List</span>
-						<span class="lang-zh">短名单</span>
-					</p>
-					<h2 class="font-serif text-3xl font-semibold">
-						<span class="lang-en">Passed the 7-point threshold</span>
-						<span class="lang-zh">通过 7 分筛选门槛</span>
-					</h2>
-					<p class="portfolio-note">
-						<span class="lang-en">
-							Tickers from the daily watchlist scan that scored ≥ 7 on the latest run. Candidates for deeper research before entry.
-						</span>
-						<span class="lang-zh">
-						每日观察池扫描中最新一期得分 ≥ 7 的标的。入仓前需做更深研究。
-					</span>
-				</p>
-				<span class="section-summary"><span class="lang-en">No entries</span><span class="lang-zh">暂无入选</span></span>
-			</header>
-				<div class="shortlist-grid">
-					{shortList.map((s: any) => (
-						<div class="shortlist-card">
-							<strong class="shortlist-ticker">{s.ticker}</strong>
-							<span class="shortlist-name">{s.name}</span>
-							<span class="shortlist-score" title={`Scan score: ${s.score}/10`}>{s.score}/10</span>
-						</div>
-					))}
-				</div>
-			</section>
 		)}
 
 		{/* ═══ Sector Research ═══ */}
@@ -1905,37 +1874,6 @@ const stages = [
 				allSections().forEach(s => toggleSection(s, open));
 			}));
 
-			// Keyboard shortcuts
-			const visibleSections = () => allSections().filter(s => s.offsetParent !== null);
-			document.addEventListener('keydown', (e) => {
-				const tag = e.target.tagName;
-				if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
-				const secs = visibleSections();
-
-				// ] / [ — next / prev section
-				if (e.key === ']' || e.key === '[') {
-					e.preventDefault();
-					const viewportCenter = window.innerHeight / 2;
-					let closestIdx = 0, closestDist = Infinity;
-					secs.forEach((s, i) => {
-						const r = s.getBoundingClientRect();
-						const dist = Math.abs(r.top + r.height / 2 - viewportCenter);
-						if (dist < closestDist) { closestDist = dist; closestIdx = i; }
-					});
-					const nextIdx = e.key === ']'
-						? Math.min(closestIdx + 1, secs.length - 1)
-						: Math.max(closestIdx - 1, 0);
-					secs[nextIdx].scrollIntoView({ behavior: 'smooth', block: 'start' });
-					return;
-				}
-
-				// Cmd+Shift+E — toggle all
-				if (e.key === 'E' && e.shiftKey && (e.metaKey || e.ctrlKey)) {
-					e.preventDefault();
-					const anyOpen = secs.some(s => !s.classList.contains('is-collapsed'));
-					secs.forEach(s => toggleSection(s, !anyOpen));
-				}
-			});
 
 			// Anchor highlight — brief pulse when clicking a nav link
 			page.querySelectorAll('a[href^="#"]').forEach((link) => {
@@ -4407,35 +4345,6 @@ const stages = [
 			background: color-mix(in srgb, var(--p-card) 70%, transparent);
 		}
 
-		/* ── Short List grid ────────────────────── */
-		.shortlist-grid {
-			display: flex;
-			flex-wrap: wrap;
-			gap: 0.6rem;
-		}
-		.shortlist-card {
-			display: flex;
-			align-items: center;
-			gap: 0.5rem;
-			padding: 0.55rem 0.9rem;
-			border-radius: 0.6rem;
-			background: var(--p-card);
-			border: 1px solid var(--p-border);
-		}
-		.shortlist-ticker {
-			font-size: 0.85rem;
-			color: var(--p-text);
-		}
-		.shortlist-name {
-			font-size: 0.78rem;
-			color: var(--p-text-soft);
-		}
-		.shortlist-score {
-			margin-left: auto;
-			font-size: 0.75rem;
-			font-weight: 700;
-			color: rgba(137, 83, 209, 0.85);
-		}
 		.portfolio-empty {
 			color: var(--p-text-faint);
 			font-size: 0.9rem;
@@ -4444,7 +4353,7 @@ const stages = [
 		/* ── Phase 5 portfolio controls ───────────────── */
 		.collapse-control { border: 1px solid var(--p-border); border-radius: 999px; background: var(--p-card); color: var(--p-text-soft); padding: .35rem .7rem; font-size: .78rem; cursor: pointer; }
 		.section-collapse-toggle { display: none; }
-		.section-chevron { display: inline-block; margin-left: .45rem; font-size: .6rem; opacity: .45; transition: opacity .2s; vertical-align: middle; }
+	.section-chevron { display: inline-block; margin-left: .3rem; font-size: .38rem; opacity: .4; transition: opacity .2s; vertical-align: middle; line-height: 1; }
 		.portfolio-section-head:hover .section-chevron { opacity: .8; }
 		.section-summary { display: none; font-size: .78rem; color: var(--p-text-faint); letter-spacing: .02em; margin-top: .35rem; padding: .35rem .7rem; border-left: 2px solid var(--p-border); }
 		.portfolio-section.is-collapsed .section-summary { display: block; }
