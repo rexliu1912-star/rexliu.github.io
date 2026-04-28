@@ -107,6 +107,7 @@ const portfolioData = rawPortfolioData as unknown as PortfolioData;
 const {
 	regime,
 	allocation,
+	allocation_history: allocationHistory,
 	positions,
 	crypto,
 	crypto_monitor: cryptoMonitor,
@@ -118,6 +119,16 @@ const {
 	stats,
 	generated_at,
 } = portfolioData;
+
+// Derived: Fear & Greed Index
+const fgi = cryptoMonitor?.macro?.fear_greed;
+const fgi7d = cryptoMonitor?.macro?.fear_greed_7d ?? [];
+
+// Derived: BTC ETF daily flow
+const etfData = (cryptoMonitor as any)?.etf;
+
+// Derived: allocation history for trend chart
+const allocHistory = (allocationHistory as any)?.history ?? [];
 
 const cryptoPositions = crypto?.positions ?? [];
 const activePositionCount = positions.length + cryptoPositions.length;
@@ -433,7 +444,22 @@ const stages = [
 				</article>
 			</div>
 
-			<p class="portfolio-updated">
+			{/* Action Signals bar */}
+		{cryptoMonitor?.action_signals?.length > 0 && (
+			<div class="action-signals-bar">
+				<span class="action-signals-icon">⚡</span>
+				<div class="action-signals-list">
+					{cryptoMonitor.action_signals.map((sig: any) => (
+						<span class={`action-signal-chip priority-${sig.priority ?? 2}`}>
+							{sig.detail}
+						</span>
+					))}
+				</div>
+				{/* Micro badges moved to Crypto Dashboard — no duplication */}
+			</div>
+		)}
+
+		<p class="portfolio-updated">
 				<span class="lang-en">Last updated: {updatedLabel}</span>
 				<span class="lang-zh">最后更新: {updatedLabel}</span>
 			</p>
@@ -767,6 +793,58 @@ const stages = [
 				))}
 			</div>
 		</section>
+
+		{/* Allocation History — monthly trend */}
+		{allocHistory.length >= 2 && (
+			<div class="alloc-history-wrap" style="margin-top:1rem">
+				<p style="font-family:var(--font-serif);font-size:.9rem;margin-bottom:.5rem">
+					Allocation Trend (monthly)
+				</p>
+				<svg viewBox="0 0 300 130" style="width:100%;max-width:500px">
+					{(() => {
+						const buckets = ["stablecoin_yield","funds_etf","stocks","crypto"];
+						const colors = ["#6ee7b7","#93c5fd","#fbbf24","#c084fc"];
+						const n = allocHistory.length;
+						const padL = 30, padR = 10, padT = 10, padB = 25;
+						const w = 300 - padL - padR;
+						const h = 130 - padT - padB;
+						return <g>
+							{/* Grid lines */}
+							{[0,25,50,75,100].map((pct: number) => (
+								<g>
+									<line x1={padL} y1={padT + h * (1 - pct/100)} x2={padL + w} y2={padT + h * (1 - pct/100)} stroke="#374151" strokeWidth="0.5" strokeDasharray="2,2" />
+									<text x={padL - 3} y={padT + h * (1 - pct/100) + 3} textAnchor="end" fontSize="7" fill="#6b7280">{pct}</text>
+								</g>
+							))}
+							{/* Lines for each bucket */}
+							{buckets.map((key: string, bi: number) => (
+								<polyline
+									fill="none"
+									stroke={colors[bi]}
+									strokeWidth="1.5"
+									points={allocHistory.map((d: any, i: number) => {
+										const x = padL + (i / (n - 1)) * w;
+										const v = (d.buckets?.[key] ?? 0);
+										const y = padT + h * (1 - v / 100);
+										return `${x},${y}`;
+									}).join(" ")}
+								/>
+							))}
+							{/* X-axis labels */}
+							{allocHistory.map((d: any, i: number) => (
+								<text x={padL + (i / (n - 1)) * w} y={padT + h + 15} textAnchor="middle" fontSize="8" fill="#9ca3af">{d.month}</text>
+							))}
+						</g>;
+					})()}
+				</svg>
+				<div style="display:flex;gap:1rem;margin-top:.3rem;font-size:.75rem">
+					{["Yield","ETF/基金","股票","Crypto"].map((label: string, i: number) => (
+						<span style={{color:["#6ee7b7","#93c5fd","#fbbf24","#c084fc"][i]}}>● {label}</span>
+					))}
+				</div>
+			</div>
+		)}
+
 		<section class="portfolio-section fade-in-up" data-collapse id="positions-section">
 			<header class="portfolio-section-head">
 				<p class="portfolio-kicker">
@@ -1184,14 +1262,157 @@ const stages = [
 	{/* ═══ Crypto Asset Management ═══ */}
 	{cryptoMonitor && (
 		<section class="portfolio-section fade-in-up" data-collapse id="crypto-mgmt-section">
-			<header class="portfolio-section-head"><p class="portfolio-kicker"><span class="lang-en">P1 Monitoring Loop</span><span class="lang-zh">P1 监控闭环</span></p><h2 class="font-serif text-3xl font-semibold"><span class="lang-en">Crypto Asset Management</span><span class="lang-zh">Crypto 资产管理</span></h2><p class="portfolio-note"><span class="lang-en">Bottom tracker, DCA gate, stablecoin health, and SNEK pulse in one place.</span><span class="lang-zh">底部追踪、DCA 闸门、稳定币健康度、SNEK 脉搏集中到一处。</span></p><span class="section-summary"><span class="lang-en">Bottom 31/100 · DCA closed · stablecoin normal</span><span class="lang-zh">底部评分 31/100 · DCA 暂停 · 稳定币正常</span></span></header>
-			<div class="crypto-mgmt-grid">
-				<article class="crypto-mgmt-card"><span class="crypto-mgmt-label"><span class="lang-en">Bottom Tracker</span><span class="lang-zh">底部追踪</span></span><strong>{cryptoMonitor.bottom_tracker.score ?? "—"}</strong><p>{cryptoMonitor.bottom_tracker.status || "unknown"}</p></article>
-				<article class="crypto-mgmt-card"><span class="crypto-mgmt-label"><span class="lang-en">DCA Gate</span><span class="lang-zh">DCA 闸门</span></span><strong>{cryptoMonitor.dca.status || "—"}</strong><p>{cryptoMonitor.dca.reason || `${cryptoMonitor.dca.met_count}/${cryptoMonitor.dca.min_required} conditions`}</p></article>
-				<article class="crypto-mgmt-card"><span class="crypto-mgmt-label"><span class="lang-en">Stablecoin Health</span><span class="lang-zh">稳定币健康</span></span><strong>{cryptoMonitor.stablecoin_health.apy_current_pct ? `${cryptoMonitor.stablecoin_health.apy_current_pct}%` : "—"}</strong><p>{cryptoMonitor.stablecoin_health.depeg_alerts.length} <span class="lang-en">depeg alerts</span><span class="lang-zh">脱锚警报</span></p></article>
-				<article class="crypto-mgmt-card"><span class="crypto-mgmt-label"><span class="lang-en">SNEK Pulse</span><span class="lang-zh">SNEK 脉搏</span></span><strong>{cryptoMonitor.snek.has_position && <><span class="lang-en">Tracked</span><span class="lang-zh">持仓中</span></>}{!cryptoMonitor.snek.has_position && <><span class="lang-en">Watch</span><span class="lang-zh">观察</span></>}</strong><p>{cryptoMonitor.snek.note || `${cryptoMonitor.snek.signals.length} signals`}</p></article>
-			</div>
-			<div class="crypto-conditions">{cryptoMonitor.dca.conditions.map((c: any) => <span class={`crypto-condition ${c.met ? "met" : "miss"}`}>{c.met ? "✓" : "·"} {c.detail || c.id}</span>)}</div>
+			<header class="portfolio-section-head">
+				<p class="portfolio-kicker">
+					<span class="lang-en">Crypto Dashboard</span>
+					<span class="lang-zh">加密看板</span>
+				</p>
+				<h2 class="font-serif text-3xl font-semibold">
+					<span class="lang-en">Crypto Market Intelligence</span>
+					<span class="lang-zh">加密市场全景</span>
+				</h2>
+				<p class="portfolio-note">
+					<span class="lang-en">Bottom Tracker radar, market temperature, DCA gate, and ETF flows.</span>
+					<span class="lang-zh">底部追踪雷达、市场温度、DCA 闸门、ETF 资金流。</span>
+				</p>
+				<span class="section-summary">
+					<span class="lang-en">Bottom {cryptoMonitor?.bottom_tracker?.score ?? "—"}/100 · DCA {cryptoMonitor?.dca?.status ?? "—"} · FGI {fgi?.value ?? "—"}</span>
+					<span class="lang-zh">底部 {cryptoMonitor?.bottom_tracker?.score ?? "—"}/100 · DCA {cryptoMonitor?.dca?.status ?? "—"} · FGI {fgi?.value ?? "—"}</span>
+				</span>
+			</header>
+
+			{cryptoMonitor && (
+				<div class="crypto-dash-grid">
+					{/* ── Radar: Bottom Tracker 8 indicators ── */}
+					<div class="crypto-dash-radar">
+						<p class="crypto-dash-card-title">Bottom Tracker</p>
+						<div class="radar-score">{(() => {
+							const s = cryptoMonitor.bottom_tracker?.score ?? 0;
+							const c = s < 26 ? "#ef4444" : s < 51 ? "#f59e0b" : s < 76 ? "#10b981" : "#22c55e";
+							return <span style={`color:${c};font-size:2rem;font-weight:700`}>{s}<span style="opacity:.5;font-size:.85rem">/100</span></span>;
+						})()}</div>
+						{(() => {
+							const indicators = cryptoMonitor.bottom_tracker?.indicators ?? [];
+							if (indicators.length === 0) return null;
+							const n = indicators.length;
+							const cx = 100, cy = 100, R = 75;
+							const angleOf = (i: number) => (Math.PI * 2 * i / n) - Math.PI / 2;
+							const pts = indicators.map((ind: any, i: number) => {
+								const r = R * (ind.score / 100);
+								return `${cx + r * Math.cos(angleOf(i))},${cy + r * Math.sin(angleOf(i))}`;
+							});
+							const maxPts = indicators.map((_ind: any, i: number) => {
+								return `${cx + R * Math.cos(angleOf(i))},${cy + R * Math.sin(angleOf(i))}`;
+							});
+							const gridLevels = [0.25, 0.5, 0.75, 1];
+							return <svg viewBox="0 0 200 200" class="radar-svg">
+								{gridLevels.map((level: number) => {
+									const gp = indicators.map((_ind: any, i: number) => {
+										const r = R * level;
+										return `${cx + r * Math.cos(angleOf(i))},${cy + r * Math.sin(angleOf(i))}`;
+									});
+									return <polygon points={gp.join(" ")} fill="none" stroke="#374151" strokeWidth="0.5" />;
+								})}
+								{indicators.map((_ind: any, i: number) => (
+									<line x1={cx} y1={cy} x2={cx + R * Math.cos(angleOf(i))} y2={cy + R * Math.sin(angleOf(i))} stroke="#374151" strokeWidth="0.3" />
+								))}
+								<polygon points={pts.join(" ")} fill="rgba(99,102,241,0.2)" stroke="#6366f1" strokeWidth="1.5" />
+								{indicators.map((ind: any, i: number) => {
+									const r = R * (ind.score / 100);
+									const lx = cx + (R + 18) * Math.cos(angleOf(i));
+									const ly = cy + (R + 18) * Math.sin(angleOf(i));
+									return <g>
+										<circle cx={cx + r * Math.cos(angleOf(i))} cy={cy + r * Math.sin(angleOf(i))} r="3" fill={ind.score < 26 ? "#ef4444" : ind.score < 51 ? "#f59e0b" : "#10b981"} />
+										<text x={lx} y={ly} textAnchor="middle" dominantBaseline="middle" fontSize="6" fill="#9ca3af">{ind.name}</text>
+									</g>;
+								})}
+							</svg>;
+						})()}
+						<div class="radar-legend">
+							{(cryptoMonitor.bottom_tracker?.indicators ?? []).map((ind: any) => (
+								<span class={`radar-legend-item ${ind.score < 26 ? "danger" : ind.score < 51 ? "warn" : "ok"}`}>
+									{ind.name}: {ind.value} ({ind.score})
+								</span>
+							))}
+						</div>
+					</div>
+
+					{/* ── Column 2: Market Temp + DCA ── */}
+					<div class="crypto-dash-col">
+						{/* FGI Card */}
+						<div class="crypto-dash-card">
+							<p class="crypto-dash-card-title">Market Temperature</p>
+							{fgi ? (() => {
+								const fgiColor = fgi.value < 26 ? "#ef4444" : fgi.value < 46 ? "#f59e0b" : fgi.value < 56 ? "#6b7280" : fgi.value < 76 ? "#10b981" : "#22c55e";
+								return <div>
+									<span style={`color:${fgiColor};font-size:2rem;font-weight:700`}>{fgi.value}</span>
+									<span style="opacity:.6;margin-left:.3rem">{fgi.label}</span>
+								</div>;
+							})() : <span style="opacity:.5">N/A</span>}
+							{fgi7d.length > 0 && (
+								<svg viewBox="0 0 120 30" class="fgi-sparkline">
+									<polyline
+										fill="none"
+										stroke="#6366f1"
+										strokeWidth="1.5"
+										points={fgi7d.map((v: number, i: number) => `${i * 120/(fgi7d.length-1)},${30 - v * 0.3}`).join(" ")}
+									/>
+								</svg>
+							)}
+						</div>
+
+						{/* DCA Gate Card */}
+						<div class="crypto-dash-card">
+							<p class="crypto-dash-card-title">DCA Gate</p>
+							<div class={`dca-status-badge ${cryptoMonitor.dca?.status === "open" ? "open" : "closed"}`}>
+								{cryptoMonitor.dca?.status === "open" ? "🟢 OPEN" : "🛑 CLOSED"}
+							</div>
+							<p style="opacity:.6;font-size:.8rem;margin-top:.3rem">{cryptoMonitor.dca?.reason ?? ""}</p>
+							<div class="dca-conditions">
+								{(cryptoMonitor.dca?.conditions ?? []).map((c: any) => (
+									<span class={`dca-cond ${c.met ? "met" : "miss"}`}>{c.met ? "✓" : "·"} {c.detail || c.id}</span>
+								))}
+							</div>
+						</div>
+					</div>
+
+					{/* ── Column 3: ETF Flow ── */}
+					<div class="crypto-dash-col">
+						<div class="crypto-dash-card">
+							<p class="crypto-dash-card-title">BTC ETF Net Flow</p>
+							{etfData?.btc_etf_net_flow_m != null ? (() => {
+								const flow = etfData.btc_etf_net_flow_m;
+								const flowColor = flow > 0 ? "#10b981" : flow < 0 ? "#ef4444" : "#6b7280";
+								return <span style={`color:${flowColor};font-size:1.5rem;font-weight:700`}>{flow > 0 ? "+" : ""}{flow}M</span>;
+							})() : <span style="opacity:.5">N/A</span>}
+							{(etfData?.etfs ?? []).length > 0 && (
+								<div class="etf-fund-list">
+									{etfData.etfs.slice(0, 4).map((e: any) => (
+										<div class="etf-fund-row">
+											<span>{e.ticker}</span>
+											<span class={`etf-flow ${e.net_flow_m > 0 ? "pos" : e.net_flow_m < 0 ? "neg" : ""}`}>
+												{e.net_flow_m > 0 ? "+" : ""}{e.net_flow_m}M
+											</span>
+										</div>
+									))}
+								</div>
+							)}
+						</div>
+
+						{/* SNEK + Stablecoin */}
+						<div class="crypto-dash-card">
+							<p class="crypto-dash-card-title">Positions</p>
+							<div style="display:flex;gap:1rem">
+								<span>{cryptoMonitor.snek?.has_position ? "🐍 Tracked" : "👀 Watch"}</span>
+								<span>{cryptoMonitor.stablecoin_health?.apy_current_pct ? `${cryptoMonitor.stablecoin_health.apy_current_pct}% APY` : "—"}</span>
+							</div>
+							{cryptoMonitor.stablecoin_health?.depeg_alerts?.length > 0 && (
+								<p class="depeg-warn">⚠ {cryptoMonitor.stablecoin_health.depeg_alerts.length} depeg alert(s)</p>
+							)}
+						</div>
+					</div>
+				</div>
+			)}
 		</section>
 		<section class="portfolio-section fade-in-up" data-collapse id="watchlist-section">
 			<header class="portfolio-section-head">
@@ -4610,5 +4831,45 @@ const stages = [
 		transform: translateY(-2px);
 		box-shadow: 0 4px 20px rgba(137, 83, 209, 0.12);
 	}
+	/* ── Action Signals Bar ── */
+	.action-signals-bar { display:flex; align-items:center; gap:.8rem; padding:.6rem 1rem; margin:.5rem 0; border-radius:.5rem; background:rgba(99,102,241,.08); flex-wrap:wrap; }
+	.action-signals-icon { font-size:1.2rem; }
+	.action-signals-list { display:flex; gap:.4rem; flex-wrap:wrap; }
+	.action-signal-chip { font-size:.75rem; padding:.2rem .5rem; border-radius:1rem; background:rgba(255,255,255,.08); }
+	.action-signal-chip.priority-1 { background:rgba(239,68,68,.15); color:#fca5a5; }
+	.action-signals-micro { display:flex; gap:.5rem; margin-left:auto; flex-wrap:wrap; }
+	.action-micro-badge { font-size:.7rem; padding:.15rem .4rem; border-radius:.3rem; background:rgba(255,255,255,.05); opacity:.8; }
+	.action-micro-badge.ok { background:rgba(16,185,129,.15); color:#6ee7b7; }
+	.action-micro-badge.warn { background:rgba(245,158,11,.15); color:#fbbf24; }
+
+	/* ── Crypto Dashboard ── */
+	.crypto-dash-grid { display:grid; grid-template-columns:1.2fr 1fr 1fr; gap:1rem; margin-top:1rem; }
+	.crypto-dash-radar { background:rgba(255,255,255,.03); border-radius:.75rem; padding:1rem; text-align:center; }
+	.crypto-dash-col { display:flex; flex-direction:column; gap:.75rem; }
+	.crypto-dash-card { background:rgba(255,255,255,.03); border-radius:.75rem; padding:1rem; }
+	.crypto-dash-card-title { font-family:var(--font-serif); font-size:.85rem; opacity:.6; margin-bottom:.5rem; text-transform:uppercase; letter-spacing:.05em; }
+	.radar-score { margin-bottom:.5rem; }
+	.radar-svg { width:100%; max-width:220px; }
+	.radar-legend { display:flex; flex-wrap:wrap; gap:.3rem; margin-top:.5rem; justify-content:center; }
+	.radar-legend-item { font-size:.65rem; padding:.15rem .35rem; border-radius:.25rem; background:rgba(255,255,255,.05); }
+	.radar-legend-item.danger { color:#fca5a5; background:rgba(239,68,68,.1); }
+	.radar-legend-item.warn { color:#fbbf24; background:rgba(245,158,11,.1); }
+	.radar-legend-item.ok { color:#6ee7b7; background:rgba(16,185,129,.1); }
+	.fgi-sparkline { width:100%; max-width:120px; margin-top:.3rem; }
+	.dca-status-badge { font-size:1.1rem; font-weight:700; }
+	.dca-status-badge.open { color:#10b981; }
+	.dca-status-badge.closed { color:#ef4444; }
+	.dca-conditions { display:flex; flex-wrap:wrap; gap:.3rem; margin-top:.5rem; }
+	.dca-cond { font-size:.7rem; padding:.15rem .35rem; border-radius:.25rem; background:rgba(255,255,255,.05); }
+	.dca-cond.met { color:#6ee7b7; }
+	.dca-cond.miss { color:#6b7280; }
+	.etf-fund-list { margin-top:.5rem; }
+	.etf-fund-row { display:flex; justify-content:space-between; font-size:.75rem; padding:.15rem 0; border-bottom:1px solid rgba(255,255,255,.05); }
+	.etf-flow.pos { color:#10b981; }
+	.etf-flow.neg { color:#ef4444; }
+	.depeg-warn { color:#fbbf24; font-size:.75rem; margin-top:.3rem; }
+
+	/* ── Allocation History ── */
+	.alloc-history-wrap { padding:.5rem 1rem; }
 	</style>
 </PageLayout>

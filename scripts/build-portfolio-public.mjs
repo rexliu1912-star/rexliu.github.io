@@ -36,6 +36,9 @@ const FETCH_TIMEOUT_MS = 15000;
 const PRIVATE_PORTFOLIO_PATH = path.join(WORKSPACE_ROOT, "projects/the-workshop/data/portfolio.json");
 const CRYPTO_MONITOR_STATE_PATH = path.join(WORKSPACE_ROOT, "data/crypto-monitor-state.json");
 const CRYPTO_DCA_STATUS_PATH = path.join(WORKSPACE_ROOT, "data/crypto-dca-status.json");
+const MARKET_DATA_DIR = path.join(WORKSPACE_ROOT, "data/market");
+const PORTFOLIO_HISTORY_DIR = path.join(WORKSPACE_ROOT, "projects/the-workshop/data/portfolio-history");
+const BOTTOM_TRACKER_PATH = path.join(WORKSPACE_ROOT, "projects/crypto-bottom-tracker/web_data.json");
 
 // ─── Small utilities ─────────────────────────────────────
 
@@ -80,6 +83,75 @@ async function convexQuery(path, args = {}) {
     clearTimeout(timer);
     console.warn(`  ⚠️  Convex ${path} failed: ${err.message}`);
     return null;
+  }
+}
+
+/**
+ * Find the latest market data file in MARKET_DATA_DIR.
+ * Tries today's date first, then walks back up to 7 days.
+ * Returns { filepath, dateStr } or null.
+ */
+async function findLatestMarketData() {
+  const dir = MARKET_DATA_DIR;
+  try {
+    const files = await fs.readdir(dir);
+    const jsonFiles = files.filter((f) => /^\d{4}-\d{2}-\d{2}\.json$/.test(f)).sort();
+    if (jsonFiles.length === 0) return null;
+    // Pick the most recent file (last in sorted order)
+    const latest = jsonFiles[jsonFiles.length - 1];
+    return { filepath: path.join(dir, latest), dateStr: latest.replace(".json", "") };
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Build monthly allocation history from portfolio-history directory.
+ * Returns { history: [...] } or { history: [] } on error.
+ */
+async function buildAllocationHistory() {
+  const BUCKET_MAP = {
+    stablecoin: "stablecoin_yield",
+    qieman: "funds_etf",
+    guotai: "stocks",
+    crypto: "crypto",
+  };
+
+  try {
+    const files = await fs.readdir(PORTFOLIO_HISTORY_DIR);
+    const jsonFiles = files.filter((f) => /^\d{4}-\d{2}\.json$/.test(f)).sort();
+
+    const history = [];
+    for (const file of jsonFiles) {
+      const data = await readJson(path.join(PORTFOLIO_HISTORY_DIR, file));
+      if (!data || !data.breakdown) continue;
+      // Skip entries with only a "note" field (no actual breakdown data)
+      const breakdownKeys = Object.keys(data.breakdown).filter((k) => k !== "note");
+      if (breakdownKeys.length === 0) continue;
+
+      const total = data.totalNetWorth || 0;
+      if (total <= 0) continue;
+
+      const buckets = {};
+      for (const [srcKey, destKey] of Object.entries(BUCKET_MAP)) {
+        const val = data.breakdown[srcKey];
+        if (val && val > 0) {
+          buckets[destKey] = Math.round((val / total) * 100);
+        }
+      }
+
+      // Extract YYYY-MM from the filename
+      const dateMonth = file.replace(".json", "");
+      history.push({
+        date: dateMonth,
+        total_net_worth_wan: data.totalNetWorthWan ?? Math.round(total / 10000),
+        buckets,
+      });
+    }
+    return { history };
+  } catch (err) {
+    console.warn(`  ⚠️  Cannot build allocation history: ${err.message}`);
+    return { history: [] };
   }
 }
 
@@ -256,7 +328,7 @@ function sanitizeCrypto(privatePortfolio) {
  *   - NO individual stablecoin asset details
  *   - Pct, status, signals, conditions — all safe
  */
-function sanitizeMonitorState(monitorState, dcaStatus) {
+function sanitizeMonitorState(monitorState, dcaStatus, marketData = null, bottomTrackerData = null) {
   if (!monitorState) return null;
 
   const alloc = monitorState.allocation || {};
@@ -265,6 +337,16 @@ function sanitizeMonitorState(monitorState, dcaStatus) {
   const stable = monitorState.stablecoin_health || {};
   const snek = monitorState.snek || {};
   const ds = monitorState.data_sources || {};
+
+  // Extract 8 bottom tracker indicators
+  const bottomTrackerIndicators = (bottomTrackerData?.indicators || []).map((ind) => ({
+    name: ind.name,
+    status: ind.status, // "red" | "yellow" | "green"
+    detail: ind.data,
+  }));
+
+  // Extract FGI 7-day history from market data file
+  const fgiHistory7d = marketData?.sections?.macro?.fear_greed?.history_7d || null;
 
   // Build action signals from allocation gaps + DCA status
   const signals = [];
@@ -329,12 +411,14 @@ function sanitizeMonitorState(monitorState, dcaStatus) {
     },
     macro: {
       fear_greed: macro.fear_greed ?? null,
+      fear_greed_7d: fgiHistory7d,
       btc_change_24h: macro.btc_change_24h ?? null,
       signals: (macro.signals || []).slice(0, 5),
     },
     bottom_tracker: {
       score: dca.bottom_tracker?.weighted_score ?? null,
       status: dca.bottom_tracker?.status || null,
+      indicators: bottomTrackerIndicators,
     },
     dca: {
       status: dcaStatus?.status || dca.dca?.status || null,
@@ -530,13 +614,21 @@ async function main() {
     console.warn("   ⚠️  No crypto data in private portfolio — crypto section will be empty");
   }
 
-  // 3c. Read crypto monitor state + DCA status
+  // 3c. Read crypto monitor state + DCA status + market data
   console.log("📊 Reading crypto monitor state...");
   const [monitorState, dcaStatus] = await Promise.all([
     readJson(CRYPTO_MONITOR_STATE_PATH),
     readJson(CRYPTO_DCA_STATUS_PATH),
   ]);
-  const cryptoMonitor = sanitizeMonitorState(monitorState, dcaStatus);
+
+  // Read latest market data for ETF and FGI history
+  const latestMarketInfo = await findLatestMarketData();
+  const marketData = latestMarketInfo ? await readJson(latestMarketInfo.filepath) : null;
+
+  // Read bottom tracker indicators
+  const bottomTrackerRaw = await readJson(BOTTOM_TRACKER_PATH).catch(() => null);
+
+  const cryptoMonitor = sanitizeMonitorState(monitorState, dcaStatus, marketData, bottomTrackerRaw);
   if (cryptoMonitor) {
     console.log(`   ✅ Monitor: ${cryptoMonitor.action_signals.length} action signal(s), DCA ${cryptoMonitor.dca.status}`);
     // Derive four-bucket overview from allocation categories (from overrides)
@@ -552,8 +644,33 @@ async function main() {
       sub_tags_en: (c.sub_tags_en || []).slice(0, 3),
       sub_tags_zh: (c.sub_tags_zh || []).slice(0, 3),
     }));
+
+    // Add ETF data from market data
+    if (marketData?.sections?.etf) {
+      const etfSection = marketData.sections.etf;
+      cryptoMonitor.etf = {
+        btc_etf_net_flow_m: etfSection.btc_etf_net_flow_m ?? null,
+        btc_etf_total_volume_m: etfSection.btc_etf_total_volume_m ?? null,
+        source: etfSection.source || null,
+        etfs: (etfSection.etfs || []).map((e) => ({
+          ticker: e.ticker,
+          volume_usd_m: e.volume_usd_m ?? null,
+        })),
+        date: latestMarketInfo?.dateStr || null,
+      };
+      console.log(`   ✅ ETF: net flow $${etfSection.btc_etf_net_flow_m}M, ${etfSection.etfs?.length || 0} funds`);
+    }
   } else {
     console.warn("   ⚠️  No monitor state — crypto management section will be empty");
+  }
+
+  // 3d. Build allocation history (monthly)
+  console.log("📈 Building allocation history...");
+  const allocationHistory = await buildAllocationHistory();
+  if (allocationHistory.history.length > 0) {
+    console.log(`   ✅ Allocation history: ${allocationHistory.history.length} months`);
+  } else {
+    console.warn("   ⚠️  No allocation history data available");
   }
 
   // 4. Fallback protection: if Convex failed AND we have a previous output, reuse it
@@ -632,6 +749,7 @@ async function main() {
     positions: publicPositions,
     crypto,
     crypto_monitor: cryptoMonitor,
+    allocation_history: allocationHistory,
     watchlist_heatmap: heatmap,
     short_list: shortList,
     clearances,
@@ -642,7 +760,7 @@ async function main() {
   await fs.writeFile(OUTPUT_PATH, JSON.stringify(output, null, 2) + "\n");
   console.log(`\n✅ Wrote ${OUTPUT_PATH}`);
   console.log(
-    `   ${stats.active_positions} positions, ${stats.markets} markets, ${stats.tracked_rules} rules, ${stats.upcoming_events} events, ${regime.history_60d.length}-day regime history, ${heatmap ? heatmap.dates.length : 0}-day heatmap, ${clearances.length} clearances, ${roundtables.length} roundtables`
+    `   ${stats.active_positions} positions, ${stats.markets} markets, ${stats.tracked_rules} rules, ${stats.upcoming_events} events, ${regime.history_60d.length}-day regime history, ${heatmap ? heatmap.dates.length : 0}-day heatmap, ${clearances.length} clearances, ${roundtables.length} roundtables, ${allocationHistory.history.length}-month allocation history`
   );
 }
 
