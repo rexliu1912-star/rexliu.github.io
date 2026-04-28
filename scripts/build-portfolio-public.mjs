@@ -34,6 +34,8 @@ const TRADELOG_INDEX = path.join(WORKSPACE_ROOT, "output/research/trade-log/arch
 const CONVEX_URL = "https://fleet-heron-880.convex.cloud";
 const FETCH_TIMEOUT_MS = 15000;
 const PRIVATE_PORTFOLIO_PATH = path.join(WORKSPACE_ROOT, "projects/the-workshop/data/portfolio.json");
+const CRYPTO_MONITOR_STATE_PATH = path.join(WORKSPACE_ROOT, "data/crypto-monitor-state.json");
+const CRYPTO_DCA_STATUS_PATH = path.join(WORKSPACE_ROOT, "data/crypto-dca-status.json");
 
 // ─── Small utilities ─────────────────────────────────────
 
@@ -244,6 +246,123 @@ function sanitizeCrypto(privatePortfolio) {
   };
 }
 
+// ─── Monitor state sanitize transform ───────────────────
+
+/**
+ * Extract public-safe fields from crypto-monitor-state.json.
+ *
+ * Privacy invariants:
+ *   - NO total_assets_usd / stablecoin value_usd / crypto value_usd (absolute $)
+ *   - NO individual stablecoin asset details
+ *   - Pct, status, signals, conditions — all safe
+ */
+function sanitizeMonitorState(monitorState, dcaStatus) {
+  if (!monitorState) return null;
+
+  const alloc = monitorState.allocation || {};
+  const macro = monitorState.macro || {};
+  const dca = monitorState.dca || {};
+  const stable = monitorState.stablecoin_health || {};
+  const snek = monitorState.snek || {};
+  const ds = monitorState.data_sources || {};
+
+  // Build action signals from allocation gaps + DCA status
+  const signals = [];
+  const cryptoAlloc = alloc.crypto || {};
+  const stableAlloc = alloc.stablecoin || {};
+
+  if (cryptoAlloc.status === "underweight") {
+    const dcaStatus2 = dcaStatus || dca.dca || {};
+    signals.push({
+      priority: Math.abs(cryptoAlloc.gap_pp || 0) > 5 ? 1 : 2,
+      type: "crypto_underweight",
+      detail: `Crypto ${cryptoAlloc.pct}% (target ${cryptoAlloc.target_pct}%), DCA ${dcaStatus2.status || dca.dca?.status || "unknown"}`,
+    });
+  } else if (cryptoAlloc.status === "overweight") {
+    signals.push({
+      priority: 1,
+      type: "crypto_overweight",
+      detail: `Crypto ${cryptoAlloc.pct}% exceeds target ${cryptoAlloc.target_pct}%`,
+    });
+  }
+
+  if (stableAlloc.gap_pp && Math.abs(stableAlloc.gap_pp) > 3) {
+    signals.push({
+      priority: Math.abs(stableAlloc.gap_pp) > 5 ? 1 : 2,
+      type: stableAlloc.gap_pp > 0 ? "stablecoin_overweight" : "stablecoin_underweight",
+      detail: `Stablecoin ${stableAlloc.pct}% (target ${stableAlloc.target_pct}%)`,
+    });
+  }
+
+  if (stable.depeg_alerts?.length > 0) {
+    signals.push({
+      priority: 0,
+      type: "depeg_alert",
+      detail: `${stable.depeg_alerts.length} stablecoin depeg alert(s)`,
+    });
+  }
+
+  // Sort by priority (lower = more urgent)
+  signals.sort((a, b) => a.priority - b.priority);
+
+  return {
+    generated_at: monitorState.generated_at || null,
+    data_freshness: {
+      market_data_available: ds.market_data_available || false,
+      bottom_tracker_available: ds.bottom_tracker_available || false,
+      dca_status_available: ds.dca_status_available || false,
+      market_data_date: ds.market_data_date || null,
+    },
+    allocation: {
+      crypto: {
+        pct: cryptoAlloc.pct ?? null,
+        target_pct: cryptoAlloc.target_pct ?? null,
+        gap_pp: cryptoAlloc.gap_pp ?? null,
+        status: cryptoAlloc.status || null,
+      },
+      stablecoin: {
+        pct: stableAlloc.pct ?? null,
+        target_pct: stableAlloc.target_pct ?? null,
+        gap_pp: stableAlloc.gap_pp ?? null,
+        status: stableAlloc.status || null,
+      },
+    },
+    macro: {
+      fear_greed: macro.fear_greed ?? null,
+      btc_change_24h: macro.btc_change_24h ?? null,
+      signals: (macro.signals || []).slice(0, 5),
+    },
+    bottom_tracker: {
+      score: dca.bottom_tracker?.weighted_score ?? null,
+      status: dca.bottom_tracker?.status || null,
+    },
+    dca: {
+      status: dcaStatus?.status || dca.dca?.status || null,
+      score: dcaStatus?.score ?? dca.dca?.score ?? null,
+      met_count: dcaStatus?.met_count ?? null,
+      min_required: dcaStatus?.min_required ?? null,
+      reason: dcaStatus?.reason || dca.dca?.reason || null,
+      conditions: (dcaStatus?.conditions || dca.dca?.conditions || []).map((c) => ({
+        id: c.id,
+        met: c.met || false,
+        detail: c.detail || null,
+      })),
+      updated_at: dcaStatus?.updated_at || dca.dca?.updated_at || null,
+    },
+    stablecoin_health: {
+      apy_current_pct: stable.apy_current_pct ?? null,
+      depeg_alerts: stable.depeg_alerts || [],
+      chain_supply_status: stable.chain_supply_usd ? "normal" : null,
+    },
+    snek: {
+      has_position: snek.has_position || false,
+      signals: (snek.signals || []).slice(0, 5),
+      note: snek.note || null,
+    },
+    action_signals: signals,
+  };
+}
+
 // ─── Positions transform ─────────────────────────────────
 
 function buildPositions(convexPositions, convexRules, convexEvents, overrides) {
@@ -411,6 +530,32 @@ async function main() {
     console.warn("   ⚠️  No crypto data in private portfolio — crypto section will be empty");
   }
 
+  // 3c. Read crypto monitor state + DCA status
+  console.log("📊 Reading crypto monitor state...");
+  const [monitorState, dcaStatus] = await Promise.all([
+    readJson(CRYPTO_MONITOR_STATE_PATH),
+    readJson(CRYPTO_DCA_STATUS_PATH),
+  ]);
+  const cryptoMonitor = sanitizeMonitorState(monitorState, dcaStatus);
+  if (cryptoMonitor) {
+    console.log(`   ✅ Monitor: ${cryptoMonitor.action_signals.length} action signal(s), DCA ${cryptoMonitor.dca.status}`);
+    // Derive four-bucket overview from allocation categories (from overrides)
+    const allocCats = overrides?.allocation?.categories || [];
+    cryptoMonitor.buckets = allocCats.map((c) => ({
+      id: c.id,
+      label_en: c.label_en || c.id,
+      label_zh: c.label_zh || c.id,
+      current_pct: c.current_pct ?? c.pct ?? null,
+      target_pct: c.target_pct ?? null,
+      drift_pp: c.drift_pp ?? null,
+      color: c.color || "#6366f1",
+      sub_tags_en: (c.sub_tags_en || []).slice(0, 3),
+      sub_tags_zh: (c.sub_tags_zh || []).slice(0, 3),
+    }));
+  } else {
+    console.warn("   ⚠️  No monitor state — crypto management section will be empty");
+  }
+
   // 4. Fallback protection: if Convex failed AND we have a previous output, reuse it
   if (!positions) {
     console.warn("  ⚠️  Convex unavailable — attempting to reuse last portfolio-public.json");
@@ -486,6 +631,7 @@ async function main() {
     deep_research: overrides.deep_research || [],
     positions: publicPositions,
     crypto,
+    crypto_monitor: cryptoMonitor,
     watchlist_heatmap: heatmap,
     short_list: shortList,
     clearances,

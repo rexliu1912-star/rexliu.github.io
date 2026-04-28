@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-28T04:21:40.863Z",
+  "generated_at": "2026-04-28T08:24:03.665Z",
   "regime": {
     "current": {
       "label": "防御期",
@@ -1067,6 +1067,163 @@
         "thesis_zh": "Cardano 生态敞口。看社区热度、KOL 活跃度和链上健康度，不走传统技术分析。",
         "strategy_en": "Signal-Driven",
         "strategy_zh": "信号驱动"
+      }
+    ]
+  },
+  "crypto_monitor": {
+    "generated_at": "2026-04-28T14:15:28.806416+08:00",
+    "data_freshness": {
+      "market_data_available": true,
+      "bottom_tracker_available": true,
+      "dca_status_available": true,
+      "market_data_date": "2026-04-28"
+    },
+    "allocation": {
+      "crypto": {
+        "pct": 7.4,
+        "target_pct": 15,
+        "gap_pp": -7.6,
+        "status": "underweight"
+      },
+      "stablecoin": {
+        "pct": 39.4,
+        "target_pct": 40,
+        "gap_pp": -0.6,
+        "status": "normal"
+      }
+    },
+    "macro": {
+      "fear_greed": null,
+      "btc_change_24h": null,
+      "signals": []
+    },
+    "bottom_tracker": {
+      "score": 31,
+      "status": "neutral"
+    },
+    "dca": {
+      "status": "closed",
+      "score": 31,
+      "met_count": 0,
+      "min_required": 2,
+      "reason": "条件不足",
+      "conditions": [
+        {
+          "id": "hypothesis_confluence",
+          "met": false,
+          "detail": "高置信假设触发不足（多0 空0）"
+        },
+        {
+          "id": "fear_greed_extreme",
+          "met": false,
+          "detail": "FGI 无数据"
+        },
+        {
+          "id": "btc_near_ema200",
+          "met": false,
+          "detail": "EMA200 数据缺失"
+        },
+        {
+          "id": "bottom_tracker_green",
+          "met": false,
+          "detail": "绿灯 2/8"
+        }
+      ],
+      "updated_at": "2026-04-28T14:15:28.786050+08:00"
+    },
+    "stablecoin_health": {
+      "apy_current_pct": null,
+      "depeg_alerts": [],
+      "chain_supply_status": "normal"
+    },
+    "snek": {
+      "has_position": true,
+      "signals": [],
+      "note": "流动性/社区热度数据由 snek-daily 和 Alpha Radar 提供"
+    },
+    "action_signals": [
+      {
+        "priority": 1,
+        "type": "crypto_underweight",
+        "detail": "Crypto 7.4% (target 15%), DCA closed"
+      }
+    ],
+    "buckets": [
+      {
+        "id": "stablecoin",
+        "label_en": "Stablecoin Yield",
+        "label_zh": "稳定币生息",
+        "current_pct": 40,
+        "target_pct": 35,
+        "drift_pp": 5,
+        "color": "#10b981",
+        "sub_tags_en": [
+          "USDT",
+          "USDC",
+          "5% APY"
+        ],
+        "sub_tags_zh": [
+          "USDT",
+          "USDC",
+          "5% 年化"
+        ]
+      },
+      {
+        "id": "funds",
+        "label_en": "Funds & ETFs",
+        "label_zh": "基金组合 & ETF",
+        "current_pct": 27,
+        "target_pct": 25,
+        "drift_pp": 2,
+        "color": "#3b82f6",
+        "sub_tags_en": [
+          "Bonds",
+          "QDII",
+          "Robo-advisor"
+        ],
+        "sub_tags_zh": [
+          "债券",
+          "QDII",
+          "且慢组合"
+        ]
+      },
+      {
+        "id": "stocks",
+        "label_en": "Stocks",
+        "label_zh": "股票",
+        "current_pct": 20,
+        "target_pct": 25,
+        "drift_pp": -5,
+        "color": "#8953d1",
+        "sub_tags_en": [
+          "AI Power",
+          "Core Infra",
+          "US Megacap"
+        ],
+        "sub_tags_zh": [
+          "AI 电力",
+          "核心基建",
+          "美股大盘"
+        ]
+      },
+      {
+        "id": "crypto",
+        "label_en": "Crypto",
+        "label_zh": "加密敞口",
+        "current_pct": 11,
+        "target_pct": 15,
+        "drift_pp": -4,
+        "color": "#f59e0b",
+        "sub_tags_en": [
+          "BTC",
+          "ADA",
+          "SNEK"
+        ],
+        "sub_tags_zh": [
+          "BTC",
+          "ADA",
+          "SNEK"
+        ]
       }
     ]
   },

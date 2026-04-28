@@ -85,6 +85,7 @@ interface PortfolioData {
 			strategy_zh: string;
 		}[];
 	} | null;
+	crypto_monitor: any | null;
 	watchlist_heatmap: PortfolioHeatmap | null;
 	clearances: any[];
 	roundtables: any[];
@@ -109,6 +110,7 @@ const {
 	allocation,
 	positions,
 	crypto,
+	crypto_monitor: cryptoMonitor,
 	watchlist_heatmap: heatmap,
 	clearances,
 	roundtables,
@@ -118,6 +120,9 @@ const {
 	stats,
 	generated_at,
 } = portfolioData;
+
+const cryptoPositions = crypto?.positions ?? [];
+const activePositionCount = positions.length + cryptoPositions.length;
 
 // Group deep research by sector for organized display
 const deepBySector = deep_research.reduce((acc: Record<string, { sector_en: string; sector_zh: string; items: any[] }>, d: any) => {
@@ -374,9 +379,9 @@ const stages = [
 					</span>
 					<strong
 						class="portfolio-stat-value font-serif"
-						data-count-target={stats.active_positions}
+						data-count-target={activePositionCount}
 					>
-						{stats.active_positions}
+						{activePositionCount}
 					</strong>
 				</article>
 				<article class="portfolio-stat-card">
@@ -437,30 +442,59 @@ const stages = [
 		</section>
 
 		<nav class="portfolio-section-nav" aria-label="Section navigation">
+			{cryptoMonitor && <a href="#bucket-overview-section">Overview</a>}
 			<a href="#positions-section">Positions</a>
-			{crypto && <a href="#crypto-section">Crypto</a>}
+			{cryptoMonitor && <a href="#crypto-mgmt-section">Crypto</a>}
+			<a href="#allocation-section">Allocation</a>
 			<a href="#supply-chain-section">Chain</a>
 			<a href="#clearance-section">Trades</a>
-			<a href="#allocation-section">Allocation</a>
-			<a href="#regime-section">Regime</a>
 			<a href="#watchlist-section">Watchlist</a>
 			<a href="#shortlist-section">Short List</a>
 			<a href="#sector-research-section">Sectors</a>
 			<a href="#deep-research-section">Research</a>
 			<a href="#roundtable-section">Roundtable</a>
 			<a href="#methodology-section">Methodology</a>
+			<button class="collapse-control" type="button" data-collapse-action="expand">Expand all</button>
+			<button class="collapse-control" type="button" data-collapse-action="collapse">Collapse all</button>
 		</nav>
 
+	{/* ═══ Bucket Overview (Four-Bucket Summary) ═══ */}
+	{cryptoMonitor && (
+		<section class="portfolio-section fade-in-up" data-collapse id="bucket-overview-section">
+			<header class="portfolio-section-head">
+				<p class="portfolio-kicker"><span class="lang-en">Dashboard</span><span class="lang-zh">仪表盘</span></p>
+				<h2 class="font-serif text-3xl font-semibold"><span class="lang-en">Four buckets at a glance</span><span class="lang-zh">四桶一览</span></h2>
+				<p class="portfolio-note"><span class="lang-en">Current allocation vs strategic targets. Action signals flag what needs attention today.</span><span class="lang-zh">当前配置 vs 战略目标。Action Signals 标记今日需关注的事项。</span></p>
+			</header>
+			<div class="bucket-bars">
+				{allocation.current.categories.map((cat: any) => {
+					const gap = (cat.current_pct ?? 0) - (cat.target_pct ?? 0);
+					const gapAbs = Math.abs(gap);
+					const gapColor = gapAbs > 5 ? "#ef4444" : gapAbs >= 3 ? "#f59e0b" : "#10b981";
+					return (
+						<div class="bucket-row">
+							<div class="bucket-label"><span class="bucket-name"><span class="lang-en">{cat.label_en}</span><span class="lang-zh">{cat.label_zh}</span></span><span class="bucket-pct">{cat.current_pct}%</span><span class="bucket-target" style={`color: ${gapColor}`}>{gap > 0 ? "+" : ""}{gap.toFixed(1)}pp</span></div>
+							<div class="bucket-bar-track"><div class="bucket-bar-fill" style={`width: ${Math.min(cat.current_pct ?? 0, 100)}%; background: ${cat.color || "#8953d1"}`}></div><div class="bucket-bar-target-marker" style={`left: ${cat.target_pct ?? 0}%`}></div></div>
+							<p class="bucket-note"><span class="lang-en">{cat.note_en}</span><span class="lang-zh">{cat.note_zh}</span></p>
+						</div>
+					);
+				})}
+			</div>
+			<p class="bucket-crypto-summary"><span class="lang-en">Crypto {cryptoMonitor.allocation.crypto.pct}% / target {cryptoMonitor.allocation.crypto.target_pct}% · DCA {cryptoMonitor.dca.status} · Bottom Tracker {cryptoMonitor.bottom_tracker.score}</span><span class="lang-zh">Crypto {cryptoMonitor.allocation.crypto.pct}% / 目标 {cryptoMonitor.allocation.crypto.target_pct}% · DCA {cryptoMonitor.dca.status} · 底部追踪 {cryptoMonitor.bottom_tracker.score}</span></p>
+			{cryptoMonitor.action_signals.length > 0 && <div class="bucket-action-signals"><p class="bucket-signals-title">⚡ Action Signals</p>{cryptoMonitor.action_signals.map((sig: any) => <a class={`bucket-signal priority-${sig.priority}`} href="#crypto-mgmt-section"><span class="signal-dot"></span>{sig.detail}</a>)}</div>}
+		</section>
+	)}
+
 		{/* ═══ Current Positions ═══ */}
-		<section class="portfolio-section fade-in-up" id="positions-section">
+		<section class="portfolio-section fade-in-up" data-collapse id="positions-section">
 			<header class="portfolio-section-head">
 				<p class="portfolio-kicker">
 					<span class="lang-en">Stage 7 · Active Positions</span>
 					<span class="lang-zh">阶段 7 · 当前持仓</span>
 				</p>
 				<h2 class="font-serif text-3xl font-semibold">
-					<span class="lang-en">The {stats.active_positions} names that earned conviction</span>
-					<span class="lang-zh">值得信念的 {stats.active_positions} 只</span>
+					<span class="lang-en">The {activePositionCount} names that earned conviction</span>
+					<span class="lang-zh">值得信念的 {activePositionCount} 只</span>
 				</h2>
 				<p class="portfolio-note">
 					<span class="lang-en">
@@ -632,34 +666,9 @@ const stages = [
 					</footer>
 					</article>
 				))}
-			</div>
-	</section>
 
-	{/* ═══ Crypto Positions ═══ */}
-	{crypto && (
-		<section class="portfolio-section fade-in-up" id="crypto-section">
-			<header class="portfolio-section-head">
-				<p class="portfolio-kicker">
-					<span class="lang-en">Asymmetric Bets</span>
-					<span class="lang-zh">非对称博弈</span>
-				</p>
-				<h2 class="font-serif text-3xl font-semibold">
-					<span class="lang-en">The crypto positions</span>
-					<span class="lang-zh">加密持仓</span>
-				</h2>
-				<p class="portfolio-note">
-					<span class="lang-en">
-						Signal-driven, not TA-driven. BTC anchors via bottom-tracker DCA; SNEK tracks Cardano community health.
-					</span>
-					<span class="lang-zh">
-						信号驱动而非技术分析驱动。BTC 通过底部追踪 DCA 锚定；SNEK 跟踪 Cardano 社区健康度。
-					</span>
-				</p>
-			</header>
-
-			<div class="positions-grid">
-				{crypto.positions.map((cp) => (
-					<article class={`position-card conviction-${cp.role === "core" ? "high" : "low"}`}>
+				{cryptoPositions.map((cp) => (
+					<article class={`position-card crypto-position-card conviction-${cp.role === "core" ? "high" : "low"}`}>
 						<header class="position-head">
 							<div class="position-symbol-row">
 								<strong class="position-symbol font-serif">{cp.symbol}</strong>
@@ -670,7 +679,7 @@ const stages = [
 							</div>
 							<div class="position-tags">
 								{cp.tags_en.map((tag, i) => (
-									<span class="position-tag">
+									<span class="position-tag crypto-position-tag">
 										<span class="lang-en">{tag}</span>
 										<span class="lang-zh">{cp.tags_zh[i] || tag}</span>
 									</span>
@@ -685,49 +694,57 @@ const stages = [
 
 						<div
 							class="position-conviction-bar"
-							title={`Role: ${cp.role}`}
+							title={`Crypto role: ${cp.role}`}
 							role="meter"
 							aria-valuenow={cp.role === "core" ? "3" : "1"}
 							aria-valuemin="1"
 							aria-valuemax="3"
-							aria-label={`Role: ${cp.role}`}
+							aria-label={`Crypto role: ${cp.role}`}
 						>
 							<span
-								class="position-conviction-fill"
+								class="position-conviction-fill crypto-position-fill"
 								style={`width: ${cp.role === "core" ? "100" : "30"}%; background: ${cp.role === "core" ? "#f59e0b" : "#6366f1"}`}
 							></span>
 						</div>
 
 						<div class="position-meta">
-							<span class="position-stage-badge">
-								<span class="lang-en">{cp.strategy_en}</span>
-								<span class="lang-zh">{cp.strategy_zh}</span>
+							<span class="position-stage-badge crypto-stage-badge">
+								<span class="lang-en">Crypto · {cp.role}</span>
+								<span class="lang-zh">加密 · {cp.role === "core" ? "核心" : "社区"}</span>
 							</span>
 							<span class="position-status">
-								<span class="lang-en">{cp.role === "core" ? "Core" : "Community"}</span>
-								<span class="lang-zh">{cp.role === "core" ? "核心" : "社区"}</span>
+								<span class="lang-en">{cp.strategy_en}</span>
+								<span class="lang-zh">{cp.strategy_zh}</span>
 							</span>
 						</div>
 
 						<footer class="position-foot">
-							<span class="position-rail">
-								<span class="lang-en">Signal-only · No price targets</span>
+							<a class="crypto-position-link" href="#positions-section">
+								<span class="lang-en">Signal-only · no price targets</span>
 								<span class="lang-zh">仅信号驱动 · 无目标价</span>
-							</span>
+							</a>
 						</footer>
 					</article>
 				))}
 			</div>
+	</section>
 
-			<p class="portfolio-updated">
-				<span class="lang-en">Updated {new Date(crypto.updated_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
-				<span class="lang-zh">更新于 {new Date(crypto.updated_at).toLocaleDateString("zh-CN", { month: "long", day: "numeric" })}</span>
-			</p>
+	{/* ═══ Crypto Asset Management ═══ */}
+	{cryptoMonitor && (
+		<section class="portfolio-section fade-in-up" data-collapse id="crypto-mgmt-section">
+			<header class="portfolio-section-head"><p class="portfolio-kicker"><span class="lang-en">P1 Monitoring Loop</span><span class="lang-zh">P1 监控闭环</span></p><h2 class="font-serif text-3xl font-semibold"><span class="lang-en">Crypto Asset Management</span><span class="lang-zh">Crypto 资产管理</span></h2><p class="portfolio-note"><span class="lang-en">Bottom tracker, DCA gate, stablecoin health, and SNEK pulse in one place.</span><span class="lang-zh">底部追踪、DCA 闸门、稳定币健康度、SNEK 脉搏集中到一处。</span></p></header>
+			<div class="crypto-mgmt-grid">
+				<article class="crypto-mgmt-card"><span class="crypto-mgmt-label">Bottom Tracker</span><strong>{cryptoMonitor.bottom_tracker.score ?? "—"}</strong><p>{cryptoMonitor.bottom_tracker.status || "unknown"}</p></article>
+				<article class="crypto-mgmt-card"><span class="crypto-mgmt-label">DCA Gate</span><strong>{cryptoMonitor.dca.status || "—"}</strong><p>{cryptoMonitor.dca.reason || `${cryptoMonitor.dca.met_count}/${cryptoMonitor.dca.min_required} conditions`}</p></article>
+				<article class="crypto-mgmt-card"><span class="crypto-mgmt-label">Stablecoin Health</span><strong>{cryptoMonitor.stablecoin_health.apy_current_pct ? `${cryptoMonitor.stablecoin_health.apy_current_pct}%` : "—"}</strong><p>{cryptoMonitor.stablecoin_health.depeg_alerts.length} depeg alerts</p></article>
+				<article class="crypto-mgmt-card"><span class="crypto-mgmt-label">SNEK Pulse</span><strong>{cryptoMonitor.snek.has_position ? "Tracked" : "Watch"}</strong><p>{cryptoMonitor.snek.note || `${cryptoMonitor.snek.signals.length} signals`}</p></article>
+			</div>
+			<div class="crypto-conditions">{cryptoMonitor.dca.conditions.map((c: any) => <span class={`crypto-condition ${c.met ? "met" : "miss"}`}>{c.met ? "✓" : "·"} {c.detail || c.id}</span>)}</div>
 		</section>
 	)}
 
 	{/* ═══ Supply Chain Topology ═══ */}
-		<section class="portfolio-section fade-in-up" id="supply-chain-section">
+		<section class="portfolio-section fade-in-up" data-collapse id="supply-chain-section">
 			<header class="portfolio-section-head">
 				<p class="portfolio-kicker">
 					<span class="lang-en">Investment Chain · Sector Topology</span>
@@ -782,7 +799,7 @@ const stages = [
 		</section>
 
 		{/* ═══ Closed Positions Gallery ═══ */}
-		<section class="portfolio-section fade-in-up" id="clearance-section">
+		<section class="portfolio-section fade-in-up" data-collapse id="clearance-section">
 			<header class="portfolio-section-head">
 				<p class="portfolio-kicker">
 					<span class="lang-en">Trade Replays · Closed Positions</span>
@@ -953,7 +970,7 @@ const stages = [
 		</section>
 
 		{/* ═══ Allocation ═══ */}
-		<section class="portfolio-section fade-in-up" id="allocation-section">
+		<section class="portfolio-section fade-in-up" data-collapse id="allocation-section">
 			<header class="portfolio-section-head">
 				<p class="portfolio-kicker">
 					<span class="lang-en">Allocation · Target vs Current</span>
@@ -1128,7 +1145,7 @@ const stages = [
 		</section>
 
 		{/* ═══ Macro Regime ═══ */}
-		<section class="portfolio-section fade-in-up" id="regime-section">
+		<section class="portfolio-section fade-in-up" data-collapse id="regime-section">
 			<header class="portfolio-section-head">
 				<p class="portfolio-kicker">
 					<span class="lang-en">Stage 0 · Macro Thermometer</span>
@@ -1230,7 +1247,7 @@ const stages = [
 		</section>
 
 		{/* ═══ Watchlist Heatmap ═══ */}
-		<section class="portfolio-section fade-in-up" id="watchlist-section">
+		<section class="portfolio-section fade-in-up" data-collapse id="watchlist-section">
 			<header class="portfolio-section-head">
 				<p class="portfolio-kicker">
 					<span class="lang-en">Stage 2-3 · Watchlist Opportunity Scan</span>
@@ -1297,7 +1314,7 @@ const stages = [
 
 		{/* ═══ Short List (Stage 2-3 filtered) ═══ */}
 		{shortList.length > 0 && (
-			<section class="portfolio-section fade-in-up" id="shortlist-section">
+			<section class="portfolio-section fade-in-up" data-collapse id="shortlist-section">
 				<header class="portfolio-section-head">
 					<p class="portfolio-kicker">
 						<span class="lang-en">Stage 2-3 · Short List</span>
@@ -1330,7 +1347,7 @@ const stages = [
 
 		{/* ═══ Sector Research (Stage 1) ═══ */}
 		{sector_research && sector_research.length > 0 && (
-			<section class="portfolio-section fade-in-up" id="sector-research-section">
+			<section class="portfolio-section fade-in-up" data-collapse id="sector-research-section">
 				<header class="portfolio-section-head">
 					<p class="portfolio-kicker">
 						<span class="lang-en">Stage 1 · Sector Research</span>
@@ -1399,7 +1416,7 @@ const stages = [
 
 		{/* ═══ Deep Research (Stage 4) ═══ */}
 		{deep_research && deep_research.length > 0 && (
-			<section class="portfolio-section fade-in-up" id="deep-research-section">
+			<section class="portfolio-section fade-in-up" data-collapse id="deep-research-section">
 				<header class="portfolio-section-head">
 					<p class="portfolio-kicker">
 						<span class="lang-en">Stage 4 · Deep Research</span>
@@ -1488,7 +1505,7 @@ const stages = [
 		)}
 
 		{/* ═══ Roundtable Log ═══ */}
-		<section class="portfolio-section fade-in-up" id="roundtable-section">
+		<section class="portfolio-section fade-in-up" data-collapse id="roundtable-section">
 			<header class="portfolio-section-head">
 				<p class="portfolio-kicker">
 					<span class="lang-en">Stage 5 · Roundtable Log</span>
@@ -1654,7 +1671,7 @@ const stages = [
 		</section>
 
 		{/* ═══ 8-Stage Methodology ═══ */}
-		<section class="portfolio-section fade-in-up" id="methodology-section">
+		<section class="portfolio-section fade-in-up" data-collapse id="methodology-section">
 			<header class="portfolio-section-head">
 				<p class="portfolio-kicker">
 					<span class="lang-en">Methodology · 8-Stage Funnel</span>
@@ -1853,6 +1870,46 @@ const stages = [
 					s.classList.add('is-visible')
 				);
 			}
+
+			// Collapsible portfolio sections with multi-open + localStorage.
+			if (page.dataset.portfolioCollapseReady !== 'true') {
+				page.dataset.portfolioCollapseReady = 'true';
+				const key = 'portfolio:v6:collapsed-sections';
+				let collapsed = [];
+				try { collapsed = JSON.parse(localStorage.getItem(key) || '[]'); } catch {}
+				const persist = () => localStorage.setItem(key, JSON.stringify(collapsed));
+				page.querySelectorAll('[data-collapse]').forEach((section) => {
+					const head = section.querySelector('.portfolio-section-head');
+					if (!head || !section.id) return;
+					const btn = document.createElement('button');
+					btn.type = 'button';
+					btn.className = 'section-collapse-toggle';
+					btn.setAttribute('aria-controls', section.id);
+					const set = (isCollapsed) => {
+						section.classList.toggle('is-collapsed', isCollapsed);
+						btn.setAttribute('aria-expanded', String(!isCollapsed));
+						btn.textContent = isCollapsed ? '+' : '−';
+					};
+					set(collapsed.includes(section.id));
+					head.appendChild(btn);
+					btn.addEventListener('click', () => {
+						const next = !section.classList.contains('is-collapsed');
+						collapsed = next ? [...new Set([...collapsed, section.id])] : collapsed.filter((id) => id !== section.id);
+						set(next); persist();
+					});
+				});
+				page.querySelectorAll('[data-collapse-action]').forEach((btn) => btn.addEventListener('click', () => {
+					const close = btn.dataset.collapseAction === 'collapse';
+					collapsed = close ? Array.from(page.querySelectorAll('[data-collapse]')).map((s) => s.id).filter(Boolean) : [];
+					persist();
+					page.querySelectorAll('[data-collapse]').forEach((section) => {
+						section.classList.toggle('is-collapsed', close);
+						section.querySelector('.section-collapse-toggle')?.setAttribute('aria-expanded', String(!close));
+						if (section.querySelector('.section-collapse-toggle')) section.querySelector('.section-collapse-toggle').textContent = close ? '+' : '−';
+					});
+				}));
+			}
+
 		}
 
 		function __initPortfolioCharts() {
@@ -4337,6 +4394,39 @@ const stages = [
 			color: var(--p-text-faint);
 			font-size: 0.9rem;
 		}
+
+		/* ── Phase 5 portfolio controls ───────────────── */
+		.collapse-control, .section-collapse-toggle { border: 1px solid var(--p-border); border-radius: 999px; background: var(--p-card); color: var(--p-text-soft); padding: .35rem .7rem; font-size: .78rem; cursor: pointer; }
+		.section-collapse-toggle { margin-left: auto; min-width: 2rem; }
+		.portfolio-section-head { position: relative; }
+		.portfolio-section.is-collapsed > *:not(.portfolio-section-head) { display: none !important; }
+		.bucket-bars { display: grid; gap: 1rem; }
+		.bucket-row, .crypto-mgmt-card { border: 1px solid var(--p-border); background: var(--p-card); border-radius: 1rem; padding: 1rem; }
+		.bucket-label { display: flex; align-items: baseline; gap: .7rem; margin-bottom: .6rem; }
+		.bucket-name { font-weight: 700; color: var(--p-text); }
+		.bucket-pct { margin-left: auto; font-family: var(--font-serif); font-size: 1.2rem; color: var(--p-text); }
+		.bucket-target { font-size: .78rem; font-weight: 700; }
+		.bucket-bar-track { position: relative; height: .55rem; border-radius: 999px; background: color-mix(in srgb, var(--p-border) 45%, transparent); overflow: hidden; }
+		.bucket-bar-fill { height: 100%; border-radius: 999px; }
+		.bucket-bar-target-marker { position: absolute; top: -.25rem; width: 2px; height: 1.05rem; background: var(--p-text); opacity: .55; }
+		.bucket-note, .bucket-crypto-summary { margin-top: .7rem; color: var(--p-text-soft); font-size: .88rem; }
+		.bucket-action-signals { margin-top: 1rem; display: grid; gap: .55rem; }
+		.bucket-signals-title { font-size: .78rem; letter-spacing: .14em; text-transform: uppercase; color: var(--p-text-faint); }
+		.bucket-signal { display: flex; gap: .5rem; align-items: center; border: 1px solid rgba(245,158,11,.28); background: rgba(245,158,11,.08); border-radius: .8rem; padding: .65rem .8rem; color: var(--p-text); }
+		.signal-dot { width: .45rem; height: .45rem; border-radius: 50%; background: #f59e0b; }
+		.crypto-position-card { border-color: rgba(245,158,11,.24); }
+		.crypto-position-tag, .crypto-stage-badge { background: rgba(245,158,11,.1); color: #92400e; }
+		.crypto-position-link { color: var(--p-accent); font-size: .82rem; }
+		.crypto-mgmt-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; }
+		.crypto-mgmt-card strong { display: block; margin: .3rem 0; font-family: var(--font-serif); font-size: 1.8rem; color: var(--p-text); }
+		.crypto-mgmt-label { color: var(--p-text-faint); font-size: .75rem; letter-spacing: .12em; text-transform: uppercase; }
+		.crypto-mgmt-card p { color: var(--p-text-soft); font-size: .85rem; }
+		.crypto-conditions { margin-top: 1rem; display: flex; flex-wrap: wrap; gap: .5rem; }
+		.crypto-condition { border: 1px solid var(--p-border); border-radius: 999px; padding: .35rem .65rem; color: var(--p-text-soft); font-size: .78rem; }
+		.crypto-condition.met { color: #047857; background: rgba(16,185,129,.1); }
+		.crypto-condition.miss { color: var(--p-text-faint); }
+		@media (max-width: 820px) { .crypto-mgmt-grid { grid-template-columns: 1fr 1fr; } .bucket-label { flex-wrap: wrap; } }
+		@media (max-width: 520px) { .crypto-mgmt-grid { grid-template-columns: 1fr; } }
 
 		/* ── Fade-in-up animation (shared with lucky) ── */
 		/* Scroll-triggered fade-up for non-hero portfolio sections. JS toggles
