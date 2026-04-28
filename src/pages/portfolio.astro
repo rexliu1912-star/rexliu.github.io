@@ -446,13 +446,14 @@ const stages = [
 			<a href="#positions-section">Positions</a>
 			{cryptoMonitor && <a href="#crypto-mgmt-section">Crypto</a>}
 			<a href="#allocation-section">Allocation</a>
+			<a href="#regime-section">Regime</a>
 			<a href="#supply-chain-section">Chain</a>
-			<a href="#clearance-section">Trades</a>
 			<a href="#watchlist-section">Watchlist</a>
 			<a href="#shortlist-section">Short List</a>
 			<a href="#sector-research-section">Sectors</a>
 			<a href="#deep-research-section">Research</a>
 			<a href="#roundtable-section">Roundtable</a>
+			<a href="#clearance-section">Trades</a>
 			<a href="#methodology-section">Methodology</a>
 			<button class="collapse-control" type="button" data-collapse-action="expand">Expand all</button>
 			<button class="collapse-control" type="button" data-collapse-action="collapse">Collapse all</button>
@@ -743,232 +744,6 @@ const stages = [
 		</section>
 	)}
 
-	{/* ═══ Supply Chain Topology ═══ */}
-		<section class="portfolio-section fade-in-up" data-collapse id="supply-chain-section">
-			<header class="portfolio-section-head">
-				<p class="portfolio-kicker">
-					<span class="lang-en">Investment Chain · Sector Topology</span>
-					<span class="lang-zh">投资链条 · 板块拓扑</span>
-				</p>
-				<h2 class="font-serif text-2xl font-semibold">
-					<span class="lang-en">From Electrons to Intelligence</span>
-					<span class="lang-zh">从电子到智能</span>
-				</h2>
-			</header>
-			<div class="topology-cake">
-				{TOPO_LAYERS.map((layer) => {
-					const nodes = topoNodesByLayer[layer.id] || [];
-					// Determine layer style: held = has held nodes, watch = only watch nodes, ghost = empty
-					const hasHeld = nodes.some((n) => n.status === "held");
-					const hasWatch = nodes.some((n) => n.status === "watch");
-					const layerClass = hasHeld ? "topo-held" : hasWatch ? "topo-watch" : "topo-ghost";
-					return (
-						<div class={`topo-cake-layer ${layerClass}`} style={`--cake-w: ${layer.widthPct}%`}>
-							<div class="topo-cake-label">
-								{layer.id} · <span class="lang-en">{layer.label_en}</span><span class="lang-zh">{layer.label_zh}</span>
-								{layer.sub_en && (
-									<span class="topo-cake-sub">
-										<span class="lang-en">{layer.sub_en}</span>
-										<span class="lang-zh">{layer.sub_zh}</span>
-									</span>
-								)}
-							</div>
-							{nodes.length > 0 ? (
-								<div class="topo-cake-nodes">
-									{nodes.map((n) => (
-										<span class={`topo-tag topo-tag-${n.status}`}>{n.symbol}</span>
-									))}
-								</div>
-							) : (
-								<div class="topo-cake-nodes">
-									<span class="topo-tag topo-tag-ghost">
-										<span class="lang-en">—</span>
-										<span class="lang-zh">暂无</span>
-									</span>
-								</div>
-							)}
-						</div>
-					);
-				})}
-			</div>
-			<div class="topology-legend">
-				<span class="legend-item"><span class="legend-dot legend-held"></span> <span class="lang-en">Held</span><span class="lang-zh">持仓</span></span>
-				<span class="legend-item"><span class="legend-dot legend-watch"></span> <span class="lang-en">Watchlist</span><span class="lang-zh">观察</span></span>
-				<span class="legend-item"><span class="legend-dot legend-ghost"></span> <span class="lang-en">Thematic</span><span class="lang-zh">主题</span></span>
-			</div>
-		</section>
-
-		{/* ═══ Closed Positions Gallery ═══ */}
-		<section class="portfolio-section fade-in-up" data-collapse id="clearance-section">
-			<header class="portfolio-section-head">
-				<p class="portfolio-kicker">
-					<span class="lang-en">Trade Replays · Closed Positions</span>
-					<span class="lang-zh">交易回放 · 已清仓</span>
-				</p>
-				<h2 class="font-serif text-3xl font-semibold">
-					<span class="lang-en">Wins, near-misses, and the lesson attached to each</span>
-					<span class="lang-zh">每笔清仓都带一条 lesson</span>
-				</h2>
-				<p class="portfolio-note">
-					<span class="lang-en">
-						Trade points marked: first entry, add, sell, stop-triggered exit. The annotation is
-						the reasoning at the time — not edited after the fact.
-					</span>
-					<span class="lang-zh">
-						每个关键交易点都标注：首次建仓、加仓、减仓、触发止损。备注是当时的判断，事后不改。
-					</span>
-				</p>
-			</header>
-
-			<div class="clearance-grid">
-				{clearances.map((c, idx) => (
-					<article
-						class={`clearance-card outcome-${c.outcome_pct_rounded >= 0 ? "win" : "loss"}`}
-					>
-						<header class="clearance-head">
-							<div class="clearance-symbol-row">
-								<strong class="clearance-symbol font-serif">
-									{c.ticker}
-								</strong>
-								<span class="clearance-name font-serif">
-									<span class="lang-en">{c.name_en}</span>
-									<span class="lang-zh">{c.name_zh}</span>
-								</span>
-							</div>
-							<div class="clearance-meta-row">
-								<span class="clearance-pct">
-									{c.outcome_pct_rounded >= 0 ? "+" : ""}
-									{c.outcome_pct_rounded}%
-								</span>
-								<span class="clearance-days">
-									<span class="lang-en">{c.holding_days}d</span>
-									<span class="lang-zh">{c.holding_days}天</span>
-								</span>
-								{c.win_rate_pct != null && (
-									<span class="clearance-chip">
-										<span class="lang-en">Win {c.win_rate_pct}%</span>
-										<span class="lang-zh">胜率 {c.win_rate_pct}%</span>
-									</span>
-								)}
-								{c.trade_count != null && (
-									<span class="clearance-chip">
-										<span class="lang-en">{c.trade_count} trades</span>
-										<span class="lang-zh">{c.trade_count} 笔</span>
-									</span>
-								)}
-							</div>
-						</header>
-
-						<div class="clearance-tags">
-							{(c.sector_tags_en || []).map((t: string, i: number) => (
-								<span class="position-tag">
-									<span class="lang-en">{t}</span>
-									<span class="lang-zh">{(c.sector_tags_zh || [])[i] || t}</span>
-								</span>
-							))}
-						</div>
-
-						{c.sub_tickers && c.sub_tickers.length > 0 && (
-							<div class="clearance-sub-tickers">
-								<span class="clearance-sub-label">
-									<span class="lang-en">Basket</span>
-									<span class="lang-zh">组合成分</span>
-								</span>
-								<div class="clearance-sub-list">
-									{c.sub_tickers.map((st: any) => (
-										<span class="clearance-sub-item">
-											<strong class="clearance-sub-ticker font-serif">{st.ticker}</strong>
-											<span class="clearance-sub-name">
-												<span class="lang-en">{st.name_en || st.name_zh || ""}</span>
-												<span class="lang-zh">{st.name_zh || st.name_en || ""}</span>
-											</span>
-											{st.outcome_pct != null && (
-												<em
-													class={`clearance-sub-pct ${st.outcome_pct >= 0 ? "positive" : "negative"}`}
-												>
-													{st.outcome_pct >= 0 ? "+" : ""}
-													{st.outcome_pct}%
-												</em>
-											)}
-											{st.holding_days != null && (
-												<span class="clearance-sub-days">
-													<span class="lang-en">{st.holding_days}d</span>
-													<span class="lang-zh">{st.holding_days}天</span>
-												</span>
-											)}
-										</span>
-									))}
-								</div>
-							</div>
-						)}
-
-						{(c.ai_context_en || c.ai_context_zh) && (
-							<p class="clearance-ai-context">
-								<strong class="clearance-ai-badge">AI-guided</strong>
-								<span class="lang-en">{c.ai_context_en}</span>
-								<span class="lang-zh">{c.ai_context_zh}</span>
-							</p>
-						)}
-
-						<div class="clearance-chart-wrap">
-							<canvas class="clearance-chart" data-clearance-idx={idx}></canvas>
-						</div>
-
-						<div class="clearance-trade-points">
-							{(c.trade_points || []).map((tp: any) => (
-								<div class={`trade-point-row kind-${tp.kind || "generic"}`}>
-									<div class="trade-point-top">
-										<time class="trade-point-date">{tp.date}</time>
-										{tp.kind && (
-											<span class="trade-point-kind">{tp.kind}</span>
-										)}
-										{tp.price != null && (
-											<span class="trade-point-price">{c.market === 'us' ? '$' : '¥'}{tp.price}</span>
-										)}
-									</div>
-									<strong class="trade-point-action">
-										<span class="lang-en">{tp.action_en || ""}</span>
-										<span class="lang-zh">{tp.action_zh || tp.action_en || ""}</span>
-									</strong>
-									{(tp.note_en || tp.note_zh) && (
-										<span class="trade-point-note">
-											<span class="lang-en">{tp.note_en || ""}</span>
-											<span class="lang-zh">{tp.note_zh || tp.note_en || ""}</span>
-										</span>
-									)}
-								</div>
-							))}
-						</div>
-
-						<footer class="clearance-foot">
-							<p class="clearance-reason">
-								<strong>
-									<span class="lang-en">Reason</span>
-									<span class="lang-zh">原因</span>:
-								</strong>{" "}
-								<span class="lang-en">{c.reason_en}</span>
-								<span class="lang-zh">{c.reason_zh}</span>
-							</p>
-							<p class="clearance-lesson">
-								<strong>
-									<span class="lang-en">Lesson</span>
-									<span class="lang-zh">教训</span>:
-								</strong>{" "}
-								<span class="lang-en">{c.lesson_en}</span>
-								<span class="lang-zh">{c.lesson_zh}</span>
-							</p>
-							{c.article_url && (
-								<a class="clearance-article-link" href={c.article_url}>
-									<span class="lang-en">Full trade review →</span>
-									<span class="lang-zh">完整交易复盘 →</span>
-								</a>
-							)}
-						</footer>
-					</article>
-				))}
-			</div>
-		</section>
-
 		{/* ═══ Allocation ═══ */}
 		<section class="portfolio-section fade-in-up" data-collapse id="allocation-section">
 			<header class="portfolio-section-head">
@@ -1243,6 +1018,61 @@ const stages = [
 						<span class="lang-zh">历史数据还未累积 · 日度任务跑几天后回来看。</span>
 					</div>
 				)}
+			</div>
+		</section>
+
+	{/* ═══ Supply Chain Topology ═══ */}
+		<section class="portfolio-section fade-in-up" data-collapse id="supply-chain-section">
+			<header class="portfolio-section-head">
+				<p class="portfolio-kicker">
+					<span class="lang-en">Investment Chain · Sector Topology</span>
+					<span class="lang-zh">投资链条 · 板块拓扑</span>
+				</p>
+				<h2 class="font-serif text-2xl font-semibold">
+					<span class="lang-en">From Electrons to Intelligence</span>
+					<span class="lang-zh">从电子到智能</span>
+				</h2>
+			</header>
+			<div class="topology-cake">
+				{TOPO_LAYERS.map((layer) => {
+					const nodes = topoNodesByLayer[layer.id] || [];
+					// Determine layer style: held = has held nodes, watch = only watch nodes, ghost = empty
+					const hasHeld = nodes.some((n) => n.status === "held");
+					const hasWatch = nodes.some((n) => n.status === "watch");
+					const layerClass = hasHeld ? "topo-held" : hasWatch ? "topo-watch" : "topo-ghost";
+					return (
+						<div class={`topo-cake-layer ${layerClass}`} style={`--cake-w: ${layer.widthPct}%`}>
+							<div class="topo-cake-label">
+								{layer.id} · <span class="lang-en">{layer.label_en}</span><span class="lang-zh">{layer.label_zh}</span>
+								{layer.sub_en && (
+									<span class="topo-cake-sub">
+										<span class="lang-en">{layer.sub_en}</span>
+										<span class="lang-zh">{layer.sub_zh}</span>
+									</span>
+								)}
+							</div>
+							{nodes.length > 0 ? (
+								<div class="topo-cake-nodes">
+									{nodes.map((n) => (
+										<span class={`topo-tag topo-tag-${n.status}`}>{n.symbol}</span>
+									))}
+								</div>
+							) : (
+								<div class="topo-cake-nodes">
+									<span class="topo-tag topo-tag-ghost">
+										<span class="lang-en">—</span>
+										<span class="lang-zh">暂无</span>
+									</span>
+								</div>
+							)}
+						</div>
+					);
+				})}
+			</div>
+			<div class="topology-legend">
+				<span class="legend-item"><span class="legend-dot legend-held"></span> <span class="lang-en">Held</span><span class="lang-zh">持仓</span></span>
+				<span class="legend-item"><span class="legend-dot legend-watch"></span> <span class="lang-en">Watchlist</span><span class="lang-zh">观察</span></span>
+				<span class="legend-item"><span class="legend-dot legend-ghost"></span> <span class="lang-en">Thematic</span><span class="lang-zh">主题</span></span>
 			</div>
 		</section>
 
@@ -1670,6 +1500,177 @@ const stages = [
 			</div>
 		</section>
 
+		{/* ═══ Closed Positions Gallery ═══ */}
+		<section class="portfolio-section fade-in-up" data-collapse id="clearance-section">
+			<header class="portfolio-section-head">
+				<p class="portfolio-kicker">
+					<span class="lang-en">Trade Replays · Closed Positions</span>
+					<span class="lang-zh">交易回放 · 已清仓</span>
+				</p>
+				<h2 class="font-serif text-3xl font-semibold">
+					<span class="lang-en">Wins, near-misses, and the lesson attached to each</span>
+					<span class="lang-zh">每笔清仓都带一条 lesson</span>
+				</h2>
+				<p class="portfolio-note">
+					<span class="lang-en">
+						Trade points marked: first entry, add, sell, stop-triggered exit. The annotation is
+						the reasoning at the time — not edited after the fact.
+					</span>
+					<span class="lang-zh">
+						每个关键交易点都标注：首次建仓、加仓、减仓、触发止损。备注是当时的判断，事后不改。
+					</span>
+				</p>
+			</header>
+
+			<div class="clearance-grid">
+				{clearances.map((c, idx) => (
+					<article
+						class={`clearance-card outcome-${c.outcome_pct_rounded >= 0 ? "win" : "loss"}`}
+					>
+						<header class="clearance-head">
+							<div class="clearance-symbol-row">
+								<strong class="clearance-symbol font-serif">
+									{c.ticker}
+								</strong>
+								<span class="clearance-name font-serif">
+									<span class="lang-en">{c.name_en}</span>
+									<span class="lang-zh">{c.name_zh}</span>
+								</span>
+							</div>
+							<div class="clearance-meta-row">
+								<span class="clearance-pct">
+									{c.outcome_pct_rounded >= 0 ? "+" : ""}
+									{c.outcome_pct_rounded}%
+								</span>
+								<span class="clearance-days">
+									<span class="lang-en">{c.holding_days}d</span>
+									<span class="lang-zh">{c.holding_days}天</span>
+								</span>
+								{c.win_rate_pct != null && (
+									<span class="clearance-chip">
+										<span class="lang-en">Win {c.win_rate_pct}%</span>
+										<span class="lang-zh">胜率 {c.win_rate_pct}%</span>
+									</span>
+								)}
+								{c.trade_count != null && (
+									<span class="clearance-chip">
+										<span class="lang-en">{c.trade_count} trades</span>
+										<span class="lang-zh">{c.trade_count} 笔</span>
+									</span>
+								)}
+							</div>
+						</header>
+
+						<div class="clearance-tags">
+							{(c.sector_tags_en || []).map((t: string, i: number) => (
+								<span class="position-tag">
+									<span class="lang-en">{t}</span>
+									<span class="lang-zh">{(c.sector_tags_zh || [])[i] || t}</span>
+								</span>
+							))}
+						</div>
+
+						{c.sub_tickers && c.sub_tickers.length > 0 && (
+							<div class="clearance-sub-tickers">
+								<span class="clearance-sub-label">
+									<span class="lang-en">Basket</span>
+									<span class="lang-zh">组合成分</span>
+								</span>
+								<div class="clearance-sub-list">
+									{c.sub_tickers.map((st: any) => (
+										<span class="clearance-sub-item">
+											<strong class="clearance-sub-ticker font-serif">{st.ticker}</strong>
+											<span class="clearance-sub-name">
+												<span class="lang-en">{st.name_en || st.name_zh || ""}</span>
+												<span class="lang-zh">{st.name_zh || st.name_en || ""}</span>
+											</span>
+											{st.outcome_pct != null && (
+												<em
+													class={`clearance-sub-pct ${st.outcome_pct >= 0 ? "positive" : "negative"}`}
+												>
+													{st.outcome_pct >= 0 ? "+" : ""}
+													{st.outcome_pct}%
+												</em>
+											)}
+											{st.holding_days != null && (
+												<span class="clearance-sub-days">
+													<span class="lang-en">{st.holding_days}d</span>
+													<span class="lang-zh">{st.holding_days}天</span>
+												</span>
+											)}
+										</span>
+									))}
+								</div>
+							</div>
+						)}
+
+						{(c.ai_context_en || c.ai_context_zh) && (
+							<p class="clearance-ai-context">
+								<strong class="clearance-ai-badge">AI-guided</strong>
+								<span class="lang-en">{c.ai_context_en}</span>
+								<span class="lang-zh">{c.ai_context_zh}</span>
+							</p>
+						)}
+
+						<div class="clearance-chart-wrap">
+							<canvas class="clearance-chart" data-clearance-idx={idx}></canvas>
+						</div>
+
+						<div class="clearance-trade-points">
+							{(c.trade_points || []).map((tp: any) => (
+								<div class={`trade-point-row kind-${tp.kind || "generic"}`}>
+									<div class="trade-point-top">
+										<time class="trade-point-date">{tp.date}</time>
+										{tp.kind && (
+											<span class="trade-point-kind">{tp.kind}</span>
+										)}
+										{tp.price != null && (
+											<span class="trade-point-price">{c.market === 'us' ? '$' : '¥'}{tp.price}</span>
+										)}
+									</div>
+									<strong class="trade-point-action">
+										<span class="lang-en">{tp.action_en || ""}</span>
+										<span class="lang-zh">{tp.action_zh || tp.action_en || ""}</span>
+									</strong>
+									{(tp.note_en || tp.note_zh) && (
+										<span class="trade-point-note">
+											<span class="lang-en">{tp.note_en || ""}</span>
+											<span class="lang-zh">{tp.note_zh || tp.note_en || ""}</span>
+										</span>
+									)}
+								</div>
+							))}
+						</div>
+
+						<footer class="clearance-foot">
+							<p class="clearance-reason">
+								<strong>
+									<span class="lang-en">Reason</span>
+									<span class="lang-zh">原因</span>:
+								</strong>{" "}
+								<span class="lang-en">{c.reason_en}</span>
+								<span class="lang-zh">{c.reason_zh}</span>
+							</p>
+							<p class="clearance-lesson">
+								<strong>
+									<span class="lang-en">Lesson</span>
+									<span class="lang-zh">教训</span>:
+								</strong>{" "}
+								<span class="lang-en">{c.lesson_en}</span>
+								<span class="lang-zh">{c.lesson_zh}</span>
+							</p>
+							{c.article_url && (
+								<a class="clearance-article-link" href={c.article_url}>
+									<span class="lang-en">Full trade review →</span>
+									<span class="lang-zh">完整交易复盘 →</span>
+								</a>
+							)}
+						</footer>
+					</article>
+				))}
+			</div>
+		</section>
+
 		{/* ═══ 8-Stage Methodology ═══ */}
 		<section class="portfolio-section fade-in-up" data-collapse id="methodology-section">
 			<header class="portfolio-section-head">
@@ -1874,10 +1875,20 @@ const stages = [
 			// Collapsible portfolio sections with multi-open + localStorage.
 			if (page.dataset.portfolioCollapseReady !== 'true') {
 				page.dataset.portfolioCollapseReady = 'true';
-				const key = 'portfolio:v6:collapsed-sections';
-				let collapsed = [];
-				try { collapsed = JSON.parse(localStorage.getItem(key) || '[]'); } catch {}
-				const persist = () => localStorage.setItem(key, JSON.stringify(collapsed));
+				const key = 'portfolio-sections';
+				const defaultOpen = new Set([
+					'bucket-overview-section',
+					'positions-section',
+					'crypto-mgmt-section',
+					'allocation-section',
+					'regime-section',
+				]);
+				let state = {};
+				try { state = JSON.parse(localStorage.getItem(key) || '{}') || {}; } catch {}
+				const sectionIsOpen = (section) => Object.prototype.hasOwnProperty.call(state, section.id)
+					? Boolean(state[section.id])
+					: defaultOpen.has(section.id);
+				const persist = () => localStorage.setItem(key, JSON.stringify(state));
 				page.querySelectorAll('[data-collapse]').forEach((section) => {
 					const head = section.querySelector('.portfolio-section-head');
 					if (!head || !section.id) return;
@@ -1890,23 +1901,24 @@ const stages = [
 						btn.setAttribute('aria-expanded', String(!isCollapsed));
 						btn.textContent = isCollapsed ? '+' : '−';
 					};
-					set(collapsed.includes(section.id));
+					set(!sectionIsOpen(section));
 					head.appendChild(btn);
 					btn.addEventListener('click', () => {
-						const next = !section.classList.contains('is-collapsed');
-						collapsed = next ? [...new Set([...collapsed, section.id])] : collapsed.filter((id) => id !== section.id);
-						set(next); persist();
+						const nextOpen = section.classList.contains('is-collapsed');
+						state[section.id] = nextOpen;
+						set(!nextOpen); persist();
 					});
 				});
 				page.querySelectorAll('[data-collapse-action]').forEach((btn) => btn.addEventListener('click', () => {
-					const close = btn.dataset.collapseAction === 'collapse';
-					collapsed = close ? Array.from(page.querySelectorAll('[data-collapse]')).map((s) => s.id).filter(Boolean) : [];
-					persist();
+					const open = btn.dataset.collapseAction === 'expand';
 					page.querySelectorAll('[data-collapse]').forEach((section) => {
-						section.classList.toggle('is-collapsed', close);
-						section.querySelector('.section-collapse-toggle')?.setAttribute('aria-expanded', String(!close));
-						if (section.querySelector('.section-collapse-toggle')) section.querySelector('.section-collapse-toggle').textContent = close ? '+' : '−';
+						if (!section.id) return;
+						state[section.id] = open;
+						section.classList.toggle('is-collapsed', !open);
+						section.querySelector('.section-collapse-toggle')?.setAttribute('aria-expanded', String(open));
+						if (section.querySelector('.section-collapse-toggle')) section.querySelector('.section-collapse-toggle').textContent = open ? '−' : '+';
 					});
+					persist();
 				}));
 			}
 
