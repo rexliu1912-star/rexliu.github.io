@@ -170,13 +170,13 @@ const convictionStroke: Record<string, string> = {
 };
 
 // ─── Topology layer data (dynamic from JSON, not hardcoded) ──
-const TOPO_LAYERS = [
-	{ id: "L5", widthPct: 32, label_en: "AI Compute", label_zh: "AI 算力", sub_en: null, sub_zh: null },
-	{ id: "L4", widthPct: 44, label_en: "Data Centers", label_zh: "数据中心", sub_en: "Demand Driver", sub_zh: "需求引擎" },
-	{ id: "L3", widthPct: 58, label_en: "Power Equipment", label_zh: "电力设备", sub_en: null, sub_zh: null },
-	{ id: "L2", widthPct: 74, label_en: "Transmission & Distribution", label_zh: "输配电", sub_en: null, sub_zh: null },
-	{ id: "L1", widthPct: 100, label_en: "Baseload Generation", label_zh: "基荷发电", sub_en: null, sub_zh: null },
-] as const;
+// const TOPO_LAYERS = [
+// 	{ id: "L5", widthPct: 32, label_en: "AI Compute", label_zh: "AI 算力", sub_en: null, sub_zh: null },
+// 	{ id: "L4", widthPct: 44, label_en: "Data Centers", label_zh: "数据中心", sub_en: "Demand Driver", sub_zh: "需求引擎" },
+// 	{ id: "L3", widthPct: 58, label_en: "Power Equipment", label_zh: "电力设备", sub_en: null, sub_zh: null },
+// 	{ id: "L2", widthPct: 74, label_en: "Transmission & Distribution", label_zh: "输配电", sub_en: null, sub_zh: null },
+// 	{ id: "L1", widthPct: 100, label_en: "Baseload Generation", label_zh: "基荷发电", sub_en: null, sub_zh: null },
+// ] as const;
 
 // Build topology nodes from positions that have a layer assignment
 const topoNodesByLayer: Record<string, { symbol: string; status: string }[]> = {};
