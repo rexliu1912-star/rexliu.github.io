@@ -74,21 +74,10 @@ interface PortfolioData {
 	positions: PortfolioPosition[];
 	crypto: {
 		updated_at: string;
-		total_usd_rounded: number;
-		non_stablecoin_total_rounded: number;
-		portfolio_pct: number | null;
 		positions: {
 			symbol: string;
-			value_usd_rounded: number;
-			portfolio_pct: number | null;
-			price_usd: number;
 			role: "core" | "community";
 		}[];
-		stablecoin: {
-			total_usd_rounded: number;
-			portfolio_pct: number | null;
-			asset_count: number;
-		} | null;
 	} | null;
 	watchlist_heatmap: PortfolioHeatmap | null;
 	clearances: any[];
@@ -649,47 +638,20 @@ const stages = [
 					<span class="lang-zh">非对称博弈 · 加密资产</span>
 				</p>
 				<h2 class="font-serif text-3xl font-semibold">
-					<span class="lang-en">
-						${crypto.non_stablecoin_total_rounded.toLocaleString()} across {crypto.positions.length} positions
-						{crypto.stablecoin && <span class="crypto-stablecoin-badge">+ ${crypto.stablecoin.total_usd_rounded.toLocaleString()} stable</span>}
-					</span>
-					<span class="lang-zh">
-						{crypto.positions.length} 个持仓，共 ${crypto.non_stablecoin_total_rounded.toLocaleString()}
-						{crypto.stablecoin && <span class="crypto-stablecoin-badge">+ ${crypto.stablecoin.total_usd_rounded.toLocaleString()} 稳定币</span>}
-					</span>
+					<span class="lang-en">{crypto.positions.length} signal-driven bets</span>
+					<span class="lang-zh">{crypto.positions.length} 个信号驱动的非对称仓位</span>
 				</h2>
 				<p class="portfolio-note">
 					<span class="lang-en">
-						{crypto.portfolio_pct}% of total portfolio · Role: {crypto.positions.filter(p => p.role === "core").map(p => p.symbol).join(", ")} (core)
-						{crypto.positions.filter(p => p.role === "community").length > 0 && `, ${crypto.positions.filter(p => p.role === "community").map(p => p.symbol).join(", ")} (community)`}
+						{crypto.positions.filter(p => p.role === "core").map(p => p.symbol).join(", ")} (core)
+						{crypto.positions.filter(p => p.role === "community").length > 0 && ` · ${crypto.positions.filter(p => p.role === "community").map(p => p.symbol).join(", ")} (community)`}
 					</span>
 					<span class="lang-zh">
-						占总组合 {crypto.portfolio_pct}% · 核心仓位：{crypto.positions.filter(p => p.role === "core").map(p => p.symbol).join("、")}
-						{crypto.positions.filter(p => p.role === "community").length > 0 && ` · 社区驱动：${crypto.positions.filter(p => p.role === "community").map(p => p.symbol).join("、")}`}
+						核心：{crypto.positions.filter(p => p.role === "core").map(p => p.symbol).join("、")}
+						{crypto.positions.filter(p => p.role === "community").length > 0 && ` · 社区：${crypto.positions.filter(p => p.role === "community").map(p => p.symbol).join("、")}`}
 					</span>
 				</p>
 			</header>
-
-			{/* Stablecoin health bar */}
-			{crypto.stablecoin && (
-				<div class="crypto-stablecoin-bar">
-					<div class="crypto-stablecoin-label">
-						<span class="lang-en">Stablecoin Reserve</span>
-						<span class="lang-zh">稳定币储备</span>
-						<span class="crypto-stablecoin-amount">${crypto.stablecoin.total_usd_rounded.toLocaleString()}</span>
-						<span class="crypto-stablecoin-pct">{crypto.stablecoin.portfolio_pct}%</span>
-					</div>
-					<div
-						class="crypto-stablecoin-fill"
-						style={`width: ${Math.min(crypto.stablecoin.portfolio_pct * 10, 100)}%`}
-						role="meter"
-						aria-valuenow={String(crypto.stablecoin.portfolio_pct)}
-						aria-valuemin="0"
-						aria-valuemax="20"
-						aria-label={`Stablecoin: ${crypto.stablecoin.portfolio_pct}%`}
-					></div>
-				</div>
-			)}
 
 			<div class="positions-grid">
 				{crypto.positions.map((cp) => (
@@ -707,14 +669,8 @@ const stages = [
 									<span class="lang-en">{cp.role === "core" ? "Core" : "Community"}</span>
 									<span class="lang-zh">{cp.role === "core" ? "核心" : "社区"}</span>
 								</span>
-								<span class="position-tag">{cp.portfolio_pct}%</span>
 							</div>
 						</header>
-
-						<div class="crypto-price-row">
-							<span class="crypto-price">${cp.price_usd.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</span>
-							<span class="crypto-value">{cp.value_usd_rounded.toLocaleString()}</span>
-						</div>
 
 						<div
 							class="position-conviction-bar"
@@ -3127,65 +3083,6 @@ const stages = [
 	}
 
 	/* ── Crypto-specific styles ─────────────── */
-	.crypto-stablecoin-badge {
-		font-size: 0.85em;
-		opacity: 0.7;
-		font-weight: 400;
-	}
-	.crypto-stablecoin-bar {
-		margin: 1.2rem 0;
-		padding: 0.9rem 1rem;
-		border: 1px solid var(--p-border);
-		border-radius: 0.5rem;
-		background: color-mix(in srgb, var(--p-bg) 60%, transparent);
-	}
-	.crypto-stablecoin-label {
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-		font-size: 0.82rem;
-		margin-bottom: 0.45rem;
-	}
-	.crypto-stablecoin-amount {
-		font-weight: 600;
-		font-variant-numeric: tabular-nums;
-		margin-left: auto;
-	}
-	.crypto-stablecoin-pct {
-		opacity: 0.6;
-		font-size: 0.78rem;
-	}
-	.crypto-stablecoin-fill {
-		height: 4px;
-		border-radius: 2px;
-		background: #22c55e;
-		transition: width 0.3s ease;
-	}
-	.crypto-price-row {
-		display: flex;
-		justify-content: space-between;
-		align-items: baseline;
-		padding: 0.5rem 0;
-		font-variant-numeric: tabular-nums;
-	}
-	.crypto-price {
-		font-size: 1.1rem;
-		font-weight: 600;
-		color: var(--p-fg);
-	}
-	.crypto-price::before {
-		content: "$";
-		opacity: 0.5;
-		font-weight: 400;
-	}
-	.crypto-value {
-		font-size: 0.85rem;
-		opacity: 0.7;
-	}
-	.crypto-value::before {
-		content: "≈ $";
-		opacity: 0.6;
-	}
 	.portfolio-updated {
 		text-align: right;
 		font-size: 0.72rem;

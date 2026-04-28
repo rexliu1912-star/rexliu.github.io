@@ -207,46 +207,19 @@ function sanitizeCrypto(privatePortfolio) {
   const crypto = privatePortfolio?.crypto;
   if (!crypto?.assets?.length) return null;
 
-  const totalPortfolio = privatePortfolio.totalAssets || 0;
   const PUBLIC_SYMBOLS = ["BTC", "SNEK"];
-  const STABLECOINS = ["USDT", "USDC"];
 
-  const roundPct = (v) => Math.round(v * 10) / 10;
-
-  // Non-stablecoin positions (public-facing)
+  // Non-stablecoin positions — no dollar amounts, no percentages, no prices
   const positions = crypto.assets
     .filter((a) => PUBLIC_SYMBOLS.includes(a.symbol) && (a.value || 0) >= 1)
     .map((a) => ({
       symbol: a.symbol,
-      value_usd_rounded: Math.round(a.value || 0),
-      portfolio_pct: totalPortfolio ? roundPct(((a.value || 0) / totalPortfolio) * 100) : null,
-      price_usd: a.price,
       role: a.symbol === "BTC" ? "core" : "community",
     }));
 
-  // Stablecoin bucket summary (no per-asset breakdown)
-  const stableAssets = crypto.assets.filter((a) => STABLECOINS.includes(a.symbol));
-  const stableTotal = stableAssets.reduce((sum, a) => sum + (a.value || 0), 0);
-  const stablecoin = stableTotal >= 1
-    ? {
-        total_usd_rounded: Math.round(stableTotal),
-        portfolio_pct: totalPortfolio ? roundPct((stableTotal / totalPortfolio) * 100) : null,
-        asset_count: stableAssets.length,
-      }
-    : null;
-
-  // Crypto total (non-stablecoin only, for allocation display)
-  const nonStableTotal = crypto.assets
-    .filter((a) => !STABLECOINS.includes(a.symbol))
-    .reduce((sum, a) => sum + (a.value || 0), 0);
-
   return {
     updated_at: crypto.lastUpdated || privatePortfolio.lastUpdated,
-    total_usd_rounded: Math.round(crypto.total || 0),
-    non_stablecoin_total_rounded: Math.round(nonStableTotal),
-    portfolio_pct: totalPortfolio ? roundPct(((crypto.total || 0) / totalPortfolio) * 100) : null,
     positions,
-    stablecoin,
   };
 }
 
@@ -412,7 +385,7 @@ async function main() {
   const privatePortfolio = await readJson(PRIVATE_PORTFOLIO_PATH);
   const crypto = sanitizeCrypto(privatePortfolio);
   if (crypto) {
-    console.log(`   ✅ Crypto: ${crypto.positions.length} positions, stablecoin bucket ${crypto.stablecoin ? 'present' : 'absent'}`);
+    console.log(`   ✅ Crypto: ${crypto.positions.length} positions`);
   } else {
     console.warn("   ⚠️  No crypto data in private portfolio — crypto section will be empty");
   }
