@@ -469,6 +469,7 @@ const stages = [
 					<span class="lang-en">The market temperature we're trading against</span>
 					<span class="lang-zh">我们在和什么样的市场做交易</span>
 				</h2>
+				<span class="section-summary"><span class="lang-en">Defensive · 1/4 green</span><span class="lang-zh">防御期 · 1/4 绿灯</span></span>
 			</header>
 
 			<div class="regime-lights">
@@ -575,10 +576,11 @@ const stages = [
 						current distance from each target.
 					</span>
 					<span class="lang-zh">
-						达利欧三桶法框架。百分比是战略目标，偏差 chip 显示当前距目标的距离。
-					</span>
-				</p>
-			</header>
+					达利欧三桶法框架。百分比是战略目标，偏差 chip 显示当前距目标的距离。
+				</span>
+			</p>
+			<span class="section-summary"><span class="lang-en">Stablecoin 40% · Funds 27% · Stocks 20% · Crypto 11%</span><span class="lang-zh">稳定币 40% · 基金 27% · 股票 20% · 加密 11%</span></span>
+		</header>
 
 		{/* Action Signals — allocation drift + crypto monitor alerts */}
 		{(() => {
@@ -784,10 +786,11 @@ const stages = [
 						next catalyst on the calendar.
 					</span>
 					<span class="lang-zh">
-						每张卡片显示板块标签、一句逻辑、阶段徽章、距止损线距离、日历上最近的催化事件。
-					</span>
-				</p>
-			</header>
+					每张卡片显示板块标签、一句逻辑、阶段徽章、距止损线距离、日历上最近的催化事件。
+				</span>
+			</p>
+			<span class="section-summary"><span class="lang-en">8 holdings · 7 high conviction</span><span class="lang-zh">8 只持仓 · 7 只高信念</span></span>
+		</header>
 
 			{/* ── Catalyst Timeline: all upcoming events across positions ── */}
 			{(() => {
@@ -1026,10 +1029,11 @@ const stages = [
 						the reasoning at the time — not edited after the fact.
 					</span>
 					<span class="lang-zh">
-						每个关键交易点都标注：首次建仓、加仓、减仓、触发止损。备注是当时的判断，事后不改。
-					</span>
-				</p>
-			</header>
+					每个关键交易点都标注：首次建仓、加仓、减仓、触发止损。备注是当时的判断，事后不改。
+				</span>
+			</p>
+			<span class="section-summary"><span class="lang-en">3 clearances</span><span class="lang-zh">3 条清仓记录</span></span>
+		</header>
 
 			<div class="clearance-grid">
 				{clearances.map((c, idx) => (
@@ -1183,7 +1187,7 @@ const stages = [
 	{/* ═══ Crypto Asset Management ═══ */}
 	{cryptoMonitor && (
 		<section class="portfolio-section fade-in-up" data-collapse id="crypto-mgmt-section">
-			<header class="portfolio-section-head"><p class="portfolio-kicker"><span class="lang-en">P1 Monitoring Loop</span><span class="lang-zh">P1 监控闭环</span></p><h2 class="font-serif text-3xl font-semibold"><span class="lang-en">Crypto Asset Management</span><span class="lang-zh">Crypto 资产管理</span></h2><p class="portfolio-note"><span class="lang-en">Bottom tracker, DCA gate, stablecoin health, and SNEK pulse in one place.</span><span class="lang-zh">底部追踪、DCA 闸门、稳定币健康度、SNEK 脉搏集中到一处。</span></p></header>
+			<header class="portfolio-section-head"><p class="portfolio-kicker"><span class="lang-en">P1 Monitoring Loop</span><span class="lang-zh">P1 监控闭环</span></p><h2 class="font-serif text-3xl font-semibold"><span class="lang-en">Crypto Asset Management</span><span class="lang-zh">Crypto 资产管理</span></h2><p class="portfolio-note"><span class="lang-en">Bottom tracker, DCA gate, stablecoin health, and SNEK pulse in one place.</span><span class="lang-zh">底部追踪、DCA 闸门、稳定币健康度、SNEK 脉搏集中到一处。</span></p><span class="section-summary"><span class="lang-en">Bottom 31/100 · DCA closed · stablecoin normal</span><span class="lang-zh">底部评分 31/100 · DCA 暂停 · 稳定币正常</span></span></header>
 			<div class="crypto-mgmt-grid">
 				<article class="crypto-mgmt-card"><span class="crypto-mgmt-label">Bottom Tracker</span><strong>{cryptoMonitor.bottom_tracker.score ?? "—"}</strong><p>{cryptoMonitor.bottom_tracker.status || "unknown"}</p></article>
 				<article class="crypto-mgmt-card"><span class="crypto-mgmt-label">DCA Gate</span><strong>{cryptoMonitor.dca.status || "—"}</strong><p>{cryptoMonitor.dca.reason || `${cryptoMonitor.dca.met_count}/${cryptoMonitor.dca.min_required} conditions`}</p></article>
@@ -1208,10 +1212,11 @@ const stages = [
 						threshold. Empty cells are days before the scan started.
 					</span>
 					<span class="lang-zh">
-						每日对 15 只标的跑 10 分评分卡。颜色越深越接近 7 分升级门槛。空格是扫描启动前的日期。
-					</span>
-				</p>
-			</header>
+					每日对 15 只标的跑 10 分评分卡。颜色越深越接近 7 分升级门槛。空格是扫描启动前的日期。
+				</span>
+			</p>
+			<span class="section-summary"><span class="lang-en">15 tickers · 14-day heatmap</span><span class="lang-zh">15 只标的 · 14 天热力图</span></span>
+		</header>
 
 			{heatmap && heatmap.tickers.length > 0 ? (
 				<div class="heatmap-wrap">
@@ -1271,10 +1276,11 @@ const stages = [
 							Tickers from the daily watchlist scan that scored ≥ 7 on the latest run. Candidates for deeper research before entry.
 						</span>
 						<span class="lang-zh">
-							每日观察池扫描中最新一期得分 ≥ 7 的标的。入仓前需做更深研究。
-						</span>
-					</p>
-				</header>
+						每日观察池扫描中最新一期得分 ≥ 7 的标的。入仓前需做更深研究。
+					</span>
+				</p>
+				<span class="section-summary"><span class="lang-en">No entries</span><span class="lang-zh">暂无入选</span></span>
+			</header>
 				<div class="shortlist-grid">
 					{shortList.map((s: any) => (
 						<div class="shortlist-card">
@@ -1305,10 +1311,11 @@ const stages = [
 							structural layers when relevant.
 						</span>
 						<span class="lang-zh">
-							每个主题 1-2 天深度研究。一句硬结论 + 一段研究范围 + 必要时的结构分层。
-						</span>
-					</p>
-				</header>
+						每个主题 1-2 天深度研究。一句硬结论 + 一段研究范围 + 必要时的结构分层。
+					</span>
+				</p>
+				<span class="section-summary"><span class="lang-en">4 sector views</span><span class="lang-zh">4 篇赛道报告</span></span>
+			</header>
 
 				<div class="sector-research-grid">
 					{sector_research.map((s) => (
@@ -1374,10 +1381,11 @@ const stages = [
 							scale. Badge marks those currently held.
 						</span>
 						<span class="lang-zh">
-							通过观察池筛选的标的会写成深度研究名片。五星置信度，徽章标注当前是否持仓。
-						</span>
-					</p>
-				</header>
+						通过观察池筛选的标的会写成深度研究名片。五星置信度，徽章标注当前是否持仓。
+					</span>
+				</p>
+				<span class="section-summary"><span class="lang-en">7 deep dives</span><span class="lang-zh">7 篇深度研究</span></span>
+			</header>
 
 				{deepSectors.map((group) => (
 					<div class="deep-research-group">
@@ -1463,10 +1471,11 @@ const stages = [
 						least one dissenter. No dissent = research not done.
 					</span>
 					<span class="lang-zh">
-						每次圆桌请 6 位嘉宾——赛道专家 / 价值派 / 宏观 / 制度 / 必含反方。没有反方 = 调研不够。
-					</span>
-				</p>
-			</header>
+					每次圆桌请 6 位嘉宾——赛道专家 / 价值派 / 宏观 / 制度 / 必含反方。没有反方 = 调研不够。
+				</span>
+			</p>
+			<span class="section-summary"><span class="lang-en">Latest 2026-04-13 · 1 session</span><span class="lang-zh">最新 2026-04-13 · 1 场圆桌</span></span>
+		</header>
 
 			<div class="roundtable-list">
 				{roundtables.length > 0 ? (
@@ -1627,10 +1636,11 @@ const stages = [
 						require human judgment. Round-trip is weeks, not days.
 					</span>
 					<span class="lang-zh">
-						每个持仓都要走过这些阶段。部分是自动 cron，部分需要人工判断。完整走一圈以周为单位，不是天。
-					</span>
-				</p>
-			</header>
+					每个持仓都要走过这些阶段。部分是自动 cron，部分需要人工判断。完整走一圈以周为单位，不是天。
+				</span>
+			</p>
+			<span class="section-summary"><span class="lang-en">8-stage funnel · automated + manual</span><span class="lang-zh">八阶段漏斗 · 自动 + 人工</span></span>
+		</header>
 
 			<div class="stage-zigzag">
 				{stages.map((s, i) => (
@@ -1811,61 +1821,115 @@ const stages = [
 				);
 			}
 
-			// Collapsible portfolio sections with multi-open + localStorage.
-			if (page.dataset.portfolioCollapseReady !== 'true') {
-				page.dataset.portfolioCollapseReady = 'true';
-				const key = 'portfolio-sections';
-				const defaultOpen = new Set([
-					'allocation-section',
-					'regime-section',
-					'positions-section',
-					'crypto-mgmt-section',
-				]);
-				let state = {};
-				try { state = JSON.parse(localStorage.getItem(key) || '{}') || {}; } catch {}
-				const sectionIsOpen = (section) => Object.prototype.hasOwnProperty.call(state, section.id)
-					? Boolean(state[section.id])
-					: defaultOpen.has(section.id);
-				const persist = () => localStorage.setItem(key, JSON.stringify(state));
-				page.querySelectorAll('[data-collapse]').forEach((section) => {
-					const head = section.querySelector('.portfolio-section-head');
-					if (!head || !section.id) return;
-					const btn = document.createElement('button');
-					btn.type = 'button';
-					btn.className = 'section-collapse-toggle';
-					btn.setAttribute('aria-controls', section.id);
-					const set = (isCollapsed) => {
-						section.classList.toggle('is-collapsed', isCollapsed);
-						btn.setAttribute('aria-expanded', String(!isCollapsed));
-						btn.innerHTML = isCollapsed
-							? '<span class="collapse-icon">▶</span><span class="collapse-label">Expand</span>'
-							: '<span class="collapse-icon">▼</span><span class="collapse-label">Collapse</span>';
-					};
-					set(!sectionIsOpen(section));
-					head.appendChild(btn);
-					btn.addEventListener('click', () => {
-						const nextOpen = section.classList.contains('is-collapsed');
-						state[section.id] = nextOpen;
-						set(!nextOpen); persist();
-					});
+		// Collapsible portfolio sections — title-click toggle + summaries.
+		if (page.dataset.portfolioCollapseReady !== 'true') {
+			page.dataset.portfolioCollapseReady = 'true';
+			const key = 'portfolio-sections';
+			const defaultOpen = new Set([
+				'allocation-section',
+				'regime-section',
+				'positions-section',
+				'crypto-mgmt-section',
+			]);
+			const allSections = () => /** @type {HTMLElement[]} */ ([...page.querySelectorAll('[data-collapse]')].filter(s => s.id));
+			let state = {};
+			try { state = JSON.parse(localStorage.getItem(key) || '{}') || {}; } catch {}
+			const sectionIsOpen = (section) => Object.prototype.hasOwnProperty.call(state, section.id)
+				? Boolean(state[section.id])
+				: defaultOpen.has(section.id);
+			const persist = () => localStorage.setItem(key, JSON.stringify(state));
+
+			// Toggle one section
+			const toggleSection = (section, forceOpen) => {
+				const willBeCollapsed = forceOpen !== undefined ? !forceOpen : !section.classList.contains('is-collapsed');
+				section.classList.toggle('is-collapsed', willBeCollapsed);
+				const chevron = section.querySelector('.section-chevron');
+				if (chevron) chevron.textContent = willBeCollapsed ? '▶' : '▼';
+				state[section.id] = !willBeCollapsed;
+				persist();
+			};
+
+			// Init each section: add chevron to h2, make header clickable
+			page.querySelectorAll('[data-collapse]').forEach((section) => {
+				const head = section.querySelector('.portfolio-section-head');
+				if (!head || !section.id) return;
+				const h2 = head.querySelector('h2');
+				if (!h2) return;
+
+				// Add chevron
+				const chevron = document.createElement('span');
+				chevron.className = 'section-chevron';
+				h2.appendChild(chevron);
+
+				// Header click toggles (but not if clicking a link inside)
+				head.style.cursor = 'pointer';
+				head.addEventListener('click', (e) => {
+					if (e.target.closest('a, button')) return;
+					toggleSection(section);
 				});
-				page.querySelectorAll('[data-collapse-action]').forEach((btn) => btn.addEventListener('click', () => {
-					const open = btn.dataset.collapseAction === 'expand';
-					page.querySelectorAll('[data-collapse]').forEach((section) => {
-						if (!section.id) return;
-						state[section.id] = open;
-						section.classList.toggle('is-collapsed', !open);
-						section.querySelector('.section-collapse-toggle')?.setAttribute('aria-expanded', String(open));
-						const toggleBtn = section.querySelector('.section-collapse-toggle');
-						if (toggleBtn) {
-							toggleBtn.innerHTML = open
-								? '<span class="collapse-icon">▼</span><span class="collapse-label">Collapse</span>'
-								: '<span class="collapse-icon">▶</span><span class="collapse-label">Expand</span>';
-						}
+
+				// Initial state
+				const collapsed = !sectionIsOpen(section);
+				section.classList.toggle('is-collapsed', collapsed);
+				chevron.textContent = collapsed ? '▶' : '▼';
+			});
+
+			// Expand / Collapse all buttons
+			page.querySelectorAll('[data-collapse-action]').forEach((btn) => btn.addEventListener('click', () => {
+				const open = btn.dataset.collapseAction === 'expand';
+				allSections().forEach(s => toggleSection(s, open));
+			}));
+
+			// Keyboard shortcuts
+			const visibleSections = () => allSections().filter(s => s.offsetParent !== null);
+			document.addEventListener('keydown', (e) => {
+				const tag = e.target.tagName;
+				if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+				const secs = visibleSections();
+
+				// ] / [ — next / prev section
+				if (e.key === ']' || e.key === '[') {
+					e.preventDefault();
+					const viewportCenter = window.innerHeight / 2;
+					let closestIdx = 0, closestDist = Infinity;
+					secs.forEach((s, i) => {
+						const r = s.getBoundingClientRect();
+						const dist = Math.abs(r.top + r.height / 2 - viewportCenter);
+						if (dist < closestDist) { closestDist = dist; closestIdx = i; }
 					});
-					persist();
-				}));
-			}
+					const nextIdx = e.key === ']'
+						? Math.min(closestIdx + 1, secs.length - 1)
+						: Math.max(closestIdx - 1, 0);
+					secs[nextIdx].scrollIntoView({ behavior: 'smooth', block: 'start' });
+					return;
+				}
+
+				// Cmd+Shift+E — toggle all
+				if (e.key === 'E' && e.shiftKey && (e.metaKey || e.ctrlKey)) {
+					e.preventDefault();
+					const anyOpen = secs.some(s => !s.classList.contains('is-collapsed'));
+					secs.forEach(s => toggleSection(s, !anyOpen));
+				}
+			});
+
+			// Anchor highlight — brief pulse when clicking a nav link
+			page.querySelectorAll('a[href^="#"]').forEach((link) => {
+				link.addEventListener('click', () => {
+					const id = link.getAttribute('href')?.slice(1);
+					if (!id) return;
+					const target = document.getElementById(id);
+					if (!target) return;
+					// Ensure section is open if it's a collapsible section
+					if (target.hasAttribute('data-collapse') && target.classList.contains('is-collapsed')) {
+						toggleSection(target, true);
+					}
+					target.classList.remove('section-highlight');
+					void target.offsetWidth; // reflow to restart animation
+					target.classList.add('section-highlight');
+					target.addEventListener('animationend', () => target.classList.remove('section-highlight'), { once: true });
+				});
+			});
+		}
 
 		}
 
@@ -4354,34 +4418,15 @@ const stages = [
 
 		/* ── Phase 5 portfolio controls ───────────────── */
 		.collapse-control { border: 1px solid var(--p-border); border-radius: 999px; background: var(--p-card); color: var(--p-text-soft); padding: .35rem .7rem; font-size: .78rem; cursor: pointer; }
-		.section-collapse-toggle {
-			margin-left: auto;
-			border: 1px solid var(--p-border);
-			border-radius: .5rem;
-			background: var(--p-card-strong);
-			color: var(--p-text-soft);
-			padding: .4rem .9rem;
-			font-size: .75rem;
-			font-weight: 500;
-			cursor: pointer;
-			display: inline-flex;
-			align-items: center;
-			gap: .4rem;
-			transition: background .2s, border-color .2s;
-		}
-		.section-collapse-toggle:hover {
-			background: var(--p-card);
-			border-color: rgba(137, 83, 209, 0.35);
-		}
-		.collapse-icon {
-			font-size: .65rem;
-			line-height: 1;
-		}
-		.collapse-label {
-			letter-spacing: .02em;
-		}
-		.portfolio-section-head { position: relative; }
+		.section-collapse-toggle { display: none; }
+		.section-chevron { display: inline-block; margin-left: .45rem; font-size: .6rem; opacity: .45; transition: opacity .2s; vertical-align: middle; }
+		.portfolio-section-head:hover .section-chevron { opacity: .8; }
+		.section-summary { display: none; font-size: .78rem; color: var(--p-text-faint); letter-spacing: .02em; margin-top: .35rem; padding: .35rem .7rem; border-left: 2px solid var(--p-border); }
+		.portfolio-section.is-collapsed .section-summary { display: block; }
+		.portfolio-section-head { position: relative; cursor: pointer; -webkit-user-select: none; user-select: none; }
 		.portfolio-section.is-collapsed > *:not(.portfolio-section-head) { display: none !important; }
+		@keyframes section-pulse { 0% { box-shadow: 0 0 0 0 rgba(137,83,209,.4); } 70% { box-shadow: 0 0 0 6px rgba(137,83,209,0); } 100% { box-shadow: none; } }
+		.section-highlight { animation: section-pulse .8s ease-out; border-radius: .8rem; }
 		.bucket-bars { display: grid; gap: 1rem; }
 		.bucket-row, .crypto-mgmt-card { border: 1px solid var(--p-border); background: var(--p-card); border-radius: 1rem; padding: 1rem; }
 		.bucket-label { display: flex; align-items: baseline; gap: .7rem; margin-bottom: .6rem; }
