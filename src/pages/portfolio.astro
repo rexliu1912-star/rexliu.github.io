@@ -459,34 +459,107 @@ const stages = [
 			<button class="collapse-control" type="button" data-collapse-action="collapse">Collapse all</button>
 		</nav>
 
-	{/* ═══ Bucket Overview (Four-Bucket Summary) ═══ */}
-	{cryptoMonitor && (
-		<section class="portfolio-section fade-in-up" data-collapse id="bucket-overview-section">
-			<header class="portfolio-section-head">
-				<p class="portfolio-kicker"><span class="lang-en">Dashboard</span><span class="lang-zh">仪表盘</span></p>
-				<h2 class="font-serif text-3xl font-semibold"><span class="lang-en">Four buckets at a glance</span><span class="lang-zh">四桶一览</span></h2>
-				<p class="portfolio-note"><span class="lang-en">Current allocation vs strategic targets. Action signals flag what needs attention today.</span><span class="lang-zh">当前配置 vs 战略目标。Action Signals 标记今日需关注的事项。</span></p>
-			</header>
-			<div class="bucket-bars">
-				{allocation.current.categories.map((cat: any) => {
-					const gap = (cat.current_pct ?? 0) - (cat.target_pct ?? 0);
-					const gapAbs = Math.abs(gap);
-					const gapColor = gapAbs > 5 ? "#ef4444" : gapAbs >= 3 ? "#f59e0b" : "#10b981";
-					return (
-						<div class="bucket-row">
-							<div class="bucket-label"><span class="bucket-name"><span class="lang-en">{cat.label_en}</span><span class="lang-zh">{cat.label_zh}</span></span><span class="bucket-pct">{cat.current_pct}%</span><span class="bucket-target" style={`color: ${gapColor}`}>{gap > 0 ? "+" : ""}{gap.toFixed(1)}pp</span></div>
-							<div class="bucket-bar-track"><div class="bucket-bar-fill" style={`width: ${Math.min(cat.current_pct ?? 0, 100)}%; background: ${cat.color || "#8953d1"}`}></div><div class="bucket-bar-target-marker" style={`left: ${cat.target_pct ?? 0}%`}></div></div>
-							<p class="bucket-note"><span class="lang-en">{cat.note_en}</span><span class="lang-zh">{cat.note_zh}</span></p>
-						</div>
-					);
-				})}
-			</div>
-			<p class="bucket-crypto-summary"><span class="lang-en">Crypto {cryptoMonitor.allocation.crypto.pct}% / target {cryptoMonitor.allocation.crypto.target_pct}% · DCA {cryptoMonitor.dca.status} · Bottom Tracker {cryptoMonitor.bottom_tracker.score}</span><span class="lang-zh">Crypto {cryptoMonitor.allocation.crypto.pct}% / 目标 {cryptoMonitor.allocation.crypto.target_pct}% · DCA {cryptoMonitor.dca.status} · 底部追踪 {cryptoMonitor.bottom_tracker.score}</span></p>
-			{cryptoMonitor.action_signals.length > 0 && <div class="bucket-action-signals"><p class="bucket-signals-title">⚡ Action Signals</p>{cryptoMonitor.action_signals.map((sig: any) => <a class={`bucket-signal priority-${sig.priority}`} href="#crypto-mgmt-section"><span class="signal-dot"></span>{sig.detail}</a>)}</div>}
-		</section>
-	)}
-
 		{/* ═══ Current Positions ═══ */}
+		<section class="portfolio-section fade-in-up" data-collapse id="regime-section">
+			<header class="portfolio-section-head">
+				<p class="portfolio-kicker">
+					<span class="lang-en">Stage 0 · Macro Thermometer</span>
+					<span class="lang-zh">阶段 0 · 宏观温度计</span>
+				</p>
+				<h2 class="font-serif text-3xl font-semibold">
+					<span class="lang-en">The market temperature we're trading against</span>
+					<span class="lang-zh">我们在和什么样的市场做交易</span>
+				</h2>
+			</header>
+
+			<div class="regime-lights">
+				{Object.entries(regime?.current?.signals || {}).map(([, sig]) => (
+					<div class="regime-light-card" style={`--light: ${lightColors[sig.light] || "#9ca3af"}`}>
+						<span class="regime-light-label">{sig.label}</span>
+						<strong class="regime-light-value font-serif">{sig.value}</strong>
+						<span class="regime-light-dot" aria-hidden="true"></span>
+					</div>
+				))}
+			</div>
+
+			<div class="regime-chart-wrap">
+				<div class="regime-chart-head">
+					<h3 class="font-serif text-lg">
+						<span class="lang-en">VIX & Regime · 60 days</span>
+						<span class="lang-zh">VIX 与 Regime · 60 天</span>
+					</h3>
+					<p class="portfolio-note">
+						<span class="lang-en">
+							Shaded bands mark regime transitions (green = offensive, amber = neutral, red =
+							defensive). VIX line is the mood overlay.
+						</span>
+						<span class="lang-zh">
+							色段为 regime 状态（绿=进攻、黄=中性、红=防御）。VIX 折线是情绪指标。
+						</span>
+					</p>
+				</div>
+				{regime?.history_60d && regime.history_60d.length >= 7 ? (
+					<div class="regime-chart-canvas-wrap">
+						<canvas id="regimeChart" aria-hidden="true"></canvas>
+					</div>
+					<div id="regimeTooltip" class="regime-tooltip" style="display:none;">
+						<div class="regime-tooltip-date"></div>
+						<div class="regime-tooltip-regime"></div>
+						<div class="regime-tooltip-signals"></div>
+					</div>
+				) : regime?.history_60d && regime.history_60d.length > 0 ? (
+					<div
+						class="regime-grid-fallback"
+						aria-label="Signal history grid"
+						style={`--days: ${regime.history_60d.length}`}
+					>
+						<div class="regime-grid-head-row">
+							<div class="regime-grid-corner"></div>
+							{regime.history_60d.map((h: any) => (
+								<div class="regime-grid-date-label" title={h.date}>
+									{h.date.slice(5)}
+								</div>
+							))}
+						</div>
+						{SIGNAL_ORDER.map((sig) => {
+							const label = SIGNAL_LABELS[sig] || { en: sig.toUpperCase(), zh: sig.toUpperCase() };
+							return (
+								<div class="regime-grid-row">
+									<div class="regime-grid-signal-label">
+										<span class="lang-en">{label.en}</span>
+										<span class="lang-zh">{label.zh}</span>
+									</div>
+									{regime.history_60d.map((h: any) => {
+										const light = h.lights?.[sig] || "gray";
+										return (
+											<div
+												class={`regime-grid-cell light-${light}`}
+												title={`${label.en} · ${h.date} · ${light}`}
+											></div>
+										);
+									})}
+								</div>
+							);
+							})}
+						<p class="regime-grid-note">
+							<span class="lang-en">
+								{regime.history_60d.length} day(s) tracked · line chart activates at 7 days
+							</span>
+							<span class="lang-zh">
+								已累积 {regime.history_60d.length} 天 · 满 7 天后切换为折线图
+							</span>
+						</p>
+					</div>
+				) : (
+					<div class="portfolio-empty-overlay">
+						<span class="lang-en">
+							No history yet · check back after a few daily runs.
+						</span>
+						<span class="lang-zh">历史数据还未累积 · 日度任务跑几天后回来看。</span>
+					</div>
+				)}
+			</div>
+		</section>
 		<section class="portfolio-section fade-in-up" data-collapse id="positions-section">
 			<header class="portfolio-section-head">
 				<p class="portfolio-kicker">
@@ -766,6 +839,19 @@ const stages = [
 				</p>
 			</header>
 
+			{/* Action Signals — global alerts that need Rex attention */}
+			{cryptoMonitor && cryptoMonitor.action_signals.length > 0 && (
+				<div class="bucket-action-signals">
+					<p class="bucket-signals-title">⚡ Action Signals</p>
+					{cryptoMonitor.action_signals.map((sig: any) => (
+						<a class={`bucket-signal priority-${sig.priority}`} href="#crypto-mgmt-section">
+							<span class="signal-dot"></span>
+							{sig.detail}
+						</a>
+					))}
+				</div>
+			)}
+
 			<div class="allocation-donut-wrap" aria-label="Target vs current allocation">
 				<svg class="allocation-donut" viewBox="0 0 240 240" role="img">
 					{/* Outer ring = target allocation */}
@@ -920,106 +1006,6 @@ const stages = [
 		</section>
 
 		{/* ═══ Macro Regime ═══ */}
-		<section class="portfolio-section fade-in-up" data-collapse id="regime-section">
-			<header class="portfolio-section-head">
-				<p class="portfolio-kicker">
-					<span class="lang-en">Stage 0 · Macro Thermometer</span>
-					<span class="lang-zh">阶段 0 · 宏观温度计</span>
-				</p>
-				<h2 class="font-serif text-3xl font-semibold">
-					<span class="lang-en">The market temperature we're trading against</span>
-					<span class="lang-zh">我们在和什么样的市场做交易</span>
-				</h2>
-			</header>
-
-			<div class="regime-lights">
-				{Object.entries(regime?.current?.signals || {}).map(([, sig]) => (
-					<div class="regime-light-card" style={`--light: ${lightColors[sig.light] || "#9ca3af"}`}>
-						<span class="regime-light-label">{sig.label}</span>
-						<strong class="regime-light-value font-serif">{sig.value}</strong>
-						<span class="regime-light-dot" aria-hidden="true"></span>
-					</div>
-				))}
-			</div>
-
-			<div class="regime-chart-wrap">
-				<div class="regime-chart-head">
-					<h3 class="font-serif text-lg">
-						<span class="lang-en">VIX & Regime · 60 days</span>
-						<span class="lang-zh">VIX 与 Regime · 60 天</span>
-					</h3>
-					<p class="portfolio-note">
-						<span class="lang-en">
-							Shaded bands mark regime transitions (green = offensive, amber = neutral, red =
-							defensive). VIX line is the mood overlay.
-						</span>
-						<span class="lang-zh">
-							色段为 regime 状态（绿=进攻、黄=中性、红=防御）。VIX 折线是情绪指标。
-						</span>
-					</p>
-				</div>
-				{regime?.history_60d && regime.history_60d.length >= 7 ? (
-					<div class="regime-chart-canvas-wrap">
-						<canvas id="regimeChart" aria-hidden="true"></canvas>
-					</div>
-					<div id="regimeTooltip" class="regime-tooltip" style="display:none;">
-						<div class="regime-tooltip-date"></div>
-						<div class="regime-tooltip-regime"></div>
-						<div class="regime-tooltip-signals"></div>
-					</div>
-				) : regime?.history_60d && regime.history_60d.length > 0 ? (
-					<div
-						class="regime-grid-fallback"
-						aria-label="Signal history grid"
-						style={`--days: ${regime.history_60d.length}`}
-					>
-						<div class="regime-grid-head-row">
-							<div class="regime-grid-corner"></div>
-							{regime.history_60d.map((h: any) => (
-								<div class="regime-grid-date-label" title={h.date}>
-									{h.date.slice(5)}
-								</div>
-							))}
-						</div>
-						{SIGNAL_ORDER.map((sig) => {
-							const label = SIGNAL_LABELS[sig] || { en: sig.toUpperCase(), zh: sig.toUpperCase() };
-							return (
-								<div class="regime-grid-row">
-									<div class="regime-grid-signal-label">
-										<span class="lang-en">{label.en}</span>
-										<span class="lang-zh">{label.zh}</span>
-									</div>
-									{regime.history_60d.map((h: any) => {
-										const light = h.lights?.[sig] || "gray";
-										return (
-											<div
-												class={`regime-grid-cell light-${light}`}
-												title={`${label.en} · ${h.date} · ${light}`}
-											></div>
-										);
-									})}
-								</div>
-							);
-							})}
-						<p class="regime-grid-note">
-							<span class="lang-en">
-								{regime.history_60d.length} day(s) tracked · line chart activates at 7 days
-							</span>
-							<span class="lang-zh">
-								已累积 {regime.history_60d.length} 天 · 满 7 天后切换为折线图
-							</span>
-						</p>
-					</div>
-				) : (
-					<div class="portfolio-empty-overlay">
-						<span class="lang-en">
-							No history yet · check back after a few daily runs.
-						</span>
-						<span class="lang-zh">历史数据还未累积 · 日度任务跑几天后回来看。</span>
-					</div>
-				)}
-			</div>
-		</section>
 
 	{/* ═══ Supply Chain Topology ═══ */}
 		<section class="portfolio-section fade-in-up" data-collapse id="supply-chain-section">
@@ -1877,7 +1863,6 @@ const stages = [
 				page.dataset.portfolioCollapseReady = 'true';
 				const key = 'portfolio-sections';
 				const defaultOpen = new Set([
-					'bucket-overview-section',
 					'positions-section',
 					'crypto-mgmt-section',
 					'allocation-section',
