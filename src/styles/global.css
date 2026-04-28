@@ -38,6 +38,28 @@
 			--color-accent-2: oklch(94.66% 0 0);
 			--color-quote: #e7ddf6;
 		}
+
+		&[data-theme="dark"] body::before {
+			content: "";
+			position: fixed;
+			inset: 0;
+			z-index: -1;
+			pointer-events: none;
+			background:
+				radial-gradient(circle at top left, rgba(137, 83, 209, 0.14), transparent 26%),
+				radial-gradient(circle at 80% 10%, rgba(59, 130, 246, 0.09), transparent 24%);
+		}
+
+		&[data-theme="light"] body::before {
+			content: "";
+			position: fixed;
+			inset: 0;
+			z-index: -1;
+			pointer-events: none;
+			background:
+				radial-gradient(circle at top left, rgba(137, 83, 209, 0.06), transparent 26%),
+				radial-gradient(circle at 80% 10%, rgba(59, 130, 246, 0.04), transparent 24%);
+		}
 	}
 
 	:target {

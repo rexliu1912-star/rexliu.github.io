@@ -144,30 +144,21 @@ const TELEGRAM_URL = "https://t.me/rexlab2026";
 	function initHeader() {
 		const header = document.getElementById("main-header") as HTMLElement | null;
 		if (!header) return;
-		const isGradientPage = document.body.classList.contains("gradient-page");
 		const gradDark = "radial-gradient(circle at top left, rgba(137,83,209,0.14), transparent 26%), radial-gradient(circle at 80% 10%, rgba(59,130,246,0.09), transparent 24%)";
 		const gradLight = "radial-gradient(circle at top left, rgba(137,83,209,0.06), transparent 26%), radial-gradient(circle at 80% 10%, rgba(59,130,246,0.04), transparent 24%)";
-		const isDark = document.documentElement.getAttribute("data-theme") !== "light";
-		const grad = isDark ? gradDark : gradLight;
 		const onScroll = () => {
+			const isDark = document.documentElement.getAttribute("data-theme") !== "light";
+			const grad = isDark ? gradDark : gradLight;
 			if (window.scrollY > 8) {
 				header.style.backdropFilter = "blur(12px)";
 				(header.style as CSSStyleDeclaration & { webkitBackdropFilter: string }).webkitBackdropFilter = "blur(12px)";
-				if (isGradientPage) {
-					header.style.background = `color-mix(in srgb, var(--color-global-bg) 85%, transparent), ${grad}`;
-				} else {
-					header.style.background = "color-mix(in srgb, var(--color-global-bg) 85%, transparent)";
-				}
+				header.style.background = `color-mix(in srgb, var(--color-global-bg) 85%, transparent), ${grad}`;
 				header.style.borderBottom = "1px solid color-mix(in srgb, currentColor 8%, transparent)";
 				header.style.boxShadow = "0 1px 12px rgba(0,0,0,0.06)";
 			} else {
 				header.style.backdropFilter = "";
 				(header.style as CSSStyleDeclaration & { webkitBackdropFilter: string }).webkitBackdropFilter = "";
-				if (isGradientPage) {
-					header.style.background = `var(--color-global-bg), ${grad}`;
-				} else {
-					header.style.background = "var(--color-global-bg)";
-				}
+				header.style.background = `var(--color-global-bg), ${grad}`;
 				header.style.borderBottom = "none";
 				header.style.boxShadow = "none";
 			}
