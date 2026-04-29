@@ -220,6 +220,9 @@ const dataJson = JSON.stringify({
 	heatmap,
 	positions,
 	clearances,
+	crypto_timeseries: cryptoTS,
+	crypto_portfolio_history: (portfolioData as any)?.crypto_portfolio_history,
+	allocation_history: (portfolioData as any)?.allocation_history,
 });
 
 const updatedLabel = new Date(generated_at).toISOString().split("T")[0];
@@ -718,6 +721,7 @@ const stages = [
 							<span class="lang-en">BTC Price & Sentiment Trend</span>
 							<span class="lang-zh">BTC 价格与情绪趋势</span>
 						</p>
+						<canvas id="cryptoBtcTrendChart" class="crypto-chart-canvas btc-trend-chart" aria-label="BTC Price and Sentiment Trend"></canvas>
 						{(() => {
 							const tsData = cryptoTS?.data ?? [];
 							if (tsData.length < 2) return <p class="crypto-chart-empty"><span class="lang-en">Insufficient trend data</span><span class="lang-zh">趋势数据不足</span></p>;
@@ -809,6 +813,7 @@ const stages = [
 								<span class="lang-en">Portfolio Value Index</span>
 								<span class="lang-zh">持仓价值指数</span>
 							</p>
+							<canvas id="cryptoPortfolioIndexChart" class="crypto-chart-canvas portfolio-index-chart" aria-label="Portfolio Value Index"></canvas>
 							<svg viewBox={`0 0 ${W} ${H}`} class="crypto-chart-svg" preserveAspectRatio="xMidYMid meet">
 								{Array.from({ length: gridRows + 1 }, (_, i: number) => {
 									const y = (pad.t + (i / gridRows) * cH).toFixed(1);
@@ -881,6 +886,7 @@ const stages = [
 								<span class="lang-en">Allocation Drift</span>
 								<span class="lang-zh">配置偏移趋势</span>
 							</p>
+							<canvas id="cryptoAllocationDriftChart" class="crypto-chart-canvas allocation-drift-chart" aria-label="Allocation Drift"></canvas>
 							<svg viewBox={`0 0 ${W} ${H}`} class="crypto-chart-svg" preserveAspectRatio="xMidYMid meet">
 								{[0, 15, 30, 45].map(v => (
 									<>
@@ -2271,6 +2277,162 @@ const stages = [
 			const isDark = () => document.documentElement.getAttribute('data-theme') !== 'light';
 			const axisColor = () => (isDark() ? 'rgba(255,255,255,0.48)' : 'rgba(30,20,50,0.52)');
 			const gridColor = () => (isDark() ? 'rgba(255,255,255,0.08)' : 'rgba(30,20,50,0.08)');
+
+			const chartFont = () => ({ family: 'Inter, system-ui, sans-serif', size: 11 });
+			const chartOptions = (extra = {}) => ({
+				responsive: true,
+				maintainAspectRatio: false,
+				animation: { duration: 700, easing: 'easeOutQuart' },
+				interaction: { mode: 'index', intersect: false },
+				plugins: {
+					legend: {
+						display: true,
+						position: 'top',
+						align: 'start',
+						labels: { color: axisColor(), usePointStyle: true, pointStyle: 'line', boxWidth: 28, font: chartFont() },
+					},
+					tooltip: {
+						backgroundColor: isDark() ? 'rgba(21,21,21,0.94)' : 'rgba(255,248,235,0.96)',
+						titleColor: isDark() ? '#f5f3ed' : '#171717',
+						bodyColor: axisColor(),
+						borderColor: gridColor(),
+						borderWidth: 1,
+						displayColors: true,
+					},
+				},
+				...extra,
+			});
+
+			const btcTrendCanvas = document.getElementById('cryptoBtcTrendChart');
+			const cryptoTsData = data.crypto_timeseries?.data || [];
+			if (btcTrendCanvas && cryptoTsData.length >= 2) {
+				if (Chart.getChart(btcTrendCanvas)) Chart.getChart(btcTrendCanvas).destroy();
+				new Chart(btcTrendCanvas, {
+					type: 'line',
+					data: {
+						labels: cryptoTsData.map((d) => d.date),
+						datasets: [
+							{
+								label: 'BTC',
+								data: cryptoTsData.map((d) => d.btc_close || null),
+								borderColor: '#8953d1',
+								backgroundColor: 'rgba(137,83,209,0.12)',
+								borderWidth: 2.2,
+								tension: 0.32,
+								fill: true,
+								pointRadius: 0,
+								pointHoverRadius: 4,
+								yAxisID: 'y',
+							},
+							{
+								label: 'Composite',
+								data: cryptoTsData.map((d) => d.composite == null ? null : d.composite),
+								borderColor: '#f59e0b',
+								backgroundColor: 'rgba(245,158,11,0.05)',
+								borderWidth: 1.8,
+								borderDash: [5, 4],
+								tension: 0.28,
+								spanGaps: true,
+								pointRadius: 0,
+								pointHoverRadius: 4,
+								yAxisID: 'y1',
+							},
+						],
+					},
+					options: chartOptions({
+						scales: {
+							x: { ticks: { color: axisColor(), maxTicksLimit: 7, font: chartFont() }, grid: { color: gridColor() } },
+							y: { position: 'left', ticks: { color: axisColor(), callback: (v) => '$' + Math.round(v / 1000) + 'K', font: chartFont() }, grid: { color: gridColor() } },
+							y1: { position: 'right', min: 0, max: 100, ticks: { color: '#f59e0b', font: chartFont() }, grid: { drawOnChartArea: false } },
+						},
+					}),
+				});
+			}
+
+			const portfolioIndexCanvas = document.getElementById('cryptoPortfolioIndexChart');
+			const portfolioHistory = data.crypto_portfolio_history?.data || [];
+			if (portfolioIndexCanvas && portfolioHistory.length >= 2) {
+				if (Chart.getChart(portfolioIndexCanvas)) Chart.getChart(portfolioIndexCanvas).destroy();
+				new Chart(portfolioIndexCanvas, {
+					type: 'line',
+					data: {
+						labels: portfolioHistory.map((d) => d.date),
+						datasets: [{
+							label: 'Index',
+							data: portfolioHistory.map((d) => d.index || null),
+							borderColor: '#10b981',
+							backgroundColor: 'rgba(16,185,129,0.12)',
+							borderWidth: 2.2,
+							tension: 0.32,
+							fill: true,
+							pointRadius: 0,
+							pointHoverRadius: 4,
+						}],
+					},
+					options: chartOptions({
+						plugins: { legend: { display: false } },
+						scales: {
+							x: { ticks: { color: axisColor(), maxTicksLimit: 7, font: chartFont() }, grid: { color: gridColor() } },
+							y: { ticks: { color: axisColor(), font: chartFont() }, grid: { color: gridColor() } },
+						},
+					}),
+				});
+			}
+
+			const allocationDriftCanvas = document.getElementById('cryptoAllocationDriftChart');
+			const allocationHistory = data.allocation_history?.history || [];
+			const allocationBuckets = data.allocation?.current?.categories || [];
+			if (allocationDriftCanvas && allocationHistory.length >= 2 && allocationBuckets.length) {
+				if (Chart.getChart(allocationDriftCanvas)) Chart.getChart(allocationDriftCanvas).destroy();
+				const datasets = [];
+				allocationBuckets.forEach((bucket) => {
+					const color = bucket.color || '#8953d1';
+					datasets.push({
+						label: bucket.label_en || bucket.id,
+						data: allocationHistory.map((h) => h.buckets?.[bucket.id] ?? null),
+						borderColor: color,
+						backgroundColor: color,
+						borderWidth: Math.abs((bucket.current_pct || 0) - (bucket.target_pct || 0)) >= 5 ? 2.4 : 1.7,
+						tension: 0.3,
+						fill: false,
+						pointRadius: 2,
+						pointHoverRadius: 5,
+					});
+					datasets.push({
+						label: (bucket.label_en || bucket.id) + ' target',
+						data: allocationHistory.map(() => bucket.target_pct),
+						borderColor: color,
+						backgroundColor: color,
+						borderWidth: 1,
+						borderDash: [3, 5],
+						pointRadius: 0,
+						tension: 0,
+					});
+				});
+				new Chart(allocationDriftCanvas, {
+					type: 'line',
+					data: { labels: allocationHistory.map((h) => h.date), datasets },
+					options: chartOptions({
+						plugins: {
+							legend: {
+								display: true,
+								position: 'top',
+								align: 'start',
+								labels: {
+									color: axisColor(),
+									font: chartFont(),
+									filter: (item) => !String(item.text || '').includes(' target'),
+								},
+							},
+						},
+						scales: {
+							x: { ticks: { color: axisColor(), font: chartFont() }, grid: { color: gridColor() } },
+							y: { suggestedMin: 0, suggestedMax: 45, ticks: { color: axisColor(), callback: (v) => v + '%', font: chartFont() }, grid: { color: gridColor() } },
+						},
+					}),
+				});
+			}
+
 
 			// Regime VIX chart (interactive version)
 			const regimeCanvas = document.getElementById('regimeChart');
@@ -5034,6 +5196,12 @@ const stages = [
 	.crypto-chart-wrap { background:rgba(255,255,255,0.03); border-radius:.75rem; padding:1rem; min-width:0; }
 	[data-theme="light"] .crypto-chart-wrap { background:rgba(0,0,0,0.03); }
 	.crypto-chart-svg { width:100%; height:auto; }
+	.crypto-chart-wrap > .crypto-chart-svg,
+	.crypto-portfolio-index-wrap > .crypto-chart-svg,
+	.crypto-alloc-trend-wrap > .crypto-chart-svg { display:none; }
+	.crypto-chart-canvas { display:block; width:100%; height:280px; }
+	.portfolio-index-chart { height:240px; }
+	.allocation-drift-chart { height:220px; }
 	.crypto-chart-empty { opacity:.45; font-size:.82rem; padding:.5rem 0; }
 
 	/* Side cards */
