@@ -107,6 +107,7 @@ const portfolioData = rawPortfolioData as unknown as PortfolioData;
 const {
 	regime,
 	allocation,
+	allocation_history: allocationHistory,
 	positions,
 	crypto,
 	crypto_monitor: cryptoMonitor,
@@ -126,6 +127,8 @@ const fgi7d = cryptoMonitor?.macro?.fear_greed_7d ?? [];
 // Derived: BTC ETF daily flow
 const etfData = (cryptoMonitor as any)?.etf;
 
+// Derived: allocation history for trend chart
+const allocHistory = (allocationHistory as any)?.history ?? [];
 
 const cryptoPositions = crypto?.positions ?? [];
 const activePositionCount = positions.length + cryptoPositions.length;
@@ -441,22 +444,41 @@ const stages = [
 				</article>
 			</div>
 
-			{/* Action Signals bar */}
-		{cryptoMonitor?.action_signals?.length > 0 && (
-			<div class="action-signals-bar">
-				<span class="action-signals-icon">⚡</span>
-				<div class="action-signals-list">
-					{cryptoMonitor.action_signals.map((sig: any) => (
-						<span class={`action-signal-chip priority-${sig.priority ?? 2}`}>
-							{sig.detail}
-						</span>
-					))}
+			{/* ═══ Action Signals ═══ */}
+			{cryptoMonitor?.action_signals?.length > 0 && (
+				<div class="action-signals-bar">
+					<span class="action-signals-icon">⚡</span>
+					<div class="action-signals-list">
+						{cryptoMonitor.action_signals.map((sig: any) => (
+							<span class={`action-signal-chip priority-${sig.priority ?? 2}`}>
+								{sig.detail}
+							</span>
+						))}
+					</div>
+					<div class="action-signals-micro">
+						{cryptoMonitor?.dca?.status === 'closed' && (
+							<span class="action-micro-badge warn">🛑 <span class="lang-en">DCA Gate Closed</span><span class="lang-zh">DCA 门控关闭</span></span>
+						)}
+						{cryptoMonitor?.dca?.status === 'open' && (
+							<span class="action-micro-badge ok">🟢 <span class="lang-en">DCA Gate Open</span><span class="lang-zh">DCA 门控开启</span></span>
+						)}
+						{cryptoMonitor?.bottom_tracker && (
+							<span class="action-micro-badge">
+								<span class="lang-en">Bottom Tracker {cryptoMonitor.bottom_tracker.score}/100</span>
+								<span class="lang-zh">底部追踪 {cryptoMonitor.bottom_tracker.score}/100</span>
+							</span>
+						)}
+						{cryptoMonitor?.macro?.fear_greed?.value != null && (
+							<span class={`action-micro-badge ${cryptoMonitor.macro.fear_greed.value < 26 ? 'ok' : cryptoMonitor.macro.fear_greed.value > 74 ? 'warn' : ''}`}>
+								<span class="lang-en">FGI {cryptoMonitor.macro.fear_greed.value} ({cryptoMonitor.macro.fear_greed.label})</span>
+								<span class="lang-zh">恐贪 {cryptoMonitor.macro.fear_greed.value} ({cryptoMonitor.macro.fear_greed.label})</span>
+							</span>
+						)}
+					</div>
 				</div>
-				{/* Micro badges moved to Crypto Dashboard — no duplication */}
-			</div>
-		)}
+			)}
 
-		<p class="portfolio-updated">
+			<p class="portfolio-updated">
 				<span class="lang-en">Last updated: {updatedLabel}</span>
 				<span class="lang-zh">最后更新: {updatedLabel}</span>
 			</p>
@@ -579,158 +601,6 @@ const stages = [
 					</div>
 				)}
 			</div>
-		</section>
-	{/* ═══ Crypto Asset Management ═══ */}
-	{cryptoMonitor && (
-		<section class="portfolio-section fade-in-up" data-collapse id="crypto-mgmt-section">
-			<header class="portfolio-section-head">
-				<p class="portfolio-kicker">
-					<span class="lang-en">Crypto Dashboard</span>
-					<span class="lang-zh">加密看板</span>
-				</p>
-				<h2 class="font-serif text-3xl font-semibold">
-					<span class="lang-en">Crypto Market Intelligence</span>
-					<span class="lang-zh">加密市场全景</span>
-				</h2>
-				<p class="portfolio-note">
-					<span class="lang-en">Bottom Tracker radar, market temperature, DCA gate, and ETF flows.</span>
-					<span class="lang-zh">底部追踪雷达、市场温度、DCA 闸门、ETF 资金流。</span>
-				</p>
-				<span class="section-summary">
-					<span class="lang-en">Bottom {cryptoMonitor?.bottom_tracker?.score ?? "—"}/100 · DCA {cryptoMonitor?.dca?.status ?? "—"} · FGI {fgi?.value ?? "—"}</span>
-					<span class="lang-zh">底部 {cryptoMonitor?.bottom_tracker?.score ?? "—"}/100 · DCA {cryptoMonitor?.dca?.status ?? "—"} · FGI {fgi?.value ?? "—"}</span>
-				</span>
-			</header>
-
-			{cryptoMonitor && (
-				<div class="crypto-dash-grid">
-					{/* ── Radar: Bottom Tracker 8 indicators ── */}
-					<div class="crypto-dash-radar">
-						<p class="crypto-dash-card-title">Bottom Tracker</p>
-						<div class="radar-score">{(() => {
-							const s = cryptoMonitor.bottom_tracker?.score ?? 0;
-							const c = s < 26 ? "#ef4444" : s < 51 ? "#f59e0b" : s < 76 ? "#10b981" : "#22c55e";
-							return <span style={`color:${c};font-size:2rem;font-weight:700`}>{s}<span style="opacity:.5;font-size:.85rem">/100</span></span>;
-						})()}</div>
-						{(() => {
-							const indicators = cryptoMonitor.bottom_tracker?.indicators ?? [];
-							if (indicators.length === 0) return null;
-							const n = indicators.length;
-							const cx = 100, cy = 100, R = 75;
-							const angleOf = (i: number) => (Math.PI * 2 * i / n) - Math.PI / 2;
-							const pts = indicators.map((ind: any, i: number) => {
-								const r = R * (ind.score / 100);
-								return `${cx + r * Math.cos(angleOf(i))},${cy + r * Math.sin(angleOf(i))}`;
-		});
-					const gridLevels = [0.25, 0.5, 0.75, 1];
-							return <svg viewBox="0 0 200 200" class="radar-svg">
-								{gridLevels.map((level: number) => {
-									const gp = indicators.map((_ind: any, i: number) => {
-										const r = R * level;
-										return `${cx + r * Math.cos(angleOf(i))},${cy + r * Math.sin(angleOf(i))}`;
-									});
-									return <polygon points={gp.join(" ")} fill="none" stroke="#374151" stroke-width="0.5" />;
-								})}
-								{indicators.map((_ind: any, i: number) => (
-									<line x1={cx} y1={cy} x2={cx + R * Math.cos(angleOf(i))} y2={cy + R * Math.sin(angleOf(i))} stroke="#374151" stroke-width="0.3" />
-								))}
-								<polygon points={pts.join(" ")} fill="rgba(99,102,241,0.2)" stroke="#6366f1" stroke-width="1.5" />
-								{indicators.map((ind: any, i: number) => {
-									const r = R * (ind.score / 100);
-									const lx = cx + (R + 18) * Math.cos(angleOf(i));
-									const ly = cy + (R + 18) * Math.sin(angleOf(i));
-									return <g>
-										<circle cx={cx + r * Math.cos(angleOf(i))} cy={cy + r * Math.sin(angleOf(i))} r="3" fill={ind.score < 26 ? "#ef4444" : ind.score < 51 ? "#f59e0b" : "#10b981"} />
-										<text x={lx} y={ly} text-anchor="middle" dominant-baseline="middle" font-size="6" fill="#9ca3af">{ind.name}</text>
-									</g>;
-								})}
-							</svg>;
-						})()}
-						<div class="radar-legend">
-							{(cryptoMonitor.bottom_tracker?.indicators ?? []).map((ind: any) => (
-								<span class={`radar-legend-item ${ind.score < 26 ? "danger" : ind.score < 51 ? "warn" : "ok"}`}>
-									{ind.name}: {ind.value} ({ind.score})
-								</span>
-							))}
-						</div>
-					</div>
-
-					{/* ── Column 2: Market Temp + DCA ── */}
-					<div class="crypto-dash-col">
-						{/* FGI Card */}
-						<div class="crypto-dash-card">
-							<p class="crypto-dash-card-title">Market Temperature</p>
-							{fgi ? (() => {
-								const fgiColor = fgi.value < 26 ? "#ef4444" : fgi.value < 46 ? "#f59e0b" : fgi.value < 56 ? "#6b7280" : fgi.value < 76 ? "#10b981" : "#22c55e";
-								return <div>
-									<span style={`color:${fgiColor};font-size:2rem;font-weight:700`}>{fgi.value}</span>
-									<span style="opacity:.6;margin-left:.3rem">{fgi.label}</span>
-								</div>;
-							})() : <span style="opacity:.5">N/A</span>}
-							{fgi7d.length > 0 && (
-								<svg viewBox="0 0 120 30" class="fgi-sparkline">
-									<polyline
-										fill="none"
-										stroke="#6366f1"
-										stroke-width="1.5"
-										points={fgi7d.map((v: number, i: number) => `${i * 120/(fgi7d.length-1)},${30 - v * 0.3}`).join(" ")}
-									/>
-								</svg>
-							)}
-						</div>
-
-						{/* DCA Gate Card */}
-						<div class="crypto-dash-card">
-							<p class="crypto-dash-card-title">DCA Gate</p>
-							<div class={`dca-status-badge ${cryptoMonitor.dca?.status === "open" ? "open" : "closed"}`}>
-								{cryptoMonitor.dca?.status === "open" ? "🟢 OPEN" : "🛑 CLOSED"}
-							</div>
-							<p style="opacity:.6;font-size:.8rem;margin-top:.3rem">{cryptoMonitor.dca?.reason ?? ""}</p>
-							<div class="dca-conditions">
-								{(cryptoMonitor.dca?.conditions ?? []).map((c: any) => (
-									<span class={`dca-cond ${c.met ? "met" : "miss"}`}>{c.met ? "✓" : "·"} {c.detail || c.id}</span>
-								))}
-							</div>
-						</div>
-					</div>
-
-					{/* ── Column 3: ETF Flow ── */}
-					<div class="crypto-dash-col">
-						<div class="crypto-dash-card">
-							<p class="crypto-dash-card-title">BTC ETF Net Flow</p>
-							{etfData?.btc_etf_net_flow_m != null ? (() => {
-								const flow = etfData.btc_etf_net_flow_m;
-								const flowColor = flow > 0 ? "#10b981" : flow < 0 ? "#ef4444" : "#6b7280";
-								return <span style={`color:${flowColor};font-size:1.5rem;font-weight:700`}>{flow > 0 ? "+" : ""}{flow}M</span>;
-							})() : <span style="opacity:.5">N/A</span>}
-							{(etfData?.etfs ?? []).length > 0 && (
-								<div class="etf-fund-list">
-									{etfData.etfs.slice(0, 4).map((e: any) => (
-										<div class="etf-fund-row">
-											<span>{e.ticker}</span>
-											<span class={`etf-flow ${e.net_flow_m > 0 ? "pos" : e.net_flow_m < 0 ? "neg" : ""}`}>
-												{e.net_flow_m > 0 ? "+" : ""}{e.net_flow_m}M
-											</span>
-										</div>
-									))}
-								</div>
-							)}
-						</div>
-
-						{/* SNEK + Stablecoin */}
-						<div class="crypto-dash-card">
-							<p class="crypto-dash-card-title">Positions</p>
-							<div style="display:flex;gap:1rem">
-								<span>{cryptoMonitor.snek?.has_position ? "🐍 Tracked" : "👀 Watch"}</span>
-								<span>{cryptoMonitor.stablecoin_health?.apy_current_pct ? `${cryptoMonitor.stablecoin_health.apy_current_pct}% APY` : "—"}</span>
-							</div>
-							{cryptoMonitor.stablecoin_health?.depeg_alerts?.length > 0 && (
-								<p class="depeg-warn">⚠ {cryptoMonitor.stablecoin_health.depeg_alerts.length} depeg alert(s)</p>
-							)}
-						</div>
-					</div>
-				</div>
-			)}
 		</section>
 		<section class="portfolio-section fade-in-up" data-collapse id="allocation-section">
 			<header class="portfolio-section-head">
@@ -941,9 +811,99 @@ const stages = [
 					</article>
 				))}
 			</div>
+
+			{/* Allocation History — monthly trend */}
+			{allocHistory.length >= 2 && (
+				<div class="alloc-history-wrap">
+					<p class="alloc-history-title">
+						<span class="lang-en">Allocation Trend (monthly)</span>
+						<span class="lang-zh">配置趋势（月度）</span>
+					</p>
+					<svg class="alloc-history-chart" viewBox="0 0 {allocHistory.length > 3 ? 320 : 240} 120" preserveAspectRatio="xMidYMid meet">
+						{(() => {
+							const w = allocHistory.length > 3 ? 320 : 240;
+							const padL = 8, padR = 8, padT = 10, padB = 24;
+							const plotW = w - padL - padR;
+							const plotH = 120 - padT - padB;
+							const bucketColors = {
+								stablecoin_yield: "#10b981",
+								funds_etf: "#8b5cf6",
+								stocks: "#f59e0b",
+								crypto: "#6366f1",
+							};
+							const bucketLabels = {
+								stablecoin_yield: { en: "Stablecoin", zh: "稳定币" },
+								funds_etf: { en: "Funds", zh: "基金" },
+								stocks: { en: "Stocks", zh: "股票" },
+								crypto: { en: "Crypto", zh: "加密" },
+							};
+							const bucketKeys = ["stablecoin_yield", "funds_etf", "stocks", "crypto"];
+							const xStep = allocHistory.length > 1 ? plotW / (allocHistory.length - 1) : plotW;
+
+							return <g>
+								{/* X axis labels */}
+								{allocHistory.map((h: any, i: number) => (
+									<text x={padL + i * xStep} y={120 - 4} textAnchor="middle" fontSize="8" fill="#9ca3af">
+										{(h.date as string).slice(5)}
+									</text>
+								))}
+								{/* Stacked area */}
+								{(() => {
+									const layers: { key: string; points: string }[] = [];
+									let cumulative: number[] = allocHistory.map(() => 0);
+									for (const key of bucketKeys) {
+										const prevCumulative = [...cumulative];
+										allocHistory.forEach((h: any, i: number) => {
+											cumulative[i] += (h.buckets[key] || 0);
+										});
+										const topPts = cumulative.map((v: number, i: number) => `${padL + i * xStep},${padT + plotH - (v / 60) * plotH}`);
+										const botPts = prevCumulative.map((v: number, i: number) => `${padL + i * xStep},${padT + plotH - (v / 60) * plotH}`);
+										const pathD = `M${topPts.join(" L")} L${botPts.reverse().join(" L")} Z`;
+										layers.push({ key, points: pathD });
+									}
+									return layers.map((l) => (
+										<path d={l.points} fill={bucketColors[l.key]} opacity="0.35" />
+									));
+								})()}
+								{/* Line for each bucket */}
+								{bucketKeys.map((key) => (
+									<polyline
+										fill="none"
+										stroke={bucketColors[key]}
+										strokeWidth="1.5"
+										points={allocHistory.map((h: any, i: number) =>
+											`${padL + i * xStep},${padT + plotH - ((h.buckets[key] || 0) / 60) * plotH}`
+										).join(" ")}
+									/>
+								))}
+								{/* Data points for each bucket */}
+								{bucketKeys.map((key) =>
+									allocHistory.map((h: any, i: number) => {
+										const v = h.buckets[key] || 0;
+										return <circle
+											cx={padL + i * xStep}
+											cy={padT + plotH - (v / 60) * plotH}
+											r="2.5"
+											fill={bucketColors[key]}
+										><title>{`${key}: ${v}%`}</title></circle>;
+									})
+								)}
+							</g>;
+						})()}
+					</svg>
+					<div class="alloc-history-legend">
+						{["stablecoin_yield", "funds_etf", "stocks", "crypto"].map((key) => (
+							<span class="alloc-history-legend-item" style={`color: var(--tw-colors-indigo-400, #818cf8)`}>
+								<span class="alloc-history-dot" style={`background: ${key === "stablecoin_yield" ? "#10b981" : key === "funds_etf" ? "#8b5cf6" : key === "stocks" ? "#f59e0b" : "#6366f1"}`}></span>
+								<span class="lang-en">{key === "stablecoin_yield" ? "Stablecoin" : key === "funds_etf" ? "Funds" : key === "stocks" ? "Stocks" : "Crypto"}</span>
+								<span class="lang-zh">{key === "stablecoin_yield" ? "稳定币" : key === "funds_etf" ? "基金" : key === "stocks" ? "股票" : "加密"}</span>
+								{allocHistory.length > 0 && <small>{allocHistory.at(-1)?.buckets[key] ?? 0}%</small>}
+							</span>
+						))}
+					</div>
+				</div>
+			)}
 		</section>
-
-
 		<section class="portfolio-section fade-in-up" data-collapse id="positions-section">
 			<header class="portfolio-section-head">
 				<p class="portfolio-kicker">
@@ -1358,6 +1318,184 @@ const stages = [
 			</div>
 		</section>
 
+	{/* ═══ Crypto Asset Management ═══ */}
+	{cryptoMonitor && (
+		{/* ════════════════ CRYPTO DASHBOARD ════════════════ */}
+		<section class="portfolio-section fade-in-up" data-collapse id="crypto-mgmt-section">
+			<header class="portfolio-section-head">
+				<p class="portfolio-kicker"><span class="lang-en">P1 Monitoring Loop</span><span class="lang-zh">P1 监控闭环</span></p>
+				<h2 class="font-serif text-3xl font-semibold"><span class="lang-en">Crypto Dashboard</span><span class="lang-zh">加密看板</span></h2>
+				<span class="section-summary">
+					<span class="lang-en">Bottom {cryptoMonitor.bottom_tracker.score}/100 · DCA {cryptoMonitor.dca.status} · FGI {fgi ? fgi.value : "—"}</span>
+					<span class="lang-zh">底部 {cryptoMonitor.bottom_tracker.score}/100 · DCA {cryptoMonitor.dca.status} · FGI {fgi ? fgi.value : "—"}</span>
+				</span>
+			</header>
+
+			{/* ── Layer 1: Radar Chart — 8 indicators at a glance ── */}
+			<div class="crypto-dash-radar-wrap">
+				<div class="crypto-dash-radar-header">
+					<h3><span class="lang-en">Bottom Tracker Radar</span><span class="lang-zh">底部追踪雷达</span></h3>
+					<span class="crypto-dash-radar-score">
+						{(() => {
+							const score = cryptoMonitor.bottom_tracker.score ?? 0;
+							const color = score < 26 ? "#ef4444" : score < 51 ? "#f59e0b" : score < 76 ? "#10b981" : "#22c55e";
+							return <span style={`color:${color};font-size:2rem;font-weight:700`}>{score}<span style="opacity:.5;font-size:.85rem">/100</span></span>;
+						})()}
+					</span>
+				</div>
+				<div class="crypto-dash-radar-chart">
+					<svg viewBox="0 0 300 300" class="radar-svg">
+						{(() => {
+							const indicators = cryptoMonitor.bottom_tracker.indicators || [];
+							const n = indicators.length || 1;
+							const cx = 150, cy = 150, maxR = 110;
+							const statusToVal = (s) => s === "green" ? 0.85 : s === "yellow" ? 0.5 : 0.2;
+							const statusToColor = (s) => s === "green" ? "#10b981" : s === "yellow" ? "#f59e0b" : "#ef4444";
+							const angle = (i) => (Math.PI * 2 * i) / n - Math.PI / 2;
+							const pt = (i, r) => [cx + r * Math.cos(angle(i)), cy + r * Math.sin(angle(i))];
+
+							// Grid rings
+							return <g>
+								{[0.25, 0.5, 0.75, 1].map((ring) => (
+									<polygon
+										points={Array.from({length: n}, (_, i) => pt(i, maxR * ring).join(",")).join(" ")}
+										fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="1"
+									/>
+								))}
+								{/* Axes */}
+								{indicators.map((_: any, i: number) => (
+									<line x1={cx} y1={cy} x2={pt(i, maxR)[0]} y2={pt(i, maxR)[1]} stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
+								))}
+								{/* Data polygon */}
+								<polygon
+									points={indicators.map((ind: any, i: number) => pt(i, maxR * statusToVal(ind.status)).join(",")).join(" ")}
+									fill="rgba(99,102,241,0.15)" stroke="#6366f1" strokeWidth="2"
+								/>
+								{/* Data points + labels */}
+								{indicators.map((ind: any, i: number) => {
+									const [px, py] = pt(i, maxR * statusToVal(ind.status));
+									const [lx, ly] = pt(i, maxR + 22);
+									const anchor = lx < cx ? "end" : lx > cx + 5 ? "start" : "middle";
+									return <g>
+										<circle cx={px} cy={py} r="4" fill={statusToColor(ind.status)} stroke="#0f172a" strokeWidth="2" />
+										<text x={lx} y={ly} textAnchor={anchor} fill="rgba(255,255,255,0.7)" fontSize="9" dominantBaseline="middle">
+											{ind.name.length > 8 ? ind.name.slice(0, 7) + "…" : ind.name}
+										</text>
+									</g>;
+								})}
+							</g>;
+						})()}
+					</svg>
+				</div>
+				{/* Indicator detail pills below radar */}
+				<div class="crypto-dash-indicator-pills">
+					{(cryptoMonitor.bottom_tracker.indicators || []).map((ind: any) => (
+						<span class={`indicator-pill ${ind.status}`}>
+							<span class="indicator-pill-dot" />
+							<span class="indicator-pill-name">{ind.name}</span>
+							<span class="indicator-pill-detail">{ind.detail?.replace(/[🔴🟡🟢]\s*/g, "") || ""}</span>
+						</span>
+					))}
+				</div>
+			</div>
+
+			{/* ── Layer 2: Three decision cards ── */}
+			<div class="crypto-dash-cards">
+				{/* Card 1: Market Temperature */}
+				<article class="crypto-dash-card fgi-card">
+					<span class="crypto-dash-card-label"><span class="lang-en">Market Temperature</span><span class="lang-zh">市场温度</span></span>
+					{fgi ? (() => {
+						const fgiColor = fgi.value < 26 ? "#ef4444" : fgi.value < 46 ? "#f59e0b" : fgi.value < 56 ? "#9ca3af" : fgi.value < 76 ? "#10b981" : "#22c55e";
+						return <span>
+							<div class="fgi-gauge">
+								<div class="fgi-bar-track">
+									<div class="fgi-bar-fill" style={`width:${fgi.value}%;background:${fgiColor}`} />
+								</div>
+								<span class="fgi-value" style={`color:${fgiColor}`}>{fgi.value}</span>
+							</div>
+							<p class="fgi-label">{fgi.label}</p>
+							{fgi7d.length > 1 && (
+								<svg viewBox="0 0 120 32" class="fgi-sparkline" preserveAspectRatio="none">
+									{(() => {
+										const pts = fgi7d.map((f: any) => f.value);
+										const mn = Math.min(...pts); const mx = Math.max(...pts); const rng = mx - mn || 1;
+										const pathD = pts.map((v: number, i: number) => `${i === 0 ? "M" : "L"}${(i / (pts.length - 1)) * 116 + 2},${30 - ((v - mn) / rng) * 28}`).join(" ");
+										return <g>
+											<path d={pathD} fill="none" stroke={fgiColor} strokeWidth="2" opacity="0.6" />
+											{pts.map((v: number, i: number) => (
+												<circle cx={(i / (pts.length - 1)) * 116 + 2} cy={30 - ((v - mn) / rng) * 28} r="2.5" fill={v < 26 ? "#ef4444" : v < 46 ? "#f59e0b" : v < 56 ? "#9ca3af" : v < 76 ? "#10b981" : "#22c55e"} />
+											))}
+										</g>;
+									})()}
+								</svg>
+							)}
+						</span>;
+					})() : <p class="fgi-label"><span class="lang-en">No data</span><span class="lang-zh">无数据</span></p>}
+				</article>
+
+				{/* Card 2: DCA Decision */}
+				<article class="crypto-dash-card dca-card">
+					<span class="crypto-dash-card-label"><span class="lang-en">DCA Decision Gate</span><span class="lang-zh">DCA 决策闸门</span></span>
+					<div class={`dca-status-badge ${cryptoMonitor.dca.status === "open" ? "open" : "closed"}`}>
+						<span class="dca-status-dot" />
+						<strong>{cryptoMonitor.dca.status === "open" ? <><span class="lang-en">OPEN</span><span class="lang-zh">开放</span></> : <><span class="lang-en">CLOSED</span><span class="lang-zh">暂停</span></>}</strong>
+					</div>
+					<div class="dca-conditions-list">
+						{cryptoMonitor.dca.conditions.map((c: any) => (
+							<div class={`dca-cond ${c.met ? "met" : "miss"}`}>
+								<span class="dca-cond-icon">{c.met ? "✓" : "○"}</span>
+								<span class="dca-cond-text">{c.detail || c.id}</span>
+							</div>
+						))}
+					</div>
+					<p class="dca-reason">{cryptoMonitor.dca.met_count}/{cryptoMonitor.dca.min_required} <span class="lang-en">conditions met</span><span class="lang-zh">条件满足</span></p>
+				</article>
+
+				{/* Card 3: ETF Flow */}
+				<article class="crypto-dash-card etf-card">
+					<span class="crypto-dash-card-label"><span class="lang-en">BTC ETF Net Flow</span><span class="lang-zh">BTC ETF 净流入</span></span>
+					{etfData ? (() => {
+						const flowColor = etfData.btc_etf_net_flow_m > 0 ? "#10b981" : etfData.btc_etf_net_flow_m < 0 ? "#ef4444" : "#9ca3af";
+						return <span>
+							<div class="etf-flow-value" style={`color:${flowColor}`}>
+								{etfData.btc_etf_net_flow_m > 0 ? "+" : ""}{etfData.btc_etf_net_flow_m}<span class="etf-unit">M</span>
+							</div>
+							<p class="etf-volume"><span class="lang-en">Volume</span><span class="lang-zh">成交量</span> ${etfData.btc_etf_total_volume_m}M</p>
+							<div class="etf-funds-bar">
+								{etfData.etfs.slice(0, 5).map((e: any) => {
+									const maxVol = Math.max(...etfData.etfs.map((x: any) => Math.abs(x.volume_usd_m)));
+									const pct = maxVol > 0 ? (Math.abs(e.volume_usd_m) / maxVol) * 100 : 0;
+									return <div class="etf-fund-row">
+										<span class="etf-fund-ticker">{e.ticker}</span>
+										<div class="etf-fund-bar-track"><div class="etf-fund-bar-fill" style={`width:${pct}%;background:${e.volume_usd_m >= 0 ? "#10b981" : "#ef4444"}`} /></div>
+										<span class="etf-fund-vol">${e.volume_usd_m}M</span>
+									</div>;
+								})}
+							</div>
+						</span>;
+					})() : <p><span class="lang-en">No data</span><span class="lang-zh">无数据</span></p>}
+				</article>
+			</div>
+
+			{/* ── Layer 3: Position snapshot ── */}
+			<div class="crypto-dash-snapshot">
+				<div class="crypto-snapshot-item">
+					<span class="crypto-snapshot-label">SNEK</span>
+					<span class={`crypto-snapshot-status ${cryptoMonitor.snek.has_position ? "active" : ""}`}>
+						{cryptoMonitor.snek.has_position ? <><span class="lang-en">Tracking</span><span class="lang-zh">持仓中</span></> : <><span class="lang-en">Watching</span><span class="lang-zh">观察中</span></>}
+					</span>
+				</div>
+				<div class="crypto-snapshot-item">
+					<span class="crypto-snapshot-label"><span class="lang-en">Stablecoin</span><span class="lang-zh">稳定币</span></span>
+					<span class="crypto-snapshot-status">
+						{cryptoMonitor.stablecoin_health.depeg_alerts.length === 0
+							? <><span class="lang-en">Normal</span><span class="lang-zh">正常</span></>
+							: <><span class="lang-en">{cryptoMonitor.stablecoin_health.depeg_alerts.length} alerts</span><span class="lang-zh">{cryptoMonitor.stablecoin_health.depeg_alerts.length} 警报</span></>
+						}
+					</span>
+				</div>
+			</div>
+		</section>
 		<section class="portfolio-section fade-in-up" data-collapse id="watchlist-section">
 			<header class="portfolio-section-head">
 				<p class="portfolio-kicker">
@@ -4536,16 +4674,167 @@ const stages = [
 		.crypto-position-card { border-color: rgba(245,158,11,.24); }
 		.crypto-position-tag, .crypto-stage-badge { background: rgba(245,158,11,.1); color: #92400e; }
 		.crypto-position-link { color: var(--p-accent); font-size: .82rem; }
-		.crypto-mgmt-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; }
-		.crypto-mgmt-card strong { display: block; margin: .3rem 0; font-family: var(--font-serif); font-size: 1.8rem; color: var(--p-text); }
-		.crypto-mgmt-label { color: var(--p-text-faint); font-size: .75rem; letter-spacing: .12em; text-transform: uppercase; }
-		.crypto-mgmt-card p { color: var(--p-text-soft); font-size: .85rem; }
-		.crypto-conditions { margin-top: 1rem; display: flex; flex-wrap: wrap; gap: .5rem; }
-		.crypto-condition { border: 1px solid var(--p-border); border-radius: 999px; padding: .35rem .65rem; color: var(--p-text-soft); font-size: .78rem; }
-		.crypto-condition.met { color: #047857; background: rgba(16,185,129,.1); }
-		.crypto-condition.miss { color: var(--p-text-faint); }
-		@media (max-width: 820px) { .crypto-mgmt-grid { grid-template-columns: 1fr 1fr; } .bucket-label { flex-wrap: wrap; } }
-		@media (max-width: 520px) { .crypto-mgmt-grid { grid-template-columns: 1fr; } }
+	.crypto-mgmt-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; }
+	.crypto-mgmt-card strong { display: block; margin: .3rem 0; font-family: var(--font-serif); font-size: 1.8rem; color: var(--p-text); }
+	.crypto-mgmt-label { color: var(--p-text-faint); font-size: .75rem; letter-spacing: .12em; text-transform: uppercase; }
+	.crypto-mgmt-card p { color: var(--p-text-soft); font-size: .85rem; }
+	@media (max-width: 820px) { .crypto-mgmt-grid { grid-template-columns: 1fr 1fr; } .bucket-label { flex-wrap: wrap; } }
+	@media (max-width: 520px) { .crypto-mgmt-grid { grid-template-columns: 1fr; } }
+
+	/* ── Crypto Dashboard ──────────────────────────────────── */
+	.crypto-dash-radar-wrap {
+		margin: 1.5rem 0;
+		padding: 1.5rem;
+		border: 1px solid var(--p-border);
+		border-radius: 1.2rem;
+		background: var(--p-card);
+	}
+	.crypto-dash-radar-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 1rem;
+	}
+	.crypto-dash-radar-header h3 {
+		font-size: 1rem;
+		font-weight: 600;
+		color: var(--p-text);
+	}
+	.crypto-dash-radar-score { line-height: 1; }
+	.crypto-dash-radar-chart {
+		display: flex;
+		justify-content: center;
+	}
+	.radar-svg {
+		width: 100%;
+		max-width: 320px;
+		height: auto;
+	}
+	/* Indicator pills */
+	.crypto-dash-indicator-pills {
+		display: flex;
+		flex-wrap: wrap;
+		gap: .5rem;
+		margin-top: 1.2rem;
+	}
+	.indicator-pill {
+		display: inline-flex;
+		align-items: center;
+		gap: .4rem;
+		padding: .35rem .7rem;
+		border-radius: .6rem;
+		font-size: .75rem;
+		border: 1px solid var(--p-border);
+		background: rgba(255,255,255,.02);
+	}
+	.indicator-pill.red { border-color: rgba(239,68,68,.25); background: rgba(239,68,68,.06); }
+	.indicator-pill.yellow { border-color: rgba(245,158,11,.25); background: rgba(245,158,11,.06); }
+	.indicator-pill.green { border-color: rgba(16,185,129,.25); background: rgba(16,185,129,.06); }
+	.indicator-pill-dot {
+		width: .4rem; height: .4rem; border-radius: 50%; flex-shrink: 0;
+	}
+	.indicator-pill.red .indicator-pill-dot { background: #ef4444; }
+	.indicator-pill.yellow .indicator-pill-dot { background: #f59e0b; }
+	.indicator-pill.green .indicator-pill-dot { background: #10b981; }
+	.indicator-pill-name { font-weight: 600; color: var(--p-text); }
+	.indicator-pill-detail { color: var(--p-text-faint); font-size: .7rem; }
+
+	/* Decision cards */
+	.crypto-dash-cards {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 1rem;
+		margin: 1.5rem 0;
+	}
+	.crypto-dash-card {
+		border: 1px solid var(--p-border);
+		border-radius: 1rem;
+		padding: 1.2rem;
+		background: var(--p-card);
+	}
+	.crypto-dash-card-label {
+		display: block;
+		font-size: .72rem;
+		letter-spacing: .12em;
+		text-transform: uppercase;
+		color: var(--p-text-faint);
+		margin-bottom: .8rem;
+	}
+	/* FGI card */
+	.fgi-gauge { display: flex; align-items: center; gap: .8rem; margin-bottom: .5rem; }
+	.fgi-bar-track {
+		flex: 1; height: 8px; border-radius: 999px;
+		background: linear-gradient(90deg, #ef4444 0%, #f59e0b 25%, #9ca3af 50%, #10b981 75%, #22c55e 100%);
+		opacity: .25;
+		position: relative;
+	}
+	.fgi-bar-fill {
+		position: absolute; top: 0; left: 0; height: 100%; border-radius: 999px;
+	}
+	.fgi-value { font-size: 1.6rem; font-weight: 700; font-family: var(--font-serif); }
+	.fgi-label { font-size: .85rem; color: var(--p-text-soft); margin-bottom: .5rem; }
+	.fgi-sparkline { width: 100%; height: 32px; margin-top: .3rem; }
+	/* DCA card */
+	.dca-status-badge {
+		display: inline-flex;
+		align-items: center;
+		gap: .5rem;
+		padding: .4rem .9rem;
+		border-radius: 999px;
+		font-size: .85rem;
+		margin-bottom: .8rem;
+	}
+	.dca-status-badge.open { background: rgba(16,185,129,.12); color: #34d399; }
+	.dca-status-badge.closed { background: rgba(239,68,68,.1); color: #f87171; }
+	.dca-status-dot {
+		width: .5rem; height: .5rem; border-radius: 50%;
+	}
+	.dca-status-badge.open .dca-status-dot { background: #10b981; box-shadow: 0 0 6px rgba(16,185,129,.5); }
+	.dca-status-badge.closed .dca-status-dot { background: #ef4444; }
+	.dca-conditions-list { display: flex; flex-direction: column; gap: .45rem; }
+	.dca-cond { display: flex; align-items: flex-start; gap: .4rem; font-size: .8rem; }
+	.dca-cond.met { color: #34d399; }
+	.dca-cond.miss { color: var(--p-text-faint); }
+	.dca-cond-icon { flex-shrink: 0; width: 1rem; text-align: center; }
+	.dca-cond-text { line-height: 1.35; }
+	.dca-reason { margin-top: .6rem; font-size: .75rem; color: var(--p-text-faint); }
+	/* ETF card */
+	.etf-flow-value { font-size: 1.8rem; font-weight: 700; font-family: var(--font-serif); margin-bottom: .2rem; }
+	.etf-unit { font-size: .9rem; font-weight: 400; opacity: .6; }
+	.etf-volume { font-size: .8rem; color: var(--p-text-soft); margin-bottom: .8rem; }
+	.etf-funds-bar { display: flex; flex-direction: column; gap: .35rem; }
+	.etf-fund-row { display: flex; align-items: center; gap: .5rem; }
+	.etf-fund-ticker { font-size: .72rem; font-weight: 700; width: 3.2rem; color: var(--p-text); }
+	.etf-fund-bar-track {
+		flex: 1; height: 6px; border-radius: 999px;
+		background: rgba(255,255,255,.06);
+		overflow: hidden;
+	}
+	.etf-fund-bar-fill { height: 100%; border-radius: 999px; }
+	.etf-fund-vol { font-size: .68rem; color: var(--p-text-faint); width: 3.5rem; text-align: right; }
+
+	/* Position snapshot */
+	.crypto-dash-snapshot {
+		display: flex;
+		gap: 1.5rem;
+		padding: .8rem 1.2rem;
+		border: 1px solid var(--p-border);
+		border-radius: .8rem;
+		background: rgba(255,255,255,.02);
+	}
+	.crypto-snapshot-item { display: flex; align-items: center; gap: .5rem; }
+	.crypto-snapshot-label {
+		font-size: .72rem; font-weight: 700; letter-spacing: .08em;
+		text-transform: uppercase; color: var(--p-text-faint);
+	}
+	.crypto-snapshot-status {
+		font-size: .82rem; color: var(--p-text-soft);
+	}
+	.crypto-snapshot-status.active { color: #34d399; }
+
+	@media (max-width: 820px) {
+		.crypto-dash-cards { grid-template-columns: 1fr; }
+	}
 
 		/* ── Fade-in-up animation (shared with lucky) ── */
 		/* Scroll-triggered fade-up for non-hero portfolio sections. JS toggles
@@ -4775,45 +5064,95 @@ const stages = [
 		transform: translateY(-2px);
 		box-shadow: 0 4px 20px rgba(137, 83, 209, 0.12);
 	}
-	/* ── Action Signals Bar ── */
-	.action-signals-bar { display:flex; align-items:center; gap:.8rem; padding:.6rem 1rem; margin:.5rem 0; border-radius:.5rem; background:rgba(99,102,241,.08); flex-wrap:wrap; }
-	.action-signals-icon { font-size:1.2rem; }
-	.action-signals-list { display:flex; gap:.4rem; flex-wrap:wrap; }
-	.action-signal-chip { font-size:.75rem; padding:.2rem .5rem; border-radius:1rem; background:rgba(255,255,255,.08); }
-	.action-signal-chip.priority-1 { background:rgba(239,68,68,.15); color:#fca5a5; }
-	.action-signals-micro { display:flex; gap:.5rem; margin-left:auto; flex-wrap:wrap; }
-	.action-micro-badge { font-size:.7rem; padding:.15rem .4rem; border-radius:.3rem; background:rgba(255,255,255,.05); opacity:.8; }
-	.action-micro-badge.ok { background:rgba(16,185,129,.15); color:#6ee7b7; }
-	.action-micro-badge.warn { background:rgba(245,158,11,.15); color:#fbbf24; }
 
-	/* ── Crypto Dashboard ── */
-	.crypto-dash-grid { display:grid; grid-template-columns:1.2fr 1fr 1fr; gap:1rem; margin-top:1rem; }
-	.crypto-dash-radar { background:rgba(255,255,255,.03); border-radius:.75rem; padding:1rem; text-align:center; }
-	.crypto-dash-col { display:flex; flex-direction:column; gap:.75rem; }
-	.crypto-dash-card { background:rgba(255,255,255,.03); border-radius:.75rem; padding:1rem; }
-	.crypto-dash-card-title { font-family:var(--font-serif); font-size:.85rem; opacity:.6; margin-bottom:.5rem; text-transform:uppercase; letter-spacing:.05em; }
-	.radar-score { margin-bottom:.5rem; }
-	.radar-svg { width:100%; max-width:220px; }
-	.radar-legend { display:flex; flex-wrap:wrap; gap:.3rem; margin-top:.5rem; justify-content:center; }
-	.radar-legend-item { font-size:.65rem; padding:.15rem .35rem; border-radius:.25rem; background:rgba(255,255,255,.05); }
-	.radar-legend-item.danger { color:#fca5a5; background:rgba(239,68,68,.1); }
-	.radar-legend-item.warn { color:#fbbf24; background:rgba(245,158,11,.1); }
-	.radar-legend-item.ok { color:#6ee7b7; background:rgba(16,185,129,.1); }
-	.fgi-sparkline { width:100%; max-width:120px; margin-top:.3rem; }
-	.dca-status-badge { font-size:1.1rem; font-weight:700; }
-	.dca-status-badge.open { color:#10b981; }
-	.dca-status-badge.closed { color:#ef4444; }
-	.dca-conditions { display:flex; flex-wrap:wrap; gap:.3rem; margin-top:.5rem; }
-	.dca-cond { font-size:.7rem; padding:.15rem .35rem; border-radius:.25rem; background:rgba(255,255,255,.05); }
-	.dca-cond.met { color:#6ee7b7; }
-	.dca-cond.miss { color:#6b7280; }
-	.etf-fund-list { margin-top:.5rem; }
-	.etf-fund-row { display:flex; justify-content:space-between; font-size:.75rem; padding:.15rem 0; border-bottom:1px solid rgba(255,255,255,.05); }
-	.etf-flow.pos { color:#10b981; }
-	.etf-flow.neg { color:#ef4444; }
-	.depeg-warn { color:#fbbf24; font-size:.75rem; margin-top:.3rem; }
+	/* ── Action Signals Bar ──────────────────────────────────── */
+	.action-signals-bar {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.5rem 1rem;
+		padding: 0.65rem 1rem;
+		margin-top: 0.75rem;
+		border-radius: 0.5rem;
+		background: linear-gradient(135deg, rgba(137, 83, 209, 0.08), rgba(99, 102, 241, 0.06));
+		border: 1px solid rgba(137, 83, 209, 0.15);
+	}
+	.action-signals-icon { font-size: 1.1rem; }
+	.action-signals-list {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem;
+	}
+	.action-signal-chip {
+		font-size: 0.78rem;
+		padding: 0.2rem 0.6rem;
+		border-radius: 9999px;
+		background: rgba(99, 102, 241, 0.12);
+		color: #c4b5fd;
+		white-space: nowrap;
+	}
+	.action-signal-chip.priority-1 {
+		background: rgba(245, 158, 11, 0.15);
+		color: #fbbf24;
+	}
+	.action-signals-micro {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem;
+		margin-left: auto;
+	}
+	.action-micro-badge {
+		font-size: 0.72rem;
+		padding: 0.15rem 0.5rem;
+		border-radius: 4px;
+		background: rgba(255, 255, 255, 0.05);
+		color: #9ca3af;
+		white-space: nowrap;
+	}
+	.action-micro-badge.warn { color: #f87171; background: rgba(248, 113, 113, 0.1); }
+	.action-micro-badge.ok { color: #34d399; background: rgba(52, 211, 153, 0.1); }
 
-	/* ── Allocation History ── */
-	.alloc-history-wrap { padding:.5rem 1rem; }
+	/* ── Allocation History Chart ────────────────────────────── */
+	.alloc-history-wrap {
+		margin-top: 1rem;
+		padding: 0.75rem 1rem;
+		border-radius: 0.5rem;
+		background: rgba(255, 255, 255, 0.02);
+		border: 1px solid rgba(255, 255, 255, 0.06);
+	}
+	.alloc-history-title {
+		font-size: 0.82rem;
+		color: #9ca3af;
+		margin-bottom: 0.5rem;
+	}
+	.alloc-history-chart {
+		width: 100%;
+		max-width: 320px;
+		height: auto;
+	}
+	.alloc-history-legend {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.75rem;
+		margin-top: 0.5rem;
+	}
+	.alloc-history-legend-item {
+		display: flex;
+		align-items: center;
+		gap: 0.3rem;
+		font-size: 0.72rem;
+		color: #9ca3af;
+	}
+	.alloc-history-legend-item small {
+		color: #c4b5fd;
+		font-weight: 600;
+	}
+	.alloc-history-dot {
+		width: 8px;
+		height: 8px;
+		border-radius: 50%;
+		display: inline-block;
+	}
+
 	</style>
 </PageLayout>
