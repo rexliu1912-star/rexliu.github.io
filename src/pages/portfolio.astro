@@ -323,8 +323,14 @@ const stages = [
 		as="script"
 	/>
 
-	<section class="portfolio-page">
-		<div class="mb-6">
+<section class="portfolio-page">
+	{/* Bamboo shadow overlay — only visible in light theme */}
+	<div class="bamboo-shadow-overlay" aria-hidden="true">
+		<div class="bamboo-shadow-layer bamboo-shadow-layer-1"></div>
+		<div class="bamboo-shadow-layer bamboo-shadow-layer-2"></div>
+		<div class="bamboo-shadow-layer bamboo-shadow-layer-3"></div>
+	</div>
+	<div class="mb-6">
 			<a
 				href="/lab/"
 				class="portfolio-breadcrumb font-serif text-sm transition-colors"
@@ -2473,6 +2479,67 @@ const stages = [
 			--p-text-soft: rgba(30, 20, 50, 0.72);
 			--p-text-faint: rgba(30, 20, 50, 0.5);
 			color: #1a1025;
+		}
+
+		/* ── Bamboo Shadow (Dappled Light) ── */
+		.bamboo-shadow-overlay {
+			position: fixed;
+			inset: 0;
+			pointer-events: none;
+			z-index: 0;
+			opacity: 0;
+			transition: opacity 1s ease;
+		}
+		:global(html[data-theme='light']) .bamboo-shadow-overlay {
+			opacity: 1;
+		}
+		.bamboo-shadow-layer {
+			position: absolute;
+			inset: 0;
+		}
+		/* Layer 1: Large soft light patches — like sun through sparse bamboo canopy */
+		.bamboo-shadow-layer-1 {
+			background:
+				radial-gradient(ellipse 120px 90px at 15% 12%, rgba(139, 115, 85, 0.10) 0%, transparent 70%),
+				radial-gradient(ellipse 80px 140px at 72% 8%, rgba(160, 130, 90, 0.08) 0%, transparent 65%),
+				radial-gradient(ellipse 100px 70px at 45% 25%, rgba(139, 115, 85, 0.06) 0%, transparent 60%),
+				radial-gradient(ellipse 60px 100px at 88% 30%, rgba(150, 120, 80, 0.07) 0%, transparent 55%),
+				radial-gradient(ellipse 90px 60px at 25% 55%, rgba(139, 115, 85, 0.05) 0%, transparent 65%),
+				radial-gradient(ellipse 70px 110px at 60% 70%, rgba(160, 130, 90, 0.06) 0%, transparent 60%);
+			animation: bambooDrift1 20s ease-in-out infinite alternate;
+		}
+		/* Layer 2: Smaller scattered leaf shadows — dappled pattern */
+		.bamboo-shadow-layer-2 {
+			background:
+				radial-gradient(ellipse 40px 25px at 8% 35%, rgba(100, 80, 50, 0.12) 0%, transparent 70%),
+				radial-gradient(ellipse 30px 50px at 32% 18%, rgba(90, 70, 40, 0.09) 0%, transparent 65%),
+				radial-gradient(ellipse 50px 30px at 55% 42%, rgba(100, 80, 50, 0.08) 0%, transparent 60%),
+				radial-gradient(ellipse 25px 40px at 78% 55%, rgba(90, 70, 40, 0.10) 0%, transparent 55%),
+				radial-gradient(ellipse 35px 20px at 92% 20%, rgba(100, 80, 50, 0.07) 0%, transparent 70%),
+				radial-gradient(ellipse 45px 35px at 18% 80%, rgba(90, 70, 40, 0.08) 0%, transparent 60%),
+				radial-gradient(ellipse 20px 30px at 65% 88%, rgba(100, 80, 50, 0.06) 0%, transparent 65%),
+				radial-gradient(ellipse 55px 25px at 40% 60%, rgba(90, 70, 40, 0.05) 0%, transparent 70%);
+			animation: bambooDrift2 25s ease-in-out infinite alternate-reverse;
+		}
+		/* Layer 3: Very subtle warm glow — overall atmosphere */
+		.bamboo-shadow-layer-3 {
+			background:
+				radial-gradient(ellipse at 20% 0%, rgba(255, 220, 150, 0.06) 0%, transparent 50%),
+				radial-gradient(ellipse at 80% 10%, rgba(255, 210, 140, 0.04) 0%, transparent 45%),
+				radial-gradient(ellipse at 50% 100%, rgba(255, 200, 120, 0.03) 0%, transparent 40%);
+			animation: bambooDrift3 30s ease-in-out infinite alternate;
+		}
+		@keyframes bambooDrift1 {
+			0%   { transform: translate(0, 0) scale(1); }
+			100% { transform: translate(8px, 5px) scale(1.02); }
+		}
+		@keyframes bambooDrift2 {
+			0%   { transform: translate(0, 0) scale(1); }
+			100% { transform: translate(-6px, 4px) scale(1.01); }
+		}
+		@keyframes bambooDrift3 {
+			0%   { transform: translate(0, 0); opacity: 1; }
+			100% { transform: translate(3px, -3px); opacity: 0.8; }
 		}
 
 		/* ── Breadcrumb ──────────────────────────── */
