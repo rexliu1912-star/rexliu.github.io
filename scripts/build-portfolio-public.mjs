@@ -339,14 +339,38 @@ function sanitizeMonitorState(monitorState, dcaStatus, marketData = null, bottom
   const snek = monitorState.snek || {};
   const ds = monitorState.data_sources || {};
 
-  // Extract 8 bottom tracker indicators — derive score from status color
+  // Extract 8 bottom tracker indicators — enrich with EN names + cleaned detail
+  const IND_META = {
+    "市场极度恐慌": { en: "Fear & Greed Index", desc_en: "Crypto market sentiment composite (0–100)", desc_zh: "加密市场情绪综合指数（0–100）" },
+    "矿工投降": { en: "Miner Capitulation", desc_en: "BTC drawdown from ATH + miner revenue stress", desc_zh: "BTC 距高点回撤 + 矿工收入压力" },
+    "黑天鹅强度": { en: "Black Swan Intensity", desc_en: "Multi-factor tail-risk model (BSS)", desc_zh: "多因子尾部风险模型（BSS）" },
+    "宏观股市熊市": { en: "Macro VIX", desc_en: "S&P 500 implied volatility", desc_zh: "标普500隐含波动率" },
+    "场外资金储备": { en: "OTC Reserve (SSR)", desc_en: "Stablecoin Supply Ratio — off-exchange liquidity", desc_zh: "稳定币供应比率 — 场外流动性" },
+    "MVRV Z-Score": { en: "MVRV Z-Score", desc_en: "Market-to-Realized Value ratio (deviation from historical mean)", desc_zh: "市值/已实现价值比（偏离历史均值程度）" },
+    "BTC ETF资金流": { en: "BTC ETF Flow", desc_en: "Daily net inflow/outflow of spot BTC ETFs (USD millions)", desc_zh: "BTC 现货 ETF 每日净流入/流出（百万美元）" },
+    "美元指数DXY": { en: "Dollar Index (DXY)", desc_en: "US Dollar strength — inverse correlation with BTC", desc_zh: "美元强度 — 与 BTC 负相关" },
+  };
   const statusScore = { green: 80, yellow: 50, red: 20 };
-  const bottomTrackerIndicators = (bottomTrackerData?.indicators || []).map((ind) => ({
-    name: ind.name,
-    status: ind.status, // "red" | "yellow" | "green"
-    score: ind.score ?? ind.weight ?? statusScore[ind.status] ?? 50,
-    detail: (ind.data || "").replace(/\$[\d,.]+/g, "$XXX"),
-  }));
+  const bottomTrackerIndicators = (bottomTrackerData?.indicators || []).map((ind) => {
+    const meta = IND_META[ind.name] || {};
+    // Clean detail: strip emoji + redact USD amounts + trailing parenthetical context label
+    let cleanDetail = (ind.data || ind.fullText || "").replace(/[\u{1F7E0}\u{1F7E1}\u{1F534}\u{1F7E2}\u{2705}\u{274C}\u{2B50}]\s*/gu, "").trim();
+    cleanDetail = cleanDetail.replace(/\$\d[\d,.]*/g, "$XX,XXX");
+    return {
+      name_zh: ind.name,
+      name_en: meta.en || ind.name,
+      status: ind.status,
+      score: ind.score ?? statusScore[ind.status] ?? 50,
+      detail: cleanDetail,
+      desc_en: meta.desc_en || "",
+      desc_zh: meta.desc_zh || "",
+    };
+  });
+
+  // Extract ETF flow from bottom tracker indicators (for side card)
+  const etfIndicator = (bottomTrackerData?.indicators || []).find((i) => i.name === "BTC ETF资金流" || i.name?.includes("ETF"));
+  const etfFlowMatch = etfIndicator?.data?.match(/(-?\d+(?:\.\d+)?)[MmBb]/);
+  const etfFlowValue = etfFlowMatch ? parseFloat(etfFlowMatch[1]) : null;
 
   // Extract FGI 7-day history from market data file
   const fgiHistory7d = marketData?.sections?.macro?.fear_greed?.history_7d || null;
@@ -422,6 +446,10 @@ function sanitizeMonitorState(monitorState, dcaStatus, marketData = null, bottom
       score: dca.bottom_tracker?.weighted_score ?? null,
       status: dca.bottom_tracker?.status || null,
       indicators: bottomTrackerIndicators,
+    },
+    etf: {
+      btc_etf_net_flow_m: etfFlowValue,
+      etfs: [], // granular per-fund data not available from current source
     },
     dca: {
       status: dcaStatus?.status || dca.dca?.status || null,

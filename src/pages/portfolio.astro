@@ -609,8 +609,8 @@ const stages = [
 				{/* ── Layer 1: Semicircular Sentiment Gauge ── */}
 				<div class="crypto-gauge-wrap">
 					<p class="crypto-dash-card-title">
-						<span class="lang-en">Market Sentiment</span>
-						<span class="lang-zh">市场情绪</span>
+						<span class="lang-en">Market Pulse</span>
+						<span class="lang-zh">市场脉搏</span>
 					</p>
 					{(() => {
 						const score = cryptoTS?.latest?.composite ?? (100 - (cryptoMonitor?.bottom_tracker?.score ?? 50));
@@ -620,6 +620,7 @@ const stages = [
 						const scoreA = sA + (score / 100) * Math.PI;
 						const sColor = score < 25 ? "#ef4444" : score < 50 ? "#f59e0b" : score < 75 ? "#10b981" : "#22c55e";
 						const sLabel = score < 25 ? "Extreme Fear" : score < 50 ? "Fear" : score < 75 ? "Greed" : "Extreme Greed";
+					const sLabelZh = score < 25 ? "极度恐惧" : score < 50 ? "恐惧" : score < 75 ? "贪婪" : "极度贪婪";
 
 						const arc = (from: number, to: number) => {
 							const a1 = sA + (from / 100) * Math.PI;
@@ -660,26 +661,26 @@ const stages = [
 									<line x1={cx} y1={cy} x2={nx.toFixed(1)} y2={ny.toFixed(1)} stroke={sColor} stroke-width="2.5" stroke-linecap="round" />
 									<circle cx={cx} cy={cy} r="5.5" fill={sColor} />
 									<circle cx={cx} cy={cy} r="2.5" fill="var(--p-card)" />
-									<text x="32" y="155" font-size="8.5" fill="color-mix(in srgb, var(--p-text-faint) 65%, transparent)" text-anchor="middle" font-family="var(--font-serif)">Fear</text>
-									<text x="268" y="155" font-size="8.5" fill="color-mix(in srgb, var(--p-text-faint) 65%, transparent)" text-anchor="middle" font-family="var(--font-serif)">Greed</text>
+										<text x="32" y="155" font-size="8.5" fill="color-mix(in srgb, var(--p-text-faint) 65%, transparent)" text-anchor="middle" font-family="var(--font-serif)"><tspan class="lang-en">Extreme Fear</tspan><tspan class="lang-zh">极度恐惧</tspan></text>
+											<text x="268" y="155" font-size="8.5" fill="color-mix(in srgb, var(--p-text-faint) 65%, transparent)" text-anchor="middle" font-family="var(--font-serif)"><tspan class="lang-en">Extreme Greed</tspan><tspan class="lang-zh">极度贪婪</tspan></text>
 								</svg>
-								<div class="crypto-gauge-score">
-									<span class="crypto-gauge-num" style={`color:${sColor}`}>{score}</span>
-									<span class="crypto-gauge-max">/100</span>
-									<span class="crypto-gauge-label" style={`color:${sColor}`}>{sLabel}</span>
+							<div class="crypto-gauge-score">
+								<span class="crypto-gauge-num" style={`color:${sColor}`}>{score}</span>
+								<span class="crypto-gauge-max">/100</span>
+								<span class="crypto-gauge-label" style={`color:${sColor}`}><span class="lang-en">{sLabel}</span><span class="lang-zh">{sLabelZh}</span></span>
+							</div>
+							{delta !== 0 && (
+								<div class={`crypto-gauge-delta ${delta > 0 ? "up" : "down"}`}>
+									{delta > 0 ? "↑" : "↓"} {Math.abs(delta)} <span class="lang-en">vs yesterday</span><span class="lang-zh">较昨日</span>
 								</div>
-								{delta !== 0 && (
-									<div class={`crypto-gauge-delta ${delta > 0 ? "up" : "down"}`}>
-										{delta > 0 ? "↑" : "↓"} {Math.abs(delta)} vs yesterday
-									</div>
-								)}
+							)}
 							</>
 						);
 					})()}
 				</div>
 
 				{/* ── Layer 2: Bottom Tracker Indicator Table ── */}
-				{(() => {
+						{(() => {
 					const indicators = cryptoMonitor?.bottom_tracker?.indicators ?? [];
 					if (indicators.length === 0) return null;
 					return (
@@ -699,10 +700,10 @@ const stages = [
 									const stColor = ind.status === "green" ? "#10b981" : ind.status === "red" ? "#ef4444" : "#f59e0b";
 									const d = ind.delta ?? ind.score_change;
 									return (
-										<div class="crypto-ind-row">
-											<span class="crypto-ind-name">{ind.name}</span>
+										<div class="crypto-ind-row" title={ind.desc_en || ind.desc_zh || ""}>
+											<span class="crypto-ind-name"><span class="lang-en">{ind.name_en || ind.name}</span><span class="lang-zh">{ind.name_zh || ind.name}</span></span>
 											<span class="crypto-ind-dot" style={`background:${stColor}`} />
-											<span class="crypto-ind-detail">{ind.detail || ind.value || "—"}</span>
+											<span class="crypto-ind-detail">{ind.detail || "—"}</span>
 											{d != null ? (
 												<span class={`crypto-ind-delta ${d > 0 ? "up" : d < 0 ? "down" : "flat"}`}>
 													{d > 0 ? "↑" : d < 0 ? "↓" : "·"} {Math.abs(d)}
@@ -777,19 +778,19 @@ const stages = [
 										const label = (d.date ?? "").slice(5);
 										return <text x={x} y={H - 6} font-size="7.5" fill="color-mix(in srgb, var(--p-text-faint) 50%, transparent)" text-anchor="middle">{label}</text>;
 									})}
-									<line x1={pad.l} y1="8" x2={pad.l + 16} y2="8" stroke="#8953d1" stroke-width="1.8" />
-									<text x={pad.l + 20} y="8" font-size="7.5" fill="color-mix(in srgb, var(--p-text-faint) 70%, transparent)" dominant-baseline="middle">BTC ($)</text>
-									<line x1={pad.l + 62} y1="8" x2={pad.l + 78} y2="8" stroke="#f59e0b" stroke-width="1.2" stroke-dasharray="3 2" />
-									<text x={pad.l + 82} y="8" font-size="7.5" fill="color-mix(in srgb, var(--p-text-faint) 70%, transparent)" dominant-baseline="middle">Composite</text>
+							<line x1={pad.l} y1="8" x2={pad.l + 16} y2="8" stroke="#8953d1" stroke-width="1.8" />
+								<text x={pad.l + 20} y="8" font-size="7.5" fill="color-mix(in srgb, var(--p-text-faint) 70%, transparent)" dominant-baseline="middle"><tspan class="lang-en">BTC ($)</tspan><tspan class="lang-zh">BTC 价格</tspan></text>
+								<line x1={pad.l + 62} y1="8" x2={pad.l + 78} y2="8" stroke="#f59e0b" stroke-width="1.2" stroke-dasharray="3 2" />
+								<text x={pad.l + 82} y="8" font-size="7.5" fill="color-mix(in srgb, var(--p-text-faint) 70%, transparent)" dominant-baseline="middle"><tspan class="lang-en">Composite</tspan><tspan class="lang-zh">综合指数</tspan></text>
 								</svg>
 							);
 						})()}
 					</div>
 
-					{/* Side cards: DCA Gate + ETF Flow */}
+						{/* Side cards: DCA Gate + ETF Flow */}
 					<div class="crypto-side-cards">
 						<div class="crypto-dash-card crypto-side-card">
-							<p class="crypto-dash-card-title">DCA Gate</p>
+							<p class="crypto-dash-card-title"><span class="lang-en">DCA Gate</span><span class="lang-zh">定投闸门</span></p>
 							<div class={`dca-status-badge ${cryptoMonitor.dca?.status === "open" ? "open" : "closed"}`}>
 								{cryptoMonitor.dca?.status === "open" ? "🟢 OPEN" : "🛑 CLOSED"}
 							</div>
@@ -802,11 +803,11 @@ const stages = [
 						</div>
 
 						<div class="crypto-dash-card crypto-side-card">
-							<p class="crypto-dash-card-title">BTC ETF Flow</p>
+							<p class="crypto-dash-card-title"><span class="lang-en">BTC ETF Flow</span><span class="lang-zh">BTC ETF 资金流</span></p>
 							{etfData?.btc_etf_net_flow_m != null ? (() => {
 								const flow = etfData.btc_etf_net_flow_m;
 								const fc = flow > 0 ? "#10b981" : flow < 0 ? "#ef4444" : "#6b7280";
-								return <span style={`color:${fc};font-size:1.25rem;font-weight:700`}>{flow > 0 ? "+" : ""}{flow}M</span>;
+								return <span style={`color:${fc};font-size:1.25rem;font-weight:700`}>{flow > 0 ? "+" : ""}{flow}M <span class="lang-en">net daily</span><span class="lang-zh">每日净流入</span></span>;
 							})() : <span style="opacity:.5">N/A</span>}
 							{(etfData?.etfs ?? []).length > 0 && (
 								<div class="etf-fund-list">
