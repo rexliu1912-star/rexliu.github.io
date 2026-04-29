@@ -2494,45 +2494,47 @@ const stages = [
 					}
 				};
 
-				// External HTML tooltip
+				// External HTML tooltip. Render from the nearest active point, not from raw cursor position.
 				const tooltipEl = document.getElementById('regimeTooltip');
 
-				const externalTooltipHandler = (context) => {
-					const { chart, tooltip } = context;
-					if (tooltip.opacity === 0) {
+				const normalizeSignalDetail = (detail) => {
+					if (typeof detail === 'string') return { light: detail, value: '-', status: null };
+					return detail || { light: 'gray', value: '-', status: null };
+				};
+
+				const renderRegimeTooltip = (chart, idx, pointX, pointY) => {
+					if (!tooltipEl) return;
+					const h = history[idx];
+					if (!h) {
 						tooltipEl.style.display = 'none';
 						return;
 					}
 
-					const idx = tooltip.dataPoints?.[0]?.dataIndex;
-					if (idx == null) return;
-					const h = history[idx];
-					if (!h) return;
-
 					const colors = regimeColors[h.regime] || regimeColors['中性期'];
 					const isZh = document.documentElement.getAttribute('data-lang') !== 'en';
-
-					// Build signals HTML
 					const signals = h.signalDetails || h.lights || {};
 					let signalsHtml = '';
+
 					for (const [key, labelObj] of Object.entries(signalLabels)) {
-						const detail = signals[key];
-						const light = detail?.light || 'gray';
-						const value = detail?.value ?? '-';
+						const detail = normalizeSignalDetail(signals[key]);
+						const light = detail.light || 'gray';
+						const value = detail.value ?? '-';
+						const status = detail.status ? ` <span class="regime-signal-status">${detail.status}</span>` : '';
 						const dotColor = lightDotColors[light] || lightDotColors.gray;
 						const label = isZh ? labelObj.zh : labelObj.en;
 						signalsHtml += `<div class="regime-signal-row">
 							<span class="regime-signal-dot" style="background:${dotColor}"></span>
 							<span class="regime-signal-name">${label}</span>
-							<span class="regime-signal-value">${value}</span>
+							<span class="regime-signal-value">${value}${status}</span>
 						</div>`;
 					}
 
 					const regimeLabel = isZh ? h.regime : (colors.label || h.regime);
-					const greenInfo = `${h.green_count}/${Object.keys(signals).length || 5} ${isZh ? '绿灯' : 'green'}`;
+					const totalSignals = Object.keys(signals).length || 5;
+					const greenInfo = `${h.green_count}/${totalSignals} ${isZh ? '绿灯' : 'green'}`;
 
 					tooltipEl.innerHTML = `
-						<div class="regime-tooltip-date">${h.date}</div>
+						<div class="regime-tooltip-date">${h.date} · VIX ${h.vix ?? '-'}</div>
 						<div class="regime-tooltip-regime" style="--regime-color:${colors.border}">
 							<strong>${regimeLabel}</strong> · ${greenInfo}
 						</div>
@@ -2540,15 +2542,15 @@ const stages = [
 					`;
 					tooltipEl.style.display = 'block';
 
-					// Position tooltip near the point
 					const canvasRect = chart.canvas.getBoundingClientRect();
 					const tooltipRect = tooltipEl.getBoundingClientRect();
-					let left = canvasRect.left + tooltip.caretX + 12;
-					let top = canvasRect.top + tooltip.caretY - tooltipRect.height / 2;
+					const x = Number.isFinite(pointX) ? pointX : chart.scales.x.getPixelForValue(idx);
+					const y = Number.isFinite(pointY) ? pointY : chart.scales.y.getPixelForValue(h.vix);
+					let left = canvasRect.left + x + 12;
+					let top = canvasRect.top + y - tooltipRect.height / 2;
 
-					// Keep within viewport
 					if (left + tooltipRect.width > window.innerWidth - 16) {
-						left = canvasRect.left + tooltip.caretX - tooltipRect.width - 12;
+						left = canvasRect.left + x - tooltipRect.width - 12;
 					}
 					if (top < 8) top = 8;
 					if (top + tooltipRect.height > window.innerHeight - 8) top = window.innerHeight - tooltipRect.height - 8;
@@ -2557,7 +2559,19 @@ const stages = [
 					tooltipEl.style.top = top + 'px';
 				};
 
-				new Chart(regimeCanvas, {
+				const externalTooltipHandler = (context) => {
+					const { chart, tooltip } = context;
+					if (!tooltipEl) return;
+					if (tooltip.opacity === 0) {
+						tooltipEl.style.display = 'none';
+						return;
+					}
+					const point = tooltip.dataPoints?.[0];
+					if (!point) return;
+					renderRegimeTooltip(chart, point.dataIndex, tooltip.caretX, tooltip.caretY);
+				};
+
+				const regimeChart = new Chart(regimeCanvas, {
 					type: 'line',
 					data: {
 						labels: history.map((h) => h.date),
@@ -2604,9 +2618,26 @@ const stages = [
 					plugins: [regimeBandsPlugin],
 				});
 
+				regimeCanvas.addEventListener('mousemove', (event) => {
+					const points = regimeChart.getElementsAtEventForMode(event, 'nearest', { intersect: false }, false);
+					const point = points?.[0];
+					if (!point) return;
+					const element = regimeChart.getDatasetMeta(point.datasetIndex).data[point.index];
+					regimeChart.setActiveElements([{ datasetIndex: point.datasetIndex, index: point.index }]);
+					regimeChart.tooltip?.setActiveElements(
+						[{ datasetIndex: point.datasetIndex, index: point.index }],
+						{ x: element.x, y: element.y }
+					);
+					regimeChart.update('none');
+					renderRegimeTooltip(regimeChart, point.index, element.x, element.y);
+				});
+
 				// Hide tooltip on mouse leave
 				regimeCanvas.addEventListener('mouseleave', () => {
-					tooltipEl.style.display = 'none';
+					if (tooltipEl) tooltipEl.style.display = 'none';
+					regimeChart.setActiveElements([]);
+					regimeChart.tooltip?.setActiveElements([], { x: 0, y: 0 });
+					regimeChart.update('none');
 				});
 			}
 
@@ -3133,6 +3164,12 @@ const stages = [
 		.regime-signal-value {
 			font-family: Georgia, serif;
 			color: var(--p-text);
+		}
+		.regime-signal-status {
+			margin-left: 0.25rem;
+			font-family: Inter, system-ui, sans-serif;
+			font-size: 0.68rem;
+			color: var(--p-text-faint);
 		}
 		.portfolio-empty-overlay {
 			position: absolute;
