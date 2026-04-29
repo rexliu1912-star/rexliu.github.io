@@ -153,11 +153,11 @@ const GA_ID = "G-1EC76EZ517";
 	<body
 		class="bg-global-bg text-global-text mx-auto flex min-h-screen max-w-4xl flex-col px-4 pt-8 font-mono text-sm font-normal antialiased sm:px-8"
 	>
-		{/* Bamboo shadow overlay — sunny mood only */}
+		{/* Bamboo shadow video — sunny mood only */}
 		<div class="mood-overlay bamboo-shadow-overlay" aria-hidden="true">
-			<div class="bamboo-shadow-layer bamboo-shadow-layer-1"></div>
-			<div class="bamboo-shadow-layer bamboo-shadow-layer-2"></div>
-			<div class="bamboo-shadow-layer bamboo-shadow-layer-3"></div>
+			<video autoplay muted loop playsinline preload="auto"
+				src="/assets/leaves.mp4"
+				class="bamboo-video"></video>
 		</div>
 		{/* Rain canvas + fog — rainy mood only */}
 		<canvas id="rain-canvas" class="mood-overlay" aria-hidden="true"></canvas>
@@ -421,62 +421,18 @@ const GA_ID = "G-1EC76EZ517";
 			transition: opacity 0.8s ease;
 		}
 
-		/* ═══ Bamboo Shadow — sunny only ═══ */
-		/* Inspired by theme-switch.pages.dev — visible dappled light patches through bamboo canopy */
+		/* ═══ Bamboo Shadow Video — sunny only ═══ */
+		/* Video of swaying leaf shadows, blended with multiply like theme-switch.pages.dev */
 		html[data-mood="sunny"] .bamboo-shadow-overlay {
 			opacity: 1;
 			transition: opacity 1s ease;
 			mix-blend-mode: multiply;
 		}
-		.bamboo-shadow-layer {
-			position: absolute;
-			inset: 0;
-		}
-		/* Layer 1: Large warm light patches — the main "sun through leaves" effect */
-		.bamboo-shadow-layer-1 {
-			background:
-				radial-gradient(ellipse 220px 160px at 12% 10%, rgba(139, 115, 85, 0.22) 0%, transparent 65%),
-				radial-gradient(ellipse 180px 240px at 68% 6%, rgba(160, 130, 90, 0.18) 0%, transparent 60%),
-				radial-gradient(ellipse 160px 120px at 40% 22%, rgba(139, 115, 85, 0.15) 0%, transparent 55%),
-				radial-gradient(ellipse 120px 180px at 85% 28%, rgba(150, 120, 80, 0.17) 0%, transparent 50%),
-				radial-gradient(ellipse 140px 100px at 22% 52%, rgba(139, 115, 85, 0.13) 0%, transparent 60%),
-				radial-gradient(ellipse 130px 200px at 58% 65%, rgba(160, 130, 90, 0.14) 0%, transparent 55%),
-				radial-gradient(ellipse 100px 80px at 75% 80%, rgba(145, 118, 82, 0.12) 0%, transparent 60%);
-			animation: bambooDrift1 20s ease-in-out infinite alternate;
-		}
-		/* Layer 2: Scattered leaf silhouettes — smaller dappled pattern */
-		.bamboo-shadow-layer-2 {
-			background:
-				radial-gradient(ellipse 60px 40px at 8% 32%, rgba(100, 80, 50, 0.25) 0%, transparent 65%),
-				radial-gradient(ellipse 45px 70px at 30% 15%, rgba(90, 70, 40, 0.20) 0%, transparent 60%),
-				radial-gradient(ellipse 70px 45px at 52% 38%, rgba(100, 80, 50, 0.18) 0%, transparent 55%),
-				radial-gradient(ellipse 35px 55px at 76% 50%, rgba(90, 70, 40, 0.22) 0%, transparent 50%),
-				radial-gradient(ellipse 50px 30px at 90% 18%, rgba(100, 80, 50, 0.15) 0%, transparent 65%),
-				radial-gradient(ellipse 65px 50px at 15% 75%, rgba(90, 70, 40, 0.17) 0%, transparent 55%),
-				radial-gradient(ellipse 30px 45px at 62% 85%, rgba(100, 80, 50, 0.13) 0%, transparent 60%),
-				radial-gradient(ellipse 75px 35px at 38% 58%, rgba(90, 70, 40, 0.12) 0%, transparent 65%),
-				radial-gradient(ellipse 40px 60px at 48% 5%, rgba(85, 65, 35, 0.19) 0%, transparent 55%);
-			animation: bambooDrift2 25s ease-in-out infinite alternate-reverse;
-		}
-		/* Layer 3: Overall warm glow — sunlight atmosphere */
-		.bamboo-shadow-layer-3 {
-			background:
-				radial-gradient(ellipse at 15% 0%, rgba(255, 210, 130, 0.12) 0%, transparent 45%),
-				radial-gradient(ellipse at 75% 5%, rgba(255, 200, 120, 0.09) 0%, transparent 40%),
-				radial-gradient(ellipse at 45% 100%, rgba(255, 190, 100, 0.07) 0%, transparent 35%);
-			animation: bambooDrift3 30s ease-in-out infinite alternate;
-		}
-		@keyframes bambooDrift1 {
-			0%   { transform: translate(0, 0) scale(1); }
-			100% { transform: translate(12px, 8px) scale(1.03); }
-		}
-		@keyframes bambooDrift2 {
-			0%   { transform: translate(0, 0) scale(1); }
-			100% { transform: translate(-10px, 6px) scale(1.02); }
-		}
-		@keyframes bambooDrift3 {
-			0%   { transform: translate(0, 0); opacity: 1; }
-			100% { transform: translate(5px, -4px); opacity: 0.75; }
+		.bamboo-video {
+			width: 100vw;
+			height: 100vh;
+			object-fit: cover;
+			opacity: 0.65;
 		}
 
 		/* ═══ Rain Canvas — rainy only ═══ */
