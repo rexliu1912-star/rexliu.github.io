@@ -18,21 +18,16 @@ jobs:
         uses: actions/checkout@v4
 
       # 👇 修正点：删掉了 version: 9，让它自动读取 package.json 里的设置
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-
-      # 手动强制设置 Node.js 22 (完美支持 Object.groupBy)
       - name: Setup Node.js 22
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
+        run: npm install
 
       - name: Build site
-        run: pnpm build
+        run: npm run build
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
