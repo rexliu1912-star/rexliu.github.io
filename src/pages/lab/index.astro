@@ -137,7 +137,7 @@ const meta = {
 			</span>
 		</div>
 		<!-- Player Stats — Hero identity card -->
-		<a href="/lab/player/" class="lab-player-card fade-in-up group mt-8 flex flex-col gap-3 rounded-xl border border-purple-500/20 p-5 transition-all hover:border-purple-500/40 sm:flex-row sm:items-center sm:gap-6 sm:p-6" style="--delay: 200ms">
+		<a href="/lab/player/" class="lab-player-card fade-in-up group mt-8 flex flex-col gap-3 rounded-xl border border-gray-200 p-5 transition-all hover:border-[#8953d1]/40 dark:border-gray-800 dark:hover:border-[#a175e8]/40 sm:flex-row sm:items-center sm:gap-6 sm:p-6" style="--delay: 200ms">
 			<div class="flex items-center gap-3">
 				<span class="text-xl">⚔️</span>
 				<div>
@@ -375,22 +375,26 @@ const meta = {
 </PageLayout>
 
 <style>
-	/* Player Stats card */
+	/* Player Stats card — keep exactly aligned with product cards */
 	.lab-player-card {
-		background: linear-gradient(135deg, #f8f4ff 0%, #fdf5e0 100%);
+		background: #fffaef;
 		box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
-		transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+		transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, background 0.4s ease;
 	}
 	.lab-player-card:hover {
-		box-shadow: 0 4px 20px rgba(137, 83, 209, 0.18);
 		transform: translateY(-2px);
+		box-shadow: 0 4px 12px rgba(137, 83, 209, 0.15);
 	}
 	:global([data-theme="dark"]) .lab-player-card {
-		background: linear-gradient(135deg, #111118 0%, #1a0f2e 100%);
-		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+		background: #181818;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
 	}
 	:global([data-theme="dark"]) .lab-player-card:hover {
-		box-shadow: 0 4px 24px rgba(161, 117, 232, 0.22);
+		box-shadow: 0 4px 16px rgba(161, 117, 232, 0.2);
+	}
+	:global([data-mood="rainy"]) .lab-player-card {
+		background: #d8dfe8;
+		box-shadow: 0 1px 6px rgba(45, 55, 72, 0.06);
 	}
 
 	/* Visual Thinking card */
