@@ -121,10 +121,12 @@ const {
 
 // Derived: Fear & Greed Index
 const fgi = cryptoMonitor?.macro?.fear_greed;
-const fgi7d = (cryptoMonitor?.macro?.fear_greed_7d ?? []).map((d: any) => d.value ?? d);
 
 // Derived: BTC ETF daily flow
 const etfData = (cryptoMonitor as any)?.etf;
+
+// Derived: Crypto timeseries for master chart
+const cryptoTS = (portfolioData as any)?.crypto_timeseries;
 
 
 const cryptoPositions = crypto?.positions ?? [];
@@ -602,135 +604,225 @@ const stages = [
 				</span>
 			</header>
 
-			{cryptoMonitor && (
-				<div class="crypto-dash-grid">
-					{/* ── Radar: Bottom Tracker 8 indicators ── */}
-					<div class="crypto-dash-radar">
-						<p class="crypto-dash-card-title">Bottom Tracker</p>
-						<div class="radar-score">{(() => {
-							const s = cryptoMonitor.bottom_tracker?.score ?? 0;
-							const c = s < 26 ? "#ef4444" : s < 51 ? "#f59e0b" : s < 76 ? "#10b981" : "#22c55e";
-							return <span style={`color:${c};font-size:2rem;font-weight:700`}>{s}<span style="opacity:.5;font-size:.85rem">/100</span></span>;
-						})()}</div>
-						{(() => {
-							const indicators = cryptoMonitor.bottom_tracker?.indicators ?? [];
-							if (indicators.length === 0) return null;
-							const n = indicators.length;
-							const cx = 100, cy = 100, R = 75;
-							const angleOf = (i: number) => (Math.PI * 2 * i / n) - Math.PI / 2;
-							const pts = indicators.map((ind: any, i: number) => {
-								const r = R * (ind.score / 100);
-								return `${cx + r * Math.cos(angleOf(i))},${cy + r * Math.sin(angleOf(i))}`;
-		});
-					const gridLevels = [0.25, 0.5, 0.75, 1];
-							return <svg viewBox="0 0 200 200" class="radar-svg">
-								{gridLevels.map((level: number) => {
-									const gp = indicators.map((_ind: any, i: number) => {
-										const r = R * level;
-										return `${cx + r * Math.cos(angleOf(i))},${cy + r * Math.sin(angleOf(i))}`;
-									});
-									return <polygon points={gp.join(" ")} fill="none" stroke="#374151" stroke-width="0.5" />;
+		{cryptoMonitor && cryptoTS && (
+			<div class="crypto-dash-v2">
+				{/* ── Layer 1: Semicircular Sentiment Gauge ── */}
+				<div class="crypto-gauge-wrap">
+					<p class="crypto-dash-card-title">
+						<span class="lang-en">Market Sentiment</span>
+						<span class="lang-zh">市场情绪</span>
+					</p>
+					{(() => {
+						const score = cryptoTS?.latest?.composite ?? (100 - (cryptoMonitor?.bottom_tracker?.score ?? 50));
+						const delta = cryptoTS?.latest?.delta_composite ?? 0;
+						const cx = 150, cy = 138, R = 108, rI = 90;
+						const sA = Math.PI;
+						const scoreA = sA + (score / 100) * Math.PI;
+						const sColor = score < 25 ? "#ef4444" : score < 50 ? "#f59e0b" : score < 75 ? "#10b981" : "#22c55e";
+						const sLabel = score < 25 ? "Extreme Fear" : score < 50 ? "Fear" : score < 75 ? "Greed" : "Extreme Greed";
+
+						const arc = (from: number, to: number) => {
+							const a1 = sA + (from / 100) * Math.PI;
+							const a2 = sA + (to / 100) * Math.PI;
+							const ox1 = cx + R * Math.cos(a1), oy1 = cy + R * Math.sin(a1);
+							const ox2 = cx + R * Math.cos(a2), oy2 = cy + R * Math.sin(a2);
+							const ix2 = cx + rI * Math.cos(a2), iy2 = cy + rI * Math.sin(a2);
+							const ix1 = cx + rI * Math.cos(a1), iy1 = cy + rI * Math.sin(a1);
+							return `M ${ox1.toFixed(1)} ${oy1.toFixed(1)} A ${R} ${R} 0 0 1 ${ox2.toFixed(1)} ${oy2.toFixed(1)} L ${ix2.toFixed(1)} ${iy2.toFixed(1)} A ${rI} ${rI} 0 0 0 ${ix1.toFixed(1)} ${iy1.toFixed(1)} Z`;
+						};
+
+						const nR = R - 20;
+						const nx = cx + nR * Math.cos(scoreA);
+						const ny = cy + nR * Math.sin(scoreA);
+
+						return (
+							<>
+								<svg viewBox="0 0 300 165" class="crypto-gauge-svg">
+									<path d={arc(0, 100)} fill="color-mix(in srgb, var(--p-border) 40%, transparent)" />
+									<path d={arc(0, 25)} fill="#ef4444" opacity="0.65" />
+									<path d={arc(25, 50)} fill="#f59e0b" opacity="0.65" />
+									<path d={arc(50, 75)} fill="#10b981" opacity="0.65" />
+									<path d={arc(75, 100)} fill="#22c55e" opacity="0.65" />
+									{[0, 25, 50, 75, 100].map((v: number) => {
+										const a = sA + (v / 100) * Math.PI;
+										const t1x = cx + (R + 6) * Math.cos(a), t1y = cy + (R + 6) * Math.sin(a);
+										const t2x = cx + (R - 2) * Math.cos(a), t2y = cy + (R - 2) * Math.sin(a);
+										return <line x1={t1x.toFixed(1)} y1={t1y.toFixed(1)} x2={t2x.toFixed(1)} y2={t2y.toFixed(1)} stroke="color-mix(in srgb, var(--p-text-faint) 60%, transparent)" stroke-width="1.5" />;
+									})}
+									{Array.from({ length: 20 }, (_, i: number) => {
+										if (i % 5 === 0) return null;
+										const v = i * 5;
+										const a = sA + (v / 100) * Math.PI;
+										const t1x = cx + (R + 3) * Math.cos(a), t1y = cy + (R + 3) * Math.sin(a);
+										const t2x = cx + (R - 1) * Math.cos(a), t2y = cy + (R - 1) * Math.sin(a);
+										return <line x1={t1x.toFixed(1)} y1={t1y.toFixed(1)} x2={t2x.toFixed(1)} y2={t2y.toFixed(1)} stroke="color-mix(in srgb, var(--p-text-faint) 25%, transparent)" stroke-width="0.7" />;
+									})}
+									<line x1={cx} y1={cy} x2={nx.toFixed(1)} y2={ny.toFixed(1)} stroke={sColor} stroke-width="2.5" stroke-linecap="round" />
+									<circle cx={cx} cy={cy} r="5.5" fill={sColor} />
+									<circle cx={cx} cy={cy} r="2.5" fill="var(--p-card)" />
+									<text x="32" y="155" font-size="8.5" fill="color-mix(in srgb, var(--p-text-faint) 65%, transparent)" text-anchor="middle" font-family="var(--font-serif)">Fear</text>
+									<text x="268" y="155" font-size="8.5" fill="color-mix(in srgb, var(--p-text-faint) 65%, transparent)" text-anchor="middle" font-family="var(--font-serif)">Greed</text>
+								</svg>
+								<div class="crypto-gauge-score">
+									<span class="crypto-gauge-num" style={`color:${sColor}`}>{score}</span>
+									<span class="crypto-gauge-max">/100</span>
+									<span class="crypto-gauge-label" style={`color:${sColor}`}>{sLabel}</span>
+								</div>
+								{delta !== 0 && (
+									<div class={`crypto-gauge-delta ${delta > 0 ? "up" : "down"}`}>
+										{delta > 0 ? "↑" : "↓"} {Math.abs(delta)} vs yesterday
+									</div>
+								)}
+							</>
+						);
+					})()}
+				</div>
+
+				{/* ── Layer 2: Bottom Tracker Indicator Table ── */}
+				{(() => {
+					const indicators = cryptoMonitor?.bottom_tracker?.indicators ?? [];
+					if (indicators.length === 0) return null;
+					return (
+						<div class="crypto-indicators-wrap">
+							<p class="crypto-dash-card-title">
+								<span class="lang-en">Bottom Tracker Indicators</span>
+								<span class="lang-zh">底部追踪指标</span>
+							</p>
+							<div class="crypto-ind-table">
+								<div class="crypto-ind-row crypto-ind-header">
+									<span class="crypto-ind-name"><span class="lang-en">Indicator</span><span class="lang-zh">指标</span></span>
+									<span class="crypto-ind-status-head"><span class="lang-en">Status</span><span class="lang-zh">状态</span></span>
+									<span class="crypto-ind-detail"><span class="lang-en">Detail</span><span class="lang-zh">详情</span></span>
+									<span class="crypto-ind-delta-head"><span class="lang-en">Chg</span><span class="lang-zh">变化</span></span>
+								</div>
+								{indicators.map((ind: any) => {
+									const stColor = ind.status === "green" ? "#10b981" : ind.status === "red" ? "#ef4444" : "#f59e0b";
+									const d = ind.delta ?? ind.score_change;
+									return (
+										<div class="crypto-ind-row">
+											<span class="crypto-ind-name">{ind.name}</span>
+											<span class="crypto-ind-dot" style={`background:${stColor}`} />
+											<span class="crypto-ind-detail">{ind.detail || ind.value || "—"}</span>
+											{d != null ? (
+												<span class={`crypto-ind-delta ${d > 0 ? "up" : d < 0 ? "down" : "flat"}`}>
+													{d > 0 ? "↑" : d < 0 ? "↓" : "·"} {Math.abs(d)}
+												</span>
+											) : (
+												<span class="crypto-ind-delta flat">—</span>
+											)}
+										</div>
+									);
 								})}
-								{indicators.map((_ind: any, i: number) => (
-									<line x1={cx} y1={cy} x2={cx + R * Math.cos(angleOf(i))} y2={cy + R * Math.sin(angleOf(i))} stroke="#374151" stroke-width="0.3" />
-								))}
-								<polygon points={pts.join(" ")} fill="rgba(99,102,241,0.2)" stroke="#6366f1" stroke-width="1.5" />
-								{indicators.map((ind: any, i: number) => {
-									const r = R * (ind.score / 100);
-									const lx = cx + (R + 18) * Math.cos(angleOf(i));
-									const ly = cy + (R + 18) * Math.sin(angleOf(i));
-									return <g>
-										<circle cx={cx + r * Math.cos(angleOf(i))} cy={cy + r * Math.sin(angleOf(i))} r="3" fill={ind.score < 26 ? "#ef4444" : ind.score < 51 ? "#f59e0b" : "#10b981"} />
-										<text x={lx} y={ly} text-anchor="middle" dominant-baseline="middle" font-size="6" fill="#9ca3af">{ind.name}</text>
-									</g>;
-								})}
-							</svg>;
-						})()}
-						<div class="radar-legend">
-							{(cryptoMonitor.bottom_tracker?.indicators ?? []).map((ind: any) => (
-								<span class={`radar-legend-item ${ind.score < 26 ? "danger" : ind.score < 51 ? "warn" : "ok"}`}>
-									{ind.name}: {ind.value} ({ind.score})
-								</span>
-							))}
+							</div>
 						</div>
+					);
+				})()}
+
+				{/* ── Layer 3: BTC Trend Chart + Side Cards ── */}
+				<div class="crypto-chart-row">
+					<div class="crypto-chart-wrap">
+						<p class="crypto-dash-card-title">
+							<span class="lang-en">BTC Price & Sentiment Trend</span>
+							<span class="lang-zh">BTC 价格与情绪趋势</span>
+						</p>
+						{(() => {
+							const tsData = cryptoTS?.data ?? [];
+							if (tsData.length < 2) return <p class="crypto-chart-empty"><span class="lang-en">Insufficient trend data</span><span class="lang-zh">趋势数据不足</span></p>;
+
+							const W = 620, H = 200;
+							const pad = { l: 48, r: 48, t: 14, b: 28 };
+							const cW = W - pad.l - pad.r;
+							const cH = H - pad.t - pad.b;
+
+							const btcArr = tsData.map((d: any) => d.btc_close ?? 0).filter(Boolean);
+							const btcMin = Math.min(...btcArr) * 0.97;
+							const btcMax = Math.max(...btcArr) * 1.03;
+
+							const xOf = (i: number) => pad.l + (i / Math.max(1, tsData.length - 1)) * cW;
+							const yBtc = (v: number) => pad.t + cH - ((v - btcMin) / Math.max(1, btcMax - btcMin)) * cH;
+							const yComp = (v: number) => pad.t + cH - (v / 100) * cH;
+
+							const btcPts = tsData.map((d: any, i: number) => `${xOf(i).toFixed(1)},${yBtc(d.btc_close ?? 0).toFixed(1)}`).join(" ");
+							const compPts = tsData.map((d: any, i: number) => d.composite != null ? `${xOf(i).toFixed(1)},${yComp(d.composite).toFixed(1)}` : null).filter(Boolean).join(" ");
+
+							const gridRows = 4;
+							const btcStep = (btcMax - btcMin) / gridRows;
+							const labelStep = Math.max(1, Math.floor(tsData.length / 5));
+
+							return (
+								<svg viewBox={`0 0 ${W} ${H}`} class="crypto-chart-svg" preserveAspectRatio="xMidYMid meet">
+									{Array.from({ length: gridRows + 1 }, (_, i: number) => {
+										const y = (pad.t + (i / gridRows) * cH).toFixed(1);
+										return <line x1={pad.l} y1={y} x2={W - pad.r} y2={y} stroke="color-mix(in srgb, var(--p-border) 35%, transparent)" stroke-width="0.5" />;
+									})}
+									<polygon
+										points={`${pad.l},${(pad.t + cH).toFixed(1)} ${btcPts} ${xOf(tsData.length - 1).toFixed(1)},${(pad.t + cH).toFixed(1)}`}
+										fill="color-mix(in srgb, #8953d1 8%, transparent)"
+									/>
+									<polyline points={btcPts} fill="none" stroke="#8953d1" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" />
+									{compPts && (
+										<polyline points={compPts} fill="none" stroke="#f59e0b" stroke-width="1.2" stroke-dasharray="4 3" stroke-linejoin="round" stroke-linecap="round" opacity="0.85" />
+									)}
+									{Array.from({ length: gridRows + 1 }, (_, i: number) => {
+										const val = btcMax - i * btcStep;
+										const y = (pad.t + (i / gridRows) * cH).toFixed(1);
+										return <text x={pad.l - 6} y={y} font-size="8" fill="color-mix(in srgb, var(--p-text-faint) 60%, transparent)" text-anchor="end" dominant-baseline="middle">{(val / 1000).toFixed(0)}K</text>;
+									})}
+									{[0, 25, 50, 75, 100].map((v: number) => (
+										<text x={W - pad.r + 6} y={yComp(v).toFixed(1)} font-size="8" fill="#f59e0b" opacity="0.45" text-anchor="start" dominant-baseline="middle">{v}</text>
+									))}
+									{tsData.map((d: any, i: number) => {
+										if (i % labelStep !== 0 && i !== tsData.length - 1) return null;
+										const x = xOf(i).toFixed(1);
+										const label = (d.date ?? "").slice(5);
+										return <text x={x} y={H - 6} font-size="7.5" fill="color-mix(in srgb, var(--p-text-faint) 50%, transparent)" text-anchor="middle">{label}</text>;
+									})}
+									<line x1={pad.l} y1="8" x2={pad.l + 16} y2="8" stroke="#8953d1" stroke-width="1.8" />
+									<text x={pad.l + 20} y="8" font-size="7.5" fill="color-mix(in srgb, var(--p-text-faint) 70%, transparent)" dominant-baseline="middle">BTC ($)</text>
+									<line x1={pad.l + 62} y1="8" x2={pad.l + 78} y2="8" stroke="#f59e0b" stroke-width="1.2" stroke-dasharray="3 2" />
+									<text x={pad.l + 82} y="8" font-size="7.5" fill="color-mix(in srgb, var(--p-text-faint) 70%, transparent)" dominant-baseline="middle">Composite</text>
+								</svg>
+							);
+						})()}
 					</div>
 
-					{/* ── Column 2: Market Temp + DCA ── */}
-					<div class="crypto-dash-col">
-						{/* FGI Card */}
-						<div class="crypto-dash-card">
-							<p class="crypto-dash-card-title">Market Temperature</p>
-							{fgi ? (() => {
-								const fgiColor = fgi.value < 26 ? "#ef4444" : fgi.value < 46 ? "#f59e0b" : fgi.value < 56 ? "#6b7280" : fgi.value < 76 ? "#10b981" : "#22c55e";
-								return <div>
-									<span style={`color:${fgiColor};font-size:2rem;font-weight:700`}>{fgi.value}</span>
-									<span style="opacity:.6;margin-left:.3rem">{fgi.label}</span>
-								</div>;
-							})() : <span style="opacity:.5">N/A</span>}
-							{fgi7d.length > 0 && (
-								<svg viewBox="0 0 120 30" class="fgi-sparkline">
-									<polyline
-										fill="none"
-										stroke="#6366f1"
-										stroke-width="1.5"
-										points={fgi7d.map((v: number, i: number) => `${i * 120/(fgi7d.length-1)},${30 - v * 0.3}`).join(" ")}
-									/>
-								</svg>
-							)}
-						</div>
-
-						{/* DCA Gate Card */}
-						<div class="crypto-dash-card">
+					{/* Side cards: DCA Gate + ETF Flow */}
+					<div class="crypto-side-cards">
+						<div class="crypto-dash-card crypto-side-card">
 							<p class="crypto-dash-card-title">DCA Gate</p>
 							<div class={`dca-status-badge ${cryptoMonitor.dca?.status === "open" ? "open" : "closed"}`}>
 								{cryptoMonitor.dca?.status === "open" ? "🟢 OPEN" : "🛑 CLOSED"}
 							</div>
-							<p style="opacity:.6;font-size:.8rem;margin-top:.3rem">{cryptoMonitor.dca?.reason ?? ""}</p>
+							<p class="dca-reason">{cryptoMonitor.dca?.reason ?? ""}</p>
 							<div class="dca-conditions">
 								{(cryptoMonitor.dca?.conditions ?? []).map((c: any) => (
 									<span class={`dca-cond ${c.met ? "met" : "miss"}`}>{c.met ? "✓" : "·"} {c.detail || c.id}</span>
 								))}
 							</div>
 						</div>
-					</div>
 
-					{/* ── Column 3: ETF Flow ── */}
-					<div class="crypto-dash-col">
-						<div class="crypto-dash-card">
-							<p class="crypto-dash-card-title">BTC ETF Net Flow</p>
+						<div class="crypto-dash-card crypto-side-card">
+							<p class="crypto-dash-card-title">BTC ETF Flow</p>
 							{etfData?.btc_etf_net_flow_m != null ? (() => {
 								const flow = etfData.btc_etf_net_flow_m;
-								const flowColor = flow > 0 ? "#10b981" : flow < 0 ? "#ef4444" : "#6b7280";
-								return <span style={`color:${flowColor};font-size:1.5rem;font-weight:700`}>{flow > 0 ? "+" : ""}{flow}M</span>;
+								const fc = flow > 0 ? "#10b981" : flow < 0 ? "#ef4444" : "#6b7280";
+								return <span style={`color:${fc};font-size:1.25rem;font-weight:700`}>{flow > 0 ? "+" : ""}{flow}M</span>;
 							})() : <span style="opacity:.5">N/A</span>}
 							{(etfData?.etfs ?? []).length > 0 && (
 								<div class="etf-fund-list">
-									{etfData.etfs.slice(0, 4).map((e: any) => (
+									{etfData.etfs.slice(0, 3).map((e: any) => (
 										<div class="etf-fund-row">
 											<span>{e.ticker}</span>
-							<span class={`etf-flow ${e.volume_usd_m > 0 ? "pos" : ""}`}>
-									Vol {e.volume_usd_m}M
-								</span>
+											<span class={`etf-flow ${e.volume_usd_m > 0 ? "pos" : ""}`}>Vol {e.volume_usd_m}M</span>
 										</div>
 									))}
 								</div>
 							)}
 						</div>
-
-						{/* SNEK + Stablecoin */}
-						<div class="crypto-dash-card">
-							<p class="crypto-dash-card-title">Positions</p>
-							<div style="display:flex;gap:1rem">
-								<span>{cryptoMonitor.snek?.has_position ? "🐍 Tracked" : "👀 Watch"}</span>
-								<span>{cryptoMonitor.stablecoin_health?.apy_current_pct ? `${cryptoMonitor.stablecoin_health.apy_current_pct}% APY` : "—"}</span>
-							</div>
-							{cryptoMonitor.stablecoin_health?.depeg_alerts?.length > 0 && (
-								<p class="depeg-warn">⚠ {cryptoMonitor.stablecoin_health.depeg_alerts.length} depeg alert(s)</p>
-							)}
-						</div>
 					</div>
 				</div>
-			)}
+			</div>
+		)}
 		</section>
 		<section class="portfolio-section fade-in-up" data-collapse id="allocation-section">
 			<header class="portfolio-section-head">
@@ -4786,12 +4878,64 @@ const stages = [
 	.action-micro-badge.ok { background:rgba(16,185,129,.15); color:#6ee7b7; }
 	.action-micro-badge.warn { background:rgba(245,158,11,.15); color:#fbbf24; }
 
-	/* ── Crypto Dashboard ── */
-	.crypto-dash-grid { display:grid; grid-template-columns:1.2fr 1fr 1fr; gap:1rem; margin-top:1rem; }
-	.crypto-dash-radar { background:rgba(255,255,255,.03); border-radius:.75rem; padding:1rem; text-align:center; }
-	.crypto-dash-col { display:flex; flex-direction:column; gap:.75rem; }
-	.crypto-dash-card { background:rgba(255,255,255,.03); border-radius:.75rem; padding:1rem; }
-	.crypto-dash-card-title { font-family:var(--font-serif); font-size:.85rem; opacity:.6; margin-bottom:.5rem; text-transform:uppercase; letter-spacing:.05em; }
+	/* ═══ Crypto Dashboard v2 ═══ */
+	.crypto-dash-v2 { display:flex; flex-direction:column; gap:1.25rem; margin-top:1rem; }
+
+	/* ── Layer 1: Gauge ── */
+	.crypto-gauge-wrap { background:rgba(255,255,255,0.03); border-radius:.75rem; padding:1rem 1rem .75rem; display:flex; flex-direction:column; align-items:center; }
+	[data-theme="light"] .crypto-gauge-wrap { background:rgba(0,0,0,0.03); }
+	.crypto-gauge-svg { width:100%; max-width:320px; height:auto; }
+	.crypto-gauge-score { display:flex; align-items:baseline; gap:.15rem; margin-top:-.15rem; }
+	.crypto-gauge-num { font-size:2.2rem; font-weight:700; font-family:var(--font-serif); line-height:1; }
+	.crypto-gauge-max { font-size:.9rem; opacity:.45; font-weight:500; }
+	.crypto-gauge-label { font-size:.82rem; margin-left:.5rem; opacity:.75; font-weight:500; }
+	.crypto-gauge-delta { font-size:.78rem; margin-top:.15rem; font-weight:600; letter-spacing:.02em; }
+	.crypto-gauge-delta.up { color:#10b981; }
+	.crypto-gauge-delta.down { color:#ef4444; }
+
+	/* ── Layer 2: Indicator Table ── */
+	.crypto-indicators-wrap { background:rgba(255,255,255,0.03); border-radius:.75rem; padding:1rem; }
+	[data-theme="light"] .crypto-indicators-wrap { background:rgba(0,0,0,0.03); }
+	.crypto-ind-table { display:grid; grid-template-columns:1.5fr auto 2fr auto; gap:0 .75rem; align-items:center; }
+	.crypto-ind-row { display:contents; }
+	.crypto-ind-header span { font-size:.7rem; opacity:.4; text-transform:uppercase; letter-spacing:.06em; padding-bottom:.4rem; border-bottom:1px solid rgba(255,255,255,0.06); margin-bottom:.3rem; }
+	[data-theme="light"] .crypto-ind-header span { border-bottom-color:rgba(0,0,0,0.06); }
+	.crypto-ind-name { font-size:.82rem; padding:.35rem 0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+	.crypto-ind-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+	.crypto-ind-detail { font-size:.78rem; opacity:.65; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+	.crypto-ind-delta-head { text-align:right; }
+	.crypto-ind-delta { font-size:.75rem; font-weight:600; text-align:right; white-space:nowrap; }
+	.crypto-ind-delta.up { color:#10b981; }
+	.crypto-ind-delta.down { color:#ef4444; }
+	.crypto-ind-delta.flat { color:var(--p-text-faint); opacity:.5; }
+
+	/* ── Layer 3: Chart + Side Cards ── */
+	.crypto-chart-row { display:grid; grid-template-columns:1fr 240px; gap:1rem; }
+	.crypto-chart-wrap { background:rgba(255,255,255,0.03); border-radius:.75rem; padding:1rem; min-width:0; }
+	[data-theme="light"] .crypto-chart-wrap { background:rgba(0,0,0,0.03); }
+	.crypto-chart-svg { width:100%; height:auto; }
+	.crypto-chart-empty { opacity:.45; font-size:.82rem; padding:.5rem 0; }
+
+	/* Side cards */
+	.crypto-side-cards { display:flex; flex-direction:column; gap:.75rem; }
+	.crypto-side-card { flex:1; }
+	.dca-reason { opacity:.55; font-size:.8rem; margin-top:.3rem; }
+
+	/* Responsive */
+	@media (max-width:768px) {
+		.crypto-chart-row { grid-template-columns:1fr; }
+		.crypto-side-cards { flex-direction:row; }
+		.crypto-side-card { flex:1; }
+		.crypto-ind-table { grid-template-columns:1.3fr auto 1.5fr auto; gap:0 .5rem; }
+	}
+	@media (max-width:480px) {
+		.crypto-ind-table { grid-template-columns:1fr auto; }
+		.crypto-ind-header .crypto-ind-detail,
+		.crypto-ind-header .crypto-ind-delta-head,
+		.crypto-ind-row .crypto-ind-detail,
+		.crypto-ind-row .crypto-ind-delta { display:none; }
+		.crypto-side-cards { flex-direction:column; }
+	}
 	.radar-score { margin-bottom:.5rem; }
 	.radar-svg { width:100%; max-width:220px; }
 	.radar-legend { display:flex; flex-wrap:wrap; gap:.3rem; margin-top:.5rem; justify-content:center; }

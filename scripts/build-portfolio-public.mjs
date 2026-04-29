@@ -39,6 +39,7 @@ const CRYPTO_DCA_STATUS_PATH = path.join(WORKSPACE_ROOT, "data/crypto-dca-status
 const MARKET_DATA_DIR = path.join(WORKSPACE_ROOT, "data/market");
 const PORTFOLIO_HISTORY_DIR = path.join(WORKSPACE_ROOT, "projects/the-workshop/data/portfolio-history");
 const BOTTOM_TRACKER_PATH = path.join(WORKSPACE_ROOT, "projects/crypto-bottom-tracker/web_data.json");
+const TIMESERIES_PATH = path.join(WORKSPACE_ROOT, "data/crypto-timeseries.json");
 
 // ─── Small utilities ─────────────────────────────────────
 
@@ -666,6 +667,33 @@ async function main() {
     console.warn("   ⚠️  No monitor state — crypto management section will be empty");
   }
 
+  // Add timeseries data (BTC price + FGI history) for master chart
+  let cryptoTimeseries = null;
+  try {
+    const tsRaw = await fs.readFile(TIMESERIES_PATH, "utf-8").catch(() => null);
+    if (tsRaw) {
+      const ts = JSON.parse(tsRaw);
+      const tsData = ts.data || [];
+      cryptoTimeseries = {
+        generated_at: ts.generated_at,
+        latest: ts.latest || {},
+        data: tsData.slice(-150).map((d) => ({
+          date: d.date,
+          btc_close: d.btc_close ?? null,
+          btc_high: d.btc_high ?? null,
+          btc_low: d.btc_low ?? null,
+          fgi: d.fgi ?? null,
+          fgi_label: d.fgi_label ?? null,
+          composite: d.composite ?? null,
+          delta_composite: d.delta_composite ?? null,
+        })),
+      };
+      console.log(`   ✅ Timeseries: ${cryptoTimeseries.data.length} days BTC + FGI`);
+    }
+  } catch (e) {
+    console.warn(`   ⚠️  Timeseries: ${e.message}`);
+  }
+
   // 3d. Build allocation history (monthly)
   console.log("📈 Building allocation history...");
   const allocationHistory = await buildAllocationHistory();
@@ -757,6 +785,7 @@ async function main() {
     clearances,
     roundtables,
     stats,
+    crypto_timeseries: cryptoTimeseries,
   };
 
   await fs.writeFile(OUTPUT_PATH, JSON.stringify(output, null, 2) + "\n");
