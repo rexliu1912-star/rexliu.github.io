@@ -306,11 +306,15 @@ export default function LibraryMasonry({
 					transition: transform 0.25s ease, box-shadow 0.25s ease;
 					box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 				}
-				:root.dark .library-masonry-card,
-				[data-theme="dark"] .library-masonry-card {
-					background: rgba(24, 24, 24, 0.6);
-					box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-				}
+			:root.dark .library-masonry-card,
+			[data-theme="dark"] .library-masonry-card {
+				background: rgba(24, 24, 24, 0.6);
+				box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+			}
+			[data-mood="rainy"] .library-masonry-card {
+				background: rgba(216, 223, 232, 0.6);
+				box-shadow: 0 1px 2px rgba(45, 55, 72, 0.1);
+			}
 				.library-masonry-card.clickable {
 					cursor: pointer;
 				}
@@ -392,10 +396,13 @@ export default function LibraryMasonry({
 					background: rgb(229, 231, 235);
 					display: block;
 				}
-				:root.dark .library-masonry-rating-dot,
-				[data-theme="dark"] .library-masonry-rating-dot {
-					background: rgb(55, 65, 81);
-				}
+			:root.dark .library-masonry-rating-dot,
+			[data-theme="dark"] .library-masonry-rating-dot {
+				background: rgb(55, 65, 81);
+			}
+			[data-mood="rainy"] .library-masonry-rating-dot {
+				background: rgb(160, 175, 200);
+			}
 				.library-masonry-rating-dot.filled {
 					background: ${BRAND};
 				}

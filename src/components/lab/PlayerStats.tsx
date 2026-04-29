@@ -166,15 +166,22 @@ function isDarkMode(): boolean {
   return document.documentElement.getAttribute("data-theme") === "dark" || document.documentElement.classList.contains("dark");
 }
 
+function isRainyMode(): boolean {
+  if (typeof document === "undefined") return false;
+  return document.documentElement.getAttribute("data-mood") === "rainy";
+}
+
 function useTheme() {
   const [dark, setDark] = useState(false);
+  const [rainy, setRainy] = useState(false);
   useEffect(() => {
     setDark(isDarkMode());
-    const obs = new MutationObserver(() => setDark(isDarkMode()));
-    obs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "class"] });
-    return () => obs.disconnect();
+    setRainy(isRainyMode());
+    const obs = new MutationObserver(() => { setDark(isDarkMode()); setRainy(isRainyMode()); });
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "data-mood", "class"] });
+    return () => { obs.disconnect(); };
   }, []);
-  return dark;
+  return { dark, rainy };
 }
 
 function usePrefersReducedMotion() {
@@ -350,15 +357,18 @@ function TooltipWrap({ content, children, align = "left" }: { content: React.Rea
   );
 }
 
-const Section = memo(function Section({ dark, children, hero }: { dark: boolean; children: React.ReactNode; hero?: boolean }) {
+const Section = memo(function Section({ dark, rainy, children, hero }: { dark: boolean; rainy: boolean; children: React.ReactNode; hero?: boolean }) {
   const reduced = usePrefersReducedMotion();
   const { ref, inView } = useInView<HTMLElement>(0.1, true);
+  const cardBg = rainy ? "linear-gradient(180deg, rgba(216,223,232,0.98), rgba(200,210,224,0.98))" : hero ? (dark ? "rgba(21,21,21,0.99)" : "linear-gradient(180deg, rgba(255,255,255,0.98), rgba(250,246,255,0.98))") : (dark ? "rgba(21,21,21,0.98)" : "linear-gradient(180deg, rgba(255,255,255,0.96), rgba(248,242,255,0.96))");
+  const cardShadow = rainy ? (hero ? "0 0 0 1px rgba(100,120,155,0.22), 0 0 24px rgba(100,120,155,0.1)" : "0 10px 20px rgba(45,55,72,0.12)") : hero ? `0 0 0 1px rgba(137,83,209,0.22), 0 0 24px rgba(137,83,209,0.08)` : (dark ? "0 10px 24px rgba(0,0,0,0.18)" : "0 10px 20px rgba(137,83,209,0.08)");
+  const cardBorder = rainy ? "rgba(100,120,155,0.22)" : `rgba(137,83,209,${dark ? "0.22" : "0.14"})`;
   const style: CSSProperties = {
     width: "100%", maxWidth: 1200, margin: "0 auto",
-    border: `1px solid ${dark ? "rgba(137,83,209,0.22)" : "rgba(137,83,209,0.14)"}`,
+    border: `1px solid ${cardBorder}`,
     borderRadius: 24, padding: "1.35rem",
-    background: hero ? (dark ? "rgba(21,21,21,0.99)" : "linear-gradient(180deg, rgba(255,255,255,0.98), rgba(250,246,255,0.98))") : (dark ? "rgba(21,21,21,0.98)" : "linear-gradient(180deg, rgba(255,255,255,0.96), rgba(248,242,255,0.96))"),
-    boxShadow: hero ? `0 0 0 1px rgba(137,83,209,0.22), 0 0 24px rgba(137,83,209,0.08)` : (dark ? "0 10px 24px rgba(0,0,0,0.18)" : "0 10px 20px rgba(137,83,209,0.08)"),
+    background: cardBg,
+    boxShadow: cardShadow,
     opacity: reduced ? 1 : (inView ? 1 : 0),
     transform: reduced ? "none" : (inView ? "translateY(0)" : "translateY(18px)"),
     transition: reduced ? undefined : "opacity 500ms cubic-bezier(0.22,1,0.36,1), transform 500ms cubic-bezier(0.22,1,0.36,1)",
@@ -1157,7 +1167,7 @@ const SaveFooter = memo(function SaveFooter({ dark, travelDays, mediaCount, book
 });
 
 export default function PlayerStats(props: PlayerStatsProps) {
-  const dark = useTheme();
+  const { dark, rainy } = useTheme();
   const { stats, level, totalExp, expInLevel, expNeeded, expProgress, rank, avgStat, currentCity, travelDays, tagCounts, postCount, builderLogCount, cities, achievements, retainers, quests, equipment, activityLog, chapters, relationships, articleMeta, statFormulas, expFormula, levelFormula, mediaCount, bookCount } = props;
   return <div style={{ width: "100%", maxWidth: 1200, margin: "0 auto", fontFamily: "Georgia, Cambria, serif", paddingInline: 12 }}>
     <style>{`
@@ -1210,18 +1220,18 @@ export default function PlayerStats(props: PlayerStatsProps) {
       }
     `}</style>
     <div style={{ display: "grid", gap: 18 }}>
-      <Section dark={dark} hero><HeroCard dark={dark} rank={rank} level={level} totalExp={totalExp} expInLevel={expInLevel} expNeeded={expNeeded} expProgress={expProgress} avgStat={avgStat} currentCity={currentCity} travelDays={travelDays} expFormula={expFormula} levelFormula={levelFormula} /></Section>
-      <Section dark={dark}><SectionHeader icon="🧭" zh="人生章节" en="Chapter Archive" dark={dark} /><ChapterCarousel chapters={chapters} articleMeta={articleMeta} dark={dark} /></Section>
-      <Section dark={dark}><a href="/travel/" style={{ display: "flex", gap: 14, justifyContent: "center", alignItems: "center", textDecoration: "none" }}><span style={{ fontSize: 28 }}>🗺️</span><div><div style={{ color: PURPLE, fontWeight: 700, fontSize: 24 }}>{cities.length} <span style={{ color: dark ? "#c8bed8" : "#78688a", fontSize: 13, fontWeight: 400 }}><span className="lang-zh">座城市已游历</span><span className="lang-en">cities explored</span></span></div><div style={{ color: dark ? "#ac9fbe" : "#8b7a98", fontSize: 12 }}><span className="lang-zh">→ 查看完整旅居地图</span><span className="lang-en">→ View full travel map</span></div></div></a></Section>
-      <Section dark={dark}><SectionHeader icon="📊" zh="六维属性" en="Six Attributes" dark={dark} /><StatRadar stats={stats} statFormulas={statFormulas} dark={dark} /><StatLegend dark={dark} /></Section>
-      <Section dark={dark}><SectionHeader icon="🧰" zh="装备栏" en="Equipment" dark={dark} /><EquipmentRing equipment={equipment} dark={dark} /></Section>
-      <Section dark={dark}><SectionHeader icon="📜" zh="任务面板" en="Quest Board" dark={dark} /><QuestPanel quests={quests} dark={dark} /></Section>
-      <Section dark={dark}><SectionHeader icon="🏯" zh="门客系统" en="Retainers" dark={dark} /><RetainerPanel retainers={retainers} dark={dark} /></Section>
-      <Section dark={dark}><SectionHeader icon="🌳" zh="技能树" en="Skill Tree" dark={dark} /><SkillTree tagCounts={tagCounts} postCount={postCount} builderLogCount={builderLogCount} dark={dark} /></Section>
-      <Section dark={dark}><SectionHeader icon="🤝" zh="江湖关系" en="Relationships" dark={dark} /><RelationshipPanel relationships={relationships} dark={dark} articleMeta={articleMeta} /></Section>
-      <Section dark={dark}><SectionHeader icon="🏆" zh="成就" en="Achievements" dark={dark} /><AchievementBadges achievements={achievements} dark={dark} /></Section>
-      <Section dark={dark}><SectionHeader icon="📜" zh="修行日志" en="Cultivation Log" dark={dark} /><CultivationLog activityLog={activityLog} dark={dark} /></Section>
-      <Section dark={dark}><SaveFooter dark={dark} travelDays={travelDays} mediaCount={mediaCount} bookCount={bookCount} postCount={postCount} cityCount={cities.length} level={level} /></Section>
+      <Section dark={dark} rainy={rainy} hero><HeroCard dark={dark} rank={rank} level={level} totalExp={totalExp} expInLevel={expInLevel} expNeeded={expNeeded} expProgress={expProgress} avgStat={avgStat} currentCity={currentCity} travelDays={travelDays} expFormula={expFormula} levelFormula={levelFormula} /></Section>
+      <Section dark={dark} rainy={rainy}><SectionHeader icon="🧭" zh="人生章节" en="Chapter Archive" dark={dark} /><ChapterCarousel chapters={chapters} articleMeta={articleMeta} dark={dark} /></Section>
+      <Section dark={dark} rainy={rainy}><a href="/travel/" style={{ display: "flex", gap: 14, justifyContent: "center", alignItems: "center", textDecoration: "none" }}><span style={{ fontSize: 28 }}>🗺️</span><div><div style={{ color: PURPLE, fontWeight: 700, fontSize: 24 }}>{cities.length} <span style={{ color: dark ? "#c8bed8" : "#78688a", fontSize: 13, fontWeight: 400 }}><span className="lang-zh">座城市已游历</span><span className="lang-en">cities explored</span></span></div><div style={{ color: dark ? "#ac9fbe" : "#8b7a98", fontSize: 12 }}><span className="lang-zh">→ 查看完整旅居地图</span><span className="lang-en">→ View full travel map</span></div></div></a></Section>
+      <Section dark={dark} rainy={rainy}><SectionHeader icon="📊" zh="六维属性" en="Six Attributes" dark={dark} /><StatRadar stats={stats} statFormulas={statFormulas} dark={dark} /><StatLegend dark={dark} /></Section>
+      <Section dark={dark} rainy={rainy}><SectionHeader icon="🧰" zh="装备栏" en="Equipment" dark={dark} /><EquipmentRing equipment={equipment} dark={dark} /></Section>
+      <Section dark={dark} rainy={rainy}><SectionHeader icon="📜" zh="任务面板" en="Quest Board" dark={dark} /><QuestPanel quests={quests} dark={dark} /></Section>
+      <Section dark={dark} rainy={rainy}><SectionHeader icon="🏯" zh="门客系统" en="Retainers" dark={dark} /><RetainerPanel retainers={retainers} dark={dark} /></Section>
+      <Section dark={dark} rainy={rainy}><SectionHeader icon="🌳" zh="技能树" en="Skill Tree" dark={dark} /><SkillTree tagCounts={tagCounts} postCount={postCount} builderLogCount={builderLogCount} dark={dark} /></Section>
+      <Section dark={dark} rainy={rainy}><SectionHeader icon="🤝" zh="江湖关系" en="Relationships" dark={dark} /><RelationshipPanel relationships={relationships} dark={dark} articleMeta={articleMeta} /></Section>
+      <Section dark={dark} rainy={rainy}><SectionHeader icon="🏆" zh="成就" en="Achievements" dark={dark} /><AchievementBadges achievements={achievements} dark={dark} /></Section>
+      <Section dark={dark} rainy={rainy}><SectionHeader icon="📜" zh="修行日志" en="Cultivation Log" dark={dark} /><CultivationLog activityLog={activityLog} dark={dark} /></Section>
+      <Section dark={dark} rainy={rainy}><SaveFooter dark={dark} travelDays={travelDays} mediaCount={mediaCount} bookCount={bookCount} postCount={postCount} cityCount={cities.length} level={level} /></Section>
     </div>
   </div>;
 }

@@ -212,6 +212,27 @@ const totalGithubCommits = Object.values(githubContributions).reduce((sum, c) =>
 		box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
 	}
 
+	:global([data-mood="rainy"]) .activity-graph {
+		background: #d8dfe8;
+		box-shadow: 0 1px 6px rgba(45, 55, 72, 0.08);
+	}
+
+	:global([data-mood="rainy"]) .level-0 {
+		background: #c8d0dc;
+	}
+	:global([data-mood="rainy"]) .level-1 {
+		background: #b0bdd0;
+	}
+	:global([data-mood="rainy"]) .level-2 {
+		background: #98a8c4;
+	}
+	:global([data-mood="rainy"]) .level-3 {
+		background: #7b8fb8;
+	}
+	:global([data-mood="rainy"]) .level-4 {
+		background: #5e76ac;
+	}
+
 	.graph-scroll {
 		@apply overflow-x-auto pb-2;
 	}

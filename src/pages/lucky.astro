@@ -1127,19 +1127,33 @@ const timelineMilestones = [...milestones].reverse();
 
 		/* ===== Light Theme Overrides ===== */
 
-		:global(html[data-theme="light"]) .star-stage {
-			background: rgba(245, 242, 235, 0.92);
-			border-color: rgba(137, 83, 209, 0.15);
-			box-shadow: 0 24px 80px rgba(0, 0, 0, 0.06);
-		}
+:global(html[data-theme="light"]) .star-stage {
+		background: rgba(245, 242, 235, 0.92);
+		border-color: rgba(137, 83, 209, 0.15);
+		box-shadow: 0 24px 80px rgba(0, 0, 0, 0.06);
+	}
 
-		:global(html[data-theme="light"]) .star-stage h2 {
-			color: #1a1025;
-		}
+	:global(html[data-mood="rainy"]) .star-stage {
+		background: rgba(180, 195, 215, 0.92);
+		border-color: rgba(100, 120, 155, 0.22);
+		box-shadow: 0 24px 80px rgba(45, 55, 72, 0.15);
+	}
 
-		:global(html[data-theme="light"]) .star-stage-note {
-			color: rgba(30, 20, 50, 0.6);
-		}
+	:global(html[data-theme="light"]) .star-stage h2 {
+		color: #1a1025;
+	}
+
+	:global(html[data-mood="rainy"]) .star-stage h2 {
+		color: #2d3748;
+	}
+
+	:global(html[data-theme="light"]) .star-stage-note {
+		color: rgba(30, 20, 50, 0.6);
+	}
+
+	:global(html[data-mood="rainy"]) .star-stage-note {
+		color: rgba(45, 55, 72, 0.55);
+	}
 
 		:global(html[data-theme="light"]) .star-legend-item {
 			color: rgba(30, 20, 50, 0.7);
