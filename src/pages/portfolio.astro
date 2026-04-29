@@ -779,6 +779,152 @@ const stages = [
 						})()}
 					</div>
 
+{/* ── Layer 4: Portfolio Value Index + Metrics ── */}
+				{(() => {
+					const ph = (portfolioData as any)?.crypto_portfolio_history;
+					if (!ph?.data || ph.data.length < 2) return null;
+					const pts = ph.data;
+					const met = ph.metrics;
+
+					const W = 720, H = 240;
+					const pad = { l: 44, r: 16, t: 14, b: 28 };
+					const cW = W - pad.l - pad.r;
+					const cH = H - pad.t - pad.b;
+
+					const idxArr = pts.map((d: any) => d.index ?? 100);
+					const iMin = Math.min(...idxArr) * 0.995;
+					const iMax = Math.max(...idxArr) * 1.005;
+
+					const xOf = (i: number) => pad.l + (i / Math.max(1, pts.length - 1)) * cW;
+					const yIdx = (v: number) => pad.t + cH - ((v - iMin) / Math.max(0.1, iMax - iMin)) * cH;
+
+					const linePts = pts.map((d: any, i: number) => `${xOf(i).toFixed(1)},${yIdx(d.index ?? 100).toFixed(1)}`).join(" ");
+
+					const gridRows = 4;
+					const labelStep = Math.max(1, Math.floor(pts.length / 6));
+
+					return (
+						<div class="crypto-portfolio-index-wrap">
+							<p class="crypto-dash-card-title">
+								<span class="lang-en">Portfolio Value Index</span>
+								<span class="lang-zh">持仓价值指数</span>
+							</p>
+							<svg viewBox={`0 0 ${W} ${H}`} class="crypto-chart-svg" preserveAspectRatio="xMidYMid meet">
+								{Array.from({ length: gridRows + 1 }, (_, i: number) => {
+									const y = (pad.t + (i / gridRows) * cH).toFixed(1);
+									return <line x1={pad.l} y1={y} x2={W - pad.r} y2={y} stroke="color-mix(in srgb, var(--p-border) 35%, transparent)" stroke-width="0.5" />;
+								})}
+								<polygon
+									points={`${pad.l},${(pad.t + cH).toFixed(1)} ${linePts} ${xOf(pts.length - 1).toFixed(1)},${(pad.t + cH).toFixed(1)}`}
+									fill="color-mix(in srgb, #10b981 8%, transparent)"
+								/>
+								<polyline points={linePts} fill="none" stroke="#10b981" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" />
+								{Array.from({ length: gridRows + 1 }, (_, i: number) => {
+									const val = iMax - (i / gridRows) * (iMax - iMin);
+									const y = (pad.t + (i / gridRows) * cH).toFixed(1);
+									return <text x={pad.l - 6} y={y} font-size="8" fill="color-mix(in srgb, var(--p-text-faint) 60%, transparent)" text-anchor="end" dominant-baseline="middle">{val.toFixed(1)}</text>;
+								})}
+								{pts.map((d: any, i: number) => {
+									if (i % labelStep !== 0 && i !== pts.length - 1) return null;
+									const x = xOf(i).toFixed(1);
+									const label = (d.date ?? "").slice(2);
+									return <text x={x} y={H - 6} font-size="7.5" fill="color-mix(in srgb, var(--p-text-faint) 50%, transparent)" text-anchor="middle">{label}</text>;
+								})}
+								<text x={W - pad.r} y="10" font-size="7.5" fill="color-mix(in srgb, var(--p-text-faint) 50%, transparent)" text-anchor="end"><span class="lang-en">Indexed (base=100)</span><span class="lang-zh">基准=100</span></text>
+							</svg>
+							<div class="crypto-portfolio-metrics">
+								<div class="cpm-item">
+									<span class="cpm-label"><span class="lang-en">Max DD</span><span class="lang-zh">最大回撤</span></span>
+									<span class="cpm-value" style={`color:${met.max_drawdown_pct < -5 ? "#ef4444" : "#10b981"}`}>{met.max_drawdown_pct}%</span>
+								</div>
+								<div class="cpm-item">
+									<span class="cpm-label"><span class="lang-en">Current DD</span><span class="lang-zh">当前回撤</span></span>
+									<span class="cpm-value" style={`color:${met.current_drawdown_pct < -3 ? "#ef4444" : met.current_drawdown_pct < 0 ? "#f59e0b" : "#10b981"}`}>{met.current_drawdown_pct > 0 ? "+" : ""}{met.current_drawdown_pct}%</span>
+								</div>
+								<div class="cpm-item">
+									<span class="cpm-label"><span class="lang-en">BTC Beta</span><span class="lang-zh">BTC Beta</span></span>
+									<span class="cpm-value" style={`color:${met.btc_beta < 0.3 ? "#10b981" : met.btc_beta < 0.7 ? "#f59e0b" : "#ef4444"}`}>{met.btc_beta}</span>
+								</div>
+								<div class="cpm-item">
+									<span class="cpm-label"><span class="lang-en">Ann. Vol</span><span class="lang-zh">年化波动</span></span>
+									<span class="cpm-value" style={`color:${met.annualized_volatility < 15 ? "#10b981" : met.annualized_volatility < 30 ? "#f59e0b" : "#ef4444"}`}>{met.annualized_volatility}%</span>
+								</div>
+							</div>
+						</div>
+					);
+				})()}
+
+{/* ── Layer 5: Allocation Drift Trend ── */}
+				{(() => {
+					const ah = (portfolioData as any)?.allocation_history?.history;
+					if (!ah || ah.length < 2) return null;
+
+					const buckets = allocation.current.categories;
+					const idToKey = {
+						"stablecoin": "stablecoin_yield",
+						"funds": "funds_etf",
+						"stocks": "stocks",
+						"crypto": "crypto"
+					};
+
+					const W = 720, H = 220;
+					const pad = { l: 44, r: 16, t: 14, b: 28 };
+					const cW = W - pad.l - pad.r;
+					const cH = H - pad.t - pad.b;
+
+					const xOf = (i: number) => pad.l + (i / Math.max(1, ah.length - 1)) * cW;
+					const yPct = (v: number) => pad.t + cH - (v / 60) * cH;
+
+					return (
+						<div class="crypto-alloc-trend-wrap">
+							<p class="crypto-dash-card-title">
+								<span class="lang-en">Allocation Drift</span>
+								<span class="lang-zh">配置偏移趋势</span>
+							</p>
+							<svg viewBox={`0 0 ${W} ${H}`} class="crypto-chart-svg" preserveAspectRatio="xMidYMid meet">
+								{[0, 15, 30, 45].map(v => (
+									<>
+										<line x1={pad.l} y1={yPct(v).toFixed(1)} x2={W - pad.r} y2={yPct(v).toFixed(1)} stroke="color-mix(in srgb, var(--p-border) 35%, transparent)" stroke-width="0.5" />
+										<text x={pad.l - 6} y={yPct(v).toFixed(1)} font-size="8" fill="color-mix(in srgb, var(--p-text-faint) 60%, transparent)" text-anchor="end" dominant-baseline="middle">{v}%</text>
+									</>
+								))}
+								{buckets.map((b: any) => {
+									const key = idToKey[b.id];
+									if (!key) return null;
+									const linePts = ah.map((h: any, i: number) => {
+										const v = h.buckets?.[key] ?? 0;
+										return `${xOf(i).toFixed(1)},${yPct(v).toFixed(1)}`;
+									}).join(" ");
+									const current = ah[ah.length - 1]?.buckets?.[key] ?? 0;
+									const target = b.target_pct;
+									const isDrifted = Math.abs(current - target) >= 5;
+									return (
+										<>
+											<polyline points={linePts} fill="none" stroke={b.color} stroke-width={isDrifted ? "2.2" : "1.5"} stroke-linejoin="round" stroke-linecap="round" stroke-dasharray={isDrifted ? "none" : "4 2"} opacity={isDrifted ? "1" : "0.6"} />
+											<line x1={pad.l} y1={yPct(target).toFixed(1)} x2={W - pad.r} y2={yPct(target).toFixed(1)} stroke={b.color} stroke-width="0.6" stroke-dasharray="2 4" opacity="0.35" />
+										</>
+									);
+								})}
+								{ah.map((h: any, i: number) => {
+									const x = xOf(i).toFixed(1);
+									return <text x={x} y={H - 6} font-size="7.5" fill="color-mix(in srgb, var(--p-text-faint) 50%, transparent)" text-anchor="middle">{h.date}</text>;
+								})}
+								{buckets.map((b: any, i: number) => {
+									const lx = pad.l + i * 110;
+									return (
+										<>
+											<line x1={lx} y1="10" x2={lx + 14} y2="10" stroke={b.color} stroke-width="1.8" />
+											<text x={lx + 18} y="10" font-size="7.5" fill="color-mix(in srgb, var(--p-text-faint) 70%, transparent)" dominant-baseline="middle"><tspan class="lang-en">{b.label_en}</tspan><tspan class="lang-zh">{b.label_zh}</tspan></text>
+										</>
+									);
+								})}
+								<text x={W - pad.r} y="10" font-size="7.5" fill="color-mix(in srgb, var(--p-text-faint) 45%, transparent)" text-anchor="end"><span class="lang-en">- - target</span><span class="lang-zh">- - 目标</span></text>
+							</svg>
+						</div>
+					);
+				})()}
+
+
 </div>
 			</div>
 		)}
@@ -4599,6 +4745,12 @@ const stages = [
 		.crypto-position-card { border-color: rgba(245,158,11,.24); }
 		.crypto-position-tag, .crypto-stage-badge { background: rgba(245,158,11,.1); color: #92400e; }
 		.crypto-position-link { color: var(--p-accent); font-size: .82rem; }
+		.crypto-portfolio-index-wrap,
+		.crypto-alloc-trend-wrap { border: 1px solid var(--p-border); background: var(--p-card); border-radius: 1rem; padding: 1rem; margin-top: 1rem; }
+		.crypto-portfolio-metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: .6rem; margin-top: .75rem; }
+		.cpm-item { display: flex; flex-direction: column; gap: .15rem; text-align: center; }
+		.cpm-label { font-size: .7rem; color: var(--p-text-faint); letter-spacing: .08em; text-transform: uppercase; }
+		.cpm-value { font-size: 1.15rem; font-weight: 700; font-variant-numeric: tabular-nums; }
 		.crypto-mgmt-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; }
 		.crypto-mgmt-card strong { display: block; margin: .3rem 0; font-family: var(--font-serif); font-size: 1.8rem; color: var(--p-text); }
 		.crypto-mgmt-label { color: var(--p-text-faint); font-size: .75rem; letter-spacing: .12em; text-transform: uppercase; }

@@ -38,6 +38,7 @@ const CRYPTO_MONITOR_STATE_PATH = path.join(WORKSPACE_ROOT, "data/crypto-monitor
 const CRYPTO_DCA_STATUS_PATH = path.join(WORKSPACE_ROOT, "data/crypto-dca-status.json");
 const MARKET_DATA_DIR = path.join(WORKSPACE_ROOT, "data/market");
 const PORTFOLIO_HISTORY_DIR = path.join(WORKSPACE_ROOT, "projects/the-workshop/data/portfolio-history");
+const CRYPTO_PORTFOLIO_HISTORY_PATH = path.join(WORKSPACE_ROOT, "projects/the-workshop/data/portfolio-crypto-history.json");
 const BOTTOM_TRACKER_PATH = path.join(WORKSPACE_ROOT, "projects/crypto-bottom-tracker/web_data.json");
 const TIMESERIES_PATH = path.join(WORKSPACE_ROOT, "data/crypto-timeseries.json");
 
@@ -153,6 +154,111 @@ async function buildAllocationHistory() {
   } catch (err) {
     console.warn(`  ⚠️  Cannot build allocation history: ${err.message}`);
     return { history: [] };
+  }
+}
+
+
+// ─── Crypto Portfolio Value Index ────────────────────────
+/**
+ * Build crypto portfolio value index from daily history.
+ * Returns { data: [...], metrics: {...} } or null.
+ * All monetary values are normalized to index (base=100) — no absolute amounts exposed.
+ */
+async function buildCryptoPortfolioHistory() {
+  try {
+    const raw = await fs.readFile(CRYPTO_PORTFOLIO_HISTORY_PATH, "utf-8").catch(() => null);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    const daily = parsed.daily || [];
+    if (daily.length < 2) return null;
+
+    const baseTotal = daily[0].total;
+    if (!baseTotal || baseTotal <= 0) return null;
+
+    // Build index data (sample every 3 days to keep JSON lean)
+    const sampled = [];
+    for (let i = 0; i < daily.length; i += 3) {
+      sampled.push(daily[i]);
+    }
+    // Always include the last entry
+    if (sampled[sampled.length - 1] !== daily[daily.length - 1]) {
+      sampled.push(daily[daily.length - 1]);
+    }
+
+    const data = sampled.map((d) => ({
+      date: d.date,
+      index: Math.round((d.total / baseTotal) * 10000) / 100,
+    }));
+
+    // Calculate metrics
+    const totals = daily.map((d) => d.total);
+    // Max drawdown: largest peak-to-trough decline anywhere in history
+    let runningMax = totals[0];
+    let maxDD = 0;
+    for (const t of totals) {
+      if (t > runningMax) runningMax = t;
+      const dd = (t - runningMax) / runningMax;
+      if (dd < maxDD) maxDD = dd;
+    }
+    const maxDrawdownPct = Math.round(maxDD * 10000) / 100;
+
+    // Current drawdown: from all-time high to today
+    const maxVal = Math.max(...totals);
+    const currentVal = totals[totals.length - 1];
+    const currentDrawdownPct = Math.round(((currentVal - maxVal) / maxVal) * 10000) / 100;
+
+    // Daily returns for BTC beta and annualized volatility
+    const dailyReturns = [];
+    for (let i = 1; i < daily.length; i++) {
+      if (daily[i - 1].total > 0) {
+        dailyReturns.push((daily[i].total - daily[i - 1].total) / daily[i - 1].total);
+      }
+    }
+
+    const avgReturn = dailyReturns.reduce((a, b) => a + b, 0) / dailyReturns.length;
+    const variance = dailyReturns.reduce((a, r) => a + (r - avgReturn) ** 2, 0) / dailyReturns.length;
+    const dailyVol = Math.sqrt(variance);
+    const annualizedVolatility = Math.round(dailyVol * Math.sqrt(365) * 10000) / 100;
+
+    // BTC beta: correlate portfolio returns with BTC price changes
+    const btcAssets = daily.map((d) => d.assets?.BTC || 0);
+    let btcBeta = 0;
+    if (btcAssets.length > 30) {
+      const btcReturns = [];
+      for (let i = 1; i < btcAssets.length; i++) {
+        if (btcAssets[i - 1] > 0) {
+          btcReturns.push((btcAssets[i] - btcAssets[i - 1]) / btcAssets[i - 1]);
+        }
+      }
+      if (btcReturns.length > 20) {
+        const n = Math.min(dailyReturns.length, btcReturns.length);
+        const pr = dailyReturns.slice(-n);
+        const br = btcReturns.slice(-n);
+        const pAvg = pr.reduce((a, b) => a + b, 0) / n;
+        const bAvg = br.reduce((a, b) => a + b, 0) / n;
+        let cov = 0, bVar = 0;
+        for (let i = 0; i < n; i++) {
+          cov += (pr[i] - pAvg) * (br[i] - bAvg);
+          bVar += (br[i] - bAvg) ** 2;
+        }
+        cov /= n;
+        bVar /= n;
+        btcBeta = bVar > 0 ? Math.round((cov / bVar) * 100) / 100 : 0;
+      }
+    }
+
+    return {
+      data,
+      metrics: {
+        max_drawdown_pct: maxDrawdownPct,
+        current_drawdown_pct: currentDrawdownPct,
+        btc_beta: btcBeta,
+        annualized_volatility: annualizedVolatility,
+      },
+    };
+  } catch (e) {
+    console.warn(`   ⚠️  Portfolio history: ${e.message}`);
+    return null;
   }
 }
 
@@ -722,6 +828,12 @@ async function main() {
     console.warn(`   ⚠️  Timeseries: ${e.message}`);
   }
 
+  // Build crypto portfolio value index
+  const cryptoPortfolioHistory = await buildCryptoPortfolioHistory();
+  if (cryptoPortfolioHistory) {
+    console.log(`   ✅ Portfolio index: ${cryptoPortfolioHistory.data.length} data points`);
+  }
+
   // 3d. Build allocation history (monthly)
   console.log("📈 Building allocation history...");
   const allocationHistory = await buildAllocationHistory();
@@ -813,6 +925,7 @@ async function main() {
     clearances,
     roundtables,
     stats,
+    crypto_portfolio_history: cryptoPortfolioHistory,
     crypto_timeseries: cryptoTimeseries,
   };
 
