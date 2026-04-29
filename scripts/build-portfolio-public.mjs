@@ -338,14 +338,12 @@ function sanitizeMonitorState(monitorState, dcaStatus, marketData = null, bottom
   const snek = monitorState.snek || {};
   const ds = monitorState.data_sources || {};
 
-  // Extract 8 bottom tracker indicators
+  // Extract 8 bottom tracker indicators — derive score from status color
+  const statusScore = { green: 80, yellow: 50, red: 20 };
   const bottomTrackerIndicators = (bottomTrackerData?.indicators || []).map((ind) => ({
     name: ind.name,
     status: ind.status, // "red" | "yellow" | "green"
-    value: ind.value,
-    signal: ind.signal,
-    weight: ind.weight,
-    score: ind.score ?? ind.weight,
+    score: ind.score ?? ind.weight ?? statusScore[ind.status] ?? 50,
     detail: (ind.data || "").replace(/\$[\d,.]+/g, "$XXX"),
   }));
 

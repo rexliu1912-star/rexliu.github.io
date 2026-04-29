@@ -121,7 +121,7 @@ const {
 
 // Derived: Fear & Greed Index
 const fgi = cryptoMonitor?.macro?.fear_greed;
-const fgi7d = cryptoMonitor?.macro?.fear_greed_7d ?? [];
+const fgi7d = (cryptoMonitor?.macro?.fear_greed_7d ?? []).map((d: any) => d.value ?? d);
 
 // Derived: BTC ETF daily flow
 const etfData = (cryptoMonitor as any)?.etf;
@@ -708,9 +708,9 @@ const stages = [
 									{etfData.etfs.slice(0, 4).map((e: any) => (
 										<div class="etf-fund-row">
 											<span>{e.ticker}</span>
-											<span class={`etf-flow ${e.net_flow_m > 0 ? "pos" : e.net_flow_m < 0 ? "neg" : ""}`}>
-												{e.net_flow_m > 0 ? "+" : ""}{e.net_flow_m}M
-											</span>
+							<span class={`etf-flow ${e.volume_usd_m > 0 ? "pos" : ""}`}>
+									Vol {e.volume_usd_m}M
+								</span>
 										</div>
 									))}
 								</div>
