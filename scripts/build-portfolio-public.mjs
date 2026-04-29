@@ -113,12 +113,17 @@ async function findLatestMarketData() {
  */
 async function buildAllocationHistory() {
   // Non-investable categories excluded from allocation base
-  const NON_INVESTABLE = new Set(["house", "education", "receivable", "note"]);
+  const NON_INVESTABLE = new Set(["note"]);
   // Source breakdown keys → destination 4-bucket keys
+  // 按有知有行分类：
+  // Funds = 银行+余额宝+微信+高端稳健+买房基金+教育基金+应收
+  // Stocks = 且慢+未来世代+AH股+美股
+  // Stablecoin = 稳定生息
+  // Crypto = 加密永生+加密交易
   const BUCKET_AGG = {
-    stablecoin_yield: ["stablecoin"],
-    funds_etf: ["qieman", "liquid"],
-    stocks: ["yanerhigh", "guotai", "future"],
+    stablecoin: ["stablecoin"],
+    funds: ["liquid", "yanerhigh", "house", "education", "receivable"],
+    stocks: ["qieman", "future", "guotai", "us_stock"],
     crypto: ["crypto", "crypto_ivy"],
   };
 
