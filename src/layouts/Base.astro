@@ -588,32 +588,52 @@ const GA_ID = "G-1EC76EZ517";
 		})();
 	</script>
 
-		<script is:inline>
-			(function () {
-				const CDN = "https://cdn.rexliu.io";
-				const playlist = [
-					{ name: "I Will Fight For You - Voyageur", url: CDN + "/music/i-will-fight-for-you.mp3" },
-					{ name: "Still Moving On - Luminar", url: CDN + "/music/still-moving-on.mp3" },
-					{ name: "一舞倾城 - 魏小涵", url: CDN + "/music/yiwuqingcheng.mp3" },
-					{ name: "捣衣 - 古琴龚一", url: CDN + "/music/daoyi.mp3" },
-					{ name: "穿越时空的思念 - 古琴梅旸", url: CDN + "/music/chuanyueshikong.mp3" },
-					{ name: "美人兮 - 古琴赵晓霞", url: CDN + "/music/meirenxi.mp3" },
-					{ name: "Angel - Cathartic Fall", url: CDN + "/music/angel.mp3" },
-					{ name: "Head In The Clouds - Hayd", url: CDN + "/music/head-in-the-clouds.mp3" },
-					{ name: "夢灯籠 - RADWIMPS", url: CDN + "/music/mengdenglong.mp3" },
-					{ name: "三葉のテーマ - RADWIMPS", url: CDN + "/music/sanye.mp3" },
-					{ name: "The Story Never Ends (Piano) - Lauv", url: CDN + "/music/lauv---the-story-never-ends-(piano-version).mp3" },
-					{ name: "One Day - Matisyahu", url: CDN + "/music/matisyahu---one-day.mp3" },
-					{ name: "Missin' You Like Crazy - Michael Alvarado & Carissa Rae", url: CDN + "/music/michael-alvarado,carissa-rae---missin'-you-like-crazy-(feat.-carissa-rae).mp3" },
-					{ name: "落ちるパズルゲーム - 神前暁", url: CDN + "/music/神前暁---落ちるパズルゲーム.mp3" },
-					{ name: "你愿意吗 - 何立", url: CDN + "/music/ni-yuan-yi-ma.mp3" },
-					{ name: "Last Dance - 伍佰 & China Blue", url: CDN + "/music/last-dance.mp3" },
-					{ name: "Viva La Vida - Coldplay", url: CDN + "/music/viva-la-vida.mp3" },
-					{ name: "Don't Waste My Time - Dayon", url: CDN + "/music/dont-waste-my-time.mp3" },
-					{ name: "Coming Home - Diddy & Skylar Grey", url: CDN + "/music/coming-home.mp3" },
-				];
-				let currentIndex = Math.floor(Math.random() * playlist.length);
-				const state = { isPlaying: false, isExpanded: false };
+	<script is:inline>
+		(function () {
+			const CDN = "https://cdn.rexliu.io";
+			const playlist = [
+				{ name: "I Will Fight For You - Voyageur", url: CDN + "/music/i-will-fight-for-you.mp3" },
+				{ name: "Still Moving On - Luminar", url: CDN + "/music/still-moving-on.mp3" },
+				{ name: "一舞倾城 - 魏小涵", url: CDN + "/music/yiwuqingcheng.mp3" },
+				{ name: "捣衣 - 古琴龚一", url: CDN + "/music/daoyi.mp3" },
+				{ name: "穿越时空的思念 - 古琴梅旸", url: CDN + "/music/chuanyueshikong.mp3" },
+				{ name: "美人兮 - 古琴赵晓霞", url: CDN + "/music/meirenxi.mp3" },
+				{ name: "Angel - Cathartic Fall", url: CDN + "/music/angel.mp3" },
+				{ name: "Head In The Clouds - Hayd", url: CDN + "/music/head-in-the-clouds.mp3" },
+				{ name: "夢灯籠 - RADWIMPS", url: CDN + "/music/mengdenglong.mp3" },
+				{ name: "三葉のテーマ - RADWIMPS", url: CDN + "/music/sanye.mp3" },
+				{ name: "The Story Never Ends (Piano) - Lauv", url: CDN + "/music/lauv---the-story-never-ends-(piano-version).mp3" },
+				{ name: "One Day - Matisyahu", url: CDN + "/music/matisyahu---one-day.mp3" },
+				{ name: "Missin' You Like Crazy - Michael Alvarado & Carissa Rae", url: CDN + "/music/michael-alvarado,carissa-rae---missin'-you-like-crazy-(feat.-carissa-rae).mp3" },
+				{ name: "落ちるパズルゲーム - 神前暁", url: CDN + "/music/神前暁---落ちるパズルゲーム.mp3" },
+				{ name: "你愿意吗 - 何立", url: CDN + "/music/ni-yuan-yi-ma.mp3" },
+				{ name: "Last Dance - 伍佰 & China Blue", url: CDN + "/music/last-dance.mp3" },
+				{ name: "Viva La Vida - Coldplay", url: CDN + "/music/viva-la-vida.mp3" },
+				{ name: "Don't Waste My Time - Dayon", url: CDN + "/music/dont-waste-my-time.mp3" },
+				{ name: "Coming Home - Diddy & Skylar Grey", url: CDN + "/music/coming-home.mp3" },
+			];
+
+			// Theme-based track mapping
+			const moodTracks = {
+				day:   [0, 1, 7, 10, 11, 16, 17],  // Voyageur, Luminar, Hayd, Lauv, Matisyahu, Coldplay, Dayon
+				sunny: [2, 3, 4, 5, 8, 9, 14, 13],  // 魏小涵, 古琴x3, RADWIMPSx2, 何立, 神前暁
+				rainy: [6, 10, 13],                   // Angel, Lauv Piano, 神前暁
+				night: [12, 15, 16, 18],              // Missin' You, Last Dance, Viva La Vida, Coming Home
+			};
+
+			function getMood() {
+				return document.documentElement.getAttribute('data-mood') ||
+					(document.documentElement.getAttribute('data-theme') === 'dark' ? 'night' : 'day');
+			}
+
+			function pickTrackForMood() {
+				const mood = getMood();
+				const indices = moodTracks[mood] || moodTracks.day;
+				return indices[Math.floor(Math.random() * indices.length)];
+			}
+
+			let currentIndex = pickTrackForMood();
+			const state = { isPlaying: false, isExpanded: false };
 				function updateUI() {
 					const player = document.getElementById("minimal-player");
 					const songName = document.getElementById("current-song-name");
@@ -680,10 +700,26 @@ const GA_ID = "G-1EC76EZ517";
 						updateUI();
 					};
 
-					// 自动播放下一首
-					audio.onended = playNext;
+			// 自动播放下一首
+				audio.onended = playNext;
 
-					// 🟢 容错处理：如果当前歌曲加载失败（如 404），自动跳到下一首
+				// Theme change → switch to mood-appropriate track
+				document.addEventListener("theme-change", () => {
+					if (state.isPlaying) {
+						const newIdx = pickTrackForMood();
+						if (newIdx !== currentIndex) {
+							currentIndex = newIdx;
+							audio.src = playlist[currentIndex].url;
+							audio.play().catch(() => {});
+							updateUI();
+						}
+					} else {
+						currentIndex = pickTrackForMood();
+						updateUI();
+					}
+				});
+
+				// 🟢 容错处理：如果当前歌曲加载失败（如 404），自动跳到下一首
 					audio.onerror = () => {
 						console.warn("Audio file failed to load, skipping...");
 						playNext();
