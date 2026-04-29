@@ -478,14 +478,10 @@ const GA_ID = "G-1EC76EZ517";
 
 	{/* ── Rain Canvas Script ── */}
 	<script is:inline>
+		// Encapsulate state so we can re-initialize after View Transitions
 		(function __initRainEffect() {
-			const canvas = document.getElementById('rain-canvas');
-			if (!canvas) return;
-			const ctx = canvas.getContext('2d');
-			let drops = [];
-			let splashes = [];
-			let animId = null;
-			let active = false;
+			let canvas, ctx, drops = [], splashes = [], animId = null, active = false;
+			let observer = null;
 
 			function resize() {
 				canvas.width = window.innerWidth;
@@ -548,6 +544,10 @@ const GA_ID = "G-1EC76EZ517";
 
 			function start() {
 				if (active) return;
+				// Re-grab canvas + ctx (may be new DOM after swap)
+				canvas = document.getElementById('rain-canvas');
+				if (!canvas) return;
+				ctx = canvas.getContext('2d');
 				active = true;
 				resize();
 				createDrops();
@@ -559,7 +559,7 @@ const GA_ID = "G-1EC76EZ517";
 				if (animId) { cancelAnimationFrame(animId); animId = null; }
 				drops = [];
 				splashes = [];
-				ctx.clearRect(0, 0, canvas.width, canvas.height);
+				if (ctx && canvas) ctx.clearRect(0, 0, canvas.width, canvas.height);
 			}
 
 			function checkMood() {
@@ -568,13 +568,22 @@ const GA_ID = "G-1EC76EZ517";
 				else stop();
 			}
 
-			new MutationObserver(checkMood).observe(document.documentElement, { attributes: true, attributeFilter: ['data-mood'] });
-			window.addEventListener('resize', function() { if (active) { resize(); createDrops(); } });
+			// MutationObserver for data-mood changes
+			observer = new MutationObserver(checkMood);
+			observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-mood'] });
+
+			// Re-init after View Transitions
 			document.addEventListener('astro:after-swap', function() {
-				const c2 = document.getElementById('rain-canvas');
-				if (c2) { ctx && ctx.clearRect(0, 0, c2.width, c2.height); }
+				// Stop any running animation with old canvas
+				stop();
+				// Re-observe on possibly new documentElement
+				if (observer) observer.disconnect();
+				observer = new MutationObserver(checkMood);
+				observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-mood'] });
 				checkMood();
 			});
+
+			window.addEventListener('resize', function() { if (active) { resize(); createDrops(); } });
 			checkMood();
 		})();
 	</script>
