@@ -416,81 +416,107 @@ const GA_ID = "G-1EC76EZ517";
 			position: fixed;
 			inset: 0;
 			pointer-events: none;
-			z-index: 0;
+			z-index: 1;
 			opacity: 0;
 			transition: opacity 0.8s ease;
 		}
 
-		/* Bamboo Shadow — sunny only */
+		/* ═══ Bamboo Shadow — sunny only ═══ */
+		/* Inspired by theme-switch.pages.dev — visible dappled light patches through bamboo canopy */
 		html[data-mood="sunny"] .bamboo-shadow-overlay {
 			opacity: 1;
 			transition: opacity 1s ease;
+			mix-blend-mode: multiply;
 		}
 		.bamboo-shadow-layer {
 			position: absolute;
 			inset: 0;
 		}
+		/* Layer 1: Large warm light patches — the main "sun through leaves" effect */
 		.bamboo-shadow-layer-1 {
 			background:
-				radial-gradient(ellipse 120px 90px at 15% 12%, rgba(139, 115, 85, 0.10) 0%, transparent 70%),
-				radial-gradient(ellipse 80px 140px at 72% 8%, rgba(160, 130, 90, 0.08) 0%, transparent 65%),
-				radial-gradient(ellipse 100px 70px at 45% 25%, rgba(139, 115, 85, 0.06) 0%, transparent 60%),
-				radial-gradient(ellipse 60px 100px at 88% 30%, rgba(150, 120, 80, 0.07) 0%, transparent 55%),
-				radial-gradient(ellipse 90px 60px at 25% 55%, rgba(139, 115, 85, 0.05) 0%, transparent 65%),
-				radial-gradient(ellipse 70px 110px at 60% 70%, rgba(160, 130, 90, 0.06) 0%, transparent 60%);
+				radial-gradient(ellipse 220px 160px at 12% 10%, rgba(139, 115, 85, 0.22) 0%, transparent 65%),
+				radial-gradient(ellipse 180px 240px at 68% 6%, rgba(160, 130, 90, 0.18) 0%, transparent 60%),
+				radial-gradient(ellipse 160px 120px at 40% 22%, rgba(139, 115, 85, 0.15) 0%, transparent 55%),
+				radial-gradient(ellipse 120px 180px at 85% 28%, rgba(150, 120, 80, 0.17) 0%, transparent 50%),
+				radial-gradient(ellipse 140px 100px at 22% 52%, rgba(139, 115, 85, 0.13) 0%, transparent 60%),
+				radial-gradient(ellipse 130px 200px at 58% 65%, rgba(160, 130, 90, 0.14) 0%, transparent 55%),
+				radial-gradient(ellipse 100px 80px at 75% 80%, rgba(145, 118, 82, 0.12) 0%, transparent 60%);
 			animation: bambooDrift1 20s ease-in-out infinite alternate;
 		}
+		/* Layer 2: Scattered leaf silhouettes — smaller dappled pattern */
 		.bamboo-shadow-layer-2 {
 			background:
-				radial-gradient(ellipse 40px 25px at 8% 35%, rgba(100, 80, 50, 0.12) 0%, transparent 70%),
-				radial-gradient(ellipse 30px 50px at 32% 18%, rgba(90, 70, 40, 0.09) 0%, transparent 65%),
-				radial-gradient(ellipse 50px 30px at 55% 42%, rgba(100, 80, 50, 0.08) 0%, transparent 60%),
-				radial-gradient(ellipse 25px 40px at 78% 55%, rgba(90, 70, 40, 0.10) 0%, transparent 55%),
-				radial-gradient(ellipse 35px 20px at 92% 20%, rgba(100, 80, 50, 0.07) 0%, transparent 70%),
-				radial-gradient(ellipse 45px 35px at 18% 80%, rgba(90, 70, 40, 0.08) 0%, transparent 60%),
-				radial-gradient(ellipse 20px 30px at 65% 88%, rgba(100, 80, 50, 0.06) 0%, transparent 65%),
-				radial-gradient(ellipse 55px 25px at 40% 60%, rgba(90, 70, 40, 0.05) 0%, transparent 70%);
+				radial-gradient(ellipse 60px 40px at 8% 32%, rgba(100, 80, 50, 0.25) 0%, transparent 65%),
+				radial-gradient(ellipse 45px 70px at 30% 15%, rgba(90, 70, 40, 0.20) 0%, transparent 60%),
+				radial-gradient(ellipse 70px 45px at 52% 38%, rgba(100, 80, 50, 0.18) 0%, transparent 55%),
+				radial-gradient(ellipse 35px 55px at 76% 50%, rgba(90, 70, 40, 0.22) 0%, transparent 50%),
+				radial-gradient(ellipse 50px 30px at 90% 18%, rgba(100, 80, 50, 0.15) 0%, transparent 65%),
+				radial-gradient(ellipse 65px 50px at 15% 75%, rgba(90, 70, 40, 0.17) 0%, transparent 55%),
+				radial-gradient(ellipse 30px 45px at 62% 85%, rgba(100, 80, 50, 0.13) 0%, transparent 60%),
+				radial-gradient(ellipse 75px 35px at 38% 58%, rgba(90, 70, 40, 0.12) 0%, transparent 65%),
+				radial-gradient(ellipse 40px 60px at 48% 5%, rgba(85, 65, 35, 0.19) 0%, transparent 55%);
 			animation: bambooDrift2 25s ease-in-out infinite alternate-reverse;
 		}
+		/* Layer 3: Overall warm glow — sunlight atmosphere */
 		.bamboo-shadow-layer-3 {
 			background:
-				radial-gradient(ellipse at 20% 0%, rgba(255, 220, 150, 0.06) 0%, transparent 50%),
-				radial-gradient(ellipse at 80% 10%, rgba(255, 210, 140, 0.04) 0%, transparent 45%),
-				radial-gradient(ellipse at 50% 100%, rgba(255, 200, 120, 0.03) 0%, transparent 40%);
+				radial-gradient(ellipse at 15% 0%, rgba(255, 210, 130, 0.12) 0%, transparent 45%),
+				radial-gradient(ellipse at 75% 5%, rgba(255, 200, 120, 0.09) 0%, transparent 40%),
+				radial-gradient(ellipse at 45% 100%, rgba(255, 190, 100, 0.07) 0%, transparent 35%);
 			animation: bambooDrift3 30s ease-in-out infinite alternate;
 		}
 		@keyframes bambooDrift1 {
 			0%   { transform: translate(0, 0) scale(1); }
-			100% { transform: translate(8px, 5px) scale(1.02); }
+			100% { transform: translate(12px, 8px) scale(1.03); }
 		}
 		@keyframes bambooDrift2 {
 			0%   { transform: translate(0, 0) scale(1); }
-			100% { transform: translate(-6px, 4px) scale(1.01); }
+			100% { transform: translate(-10px, 6px) scale(1.02); }
 		}
 		@keyframes bambooDrift3 {
 			0%   { transform: translate(0, 0); opacity: 1; }
-			100% { transform: translate(3px, -3px); opacity: 0.8; }
+			100% { transform: translate(5px, -4px); opacity: 0.75; }
 		}
 
-		/* Rain Canvas — rainy only */
+		/* ═══ Rain Canvas — rainy only ═══ */
 		html[data-mood="rainy"] #rain-canvas {
 			opacity: 1;
 		}
 
-		/* Rain Fog — rainy only */
+		/* ═══ Rain Fog — rainy only ═══ */
 		html[data-mood="rainy"] .rain-fog-overlay {
 			opacity: 1;
 			transition: opacity 1s ease;
 			background:
-				radial-gradient(ellipse at 15% 75%, rgba(130, 150, 180, 0.14) 0%, transparent 55%),
-				radial-gradient(ellipse at 85% 65%, rgba(120, 140, 175, 0.11) 0%, transparent 50%),
-				radial-gradient(ellipse at 50% 95%, rgba(140, 160, 190, 0.18) 0%, transparent 40%),
-				linear-gradient(to bottom, transparent 50%, rgba(150, 170, 195, 0.08) 100%);
+				radial-gradient(ellipse at 15% 75%, rgba(100, 120, 150, 0.25) 0%, transparent 50%),
+				radial-gradient(ellipse at 85% 65%, rgba(90, 110, 145, 0.20) 0%, transparent 45%),
+				radial-gradient(ellipse at 50% 95%, rgba(110, 130, 165, 0.30) 0%, transparent 35%),
+				linear-gradient(to bottom, transparent 40%, rgba(130, 150, 180, 0.15) 100%);
 			animation: rainFogDrift 28s ease-in-out infinite alternate;
 		}
 		@keyframes rainFogDrift {
-			0%   { transform: translate(0, 0); }
-			100% { transform: translate(5px, -3px); }
+			0%   { transform: translate(-2%, 0); opacity: 0.7; }
+			100% { transform: translate(2%, -2px); opacity: 1; }
+		}
+
+		/* ═══ Rainy: override hardcoded light-theme elements ═══ */
+		html[data-mood="rainy"] .prose {
+			--tw-prose-body: #2d3748;
+			--tw-prose-bold: #1e2d42;
+			--tw-prose-bullets: #4a5d6e;
+			--tw-prose-code: #3b5275;
+			--tw-prose-headings: #1e2d42;
+			--tw-prose-links: #3b5275;
+		}
+		html[data-mood="rainy"] .card,
+		html[data-mood="rainy"] .gh-card,
+		html[data-mood="rainy"] [class*="card"] {
+			border-color: rgba(100, 120, 155, 0.25);
+		}
+		html[data-mood="rainy"] .nav-bar,
+		html[data-mood="rainy"] header {
+			border-color: rgba(100, 120, 155, 0.2);
 		}
 	</style>
 
@@ -513,14 +539,17 @@ const GA_ID = "G-1EC76EZ517";
 			function createDrops() {
 				drops = [];
 				const W = canvas.width, H = canvas.height;
-				for (let i = 0; i < 120; i++) {
-					drops.push({ x: Math.random() * W, y: Math.random() * H, len: Math.random() * 10 + 5, speed: Math.random() * 2 + 1.5, opacity: Math.random() * 0.08 + 0.04, wind: 0.4 + Math.random() * 0.3, width: 0.5 });
+				// Background: thin, slow
+				for (let i = 0; i < 180; i++) {
+					drops.push({ x: Math.random() * W, y: Math.random() * H, len: Math.random() * 12 + 6, speed: Math.random() * 2.5 + 2, opacity: Math.random() * 0.14 + 0.08, wind: 0.4 + Math.random() * 0.3, width: 0.6 });
 				}
-				for (let i = 0; i < 100; i++) {
-					drops.push({ x: Math.random() * W, y: Math.random() * H, len: Math.random() * 15 + 10, speed: Math.random() * 4 + 3, opacity: Math.random() * 0.12 + 0.08, wind: 0.8 + Math.random() * 0.4, width: 0.8 });
+				// Midground
+				for (let i = 0; i < 140; i++) {
+					drops.push({ x: Math.random() * W, y: Math.random() * H, len: Math.random() * 18 + 12, speed: Math.random() * 5 + 4, opacity: Math.random() * 0.20 + 0.14, wind: 0.8 + Math.random() * 0.5, width: 1.0 });
 				}
-				for (let i = 0; i < 60; i++) {
-					drops.push({ x: Math.random() * W, y: Math.random() * H, len: Math.random() * 22 + 14, speed: Math.random() * 6 + 5, opacity: Math.random() * 0.18 + 0.12, wind: 1.2 + Math.random() * 0.5, width: 1.2 });
+				// Foreground: thick, fast
+				for (let i = 0; i < 80; i++) {
+					drops.push({ x: Math.random() * W, y: Math.random() * H, len: Math.random() * 28 + 18, speed: Math.random() * 7 + 6, opacity: Math.random() * 0.28 + 0.18, wind: 1.2 + Math.random() * 0.6, width: 1.5 });
 				}
 			}
 
