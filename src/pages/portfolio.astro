@@ -584,8 +584,8 @@ const stages = [
 					<span class="lang-zh">加密雷达、市场温度与链上指标。</span>
 				</p>
 				<span class="section-summary">
-					<span class="lang-en">Composite {compositeScore ?? "—"}/100 · FGI {fgi?.value ?? "—"}</span>
-					<span class="lang-zh">综合 {compositeScore ?? "—"}/100 · FGI {fgi?.value ?? "—"}</span>
+					<span class="lang-en">Composite {(cryptoTS?.latest?.composite ?? (100 - (cryptoMonitor?.bottom_tracker?.score ?? 50))) ?? "—"}/100 · FGI {fgi?.value ?? "—"}</span>
+					<span class="lang-zh">综合 {(cryptoTS?.latest?.composite ?? (100 - (cryptoMonitor?.bottom_tracker?.score ?? 50))) ?? "—"}/100 · FGI {fgi?.value ?? "—"}</span>
 				</span>
 			</header>
 
