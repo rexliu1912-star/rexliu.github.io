@@ -168,8 +168,7 @@ function isDarkMode(): boolean {
 
 function isRainyMode(): boolean {
   if (typeof document === "undefined") return false;
-  const mood = document.documentElement.getAttribute("data-mood");
-  return mood === "rainy" || mood === "sunny";
+  return document.documentElement.getAttribute("data-mood") === "rainy";
 }
 
 function useTheme() {
