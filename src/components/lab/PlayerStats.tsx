@@ -367,9 +367,9 @@ const Section = memo(function Section({ dark, rainy, sunny, children, hero }: { 
   const reduced = usePrefersReducedMotion();
   const { ref, inView } = useInView<HTMLElement>(0.1, true);
   void hero;
-  const cardBg = rainy ? "linear-gradient(180deg, rgba(216,223,232,0.98), rgba(200,210,224,0.98))" : sunny ? "linear-gradient(180deg, rgba(255,253,240,0.98), rgba(250,245,220,0.98))" : (dark ? "rgba(21,21,21,0.98)" : "linear-gradient(180deg, rgba(255,255,255,0.96), rgba(248,242,255,0.96))");
-  const cardShadow = rainy ? "0 10px 20px rgba(45,55,72,0.12)" : sunny ? "0 10px 20px rgba(180,160,80,0.1)" : (dark ? "0 10px 24px rgba(0,0,0,0.18)" : "0 10px 20px rgba(137,83,209,0.08)");
-  const cardBorder = rainy ? "rgba(100,120,155,0.22)" : sunny ? "rgba(180,160,80,0.22)" : `rgba(137,83,209,${dark ? "0.22" : "0.14"})`;
+  const cardBg = rainy ? "#d8dfe8" : sunny ? "#fffaef" : (dark ? "#181818" : "linear-gradient(180deg, rgba(255,255,255,0.96), rgba(248,242,255,0.96))");
+  const cardShadow = rainy ? "0 1px 6px rgba(45,55,72,0.06)" : sunny ? "0 1px 6px rgba(0,0,0,0.04)" : (dark ? "0 2px 8px rgba(0,0,0,0.12)" : "0 10px 20px rgba(137,83,209,0.08)");
+  const cardBorder = rainy ? "rgba(100,120,155,0.22)" : sunny ? "rgba(137,83,209,0.14)" : `rgba(137,83,209,${dark ? "0.22" : "0.14"})`;
   const style: CSSProperties = {
     width: "100%", maxWidth: 1200, margin: "0 auto",
     border: `1px solid ${cardBorder}`,
