@@ -62,12 +62,31 @@
 	// initial setup
 	setTheme(getUserPref());
 
+	// Control bamboo video playback based on mood
+	function syncBambooVideo() {
+		const video = document.querySelector('.bamboo-video');
+		if (!video) return;
+		const mood = document.documentElement.getAttribute('data-mood');
+		if (mood === 'sunny') {
+			video.play().catch(() => {});
+		} else {
+			video.pause();
+		}
+	}
+
+	// Run after initial theme + on every swap
+	syncBambooVideo();
+
 	// View Transitions hook to restore theme
-	document.addEventListener("astro:after-swap", () => setTheme(getUserPref()));
+	document.addEventListener("astro:after-swap", () => {
+		setTheme(getUserPref());
+		syncBambooVideo();
+	});
 
 	// listen for theme-change custom event, fired in ThemeToggle.astro
 	document.addEventListener("theme-change", (e) => {
 		setTheme(e.detail.theme);
+		syncBambooVideo();
 	});
 
 	// listen for prefers-color-scheme change → reset to day/night
