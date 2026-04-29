@@ -1099,7 +1099,7 @@ const stages = [
 									</>
 								))}
 								{buckets.map((b: any) => {
-									const key = idToKey[b.id];
+									const key = idToKey[b.id as string];
 									if (!key) return null;
 									const linePts = ah.map((h: any, i: number) => {
 										const v = h.buckets?.[key] ?? 0;
@@ -1139,7 +1139,6 @@ const stages = [
 			</div>
 		)}
 		</section>
-		</section></section>
 
 
 		<section class="portfolio-section fade-in-up" data-collapse id="positions-section">
