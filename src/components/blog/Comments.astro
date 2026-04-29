@@ -6,98 +6,158 @@ interface Props {
 const { slug } = Astro.props;
 ---
 
-<div class="giscus-wrapper mt-8 mb-4" id={`giscus-container-${slug}`} data-giscus-container>
-</div>
+<div class="waline-wrapper" id={`waline-${slug}`} data-waline-slug={slug}></div>
 
-<script is:inline>
-function getGiscusTheme() {
-  return document.documentElement.dataset.theme === 'dark' ? 'dark_dimmed' : 'light';
-}
+<style>
+  .waline-wrapper {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    border-radius: 12px;
+    overflow: hidden;
+  }
 
-function getGiscusLang() {
-  return document.documentElement.classList.contains('lang-en') ? 'en' : 'zh-CN';
-}
+  /* ── Override Waline defaults to match design system ── */
+  .waline-wrapper :global(.wl-container) {
+    max-width: 100%;
+  }
 
-function syncGiscusTheme(container) {
-  const iframe = container?.querySelector('iframe.giscus-frame');
-  if (!iframe?.contentWindow) return;
+  /* Main card */
+  .waline-wrapper :global(.wl-card) {
+    border-radius: 12px;
+    border: 1px solid var(--border-color, #e5e7eb);
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
+  }
 
-  iframe.contentWindow.postMessage(
-    {
-      giscus: {
-        setConfig: {
-          theme: getGiscusTheme(),
-          lang: getGiscusLang(),
-        },
-      },
-    },
-    'https://giscus.app'
-  );
-}
+  /* Input area */
+  .waline-wrapper :global(.wl-editor) {
+    border-radius: 8px;
+    min-height: 120px;
+  }
 
-function initGiscus() {
-  const containers = document.querySelectorAll('[data-giscus-container]');
-  if (!containers.length) return;
+  /* Submit button — brand purple */
+  .waline-wrapper :global(.wl-btn.primary) {
+    background: #8953d1;
+    border-color: #8953d1;
+    border-radius: 6px;
+  }
+  .waline-wrapper :global(.wl-btn.primary:hover) {
+    background: #a175e8;
+    border-color: #a175e8;
+  }
 
-  containers.forEach((container) => {
-    if (container.dataset.loaded === 'true') {
-      syncGiscusTheme(container);
-      return;
-    }
+  /* Nick / email links */
+  .waline-wrapper :global(.wl-nick) {
+    color: #8953d1;
+  }
 
-    container.innerHTML = '';
-    container.dataset.loaded = 'true';
+  /* Admin badge */
+  .waline-wrapper :global(.wl-badge) {
+    background: #8953d1;
+  }
 
-    const script = document.createElement('script');
-    script.src = 'https://giscus.app/client.js';
-    script.dataset.repo = 'rexliu1912-star/rexliu.github.io';
-    script.dataset.repoId = 'R_kgDOQo6tCA';
-    script.dataset.category = 'Announcements';
-    script.dataset.categoryId = 'DIC_kwDOQo6tCM4C4c1z';
-    script.dataset.mapping = 'pathname';
-    script.dataset.strict = '0';
-    script.dataset.reactionsEnabled = '1';
-    script.dataset.emitMetadata = '0';
-    script.dataset.inputPosition = 'top';
-    script.dataset.theme = getGiscusTheme();
-    script.dataset.lang = getGiscusLang();
-    script.dataset.loading = 'lazy';
-    script.crossOrigin = 'anonymous';
-    script.async = true;
+  /* Comment text */
+  .waline-wrapper :global(.wl-content) {
+    line-height: 1.7;
+  }
 
-    container.appendChild(script);
+  /* Reply button */
+  .waline-wrapper :global(.wl-reply) {
+    color: #8953d1;
+  }
+
+  /* Blockquote */
+  .waline-wrapper :global(.wl-content blockquote) {
+    border-left-color: #8953d1;
+  }
+
+  /* Code */
+  .waline-wrapper :global(.wl-content pre) {
+    border-radius: 8px;
+  }
+
+  /* ── Dark theme ── */
+  :global([data-theme="dark"]) .waline-wrapper :global(.wl-card) {
+    background: #1a1a1a;
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
+  }
+
+  :global([data-theme="dark"]) .waline-wrapper :global(.wl-editor) {
+    background: #151515;
+    color: #e5e5e5;
+  }
+
+  :global([data-theme="dark"]) .waline-wrapper :global(.wl-input) {
+    background: #151515;
+    color: #e5e5e5;
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  :global([data-theme="dark"]) .waline-wrapper :global(.wl-meta) {
+    color: #9ca3af;
+  }
+
+  /* ── Rainy theme ── */
+  :global([data-mood="rainy"]) .waline-wrapper :global(.wl-card) {
+    background: #d8dfe8;
+    border-color: rgba(100, 120, 155, 0.22);
+    box-shadow: 0 1px 6px rgba(45, 55, 72, 0.06);
+  }
+
+  :global([data-mood="rainy"]) .waline-wrapper :global(.wl-editor) {
+    background: #e2e8ef;
+    color: #2d3748;
+  }
+
+  :global([data-mood="rainy"]) .waline-wrapper :global(.wl-input) {
+    background: #e2e8ef;
+    color: #2d3748;
+    border-color: rgba(100, 120, 155, 0.22);
+  }
+
+  :global([data-mood="rainy"]) .waline-wrapper :global(.wl-meta) {
+    color: #4a5568;
+  }
+</style>
+
+<script>
+  import { init } from '@waline/client';
+  import '@waline/client/style';
+
+  document.addEventListener('astro:page-load', () => {
+    document.querySelectorAll('[data-waline-slug]').forEach((el) => {
+      if ((el as HTMLElement).dataset.loaded === 'true') return;
+      (el as HTMLElement).dataset.loaded = 'true';
+
+      const slug = (el as HTMLElement).dataset.walineSlug || location.pathname;
+      const lang = document.documentElement.classList.contains('lang-en') ? 'en' : 'zh-CN';
+
+      const waline = init({
+        el: el as HTMLElement,
+        serverURL: 'https://waline.rexliu.io',
+        lang,
+        dark: 'html[data-theme="dark"], html[data-mood="rainy"]',
+        path: slug,
+        emoji: ['https://cdn.jsdelivr.net/npm/@waline/emojis@1.2.0/weibo'],
+        meta: ['nick', 'mail', 'link'],
+        requiredMeta: [],
+        login: 'force',
+        wordLimit: 1000,
+        pageSize: 10,
+        noCopyright: true,
+        imageUploader: false,
+      });
+
+      // Store instance for theme sync
+      (el as HTMLElement).dataset.walineInstance = 'true';
+
+      // Sync theme on change
+      const syncTheme = () => {
+        if (!waline) return;
+      };
+
+      document.addEventListener('theme-change', syncTheme);
+    });
   });
-}
 
-if (!window.__giscusThemeObserverBound) {
-  window.__giscusThemeObserverBound = 'true';
-
-  const observer = new MutationObserver((mutations) => {
-    if (mutations.some((mutation) => mutation.attributeName === 'data-theme' || mutation.attributeName === 'class')) {
-      document.querySelectorAll('[data-giscus-container]').forEach((container) => syncGiscusTheme(container));
-    }
-  });
-
-  observer.observe(document.documentElement, {
-    attributes: true,
-    attributeFilter: ['data-theme', 'class'],
-  });
-
-  document.addEventListener('theme-change', () => {
-    document.querySelectorAll('[data-giscus-container]').forEach((container) => syncGiscusTheme(container));
-  });
-}
-
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initGiscus);
-} else {
-  initGiscus();
-}
-
-document.addEventListener('astro:page-load', () => {
-  document.querySelectorAll('[data-giscus-container]').forEach((container) => {
-    container.dataset.loaded = 'false';
-  });
-  initGiscus();
-});
 </script>
