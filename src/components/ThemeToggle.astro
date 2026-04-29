@@ -1,110 +1,151 @@
 <theme-toggle class="ms-0">
-	<button class="relative h-9 w-9 cursor-pointer rounded-md p-2 transition-colors hover:text-[#8953d1] dark:hover:text-[#a175e8]" type="button">
-		<span class="sr-only">Dark Theme</span>
-		<svg
-			aria-hidden="true"
-			class="absolute start-1/2 top-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2 scale-100 opacity-100 transition-all dark:scale-0 dark:opacity-0"
-			fill="none"
-			focusable="false"
-			id="sun-svg"
-			stroke-width="1.5"
-			viewBox="0 0 24 24"
-			xmlns="http://www.w3.org/2000/svg"
-		>
-			<path
-				d="M12 18C15.3137 18 18 15.3137 18 12C18 8.68629 15.3137 6 12 6C8.68629 6 6 8.68629 6 12C6 15.3137 8.68629 18 12 18Z"
-				stroke="currentColor"
-				stroke-linecap="round"
-				stroke-linejoin="round"></path>
-			<path d="M22 12L23 12" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-			></path>
-			<path d="M12 2V1" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"></path>
-			<path d="M12 23V22" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-			></path>
-			<path d="M20 20L19 19" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-			></path>
-			<path d="M20 4L19 5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-			></path>
-			<path d="M4 20L5 19" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-			></path>
-			<path d="M4 4L5 5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-			></path>
-			<path d="M1 12L2 12" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-			></path>
+	<button
+		class="relative h-9 w-9 cursor-pointer rounded-md p-2 transition-colors hover:text-[#8953d1]"
+		type="button"
+		aria-label="Cycle theme"
+	>
+		<span class="sr-only">Cycle Theme</span>
+
+		<!-- Day: plain sun -->
+		<svg class="theme-icon theme-icon-day" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+			<circle cx="12" cy="12" r="5" />
+			<line x1="12" y1="1" x2="12" y2="3" />
+			<line x1="12" y1="21" x2="12" y2="23" />
+			<line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+			<line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+			<line x1="1" y1="12" x2="3" y2="12" />
+			<line x1="21" y1="12" x2="23" y2="12" />
+			<line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+			<line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
 		</svg>
-		<svg
-			aria-hidden="true"
-			class="absolute start-1/2 top-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2 scale-0 opacity-0 transition-all dark:scale-100 dark:opacity-100"
-			fill="none"
-			focusable="false"
-			id="moon-svg"
-			stroke="currentColor"
-			stroke-width="1.5"
-			viewBox="0 0 24 24"
-			xmlns="http://www.w3.org/2000/svg"
-		>
-			<path d="M0 0h24v24H0z" fill="none" stroke="none"></path>
-			<path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z"
-			></path>
-			<path d="M17 4a2 2 0 0 0 2 2a2 2 0 0 0 -2 2a2 2 0 0 0 -2 -2a2 2 0 0 0 2 -2"></path>
-			<path d="M19 11h2m-1 -1v2"></path>
+
+		<!-- Sunny: sun + bamboo leaf -->
+		<svg class="theme-icon theme-icon-sunny" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+			<circle cx="11" cy="10" r="4.5" />
+			<line x1="11" y1="1.5" x2="11" y2="3" />
+			<line x1="11" y1="17" x2="11" y2="18.5" />
+			<line x1="4.8" y1="3.8" x2="5.9" y2="4.9" />
+			<line x1="16.1" y1="15.1" x2="17.2" y2="16.2" />
+			<line x1="2.5" y1="10" x2="4" y2="10" />
+			<line x1="18" y1="10" x2="19.5" y2="10" />
+			<line x1="4.8" y1="16.2" x2="5.9" y2="15.1" />
+			<line x1="16.1" y1="4.9" x2="17.2" y2="3.8" />
+			<!-- bamboo leaf accent -->
+			<path d="M17 19c1.2-1.5 2.8-2.5 4.5-3-1.3 1.5-2.5 2.8-4.5 3z" fill="currentColor" stroke="none" opacity="0.6" />
+			<path d="M16.8 20.5c-0.8-1.2-0.6-3 0.2-4.5 0.2 1.5-0.1 3-0.2 4.5z" fill="currentColor" stroke="none" opacity="0.4" />
+		</svg>
+
+		<!-- Rainy: cloud + rain -->
+		<svg class="theme-icon theme-icon-rainy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+			<path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242" />
+			<path d="M8 14v6" />
+			<path d="M12 16v6" />
+			<path d="M16 14v6" />
+		</svg>
+
+		<!-- Night: moon + stars -->
+		<svg class="theme-icon theme-icon-night" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+			<path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+			<path d="M17 4a2 2 0 0 0 2 2a2 2 0 0 0 -2 2a2 2 0 0 0 -2 -2a2 2 0 0 0 2 -2" />
+			<path d="M19 11h2m-1 -1v2" />
 		</svg>
 	</button>
 </theme-toggle>
 
+<style>
+	theme-toggle .theme-icon {
+		position: absolute;
+		inset: 0;
+		margin: auto;
+		width: 1.25rem;
+		height: 1.25rem;
+		opacity: 0;
+		transform: scale(0.5) rotate(-90deg);
+		transition: opacity 0.3s ease, transform 0.3s ease;
+		pointer-events: none;
+	}
+	theme-toggle .theme-icon.active {
+		opacity: 1;
+		transform: scale(1) rotate(0deg);
+		pointer-events: auto;
+	}
+</style>
+
 <script>
-	// Note that if you fire the theme-change event outside of this component, it will not be reflected in the button's aria-checked attribute. You will need to add an event listener if you want that.
-	import { rootInDarkMode } from "@/utils/domElement";
+	const MOOD_THEMES = ["day", "sunny", "rainy", "night"];
+
+	function getCurrentMood() {
+		const theme = document.documentElement.getAttribute("data-theme");
+		const mood = document.documentElement.getAttribute("data-mood");
+		if (theme === "dark") return "night";
+		if (mood === "sunny") return "sunny";
+		if (mood === "rainy") return "rainy";
+		return "day";
+	}
 
 	class ThemeToggle extends HTMLElement {
 		constructor() {
 			super();
 			const button = this.querySelector<HTMLButtonElement>("button");
-
-			if (button) {
-				// set aria role value
-				button.setAttribute("role", "switch");
-				button.setAttribute("aria-checked", String(rootInDarkMode()));
-
-				// button event
-				button.addEventListener("click", (e) => {
-					const newTheme = rootInDarkMode() ? "light" : "dark";
-					const themeChangeEvent = new CustomEvent("theme-change", {
-						detail: { theme: newTheme },
-					});
-
-					// Use View Transitions API for circular reveal if supported
-					if (
-						typeof document.startViewTransition === "function" &&
-						!window.matchMedia("(prefers-reduced-motion: reduce)").matches
-					) {
-						const x = e.clientX;
-						const y = e.clientY;
-						const endRadius = Math.hypot(
-							Math.max(x, window.innerWidth - x),
-							Math.max(y, window.innerHeight - y),
-						);
-						const transition = document.startViewTransition(() => {
-							document.dispatchEvent(themeChangeEvent);
-							button.setAttribute("aria-checked", String(rootInDarkMode()));
-						});
-						transition.ready.then(() => {
-							document.documentElement.animate(
-								{ clipPath: [
-									`circle(0px at ${x}px ${y}px)`,
-									`circle(${endRadius}px at ${x}px ${y}px)`,
-								] },
-								{ duration: 400, easing: "ease-out", pseudoElement: "::view-transition-new(root)" },
-							);
-						}).catch(() => {});
-					} else {
-						document.dispatchEvent(themeChangeEvent);
-						button.setAttribute("aria-checked", String(rootInDarkMode()));
-					}
-				});
-			} else {
+			if (!button) {
 				console.warn("Theme Toggle: No button found");
+				return;
 			}
+
+			this.updateIcons();
+
+			button.addEventListener("click", (e) => {
+				const current = getCurrentMood();
+				const idx = MOOD_THEMES.indexOf(current);
+				const next = MOOD_THEMES[(idx + 1) % MOOD_THEMES.length];
+
+				const themeChangeEvent = new CustomEvent("theme-change", {
+					detail: { theme: next },
+				});
+
+				if (
+					typeof document.startViewTransition === "function" &&
+					!window.matchMedia("(prefers-reduced-motion: reduce)").matches
+				) {
+					const x = e.clientX;
+					const y = e.clientY;
+					const endRadius = Math.hypot(
+						Math.max(x, window.innerWidth - x),
+						Math.max(y, window.innerHeight - y),
+					);
+					const transition = document.startViewTransition(() => {
+						document.dispatchEvent(themeChangeEvent);
+						this.updateIcons();
+					});
+					transition.ready
+						.then(() => {
+							document.documentElement.animate(
+								{
+									clipPath: [
+										`circle(0px at ${x}px ${y}px)`,
+										`circle(${endRadius}px at ${x}px ${y}px)`,
+									],
+								},
+								{
+									duration: 400,
+									easing: "ease-out",
+									pseudoElement: "::view-transition-new(root)",
+								},
+							);
+						})
+						.catch(() => {});
+				} else {
+					document.dispatchEvent(themeChangeEvent);
+					this.updateIcons();
+				}
+			});
+		}
+
+		updateIcons() {
+			const current = getCurrentMood();
+			this.querySelectorAll<SVGElement>(".theme-icon").forEach((icon) => {
+				icon.classList.toggle("active", icon.classList.contains(`theme-icon-${current}`));
+			});
 		}
 	}
 

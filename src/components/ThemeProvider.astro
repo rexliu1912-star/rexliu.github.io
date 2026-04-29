@@ -1,27 +1,58 @@
 {/* Inlined to avoid FOUC. This is a parser blocking script. */}
 <script is:inline>
-	const lightModePref = window.matchMedia("(prefers-color-scheme: light)");
+	const VALID_MOODS = ["day", "sunny", "rainy", "night"];
+	const MOOD_TO_BASE = {
+		day: "light",
+		sunny: "light",
+		rainy: "light",
+		night: "dark",
+		light: "light",
+		dark: "dark",
+	};
+	const MOOD_TO_ATTR = {
+		day: "",
+		sunny: "sunny",
+		rainy: "rainy",
+		night: "",
+		light: "",
+		dark: "",
+	};
 
 	function getUserPref() {
-		const storedTheme = typeof localStorage !== "undefined" && localStorage.getItem("theme");
-		return storedTheme || (lightModePref.matches ? "light" : "dark");
+		if (typeof localStorage === "undefined") {
+			return window.matchMedia("(prefers-color-scheme: light)").matches ? "day" : "night";
+		}
+		const stored = localStorage.getItem("theme");
+		if (stored === "light") return "day";
+		if (stored === "dark") return "night";
+		if (VALID_MOODS.includes(stored)) return stored;
+		return window.matchMedia("(prefers-color-scheme: light)").matches ? "day" : "night";
 	}
 
 	function setTheme(newTheme) {
-		if (newTheme !== "light" && newTheme !== "dark") {
+		const base = MOOD_TO_BASE[newTheme];
+		if (!base) {
 			return console.warn(
-				`Invalid theme value '${newTheme}' received. Expected 'light' or 'dark'.`,
+				`Invalid theme '${newTheme}'. Expected one of: day, sunny, rainy, night.`,
 			);
 		}
-
+		const mood = MOOD_TO_ATTR[newTheme] || "";
 		const root = document.documentElement;
 
-		// root already set to newTheme, exit early
-		if (newTheme === root.getAttribute("data-theme")) {
-			return;
-		}
+		// Normalize legacy values
+		if (newTheme === "light") newTheme = "day";
+		if (newTheme === "dark") newTheme = "night";
 
-		root.setAttribute("data-theme", newTheme);
+		const curBase = root.getAttribute("data-theme");
+		const curMood = root.getAttribute("data-mood") || "";
+		if (base === curBase && mood === curMood) return;
+
+		root.setAttribute("data-theme", base);
+		if (mood) {
+			root.setAttribute("data-mood", mood);
+		} else {
+			root.removeAttribute("data-mood");
+		}
 
 		if (typeof localStorage !== "undefined") {
 			localStorage.setItem("theme", newTheme);
@@ -34,11 +65,12 @@
 	// View Transitions hook to restore theme
 	document.addEventListener("astro:after-swap", () => setTheme(getUserPref()));
 
-	// listen for theme-change custom event, fired in src/components/ThemeToggle.astro
+	// listen for theme-change custom event, fired in ThemeToggle.astro
 	document.addEventListener("theme-change", (e) => {
 		setTheme(e.detail.theme);
 	});
 
-	// listen for prefers-color-scheme change.
-	lightModePref.addEventListener("change", (e) => setTheme(e.matches ? "light" : "dark"));
+	// listen for prefers-color-scheme change → reset to day/night
+	const lightModePref = window.matchMedia("(prefers-color-scheme: light)");
+	lightModePref.addEventListener("change", (e) => setTheme(e.matches ? "day" : "night"));
 </script>
