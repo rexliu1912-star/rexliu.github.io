@@ -123,7 +123,7 @@ const {
 const fgi = cryptoMonitor?.macro?.fear_greed;
 
 // Derived: BTC ETF daily flow
-const etfData = (cryptoMonitor as any)?.etf;
+
 
 // Derived: Crypto timeseries for master chart
 const cryptoTS = (portfolioData as any)?.crypto_timeseries;
@@ -443,21 +443,6 @@ const stages = [
 				</article>
 			</div>
 
-			{/* Action Signals bar */}
-		{cryptoMonitor?.action_signals?.length > 0 && (
-			<div class="action-signals-bar">
-				<span class="action-signals-icon">⚡</span>
-				<div class="action-signals-list">
-					{cryptoMonitor.action_signals.map((sig: any) => (
-						<span class={`action-signal-chip priority-${sig.priority ?? 2}`}>
-							{sig.detail}
-						</span>
-					))}
-				</div>
-				{/* Micro badges moved to Crypto Dashboard — no duplication */}
-			</div>
-		)}
-
 		<p class="portfolio-updated">
 				<span class="lang-en">Last updated: {updatedLabel}</span>
 				<span class="lang-zh">最后更新: {updatedLabel}</span>
@@ -699,11 +684,22 @@ const stages = [
 								{indicators.map((ind: any) => {
 									const stColor = ind.status === "green" ? "#10b981" : ind.status === "red" ? "#ef4444" : "#f59e0b";
 									const d = ind.delta ?? ind.score_change;
+									// Extract change value from detail text for visual emphasis
+									const chgMatch = (ind.detail || "").match(/变化[:：]?\s*(-?\d+\.?\d*)/);
+									const chgVal = chgMatch ? parseFloat(chgMatch[1]) : null;
+									const chgColor = chgVal === null ? "var(--p-text-faint)" : chgVal > 0 ? "#10b981" : chgVal < 0 ? "#ef4444" : "var(--p-text-faint)";
 									return (
 										<div class="crypto-ind-row" title={ind.desc_en || ind.desc_zh || ""}>
 											<span class="crypto-ind-name"><span class="lang-en">{ind.name_en || ind.name}</span><span class="lang-zh">{ind.name_zh || ind.name}</span></span>
 											<span class="crypto-ind-dot" style={`background:${stColor}`} />
-											<span class="crypto-ind-detail">{ind.detail || "—"}</span>
+											<span class="crypto-ind-detail">
+												{ind.detail || "—"}
+												{chgVal !== null && (
+													<span class="crypto-ind-chg-badge" style={`color:${chgColor};background:${chgVal > 0 ? "rgba(16,185,129,.12)" : chgVal < 0 ? "rgba(239,68,68,.12)" : "rgba(107,114,128,.12)"}`}>
+														{chgVal > 0 ? "↑" : chgVal < 0 ? "↓" : "→"}{Math.abs(chgVal)}
+													</span>
+												)}
+											</span>
 											{d != null ? (
 												<span class={`crypto-ind-delta ${d > 0 ? "up" : d < 0 ? "down" : "flat"}`}>
 													{d > 0 ? "↑" : d < 0 ? "↓" : "·"} {Math.abs(d)}
@@ -787,7 +783,7 @@ const stages = [
 						})()}
 					</div>
 
-						{/* Side cards: DCA Gate + ETF Flow */}
+						{/* Side cards: DCA Gate */ }
 					<div class="crypto-side-cards">
 						<div class="crypto-dash-card crypto-side-card">
 							<p class="crypto-dash-card-title"><span class="lang-en">DCA Gate</span><span class="lang-zh">定投闸门</span></p>
@@ -800,25 +796,6 @@ const stages = [
 									<span class={`dca-cond ${c.met ? "met" : "miss"}`}>{c.met ? "✓" : "·"} {c.detail || c.id}</span>
 								))}
 							</div>
-						</div>
-
-						<div class="crypto-dash-card crypto-side-card">
-							<p class="crypto-dash-card-title"><span class="lang-en">BTC ETF Flow</span><span class="lang-zh">BTC ETF 资金流</span></p>
-							{etfData?.btc_etf_net_flow_m != null ? (() => {
-								const flow = etfData.btc_etf_net_flow_m;
-								const fc = flow > 0 ? "#10b981" : flow < 0 ? "#ef4444" : "#6b7280";
-								return <span style={`color:${fc};font-size:1.25rem;font-weight:700`}>{flow > 0 ? "+" : ""}{flow}M <span class="lang-en">net daily</span><span class="lang-zh">每日净流入</span></span>;
-							})() : <span style="opacity:.5">N/A</span>}
-							{(etfData?.etfs ?? []).length > 0 && (
-								<div class="etf-fund-list">
-									{etfData.etfs.slice(0, 3).map((e: any) => (
-										<div class="etf-fund-row">
-											<span>{e.ticker}</span>
-											<span class={`etf-flow ${e.volume_usd_m > 0 ? "pos" : ""}`}>Vol {e.volume_usd_m}M</span>
-										</div>
-									))}
-								</div>
-							)}
 						</div>
 					</div>
 				</div>
@@ -4903,7 +4880,8 @@ const stages = [
 	[data-theme="light"] .crypto-ind-header span { border-bottom-color:rgba(0,0,0,0.06); }
 	.crypto-ind-name { font-size:.82rem; padding:.35rem 0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 	.crypto-ind-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
-	.crypto-ind-detail { font-size:.78rem; opacity:.65; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+	.crypto-ind-detail { font-size:.78rem; opacity:.65; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:flex; align-items:center; gap:.35rem; }
+	.crypto-ind-chg-badge { font-size:.7rem; font-weight:600; padding:.1rem .35rem; border-radius:.3rem; white-space:nowrap; flex-shrink:0; }
 	.crypto-ind-delta-head { text-align:right; }
 	.crypto-ind-delta { font-size:.75rem; font-weight:600; text-align:right; white-space:nowrap; }
 	.crypto-ind-delta.up { color:#10b981; }
