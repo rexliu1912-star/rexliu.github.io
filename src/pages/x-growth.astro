@@ -393,6 +393,11 @@ const meta = {
       const t = (path) => path.split('.').reduce((acc, key) => acc?.[key], copy[currentLang]);
       const formatNumber = (value) => new Intl.NumberFormat(currentLang === 'zh' ? 'zh-CN' : 'en-US').format(Math.round(value || 0));
       const formatCompact = (value) => new Intl.NumberFormat(currentLang === 'zh' ? 'zh-CN' : 'en-US', { notation: 'compact', maximumFractionDigits: 1 }).format(value || 0);
+      const isRainy = () => document.documentElement.dataset.mood === 'rainy';
+      const cv = (darkVal, rainyVal, lightVal) => {
+        if (document.documentElement.dataset.theme === 'dark') return darkVal;
+        return isRainy() ? rainyVal : lightVal;
+      };
       const formatShortNumber = (value) => {
         const numericValue = Number(value) || 0;
         const absoluteValue = Math.abs(numericValue);
@@ -419,10 +424,10 @@ const meta = {
       };
       const chartAnimation = prefersReducedMotion ? false : { duration: 1200, easing: 'easeOutQuart' };
       const tooltipBase = () => ({
-        backgroundColor: document.documentElement.dataset.theme === 'dark' ? 'rgba(17, 17, 17, 0.94)' : 'rgba(255, 248, 240, 0.96)',
-        titleColor: document.documentElement.dataset.theme === 'dark' ? '#f5f3ed' : '#171717',
-        bodyColor: document.documentElement.dataset.theme === 'dark' ? '#e7ddf6' : '#4b5563',
-        borderColor: document.documentElement.dataset.theme === 'dark' ? 'rgba(231, 221, 246, 0.16)' : 'rgba(137, 83, 209, 0.14)',
+        backgroundColor: cv('rgba(17, 17, 17, 0.94)', 'rgba(226, 232, 239, 0.96)', 'rgba(255, 248, 240, 0.96)'),
+        titleColor: cv('#f5f3ed', '#2d3748', '#171717'),
+        bodyColor: cv('#e7ddf6', '#5a6b7e', '#4b5563'),
+        borderColor: cv('rgba(231, 221, 246, 0.16)', 'rgba(100, 120, 155, 0.18)', 'rgba(137, 83, 209, 0.14)'),
         borderWidth: 1,
         padding: 12,
         cornerRadius: 16,
@@ -477,8 +482,8 @@ const meta = {
         return best;
       }, null);
       const chartTheme = () => ({
-        tick: document.documentElement.dataset.theme === 'dark' ? '#8f8b96' : '#8a7d8f',
-        label: document.documentElement.dataset.theme === 'dark' ? '#e7ddf6' : '#5b5563',
+        tick: cv('#8f8b96', '#7a8a9c', '#8a7d8f'),
+        label: cv('#e7ddf6', '#5a6b7e', '#5b5563'),
         grid: 'rgba(137, 83, 209, 0.1)'
       });
       function createAreaChart(instance, canvas, labels, values, tooltipLabel, tooltipFormatter = formatNumber) {
@@ -820,7 +825,7 @@ const meta = {
               r: {
                 angleLines: { color: 'rgba(137, 83, 209, 0.12)' },
                 grid: { color: 'rgba(137, 83, 209, 0.12)' },
-                pointLabels: { color: document.documentElement.dataset.theme === 'dark' ? '#e7ddf6' : '#5b5563', font: { family: 'Georgia, serif', size: 12 } },
+                pointLabels: { color: cv('#e7ddf6', '#5a6b7e', '#5b5563'), font: { family: 'Georgia, serif', size: 12 } },
                 ticks: { display: false },
                 suggestedMin: 0
               }
@@ -884,7 +889,7 @@ const meta = {
                 ctx.closePath();
                 ctx.fill();
                 ctx.stroke();
-                ctx.fillStyle = document.documentElement.dataset.theme === 'dark' ? '#e7ddf6' : '#6b6574';
+                ctx.fillStyle = cv('#e7ddf6', '#5a6b7e', '#6b6574');
                 ctx.fillText(text, boxX + 8, boxY + 18);
               }
             });
@@ -961,12 +966,12 @@ const meta = {
             scales: {
               x: {
                 grid: { display: false },
-                ticks: { maxTicksLimit: 6, color: document.documentElement.dataset.theme === 'dark' ? '#8f8b96' : '#8a7d8f' }
+                ticks: { maxTicksLimit: 6, color: cv('#8f8b96', '#7a8a9c', '#8a7d8f') }
               },
               y: {
                 grid: { color: 'rgba(137, 83, 209, 0.1)' },
                 ticks: {
-                  color: document.documentElement.dataset.theme === 'dark' ? '#8f8b96' : '#8a7d8f',
+                  color: cv('#8f8b96', '#7a8a9c', '#8a7d8f'),
                   callback: (value) => formatCompact(value)
                 }
               }
@@ -1040,12 +1045,12 @@ const meta = {
             scales: {
               x: {
                 grid: { display: false },
-                ticks: { maxTicksLimit: 13, color: document.documentElement.dataset.theme === 'dark' ? '#8f8b96' : '#8a7d8f' }
+                ticks: { maxTicksLimit: 13, color: cv('#8f8b96', '#7a8a9c', '#8a7d8f') }
               },
               y: {
                 grid: { color: 'rgba(137, 83, 209, 0.1)' },
                 ticks: {
-                  color: document.documentElement.dataset.theme === 'dark' ? '#8f8b96' : '#8a7d8f',
+                  color: cv('#8f8b96', '#7a8a9c', '#8a7d8f'),
                   callback: (value) => formatShortNumber(value)
                 }
               }
