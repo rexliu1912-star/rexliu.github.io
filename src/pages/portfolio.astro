@@ -783,22 +783,7 @@ const stages = [
 						})()}
 					</div>
 
-						{/* Side cards: DCA Gate */ }
-					<div class="crypto-side-cards">
-						<div class="crypto-dash-card crypto-side-card">
-							<p class="crypto-dash-card-title"><span class="lang-en">DCA Gate</span><span class="lang-zh">定投闸门</span></p>
-							<div class={`dca-status-badge ${cryptoMonitor.dca?.status === "open" ? "open" : "closed"}`}>
-								{cryptoMonitor.dca?.status === "open" ? "🟢 OPEN" : "🛑 CLOSED"}
-							</div>
-							<p class="dca-reason">{cryptoMonitor.dca?.reason ?? ""}</p>
-							<div class="dca-conditions">
-								{(cryptoMonitor.dca?.conditions ?? []).map((c: any) => (
-									<span class={`dca-cond ${c.met ? "met" : "miss"}`}>{c.met ? "✓" : "·"} {c.detail || c.id}</span>
-								))}
-							</div>
-						</div>
-					</div>
-				</div>
+</div>
 			</div>
 		)}
 		</section>
@@ -4896,15 +4881,11 @@ const stages = [
 	.crypto-chart-empty { opacity:.45; font-size:.82rem; padding:.5rem 0; }
 
 	/* Side cards */
-	.crypto-side-cards { display:flex; flex-direction:column; gap:.75rem; }
-	.crypto-side-card { flex:1; }
-	.dca-reason { opacity:.55; font-size:.8rem; margin-top:.3rem; }
+
 
 	/* Responsive */
 	@media (max-width:768px) {
 		.crypto-chart-row { grid-template-columns:1fr; }
-		.crypto-side-cards { flex-direction:row; }
-		.crypto-side-card { flex:1; }
 		.crypto-ind-table { grid-template-columns:1.3fr auto 1.5fr auto; gap:0 .5rem; }
 	}
 	@media (max-width:480px) {
@@ -4913,7 +4894,6 @@ const stages = [
 		.crypto-ind-header .crypto-ind-delta-head,
 		.crypto-ind-row .crypto-ind-detail,
 		.crypto-ind-row .crypto-ind-delta { display:none; }
-		.crypto-side-cards { flex-direction:column; }
 	}
 	.radar-score { margin-bottom:.5rem; }
 	.radar-svg { width:100%; max-width:220px; }
@@ -4923,17 +4903,7 @@ const stages = [
 	.radar-legend-item.warn { color:#fbbf24; background:rgba(245,158,11,.1); }
 	.radar-legend-item.ok { color:#6ee7b7; background:rgba(16,185,129,.1); }
 	.fgi-sparkline { width:100%; max-width:120px; margin-top:.3rem; }
-	.dca-status-badge { font-size:1.1rem; font-weight:700; }
-	.dca-status-badge.open { color:#10b981; }
-	.dca-status-badge.closed { color:#ef4444; }
-	.dca-conditions { display:flex; flex-wrap:wrap; gap:.3rem; margin-top:.5rem; }
-	.dca-cond { font-size:.7rem; padding:.15rem .35rem; border-radius:.25rem; background:rgba(255,255,255,.05); }
-	.dca-cond.met { color:#6ee7b7; }
-	.dca-cond.miss { color:#6b7280; }
-	.etf-fund-list { margin-top:.5rem; }
-	.etf-fund-row { display:flex; justify-content:space-between; font-size:.75rem; padding:.15rem 0; border-bottom:1px solid rgba(255,255,255,.05); }
-	.etf-flow.pos { color:#10b981; }
-	.etf-flow.neg { color:#ef4444; }
+
 	.depeg-warn { color:#fbbf24; font-size:.75rem; margin-top:.3rem; }
 
 	/* ── Allocation History ── */
