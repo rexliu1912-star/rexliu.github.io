@@ -112,11 +112,14 @@ async function findLatestMarketData() {
  * Returns { history: [...] } or { history: [] } on error.
  */
 async function buildAllocationHistory() {
-  const BUCKET_MAP = {
-    stablecoin: "stablecoin_yield",
-    qieman: "funds_etf",
-    guotai: "stocks",
-    crypto: "crypto",
+  // Non-investable categories excluded from allocation base
+  const NON_INVESTABLE = new Set(["house", "education", "receivable", "note"]);
+  // Source breakdown keys → destination 4-bucket keys
+  const BUCKET_AGG = {
+    stablecoin_yield: ["stablecoin"],
+    funds_etf: ["qieman", "liquid"],
+    stocks: ["yanerhigh", "guotai", "future"],
+    crypto: ["crypto", "crypto_ivy"],
   };
 
   try {
@@ -127,26 +130,27 @@ async function buildAllocationHistory() {
     for (const file of jsonFiles) {
       const data = await readJson(path.join(PORTFOLIO_HISTORY_DIR, file));
       if (!data || !data.breakdown) continue;
-      // Skip entries with only a "note" field (no actual breakdown data)
       const breakdownKeys = Object.keys(data.breakdown).filter((k) => k !== "note");
       if (breakdownKeys.length === 0) continue;
 
-      const total = data.totalNetWorth || 0;
-      if (total <= 0) continue;
+      // Investable base = total minus non-investable categories
+      const investable = Object.entries(data.breakdown)
+        .filter(([k]) => !NON_INVESTABLE.has(k))
+        .reduce((sum, [, v]) => sum + (Number(v) || 0), 0);
+      if (investable <= 0) continue;
 
       const buckets = {};
-      for (const [srcKey, destKey] of Object.entries(BUCKET_MAP)) {
-        const val = data.breakdown[srcKey];
-        if (val && val > 0) {
-          buckets[destKey] = Math.round((val / total) * 100);
+      for (const [destKey, srcKeys] of Object.entries(BUCKET_AGG)) {
+        const val = srcKeys.reduce((s, k) => s + (Number(data.breakdown[k]) || 0), 0);
+        if (val > 0) {
+          buckets[destKey] = Math.round((val / investable) * 100);
         }
       }
 
-      // Extract YYYY-MM from the filename
       const dateMonth = file.replace(".json", "");
       history.push({
         date: dateMonth,
-        total_net_worth_wan: data.totalNetWorthWan ?? Math.round(total / 10000),
+        total_net_worth_wan: data.totalNetWorthWan ?? Math.round(investable / 10000),
         buckets,
       });
     }
