@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [main]
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
@@ -18,18 +22,26 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.0
+          run_install: false
+
       - name: Setup node
         uses: actions/setup-node@v6
         with:
           node-version: 22
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
 
       - name: Install dependencies
-        run: npm install
+        run: pnpm install --frozen-lockfile --prefer-offline
 
         # use astro check for issues
       - name: Run Astro check
-        run: npx astro check
+        run: pnpm astro check
 
         # ensure build works
       - name: Run Astro build
-        run: npm run build
+        run: pnpm build
