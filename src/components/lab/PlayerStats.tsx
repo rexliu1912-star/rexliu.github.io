@@ -367,8 +367,9 @@ function TooltipWrap({ content, children, align = "left" }: { content: React.Rea
 const Section = memo(function Section({ dark, rainy, sunny, children, hero }: { dark: boolean; rainy: boolean; sunny: boolean; children: React.ReactNode; hero?: boolean }) {
   const reduced = usePrefersReducedMotion();
   const { ref, inView } = useInView<HTMLElement>(0.1, true);
-  const cardBg = rainy ? "linear-gradient(180deg, rgba(216,223,232,0.98), rgba(200,210,224,0.98))" : sunny ? "linear-gradient(180deg, rgba(255,253,240,0.98), rgba(250,245,220,0.98))" : hero ? (dark ? "rgba(21,21,21,0.99)" : "linear-gradient(180deg, rgba(255,255,255,0.98), rgba(250,246,255,0.98))") : (dark ? "rgba(21,21,21,0.98)" : "linear-gradient(180deg, rgba(255,255,255,0.96), rgba(248,242,255,0.96))");
-  const cardShadow = rainy ? (hero ? "0 0 0 1px rgba(100,120,155,0.22), 0 0 24px rgba(100,120,155,0.1)" : "0 10px 20px rgba(45,55,72,0.12)") : sunny ? (hero ? "0 0 0 1px rgba(180,160,80,0.22), 0 0 24px rgba(180,160,80,0.08)" : "0 10px 20px rgba(180,160,80,0.1)") : hero ? `0 0 0 1px rgba(137,83,209,0.22), 0 0 24px rgba(137,83,209,0.08)` : (dark ? "0 10px 24px rgba(0,0,0,0.18)" : "0 10px 20px rgba(137,83,209,0.08)");
+  void hero;
+  const cardBg = rainy ? "linear-gradient(180deg, rgba(216,223,232,0.98), rgba(200,210,224,0.98))" : sunny ? "linear-gradient(180deg, rgba(255,253,240,0.98), rgba(250,245,220,0.98))" : (dark ? "rgba(21,21,21,0.98)" : "linear-gradient(180deg, rgba(255,255,255,0.96), rgba(248,242,255,0.96))");
+  const cardShadow = rainy ? "0 10px 20px rgba(45,55,72,0.12)" : sunny ? "0 10px 20px rgba(180,160,80,0.1)" : (dark ? "0 10px 24px rgba(0,0,0,0.18)" : "0 10px 20px rgba(137,83,209,0.08)");
   const cardBorder = rainy ? "rgba(100,120,155,0.22)" : sunny ? "rgba(180,160,80,0.22)" : `rgba(137,83,209,${dark ? "0.22" : "0.14"})`;
   const style: CSSProperties = {
     width: "100%", maxWidth: 1200, margin: "0 auto",
