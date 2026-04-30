@@ -41,6 +41,7 @@ const PORTFOLIO_HISTORY_DIR = path.join(WORKSPACE_ROOT, "projects/the-workshop/d
 const CRYPTO_PORTFOLIO_HISTORY_PATH = path.join(WORKSPACE_ROOT, "projects/the-workshop/data/portfolio-crypto-history.json");
 const BOTTOM_TRACKER_PATH = path.join(WORKSPACE_ROOT, "projects/crypto-bottom-tracker/web_data.json");
 const TIMESERIES_PATH = path.join(WORKSPACE_ROOT, "data/crypto-timeseries.json");
+const NEWS_DIGEST_PATH = path.join(WORKSPACE_ROOT, "data/portfolio-news-digest.json");
 
 // ─── Small utilities ─────────────────────────────────────
 
@@ -876,6 +877,28 @@ async function main() {
   const futureEvents = (events || []).filter((e) => (e.eventDate || "") >= today);
 
   const publicPositions = buildPositions(positions, rules, events, overrides);
+
+  // 5b. Merge news digest into positions
+  const newsDigest = await readJson(NEWS_DIGEST_PATH);
+  if (newsDigest?.positions) {
+    for (const pos of publicPositions) {
+      const news = newsDigest.positions[pos.symbol];
+      if (news) {
+        pos.news = {
+          summary: news.summary,
+          sentiment: news.sentiment, // "positive" | "neutral" | "negative"
+          items: (news.items || []).slice(0, 2).map((n) => ({
+            title: n.title,
+            snippet: n.snippet,
+          })),
+        };
+      }
+    }
+    const withNews = publicPositions.filter((p) => p.news).length;
+    console.log(`📰 News digest: ${withNews}/${publicPositions.length} positions`);
+  } else {
+    console.log("📰 No news digest found — skipping");
+  }
   const clearances = tradelog?.clearances || [];
   const roundtables = overrides.roundtables || [];
 

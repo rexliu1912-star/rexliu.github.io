@@ -47,6 +47,11 @@ interface PortfolioPosition {
 	stop?: PortfolioStop | null;
 	target?: PortfolioTarget | null;
 	next_event?: PortfolioNextEvent | null;
+	news?: {
+		summary: string;
+		sentiment: "positive" | "neutral" | "negative";
+		items: { title: string; snippet: string }[];
+	} | null;
 }
 interface PortfolioHeatmap {
 	tickers: string[];
@@ -1319,13 +1324,21 @@ const stages = [
 								<span class="event-countdown">—</span>
 								<span class="event-label">{p.next_event.label}</span>
 							</span>
-						) : (
-							<span class="position-event-empty">
-								<span class="lang-en">No pending events</span>
-								<span class="lang-zh">无预告事件</span>
+					) : (
+						<span class="position-event-empty">
+							<span class="lang-en">No pending events</span>
+							<span class="lang-zh">无预告事件</span>
+						</span>
+					)}
+					{p.news && (
+						<div class={`position-news sentiment-${p.news.sentiment}`}>
+							<span class="news-sentiment-icon">
+								{p.news.sentiment === "positive" ? "🟢" : p.news.sentiment === "negative" ? "🔴" : "🟡"}
 							</span>
-						)}
-					</footer>
+							<span class="news-summary">{p.news.summary}</span>
+						</div>
+					)}
+				</footer>
 					</article>
 				))}
 
@@ -3980,6 +3993,31 @@ const stages = [
 			0%, 100% { box-shadow: 0 0 0 0 rgba(251, 146, 60, 0); }
 			50% { box-shadow: 0 0 8px 2px rgba(251, 146, 60, 0.25); }
 		}
+
+		/* ── Position News Digest ───────────────── */
+		.position-news {
+			display: flex;
+			align-items: flex-start;
+			gap: 0.4rem;
+			margin-top: 0.4rem;
+			padding: 0.35rem 0.5rem;
+			border-radius: 0.4rem;
+			font-size: 0.72rem;
+			line-height: 1.35;
+			color: var(--p-text-secondary);
+			background: color-mix(in srgb, var(--p-surface) 60%, transparent);
+		}
+		.news-sentiment-icon { flex-shrink: 0; font-size: 0.65rem; margin-top: 0.1rem; }
+		.news-summary {
+			flex: 1;
+			overflow: hidden;
+			display: -webkit-box;
+			-webkit-line-clamp: 2;
+			-webkit-box-orient: vertical;
+		}
+		.position-news.sentiment-positive { border-left: 2px solid #22c55e40; }
+		.position-news.sentiment-negative { border-left: 2px solid #ef444440; }
+		.position-news.sentiment-neutral  { border-left: 2px solid #eab30840; }
 
 		/* ── Catalyst Timeline Strip ─────────────── */
 		.catalyst-timeline {
