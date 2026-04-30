@@ -693,11 +693,11 @@ const stages = [
 								const stColor = ind.status === "green" ? "#10b981" : ind.status === "red" ? "#ef4444" : "#f59e0b";
 								const d = ind.delta ?? ind.score_change;
 								// Extract change value from detail text, move to CHG column
-								const chgMatch = (ind.detail || "").match(/变化[:：]?\s*(-?\d+\.?\d*)/);
+								const chgMatch = (ind.detail || "").match(/变化[:：]?\s*([+-]?\d+\.?\d*)/);
 								const chgVal = chgMatch ? parseFloat(chgMatch[1]) : null;
 								const chgColor = chgVal === null ? "var(--p-text-faint)" : chgVal > 0 ? "#10b981" : chgVal < 0 ? "#ef4444" : "var(--p-text-faint)";
 								// Clean detail: remove the change portion
-								const cleanDetail = chgMatch ? (ind.detail || "").replace(/[,，]?\s*变化[:：]?\s*-?\d+\.?\d*/, "") : (ind.detail || "");
+								const cleanDetail = chgMatch ? (ind.detail || "").replace(/[,，]?\s*变化[:：]?\s*[+-]?\d+\.?\d*/, "") : (ind.detail || "");
 								const displayChg = chgVal !== null ? chgVal : d;
 								return (
 									<div class="crypto-ind-row" title={ind.desc_en || ind.desc_zh || ""}>
