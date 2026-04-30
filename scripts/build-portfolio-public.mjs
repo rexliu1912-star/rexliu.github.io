@@ -43,6 +43,7 @@ const BOTTOM_TRACKER_PATH = path.join(WORKSPACE_ROOT, "projects/crypto-bottom-tr
 const TIMESERIES_PATH = path.join(WORKSPACE_ROOT, "data/crypto-timeseries.json");
 const NEWS_DIGEST_PATH = path.join(WORKSPACE_ROOT, "data/portfolio-news-digest.json");
 const DAILY_SNAPSHOT_DIR = path.join(WORKSPACE_ROOT, "output/research/investment-strategy/portfolio/snapshots");
+const GOLD_TRACKER_PATH = path.join(WORKSPACE_ROOT, "data/gold-tracker.json");
 
 // ─── Small utilities ─────────────────────────────────────
 
@@ -854,6 +855,23 @@ async function main() {
     console.warn("   ⚠️  No allocation history data available");
   }
 
+  // Read gold tracker data
+  const goldTrackerRaw = await readJson(GOLD_TRACKER_PATH);
+  const goldTracker = goldTrackerRaw ? {
+    generated_at: goldTrackerRaw.generated_at,
+    price: goldTrackerRaw.price,
+    technical: goldTrackerRaw.technical,
+    monetary: goldTrackerRaw.monetary,
+    cost_floor: goldTrackerRaw.cost_floor,
+    premium: goldTrackerRaw.premium,
+    signal: goldTrackerRaw.signal,
+  } : null;
+  if (goldTracker) {
+    console.log(`   ✅ Gold: $${goldTracker.price?.xau_usd} | M2 $${goldTracker.monetary?.m2_trillion}T | ${goldTracker.signal?.status}`);
+  } else {
+    console.log("   ⚠️  No gold tracker data — gold section will be empty");
+  }
+
   // 4. Fallback protection: if Convex failed AND we have a previous output, reuse it
   if (!positions) {
     console.warn("  ⚠️  Convex unavailable — attempting to reuse last portfolio-public.json");
@@ -1009,6 +1027,7 @@ async function main() {
     stats,
     crypto_portfolio_history: cryptoPortfolioHistory,
     crypto_timeseries: cryptoTimeseries,
+    gold_tracker: goldTracker,
   };
 
   await fs.writeFile(OUTPUT_PATH, JSON.stringify(output, null, 2) + "\n");

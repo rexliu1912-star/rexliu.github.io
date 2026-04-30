@@ -93,6 +93,7 @@ interface PortfolioData {
 		}[];
 	} | null;
 	crypto_monitor: any | null;
+	gold_tracker: any | null;
 	watchlist_heatmap: PortfolioHeatmap | null;
 	clearances: any[];
 	roundtables: any[];
@@ -117,6 +118,7 @@ const {
 	positions,
 	crypto,
 	crypto_monitor: cryptoMonitor,
+	gold_tracker: goldTracker,
 	watchlist_heatmap: heatmap,
 	clearances,
 	roundtables,
@@ -138,6 +140,24 @@ const cryptoTS = (portfolioData as any)?.crypto_timeseries;
 
 const cryptoPositions = crypto?.positions ?? [];
 const activePositionCount = positions.length + cryptoPositions.length;
+
+// Derived: Gold Tracker
+const goldSignal = goldTracker?.signal?.status ?? goldTracker?.signal?.signal ?? "yellow";
+const goldSignalLabel = goldTracker?.signal?.label_en ?? goldTracker?.signal?.signal_label_en ?? "Watch";
+const goldSignalLabelZh = goldTracker?.signal?.label_zh ?? goldTracker?.signal?.signal_label_zh ?? "观察";
+const goldXau = goldTracker?.price?.xau_usd;
+const goldDay = goldTracker?.price?.day_change_pct;
+const goldPeak = goldTracker?.price?.peak_price ?? goldTracker?.price?.week_52_high;
+const goldDrawdown = goldTracker?.price?.drawdown_from_peak_pct;
+const goldM2Pct = Math.min(100, Math.max(0, goldTracker?.monetary?.m2_to_trigger_pct ?? 0));
+const goldM2Label = goldTracker?.monetary?.inversion_label_en ?? goldSignalLabel;
+const goldM2LabelZh = goldTracker?.monetary?.inversion_label_zh ?? goldSignalLabelZh;
+const goldPremium = goldTracker?.premium?.premium_pct ?? goldTracker?.metrics?.premium_shanghai_pct;
+const goldPremiumDate = goldTracker?.premium?.updated_at ?? goldTracker?.metrics?.premium_date ?? "manual";
+const goldCycle = goldTracker?.metrics?.cycle_label_en ?? "Cycle watch";
+const goldCycleZh = goldTracker?.metrics?.cycle_label_zh ?? "周期观察";
+const goldStop = goldTracker?.signal?.stop_loss ?? goldTracker?.signal?.aisc_range?.[0] ?? goldTracker?.cost_floor?.aisc_usd ?? 1750;
+const goldRangeHigh = goldTracker?.signal?.aisc_range?.[1] ?? goldStop;
 
 // Group deep research by sector for organized display
 const deepBySector = deep_research.reduce((acc: Record<string, { sector_en: string; sector_zh: string; items: any[] }>, d: any) => {
@@ -464,6 +484,7 @@ const stages = [
 			<a href="#regime-section"><span class="lang-en">Regime</span><span class="lang-zh">宏观</span></a>
 			<a href="#positions-section"><span class="lang-en">Positions</span><span class="lang-zh">持仓</span></a>
 			{cryptoMonitor && <a href="#crypto-mgmt-section"><span class="lang-en">Crypto</span><span class="lang-zh">加密</span></a>}
+			<a href="#gold-tracker-section"><span class="lang-en">Gold</span><span class="lang-zh">黄金</span></a>
 			<a href="#supply-chain-section"><span class="lang-en">Chain</span><span class="lang-zh">链上</span></a>
 			<a href="#watchlist-section"><span class="lang-en">Watchlist</span><span class="lang-zh">观察池</span></a>
 			<a href="#sector-research-section"><span class="lang-en">Sectors</span><span class="lang-zh">行业</span></a>
@@ -942,6 +963,53 @@ const stages = [
 			</div>
 		)}
 		</section>
+
+		<section class="portfolio-section fade-in-up gold-tracker-section" data-collapse id="gold-tracker-section">
+			<header class="portfolio-section-head">
+				<p class="portfolio-kicker"><span class="lang-en">Gold Tracker · Long-cycle dashboard</span><span class="lang-zh">黄金跟踪 · 长周期仪表盘</span></p>
+				<h2 class="font-serif text-3xl font-semibold"><span class="lang-en">Gold is a liquidity hedge, not a candle chart</span><span class="lang-zh">黄金看流动性，不看五分钟K线</span></h2>
+				<p class="portfolio-note"><span class="lang-en">M2 inversion, cost floor, peak drawdown and Shanghai premium in one decision layer.</span><span class="lang-zh">把 M2 倒挂、成本底、距高点回撤和境内溢价放在同一层判断。</span></p>
+				<span class="section-summary"><span class="lang-en">XAU {goldXau ?? "—"} · M2 {goldM2Pct.toFixed(1)}% · {goldSignalLabel}</span><span class="lang-zh">金价 {goldXau ?? "—"} · M2 {goldM2Pct.toFixed(1)}% · {goldSignalLabelZh}</span></span>
+			</header>
+
+			<div class="gold-tracker-dash" data-stop={goldStop} data-target={goldPeak ?? 5500} data-entry={goldXau ?? 4500}>
+				<div class={"gold-price-card gold-signal-" + goldSignal}>
+					<div>
+						<p class="gold-card-label"><span class="lang-en">Spot XAU/USD</span><span class="lang-zh">现货金价</span></p>
+						<strong>${goldXau?.toLocaleString?.() ?? "—"}</strong>
+						<span class={goldDay >= 0 ? "gold-up" : "gold-down"}>{goldDay >= 0 ? "+" : ""}{goldDay ?? "—"}% 1D</span>
+					</div>
+					<svg class="gold-semi-gauge" viewBox="0 0 180 100" role="img" aria-label="Gold drawdown gauge">
+						<path d="M 20 90 A 70 70 0 0 1 160 90" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="14" stroke-linecap="round" />
+						<path d="M 20 90 A 70 70 0 0 1 160 90" fill="none" stroke="#facc15" stroke-width="14" stroke-linecap="round" stroke-dasharray="220" stroke-dashoffset={String(220 - Math.min(1, Math.abs(goldDrawdown ?? 0) / 30) * 220)} />
+						<text x="90" y="70" text-anchor="middle" font-size="18" fill="var(--p-text)">{goldDrawdown ?? "—"}%</text>
+						<text x="90" y="88" text-anchor="middle" font-size="8" fill="var(--p-text-faint)">from peak</text>
+					</svg>
+				</div>
+
+				<div class="gold-inversion-panel">
+					<div class="gold-panel-head"><p class="gold-card-label"><span class="lang-en">Westwind M2 inversion system</span><span class="lang-zh">西风 M2 倒挂体系</span></p><span class={"gold-status-pill gold-" + goldSignal}>{goldSignalLabel}</span></div>
+					<div class="gold-trigger-bar" aria-label="M2 trigger progress"><span style={"width:" + goldM2Pct + "%"}></span></div>
+					<div class="gold-metric-row"><span><span class="lang-en">US M2</span><span class="lang-zh">美国 M2</span></span><strong>{goldTracker?.monetary?.m2_trillion ?? "—"}T / {goldTracker?.monetary?.m2_trigger_line ?? "—"}T</strong></div>
+					<div class="gold-metric-row"><span><span class="lang-en">Gold / M2 ratio</span><span class="lang-zh">金价 / M2 比值</span></span><strong>{goldTracker?.monetary?.ratio_display ?? "—"}</strong></div>
+					<div class="gold-metric-row"><span><span class="lang-en">Status</span><span class="lang-zh">状态</span></span><strong><span class="lang-en">{goldM2Label}</span><span class="lang-zh">{goldM2LabelZh}</span></strong></div>
+				</div>
+
+				<div class="gold-rr-panel">
+					<p class="gold-card-label"><span class="lang-en">Interactive risk / reward</span><span class="lang-zh">可拖动盈亏比速查</span></p>
+					<div class="gold-rr-main"><strong data-gold-rr>—</strong><span><span class="lang-en">R/R to prior peak</span><span class="lang-zh">到前高盈亏比</span></span></div>
+					<input class="gold-entry-slider" data-gold-slider type="range" min={Math.round(goldStop * 1.05)} max={Math.round(goldPeak ?? 5500)} value={Math.round(goldXau ?? 4500)} />
+					<div class="gold-rr-labels"><span>Entry <b data-gold-entry>—</b></span><span>Stop ${goldStop}</span><span>Target ${goldPeak ?? "—"}</span></div>
+				</div>
+
+				<div class="gold-snapshot-grid">
+					<div><span>AISC band</span><strong>${goldStop}–${goldRangeHigh}</strong><small>{goldSignalLabel}</small></div>
+					<div><span>Shanghai premium</span><strong>{goldPremium == null ? "—" : goldPremium + "%"}</strong><small>{goldPremiumDate}</small></div>
+					<div><span>Cycle position</span><strong><span class="lang-en">{goldCycle}</span><span class="lang-zh">{goldCycleZh}</span></strong><small>long-cycle context</small></div>
+				</div>
+			</div>
+		</section>
+
 		<section class="portfolio-section fade-in-up" data-collapse id="allocation-section">
 			<header class="portfolio-section-head">
 				<p class="portfolio-kicker">
@@ -2185,6 +2253,7 @@ const stages = [
 				'regime-section',
 				'positions-section',
 				'crypto-mgmt-section',
+				'gold-tracker-section',
 			]);
 			const allSections = () => /** @type {HTMLElement[]} */ ([...page.querySelectorAll('[data-collapse]')].filter(s => s.id));
 			let state = {};
@@ -2255,6 +2324,31 @@ const stages = [
 			});
 		}
 
+		}
+
+
+		function __initGoldTracker() {
+			const page = document.querySelector('.portfolio-page');
+			if (!page || page.dataset.goldTrackerReady === 'true') return;
+			page.dataset.goldTrackerReady = 'true';
+			page.querySelectorAll('.gold-tracker-dash').forEach((dash) => {
+				const slider = dash.querySelector('[data-gold-slider]');
+				const rr = dash.querySelector('[data-gold-rr]');
+				const entryLabel = dash.querySelector('[data-gold-entry]');
+				if (!slider || !rr || !entryLabel) return;
+				const stop = Number(dash.dataset.stop || 0);
+				const target = Number(dash.dataset.target || 0);
+				const fmt = (n) => '$' + Math.round(n).toLocaleString();
+				const update = () => {
+					const entry = Number(slider.value || dash.dataset.entry || 0);
+					const risk = Math.max(1, entry - stop);
+					const reward = Math.max(0, target - entry);
+					rr.textContent = (reward / risk).toFixed(2) + '×';
+					entryLabel.textContent = fmt(entry);
+				};
+				slider.addEventListener('input', update);
+				update();
+			});
 		}
 
 		function __initPortfolioCharts() {
@@ -2712,6 +2806,7 @@ const stages = [
 		function __runPortfolio() {
 			__initPortfolioAnimate();
 			__initPortfolioCharts();
+			__initGoldTracker();
 			__initCatalystCountdown();
 		}
 		if (document.readyState === 'loading') {
@@ -2810,6 +2905,36 @@ const stages = [
 		:global(html[data-theme='light']) .portfolio-breadcrumb:hover {
 			color: #8953d1;
 		}
+
+
+		/* ── Gold Tracker ───────────────────────── */
+		.gold-tracker-section { border-color: color-mix(in srgb, #f59e0b 24%, var(--p-border)); }
+		.gold-tracker-dash { display: grid; grid-template-columns: minmax(240px, .9fr) minmax(280px, 1.1fr); gap: 1rem; margin-top: 1rem; }
+		.gold-price-card, .gold-inversion-panel, .gold-rr-panel, .gold-snapshot-grid > div { border: 1px solid color-mix(in srgb, #f59e0b 18%, var(--p-border)); background: linear-gradient(145deg, color-mix(in srgb, #f59e0b 9%, var(--p-card)), var(--p-card)); border-radius: 1rem; padding: 1rem; box-shadow: 0 18px 50px rgba(0,0,0,.12); }
+		.gold-price-card { display: grid; grid-template-columns: 1fr 180px; align-items: center; min-height: 180px; }
+		.gold-price-card strong { display:block; margin:.25rem 0; font: 600 clamp(2rem, 5vw, 3.6rem)/1 var(--font-serif); color: #facc15; }
+		.gold-card-label { margin: 0 0 .5rem; font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; color: var(--p-text-faint); }
+		.gold-up { color:#10b981; } .gold-down { color:#ef4444; }
+		.gold-semi-gauge { width: 100%; max-width: 190px; justify-self: end; overflow: visible; }
+		.gold-inversion-panel { grid-column: span 1; display:flex; flex-direction:column; gap:.72rem; }
+		.gold-panel-head { display:flex; align-items:center; justify-content:space-between; gap:.75rem; }
+		.gold-status-pill { padding:.28rem .62rem; border-radius:999px; font-size:.72rem; text-transform:uppercase; letter-spacing:.06em; border:1px solid currentColor; }
+		.gold-status-pill.gold-green { color:#10b981; background:rgba(16,185,129,.10); }
+		.gold-status-pill.gold-yellow { color:#f59e0b; background:rgba(245,158,11,.12); }
+		.gold-status-pill.gold-red { color:#ef4444; background:rgba(239,68,68,.10); }
+		.gold-trigger-bar { height: 10px; border-radius:999px; overflow:hidden; background: color-mix(in srgb, var(--p-border) 50%, transparent); }
+		.gold-trigger-bar span { display:block; height:100%; border-radius:inherit; background: linear-gradient(90deg, #f59e0b, #facc15); box-shadow: 0 0 18px rgba(250,204,21,.35); }
+		.gold-metric-row { display:flex; justify-content:space-between; gap:1rem; padding:.65rem 0; border-top:1px solid color-mix(in srgb, var(--p-border) 55%, transparent); font-size:.9rem; }
+		.gold-metric-row span { color:var(--p-text-faint); } .gold-metric-row strong { text-align:right; color:var(--p-text); }
+		.gold-rr-panel { grid-column: span 1; }
+		.gold-rr-main { display:flex; align-items:baseline; gap:.7rem; margin:.55rem 0 .9rem; }
+		.gold-rr-main strong { font: 700 2.4rem/1 var(--font-serif); color:#facc15; }
+		.gold-entry-slider { width:100%; accent-color:#f59e0b; }
+		.gold-rr-labels { display:flex; justify-content:space-between; gap:.5rem; margin-top:.55rem; font-size:.74rem; color:var(--p-text-faint); }
+		.gold-snapshot-grid { grid-column: 1 / -1; display:grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap:1rem; }
+		.gold-snapshot-grid span, .gold-snapshot-grid small { display:block; color:var(--p-text-faint); font-size:.74rem; }
+		.gold-snapshot-grid strong { display:block; margin:.25rem 0; font: 600 1.25rem/1.2 var(--font-serif); color:var(--p-text); }
+		@media (max-width: 860px) { .gold-tracker-dash, .gold-snapshot-grid { grid-template-columns: 1fr; } .gold-price-card { grid-template-columns: 1fr; } .gold-semi-gauge { justify-self:start; } }
 
 		/* ── Section Nav ────────────────────────── */
 		.portfolio-section-nav {
