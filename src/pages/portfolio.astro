@@ -1164,50 +1164,63 @@ const stages = [
 				</h2>
 				<p class="portfolio-note">
 					<span class="lang-en">
-						Each card shows sector tags, one-line thesis, stage badge, distance to stop, and the
-						next catalyst on the calendar.
+						Each card shows sector tags, one-line thesis, distance to stop, and target.
 					</span>
 					<span class="lang-zh">
-					每张卡片显示板块标签、一句逻辑、阶段徽章、距止损线距离、日历上最近的催化事件。
+					每张卡片显示板块标签、一句逻辑、距止损线距离和目标价。
 				</span>
 			</p>
 			<span class="section-summary"><span class="lang-en">8 holdings · 7 high conviction</span><span class="lang-zh">8 只持仓 · 7 只高信念</span></span>
 		</header>
 
-			{/* ── Catalyst Timeline: all upcoming events across positions ── */}
-			{(() => {
-				const allEvents = positions
-					.filter((p) => p.next_event)
-					.map((p) => ({
-						date: p.next_event!.date,
-						label: p.next_event!.label,
-						urgency: p.next_event!.urgency,
-						symbol: p.symbol,
-					}))
-					.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-				if (allEvents.length === 0) return null;
-				return (
-					<div class="catalyst-timeline">
-						<div class="catalyst-timeline-head">
-							<span class="lang-en">Upcoming Catalysts</span>
-							<span class="lang-zh">近期催化事件</span>
-							<span class="catalyst-timeline-count">{allEvents.length}</span>
-						</div>
-						<div class="catalyst-timeline-track">
-							{allEvents.map((ev) => (
-								<div class={`catalyst-timeline-item urgency-${ev.urgency}`} data-catalyst-date={ev.date}>
-									<span class="catalyst-date">{ev.date}</span>
-									<span class="catalyst-symbol">{ev.symbol}</span>
-									<span class="catalyst-label">{ev.label}</span>
-									<span class="catalyst-countdown">—</span>
-								</div>
-							))}
-						</div>
+		{/* ── 持仓简报: consolidated daily briefing ── */}
+		{(() => {
+			const today = new Date().toISOString().slice(0, 10);
+			const snapshotDate = positions[0]?.price != null ? today : null;
+			return (
+				<div class="daily-briefing">
+					<div class="daily-briefing-head">
+						<span class="lang-en">📋 Daily Briefing · {snapshotDate || '—'}</span>
+						<span class="lang-zh">📋 持仓简报 · {snapshotDate || '—'}</span>
 					</div>
-				);
-			})()}
+					<div class="daily-briefing-list">
+						{positions.map((p) => {
+							const chg = p.daily_change_pct;
+							const chgStr = chg != null ? ` (${chg >= 0 ? '+' : ''}${chg.toFixed(1)}%)` : '';
+							const chgClass = chg != null ? (chg >= 0 ? 'briefing-up' : 'briefing-down') : '';
+							const sentEmoji = p.news?.sentiment === 'positive' ? '🟢' : p.news?.sentiment === 'negative' ? '🔴' : '🟡';
+							const ev = p.next_event;
+							let countdown = '';
+						if (ev?.date) {
+							const diff = Math.round((new Date(ev.date).getTime() - new Date(today).getTime()) / 86400000);
+							countdown = diff === 0 ? '(Today)' : diff === 1 ? '(Tomorrow)' : `(${diff}d)`;
+						}
+							return (
+								<div class="briefing-row">
+									<div class="briefing-price-row">
+										<span class={`briefing-change ${chgClass}`}>
+											{chg >= 0 ? '🟢' : '🔴'} {p.symbol} ${p.price?.toFixed(2) ?? '—'}{chgStr}
+										</span>
+									</div>
+									{p.news?.summary && (
+										<div class="briefing-news">
+											<span>{sentEmoji} {p.news.summary}</span>
+										</div>
+									)}
+									{ev && (
+										<div class="briefing-event">
+											<span>🗓 {ev.date} {ev.label} {countdown}</span>
+										</div>
+									)}
+								</div>
+							);
+						})}
+					</div>
+				</div>
+			);
+		})()}
 
-			<div class="positions-grid">
+		<div class="positions-grid">
 				{positions.map((p) => (
 					<article class={`position-card conviction-${p.conviction}`}>
 						<header class="position-head">
@@ -1250,18 +1263,8 @@ const stages = [
 						></span>
 					</div>
 
-						<div class="position-meta">
-							<span class="position-stage-badge">
-								<span class="lang-en">Core</span>
-								<span class="lang-zh">核心</span>
-							</span>
-							<span class="position-status">
-								<span class="lang-en">{p.status_en}</span>
-								<span class="lang-zh">{p.status_zh}</span>
-							</span>
-						</div>
-
-					<footer class="position-foot">
+	
+				<footer class="position-foot">
 						{p.stop && p.target ? (
 							<div class="position-range-track" title={`${p.stop.description || "Stop"} → ${p.target.description || "Target"}`}>
 								<span class="range-label range-stop">
@@ -1313,30 +1316,6 @@ const stages = [
 									</span>
 								)}
 							</div>
-						)}
-						{p.next_event ? (
-							<span
-								class={`position-event urgency-${p.next_event.urgency}`}
-								data-event-date={p.next_event.date}
-								data-event-label={p.next_event.label}
-								data-event-urgency={String(p.next_event.urgency)}
-							>
-								<span class="event-countdown">—</span>
-								<span class="event-label">{p.next_event.label}</span>
-							</span>
-					) : (
-						<span class="position-event-empty">
-							<span class="lang-en">No pending events</span>
-							<span class="lang-zh">无预告事件</span>
-						</span>
-					)}
-					{p.news && (
-						<div class={`position-news sentiment-${p.news.sentiment}`}>
-							<span class="news-sentiment-icon">
-								{p.news.sentiment === "positive" ? "🟢" : p.news.sentiment === "negative" ? "🔴" : "🟡"}
-							</span>
-							<span class="news-summary">{p.news.summary}</span>
-						</div>
 					)}
 				</footer>
 					</article>
@@ -2769,27 +2748,7 @@ const stages = [
 				}
 				const label = pill.querySelector('.event-label');
 				if (label) label.title = d + ' · ' + (pill.getAttribute('data-event-label') || '');
-			});
-
-			// Timeline strip countdowns
-			document.querySelectorAll('.catalyst-timeline-item[data-catalyst-date]').forEach((item) => {
-				const d = item.getAttribute('data-catalyst-date');
-				if (!d) return;
-				const target = new Date(d + 'T00:00:00');
-				const diff = Math.ceil((target - now) / 86400000);
-				const cd = item.querySelector('.catalyst-countdown');
-				if (!cd) return;
-				if (diff < 0) {
-					item.classList.add('event-past');
-					cd.textContent = isZh ? '已过' : 'past';
-				} else if (diff === 0) {
-					cd.textContent = isZh ? '今天' : 'today';
-				} else if (diff === 1) {
-					cd.textContent = isZh ? '明天' : '1d';
-				} else {
-					cd.textContent = isZh ? `${diff}天后` : `${diff}d`;
-				}
-			});
+		});
 		}
 	</script>
 
@@ -4019,107 +3978,59 @@ const stages = [
 		.position-news.sentiment-negative { border-left: 2px solid #ef444440; }
 		.position-news.sentiment-neutral  { border-left: 2px solid #eab30840; }
 
-		/* ── Catalyst Timeline Strip ─────────────── */
-		.catalyst-timeline {
+		/* ── Daily Briefing ─────────────────────── */
+		.daily-briefing {
 			margin: 0.5rem 0 1.25rem;
 			padding: 0.85rem 1rem;
 			border-radius: 0.75rem;
 			border: 1px solid var(--p-border);
-			background: color-mix(in srgb, var(--p-card) 92%, transparent);
+			background: var(--p-card);
 		}
-		.catalyst-timeline-head {
-			display: flex;
-			align-items: center;
-			gap: 0.5rem;
+		.daily-briefing-head {
 			font-size: 0.8rem;
 			font-weight: 600;
 			color: var(--p-muted);
 			text-transform: uppercase;
 			letter-spacing: 0.04em;
-			margin-bottom: 0.6rem;
+			margin-bottom: 0.75rem;
 		}
-		.catalyst-timeline-count {
-			display: inline-flex;
-			align-items: center;
-			justify-content: center;
-			min-width: 1.4rem;
-			height: 1.4rem;
-			padding: 0 0.35rem;
-			border-radius: 0.45rem;
-			background: rgba(137, 83, 209, 0.15);
-			color: #8953d1;
-			font-size: 0.7rem;
-			font-weight: 700;
-		}
-		.catalyst-timeline-track {
+		.daily-briefing-list {
 			display: flex;
-			flex-wrap: wrap;
-			gap: 0.5rem;
+			flex-direction: column;
+			gap: 0.6rem;
 		}
-		.catalyst-timeline-item {
-			display: inline-flex;
-			align-items: center;
-			gap: 0.4rem;
-			padding: 0.4rem 0.65rem;
-			border-radius: 0.55rem;
-			border: 1px solid var(--p-border);
-			background: color-mix(in srgb, var(--p-card) 85%, transparent);
-			font-size: 0.8rem;
-			transition: transform 0.15s ease;
+		.briefing-row {
+			padding: 0.5rem 0;
+			border-bottom: 1px solid var(--p-border);
 		}
-		.catalyst-timeline-item:hover {
-			transform: translateY(-1px);
+		.briefing-row:last-child {
+			border-bottom: none;
+			padding-bottom: 0;
 		}
-		.catalyst-date {
+		.briefing-price-row {
+			font-size: 0.9rem;
+			font-weight: 600;
+		}
+		.briefing-change {
 			font-family: var(--font-mono);
-			font-size: 0.72rem;
-			color: var(--p-muted);
-		}
-		.catalyst-symbol {
-			font-weight: 700;
-			font-family: var(--font-serif);
 			color: var(--p-heading);
 		}
-		.catalyst-label {
-			color: var(--p-body);
-			max-width: 180px;
-			overflow: hidden;
-			text-overflow: ellipsis;
-			white-space: nowrap;
+		.briefing-up {
+			color: #22c55e;
 		}
-		.catalyst-countdown {
-			font-size: 0.72rem;
-			font-weight: 600;
-			padding: 0.15rem 0.35rem;
-			border-radius: 0.35rem;
-			background: rgba(100, 116, 139, 0.12);
-			color: #64748b;
-		}
-		/* urgency tiers on timeline */
-		.catalyst-timeline-item.urgency-4,
-		.catalyst-timeline-item.urgency-5 {
-			border-color: rgba(251, 146, 60, 0.4);
-			background: rgba(251, 146, 60, 0.06);
-		}
-		.catalyst-timeline-item.urgency-4 .catalyst-countdown,
-		.catalyst-timeline-item.urgency-5 .catalyst-countdown {
-			background: rgba(251, 146, 60, 0.15);
-			color: #fb923c;
-		}
-		.catalyst-timeline-item.urgency-5 {
-			animation: event-pulse 2.4s ease-in-out infinite;
-		}
-		.catalyst-timeline-item.urgency-3 {
-			border-color: rgba(239, 68, 68, 0.3);
-			background: rgba(239, 68, 68, 0.04);
-		}
-		.catalyst-timeline-item.urgency-3 .catalyst-countdown {
-			background: rgba(239, 68, 68, 0.12);
+		.briefing-down {
 			color: #ef4444;
 		}
-		.catalyst-timeline-item.event-past {
-			opacity: 0.45;
-			filter: grayscale(0.6);
+		.briefing-news {
+			font-size: 0.82rem;
+			color: var(--p-body);
+			margin-top: 0.15rem;
+			line-height: 1.5;
+		}
+		.briefing-event {
+			font-size: 0.78rem;
+			color: var(--p-muted);
+			margin-top: 0.1rem;
 		}
 
 		/* ── Clearance Gallery ───────────────────── */

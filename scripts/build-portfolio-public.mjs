@@ -42,6 +42,7 @@ const CRYPTO_PORTFOLIO_HISTORY_PATH = path.join(WORKSPACE_ROOT, "projects/the-wo
 const BOTTOM_TRACKER_PATH = path.join(WORKSPACE_ROOT, "projects/crypto-bottom-tracker/web_data.json");
 const TIMESERIES_PATH = path.join(WORKSPACE_ROOT, "data/crypto-timeseries.json");
 const NEWS_DIGEST_PATH = path.join(WORKSPACE_ROOT, "data/portfolio-news-digest.json");
+const DAILY_SNAPSHOT_DIR = path.join(WORKSPACE_ROOT, "output/research/investment-strategy/portfolio/snapshots");
 
 // ─── Small utilities ─────────────────────────────────────
 
@@ -899,6 +900,55 @@ async function main() {
   } else {
     console.log("📰 No news digest found — skipping");
   }
+
+  // 5c. Merge daily snapshot price + daily change into positions
+  try {
+    const snapshotFiles = (await fs.readdir(DAILY_SNAPSHOT_DIR))
+      .filter((f) => f.endsWith(".json"))
+      .sort()
+      .reverse();
+    if (snapshotFiles.length >= 1) {
+      const todaySnap = await readJson(path.join(DAILY_SNAPSHOT_DIR, snapshotFiles[0]));
+      const yestSnap = snapshotFiles.length >= 2
+        ? await readJson(path.join(DAILY_SNAPSHOT_DIR, snapshotFiles[1]))
+        : null;
+      // Build price maps: symbol → price
+      const priceMap = {};
+      const yestPriceMap = {};
+      for (const snap of [todaySnap].filter(Boolean)) {
+        for (const acc of snap.accounts || []) {
+          for (const p of acc.positions || []) {
+            priceMap[p.symbol] = p.price;
+          }
+        }
+      }
+      for (const snap of [yestSnap].filter(Boolean)) {
+        for (const acc of snap.accounts || []) {
+          for (const p of acc.positions || []) {
+            yestPriceMap[p.symbol] = p.price;
+          }
+        }
+      }
+      for (const pos of publicPositions) {
+        const price = priceMap[pos.symbol];
+        const yestPrice = yestPriceMap[pos.symbol];
+        if (price != null) {
+          pos.price = price;
+          if (yestPrice != null && yestPrice > 0) {
+            pos.daily_change_pct = +((price - yestPrice) / yestPrice * 100).toFixed(2);
+          }
+        }
+      }
+      const withPrice = publicPositions.filter((p) => p.price != null).length;
+      const snapshotDate = snapshotFiles[0].replace(".json", "");
+      console.log(`📊 Snapshot: ${withPrice}/${publicPositions.length} positions (date: ${snapshotDate})`);
+    } else {
+      console.log("📊 No daily snapshots found — skipping price merge");
+    }
+  } catch (err) {
+    console.warn(`  ⚠️  Snapshot merge failed: ${err.message}`);
+  }
+
   const clearances = tradelog?.clearances || [];
   const roundtables = overrides.roundtables || [];
 
