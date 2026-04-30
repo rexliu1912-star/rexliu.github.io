@@ -4983,7 +4983,9 @@ const stages = [
 		.crypto-position-tag, .crypto-stage-badge { background: rgba(245,158,11,.1); color: #92400e; }
 		.crypto-position-link { color: var(--p-accent); font-size: .82rem; }
 		.crypto-portfolio-index-wrap,
-		.crypto-alloc-trend-wrap { border: 1px solid var(--p-border); background: var(--p-card); border-radius: 1rem; padding: 1rem; margin-top: 1rem; }
+		.crypto-alloc-trend-wrap { background:rgba(255,255,255,0.03); border-radius:.75rem; padding:1rem; margin-top:1rem; min-width:0; }
+		[data-theme="light"] .crypto-portfolio-index-wrap,
+		[data-theme="light"] .crypto-alloc-trend-wrap { background:rgba(0,0,0,0.03); }
 		.crypto-portfolio-metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: .6rem; margin-top: .75rem; }
 		.cpm-item { display: flex; flex-direction: column; gap: .15rem; text-align: center; }
 		.cpm-label { font-size: .7rem; color: var(--p-text-faint); letter-spacing: .08em; text-transform: uppercase; }
