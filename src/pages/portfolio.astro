@@ -46,6 +46,8 @@ interface PortfolioPosition {
 	layer_label_zh?: string | null;
 	stop?: PortfolioStop | null;
 	target?: PortfolioTarget | null;
+	price?: number;
+	daily_change_pct?: number;
 	next_event?: PortfolioNextEvent | null;
 	news?: {
 		summary: string;
@@ -1185,7 +1187,7 @@ const stages = [
 					</div>
 					<div class="daily-briefing-list">
 						{positions.map((p) => {
-							const chg = p.daily_change_pct;
+							const chg = p.daily_change_pct ?? null;
 							const chgStr = chg != null ? ` (${chg >= 0 ? '+' : ''}${chg.toFixed(1)}%)` : '';
 							const chgClass = chg != null ? (chg >= 0 ? 'briefing-up' : 'briefing-down') : '';
 							const sentEmoji = p.news?.sentiment === 'positive' ? '🟢' : p.news?.sentiment === 'negative' ? '🔴' : '🟡';
@@ -1199,7 +1201,7 @@ const stages = [
 								<div class="briefing-row">
 									<div class="briefing-price-row">
 										<span class={`briefing-change ${chgClass}`}>
-											{chg >= 0 ? '🟢' : '🔴'} {p.symbol} ${p.price?.toFixed(2) ?? '—'}{chgStr}
+											{chg != null ? (chg >= 0 ? '🟢' : '🔴') : '⚪'} {p.symbol} ${p.price?.toFixed(2) ?? '—'}{chgStr}
 										</span>
 									</div>
 									{p.news?.summary && (
