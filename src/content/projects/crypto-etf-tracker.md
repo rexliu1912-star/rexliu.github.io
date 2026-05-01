@@ -6,5 +6,5 @@ description_zh: "实时 SEC 加密 ETF 申请追踪器 — EDGAR 实时数据，
 status: "running"
 icon: "📊"
 url: "https://etf.rexliu.io"
-order: 2
+order: 5
 ---

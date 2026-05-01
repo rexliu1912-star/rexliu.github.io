@@ -6,5 +6,5 @@ description_zh: "公开的持仓驾驶舱——板块、逻辑、分阶段决策
 status: "running"
 icon: "📊"
 url: "/portfolio"
-order: 2
+order: 1
 ---

@@ -6,5 +6,5 @@ description_zh: "每个里程碑都是一颗星。从出生到第一句主动说
 status: "running"
 icon: "🌱"
 url: "/lucky"
-order: 6
+order: 7
 ---
