@@ -149,15 +149,10 @@ const goldSignalLabel = goldTracker?.signal?.label_en ?? goldTracker?.signal?.si
 const goldSignalLabelZh = goldTracker?.signal?.label_zh ?? goldTracker?.signal?.signal_label_zh ?? "观察";
 const goldXau = goldTracker?.price?.xau_usd;
 const goldDay = goldTracker?.price?.day_change_pct;
-const goldPeak = goldTracker?.price?.peak_price ?? goldTracker?.price?.week_52_high;
 const goldDrawdown = goldTracker?.price?.drawdown_from_peak_pct;
 const goldM2Pct = Math.min(100, Math.max(0, goldTracker?.monetary?.m2_to_trigger_pct ?? 0));
 const goldM2Label = goldTracker?.monetary?.inversion_label_en ?? goldSignalLabel;
 const goldM2LabelZh = goldTracker?.monetary?.inversion_label_zh ?? goldSignalLabelZh;
-const goldCycle = goldTracker?.metrics?.cycle_label_en ?? "Cycle watch";
-const goldCycleZh = goldTracker?.metrics?.cycle_label_zh ?? "周期观察";
-const goldStop = goldTracker?.signal?.stop_loss ?? goldTracker?.signal?.aisc_range?.[0] ?? goldTracker?.cost_floor?.aisc_usd ?? 1750;
-const goldRangeHigh = goldTracker?.signal?.aisc_range?.[1] ?? goldStop;
 
 // Group deep research by sector for organized display
 const deepBySector = deep_research.reduce((acc: Record<string, { sector_en: string; sector_zh: string; items: any[] }>, d: any) => {
@@ -973,7 +968,7 @@ const stages = [
 				<span class="section-summary"><span class="lang-en">XAU {goldXau ?? "—"} · M2 {goldM2Pct.toFixed(1)}% · {goldSignalLabel}</span><span class="lang-zh">金价 {goldXau ?? "—"} · M2 {goldM2Pct.toFixed(1)}% · {goldSignalLabelZh}</span></span>
 			</header>
 
-			<div class="gold-tracker-dash" data-stop={goldStop} data-target={goldPeak ?? 5500} data-entry={goldXau ?? 4500}>
+			<div class="gold-tracker-dash">
 				<div class={"gold-price-card gold-signal-" + goldSignal}>
 					<div>
 						<p class="gold-card-label"><span class="lang-en">Spot XAU/USD</span><span class="lang-zh">现货金价</span></p>
@@ -992,40 +987,10 @@ const stages = [
 					<div class="gold-panel-head"><p class="gold-card-label"><span class="lang-en">Westwind M2 inversion system</span><span class="lang-zh">西风 M2 倒挂体系</span></p><span class={"gold-status-pill gold-" + goldSignal}>{goldSignalLabel}</span></div>
 					<div class="gold-trigger-bar" aria-label="M2 trigger progress"><span style={"width:" + goldM2Pct + "%"}></span></div>
 					<div class="gold-metric-row"><span><span class="lang-en">US M2</span><span class="lang-zh">美国 M2</span></span><strong>{goldTracker?.monetary?.m2_trillion ?? "—"}T / {goldTracker?.monetary?.m2_trigger_line ?? "—"}T</strong></div>
-					<div class="gold-metric-row"><span><span class="lang-en">Gold / M2 ratio</span><span class="lang-zh">金价 / M2 比值</span></span><strong>{goldTracker?.monetary?.ratio_display ?? "—"}</strong></div>
-					<div class="gold-metric-row"><span><span class="lang-en">Status</span><span class="lang-zh">状态</span></span><strong><span class="lang-en">{goldM2Label}</span><span class="lang-zh">{goldM2LabelZh}</span></strong></div>
+		<div class="gold-metric-row"><span><span class="lang-en">Status</span><span class="lang-zh">状态</span></span><strong><span class="lang-en">{goldM2Label}</span><span class="lang-zh">{goldM2LabelZh}</span></strong></div>
 				</div>
 
-					<div class="gold-rr-panel">
-					<p class="gold-card-label"><span class="lang-en">Interactive risk / reward</span><span class="lang-zh">可拖动盈亏比速查</span></p>
-					<div class="gold-rr-main"><strong data-gold-rr>—</strong><span><span class="lang-en">R/R to prior peak</span><span class="lang-zh">到前高盈亏比</span></span></div>
-					<input class="gold-entry-slider" data-gold-slider type="range" min={Math.round(goldStop * 1.05)} max={Math.round(goldPeak ?? 5500)} value={Math.round(goldXau ?? 4500)} />
-					<div class="gold-rr-labels"><span>Entry <b data-gold-entry>—</b></span><span>Stop ${goldStop}</span><span>Target ${goldPeak ?? "—"}</span></div>
-					<div class="gold-rr-cost"><span class="lang-en">AISC cost floor: ${goldStop}</span><span class="lang-zh">矿企成本底线: ${goldStop}</span></div>
-				</div>
-
-				<div class="gold-snapshot-grid">
-					<div><span>AISC band</span><strong>${goldStop}–${goldRangeHigh}</strong><small><span class="lang-en">Production cost floor</span><span class="lang-zh">矿企成本底线</span></small></div>
-					<div><span>Cycle position</span><strong><span class="lang-en">{goldCycle}</span><span class="lang-zh">{goldCycleZh}</span></strong><small><span class="lang-en">Long-cycle macro context</span><span class="lang-zh">长周期宏观定位</span></small></div>
-				</div>
-
-				<details class="gold-methodology">
-					<summary><span class="lang-en">📖 How to read this dashboard — methodology & investment logic</span><span class="lang-zh">📖 如何解读这个面板 — 方法论与投资逻辑</span></summary>
-					<dl class="gold-methodology-content">
-						<dt><span class="lang-en">M2 Inversion System</span><span class="lang-zh">M2 倒挂体系</span></dt>
-						<dd><span class="lang-en">Gold tracks global M2 money supply. When US M2 approaches the trigger line and gold lags, it signals undervaluation — a high-conviction entry window. Status: Accumulate / Watch / Avoid.</span><span class="lang-zh">金价跟踪全球 M2 货币供应。当美国 M2 接近触发线而金价滞后时，说明金价被低估——是高置信度的建仓窗口。状态：积累 / 观望 / 回避。</span></dd>
-						<dt><span class="lang-en">AISC Cost Floor</span><span class="lang-zh">AISC 成本底线</span></dt>
-						<dd><span class="lang-en">All-In Sustaining Cost is the break-even price for gold miners. Price rarely stays below AISC for long — it acts as a structural floor. Our stop-loss is anchored here.</span><span class="lang-zh">全维持成本是金矿企业的盈亏平衡线。金价很少长期低于 AISC——它构成结构性底部。我们的止损锚定在此。</span></dd>
-						<dt><span class="lang-en">Cycle Position</span><span class="lang-zh">周期定位</span></dt>
-						<dd><span class="lang-en">Long-cycle macro indicator: where gold sits in its multi-year secular bull/bear. Helps decide position sizing — early cycle = add, late cycle = trim.</span><span class="lang-zh">长周期宏观指标：判断金价处于多年大周期牛市/熊市的哪个阶段。辅助仓位决策——早期加仓，晚期减仓。</span></dd>
-						<dt><span class="lang-en">Risk / Reward Slider</span><span class="lang-zh">盈亏比滑块</span></dt>
-						<dd><span class="lang-en">Drag to model entry prices. R/R ratio = potential upside ÷ downside to stop. Above 3:1 is attractive; below 2:1 we wait. Stop is set at AISC floor.</span><span class="lang-zh">拖动滑块模拟不同入场价。盈亏比 = 潜在上行 ÷ 下行至止损。3:1 以上有吸引力，2:1 以下等待。止损设在 AISC 成本线。</span></dd>
-						<dt><span class="lang-en">Bollinger Deviation</span><span class="lang-zh">布林带偏离</span></dt>
-						<dd><span class="lang-en">Distance from 200-day mean. Extreme deviation (±2σ) suggests mean reversion risk. Helps time additions — buy dips near -2σ, trim on spikes above +2σ.</span><span class="lang-zh">偏离 200 日均线的距离。极端偏离 (±2σ) 暗示均值回归风险。辅助择时——接近 -2σ 加仓，突破 +2σ 减仓。</span></dd>
-						<dt><span class="lang-en">Shanghai Premium</span><span class="lang-zh">境内溢价</span></dt>
-						<dd><span class="lang-en">Shanghai vs London price gap. Rising premium = strong domestic demand (China buying). Useful as a sentiment / demand signal, not a direct trade trigger.</span><span class="lang-zh">上海与伦敦金价差。溢价上升 = 国内需求强劲（中国买入）。作为情绪/需求信号参考，非直接交易触发器。</span></dd>
-					</dl>
-				</details>
+	
 
 				{/* ── Gold Timeseries Charts ── */}
 				<div class="gold-charts-row">
@@ -2378,29 +2343,7 @@ const stages = [
 		}
 
 
-		function __initGoldTracker() {
-			const page = document.querySelector('.portfolio-page');
-			if (!page || page.dataset.goldTrackerReady === 'true') return;
-			page.dataset.goldTrackerReady = 'true';
-			page.querySelectorAll('.gold-tracker-dash').forEach((dash) => {
-				const slider = dash.querySelector('[data-gold-slider]');
-				const rr = dash.querySelector('[data-gold-rr]');
-				const entryLabel = dash.querySelector('[data-gold-entry]');
-				if (!slider || !rr || !entryLabel) return;
-				const stop = Number(dash.dataset.stop || 0);
-				const target = Number(dash.dataset.target || 0);
-				const fmt = (n) => '$' + Math.round(n).toLocaleString();
-				const update = () => {
-					const entry = Number(slider.value || dash.dataset.entry || 0);
-					const risk = Math.max(1, entry - stop);
-					const reward = Math.max(0, target - entry);
-					rr.textContent = (reward / risk).toFixed(2) + '×';
-					entryLabel.textContent = fmt(entry);
-				};
-				slider.addEventListener('input', update);
-				update();
-			});
-		}
+
 
 		function __initPortfolioCharts() {
 			if (typeof window.Chart === 'undefined') return;
@@ -2990,7 +2933,6 @@ const stages = [
 		function __runPortfolio() {
 			__initPortfolioAnimate();
 			__initPortfolioCharts();
-			__initGoldTracker();
 			__initCatalystCountdown();
 		}
 		if (document.readyState === 'loading') {
@@ -3096,7 +3038,7 @@ const stages = [
 		/* ── Gold Tracker ───────────────────────── */
 		.gold-tracker-section { /* standard section border */ }
 		.gold-tracker-dash { display: grid; grid-template-columns: minmax(240px, .9fr) minmax(280px, 1.1fr); gap: 1rem; margin-top: 1rem; }
-		.gold-price-card, .gold-inversion-panel, .gold-rr-panel, .gold-snapshot-grid > div { border: 1px solid var(--p-border); background: var(--p-card); border-radius: 1rem; padding: 1rem; }
+		.gold-price-card, .gold-inversion-panel { border: 1px solid var(--p-border); background: var(--p-card); border-radius: 1rem; padding: 1rem; }
 		.gold-price-card { display: grid; grid-template-columns: 1fr 180px; align-items: center; min-height: 180px; }
 		.gold-price-card strong { display:block; margin:.25rem 0; font: 600 clamp(2rem, 5vw, 3.6rem)/1 var(--font-serif); color: var(--p-text); }
 		.gold-card-label { margin: 0 0 .5rem; font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; color: var(--p-text-faint); }
@@ -3112,23 +3054,7 @@ const stages = [
 		.gold-trigger-bar span { display:block; height:100%; border-radius:inherit; background: var(--p-accent); }
 		.gold-metric-row { display:flex; justify-content:space-between; gap:1rem; padding:.65rem 0; border-top:1px solid color-mix(in srgb, var(--p-border) 55%, transparent); font-size:.9rem; }
 		.gold-metric-row span { color:var(--p-text-faint); } .gold-metric-row strong { text-align:right; color:var(--p-text); }
-		.gold-rr-panel { grid-column: span 1; }
-		.gold-rr-main { display:flex; align-items:baseline; gap:.7rem; margin:.55rem 0 .9rem; }
-		.gold-rr-main strong { font: 700 2.4rem/1 var(--font-serif); color:var(--p-text); }
-		.gold-entry-slider { width:100%; accent-color:var(--p-accent); }
-		.gold-rr-labels { display:flex; justify-content:space-between; gap:.5rem; margin-top:.55rem; font-size:.74rem; color:var(--p-text-faint); }
-		.gold-rr-cost { margin-top:.4rem; padding-top:.4rem; border-top:1px solid var(--p-border); font-size:.72rem; color:var(--p-text-faint); text-align:center; }
-		.gold-rr-cost .lang-en, .gold-rr-cost .lang-zh { font-weight:500; color:var(--p-text-secondary); }
-		.gold-methodology { margin-top:1.2rem; padding:.9rem 1.1rem; background:var(--p-bg-secondary); border:1px solid var(--p-border); border-radius:var(--radius-lg); }
-		.gold-methodology summary { cursor:pointer; font-size:.78rem; font-weight:600; color:var(--p-text-secondary); letter-spacing:.02em; }
-		.gold-methodology summary:hover { color:var(--p-text); }
-		.gold-methodology-content { margin-top:.7rem; display:grid; grid-template-columns:1fr 1fr; gap:.55rem .9rem; font-size:.72rem; line-height:1.5; color:var(--p-text-secondary); }
-		.gold-methodology-content dt { font-weight:600; color:var(--p-text); }
-		.gold-methodology-content dd { margin:0; color:var(--p-text-faint); }
-		.gold-snapshot-grid { grid-column: 1 / -1; display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap:1rem; }
-		.gold-snapshot-grid span, .gold-snapshot-grid small { display:block; color:var(--p-text-faint); font-size:.74rem; }
-		.gold-snapshot-grid strong { display:block; margin:.25rem 0; font: 600 1.25rem/1.2 var(--font-serif); color:var(--p-text); }
-		@media (max-width: 860px) { .gold-tracker-dash, .gold-snapshot-grid { grid-template-columns: 1fr; } .gold-price-card { grid-template-columns: 1fr; } .gold-semi-gauge { justify-self:start; } }
+		@media (max-width: 860px) { .gold-tracker-dash { grid-template-columns: 1fr; } .gold-price-card { grid-template-columns: 1fr; } .gold-semi-gauge { justify-self:start; } }
 
 		/* ── Gold Charts & Gauges ── */
 		.gold-charts-row { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
