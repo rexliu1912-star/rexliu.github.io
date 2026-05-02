@@ -866,7 +866,7 @@ async function main() {
     }
   }
 
-  // Enrich crypto positions with SNEK Daily news summary
+  // Enrich crypto positions with per-symbol news from SNEK Daily
   if (crypto?.positions) {
     try {
       const snekDailyDir = path.join(ROOT, "src/content/snek-daily");
@@ -875,19 +875,56 @@ async function main() {
         .sort()
         .reverse();
       if (mdFiles.length > 0) {
-        const latestFile = path.join(snekDailyDir, mdFiles[0]);
-        const raw = await fs.readFile(latestFile, "utf-8");
-        const fmMatch = raw.match(/^---\s*\n([\s\S]*?)\n---/);
-        if (fmMatch) {
-          const summaryMatch = fmMatch[1].match(/^summary:\s*["']?(.+?)["']?\s*$/m);
-          if (summaryMatch) {
-            const summary = summaryMatch[1].trim();
-            for (const cp of crypto.positions) {
-              cp.news = { summary, sentiment: "neutral" };
-            }
-            console.log(`   ✅ SNEK Daily news: "${summary.slice(0, 60)}…"`);
-          }
+        const raw = await fs.readFile(path.join(snekDailyDir, mdFiles[0]), "utf-8");
+        const body = raw.replace(/^---[\s\S]*?---\s*/, "");
+
+        // Parse BTC: from 行情快照 table row "| BTC | $XX,XXX | +X.X% |"
+        const btcRow = body.match(/\|\s*BTC\s*\|\s*\$?([\d,]+)\s*\|\s*([+-]?[\d.]+%)/i);
+        // Parse SNEK: from SNEK 数据 section — bold markers **key**
+        const snekVol = body.match(/\*?\*?24h\s*量\*?\*?\s*[：:]\s*\$?([\d.]+)([MmBb])/);
+        const snekBuySell = body.match(/\*?\*?买卖比\*?\*?\s*[：:]\s*(?:买家\s*(\d+)\s*[/／]\s*卖家\s*(\d+))?/);
+        const snekMcap = body.match(/(?<!总)\*?\*?市值\*?\*?\s*[：:]\s*\$?([\d.]+)([MmBb])\s*\(?\#?(\d+)?/);
+        const snekAth = body.match(/\*?\*?距\s*ATH\*?\*?\s*[：:]\s*([+-]?[\d.]+%)/);
+
+        // BTC news
+        if (btcRow) {
+          const rawPrice = parseInt(btcRow[1].replace(/,/g, ""));
+          const price = rawPrice >= 1000 ? `$${Math.round(rawPrice / 1000)}K` : `$${rawPrice}`;
+          const chg = parseFloat(btcRow[2]);
+          let headline;
+          if (chg >= 3) headline = `BTC ${price}，日涨 ${btcRow[2]}，强势突破`;
+          else if (chg >= 1) headline = `BTC ${price}，温和上涨 ${btcRow[2]}`;
+          else if (chg > -1) headline = `BTC ${price}，横盘整理`;
+          else if (chg > -3) headline = `BTC ${price}，小幅回调 ${btcRow[2]}`;
+          else headline = `BTC ${price}，日跌 ${btcRow[2]}，承压`;
+          const btcPos = crypto.positions.find((p) => p.symbol === "BTC");
+          if (btcPos) btcPos.news = { summary: headline, sentiment: chg >= 1 ? "positive" : chg <= -1 ? "negative" : "neutral" };
         }
+
+        // SNEK news
+        const snekParts = [];
+        if (snekVol) snekParts.push(`24h量 $${snekVol[1]}${snekVol[2].toUpperCase()}`);
+        if (snekMcap) snekParts.push(`市值 $${snekMcap[1]}${snekMcap[2].toUpperCase()}`);
+        if (snekBuySell && snekBuySell[1]) {
+          const ratio = (parseInt(snekBuySell[1]) / Math.max(parseInt(snekBuySell[2]), 1)).toFixed(1);
+          snekParts.push(`买卖比 ${ratio}:1`);
+        }
+        if (snekAth) snekParts.push(`距ATH ${snekAth[1]}`);
+        // Determine sentiment from buy/sell ratio and ATH proximity
+        let snekSent = "neutral";
+        if (snekBuySell && snekBuySell[1]) {
+          const r = parseInt(snekBuySell[1]) / Math.max(parseInt(snekBuySell[2]), 1);
+          if (r >= 1.5) snekSent = "positive";
+          else if (r <= 0.7) snekSent = "negative";
+        }
+        if (snekParts.length > 0) {
+          const snekPos = crypto.positions.find((p) => p.symbol === "SNEK");
+          if (snekPos) snekPos.news = { summary: snekParts.join(" · "), sentiment: snekSent };
+        }
+
+        const btcNews = crypto.positions.find((p) => p.symbol === "BTC")?.news?.summary;
+        const snekNews = crypto.positions.find((p) => p.symbol === "SNEK")?.news?.summary;
+        if (btcNews || snekNews) console.log(`   ✅ Crypto news: BTC="${btcNews || "—"}" SNEK="${snekNews || "—"}"`);
       }
     } catch (e) {
       console.warn(`   ⚠️  SNEK Daily news enrichment skipped: ${e.message}`);
