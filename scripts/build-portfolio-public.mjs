@@ -878,48 +878,41 @@ async function main() {
         const raw = await fs.readFile(path.join(snekDailyDir, mdFiles[0]), "utf-8");
         const body = raw.replace(/^---[\s\S]*?---\s*/, "");
 
-        // Parse BTC: from 行情快照 table row "| BTC | $XX,XXX | +X.X% |"
-        const btcRow = body.match(/\|\s*BTC\s*\|\s*\$?([\d,]+)\s*\|\s*([+-]?[\d.]+%)/i);
-        // Parse SNEK: from SNEK 数据 section — bold markers **key**
-        const snekVol = body.match(/\*?\*?24h\s*量\*?\*?\s*[：:]\s*\$?([\d.]+)([MmBb])/);
-        const snekBuySell = body.match(/\*?\*?买卖比\*?\*?\s*[：:]\s*(?:买家\s*(\d+)\s*[/／]\s*卖家\s*(\d+))?/);
-        const snekMcap = body.match(/(?<!总)\*?\*?市值\*?\*?\s*[：:]\s*\$?([\d.]+)([MmBb])\s*\(?\#?(\d+)?/);
-        const snekAth = body.match(/\*?\*?距\s*ATH\*?\*?\s*[：:]\s*([+-]?[\d.]+%)/);
+        // Parse BTC: top headline from 🗞 BTC 要闻 section
+        const btcNewsMatch = body.match(/##\s*🗞\s*BTC\s*要闻\s*\n([\s\S]*?)(?=\n##|\n---|\Z)/);
+        const btcHeadlines = btcNewsMatch
+          ? btcNewsMatch[1].match(/•\s*\[([^\]]+)\]/g)?.map(m => m.replace(/^•\s*\[/, '').replace(/\].*/, ''))
+          : null;
+        // Parse SNEK: top headline from 🐍 SNEK 社区 section (link or plain text)
+        const snekNewsMatch = body.match(/##\s*🐍\s*SNEK\s*社区\s*\n([\s\S]*?)(?=\n##|\n---|\Z)/);
+        let snekHeadlines = null;
+        if (snekNewsMatch) {
+          // Try linked headlines first: • @handle: [text](url) or • [text](url)
+          snekHeadlines = snekNewsMatch[1].match(/•\s*(?:@\w+:?\s*)?\[([^\]]+)\]/g)?.map(m => m.replace(/^.*\[/, '').replace(/\].*/, ''));
+          // Fallback: plain text bullet lines (any non-empty)
+          if (!snekHeadlines?.length) {
+            snekHeadlines = snekNewsMatch[1].match(/(?:^|\n)\s*[-•]\s+([^\n]+)/g)?.map(m => m.replace(/^[-•\s]+/, '').trim()).filter(s => s.length > 3 && !s.startsWith('📎') && !s.startsWith('🔗'));
+          }
+        }
 
-        // BTC news
-        if (btcRow) {
-          const rawPrice = parseInt(btcRow[1].replace(/,/g, ""));
-          const price = rawPrice >= 1000 ? `$${Math.round(rawPrice / 1000)}K` : `$${rawPrice}`;
-          const chg = parseFloat(btcRow[2]);
-          let headline;
-          if (chg >= 3) headline = `BTC ${price}，日涨 ${btcRow[2]}，强势突破`;
-          else if (chg >= 1) headline = `BTC ${price}，温和上涨 ${btcRow[2]}`;
-          else if (chg > -1) headline = `BTC ${price}，横盘整理`;
-          else if (chg > -3) headline = `BTC ${price}，小幅回调 ${btcRow[2]}`;
-          else headline = `BTC ${price}，日跌 ${btcRow[2]}，承压`;
+        // BTC news — use first headline, determine sentiment from keywords
+        if (btcHeadlines?.length > 0) {
+          const headline = btcHeadlines[0];
+          const pos = /大涨|突破|流入|牛市|新高|rally|surge|inflow|bull/i;
+          const neg = /大跌|流出|暴跌|crash|outflow|bear|dump/i;
+          const sent = pos.test(headline) ? "positive" : neg.test(headline) ? "negative" : "neutral";
           const btcPos = crypto.positions.find((p) => p.symbol === "BTC");
-          if (btcPos) btcPos.news = { summary: headline, sentiment: chg >= 1 ? "positive" : chg <= -1 ? "negative" : "neutral" };
+          if (btcPos) btcPos.news = { summary: headline, sentiment: sent };
         }
 
-        // SNEK news
-        const snekParts = [];
-        if (snekVol) snekParts.push(`24h量 $${snekVol[1]}${snekVol[2].toUpperCase()}`);
-        if (snekMcap) snekParts.push(`市值 $${snekMcap[1]}${snekMcap[2].toUpperCase()}`);
-        if (snekBuySell && snekBuySell[1]) {
-          const ratio = (parseInt(snekBuySell[1]) / Math.max(parseInt(snekBuySell[2]), 1)).toFixed(1);
-          snekParts.push(`买卖比 ${ratio}:1`);
-        }
-        if (snekAth) snekParts.push(`距ATH ${snekAth[1]}`);
-        // Determine sentiment from buy/sell ratio and ATH proximity
-        let snekSent = "neutral";
-        if (snekBuySell && snekBuySell[1]) {
-          const r = parseInt(snekBuySell[1]) / Math.max(parseInt(snekBuySell[2]), 1);
-          if (r >= 1.5) snekSent = "positive";
-          else if (r <= 0.7) snekSent = "negative";
-        }
-        if (snekParts.length > 0) {
+        // SNEK news — use first headline
+        if (snekHeadlines?.length > 0) {
+          const headline = snekHeadlines[0];
+          const pos = /上涨|拉升|突破|增长|阳线|bull|surge|pump|新高/i;
+          const neg = /下跌|暴跌|崩盘|crash|dump|bear/i;
+          const sent = pos.test(headline) ? "positive" : neg.test(headline) ? "negative" : "neutral";
           const snekPos = crypto.positions.find((p) => p.symbol === "SNEK");
-          if (snekPos) snekPos.news = { summary: snekParts.join(" · "), sentiment: snekSent };
+          if (snekPos) snekPos.news = { summary: headline, sentiment: sent };
         }
 
         const btcNews = crypto.positions.find((p) => p.symbol === "BTC")?.news?.summary;
