@@ -841,22 +841,28 @@ async function main() {
     console.warn(`   ⚠️  Timeseries: ${e.message}`);
   }
 
-  // Enrich crypto positions with price data from timeseries
-  if (crypto?.positions && cryptoTimeseries?.data?.length >= 2) {
-    const latest = cryptoTimeseries.data[cryptoTimeseries.data.length - 1];
-    const prev = cryptoTimeseries.data[cryptoTimeseries.data.length - 2];
-    for (const cp of crypto.positions) {
-      if (cp.symbol === "BTC" && latest.btc_close) {
-        cp.price = latest.btc_close;
-        if (prev.btc_close) {
-          cp.daily_change_pct = +((latest.btc_close - prev.btc_close) / prev.btc_close * 100).toFixed(2);
+  // Enrich crypto positions with price data from monitor state + timeseries
+  if (crypto?.positions) {
+    // Primary source: crypto-monitor-state positions (has both BTC and SNEK)
+    const monitorPositions = monitorState?.positions?.positions;
+    if (Array.isArray(monitorPositions)) {
+      for (const cp of crypto.positions) {
+        const mp = monitorPositions.find((p) => p.symbol === cp.symbol);
+        if (mp?.price_usd != null) {
+          cp.price = mp.price_usd;
         }
       }
     }
-    // Try SNEK price from cryptoMonitor if available
-    if (cryptoMonitor?.snek_price != null) {
-      const snekPos = crypto.positions.find((p) => p.symbol === "SNEK");
-      if (snekPos) snekPos.price = cryptoMonitor.snek_price;
+    // BTC daily change from timeseries (has historical data)
+    if (cryptoTimeseries?.data?.length >= 2) {
+      const latest = cryptoTimeseries.data[cryptoTimeseries.data.length - 1];
+      const prev = cryptoTimeseries.data[cryptoTimeseries.data.length - 2];
+      const btcPos = crypto.positions.find((p) => p.symbol === "BTC");
+      if (btcPos && latest.btc_close && prev.btc_close) {
+        // Use timeseries price if monitor didn't have it
+        if (btcPos.price == null) btcPos.price = latest.btc_close;
+        btcPos.daily_change_pct = +((latest.btc_close - prev.btc_close) / prev.btc_close * 100).toFixed(2);
+      }
     }
   }
 

@@ -1407,14 +1407,7 @@ const stages = [
 									{cp.role === "core" ? "◆" : "◇"}
 								</span>
 							</div>
-							<div class="position-tags">
-								{cp.tags_en.map((tag, i) => (
-									<span class="position-tag crypto-position-tag">
-										<span class="lang-en">{tag}</span>
-										<span class="lang-zh">{cp.tags_zh[i] || tag}</span>
-									</span>
-								))}
-							</div>
+		
 						</header>
 
 						<p class="position-thesis">
@@ -1437,16 +1430,7 @@ const stages = [
 							></span>
 						</div>
 
-						<div class="position-meta">
-							<span class="position-stage-badge crypto-stage-badge">
-								<span class="lang-en">Crypto · {cp.role}</span>
-								<span class="lang-zh">加密 · {cp.role === "core" ? "核心" : "社区"}</span>
-							</span>
-							<span class="position-status">
-								<span class="lang-en">{cp.strategy_en}</span>
-								<span class="lang-zh">{cp.strategy_zh}</span>
-							</span>
-						</div>
+	
 
 						<footer class="position-foot">
 							{cp.price != null ? (
