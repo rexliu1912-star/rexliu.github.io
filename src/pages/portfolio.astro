@@ -895,6 +895,7 @@ const stages = [
 			</div>
 		)}
 		</section>
+	)}
 
 		<section class="portfolio-section fade-in-up gold-tracker-section" data-collapse id="gold-tracker-section">
 			<header class="portfolio-section-head">
@@ -1440,9 +1441,6 @@ const stages = [
 											{cp.daily_change_pct >= 0 ? '▲' : '▼'} {cp.daily_change_pct >= 0 ? '+' : ''}{cp.daily_change_pct.toFixed(1)}%
 										</span>
 									)}
-									{cp.market_cap != null && (
-										<span class="crypto-mcap"> · <span class="lang-en">MCap</span><span class="lang-zh">市值</span> ${cp.market_cap >= 1e12 ? (cp.market_cap / 1e12).toFixed(1) + 'T' : cp.market_cap >= 1e9 ? (cp.market_cap / 1e9).toFixed(1) + 'B' : (cp.market_cap / 1e6).toFixed(0) + 'M'}</span>
-									)}
 
 								</span>
 							) : (
@@ -1692,7 +1690,6 @@ const stages = [
 				</div>
 			)}
 		</section>
-		)}
 
 		{/* ═══ Sector Research ═══ */}
 		{sector_research && sector_research.length > 0 && (
