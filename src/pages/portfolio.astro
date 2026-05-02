@@ -2869,6 +2869,7 @@ const stages = [
 			--p-text: rgba(255, 255, 255, 0.88);
 			--p-text-soft: rgba(255, 255, 255, 0.7);
 			--p-text-faint: rgba(255, 255, 255, 0.52);
+			--p-accent: #8953d1;
 			display: grid;
 			gap: 3.5rem;
 			padding-bottom: 5rem;
@@ -2881,6 +2882,7 @@ const stages = [
 			--p-text: #1a1025;
 			--p-text-soft: rgba(30, 20, 50, 0.72);
 			--p-text-faint: rgba(30, 20, 50, 0.5);
+			--p-accent: #7c3aed;
 			color: #1a1025;
 		}
 
@@ -2908,11 +2910,11 @@ const stages = [
 
 
 		/* ── Gold Tracker ───────────────────────── */
-		.gold-tracker-section { border-color: color-mix(in srgb, #f59e0b 24%, var(--p-border)); }
+		.gold-tracker-section { /* standard section border */ }
 		.gold-tracker-dash { display: grid; grid-template-columns: minmax(240px, .9fr) minmax(280px, 1.1fr); gap: 1rem; margin-top: 1rem; }
-		.gold-price-card, .gold-inversion-panel, .gold-rr-panel, .gold-snapshot-grid > div { border: 1px solid color-mix(in srgb, #f59e0b 18%, var(--p-border)); background: linear-gradient(145deg, color-mix(in srgb, #f59e0b 9%, var(--p-card)), var(--p-card)); border-radius: 1rem; padding: 1rem; box-shadow: 0 18px 50px rgba(0,0,0,.12); }
+		.gold-price-card, .gold-inversion-panel, .gold-rr-panel, .gold-snapshot-grid > div { border: 1px solid var(--p-border); background: var(--p-card); border-radius: 1rem; padding: 1rem; }
 		.gold-price-card { display: grid; grid-template-columns: 1fr 180px; align-items: center; min-height: 180px; }
-		.gold-price-card strong { display:block; margin:.25rem 0; font: 600 clamp(2rem, 5vw, 3.6rem)/1 var(--font-serif); color: #facc15; }
+		.gold-price-card strong { display:block; margin:.25rem 0; font: 600 clamp(2rem, 5vw, 3.6rem)/1 var(--font-serif); color: var(--p-text); }
 		.gold-card-label { margin: 0 0 .5rem; font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; color: var(--p-text-faint); }
 		.gold-up { color:#10b981; } .gold-down { color:#ef4444; }
 		.gold-semi-gauge { width: 100%; max-width: 190px; justify-self: end; overflow: visible; }
@@ -2923,13 +2925,13 @@ const stages = [
 		.gold-status-pill.gold-yellow { color:#f59e0b; background:rgba(245,158,11,.12); }
 		.gold-status-pill.gold-red { color:#ef4444; background:rgba(239,68,68,.10); }
 		.gold-trigger-bar { height: 10px; border-radius:999px; overflow:hidden; background: color-mix(in srgb, var(--p-border) 50%, transparent); }
-		.gold-trigger-bar span { display:block; height:100%; border-radius:inherit; background: linear-gradient(90deg, #f59e0b, #facc15); box-shadow: 0 0 18px rgba(250,204,21,.35); }
+		.gold-trigger-bar span { display:block; height:100%; border-radius:inherit; background: var(--p-accent); }
 		.gold-metric-row { display:flex; justify-content:space-between; gap:1rem; padding:.65rem 0; border-top:1px solid color-mix(in srgb, var(--p-border) 55%, transparent); font-size:.9rem; }
 		.gold-metric-row span { color:var(--p-text-faint); } .gold-metric-row strong { text-align:right; color:var(--p-text); }
 		.gold-rr-panel { grid-column: span 1; }
 		.gold-rr-main { display:flex; align-items:baseline; gap:.7rem; margin:.55rem 0 .9rem; }
-		.gold-rr-main strong { font: 700 2.4rem/1 var(--font-serif); color:#facc15; }
-		.gold-entry-slider { width:100%; accent-color:#f59e0b; }
+		.gold-rr-main strong { font: 700 2.4rem/1 var(--font-serif); color:var(--p-text); }
+		.gold-entry-slider { width:100%; accent-color:var(--p-accent); }
 		.gold-rr-labels { display:flex; justify-content:space-between; gap:.5rem; margin-top:.55rem; font-size:.74rem; color:var(--p-text-faint); }
 		.gold-snapshot-grid { grid-column: 1 / -1; display:grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap:1rem; }
 		.gold-snapshot-grid span, .gold-snapshot-grid small { display:block; color:var(--p-text-faint); font-size:.74rem; }
