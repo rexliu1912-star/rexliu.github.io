@@ -89,6 +89,70 @@
 	.gold-chart-card h4 { margin: 0 0 .5rem; font-size: .78rem; letter-spacing: .08em; text-transform: uppercase; color: var(--p-text-faint); }
 	@media (max-width: 860px) { .gold-tracker-dash, .gold-snapshot-grid, .gold-charts-grid { grid-template-columns: 1fr; } .gold-price-card { grid-template-columns: 1fr; } .gold-semi-gauge { justify-self:start; } }
 
+	/* ═══ Crypto Dashboard v2 ═══ */
+	.crypto-dash-v2 { display:flex; flex-direction:column; gap:1.25rem; margin-top:1rem; }
+
+	/* ── Layer 1: Gauge ── */
+	.crypto-gauge-wrap { background:rgba(255,255,255,0.03); border-radius:.75rem; padding:1rem 1rem .75rem; display:flex; flex-direction:column; align-items:center; }
+	[data-theme="light"] .crypto-gauge-wrap { background:rgba(0,0,0,0.03); }
+	.crypto-gauge-svg { width:100%; max-width:320px; height:auto; }
+	.crypto-gauge-score { display:flex; align-items:baseline; gap:.15rem; margin-top:-.15rem; }
+	.crypto-gauge-num { font-size:2.2rem; font-weight:700; font-family:var(--font-serif); line-height:1; }
+	.crypto-gauge-max { font-size:.9rem; opacity:.45; font-weight:500; }
+	.crypto-gauge-label { font-size:.82rem; margin-left:.5rem; opacity:.75; font-weight:500; }
+	.crypto-gauge-delta { font-size:.78rem; margin-top:.15rem; font-weight:600; letter-spacing:.02em; }
+	.crypto-gauge-delta.up { color:#10b981; }
+	.crypto-gauge-delta.down { color:#ef4444; }
+
+	/* ── Layer 2: Indicator Table ── */
+	.crypto-indicators-wrap { background:rgba(255,255,255,0.03); border-radius:.75rem; padding:1rem; }
+	[data-theme="light"] .crypto-indicators-wrap { background:rgba(0,0,0,0.03); }
+	.crypto-ind-table { display:grid; grid-template-columns:1.5fr auto 2fr auto; gap:0 .75rem; align-items:center; }
+	.crypto-ind-row { display:contents; }
+	.crypto-ind-header span { font-size:.7rem; opacity:.4; text-transform:uppercase; letter-spacing:.06em; padding-bottom:.4rem; border-bottom:1px solid rgba(255,255,255,0.06); margin-bottom:.3rem; }
+	[data-theme="light"] .crypto-ind-header span { border-bottom-color:rgba(0,0,0,0.06); }
+	.crypto-ind-name { font-size:.82rem; padding:.35rem 0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+	.crypto-ind-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+	.crypto-ind-detail { font-size:.78rem; opacity:.65; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:flex; align-items:center; gap:.35rem; }
+	.crypto-ind-chg-badge { font-size:.7rem; font-weight:600; padding:.1rem .35rem; border-radius:.3rem; white-space:nowrap; flex-shrink:0; }
+	.crypto-ind-delta-head { text-align:right; }
+
+	/* ── Layer 3: Chart + Side Cards ── */
+	.crypto-chart-row { display:block; }
+	.crypto-chart-wrap { border: 1px solid var(--p-border); background: var(--p-card); border-radius: 1rem; padding: 1rem; min-width: 0; }
+	.crypto-chart-svg { width:100%; height:auto; }
+	.crypto-chart-wrap > .crypto-chart-svg,
+	.crypto-portfolio-index-wrap > .crypto-chart-svg,
+	.crypto-alloc-trend-wrap > .crypto-chart-svg,
+	.crypto-portfolio-index-wrap > .lang-en,
+	.crypto-portfolio-index-wrap > .lang-zh,
+	.crypto-alloc-trend-wrap > .lang-en,
+	.crypto-alloc-trend-wrap > .lang-zh { display:none; }
+	.crypto-chart-canvas { display:block; width:100%; height:280px !important; max-height:280px; }
+	.portfolio-index-chart { height:240px !important; max-height:240px; }
+	.allocation-drift-chart { height:220px !important; max-height:220px; }
+	.crypto-chart-empty { opacity:.45; font-size:.82rem; padding:.5rem 0; }
+
+	/* Responsive */
+	@media (max-width:768px) { .crypto-ind-table { grid-template-columns:1.3fr auto 1.5fr auto; gap:0 .5rem; } }
+	@media (max-width:480px) {
+		.crypto-ind-table { grid-template-columns:1fr auto; }
+		.crypto-ind-header .crypto-ind-detail,
+		.crypto-ind-header .crypto-ind-delta-head,
+		.crypto-ind-row .crypto-ind-detail,
+		.crypto-ind-row .crypto-ind-chg-badge { display:none; }
+	}
+	.radar-score { margin-bottom:.5rem; }
+	.radar-svg { width:100%; max-width:220px; }
+	.radar-legend { display:flex; flex-wrap:wrap; gap:.3rem; margin-top:.5rem; justify-content:center; }
+	.radar-legend-item { font-size:.65rem; padding:.15rem .35rem; border-radius:.25rem; background:rgba(255,255,255,.05); }
+	.radar-legend-item.danger { color:#fca5a5; background:rgba(239,68,68,.1); }
+	.radar-legend-item.warn { color:#fbbf24; background:rgba(245,158,11,.1); }
+	.radar-legend-item.ok { color:#6ee7b7; background:rgba(16,185,129,.1); }
+	.fgi-sparkline { width:100%; max-width:120px; margin-top:.3rem; }
+	.depeg-warn { color:#fbbf24; font-size:.75rem; margin-top:.3rem; }
+	.alloc-history-wrap { padding:.5rem 1rem; }
+
 	/* ── Section Nav ────────────────────────── */
 	.portfolio-section-nav {
 		display: flex;
