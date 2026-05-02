@@ -137,6 +137,8 @@ const fgi = cryptoMonitor?.macro?.fear_greed;
 // Derived: Crypto timeseries for master chart
 const cryptoTS = (portfolioData as any)?.crypto_timeseries;
 
+// Derived: Gold timeseries for Gold/M2 and Premium charts
+const goldTS = (portfolioData as any)?.gold_timeseries;
 
 const cryptoPositions = crypto?.positions ?? [];
 const activePositionCount = positions.length + cryptoPositions.length;
@@ -250,6 +252,7 @@ const dataJson = JSON.stringify({
 	crypto_timeseries: cryptoTS,
 	crypto_portfolio_history: (portfolioData as any)?.crypto_portfolio_history,
 	allocation_history: (portfolioData as any)?.allocation_history,
+	gold_timeseries: goldTS,
 });
 
 const updatedLabel = new Date(generated_at).toISOString().split("T")[0];
@@ -1006,6 +1009,38 @@ const stages = [
 					<div><span>AISC band</span><strong>${goldStop}–${goldRangeHigh}</strong><small>{goldSignalLabel}</small></div>
 					<div><span>Shanghai premium</span><strong>{goldPremium == null ? "—" : goldPremium + "%"}</strong><small>{goldPremiumDate}</small></div>
 					<div><span>Cycle position</span><strong><span class="lang-en">{goldCycle}</span><span class="lang-zh">{goldCycleZh}</span></strong><small>long-cycle context</small></div>
+				</div>
+
+				{/* ── Gold Timeseries Charts ── */}
+				<div class="gold-charts-row">
+					<div class="gold-chart-card">
+						<p class="gold-chart-title"><span class="lang-en">Gold Price (XAU/USD) · 250 days</span><span class="lang-zh">金价 (XAU/USD) · 250天</span></p>
+						<canvas id="goldPriceChart" class="gold-chart-canvas" aria-label="Gold Price Trend"></canvas>
+					</div>
+					<div class="gold-chart-card">
+						<p class="gold-chart-title"><span class="lang-en">Bollinger Deviation · 250 days</span><span class="lang-zh">布林带偏离 · 250天</span></p>
+						<canvas id="goldDevChart" class="gold-chart-canvas" aria-label="Bollinger Deviation Trend"></canvas>
+					</div>
+				</div>
+				<div class="gold-charts-row">
+					<div class="gold-chart-card gold-gauge-card">
+						<p class="gold-chart-title"><span class="lang-en">Gold / M2 Ratio</span><span class="lang-zh">金价 / M2 比值</span></p>
+						<div class="gold-gauge-wrap">
+							<div class="gold-gauge-track">
+								<div id="goldM2Bar" class="gold-gauge-fill"></div>
+							</div>
+							<div class="gold-gauge-value"><span id="goldM2Label">{goldTS?.data?.[goldTS.data.length - 1]?.gold_m2_ratio?.toFixed(1) ?? '—'}</span><small>100–250 range</small></div>
+						</div>
+					</div>
+					<div class="gold-chart-card gold-gauge-card">
+						<p class="gold-chart-title"><span class="lang-en">Shanghai Premium</span><span class="lang-zh">境内溢价</span></p>
+						<div class="gold-gauge-wrap">
+							<div class="gold-gauge-track">
+								<div id="goldPremBar" class="gold-gauge-fill"></div>
+							</div>
+							<div class="gold-gauge-value"><span id="goldPremLabel">{goldTS?.data?.[goldTS.data.length - 1]?.premium_pct != null ? (goldTS.data[goldTS.data.length - 1].premium_pct > 0 ? '+' : '') + goldTS.data[goldTS.data.length - 1].premium_pct.toFixed(2) + '%' : '—'}</span><small>−2% to +5% range</small></div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</section>
@@ -2118,7 +2153,7 @@ const stages = [
 
 	<script is:inline id="portfolio-data" type="application/json" set:html={dataJson}></script>
 	{/* Rain canvas effect — moved to Base.astro for site-wide support */}
-	<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+	<script is:inline src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 	<script is:inline>
 		function __initPortfolioAnimate() {
 			const page = document.querySelector('.portfolio-page');
@@ -2797,12 +2832,145 @@ const stages = [
 						scales: {
 							x: { ticks: { color: axisColor(), maxTicksLimit: 6 }, grid: { color: gridColor() } },
 							y: { ticks: { color: axisColor() }, grid: { color: gridColor() } },
+					},
+				},
+			});
+		});
+
+
+		// ── Gold Timeseries Charts ──
+		if (data.gold_timeseries?.data?.length) {
+			const goldData = data.gold_timeseries.data.filter(d => d.xau_usd != null);
+
+			// Gold Price Trend (xau_usd)
+			const priceCanvas = document.getElementById('goldPriceChart');
+			if (priceCanvas && goldData.length >= 2) {
+				if (Chart.getChart(priceCanvas)) Chart.getChart(priceCanvas).destroy();
+				const dates = goldData.map(d => d.date.slice(5));
+				const prices = goldData.map(d => d.xau_usd);
+				new Chart(priceCanvas, {
+					type: 'line',
+					data: {
+						labels: dates,
+						datasets: [{
+							data: prices,
+							borderColor: '#f59e0b',
+							backgroundColor: 'rgba(245,158,11,0.08)',
+							fill: true,
+							borderWidth: 2,
+							pointRadius: 0,
+							pointHitRadius: 6,
+							tension: 0.3,
+						}],
+					},
+					options: {
+						responsive: true,
+						maintainAspectRatio: false,
+						plugins: {
+							legend: { display: false },
+							tooltip: {
+								callbacks: {
+									label: (ctx) => `$${ctx.parsed.y.toLocaleString()}`,
+								},
+							},
+						},
+						scales: {
+							x: {
+								ticks: { color: 'var(--p-text-dim)', maxTicksLimit: 6, font: { size: 10 } },
+								grid: { display: false },
+							},
+							y: {
+								ticks: {
+									color: 'var(--p-text-dim)',
+									font: { size: 10 },
+									callback: (v) => `$${v.toLocaleString()}`,
+								},
+								grid: { color: 'rgba(148,163,184,0.08)' },
+							},
 						},
 					},
 				});
-			});
+			}
+
+			// Bollinger Deviation Trend (bollinger_mid_pct_diff)
+			const devCanvas = document.getElementById('goldDevChart');
+			const devData = data.gold_timeseries.data.filter(d => d.bollinger_mid_pct_diff != null);
+			if (devCanvas && devData.length >= 2) {
+				if (Chart.getChart(devCanvas)) Chart.getChart(devCanvas).destroy();
+				const dates = devData.map(d => d.date.slice(5));
+				const devs = devData.map(d => d.bollinger_mid_pct_diff);
+				new Chart(devCanvas, {
+					type: 'line',
+					data: {
+						labels: dates,
+						datasets: [{
+							data: devs,
+							borderColor: '#8953d1',
+							backgroundColor: 'rgba(137,83,209,0.08)',
+							fill: true,
+							borderWidth: 2,
+							pointRadius: 0,
+							pointHitRadius: 6,
+							tension: 0.3,
+						}],
+					},
+					options: {
+						responsive: true,
+						maintainAspectRatio: false,
+						plugins: {
+							legend: { display: false },
+							tooltip: {
+								callbacks: {
+									label: (ctx) => `${ctx.parsed.y > 0 ? '+' : ''}${ctx.parsed.y.toFixed(1)}% vs Boll mid`,
+								},
+							},
+						},
+						scales: {
+							x: {
+								ticks: { color: 'var(--p-text-dim)', maxTicksLimit: 6, font: { size: 10 } },
+								grid: { display: false },
+							},
+							y: {
+								ticks: {
+									color: 'var(--p-text-dim)',
+									font: { size: 10 },
+									callback: (v) => `${v > 0 ? '+' : ''}${v.toFixed(0)}%`,
+								},
+								grid: { color: 'rgba(148,163,184,0.08)' },
+							},
+						},
+					},
+				});
+			}
+
+			// Gold/M2 Ratio gauge fill
+			if (data.gold_tracker?.monetary?.gold_m2_ratio) {
+				const ratio = data.gold_tracker.monetary.gold_m2_ratio;
+				const ratioBar = document.getElementById('goldM2Bar');
+				const ratioLabel = document.getElementById('goldM2Label');
+				if (ratioBar) {
+					const pct = Math.min(100, Math.max(0, ((ratio - 100) / 150) * 100));
+					ratioBar.style.width = pct + '%';
+					ratioBar.style.background = ratio < 150 ? 'var(--p-green)' : ratio > 220 ? 'var(--p-red)' : 'var(--p-accent)';
+				}
+				if (ratioLabel) ratioLabel.textContent = ratio.toFixed(1);
+			}
+
+			// Shanghai Premium gauge fill
+			if (data.gold_tracker?.premium?.premium_pct != null) {
+				const prem = data.gold_tracker.premium.premium_pct;
+				const premBar = document.getElementById('goldPremBar');
+				const premLabel = document.getElementById('goldPremLabel');
+				if (premBar) {
+					const pct = Math.min(100, Math.max(0, ((prem + 2) / 7) * 100));
+					premBar.style.width = pct + '%';
+					premBar.style.background = prem < 0 ? 'var(--p-red)' : prem > 2 ? 'var(--p-green)' : 'var(--p-accent)';
+				}
+				if (premLabel) premLabel.textContent = (prem >= 0 ? '+' : '') + prem.toFixed(2) + '%';
+			}
 		}
 
+		}
 		function __runPortfolio() {
 			__initPortfolioAnimate();
 			__initPortfolioCharts();
@@ -2937,6 +3105,20 @@ const stages = [
 		.gold-snapshot-grid span, .gold-snapshot-grid small { display:block; color:var(--p-text-faint); font-size:.74rem; }
 		.gold-snapshot-grid strong { display:block; margin:.25rem 0; font: 600 1.25rem/1.2 var(--font-serif); color:var(--p-text); }
 		@media (max-width: 860px) { .gold-tracker-dash, .gold-snapshot-grid { grid-template-columns: 1fr; } .gold-price-card { grid-template-columns: 1fr; } .gold-semi-gauge { justify-self:start; } }
+
+		/* ── Gold Charts & Gauges ── */
+		.gold-charts-row { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+		.gold-chart-card { border: 1px solid var(--p-border); background: var(--p-card); border-radius: 1rem; padding: 1rem; }
+		.gold-chart-title { font-size: .78rem; letter-spacing: .06em; text-transform: uppercase; color: var(--p-text-faint); margin-bottom: .6rem; font-weight: 600; }
+		.gold-chart-canvas { display:block; width:100%; height:220px !important; max-height:220px; }
+		.gold-gauge-card { display: flex; flex-direction: column; }
+		.gold-gauge-wrap { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: .5rem; }
+		.gold-gauge-track { height: 10px; border-radius: 999px; overflow: hidden; background: color-mix(in srgb, var(--p-border) 50%, transparent); }
+		.gold-gauge-fill { height: 100%; border-radius: 999px; width: 0; transition: width .8s ease; }
+		.gold-gauge-value { display: flex; align-items: baseline; gap: .5rem; }
+		.gold-gauge-value span { font-size: 1.4rem; font-weight: 700; font-family: var(--font-serif); color: var(--p-text); }
+		.gold-gauge-value small { font-size: .72rem; color: var(--p-text-faint); }
+		@media (max-width: 860px) { .gold-charts-row { grid-template-columns: 1fr; } }
 
 		/* ── Section Nav ────────────────────────── */
 		.portfolio-section-nav {
