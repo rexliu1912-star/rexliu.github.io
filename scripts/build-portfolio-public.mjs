@@ -866,6 +866,34 @@ async function main() {
     }
   }
 
+  // Enrich crypto positions with SNEK Daily news summary
+  if (crypto?.positions) {
+    try {
+      const snekDailyDir = path.join(ROOT, "src/content/snek-daily");
+      const mdFiles = (await fs.readdir(snekDailyDir))
+        .filter((f) => f.endsWith(".md"))
+        .sort()
+        .reverse();
+      if (mdFiles.length > 0) {
+        const latestFile = path.join(snekDailyDir, mdFiles[0]);
+        const raw = await fs.readFile(latestFile, "utf-8");
+        const fmMatch = raw.match(/^---\s*\n([\s\S]*?)\n---/);
+        if (fmMatch) {
+          const summaryMatch = fmMatch[1].match(/^summary:\s*["']?(.+?)["']?\s*$/m);
+          if (summaryMatch) {
+            const summary = summaryMatch[1].trim();
+            for (const cp of crypto.positions) {
+              cp.news = { summary, sentiment: "neutral" };
+            }
+            console.log(`   ✅ SNEK Daily news: "${summary.slice(0, 60)}…"`);
+          }
+        }
+      }
+    } catch (e) {
+      console.warn(`   ⚠️  SNEK Daily news enrichment skipped: ${e.message}`);
+    }
+  }
+
   // Build crypto portfolio value index
   const cryptoPortfolioHistory = await buildCryptoPortfolioHistory();
   if (cryptoPortfolioHistory) {
