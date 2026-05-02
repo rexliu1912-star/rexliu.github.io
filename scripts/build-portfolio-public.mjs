@@ -841,6 +841,25 @@ async function main() {
     console.warn(`   ⚠️  Timeseries: ${e.message}`);
   }
 
+  // Enrich crypto positions with price data from timeseries
+  if (crypto?.positions && cryptoTimeseries?.data?.length >= 2) {
+    const latest = cryptoTimeseries.data[cryptoTimeseries.data.length - 1];
+    const prev = cryptoTimeseries.data[cryptoTimeseries.data.length - 2];
+    for (const cp of crypto.positions) {
+      if (cp.symbol === "BTC" && latest.btc_close) {
+        cp.price = latest.btc_close;
+        if (prev.btc_close) {
+          cp.daily_change_pct = +((latest.btc_close - prev.btc_close) / prev.btc_close * 100).toFixed(2);
+        }
+      }
+    }
+    // Try SNEK price from cryptoMonitor if available
+    if (cryptoMonitor?.snek_price != null) {
+      const snekPos = crypto.positions.find((p) => p.symbol === "SNEK");
+      if (snekPos) snekPos.price = cryptoMonitor.snek_price;
+    }
+  }
+
   // Build crypto portfolio value index
   const cryptoPortfolioHistory = await buildCryptoPortfolioHistory();
   if (cryptoPortfolioHistory) {
@@ -904,10 +923,13 @@ async function main() {
 
   const publicPositions = buildPositions(positions, rules, events, overrides);
 
+  // BTC/SNEK live in crypto.positions — remove duplicates from tradfi positions
+  const filteredPublicPositions = publicPositions.filter(p => !['BTC', 'SNEK'].includes(p.symbol));
+
   // 5b. Merge news digest into positions
   const newsDigest = await readJson(NEWS_DIGEST_PATH);
   if (newsDigest?.positions) {
-    for (const pos of publicPositions) {
+    for (const pos of filteredPublicPositions) {
       const news = newsDigest.positions[pos.symbol];
       if (news) {
         pos.news = {
@@ -920,10 +942,24 @@ async function main() {
         };
       }
     }
-    const withNews = publicPositions.filter((p) => p.news).length;
-    console.log(`📰 News digest: ${withNews}/${publicPositions.length} positions`);
+    const withNews = filteredPublicPositions.filter((p) => p.news).length;
+    console.log(`📰 News digest: ${withNews}/${filteredPublicPositions.length} positions`);
   } else {
     console.log("📰 No news digest found — skipping");
+  }
+
+  // Merge news into crypto positions from news digest
+  if (crypto?.positions && newsDigest?.positions) {
+    for (const cp of crypto.positions) {
+      const news = newsDigest.positions[cp.symbol];
+      if (news) {
+        cp.news = {
+          summary: news.summary,
+          sentiment: news.sentiment,
+          items: (news.items || []).slice(0, 2).map((n) => ({ title: n.title, snippet: n.snippet })),
+        };
+      }
+    }
   }
 
   // 5c. Merge daily snapshot price + daily change into positions
@@ -954,7 +990,7 @@ async function main() {
           }
         }
       }
-      for (const pos of publicPositions) {
+      for (const pos of filteredPublicPositions) {
         const price = priceMap[pos.symbol];
         const yestPrice = yestPriceMap[pos.symbol];
         if (price != null) {
@@ -964,9 +1000,9 @@ async function main() {
           }
         }
       }
-      const withPrice = publicPositions.filter((p) => p.price != null).length;
+      const withPrice = filteredPublicPositions.filter((p) => p.price != null).length;
       const snapshotDate = snapshotFiles[0].replace(".json", "");
-      console.log(`📊 Snapshot: ${withPrice}/${publicPositions.length} positions (date: ${snapshotDate})`);
+      console.log(`📊 Snapshot: ${withPrice}/${filteredPublicPositions.length} positions (date: ${snapshotDate})`);
     } else {
       console.log("📊 No daily snapshots found — skipping price merge");
     }
@@ -998,8 +1034,8 @@ async function main() {
   })();
 
   const stats = {
-    active_positions: publicPositions.length,
-    markets: new Set(publicPositions.map((p) => p.market)).size,
+    active_positions: filteredPublicPositions.length,
+    markets: new Set(filteredPublicPositions.map((p) => p.market)).size,
     tracked_rules: (rules || []).filter((r) => r.active !== false).length,
     upcoming_events: futureEvents.length,
     weekly_scan_hits: watchlistIndex
@@ -1023,7 +1059,7 @@ async function main() {
     allocation: { current: overrides.allocation },
     sector_research: overrides.sector_research || [],
     deep_research: overrides.deep_research || [],
-    positions: publicPositions,
+    positions: filteredPublicPositions,
     crypto,
     crypto_monitor: cryptoMonitor,
     allocation_history: allocationHistory,

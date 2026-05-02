@@ -90,6 +90,13 @@ interface PortfolioData {
 			thesis_zh: string;
 			strategy_en: string;
 			strategy_zh: string;
+			price?: number;
+			daily_change_pct?: number;
+			news?: {
+				summary: string;
+				sentiment: "positive" | "neutral" | "negative";
+				items: { title: string; snippet: string }[];
+			} | null;
 		}[];
 	} | null;
 	crypto_monitor: any | null;
@@ -883,77 +890,6 @@ const stages = [
 					);
 				})()}
 
-{/* ── Layer 5: Allocation Drift Trend ── */}
-				{(() => {
-					const ah = (portfolioData as any)?.allocation_history?.history;
-					if (!ah || ah.length < 2) return null;
-
-					const buckets = allocation.current.categories;
-					const idToKey = {
-						"stablecoin": "stablecoin_yield",
-						"funds": "funds_etf",
-						"stocks": "stocks",
-						"crypto": "crypto"
-					};
-
-					const W = 720, H = 220;
-					const pad = { l: 44, r: 16, t: 14, b: 28 };
-					const cW = W - pad.l - pad.r;
-					const cH = H - pad.t - pad.b;
-
-					const xOf = (i: number) => pad.l + (i / Math.max(1, ah.length - 1)) * cW;
-					const yPct = (v: number) => pad.t + cH - (v / 60) * cH;
-
-					return (
-						<div class="crypto-alloc-trend-wrap">
-							<p class="crypto-dash-card-title">
-								<span class="lang-en">Allocation Drift</span>
-								<span class="lang-zh">配置偏移趋势</span>
-							</p>
-							<canvas id="cryptoAllocationDriftChart" class="crypto-chart-canvas allocation-drift-chart" aria-label="Allocation Drift"></canvas>
-							<svg viewBox={`0 0 ${W} ${H}`} class="crypto-chart-svg" preserveAspectRatio="xMidYMid meet">
-								{[0, 15, 30, 45].map(v => (
-									<>
-										<line x1={pad.l} y1={yPct(v).toFixed(1)} x2={W - pad.r} y2={yPct(v).toFixed(1)} stroke="color-mix(in srgb, var(--p-border) 35%, transparent)" stroke-width="0.5" />
-										<text x={pad.l - 6} y={yPct(v).toFixed(1)} font-size="8" fill="color-mix(in srgb, var(--p-text-faint) 60%, transparent)" text-anchor="end" dominant-baseline="middle">{v}%</text>
-									</>
-								))}
-								{buckets.map((b: any) => {
-									const key = idToKey[b.id as keyof typeof idToKey];
-									if (!key) return null;
-									const linePts = ah.map((h: any, i: number) => {
-										const v = h.buckets?.[key] ?? 0;
-										return `${xOf(i).toFixed(1)},${yPct(v).toFixed(1)}`;
-									}).join(" ");
-									const current = ah[ah.length - 1]?.buckets?.[key] ?? 0;
-									const target = b.target_pct;
-									const isDrifted = Math.abs(current - target) >= 5;
-									return (
-										<>
-											<polyline points={linePts} fill="none" stroke={b.color} stroke-width={isDrifted ? "2.2" : "1.5"} stroke-linejoin="round" stroke-linecap="round" stroke-dasharray={isDrifted ? "none" : "4 2"} opacity={isDrifted ? "1" : "0.6"} />
-											<line x1={pad.l} y1={yPct(target).toFixed(1)} x2={W - pad.r} y2={yPct(target).toFixed(1)} stroke={b.color} stroke-width="0.6" stroke-dasharray="2 4" opacity="0.35" />
-										</>
-									);
-								})}
-								{ah.map((h: any, i: number) => {
-									const x = xOf(i).toFixed(1);
-									return <text x={x} y={H - 6} font-size="7.5" fill="color-mix(in srgb, var(--p-text-faint) 50%, transparent)" text-anchor="middle">{h.date}</text>;
-								})}
-								{buckets.map((b: any, i: number) => {
-									const lx = pad.l + i * 110;
-									return (
-										<>
-											<line x1={lx} y1="10" x2={lx + 14} y2="10" stroke={b.color} stroke-width="1.8" />
-											<text x={lx + 18} y="10" font-size="7.5" fill="color-mix(in srgb, var(--p-text-faint) 70%, transparent)" dominant-baseline="middle"><tspan class="lang-en">{b.label_en}</tspan><tspan class="lang-zh">{b.label_zh}</tspan></text>
-										</>
-									);
-								})}
-								<text x={W - pad.r} y="10" font-size="7.5" fill="color-mix(in srgb, var(--p-text-faint) 45%, transparent)" text-anchor="end"><span class="lang-en">- - target</span><span class="lang-zh">- - 目标</span></text>
-							</svg>
-						</div>
-					);
-				})()}
-
 
 </div>
 			</div>
@@ -1046,45 +982,9 @@ const stages = [
 				</span>
 			</p>
 			<span class="section-summary"><span class="lang-en">Stablecoin 40% · Funds 27% · Stocks 20% · Crypto 11%</span><span class="lang-zh">稳定币 40% · 基金 27% · 股票 20% · 加密 11%</span></span>
-		</header>
+	</header>
 
-		{/* Action Signals — allocation drift + crypto monitor alerts */}
-		{(() => {
-			/* Rebalancing signals from allocation drift */
-			const rebalanceSignals = allocation.current.categories
-				.filter((c: any) => Math.abs(c.drift_pp) >= 3)
-				.map((c: any) => ({
-					priority: Math.abs(c.drift_pp) >= 5 ? 1 : 2,
-					type: "allocation_drift",
-					detail: `${c.label_en} ${c.current_pct}% (target ${c.target_pct}%), drift ${c.drift_pp >= 0 ? "+" : ""}${c.drift_pp}pp`,
-					href: "#allocation-section",
-				}));
-
-			/* Crypto monitor signals */
-			const cryptoSignals = (cryptoMonitor?.action_signals ?? []).map((sig: any) => ({
-				...sig,
-				href: "#crypto-mgmt-section",
-			}));
-
-			/* Merge & sort: priority 1 (action) first */
-			const allSignals = [...rebalanceSignals, ...cryptoSignals].sort(
-				(a: any, b: any) => a.priority - b.priority,
-			);
-
-			return allSignals.length > 0 ? (
-				<div class="bucket-action-signals">
-					<p class="bucket-signals-title">⚡ <span class="lang-en">Action Signals</span><span class="lang-zh">行动信号</span></p>
-					{allSignals.map((sig: any) => (
-						<a class={`bucket-signal priority-${sig.priority}`} href={sig.href}>
-							<span class="signal-dot" />
-							{sig.detail}
-						</a>
-					))}
-				</div>
-			) : null;
-		})()}
-
-			<div class="allocation-donut-wrap" aria-label="Target vs current allocation">
+		<div class="allocation-donut-wrap" aria-label="Target vs current allocation">
 				<svg class="allocation-donut" viewBox="0 0 240 240" role="img">
 					{/* Outer ring = target allocation */}
 					{(() => {
@@ -1234,7 +1134,77 @@ const stages = [
 						)}
 					</article>
 				))}
-			</div>
+
+			{/* ── Layer 5: Allocation Drift Trend ── */}
+				{(() => {
+					const ah = (portfolioData as any)?.allocation_history?.history;
+					if (!ah || ah.length < 2) return null;
+
+					const buckets = allocation.current.categories;
+					const idToKey = {
+						"stablecoin": "stablecoin_yield",
+						"funds": "funds_etf",
+						"stocks": "stocks",
+						"crypto": "crypto"
+					};
+
+					const W = 720, H = 220;
+					const pad = { l: 44, r: 16, t: 14, b: 28 };
+					const cW = W - pad.l - pad.r;
+					const cH = H - pad.t - pad.b;
+
+					const xOf = (i: number) => pad.l + (i / Math.max(1, ah.length - 1)) * cW;
+					const yPct = (v: number) => pad.t + cH - (v / 60) * cH;
+
+					return (
+						<div class="crypto-alloc-trend-wrap">
+							<p class="crypto-dash-card-title">
+								<span class="lang-en">Allocation Drift</span>
+								<span class="lang-zh">配置偏移趋势</span>
+							</p>
+							<canvas id="cryptoAllocationDriftChart" class="crypto-chart-canvas allocation-drift-chart" aria-label="Allocation Drift"></canvas>
+							<svg viewBox={`0 0 ${W} ${H}`} class="crypto-chart-svg" preserveAspectRatio="xMidYMid meet">
+								{[0, 15, 30, 45].map(v => (
+									<>
+										<line x1={pad.l} y1={yPct(v).toFixed(1)} x2={W - pad.r} y2={yPct(v).toFixed(1)} stroke="color-mix(in srgb, var(--p-border) 35%, transparent)" stroke-width="0.5" />
+										<text x={pad.l - 6} y={yPct(v).toFixed(1)} font-size="8" fill="color-mix(in srgb, var(--p-text-faint) 60%, transparent)" text-anchor="end" dominant-baseline="middle">{v}%</text>
+									</>
+								))}
+								{buckets.map((b: any) => {
+									const key = idToKey[b.id as keyof typeof idToKey];
+									if (!key) return null;
+									const linePts = ah.map((h: any, i: number) => {
+										const v = h.buckets?.[key] ?? 0;
+										return `${xOf(i).toFixed(1)},${yPct(v).toFixed(1)}`;
+									}).join(" ");
+									const current = ah[ah.length - 1]?.buckets?.[key] ?? 0;
+									const target = b.target_pct;
+									const isDrifted = Math.abs(current - target) >= 5;
+									return (
+										<>
+											<polyline points={linePts} fill="none" stroke={b.color} stroke-width={isDrifted ? "2.2" : "1.5"} stroke-linejoin="round" stroke-linecap="round" stroke-dasharray={isDrifted ? "none" : "4 2"} opacity={isDrifted ? "1" : "0.6"} />
+											<line x1={pad.l} y1={yPct(target).toFixed(1)} x2={W - pad.r} y2={yPct(target).toFixed(1)} stroke={b.color} stroke-width="0.6" stroke-dasharray="2 4" opacity="0.35" />
+										</>
+									);
+								})}
+								{ah.map((h: any, i: number) => {
+									const x = xOf(i).toFixed(1);
+									return <text x={x} y={H - 6} font-size="7.5" fill="color-mix(in srgb, var(--p-text-faint) 50%, transparent)" text-anchor="middle">{h.date}</text>;
+								})}
+								{buckets.map((b: any, i: number) => {
+									const lx = pad.l + i * 110;
+									return (
+										<>
+											<line x1={lx} y1="10" x2={lx + 14} y2="10" stroke={b.color} stroke-width="1.8" />
+											<text x={lx + 18} y="10" font-size="7.5" fill="color-mix(in srgb, var(--p-text-faint) 70%, transparent)" dominant-baseline="middle"><tspan class="lang-en">{b.label_en}</tspan><tspan class="lang-zh">{b.label_zh}</tspan></text>
+										</>
+									);
+								})}
+								<text x={W - pad.r} y="10" font-size="7.5" fill="color-mix(in srgb, var(--p-text-faint) 45%, transparent)" text-anchor="end"><span class="lang-en">- - target</span><span class="lang-zh">- - 目标</span></text>
+							</svg>
+						</div>
+					);
+				})()}
 		</section>
 
 
@@ -1296,6 +1266,26 @@ const stages = [
 									{ev && (
 										<div class="briefing-event">
 											<span>🗓 {ev.date} {ev.label} {countdown}</span>
+										</div>
+									)}
+								</div>
+							);
+						})}
+						{cryptoPositions.map((cp) => {
+							const chg = cp.daily_change_pct ?? null;
+							const chgStr = chg != null ? ` (${chg >= 0 ? '+' : ''}${chg.toFixed(1)}%)` : '';
+							const chgClass = chg != null ? (chg >= 0 ? 'briefing-up' : 'briefing-down') : '';
+							const sentEmoji = cp.news?.sentiment === 'positive' ? '🟢' : cp.news?.sentiment === 'negative' ? '🔴' : '🟡';
+							return (
+								<div class="briefing-row">
+									<div class="briefing-price-row">
+										<span class={`briefing-change ${chgClass}`}>
+											{chg != null ? (chg >= 0 ? '🟢' : '🔴') : '⚪'} {cp.symbol} ${cp.price?.toFixed(2) ?? '—'}{chgStr}
+										</span>
+									</div>
+									{cp.news?.summary && (
+										<div class="briefing-news">
+											<span>{sentEmoji} {cp.news.summary}</span>
 										</div>
 									)}
 								</div>
@@ -1459,10 +1449,26 @@ const stages = [
 						</div>
 
 						<footer class="position-foot">
-							<a class="crypto-position-link" href="#positions-section">
-								<span class="lang-en">Signal-only · no price targets</span>
-								<span class="lang-zh">仅信号驱动 · 无目标价</span>
-							</a>
+							{cp.price != null ? (
+								<span class="crypto-price-line">
+									{cp.daily_change_pct != null && (
+										<span class={cp.daily_change_pct >= 0 ? 'briefing-up' : 'briefing-down'}>
+											{cp.daily_change_pct >= 0 ? '▲' : '▼'} {cp.daily_change_pct >= 0 ? '+' : ''}{cp.daily_change_pct.toFixed(1)}%
+										</span>
+									)}
+									{cp.market_cap != null && (
+										<span class="crypto-mcap"> · <span class="lang-en">MCap</span><span class="lang-zh">市值</span> ${cp.market_cap >= 1e12 ? (cp.market_cap / 1e12).toFixed(1) + 'T' : cp.market_cap >= 1e9 ? (cp.market_cap / 1e9).toFixed(1) + 'B' : (cp.market_cap / 1e6).toFixed(0) + 'M'}</span>
+									)}
+									{cp.news?.summary && (
+										<span class="crypto-foot-news"> · {cp.news.sentiment === 'positive' ? '🟢' : cp.news.sentiment === 'negative' ? '🔴' : '🟡'} {cp.news.summary}</span>
+									)}
+								</span>
+							) : (
+								<a class="crypto-position-link" href="#positions-section">
+									<span class="lang-en">Signal-only · no price targets</span>
+									<span class="lang-zh">仅信号驱动 · 无目标价</span>
+								</a>
+							)}
 						</footer>
 					</article>
 				))}
@@ -5140,17 +5146,6 @@ const stages = [
 		.bucket-bar-fill { height: 100%; border-radius: 999px; }
 		.bucket-bar-target-marker { position: absolute; top: -.25rem; width: 2px; height: 1.05rem; background: var(--p-text); opacity: .55; }
 		.bucket-note, .bucket-crypto-summary { margin-top: .7rem; color: var(--p-text-soft); font-size: .88rem; }
-		.bucket-action-signals { margin-top: 1rem; display: grid; gap: .55rem; }
-		.bucket-signals-title { font-size: .78rem; letter-spacing: .14em; text-transform: uppercase; color: var(--p-text-faint); }
-		.bucket-signal { display: flex; gap: .5rem; align-items: center; border-radius: .8rem; padding: .65rem .8rem; color: var(--p-text); text-decoration: none; transition: background .15s; }
-		.bucket-signal:hover { background: rgba(255,255,255,.04); }
-		.signal-dot { width: .45rem; height: .45rem; border-radius: 50%; flex-shrink: 0; }
-		/* priority-1 = ACTION (≥5pp drift or critical) */
-		.bucket-signal.priority-1 { border: 1px solid rgba(239,68,68,.32); background: rgba(239,68,68,.08); }
-		.bucket-signal.priority-1 .signal-dot { background: #ef4444; box-shadow: 0 0 4px rgba(239,68,68,.4); }
-		/* priority-2 = WATCH (≥3pp drift) */
-		.bucket-signal.priority-2 { border: 1px solid rgba(245,158,11,.28); background: rgba(245,158,11,.08); }
-		.bucket-signal.priority-2 .signal-dot { background: #f59e0b; }
 		.crypto-position-card { border-color: rgba(245,158,11,.24); }
 		.crypto-position-tag, .crypto-stage-badge { background: rgba(245,158,11,.1); color: #92400e; }
 		.crypto-position-link { color: var(--p-accent); font-size: .82rem; }
@@ -5399,16 +5394,6 @@ const stages = [
 		transform: translateY(-2px);
 		box-shadow: 0 4px 20px rgba(137, 83, 209, 0.12);
 	}
-	/* ── Action Signals Bar ── */
-	.action-signals-bar { display:flex; align-items:center; gap:.8rem; padding:.6rem 1rem; margin:.5rem 0; border-radius:.5rem; background:rgba(99,102,241,.08); flex-wrap:wrap; }
-	.action-signals-icon { font-size:1.2rem; }
-	.action-signals-list { display:flex; gap:.4rem; flex-wrap:wrap; }
-	.action-signal-chip { font-size:.75rem; padding:.2rem .5rem; border-radius:1rem; background:rgba(255,255,255,.08); }
-	.action-signal-chip.priority-1 { background:rgba(239,68,68,.15); color:#fca5a5; }
-	.action-signals-micro { display:flex; gap:.5rem; margin-left:auto; flex-wrap:wrap; }
-	.action-micro-badge { font-size:.7rem; padding:.15rem .4rem; border-radius:.3rem; background:rgba(255,255,255,.05); opacity:.8; }
-	.action-micro-badge.ok { background:rgba(16,185,129,.15); color:#6ee7b7; }
-	.action-micro-badge.warn { background:rgba(245,158,11,.15); color:#fbbf24; }
 
 	/* ═══ Crypto Dashboard v2 ═══ */
 	.crypto-dash-v2 { display:flex; flex-direction:column; gap:1.25rem; margin-top:1rem; }
