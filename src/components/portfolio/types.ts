@@ -85,6 +85,7 @@ crypto: {
 } | null;
 crypto_monitor: any | null;
 gold_tracker: any | null;
+gold_timeseries: { generated_at: string; data: Array<{ date: string; xau_usd: number | null; m2_trillion: number | null; gold_m2_ratio: number | null; bollinger_mid_pct_diff: number | null; premium_pct: number | null; signal_status: string | null }> } | null;
 watchlist_heatmap: PortfolioHeatmap | null;
 clearances: any[];
 roundtables: any[];

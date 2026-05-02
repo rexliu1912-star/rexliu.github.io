@@ -13,6 +13,7 @@ const {
 	crypto,
 	crypto_monitor: cryptoMonitor,
 	gold_tracker: goldTracker,
+gold_timeseries: goldTimeseries,
 	watchlist_heatmap: heatmap,
 	clearances,
 	roundtables,
@@ -899,8 +900,25 @@ const stages = [
 				<div class="gold-snapshot-grid">
 					<div><span>AISC band</span><strong>${goldStop}–${goldRangeHigh}</strong><small>{goldSignalLabel}</small></div>
 					<div><span>Shanghai premium</span><strong>{goldPremium == null ? "—" : goldPremium + "%"}</strong><small>{goldPremiumDate}</small></div>
-					<div><span>Cycle position</span><strong><span class="lang-en">{goldCycle}</span><span class="lang-zh">{goldCycleZh}</span></strong><small>long-cycle context</small></div>
+			<div><span>Cycle position</span><strong><span class="lang-en">{goldCycle}</span><span class="lang-zh">{goldCycleZh}</span></strong><small>long-cycle context</small></div>
+			</div>
+
+			{(goldTimeseries?.data?.length ?? 0) > 7 && (
+				<div class="gold-charts-grid">
+					<div class="gold-chart-card">
+						<h4><span class="lang-en">Gold Price (1Y)</span><span class="lang-zh">金价走势（1年）</span></h4>
+						<canvas id="gold-price-chart" data-ts="gold-price"></canvas>
+					</div>
+					<div class="gold-chart-card">
+						<h4><span class="lang-en">Gold / M2 Ratio</span><span class="lang-zh">黄金/M2 比值</span></h4>
+						<canvas id="gold-m2-chart" data-ts="gold-m2"></canvas>
+					</div>
+					<div class="gold-chart-card">
+						<h4><span class="lang-en">Shanghai Premium</span><span class="lang-zh">上海溢价</span></h4>
+						<canvas id="gold-premium-chart" data-ts="gold-premium"></canvas>
+					</div>
 				</div>
+				)}
 			</div>
 		</section>
 
@@ -2741,6 +2759,93 @@ const stages = [
 				if (label) label.title = d + ' · ' + (pill.getAttribute('data-event-label') || '');
 		});
 		}
+
+		// ── Gold trend charts ──
+		try {
+			const goldTsRaw = JSON.parse(document.getElementById('portfolio-data')?.textContent || '{}')?.gold_timeseries?.data || [];
+			if (goldTsRaw.length > 7) {
+			const goldChartOpts = {
+				responsive: true,
+				maintainAspectRatio: false,
+				plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false } },
+				scales: {
+					x: { display: true, grid: { display: false }, ticks: { color: '#6b7280', maxTicksLimit: 6, font: { size: 10 } } },
+					y: { display: true, grid: { color: 'rgba(255,255,255,.06)' }, ticks: { color: '#6b7280', font: { size: 10 } } }
+				}
+			};
+
+			// Gold Price chart
+			const gpCanvas = document.getElementById('gold-price-chart');
+			if (gpCanvas) {
+				const dates = goldTsRaw.map(d => d.date);
+				const prices = goldTsRaw.map(d => d.xau_usd);
+				new Chart(gpCanvas, {
+					type: 'line',
+					data: {
+						labels: dates,
+						datasets: [{
+							label: 'XAU/USD',
+							data: prices,
+							borderColor: '#f59e0b',
+							backgroundColor: 'rgba(245,158,11,.10)',
+							fill: true, tension: 0.3, pointRadius: 0, borderWidth: 2
+						}]
+					},
+					options: { ...goldChartOpts, scales: { ...goldChartOpts.scales, y: { ...goldChartOpts.scales.y, ticks: { ...goldChartOpts.scales.y.ticks, callback: v => '$' + v.toLocaleString() } } } }
+				});
+			}
+
+			// Gold/M2 Ratio chart
+			const gmCanvas = document.getElementById('gold-m2-chart');
+			if (gmCanvas) {
+				const m2Dates = goldTsRaw.filter(d => d.gold_m2_ratio != null).map(d => d.date);
+				const m2Ratios = goldTsRaw.filter(d => d.gold_m2_ratio != null).map(d => d.gold_m2_ratio);
+				if (m2Ratios.length > 0) {
+					new Chart(gmCanvas, {
+						type: 'line',
+						data: {
+							labels: m2Dates,
+							datasets: [{
+								label: 'Gold/M2',
+								data: m2Ratios,
+								borderColor: '#8953d1',
+								backgroundColor: 'rgba(137,83,209,.10)',
+								fill: true, tension: 0.3, pointRadius: 0, borderWidth: 2
+							}]
+						},
+						options: goldChartOpts
+					});
+				} else {
+					gmCanvas.parentElement.querySelector('h4').innerHTML += ' <small style="opacity:.5">(no M2 history yet)</small>';
+				}
+			}
+
+			// Shanghai Premium chart
+			const spCanvas = document.getElementById('gold-premium-chart');
+			if (spCanvas) {
+				const premDates = goldTsRaw.filter(d => d.premium_pct != null).map(d => d.date);
+				const premVals = goldTsRaw.filter(d => d.premium_pct != null).map(d => d.premium_pct);
+				if (premVals.length > 0) {
+					new Chart(spCanvas, {
+						type: 'line',
+						data: {
+							labels: premDates,
+							datasets: [{
+								label: 'Premium %',
+								data: premVals,
+								borderColor: '#10b981',
+								backgroundColor: 'rgba(16,185,129,.10)',
+								fill: true, tension: 0.3, pointRadius: 0, borderWidth: 2
+							}]
+						},
+						options: { ...goldChartOpts, scales: { ...goldChartOpts.scales, y: { ...goldChartOpts.scales.y, ticks: { ...goldChartOpts.scales.y.ticks, callback: v => v + '%' } } } }
+					});
+				} else {
+					spCanvas.parentElement.querySelector('h4').innerHTML += ' <small style="opacity:.5">(no premium history yet)</small>';
+				}
+			}
+		}
+	} catch(e) { console.warn('Gold charts:', e); }
 	</script>
 
 	<style>

@@ -44,6 +44,7 @@ const TIMESERIES_PATH = path.join(WORKSPACE_ROOT, "data/crypto-timeseries.json")
 const NEWS_DIGEST_PATH = path.join(WORKSPACE_ROOT, "data/portfolio-news-digest.json");
 const DAILY_SNAPSHOT_DIR = path.join(WORKSPACE_ROOT, "output/research/investment-strategy/portfolio/snapshots");
 const GOLD_TRACKER_PATH = path.join(WORKSPACE_ROOT, "data/gold-tracker.json");
+const GOLD_TIMESERIES_PATH = path.join(WORKSPACE_ROOT, "data/gold-timeseries.json");
 
 // ─── Small utilities ─────────────────────────────────────
 
@@ -872,6 +873,12 @@ async function main() {
     console.log("   ⚠️  No gold tracker data — gold section will be empty");
   }
 
+  // Read gold timeseries
+  const goldTimeseries = await readJson(GOLD_TIMESERIES_PATH);
+  if (goldTimeseries?.data?.length) {
+    console.log(`   📈 Gold timeseries: ${goldTimeseries.data.length} days`);
+  }
+
   // 4. Fallback protection: if Convex failed AND we have a previous output, reuse it
   if (!positions) {
     console.warn("  ⚠️  Convex unavailable — attempting to reuse last portfolio-public.json");
@@ -1028,6 +1035,7 @@ async function main() {
     crypto_portfolio_history: cryptoPortfolioHistory,
     crypto_timeseries: cryptoTimeseries,
     gold_tracker: goldTracker,
+    gold_timeseries: goldTimeseries,
   };
 
   await fs.writeFile(OUTPUT_PATH, JSON.stringify(output, null, 2) + "\n");
