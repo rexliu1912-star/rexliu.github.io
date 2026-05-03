@@ -1233,7 +1233,7 @@ export default function PlayerStats(props: PlayerStatsProps) {
       <Section dark={dark} rainy={rainy} sunny={sunny}><SectionHeader icon="📊" zh="六维属性" en="Six Attributes" dark={dark} /><StatRadar stats={stats} statFormulas={statFormulas} dark={dark} /><StatLegend dark={dark} /></Section>
       <Section dark={dark} rainy={rainy} sunny={sunny}><SectionHeader icon="🧰" zh="装备栏" en="Equipment" dark={dark} /><EquipmentRing equipment={equipment} dark={dark} /></Section>
       <Section dark={dark} rainy={rainy} sunny={sunny}><SectionHeader icon="📜" zh="任务面板" en="Quest Board" dark={dark} /><QuestPanel quests={quests} dark={dark} /></Section>
-      <Section dark={dark} rainy={rainy} sunny={sunny}><SectionHeader icon="🏯" zh="门客系统" en="Retainers" dark={dark} /><RetainerPanel retainers={retainers} dark={dark} /></Section>
+
       <Section dark={dark} rainy={rainy} sunny={sunny}><SectionHeader icon="🌳" zh="技能树" en="Skill Tree" dark={dark} /><SkillTree tagCounts={tagCounts} postCount={postCount} builderLogCount={builderLogCount} dark={dark} /></Section>
       <Section dark={dark} rainy={rainy} sunny={sunny}><SectionHeader icon="🤝" zh="江湖关系" en="Relationships" dark={dark} /><RelationshipPanel relationships={relationships} dark={dark} articleMeta={articleMeta} /></Section>
       <Section dark={dark} rainy={rainy} sunny={sunny}><SectionHeader icon="🏆" zh="成就" en="Achievements" dark={dark} /><AchievementBadges achievements={achievements} dark={dark} /></Section>

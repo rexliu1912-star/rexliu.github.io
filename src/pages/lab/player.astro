@@ -328,7 +328,7 @@ const meta = {
     quests={quests}
     equipment={journey.equipment}
     activityLog={activityForClient}
-    chapters={journey.chapters}
+    chapters={journey.chapters.map((ch: any) => ch.id === "current" ? { ...ch, location: currentCityObj.nameCN } : ch)}
     relationships={(journey.relationships ?? []).map((item: any) => ({
       id: item.id,
       nameCN: item.nameCN,
