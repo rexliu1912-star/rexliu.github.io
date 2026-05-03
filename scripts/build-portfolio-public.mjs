@@ -475,12 +475,31 @@ function sanitizeMonitorState(monitorState, dcaStatus, marketData = null, bottom
     // Clean detail: strip emoji + redact USD amounts + trailing parenthetical context label
     let cleanDetail = (ind.data || ind.fullText || "").replace(/[\u{1F7E0}\u{1F7E1}\u{1F534}\u{1F7E2}\u{2705}\u{274C}\u{2B50}]\s*/gu, "").trim();
     cleanDetail = cleanDetail.replace(/\$\d[\d,.]*/g, "$XX,XXX");
+    // Strip trailing change value (变化:+N or 变化:-N) — that goes to CHG column
+    let detailBase = cleanDetail.replace(/[,，]?\s*变化[:：]?\s*[+-]?\d+\.?\d*/g, "").trim();
+    // Strip outer parentheses if wrapping the whole string
+    detailBase = detailBase.replace(/^\s*[（(](.*)[)）]\s*$/, "$1").trim().replace(/,\s*$/, "").trim();
+    // Bilingual detail: split Chinese and English versions
+    const detail_zh = detailBase
+      .replace(/[(（][A-Za-z0-9:/$%,.\s+\-]+[)）]/g, "")  // remove parenthetical English/Chinese
+      .replace(/[\u4e00-\u9fff]+[(（][^)）]*[)）]/g, (m) => m.replace(/[(（][^)）]*[)）]/g, ""))  // 移除中文后的括号
+      .replace(/\s+/g, " ").trim().replace(/,?\s*$/, "");
+    const detail_en = detailBase
+      .replace(/当前/g, "Current").replace(/回撤/g, "Drawdown").replace(/价格/g, "Price")
+      .replace(/场外充裕/g, "Abundant OTC").replace(/严重低估/g, "Severely Undervalued")
+      .replace(/资金中性/g, "Neutral Flow")
+      .replace(/美元偏弱（利好风险）/g, "Weak USD (risk-on)")
+      .replace(/美元偏弱/g, "Weak USD")
+      .replace(/[\u4e00-\u9fff（）]+/g, "")  // strip remaining Chinese
+      .replace(/\(([A-Za-z0-9:/$%,.\s+\-]+)\)/g, "$1")  // unwrap parenthetical English
+      .replace(/,\s*$/, "").replace(/\s+/g, " ").trim() || detailBase;
     return {
       name_zh: ind.name,
       name_en: meta.en || ind.name,
       status: ind.status,
       score: ind.score ?? statusScore[ind.status] ?? 50,
-      detail: cleanDetail,
+      detail_en,
+      detail_zh,
       desc_en: meta.desc_en || "",
       desc_zh: meta.desc_zh || "",
     };
