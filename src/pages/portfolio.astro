@@ -719,17 +719,19 @@ const stages = [
 								const stColor = ind.status === "green" ? "#10b981" : ind.status === "red" ? "#ef4444" : "#f59e0b";
 								const d = ind.delta ?? ind.score_change;
 								// Extract change value from detail text, move to CHG column
-								const chgMatch = (ind.detail || "").match(/变化[:：]?\s*([+-]?\d+\.?\d*)/);
+								const rawDetail = ind.detail || ind.detail_zh || ind.detail_en || "";
+								const chgMatch = rawDetail.match(/变化[:：]?\s*([+-]?\d+\.?\d*)/);
 								const chgVal = chgMatch ? parseFloat(chgMatch[1]) : null;
 								const chgColor = chgVal === null ? "var(--p-text-faint)" : chgVal > 0 ? "#10b981" : chgVal < 0 ? "#ef4444" : "var(--p-text-faint)";
-								// Clean detail: remove the change portion
-								const cleanDetail = chgMatch ? (ind.detail || "").replace(/[,，]?\s*变化[:：]?\s*[+-]?\d+\.?\d*/, "") : (ind.detail || "");
+								// Bilingual detail: prefer detail_en/detail_zh, fallback to cleaned detail
+								const detailEn = ind.detail_en || rawDetail.replace(/[()（）]/g, "").replace(/[,，]?\s*变化[:：]?\s*[+-]?\d+\.?\d*/, "").replace(/[,，]\s*$/, "").trim() || "—";
+								const detailZh = ind.detail_zh || detailEn;
 								const displayChg = chgVal !== null ? chgVal : d;
 								return (
 									<div class="crypto-ind-row" title={ind.desc_en || ind.desc_zh || ""}>
 										<span class="crypto-ind-name"><span class="lang-en">{ind.name_en || ind.name}</span><span class="lang-zh">{ind.name_zh || ind.name}</span></span>
 										<span class="crypto-ind-dot" style={`background:${stColor}`} />
-										<span class="crypto-ind-detail">{cleanDetail || "—"}</span>
+										<span class="crypto-ind-detail"><span class="lang-en">{detailEn}</span><span class="lang-zh">{detailZh}</span></span>
 										{displayChg != null ? (
 											<span class={`crypto-ind-chg-badge ${displayChg > 0 ? "up" : displayChg < 0 ? "down" : "flat"}`} style={displayChg !== null ? `color:${chgColor};background:${displayChg > 0 ? "rgba(16,185,129,.12)" : displayChg < 0 ? "rgba(239,68,68,.12)" : "rgba(107,114,128,.12)"}` : ""}>
 												{displayChg > 0 ? "↑" : displayChg < 0 ? "↓" : "→"}{Math.abs(displayChg)}
@@ -5129,7 +5131,7 @@ const stages = [
 		.crypto-position-tag, .crypto-stage-badge { background: rgba(245,158,11,.1); color: #92400e; }
 		.crypto-position-link { color: var(--p-accent); font-size: .82rem; }
 		.crypto-portfolio-index-wrap,
-		.crypto-alloc-trend-wrap { border: 1px solid var(--p-border); background: var(--p-card); border-radius: 1rem; padding: 1rem; margin-top: 1rem; }
+		.crypto-alloc-trend-wrap { border: 1px solid var(--p-border); background: var(--p-card); border-radius: 1rem; padding: 1rem; margin-top: 1rem; grid-column: 1 / -1; }
 		.crypto-portfolio-metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: .6rem; margin-top: .75rem; }
 		.cpm-item { display: flex; flex-direction: column; gap: .15rem; text-align: center; }
 		.cpm-label { font-size: .7rem; color: var(--p-text-faint); letter-spacing: .08em; text-transform: uppercase; }
@@ -5399,6 +5401,8 @@ const stages = [
 	.crypto-ind-name { font-size:.82rem; padding:.35rem 0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 	.crypto-ind-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
 	.crypto-ind-detail { font-size:.78rem; opacity:.65; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:flex; align-items:center; gap:.35rem; }
+	.crypto-ind-header .crypto-ind-detail { font-size:.7rem; opacity:.4; text-transform:uppercase; letter-spacing:.06em; padding-bottom:.4rem; border-bottom:1px solid rgba(255,255,255,0.06); margin-bottom:.3rem; }
+	[data-theme="light"] .crypto-ind-header .crypto-ind-detail { border-bottom-color:rgba(0,0,0,0.06); }
 	.crypto-ind-chg-badge { font-size:.7rem; font-weight:600; padding:.1rem .35rem; border-radius:.3rem; white-space:nowrap; flex-shrink:0; }
 	.crypto-ind-delta-head { text-align:right; }
 
