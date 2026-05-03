@@ -736,13 +736,7 @@ const QuestPanel = memo(function QuestPanel({ quests, dark }: { quests: PlayerSt
   </div>;
 });
 
-const RetainerPanel = memo(function RetainerPanel({ retainers, dark }: { retainers: RetainerData[]; dark: boolean }) {
-  const maxSessions = Math.max(...retainers.map(agent => agent.sessions), 1);
-  return <div className="retainer-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 12 }}>{retainers.map(agent => {
-    const ratio = Math.max(6, Math.round(agent.sessions / maxSessions * 100));
-    return <a key={agent.id} href="/lab/agents/" style={{ textDecoration: "none" }}><div style={{ borderRadius: 18, padding: 14, border: `1px solid ${dark ? "rgba(137,83,209,0.18)" : "rgba(137,83,209,0.12)"}`, background: dark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.7)" }}><div style={{ display: "flex", gap: 12, alignItems: "center" }}><img src={agent.sprite} alt={agent.name} width={56} height={56} style={{ width: 56, height: 56, borderRadius: 14, objectFit: "cover", imageRendering: "pixelated", border: "1px solid rgba(137,83,209,0.24)" }} /><div><div style={{ color: dark ? "#fff" : "#261a33", fontWeight: 700 }}>{agent.name} {agent.emoji}</div><div style={{ color: PURPLE, fontSize: 11 }}><span className="lang-zh">{agent.titleZh}</span><span className="lang-en">{agent.titleEn}</span></div></div></div><div style={{ marginTop: 12, display: "flex", justifyContent: "space-between", fontFamily: "monospace", fontSize: 11 }}><span style={{ color: dark ? "#c8bed8" : "#78688a" }}>Lv.{agent.level}</span><span style={{ color: PURPLE }}>{agent.sessions} sessions</span></div><div style={{ marginTop: 10, height: 6, borderRadius: 999, background: dark ? "rgba(255,255,255,0.07)" : "rgba(60,20,90,0.08)", overflow: "hidden" }}><div style={{ width: `${ratio}%`, height: "100%", borderRadius: 999, background: PURPLE, boxShadow: ratio >= 100 ? "2px 0 8px rgba(137,83,209,0.4)" : undefined }} /></div></div></a>;
-  })}</div>;
-});
+
 
 type SkillNode = { label: string; desc: string; count: number; url?: string };
 type SkillGroup = { label: string; nodes: SkillNode[] };
@@ -1175,7 +1169,7 @@ const SaveFooter = memo(function SaveFooter({ dark, travelDays, mediaCount, book
 
 export default function PlayerStats(props: PlayerStatsProps) {
   const { dark, rainy, sunny } = useTheme();
-  const { stats, level, totalExp, expInLevel, expNeeded, expProgress, rank, avgStat, currentCity, travelDays, tagCounts, postCount, builderLogCount, cities, achievements, retainers, quests, equipment, activityLog, chapters, relationships, articleMeta, statFormulas, expFormula, levelFormula, mediaCount, bookCount } = props;
+  const { stats, level, totalExp, expInLevel, expNeeded, expProgress, rank, avgStat, currentCity, travelDays, tagCounts, postCount, builderLogCount, cities, achievements, quests, equipment, activityLog, chapters, relationships, articleMeta, statFormulas, expFormula, levelFormula, mediaCount, bookCount } = props;
   return <div style={{ width: "100%", maxWidth: 1200, margin: "0 auto", fontFamily: "Georgia, Cambria, serif", paddingInline: 12 }}>
     <style>{`
       @keyframes chapterSlide { from { opacity: 0; transform: translateX(26px); } to { opacity: 1; transform: translateX(0); } }
