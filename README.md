@@ -35,7 +35,6 @@ Every article, digest, signal, and builder log adds a layer. The goal is that si
 - **Builder transparency** — what I'm building, what broke, what worked, in the rare format of someone who actually ships
 - **Cross-cultural bridge** — EN/中文 bilingual throughout, because the best insights often live in one language and get lost in translation
 - **Weekly digests** that surface the most signal-rich content from the internet, filtered through a specific lens (long-term investing, AI × crypto, sovereign living)
-- **A living timeline** of AI milestones since 2020, maintained because most people don't realize how fast we're moving until they see it laid out
 
 ---
 
@@ -44,7 +43,7 @@ Every article, digest, signal, and builder log adds a layer. The goal is that si
 | Section | What It Is |
 |---------|-----------|
 | **Posts** (`/posts/`) | Long-form essays — crypto analysis, investment philosophy, life decisions, AI experiments |
-| **Lab** (`/lab/`) | A content lab: AI Timeline, Daily Digest, SNEK Daily, Builder's Log, Projects, Visual Thinking experiments |
+| **Lab** (`/lab/`) | A content lab: Daily Digest, SNEK Daily, Builder's Log, Projects, Visual Thinking experiments |
 | **Travel** (`/travel/`) | Interactive map of our digital nomad journey since Oct 2025 |
 | **OS** (`/os/`) | Library (books, films, shows I've consumed), X Growth data |
 | **Visual Thinking** (`/lab/visual/`) | 4 interactive math experiments — crypto cycles, neural graphs, compound growth, Bezier paths — each connected to a philosophy |
@@ -102,7 +101,6 @@ src/
 │   ├── digest/     # Weekly digests
 │   ├── builder-log/# Builder's log entries
 │   ├── snek-daily/ # SNEK ecosystem daily
-│   └── ai-timeline/# AI milestone timeline
 ├── components/     # UI components
 │   ├── blog/       # MagazineView, TagAnimation, ReadingProgress
 │   └── lab/        # VisualExperiments (interactive math)

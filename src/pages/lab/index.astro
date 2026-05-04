@@ -3,14 +3,12 @@ import { getCollection } from "astro:content";
 import PageLayout from "@/layouts/Base.astro";
 
 // Fetch all collections for counts & previews
-const allTimelineEvents = await getCollection("ai-timeline");
 const allBookmarks = await getCollection("bookmarks");
 const allDigests = await getCollection("digest");
 const allBuilderLogs = await getCollection("builder-log");
 const allProjects = await getCollection("projects");
 
 // Counts for stat bar
-const timelineCount = allTimelineEvents.length;
 const bookmarkCount = allBookmarks.length;
 const digestCount = allDigests.length;
 const builderLogCount = allBuilderLogs.length;
@@ -33,26 +31,6 @@ const otherProjects = allProjects
 	.filter(p => !excludeFromProducts.includes(p.id))
 	.sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
 
-// Timeline: latest 5
-const latestEvents = sortByDate([...allTimelineEvents]).slice(0, 5);
-
-// Category helpers for timeline
-const timelineCategoryColors: Record<string, string> = {
-	model: "text-purple-500",
-	funding: "text-green-500",
-	industry: "text-blue-500",
-	robotics: "text-orange-500",
-	"crypto-ai": "text-yellow-500",
-	product: "text-cyan-500",
-};
-const timelineCategoryLabels: Record<string, { en: string; zh: string }> = {
-	model: { en: "Model", zh: "模型" },
-	funding: { en: "Funding", zh: "融资" },
-	industry: { en: "Industry", zh: "行业" },
-	robotics: { en: "Robotics", zh: "机器人" },
-	"crypto-ai": { en: "Crypto×AI", zh: "Crypto×AI" },
-	product: { en: "Product", zh: "产品" },
-};
 
 const statusColors: Record<string, string> = {
 	running: "text-green-500",
@@ -69,10 +47,6 @@ const statusLabels: Record<string, { en: string; zh: string }> = {
 	building: { en: "building", zh: "开发中" },
 	planning: { en: "planning", zh: "规划中" },
 };
-
-function formatShortDate(date: Date) {
-	return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-}
 
 
 const meta = {
@@ -96,16 +70,7 @@ const meta = {
 
 		<!-- Stat Bar -->
 		<div class="lab-stat-bar mt-6 flex flex-wrap items-center gap-x-4 gap-y-1 font-serif text-sm">
-			<span class="lang-en">
-				<span class="lab-counter font-bold" style="color:#8953d1" data-target={timelineCount}>0</span>
-				<span class="text-gray-400"> AI events</span>
-			</span>
-			<span class="lang-zh">
-				<span class="lab-counter font-bold" style="color:#8953d1" data-target={timelineCount}>0</span>
-				<span class="text-gray-400"> 条 AI 事件</span>
-			</span>
-			<span class="text-gray-300 dark:text-gray-600">·</span>
-			<span class="lang-en">
+		<span class="lang-en">
 				<span class="lab-counter font-bold" style="color:#8953d1" data-target={bookmarkCount}>0</span>
 				<span class="text-gray-400"> tweets curated</span>
 			</span>
@@ -281,54 +246,7 @@ const meta = {
 		</div>
 	</section>
 
-	<!-- ====== SECTION 3: DATA STREAMS ====== -->
-	<section class="mb-16">
-		<h2 class="fade-in-up mb-2 font-serif text-xs font-bold tracking-widest text-gray-400 uppercase dark:text-gray-500" style="--delay: 100ms">
-			<span class="lang-en">Data Streams</span><span class="lang-zh">数据流</span>
-		</h2>
-		<p class="fade-in-up mb-8 font-serif text-sm text-gray-400 dark:text-gray-500" style="--delay: 150ms">
-			<span class="lang-en">Automated feeds running 24/7.</span>
-			<span class="lang-zh">全天候自动化数据。</span>
-		</p>
 
-		<div class="grid gap-8 lg:grid-cols-1">
-			<!-- Left: AI Timeline -->
-			<div class="fade-in-up" style="--delay: 200ms">
-				<h3 class="mb-4 font-serif text-base font-medium tracking-wide text-gray-500 dark:text-gray-400">
-					<span class="lang-en">AI Timeline</span><span class="lang-zh">AI 大事记</span>
-				</h3>
-				<div class="relative border-l-2 border-gray-200 pl-6 dark:border-gray-700">
-					{latestEvents.map((ev, i) => (
-						<div class="fade-in-up relative mb-6 last:mb-0" style={`--delay: ${250 + i * 60}ms`}>
-							<div class="absolute -left-[31px] top-1.5 h-3 w-3 rounded-full border-2 border-gray-200 bg-[var(--color-global-bg)] dark:border-gray-700" />
-							<div class="flex flex-wrap items-baseline gap-2">
-								<time class="shrink-0 font-serif text-sm text-gray-400 dark:text-gray-500" datetime={ev.data.date.toISOString()}>
-									{formatShortDate(ev.data.date)}
-								</time>
-								<span class={`shrink-0 rounded-sm px-1.5 py-0.5 font-serif text-[10px] font-medium uppercase ${timelineCategoryColors[ev.data.category] || "text-gray-400"} bg-gray-100 dark:bg-gray-800`}>
-									<span class="lang-en">{timelineCategoryLabels[ev.data.category]?.en || ev.data.category}</span><span class="lang-zh">{timelineCategoryLabels[ev.data.category]?.zh || ev.data.category}</span>
-								</span>
-							</div>
-							{ev.data.source ? (
-								<a href={ev.data.source} target="_blank" rel="noopener noreferrer" class="mt-1 block font-serif text-base leading-relaxed text-black transition-colors hover:text-[#8953d1] dark:text-white dark:hover:text-[#a175e8]">
-									<span class="lang-en">{ev.data.title}</span><span class="lang-zh">{ev.data.title_zh || ev.data.title}</span> ↗
-								</a>
-							) : (
-								<p class="mt-1 font-serif text-base leading-relaxed text-black dark:text-white">
-									<span class="lang-en">{ev.data.title}</span><span class="lang-zh">{ev.data.title_zh || ev.data.title}</span>
-								</p>
-							)}
-						</div>
-					))}
-				</div>
-				<div class="mt-6">
-					<a href="/lab/ai-timeline/" class="font-serif text-sm text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]">
-						<span class="lang-en">View full timeline →</span><span class="lang-zh">查看完整时间线 →</span>
-					</a>
-				</div>
-			</div>
-		</div>
-	</section>
 </PageLayout>
 
 <style>

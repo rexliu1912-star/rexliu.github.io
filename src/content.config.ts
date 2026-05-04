@@ -105,24 +105,7 @@ const builderLog = defineCollection({
 	}),
 });
 
-// 7. AI Timeline 集合
-const aiTimeline = defineCollection({
-	loader: glob({ base: "./src/content/ai-timeline", pattern: "**/*.{md,mdx}" }),
-	schema: z.object({
-		title: z.string(),
-		title_zh: z.string().optional(),
-		date: z.coerce.date(),
-		category: z.enum(["model", "funding", "industry", "robotics", "crypto-ai", "product", "acquisition", "policy"]),
-		tags: z.array(z.string()).default([]),
-		source: z.string().url().optional(),
-		source_name: z.string().optional(),
-		company: z.string().optional(),
-		significance: z.enum(["high", "medium", "low"]).default("medium"),
-		body_zh: z.string().optional(),
-	}),
-});
-
-// 8. SNEK Daily 集合
+// 7. SNEK Daily 集合
 const snekDaily = defineCollection({
 	loader: glob({ base: "./src/content/snek-daily", pattern: "**/*.{md,mdx}" }),
 	schema: z.object({
@@ -158,4 +141,4 @@ const bookmarks = defineCollection({
 });
 
 // 10. 统一导出
-export const collections = { post, note, tag, digest, projects, "builder-log": builderLog, "ai-timeline": aiTimeline, "snek-daily": snekDaily, bookmarks };
+export const collections = { post, note, tag, digest, projects, "builder-log": builderLog, "snek-daily": snekDaily, bookmarks };

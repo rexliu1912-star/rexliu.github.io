@@ -134,9 +134,8 @@ import "@/styles/blocks/search.css";
 		getSectionInfo = (url: string, lang: string): { label: string; cls: string } | null => {
 			if (url.includes("/lab/digest/"))       return { label: lang === "zh" ? "精读"        : "Digest",       cls: "badge-digest" };
 			if (url.includes("/lab/builder-log/"))  return { label: lang === "zh" ? "Builder's Log" : "Builder's Log", cls: "badge-builder" };
-			if (url.includes("/lab/snek-daily/"))   return { label: lang === "zh" ? "SNEK Daily"  : "SNEK Daily",   cls: "badge-snek" };
-			if (url.includes("/lab/ai-timeline"))   return { label: lang === "zh" ? "AI 时间线"   : "AI Timeline",  cls: "badge-timeline" };
-			if (url.includes("/lab/"))              return { label: "Lab",                                           cls: "badge-lab" };
+		if (url.includes("/lab/snek-daily/"))   return { label: lang === "zh" ? "SNEK Daily"  : "SNEK Daily",   cls: "badge-snek" };
+		if (url.includes("/lab/"))              return { label: "Lab",                                           cls: "badge-lab" };
 			if (url.includes("/posts/"))            return { label: lang === "zh" ? "文章"         : "Posts",        cls: "badge-posts" };
 			return null;
 		};
