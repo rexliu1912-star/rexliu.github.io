@@ -199,6 +199,19 @@ const SIGNAL_LABELS: Record<string, { en: string; zh: string }> = {
 	policy: { en: "Policy", zh: "政策" },
 };
 
+// Policy status bilingual mapping (value in JSON is Chinese only)
+const POLICY_STATUS_MAP: Record<string, { en: string; zh: string }> = {
+	"扩张": { en: "Expansion", zh: "扩张" },
+	"紧缩": { en: "Contraction", zh: "紧缩" },
+	"中性": { en: "Neutral", zh: "中性" },
+	"胶着": { en: "Stalemate", zh: "胶着" },
+	"宽松": { en: "Easing", zh: "宽松" },
+	"观望": { en: "Wait-and-see", zh: "观望" },
+};
+function policyLabel(val: string): { en: string; zh: string } {
+	return POLICY_STATUS_MAP[val] || { en: val, zh: val };
+}
+
 // Conviction bar colors (used for position confidence fill).
 const convictionStroke: Record<string, string> = {
 	high: "#8953d1",
@@ -514,13 +527,24 @@ const stages = [
 			</header>
 
 			<div class="regime-lights">
-				{Object.entries(regime?.current?.signals || {}).map(([, sig]) => (
-					<div class="regime-light-card" style={`--light: ${lightColors[sig.light] || "#9ca3af"}`}>
-						<span class="regime-light-label">{sig.label}</span>
+			{Object.entries(regime?.current?.signals || {}).map(([key, sig]) => {
+				const isPolicy = key === "policy";
+				const pLabel = isPolicy ? policyLabel(sig.value) : null;
+				return (
+				<div class="regime-light-card" style={`--light: ${lightColors[sig.light] || "#9ca3af"}`}>
+					<span class="regime-light-label">{sig.label}</span>
+					{isPolicy ? (
+						<strong class="regime-light-value font-serif">
+							<span class="lang-en">{pLabel?.en}</span>
+							<span class="lang-zh">{pLabel?.zh}</span>
+						</strong>
+					) : (
 						<strong class="regime-light-value font-serif">{sig.value}</strong>
-						<span class="regime-light-dot" aria-hidden="true"></span>
-					</div>
-				))}
+					)}
+					<span class="regime-light-dot" aria-hidden="true"></span>
+				</div>
+				);
+			})}
 			</div>
 
 			<div class="regime-chart-wrap">

@@ -1118,7 +1118,7 @@ async function main() {
 
   const stats = {
     active_positions: filteredPublicPositions.length,
-    markets: new Set(filteredPublicPositions.map((p) => p.market)).size,
+    markets: new Set(filteredPublicPositions.map((p) => p.market)).size + (crypto?.positions?.length > 0 ? 1 : 0),
     tracked_rules: (rules || []).filter((r) => r.active !== false).length,
     upcoming_events: futureEvents.length,
     weekly_scan_hits: watchlistIndex
