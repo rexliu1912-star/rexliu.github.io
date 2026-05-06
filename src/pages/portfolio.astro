@@ -490,8 +490,8 @@ const stages = [
 			</div>
 
 		<p class="portfolio-updated">
-				<span class="lang-en">Last updated: {updatedLabel}</span>
-				<span class="lang-zh">最后更新: {updatedLabel}</span>
+				<span class="lang-en">🕐 Last updated: {updatedLabel}</span>
+				<span class="lang-zh">🕐 最后更新: {updatedLabel}</span>
 			</p>
 		</section>
 
@@ -527,7 +527,26 @@ const stages = [
 			</header>
 
 			<div class="regime-lights">
-			{Object.entries(regime?.current?.signals || {}).map(([key, sig]) => {
+		{(() => {
+			const sparkWidth = 60;
+			const sparkHeight = 20;
+			const history = regime?.history_60d || [];
+			const recent = history.slice(-7);
+
+			function makeSparkPath(signalKey) {
+				const values = recent.map(h => h.signalDetails?.[signalKey]?.value).filter(v => v != null);
+				if (values.length < 2) return '';
+				const min = Math.min(...values);
+				const max = Math.max(...values);
+				const range = max - min || 1;
+				return values.map((v, i) => {
+					const x = (i / (values.length - 1)) * sparkWidth;
+					const y = sparkHeight - ((v - min) / range) * sparkHeight;
+					return `${i === 0 ? 'M' : 'L'}${x.toFixed(1)},${y.toFixed(1)}`;
+				}).join(' ');
+			}
+
+			return Object.entries(regime?.current?.signals || {}).map(([key, sig]) => {
 				const isPolicy = key === "policy";
 				const pLabel = isPolicy ? policyLabel(sig.value) : null;
 				return (
@@ -541,11 +560,17 @@ const stages = [
 					) : (
 						<strong class="regime-light-value font-serif">{sig.value}</strong>
 					)}
+					{key !== 'policy' && makeSparkPath(key) && (
+						<svg class="regime-sparkline" viewBox={`0 0 ${sparkWidth} ${sparkHeight}`} width={sparkWidth} height={sparkHeight} aria-hidden="true">
+							<path d={makeSparkPath(key)} fill="none" stroke="var(--light)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+						</svg>
+					)}
 					<span class="regime-light-dot" aria-hidden="true"></span>
 				</div>
 				);
-			})}
-			</div>
+			});
+		})()}
+		</div>
 
 			<div class="regime-chart-wrap">
 				<div class="regime-chart-head">
@@ -1270,16 +1295,16 @@ const stages = [
 						{positions.map((p) => {
 							const chg = p.daily_change_pct ?? null;
 							const chgStr = chg != null ? ` (${chg >= 0 ? '+' : ''}${chg.toFixed(1)}%)` : '';
-							const chgClass = chg != null ? (chg >= 0 ? 'briefing-up' : 'briefing-down') : '';
-							const sentEmoji = p.news?.sentiment === 'positive' ? '🟢' : p.news?.sentiment === 'negative' ? '🔴' : '🟡';
-							const ev = p.next_event;
-							let countdown = '';
-						if (ev?.date) {
-							const diff = Math.round((new Date(ev.date).getTime() - new Date(today).getTime()) / 86400000);
-							countdown = diff === 0 ? '(Today)' : diff === 1 ? '(Tomorrow)' : `(${diff}d)`;
-						}
-							return (
-								<div class="briefing-row">
+					const chgClass = chg != null ? (chg >= 0 ? 'briefing-up' : 'briefing-down') : '';
+					const sentEmoji = p.news?.sentiment === 'positive' ? '🟢' : p.news?.sentiment === 'negative' ? '🔴' : '🟡';
+					const ev = p.next_event;
+					let countdown = '';
+					if (ev?.date) {
+						const diff = Math.round((new Date(ev.date).getTime() - new Date(today).getTime()) / 86400000);
+						countdown = diff === 0 ? '(Today)' : diff === 1 ? '(Tomorrow)' : `(${diff}d)`;
+					}
+						return (
+								<div class="briefing-row" data-sentiment={chg != null ? (chg >= 0 ? 'up' : 'down') : 'neutral'}>
 									<div class="briefing-price-row">
 										<span class={`briefing-change ${chgClass}`}>
 											{chg != null ? (chg >= 0 ? '🟢' : '🔴') : '⚪'} {p.symbol} ${p.price?.toFixed(2) ?? '—'}{chgStr}
@@ -1302,9 +1327,9 @@ const stages = [
 							const chg = cp.daily_change_pct ?? null;
 							const chgStr = chg != null ? ` (${chg >= 0 ? '+' : ''}${chg.toFixed(1)}%)` : '';
 							const chgClass = chg != null ? (chg >= 0 ? 'briefing-up' : 'briefing-down') : '';
-							const sentEmoji = cp.news?.sentiment === 'positive' ? '🟢' : cp.news?.sentiment === 'negative' ? '🔴' : '🟡';
-							return (
-								<div class="briefing-row">
+						const sentEmoji = cp.news?.sentiment === 'positive' ? '🟢' : cp.news?.sentiment === 'negative' ? '🔴' : '🟡';
+						return (
+								<div class="briefing-row" data-sentiment={chg != null ? (chg >= 0 ? 'up' : 'down') : 'neutral'}>
 									<div class="briefing-price-row">
 										<span class={`briefing-change ${chgClass}`}>
 											{chg != null ? (chg >= 0 ? '🟢' : '🔴') : '⚪'} {cp.symbol} ${cp.price?.toFixed(2) ?? '—'}{chgStr}
@@ -3311,6 +3336,10 @@ const stages = [
 			background: var(--light);
 			box-shadow: 0 0 14px color-mix(in srgb, var(--light) 80%, transparent);
 		}
+	.regime-sparkline {
+		display: block;
+		margin-top: 0.2rem;
+	}
 
 		.regime-chart-wrap {
 			border: 1px solid var(--p-border);
@@ -3882,9 +3911,9 @@ const stages = [
 			transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
 		}
 		.position-card:hover {
-			transform: translateY(-2px);
-			border-color: rgba(137, 83, 209, 0.35);
-			box-shadow: 0 12px 40px rgba(137, 83, 209, 0.12);
+			transform: translateY(-3px);
+			border-color: rgba(137, 83, 209, 0.45);
+			box-shadow: 0 8px 32px rgba(137, 83, 209, 0.18), 0 2px 8px rgba(0,0,0,0.08);
 		}
 		.position-card.conviction-high {
 			border-color: rgba(137, 83, 209, 0.28);
@@ -3985,9 +4014,14 @@ const stages = [
 	/* ── Crypto-specific styles ─────────────── */
 	.portfolio-updated {
 		text-align: right;
-		font-size: 0.72rem;
-		opacity: 0.45;
-		margin-top: 1rem;
+		font-size: 0.82rem;
+		font-weight: 600;
+		color: var(--p-text);
+		opacity: 0.75;
+		margin-top: 0.75rem;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
 	}
 
 	.position-rail {
@@ -4339,6 +4373,18 @@ const stages = [
 			color: var(--p-muted);
 			margin-top: 0.1rem;
 		}
+	.briefing-row[data-sentiment="up"] {
+		border-left: 3px solid #22c55e;
+		padding-left: 0.85rem;
+	}
+	.briefing-row[data-sentiment="down"] {
+		border-left: 3px solid #ef4444;
+		padding-left: 0.85rem;
+	}
+	.briefing-row[data-sentiment="neutral"] {
+		border-left: 3px solid var(--p-muted);
+		padding-left: 0.85rem;
+	}
 
 		/* ── Clearance Gallery ───────────────────── */
 		.clearance-grid {
@@ -5247,8 +5293,8 @@ const stages = [
 
 	/* ── 1. Allocation donut: arcs fade-scale in + legend hover ── */
 	@keyframes donut-arc-in {
-		from { opacity: 0; transform: scale(0.7); }
-		to   { opacity: 1; transform: scale(1); }
+		from { opacity: 0; transform: scale(0.7) rotate(-10deg); }
+		to   { opacity: 1; transform: scale(1) rotate(0deg); }
 	}
 	.allocation-donut-wrap:not(.is-visible) .allocation-arc-outer,
 	.allocation-donut-wrap:not(.is-visible) .allocation-arc-inner {
@@ -5270,6 +5316,17 @@ const stages = [
 	.allocation-donut-wrap.is-visible .allocation-arc-inner:nth-child(4) { animation-delay: 400ms; }
 	.allocation-donut-wrap.is-visible .allocation-arc-outer:nth-child(5),
 	.allocation-donut-wrap.is-visible .allocation-arc-inner:nth-child(5) { animation-delay: 500ms; }
+	/* Drift chart fade-in on viewport entry */
+	.allocation-drift-chart {
+		opacity: 0;
+		transform: translateY(12px);
+		transition: opacity 0.7s ease, transform 0.7s ease;
+	}
+	.allocation-donut-wrap.is-visible .allocation-drift-chart,
+	.allocation-section.is-visible .allocation-drift-chart {
+		opacity: 1;
+		transform: translateY(0);
+	}
 	/* Legend hover → dim other arcs, highlight matching */
 	.allocation-donut-wrap:has(.allocation-legend-item:hover) .allocation-arc-outer,
 	.allocation-donut-wrap:has(.allocation-legend-item:hover) .allocation-arc-inner {
