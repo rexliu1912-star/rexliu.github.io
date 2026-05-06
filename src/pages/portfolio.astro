@@ -74,6 +74,7 @@ interface PortfolioRegimeHistoryPoint {
 	regime: string;
 	green_count: number;
 	vix: number | null;
+	signalDetails?: Record<string, { value: number | null }>;
 }
 interface PortfolioData {
 	regime: { current: PortfolioRegimeCurrent; history_60d: PortfolioRegimeHistoryPoint[] };
@@ -533,7 +534,7 @@ const stages = [
 			const history = regime?.history_60d || [];
 			const recent = history.slice(-7);
 
-			function makeSparkPath(signalKey) {
+			function makeSparkPath(signalKey: string) {
 				const values = recent.map(h => h.signalDetails?.[signalKey]?.value).filter(v => v != null);
 				if (values.length < 2) return '';
 				const min = Math.min(...values);
