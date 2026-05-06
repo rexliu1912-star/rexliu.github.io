@@ -2154,11 +2154,12 @@ const stages = [
 			const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 			if (!reduce) {
-				const fadeIn = (el, delay, dur) => {
-					if (!el) return;
-					el.style.opacity = '0';
-					el.style.animation = `lucky-fade-up ${dur || 420}ms ease ${delay}ms forwards`;
-				};
+		const fadeIn = (el, delay, dur) => {
+				if (!el) return;
+				el.style.setProperty('--fade-delay', delay + 'ms');
+				el.style.setProperty('--fade-dur', (dur || 420) + 'ms');
+				el.classList.add('portfolio-fade-in');
+			};
 				fadeIn(page.querySelector('.portfolio-eyebrow'), 280);
 				const title = page.querySelector('.portfolio-hero h1');
 				if (title && !title.dataset.animated) {
@@ -2172,7 +2173,7 @@ const stages = [
 							span.innerHTML = [...text]
 								.map((c) => {
 									if (!c.trim()) return c;
-									const s = `<span style="opacity:0;display:inline-block;animation:lucky-fade-up .38s ease ${d}ms forwards">${c}</span>`;
+									const s = `<span class="portfolio-char-anim" style="--char-delay:${d}ms">${c}</span>`;
 									d += 38;
 									return s;
 								})
@@ -2182,7 +2183,7 @@ const stages = [
 								.trim()
 								.split(/\s+/)
 								.map((w) => {
-									const s = `<span style="opacity:0;display:inline-block;animation:lucky-fade-up .38s ease ${d}ms forwards">${w}</span>`;
+									const s = `<span class="portfolio-char-anim" style="--char-delay:${d}ms">${w}</span>`;
 									d += 38;
 									return s;
 								})
@@ -2940,12 +2941,41 @@ const stages = [
 			}
 		}
 
-		}
-		function __runPortfolio() {
-			__initPortfolioAnimate();
-			__initPortfolioCharts();
-			__initCatalystCountdown();
-		}
+	}
+	function __lazyInitCharts() {
+		const canvasIds = [
+			'regimeChart', 'cryptoBtcTrendChart', 'cryptoPortfolioIndexChart',
+			'cryptoAllocationDriftChart', 'goldPriceChart', 'goldDevChart'
+		];
+		let chartsInitialized = false;
+		const observer = new IntersectionObserver((entries) => {
+			entries.forEach(entry => {
+				if (entry.isIntersecting) {
+					observer.unobserve(entry.target);
+					if (!chartsInitialized) {
+						chartsInitialized = true;
+						__initPortfolioCharts();
+					}
+				}
+			});
+		}, { rootMargin: '200px 0px' });
+		canvasIds.forEach(id => {
+			const el = document.getElementById(id);
+			if (el) observer.observe(el);
+		});
+		// Fallback: init charts after 3s even if not scrolled to
+		setTimeout(() => {
+			if (!chartsInitialized) {
+				chartsInitialized = true;
+				__initPortfolioCharts();
+			}
+		}, 3000);
+	}
+	function __runPortfolio() {
+		__initPortfolioAnimate();
+		__lazyInitCharts();
+		__initCatalystCountdown();
+	}
 		if (document.readyState === 'loading') {
 			document.addEventListener('DOMContentLoaded', __runPortfolio, { once: true });
 		} else {
@@ -3096,8 +3126,13 @@ const stages = [
 			background: color-mix(in srgb, var(--color-global-bg) 88%, transparent);
 			backdrop-filter: blur(8px);
 			-webkit-backdrop-filter: blur(8px);
+			mask-image: linear-gradient(to right, black 90%, transparent 100%);
+			-webkit-mask-image: linear-gradient(to right, black 90%, transparent 100%);
 		}
 		.portfolio-section-nav::-webkit-scrollbar { display: none; }
+		@media (min-width: 900px) {
+			.portfolio-section-nav { mask-image: none; -webkit-mask-image: none; }
+		}
 		.portfolio-section-nav a {
 			font-size: 0.72rem;
 			letter-spacing: 0.04em;
@@ -5199,6 +5234,15 @@ const stages = [
 			opacity: 1;
 			transform: translateY(0);
 		}
+	}
+	.portfolio-fade-in {
+		opacity: 0;
+		animation: lucky-fade-up var(--fade-dur, 420ms) ease var(--fade-delay, 0ms) forwards;
+	}
+	.portfolio-char-anim {
+		opacity: 0;
+		display: inline-block;
+		animation: lucky-fade-up .38s ease var(--char-delay, 0ms) forwards;
 	}
 
 	/* ── 1. Allocation donut: arcs fade-scale in + legend hover ── */
