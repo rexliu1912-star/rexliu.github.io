@@ -475,6 +475,9 @@ function sanitizeMonitorState(monitorState, dcaStatus, marketData = null, bottom
     // Clean detail: strip emoji + redact USD amounts + trailing parenthetical context label
     let cleanDetail = (ind.data || ind.fullText || "").replace(/[\u{1F7E0}\u{1F7E1}\u{1F534}\u{1F7E2}\u{2705}\u{274C}\u{2B50}]\s*/gu, "").trim();
     cleanDetail = cleanDetail.replace(/\$\d[\d,.]*/g, "$XX,XXX");
+    // Extract change value BEFORE stripping (for CHG column)
+    const deltaMatch = cleanDetail.match(/[,，]?\s*变化[:：]?\s*([+-]?\d+\.?\d*)/);
+    const delta = deltaMatch ? parseFloat(deltaMatch[1]) : null;
     // Strip trailing change value (变化:+N or 变化:-N) — that goes to CHG column
     let detailBase = cleanDetail.replace(/[,，]?\s*变化[:：]?\s*[+-]?\d+\.?\d*/g, "").trim();
     // Strip outer parentheses if wrapping the whole string
@@ -500,6 +503,7 @@ function sanitizeMonitorState(monitorState, dcaStatus, marketData = null, bottom
       score: ind.score ?? statusScore[ind.status] ?? 50,
       detail_en,
       detail_zh,
+      delta,
       desc_en: meta.desc_en || "",
       desc_zh: meta.desc_zh || "",
     };
@@ -858,6 +862,28 @@ async function main() {
     }
   } catch (e) {
     console.warn(`   ⚠️  Timeseries: ${e.message}`);
+  }
+
+  // Enrich Miner Capitulation indicator with real ATH drawdown from timeseries
+  if (cryptoTimeseries?.data?.length >= 2 && cryptoMonitor?.bottom_tracker?.indicators) {
+    const prices = cryptoTimeseries.data.map(d => d.btc_close).filter(p => p != null);
+    if (prices.length > 0) {
+      const ath = Math.max(...prices);
+      const current = prices[prices.length - 1];
+      const prev = prices[prices.length - 2];
+      const drawdownPct = ((current - ath) / ath * 100).toFixed(1);
+      const dailyChg = prev ? ((current - prev) / prev * 100).toFixed(1) : null;
+      
+      // Find and update the Miner Capitulation indicator
+      const minerInd = cryptoMonitor.bottom_tracker.indicators.find(
+        ind => ind.name_zh === "矿工投降" || ind.name_en === "Miner Capitulation"
+      );
+      if (minerInd) {
+        minerInd.detail_en = `Drawdown: ${drawdownPct}%, Price: $${current.toLocaleString()}`;
+        minerInd.detail_zh = `回撤: ${drawdownPct}%, 价格: $${current.toLocaleString()}`;
+        minerInd.delta = dailyChg ? parseFloat(dailyChg) : null;
+      }
+    }
   }
 
   // Enrich crypto positions with price data from monitor state + timeseries
