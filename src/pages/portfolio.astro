@@ -1195,8 +1195,8 @@ const stages = [
 
 					const buckets = allocation.current.categories;
 					const idToKey = {
-						"stablecoin": "stablecoin_yield",
-						"funds": "funds_etf",
+						"stablecoin": "stablecoin",
+						"funds": "funds",
 						"stocks": "stocks",
 						"crypto": "crypto"
 					};
@@ -1487,14 +1487,19 @@ const stages = [
 
 						<footer class="position-foot">
 							{cp.price != null ? (
-								<span class="crypto-price-line">
-									{cp.daily_change_pct != null && (
-										<span class={cp.daily_change_pct >= 0 ? 'briefing-up' : 'briefing-down'}>
-											{cp.daily_change_pct >= 0 ? '▲' : '▼'} {cp.daily_change_pct >= 0 ? '+' : ''}{cp.daily_change_pct.toFixed(1)}%
-										</span>
-									)}
+						<span class="crypto-price-line">
+								{cp.price != null && (
+									<span class="crypto-price-val">
+										${cp.price < 0.01 ? cp.price.toFixed(6) : cp.price < 1 ? cp.price.toFixed(4) : cp.price.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+									</span>
+								)}
+								{cp.daily_change_pct != null && (
+									<span class={cp.daily_change_pct >= 0 ? 'briefing-up' : 'briefing-down'}>
+										{cp.daily_change_pct >= 0 ? '▲' : '▼'} {cp.daily_change_pct >= 0 ? '+' : ''}{cp.daily_change_pct.toFixed(1)}%
+									</span>
+								)}
 
-								</span>
+							</span>
 							) : (
 								<a class="crypto-position-link" href="#positions-section">
 									<span class="lang-en">Signal-only · no price targets</span>
@@ -5525,11 +5530,14 @@ const stages = [
 	.crypto-ind-header span { font-size:.7rem; opacity:.4; text-transform:uppercase; letter-spacing:.06em; padding-bottom:.4rem; border-bottom:1px solid rgba(255,255,255,0.06); margin-bottom:.3rem; }
 	[data-theme="light"] .crypto-ind-header span { border-bottom-color:rgba(0,0,0,0.06); }
 	.crypto-ind-name { font-size:.82rem; padding:.35rem 0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-	.crypto-ind-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
 	.crypto-ind-detail { font-size:.78rem; opacity:.65; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:flex; align-items:center; gap:.35rem; }
 	.crypto-ind-header .crypto-ind-detail { font-size:.7rem; opacity:.4; text-transform:uppercase; letter-spacing:.06em; }
 	.crypto-ind-chg-badge { font-size:.7rem; font-weight:600; padding:.1rem .35rem; border-radius:.3rem; white-space:nowrap; flex-shrink:0; }
+	.crypto-price-val { font-size:.82rem; font-weight:600; margin-right:.5rem; font-variant-numeric:tabular-nums; }
 	.crypto-ind-delta-head { text-align:right; }
+	.crypto-ind-status-head { text-align:center; min-width:2.5rem; }
+	.crypto-ind-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; justify-self:center; }
+	.crypto-ind-delta-head, .crypto-ind-chg-badge { text-align:right; justify-self:end; }
 
 	/* ── Layer 3: Chart + Side Cards ── */
 	.crypto-chart-row { display:block; }
