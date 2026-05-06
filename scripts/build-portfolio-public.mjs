@@ -879,8 +879,8 @@ async function main() {
         ind => ind.name_zh === "矿工投降" || ind.name_en === "Miner Capitulation"
       );
       if (minerInd) {
-        minerInd.detail_en = `Drawdown: ${drawdownPct}%, Price: $${current.toLocaleString()}`;
-        minerInd.detail_zh = `回撤: ${drawdownPct}%, 价格: $${current.toLocaleString()}`;
+        minerInd.detail_en = `Drawdown: ${drawdownPct}%`;
+        minerInd.detail_zh = `回撤: ${drawdownPct}%`;
         minerInd.delta = dailyChg ? parseFloat(dailyChg) : null;
       }
     }
