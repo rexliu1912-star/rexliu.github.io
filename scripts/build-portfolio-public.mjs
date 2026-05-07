@@ -1222,9 +1222,38 @@ async function main() {
         const pct = Math.round((actualPcts[cat.id] / totalAssets) * 1000) / 10; // 1 decimal
         cat.current_pct = pct;
         cat.drift_pp = Math.round((pct - cat.target_pct) * 10) / 10;
+        // Gap: how much ¥ to add/reduce to reach target
+        const targetAmount = totalAssets * (cat.target_pct / 100);
+        cat.gap_amount = Math.round(targetAmount - actualPcts[cat.id]);
       }
     }
-    console.log(`   ✅ Allocation current_pct computed from live data`);
+    // Weighted expected returns
+    const targetReturn = computedAllocation.categories.reduce((s, c) => s + (c.target_pct / 100) * (c.expected_return_pct || 0), 0);
+    const currentReturn = computedAllocation.categories.reduce((s, c) => s + ((c.current_pct || 0) / 100) * (c.expected_return_pct || 0), 0);
+    computedAllocation.weighted_return = {
+      target: Math.round(targetReturn * 10) / 10,
+      current: Math.round(currentReturn * 10) / 10,
+    };
+    computedAllocation.projected_annual_yield = Math.round(totalAssets * currentReturn / 100);
+    // Portfolio risk (weighted volatility)
+    const targetVol = computedAllocation.categories.reduce((s, c) => s + (c.target_pct / 100) * (c.annual_volatility_pct || 0), 0);
+    const currentVol = computedAllocation.categories.reduce((s, c) => s + ((c.current_pct || 0) / 100) * (c.annual_volatility_pct || 0), 0);
+    // Risk-adjusted return (Sharpe-like, risk-free = 3%)
+    const riskFree = 3;
+    computedAllocation.risk = {
+      target_vol: Math.round(targetVol * 10) / 10,
+      current_vol: Math.round(currentVol * 10) / 10,
+      sharpe_target: targetVol > 0 ? Math.round((targetReturn - riskFree) / targetVol * 100) / 100 : 0,
+      sharpe_current: currentVol > 0 ? Math.round((currentReturn - riskFree) / currentVol * 100) / 100 : 0,
+      risk_free_rate: riskFree,
+    };
+    // Temperature: 0-100 scale based on current volatility
+    // 0% vol = 0, 30% vol = 50, 60%+ vol = 100
+    const tempScore = Math.min(100, Math.round((currentVol / 30) * 50));
+    computedAllocation.risk.temperature = tempScore;
+    computedAllocation.risk.temperature_label_en = tempScore < 25 ? "Defensive" : tempScore < 50 ? "Conservative" : tempScore < 75 ? "Balanced" : "Aggressive";
+    computedAllocation.risk.temperature_label_zh = tempScore < 25 ? "防御型" : tempScore < 50 ? "保守型" : tempScore < 75 ? "均衡型" : "进取型";
+    console.log(`   ✅ Risk profile: vol ${currentVol.toFixed(1)}%, temp ${tempScore}, sharpe ${computedAllocation.risk.sharpe_current}`);
   }
 
   const output = {
