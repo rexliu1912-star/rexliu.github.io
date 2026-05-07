@@ -1124,10 +1124,79 @@ const stages = [
 							</span>
 						</div>
 					))}
-				</div>
 			</div>
+		</div>
 
-			<div class="allocation-subcards">
+		{/* ── Risk Profile Card ── */}
+		{(() => {
+			const r = allocation.current.risk;
+			if (!r) return null;
+			const tempPct = Math.max(0, Math.min(100, r.temperature));
+			return (
+				<div class="risk-profile-card">
+					<p class="crypto-dash-card-title">
+						<span class="lang-en">Risk Profile</span>
+						<span class="lang-zh">风险画像</span>
+					</p>
+					<div class="risk-gauge-wrap">
+						<div class="risk-gauge-track">
+							<div
+								class="risk-gauge-fill"
+								style={`width: ${tempPct}%`}
+							></div>
+						</div>
+						<div class="risk-gauge-labels">
+							<span class="risk-temp-score font-serif">{r.temperature}/100</span>
+							<span class="risk-temp-type">
+								<span class="lang-en">{r.temperature_label_en}</span>
+								<span class="lang-zh">{r.temperature_label_zh}</span>
+							</span>
+						</div>
+					</div>
+					<div class="risk-metrics-grid">
+						<div class="risk-metric-row">
+							<span class="risk-metric-label">
+								<span class="lang-en">Weighted Return</span>
+								<span class="lang-zh">加权收益</span>
+							</span>
+							<span class="risk-metric-values font-serif">
+							<span class="risk-metric-target">{allocation.current.weighted_return?.target ?? '-'}%</span>
+							<span class="risk-metric-arrow">→</span>
+							<span class="risk-metric-current">{allocation.current.weighted_return?.current ?? '-'}%</span>
+							</span>
+						</div>
+						<div class="risk-metric-row">
+							<span class="risk-metric-label">
+								<span class="lang-en">Portfolio Volatility</span>
+								<span class="lang-zh">组合波动率</span>
+							</span>
+							<span class="risk-metric-values font-serif">
+								<span class="risk-metric-target">{r.target_vol}%</span>
+								<span class="risk-metric-arrow">→</span>
+								<span class="risk-metric-current">{r.current_vol}%</span>
+							</span>
+						</div>
+						<div class="risk-metric-row">
+							<span class="risk-metric-label">
+								<span class="lang-en">Sharpe Ratio</span>
+								<span class="lang-zh">夏普比率</span>
+							</span>
+							<span class="risk-metric-values font-serif">
+								<span class="risk-metric-target">{r.sharpe_target}</span>
+								<span class="risk-metric-arrow">→</span>
+								<span class="risk-metric-current">{r.sharpe_current}</span>
+							</span>
+						</div>
+					</div>
+					<p class="risk-profile-note">
+						<span class="lang-en">Sharpe = (return − risk_free) / vol. Higher = better risk-adjusted return.</span>
+						<span class="lang-zh">夏普比率 = (收益率 − 无风险利率) / 波动率。越高代表风险调整后收益越好。</span>
+					</p>
+				</div>
+			);
+		})()}
+
+		<div class="allocation-subcards">
 				{allocation.current.categories.map((cat) => (
 					<article class="allocation-subcard" style={`--cat-color: ${cat.color}`}>
 						<header class="allocation-subcard-head">
@@ -1136,12 +1205,6 @@ const stages = [
 								<span class="lang-en">{cat.label_en}</span>
 								<span class="lang-zh">{cat.label_zh}</span>
 							</h3>
-							<span
-								class={`allocation-drift-chip ${cat.drift_pp >= 0 ? "positive" : "negative"}`}
-							>
-								{cat.drift_pp >= 0 ? "+" : ""}
-								{cat.drift_pp}pp
-							</span>
 						</header>
 						<div class="allocation-subcard-stats">
 							<div>
@@ -1279,75 +1342,7 @@ const stages = [
 					);
 				})()}
 
-			{/* ── Risk Profile Card ── */}
-			{(() => {
-				const r = allocation.current.risk;
-				if (!r) return null;
-				const tempPct = Math.max(0, Math.min(100, r.temperature));
-				return (
-					<div class="risk-profile-card">
-						<p class="crypto-dash-card-title">
-							<span class="lang-en">Risk Profile</span>
-							<span class="lang-zh">风险画像</span>
-						</p>
-						<div class="risk-gauge-wrap">
-							<div class="risk-gauge-track">
-								<div
-									class="risk-gauge-fill"
-									style={`width: ${tempPct}%`}
-								></div>
-							</div>
-							<div class="risk-gauge-labels">
-								<span class="risk-temp-score font-serif">{r.temperature}/100</span>
-								<span class="risk-temp-type">
-									<span class="lang-en">{r.temperature_label_en}</span>
-									<span class="lang-zh">{r.temperature_label_zh}</span>
-								</span>
-							</div>
-						</div>
-						<div class="risk-metrics-grid">
-							<div class="risk-metric-row">
-								<span class="risk-metric-label">
-									<span class="lang-en">Weighted Return</span>
-									<span class="lang-zh">加权收益</span>
-								</span>
-								<span class="risk-metric-values font-serif">
-								<span class="risk-metric-target">{allocation.current.weighted_return?.target ?? '-'}%</span>
-								<span class="risk-metric-arrow">→</span>
-								<span class="risk-metric-current">{allocation.current.weighted_return?.current ?? '-'}%</span>
-								</span>
-							</div>
-							<div class="risk-metric-row">
-								<span class="risk-metric-label">
-									<span class="lang-en">Portfolio Volatility</span>
-									<span class="lang-zh">组合波动率</span>
-								</span>
-								<span class="risk-metric-values font-serif">
-									<span class="risk-metric-target">{r.target_vol}%</span>
-									<span class="risk-metric-arrow">→</span>
-									<span class="risk-metric-current">{r.current_vol}%</span>
-								</span>
-							</div>
-							<div class="risk-metric-row">
-								<span class="risk-metric-label">
-									<span class="lang-en">Sharpe Ratio</span>
-									<span class="lang-zh">夏普比率</span>
-								</span>
-								<span class="risk-metric-values font-serif">
-									<span class="risk-metric-target">{r.sharpe_target}</span>
-									<span class="risk-metric-arrow">→</span>
-									<span class="risk-metric-current">{r.sharpe_current}</span>
-								</span>
-							</div>
-						</div>
-						<p class="risk-profile-note">
-							<span class="lang-en">Sharpe = (return − risk_free) / vol. Higher = better risk-adjusted return.</span>
-							<span class="lang-zh">夏普比率 = (收益率 − 无风险利率) / 波动率。越高代表风险调整后收益越好。</span>
-						</p>
-					</div>
-				);
-			})()}
-		</section>
+	</section>
 
 		<section class="portfolio-section fade-in-up" data-collapse id="positions-section">
 			<header class="portfolio-section-head">
