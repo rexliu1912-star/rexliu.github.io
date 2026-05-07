@@ -1282,72 +1282,7 @@ const stages = [
 			<span class="section-summary"><span class="lang-en">8 holdings · 7 high conviction</span><span class="lang-zh">8 只持仓 · 7 只高信念</span></span>
 		</header>
 
-		{/* ── 持仓简报: consolidated daily briefing ── */}
-		{(() => {
-			const today = new Date().toISOString().slice(0, 10);
-			const snapshotDate = positions[0]?.price != null ? today : null;
-			return (
-				<div class="daily-briefing">
-					<div class="daily-briefing-head">
-						<span class="lang-en">📋 Daily Briefing · {snapshotDate || '—'}</span>
-						<span class="lang-zh">📋 持仓简报 · {snapshotDate || '—'}</span>
-					</div>
-					<div class="daily-briefing-list">
-						{positions.map((p) => {
-							const chg = p.daily_change_pct ?? null;
-							const chgStr = chg != null ? ` (${chg >= 0 ? '+' : ''}${chg.toFixed(1)}%)` : '';
-					const chgClass = chg != null ? (chg >= 0 ? 'briefing-up' : 'briefing-down') : '';
-					const sentEmoji = p.news?.sentiment === 'positive' ? '🟢' : p.news?.sentiment === 'negative' ? '🔴' : '🟡';
-					const ev = p.next_event;
-					let countdown = '';
-					if (ev?.date) {
-						const diff = Math.round((new Date(ev.date).getTime() - new Date(today).getTime()) / 86400000);
-						countdown = diff === 0 ? '(Today)' : diff === 1 ? '(Tomorrow)' : `(${diff}d)`;
-					}
-						return (
-								<div class="briefing-row" data-sentiment={chg != null ? (chg >= 0 ? 'up' : 'down') : 'neutral'}>
-									<div class="briefing-price-row">
-										<span class={`briefing-change ${chgClass}`}>
-											{chg != null ? (chg >= 0 ? '🟢' : '🔴') : '⚪'} {p.symbol} ${p.price?.toFixed(2) ?? '—'}{chgStr}
-										</span>
-									</div>
-									{p.news?.summary && (
-										<div class="briefing-news">
-											<span>{sentEmoji} {p.news.summary}</span>
-										</div>
-									)}
-									{ev && (
-										<div class="briefing-event">
-											<span>🗓 {ev.date} {ev.label} {countdown}</span>
-										</div>
-									)}
-								</div>
-							);
-						})}
-						{cryptoPositions.map((cp) => {
-							const chg = cp.daily_change_pct ?? null;
-							const chgStr = chg != null ? ` (${chg >= 0 ? '+' : ''}${chg.toFixed(1)}%)` : '';
-							const chgClass = chg != null ? (chg >= 0 ? 'briefing-up' : 'briefing-down') : '';
-						const sentEmoji = cp.news?.sentiment === 'positive' ? '🟢' : cp.news?.sentiment === 'negative' ? '🔴' : '🟡';
-						return (
-								<div class="briefing-row" data-sentiment={chg != null ? (chg >= 0 ? 'up' : 'down') : 'neutral'}>
-									<div class="briefing-price-row">
-										<span class={`briefing-change ${chgClass}`}>
-											{chg != null ? (chg >= 0 ? '🟢' : '🔴') : '⚪'} {cp.symbol} ${cp.price?.toFixed(2) ?? '—'}{chgStr}
-										</span>
-									</div>
-									{cp.news?.summary && (
-										<div class="briefing-news">
-											<span>{sentEmoji} {cp.news.summary}</span>
-										</div>
-									)}
-								</div>
-							);
-						})}
-					</div>
-				</div>
-			);
-		})()}
+
 
 		<div class="positions-grid">
 				{positions.map((p) => (
@@ -4300,96 +4235,13 @@ const stages = [
 			50% { box-shadow: 0 0 8px 2px rgba(251, 146, 60, 0.25); }
 		}
 
-		/* ── Position News Digest ───────────────── */
-		.position-news {
-			display: flex;
-			align-items: flex-start;
-			gap: 0.4rem;
-			margin-top: 0.4rem;
-			padding: 0.35rem 0.5rem;
-			border-radius: 0.4rem;
-			font-size: 0.72rem;
-			line-height: 1.35;
-			color: var(--p-text-secondary);
-			background: color-mix(in srgb, var(--p-surface) 60%, transparent);
-		}
-		.news-sentiment-icon { flex-shrink: 0; font-size: 0.65rem; margin-top: 0.1rem; }
-		.news-summary {
-			flex: 1;
-			overflow: hidden;
-			display: -webkit-box;
-			-webkit-line-clamp: 2;
-			-webkit-box-orient: vertical;
-		}
-		.position-news.sentiment-positive { border-left: 2px solid #22c55e40; }
-		.position-news.sentiment-negative { border-left: 2px solid #ef444440; }
-		.position-news.sentiment-neutral  { border-left: 2px solid #eab30840; }
 
-		/* ── Daily Briefing ─────────────────────── */
-		.daily-briefing {
-			margin: 0.5rem 0 1.25rem;
-			padding: 0.85rem 1rem;
-			border-radius: 0.75rem;
-			border: 1px solid var(--p-border);
-			background: var(--p-card);
-		}
-		.daily-briefing-head {
-			font-size: 0.8rem;
-			font-weight: 600;
-			color: var(--p-muted);
-			text-transform: uppercase;
-			letter-spacing: 0.04em;
-			margin-bottom: 0.75rem;
-		}
-		.daily-briefing-list {
-			display: flex;
-			flex-direction: column;
-			gap: 0.6rem;
-		}
-		.briefing-row {
-			padding: 0.5rem 0;
-			border-bottom: 1px solid var(--p-border);
-		}
-		.briefing-row:last-child {
-			border-bottom: none;
-			padding-bottom: 0;
-		}
-		.briefing-price-row {
-			font-size: 0.9rem;
-			font-weight: 600;
-		}
-		.briefing-change {
-			font-family: var(--font-mono);
-			color: var(--p-heading);
-		}
-		.briefing-up {
-			color: #22c55e;
-		}
-		.briefing-down {
-			color: #ef4444;
-		}
-		.briefing-news {
-			font-size: 0.82rem;
-			color: var(--p-body);
-			margin-top: 0.15rem;
-			line-height: 1.5;
-		}
-		.briefing-event {
-			font-size: 0.78rem;
-			color: var(--p-muted);
-			margin-top: 0.1rem;
-		}
-	.briefing-row[data-sentiment="up"] {
-		border-left: 3px solid #22c55e;
-		padding-left: 0.85rem;
+	/* briefing-up / briefing-down kept for crypto card daily change display */
+	.briefing-up {
+		color: #22c55e;
 	}
-	.briefing-row[data-sentiment="down"] {
-		border-left: 3px solid #ef4444;
-		padding-left: 0.85rem;
-	}
-	.briefing-row[data-sentiment="neutral"] {
-		border-left: 3px solid var(--p-muted);
-		padding-left: 0.85rem;
+	.briefing-down {
+		color: #ef4444;
 	}
 
 		/* ── Clearance Gallery ───────────────────── */
