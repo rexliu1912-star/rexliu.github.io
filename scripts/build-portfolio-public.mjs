@@ -124,9 +124,12 @@ async function buildAllocationHistory() {
   // Stocks = 且慢+未来世代+AH股+美股
   // Stablecoin = 稳定生息
   // Crypto = 加密永生+加密交易
+  // Gold ETF share inside "future" bucket (国泰黄金ETF_A / future total)
+  const GOLD_SHARE_OF_FUTURE = 402350 / 597400; // ~0.673
   const BUCKET_AGG = {
     stablecoin: ["stablecoin"],
     funds: ["liquid", "yanerhigh", "house", "education", "receivable"],
+    gold: [], // computed separately below
     stocks: ["qieman", "future", "guotai", "us_stock"],
     crypto: ["crypto", "crypto_ivy"],
   };
@@ -153,6 +156,17 @@ async function buildAllocationHistory() {
         const val = srcKeys.reduce((s, k) => s + (Number(data.breakdown[k]) || 0), 0);
         if (val > 0) {
           buckets[destKey] = Math.round((val / investable) * 100);
+        }
+      }
+      // Extract gold from stocks' future portion by fixed ratio
+      const futureVal = Number(data.breakdown.future) || 0;
+      if (futureVal > 0) {
+        const goldVal = Math.round(futureVal * GOLD_SHARE_OF_FUTURE);
+        const goldPct = Math.round((goldVal / investable) * 100);
+        const stockPctOld = buckets.stocks || 0;
+        if (stockPctOld > 0) {
+          buckets.gold = goldPct;
+          buckets.stocks = stockPctOld - goldPct;
         }
       }
 
