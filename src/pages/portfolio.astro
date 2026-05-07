@@ -656,6 +656,331 @@ const stages = [
 				)}
 			</div>
 		</section>
+	
+		<section class="portfolio-section fade-in-up allocation-section" data-collapse id="allocation-section">
+			<header class="portfolio-section-head">
+				<p class="portfolio-kicker">
+					<span class="lang-en">Allocation · Target vs Current</span>
+					<span class="lang-zh">资产配置 · 目标 vs 当前</span>
+				</p>
+				<h2 class="font-serif text-3xl font-semibold">
+						<span class="lang-en">Five buckets, conviction on display</span>
+						<span class="lang-zh">五桶资产，信念展示</span>
+				</h2>
+				<p class="portfolio-note">
+					<span class="lang-en">
+						Dalio three-bucket framework. Percentages are strategic targets; drift chips show
+						current distance from each target.
+					</span>
+					<span class="lang-zh">
+					达利欧三桶法框架。百分比是战略目标，偏差 chip 显示当前距目标的距离。
+				</span>
+			</p>
+			<span class="section-summary"><span class="lang-en">{allocation.current.categories.map(c => `${c.label_en} ${c.target_pct}%`).join(' · ')}</span><span class="lang-zh">{allocation.current.categories.map(c => `${c.label_zh} ${c.target_pct}%`).join(' · ')}</span></span>
+	</header>
+
+		<div class="allocation-donut-wrap" aria-label="Target vs current allocation">
+				<svg class="allocation-donut" viewBox="0 0 240 240" role="img">
+					{/* Outer ring = target allocation */}
+					{(() => {
+						const cats = allocation.current.categories;
+						let cum = 0;
+						return cats.map((cat: any) => {
+							const offset = -cum;
+							cum += cat.target_pct;
+							return (
+								<circle
+									class="allocation-arc-outer"
+									cx="120"
+									cy="120"
+									r="92"
+									pathLength="100"
+									fill="none"
+									stroke={cat.color}
+									stroke-width="22"
+									stroke-dasharray={`${cat.target_pct} 100`}
+									stroke-dashoffset={offset}
+									transform="rotate(-90 120 120)"
+								/>
+							);
+						});
+					})()}
+					{/* Inner ring = current allocation */}
+					{(() => {
+						const cats = allocation.current.categories;
+						let cum = 0;
+						return cats.map((cat: any) => {
+							const offset = -cum;
+							cum += cat.current_pct;
+							return (
+								<circle
+									class="allocation-arc-inner"
+									cx="120"
+									cy="120"
+									r="58"
+									pathLength="100"
+									fill="none"
+									stroke={cat.color}
+									stroke-opacity="0.55"
+									stroke-width="16"
+									stroke-dasharray={`${cat.current_pct} 100`}
+									stroke-dashoffset={offset}
+									transform="rotate(-90 120 120)"
+								/>
+							);
+						});
+					})()}
+					{/* Center labels — bilingual */}
+					<text x="120" y="114" class="allocation-donut-label-top lang-en" text-anchor="middle">
+						TARGET
+					</text>
+					<text x="120" y="114" class="allocation-donut-label-top lang-zh" text-anchor="middle">
+						目标配比
+					</text>
+					<text x="120" y="134" class="allocation-donut-label-bot lang-en" text-anchor="middle">
+						vs CURRENT
+					</text>
+					<text x="120" y="134" class="allocation-donut-label-bot lang-zh" text-anchor="middle">
+						当前持仓
+					</text>
+				</svg>
+				<div class="allocation-donut-legend">
+					{allocation.current.categories.map((cat: any) => (
+						<div class="allocation-legend-item" style={`--cat-color: ${cat.color}`}>
+							<span class="allocation-legend-dot"></span>
+							<span class="allocation-legend-label">
+								<span class="lang-en">{cat.label_en}</span>
+								<span class="lang-zh">{cat.label_zh}</span>
+							</span>
+							<span class="allocation-legend-target">{cat.target_pct}%</span>
+							<span
+								class={`allocation-legend-drift ${cat.drift_pp >= 0 ? "positive" : "negative"}`}
+							>
+								{cat.drift_pp >= 0 ? "+" : ""}
+								{cat.drift_pp}pp
+							</span>
+						</div>
+					))}
+			</div>
+		</div>
+
+		{/* ── Risk Profile Card ── */}
+		{(() => {
+			const r = allocation.current.risk;
+			if (!r) return null;
+			const tempPct = Math.max(0, Math.min(100, r.temperature));
+			return (
+				<div class="risk-profile-card">
+					<p class="crypto-dash-card-title">
+						<span class="lang-en">Risk Profile</span>
+						<span class="lang-zh">风险画像</span>
+					</p>
+					<div class="risk-gauge-wrap">
+						<div class="risk-gauge-track">
+							<div
+								class="risk-gauge-fill"
+								style={`width: ${tempPct}%`}
+							></div>
+						</div>
+						<div class="risk-gauge-labels">
+							<span class="risk-temp-score font-serif">{r.temperature}/100</span>
+							<span class="risk-temp-type">
+								<span class="lang-en">{r.temperature_label_en}</span>
+								<span class="lang-zh">{r.temperature_label_zh}</span>
+							</span>
+						</div>
+					</div>
+					<div class="risk-metrics-grid">
+						<div class="risk-metric-row">
+							<span class="risk-metric-label">
+								<span class="lang-en">Weighted Return</span>
+								<span class="lang-zh">加权收益</span>
+							</span>
+							<span class="risk-metric-values font-serif">
+							<span class="risk-metric-target">{allocation.current.weighted_return?.target ?? '-'}%</span>
+							<span class="risk-metric-arrow">→</span>
+							<span class="risk-metric-current">{allocation.current.weighted_return?.current ?? '-'}%</span>
+							</span>
+						</div>
+						<div class="risk-metric-row">
+							<span class="risk-metric-label">
+								<span class="lang-en">Portfolio Volatility</span>
+								<span class="lang-zh">组合波动率</span>
+							</span>
+							<span class="risk-metric-values font-serif">
+								<span class="risk-metric-target">{r.target_vol}%</span>
+								<span class="risk-metric-arrow">→</span>
+								<span class="risk-metric-current">{r.current_vol}%</span>
+							</span>
+						</div>
+						<div class="risk-metric-row">
+							<span class="risk-metric-label">
+								<span class="lang-en">Sharpe Ratio</span>
+								<span class="lang-zh">夏普比率</span>
+							</span>
+							<span class="risk-metric-values font-serif">
+								<span class="risk-metric-target">{r.sharpe_target}</span>
+								<span class="risk-metric-arrow">→</span>
+								<span class="risk-metric-current">{r.sharpe_current}</span>
+							</span>
+						</div>
+					</div>
+					<p class="risk-profile-note">
+						<span class="lang-en">Sharpe = (return − risk_free) / vol. Higher = better risk-adjusted return.</span>
+						<span class="lang-zh">夏普比率 = (收益率 − 无风险利率) / 波动率。越高代表风险调整后收益越好。</span>
+					</p>
+				</div>
+			);
+		})()}
+
+		<div class="allocation-subcards">
+				{allocation.current.categories.map((cat) => (
+					<article class="allocation-subcard" style={`--cat-color: ${cat.color}`}>
+						<header class="allocation-subcard-head">
+							<span class="allocation-subcard-dot"></span>
+							<h3 class="allocation-subcard-title font-serif">
+								<span class="lang-en">{cat.label_en}</span>
+								<span class="lang-zh">{cat.label_zh}</span>
+							</h3>
+						</header>
+						<div class="allocation-subcard-stats">
+							<div>
+								<span class="allocation-subcard-eyebrow">
+									<span class="lang-en">Target</span>
+									<span class="lang-zh">目标</span>
+								</span>
+								<strong class="font-serif">{cat.target_pct}%</strong>
+							</div>
+							<div>
+								<span class="allocation-subcard-eyebrow">
+									<span class="lang-en">Current</span>
+									<span class="lang-zh">当前</span>
+								</span>
+								<strong class="font-serif">{cat.current_pct}%</strong>
+							</div>
+							<div>
+								<span class="allocation-subcard-eyebrow">
+									<span class="lang-en">Exp. Return</span>
+									<span class="lang-zh">预期年化</span>
+								</span>
+								<strong class="font-serif">{cat.expected_return_pct}%</strong>
+							</div>
+							<div>
+								<span class="allocation-subcard-eyebrow">
+									<span class="lang-en">Volatility</span>
+									<span class="lang-zh">波动率</span>
+								</span>
+								<strong class="font-serif">{cat.annual_volatility_pct}%</strong>
+							</div>
+						</div>
+						{cat.sub_tags_en && (
+							<div class="allocation-subcard-tags">
+								{cat.sub_tags_en.map((tag: string, i: number) => (
+									<span class="allocation-tag">
+										<span class="lang-en">{tag}</span>
+										<span class="lang-zh">{cat.sub_tags_zh[i] || tag}</span>
+									</span>
+								))}
+							</div>
+						)}
+						<p class="allocation-subcard-note">
+							<span class="lang-en">{cat.note_en}</span>
+							<span class="lang-zh">{cat.note_zh}</span>
+						</p>
+						{cat.sub && (
+							<div class="allocation-sub-mini">
+								{cat.sub.map((s: any) => (
+									<div
+										class="allocation-sub-mini-row"
+										style={`--sub-pct: ${(s.pct / cat.target_pct) * 100}%`}
+									>
+										<span>
+											<span class="lang-en">{s.label_en}</span>
+											<span class="lang-zh">{s.label_zh}</span>
+										</span>
+										<span class="allocation-sub-mini-bar"></span>
+										<strong class="font-serif">{s.pct}%</strong>
+									</div>
+								))}
+							</div>
+						)}
+					</article>
+				))}
+
+			{/* ── Layer 5: Allocation Drift Trend ── */}
+				{(() => {
+					const ah = (portfolioData as any)?.allocation_history?.history;
+					if (!ah || ah.length < 2) return null;
+
+					const buckets = allocation.current.categories;
+					const idToKey = {
+						"stablecoin": "stablecoin",
+						"funds": "funds",
+						"gold": "gold",
+						"stocks": "stocks",
+						"crypto": "crypto"
+					};
+
+					const W = 720, H = 220;
+					const pad = { l: 44, r: 16, t: 14, b: 28 };
+					const cW = W - pad.l - pad.r;
+					const cH = H - pad.t - pad.b;
+
+					const xOf = (i: number) => pad.l + (i / Math.max(1, ah.length - 1)) * cW;
+					const yPct = (v: number) => pad.t + cH - (v / 60) * cH;
+
+					return (
+						<div class="crypto-alloc-trend-wrap">
+							<p class="crypto-dash-card-title">
+								<span class="lang-en">Allocation Drift</span>
+								<span class="lang-zh">配置偏移趋势</span>
+							</p>
+							<canvas id="cryptoAllocationDriftChart" class="crypto-chart-canvas allocation-drift-chart" aria-label="Allocation Drift"></canvas>
+							<svg viewBox={`0 0 ${W} ${H}`} class="crypto-chart-svg" preserveAspectRatio="xMidYMid meet">
+								{[0, 15, 30, 45].map(v => (
+									<>
+										<line x1={pad.l} y1={yPct(v).toFixed(1)} x2={W - pad.r} y2={yPct(v).toFixed(1)} stroke="color-mix(in srgb, var(--p-border) 35%, transparent)" stroke-width="0.5" />
+										<text x={pad.l - 6} y={yPct(v).toFixed(1)} font-size="8" fill="color-mix(in srgb, var(--p-text-faint) 60%, transparent)" text-anchor="end" dominant-baseline="middle">{v}%</text>
+									</>
+								))}
+								{buckets.map((b: any) => {
+									const key = idToKey[b.id as keyof typeof idToKey];
+									if (!key) return null;
+									const linePts = ah.map((h: any, i: number) => {
+										const v = h.buckets?.[key] ?? 0;
+										return `${xOf(i).toFixed(1)},${yPct(v).toFixed(1)}`;
+									}).join(" ");
+									const current = ah[ah.length - 1]?.buckets?.[key] ?? 0;
+									const target = b.target_pct;
+									const isDrifted = Math.abs(current - target) >= 5;
+									return (
+										<>
+											<polyline points={linePts} fill="none" stroke={b.color} stroke-width={isDrifted ? "2.2" : "1.5"} stroke-linejoin="round" stroke-linecap="round" stroke-dasharray={isDrifted ? "none" : "4 2"} opacity={isDrifted ? "1" : "0.6"} />
+											<line x1={pad.l} y1={yPct(target).toFixed(1)} x2={W - pad.r} y2={yPct(target).toFixed(1)} stroke={b.color} stroke-width="0.6" stroke-dasharray="2 4" opacity="0.35" />
+										</>
+									);
+								})}
+								{ah.map((h: any, i: number) => {
+									const x = xOf(i).toFixed(1);
+									return <text x={x} y={H - 6} font-size="7.5" fill="color-mix(in srgb, var(--p-text-faint) 50%, transparent)" text-anchor="middle">{h.date}</text>;
+								})}
+								{buckets.map((b: any, i: number) => {
+									const lx = pad.l + i * 110;
+									return (
+										<>
+											<line x1={lx} y1="10" x2={lx + 14} y2="10" stroke={b.color} stroke-width="1.8" />
+											<text x={lx + 18} y="10" font-size="7.5" fill="color-mix(in srgb, var(--p-text-faint) 70%, transparent)" dominant-baseline="middle"><tspan class="lang-en">{b.label_en}</tspan><tspan class="lang-zh">{b.label_zh}</tspan></text>
+										</>
+									);
+								})}
+								<text x={W - pad.r} y="10" font-size="7.5" fill="color-mix(in srgb, var(--p-text-faint) 45%, transparent)" text-anchor="end"><span class="lang-en">- - target</span><span class="lang-zh">- - 目标</span></text>
+							</svg>
+						</div>
+					);
+				})()}
+
+		</section>
+	
 	{/* ═══ Crypto Asset Management ═══ */}
 	{cryptoMonitor && (
 		<section class="portfolio-section fade-in-up" data-collapse id="crypto-mgmt-section">
@@ -1019,330 +1344,6 @@ const stages = [
 				</div>
 			</div>
 		</section>
-
-		<section class="portfolio-section fade-in-up allocation-section" data-collapse id="allocation-section">
-			<header class="portfolio-section-head">
-				<p class="portfolio-kicker">
-					<span class="lang-en">Allocation · Target vs Current</span>
-					<span class="lang-zh">资产配置 · 目标 vs 当前</span>
-				</p>
-				<h2 class="font-serif text-3xl font-semibold">
-						<span class="lang-en">Five buckets, conviction on display</span>
-						<span class="lang-zh">五桶资产，信念展示</span>
-				</h2>
-				<p class="portfolio-note">
-					<span class="lang-en">
-						Dalio three-bucket framework. Percentages are strategic targets; drift chips show
-						current distance from each target.
-					</span>
-					<span class="lang-zh">
-					达利欧三桶法框架。百分比是战略目标，偏差 chip 显示当前距目标的距离。
-				</span>
-			</p>
-			<span class="section-summary"><span class="lang-en">{allocation.current.categories.map(c => `${c.label_en} ${c.target_pct}%`).join(' · ')}</span><span class="lang-zh">{allocation.current.categories.map(c => `${c.label_zh} ${c.target_pct}%`).join(' · ')}</span></span>
-	</header>
-
-		<div class="allocation-donut-wrap" aria-label="Target vs current allocation">
-				<svg class="allocation-donut" viewBox="0 0 240 240" role="img">
-					{/* Outer ring = target allocation */}
-					{(() => {
-						const cats = allocation.current.categories;
-						let cum = 0;
-						return cats.map((cat: any) => {
-							const offset = -cum;
-							cum += cat.target_pct;
-							return (
-								<circle
-									class="allocation-arc-outer"
-									cx="120"
-									cy="120"
-									r="92"
-									pathLength="100"
-									fill="none"
-									stroke={cat.color}
-									stroke-width="22"
-									stroke-dasharray={`${cat.target_pct} 100`}
-									stroke-dashoffset={offset}
-									transform="rotate(-90 120 120)"
-								/>
-							);
-						});
-					})()}
-					{/* Inner ring = current allocation */}
-					{(() => {
-						const cats = allocation.current.categories;
-						let cum = 0;
-						return cats.map((cat: any) => {
-							const offset = -cum;
-							cum += cat.current_pct;
-							return (
-								<circle
-									class="allocation-arc-inner"
-									cx="120"
-									cy="120"
-									r="58"
-									pathLength="100"
-									fill="none"
-									stroke={cat.color}
-									stroke-opacity="0.55"
-									stroke-width="16"
-									stroke-dasharray={`${cat.current_pct} 100`}
-									stroke-dashoffset={offset}
-									transform="rotate(-90 120 120)"
-								/>
-							);
-						});
-					})()}
-					{/* Center labels — bilingual */}
-					<text x="120" y="114" class="allocation-donut-label-top lang-en" text-anchor="middle">
-						TARGET
-					</text>
-					<text x="120" y="114" class="allocation-donut-label-top lang-zh" text-anchor="middle">
-						目标配比
-					</text>
-					<text x="120" y="134" class="allocation-donut-label-bot lang-en" text-anchor="middle">
-						vs CURRENT
-					</text>
-					<text x="120" y="134" class="allocation-donut-label-bot lang-zh" text-anchor="middle">
-						当前持仓
-					</text>
-				</svg>
-				<div class="allocation-donut-legend">
-					{allocation.current.categories.map((cat: any) => (
-						<div class="allocation-legend-item" style={`--cat-color: ${cat.color}`}>
-							<span class="allocation-legend-dot"></span>
-							<span class="allocation-legend-label">
-								<span class="lang-en">{cat.label_en}</span>
-								<span class="lang-zh">{cat.label_zh}</span>
-							</span>
-							<span class="allocation-legend-target">{cat.target_pct}%</span>
-							<span
-								class={`allocation-legend-drift ${cat.drift_pp >= 0 ? "positive" : "negative"}`}
-							>
-								{cat.drift_pp >= 0 ? "+" : ""}
-								{cat.drift_pp}pp
-							</span>
-						</div>
-					))}
-			</div>
-		</div>
-
-		{/* ── Risk Profile Card ── */}
-		{(() => {
-			const r = allocation.current.risk;
-			if (!r) return null;
-			const tempPct = Math.max(0, Math.min(100, r.temperature));
-			return (
-				<div class="risk-profile-card">
-					<p class="crypto-dash-card-title">
-						<span class="lang-en">Risk Profile</span>
-						<span class="lang-zh">风险画像</span>
-					</p>
-					<div class="risk-gauge-wrap">
-						<div class="risk-gauge-track">
-							<div
-								class="risk-gauge-fill"
-								style={`width: ${tempPct}%`}
-							></div>
-						</div>
-						<div class="risk-gauge-labels">
-							<span class="risk-temp-score font-serif">{r.temperature}/100</span>
-							<span class="risk-temp-type">
-								<span class="lang-en">{r.temperature_label_en}</span>
-								<span class="lang-zh">{r.temperature_label_zh}</span>
-							</span>
-						</div>
-					</div>
-					<div class="risk-metrics-grid">
-						<div class="risk-metric-row">
-							<span class="risk-metric-label">
-								<span class="lang-en">Weighted Return</span>
-								<span class="lang-zh">加权收益</span>
-							</span>
-							<span class="risk-metric-values font-serif">
-							<span class="risk-metric-target">{allocation.current.weighted_return?.target ?? '-'}%</span>
-							<span class="risk-metric-arrow">→</span>
-							<span class="risk-metric-current">{allocation.current.weighted_return?.current ?? '-'}%</span>
-							</span>
-						</div>
-						<div class="risk-metric-row">
-							<span class="risk-metric-label">
-								<span class="lang-en">Portfolio Volatility</span>
-								<span class="lang-zh">组合波动率</span>
-							</span>
-							<span class="risk-metric-values font-serif">
-								<span class="risk-metric-target">{r.target_vol}%</span>
-								<span class="risk-metric-arrow">→</span>
-								<span class="risk-metric-current">{r.current_vol}%</span>
-							</span>
-						</div>
-						<div class="risk-metric-row">
-							<span class="risk-metric-label">
-								<span class="lang-en">Sharpe Ratio</span>
-								<span class="lang-zh">夏普比率</span>
-							</span>
-							<span class="risk-metric-values font-serif">
-								<span class="risk-metric-target">{r.sharpe_target}</span>
-								<span class="risk-metric-arrow">→</span>
-								<span class="risk-metric-current">{r.sharpe_current}</span>
-							</span>
-						</div>
-					</div>
-					<p class="risk-profile-note">
-						<span class="lang-en">Sharpe = (return − risk_free) / vol. Higher = better risk-adjusted return.</span>
-						<span class="lang-zh">夏普比率 = (收益率 − 无风险利率) / 波动率。越高代表风险调整后收益越好。</span>
-					</p>
-				</div>
-			);
-		})()}
-
-		<div class="allocation-subcards">
-				{allocation.current.categories.map((cat) => (
-					<article class="allocation-subcard" style={`--cat-color: ${cat.color}`}>
-						<header class="allocation-subcard-head">
-							<span class="allocation-subcard-dot"></span>
-							<h3 class="allocation-subcard-title font-serif">
-								<span class="lang-en">{cat.label_en}</span>
-								<span class="lang-zh">{cat.label_zh}</span>
-							</h3>
-						</header>
-						<div class="allocation-subcard-stats">
-							<div>
-								<span class="allocation-subcard-eyebrow">
-									<span class="lang-en">Target</span>
-									<span class="lang-zh">目标</span>
-								</span>
-								<strong class="font-serif">{cat.target_pct}%</strong>
-							</div>
-							<div>
-								<span class="allocation-subcard-eyebrow">
-									<span class="lang-en">Current</span>
-									<span class="lang-zh">当前</span>
-								</span>
-								<strong class="font-serif">{cat.current_pct}%</strong>
-							</div>
-							<div>
-								<span class="allocation-subcard-eyebrow">
-									<span class="lang-en">Exp. Return</span>
-									<span class="lang-zh">预期年化</span>
-								</span>
-								<strong class="font-serif">{cat.expected_return_pct}%</strong>
-							</div>
-							<div>
-								<span class="allocation-subcard-eyebrow">
-									<span class="lang-en">Volatility</span>
-									<span class="lang-zh">波动率</span>
-								</span>
-								<strong class="font-serif">{cat.annual_volatility_pct}%</strong>
-							</div>
-						</div>
-						{cat.sub_tags_en && (
-							<div class="allocation-subcard-tags">
-								{cat.sub_tags_en.map((tag: string, i: number) => (
-									<span class="allocation-tag">
-										<span class="lang-en">{tag}</span>
-										<span class="lang-zh">{cat.sub_tags_zh[i] || tag}</span>
-									</span>
-								))}
-							</div>
-						)}
-						<p class="allocation-subcard-note">
-							<span class="lang-en">{cat.note_en}</span>
-							<span class="lang-zh">{cat.note_zh}</span>
-						</p>
-						{cat.sub && (
-							<div class="allocation-sub-mini">
-								{cat.sub.map((s: any) => (
-									<div
-										class="allocation-sub-mini-row"
-										style={`--sub-pct: ${(s.pct / cat.target_pct) * 100}%`}
-									>
-										<span>
-											<span class="lang-en">{s.label_en}</span>
-											<span class="lang-zh">{s.label_zh}</span>
-										</span>
-										<span class="allocation-sub-mini-bar"></span>
-										<strong class="font-serif">{s.pct}%</strong>
-									</div>
-								))}
-							</div>
-						)}
-					</article>
-				))}
-
-			{/* ── Layer 5: Allocation Drift Trend ── */}
-				{(() => {
-					const ah = (portfolioData as any)?.allocation_history?.history;
-					if (!ah || ah.length < 2) return null;
-
-					const buckets = allocation.current.categories;
-					const idToKey = {
-						"stablecoin": "stablecoin",
-						"funds": "funds",
-						"gold": "gold",
-						"stocks": "stocks",
-						"crypto": "crypto"
-					};
-
-					const W = 720, H = 220;
-					const pad = { l: 44, r: 16, t: 14, b: 28 };
-					const cW = W - pad.l - pad.r;
-					const cH = H - pad.t - pad.b;
-
-					const xOf = (i: number) => pad.l + (i / Math.max(1, ah.length - 1)) * cW;
-					const yPct = (v: number) => pad.t + cH - (v / 60) * cH;
-
-					return (
-						<div class="crypto-alloc-trend-wrap">
-							<p class="crypto-dash-card-title">
-								<span class="lang-en">Allocation Drift</span>
-								<span class="lang-zh">配置偏移趋势</span>
-							</p>
-							<canvas id="cryptoAllocationDriftChart" class="crypto-chart-canvas allocation-drift-chart" aria-label="Allocation Drift"></canvas>
-							<svg viewBox={`0 0 ${W} ${H}`} class="crypto-chart-svg" preserveAspectRatio="xMidYMid meet">
-								{[0, 15, 30, 45].map(v => (
-									<>
-										<line x1={pad.l} y1={yPct(v).toFixed(1)} x2={W - pad.r} y2={yPct(v).toFixed(1)} stroke="color-mix(in srgb, var(--p-border) 35%, transparent)" stroke-width="0.5" />
-										<text x={pad.l - 6} y={yPct(v).toFixed(1)} font-size="8" fill="color-mix(in srgb, var(--p-text-faint) 60%, transparent)" text-anchor="end" dominant-baseline="middle">{v}%</text>
-									</>
-								))}
-								{buckets.map((b: any) => {
-									const key = idToKey[b.id as keyof typeof idToKey];
-									if (!key) return null;
-									const linePts = ah.map((h: any, i: number) => {
-										const v = h.buckets?.[key] ?? 0;
-										return `${xOf(i).toFixed(1)},${yPct(v).toFixed(1)}`;
-									}).join(" ");
-									const current = ah[ah.length - 1]?.buckets?.[key] ?? 0;
-									const target = b.target_pct;
-									const isDrifted = Math.abs(current - target) >= 5;
-									return (
-										<>
-											<polyline points={linePts} fill="none" stroke={b.color} stroke-width={isDrifted ? "2.2" : "1.5"} stroke-linejoin="round" stroke-linecap="round" stroke-dasharray={isDrifted ? "none" : "4 2"} opacity={isDrifted ? "1" : "0.6"} />
-											<line x1={pad.l} y1={yPct(target).toFixed(1)} x2={W - pad.r} y2={yPct(target).toFixed(1)} stroke={b.color} stroke-width="0.6" stroke-dasharray="2 4" opacity="0.35" />
-										</>
-									);
-								})}
-								{ah.map((h: any, i: number) => {
-									const x = xOf(i).toFixed(1);
-									return <text x={x} y={H - 6} font-size="7.5" fill="color-mix(in srgb, var(--p-text-faint) 50%, transparent)" text-anchor="middle">{h.date}</text>;
-								})}
-								{buckets.map((b: any, i: number) => {
-									const lx = pad.l + i * 110;
-									return (
-										<>
-											<line x1={lx} y1="10" x2={lx + 14} y2="10" stroke={b.color} stroke-width="1.8" />
-											<text x={lx + 18} y="10" font-size="7.5" fill="color-mix(in srgb, var(--p-text-faint) 70%, transparent)" dominant-baseline="middle"><tspan class="lang-en">{b.label_en}</tspan><tspan class="lang-zh">{b.label_zh}</tspan></text>
-										</>
-									);
-								})}
-								<text x={W - pad.r} y="10" font-size="7.5" fill="color-mix(in srgb, var(--p-text-faint) 45%, transparent)" text-anchor="end"><span class="lang-en">- - target</span><span class="lang-zh">- - 目标</span></text>
-							</svg>
-						</div>
-					);
-				})()}
-
-	</section>
 
 		<section class="portfolio-section fade-in-up" data-collapse id="positions-section">
 			<header class="portfolio-section-head">
