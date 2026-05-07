@@ -1034,7 +1034,7 @@ const stages = [
 					达利欧三桶法框架。百分比是战略目标，偏差 chip 显示当前距目标的距离。
 				</span>
 			</p>
-			<span class="section-summary"><span class="lang-en">Stablecoin 40% · Funds 27% · Stocks 20% · Crypto 11%</span><span class="lang-zh">稳定币 40% · 基金 27% · 股票 20% · 加密 11%</span></span>
+			<span class="section-summary"><span class="lang-en">{allocation.current.categories.map(c => `${c.label_en} ${c.target_pct}%`).join(' · ')}</span><span class="lang-zh">{allocation.current.categories.map(c => `${c.label_zh} ${c.target_pct}%`).join(' · ')}</span></span>
 	</header>
 
 		<div class="allocation-donut-wrap" aria-label="Target vs current allocation">

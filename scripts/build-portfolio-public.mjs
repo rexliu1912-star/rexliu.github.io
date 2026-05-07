@@ -115,22 +115,20 @@ async function findLatestMarketData() {
  * Build monthly allocation history from portfolio-history directory.
  * Returns { history: [...] } or { history: [] } on error.
  */
-async function buildAllocationHistory() {
+async function buildAllocationHistory(privatePortfolio = null) {
   // Non-investable categories excluded from allocation base
   const NON_INVESTABLE = new Set(["note"]);
-  // Source breakdown keys → destination 4-bucket keys
   // 按有知有行分类：
   // Funds = 银行+余额宝+微信+高端稳健+买房基金+教育基金+应收
-  // Stocks = 且慢+未来世代+AH股+美股
+  // Stocks = 且慢+未来世代(非黄金部分)+A股个股+美股
   // Stablecoin = 稳定生息
   // Crypto = 加密永生+加密交易
-  // Gold ETF share inside "future" bucket (国泰黄金ETF_A / future total)
-  const GOLD_SHARE_OF_FUTURE = 402350 / 597400; // ~0.673
+  // Gold = 从未来世代拆出的国泰黄金ETF
   const BUCKET_AGG = {
     stablecoin: ["stablecoin"],
     funds: ["liquid", "yanerhigh", "house", "education", "receivable"],
-    gold: [], // computed separately below
-    stocks: ["qieman", "future", "guotai", "us_stock"],
+    gold: [], // computed dynamically from future.breakdown
+    stocks: ["qieman", "future", "rex_stock", "us_stock"],
     crypto: ["crypto", "crypto_ivy"],
   };
 
@@ -158,15 +156,30 @@ async function buildAllocationHistory() {
           buckets[destKey] = Math.round((val / investable) * 100);
         }
       }
-      // Extract gold from stocks' future portion by fixed ratio
+      // Extract gold from stocks' future portion
+      // For history snapshots without breakdown, use current ratio as estimate
       const futureVal = Number(data.breakdown.future) || 0;
       if (futureVal > 0) {
-        const goldVal = Math.round(futureVal * GOLD_SHARE_OF_FUTURE);
-        const goldPct = Math.round((goldVal / investable) * 100);
-        const stockPctOld = buckets.stocks || 0;
-        if (stockPctOld > 0) {
-          buckets.gold = goldPct;
-          buckets.stocks = stockPctOld - goldPct;
+        // Try to get gold from breakdown sub-structure (current data)
+        const futureBreakdown = data.breakdown_future || data.future_breakdown;
+        let goldVal = 0;
+        if (futureBreakdown && futureBreakdown["国泰黄金ETF_A"]) {
+          goldVal = Number(futureBreakdown["国泰黄金ETF_A"].amount) || 0;
+        } else {
+          // Fallback: use current privatePortfolio gold ratio for history estimates
+          const goldRatio = privatePortfolio?.assets?.find(a => a.id === "future")?.breakdown?.["国泰黄金ETF_A"]?.amount;
+          const futureCurrent = privatePortfolio?.assets?.find(a => a.id === "future")?.amount;
+          if (goldRatio && futureCurrent && futureCurrent > 0) {
+            goldVal = Math.round(futureVal * (goldRatio / futureCurrent));
+          }
+        }
+        if (goldVal > 0) {
+          const goldPct = Math.round((goldVal / investable) * 100);
+          const stockPctOld = buckets.stocks || 0;
+          if (stockPctOld > goldPct) {
+            buckets.gold = goldPct;
+            buckets.stocks = stockPctOld - goldPct;
+          }
         }
       }
 
@@ -993,7 +1006,7 @@ async function main() {
 
   // 3d. Build allocation history (monthly)
   console.log("📈 Building allocation history...");
-  const allocationHistory = await buildAllocationHistory();
+  const allocationHistory = await buildAllocationHistory(privatePortfolio);
   if (allocationHistory.history.length > 0) {
     console.log(`   ✅ Allocation history: ${allocationHistory.history.length} months`);
   } else {
@@ -1178,10 +1191,46 @@ async function main() {
       : null,
   };
 
+  // Compute real allocation current_pct from privatePortfolio data
+  const computedAllocation = JSON.parse(JSON.stringify(overrides.allocation));
+  if (privatePortfolio && privatePortfolio.assets) {
+    const totalAssets = privatePortfolio.totalAssets || 1;
+    // Sum up actual values per bucket using same BUCKET_AGG mapping
+    // (import the mapping logic used in buildAllocationHistory)
+    const bucketKeys = {
+      stablecoin: ["stablecoin"],
+      funds: ["liquid", "yanerhigh", "house", "education", "receivable"],
+      stocks: ["qieman", "future", "rex_stock", "us_stock"],
+      crypto: ["crypto", "crypto_ivy"],
+    };
+    const assetMap = {};
+    for (const a of privatePortfolio.assets) assetMap[a.id] = a.amount || 0;
+
+    const actualPcts = {};
+    for (const [bucket, keys] of Object.entries(bucketKeys)) {
+      actualPcts[bucket] = keys.reduce((s, k) => s + (assetMap[k] || 0), 0);
+    }
+    // Gold: extract from future.breakdown
+    const futureAsset = privatePortfolio.assets.find(a => a.id === "future");
+    const goldAmount = futureAsset?.breakdown?.["国泰黄金ETF_A"]?.amount || 0;
+    actualPcts.gold = goldAmount;
+    // Subtract gold from stocks (future includes gold)
+    actualPcts.stocks -= goldAmount;
+
+    for (const cat of computedAllocation.categories) {
+      if (actualPcts[cat.id] !== undefined) {
+        const pct = Math.round((actualPcts[cat.id] / totalAssets) * 1000) / 10; // 1 decimal
+        cat.current_pct = pct;
+        cat.drift_pp = Math.round((pct - cat.target_pct) * 10) / 10;
+      }
+    }
+    console.log(`   ✅ Allocation current_pct computed from live data`);
+  }
+
   const output = {
     generated_at: new Date().toISOString(),
     regime,
-    allocation: { current: overrides.allocation },
+    allocation: { current: computedAllocation },
     sector_research: overrides.sector_research || [],
     deep_research: overrides.deep_research || [],
     positions: filteredPublicPositions,
