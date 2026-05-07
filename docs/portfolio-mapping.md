@@ -37,31 +37,39 @@
 
 ### 5 桶定义
 
-| 桶 ID | 中文 | 目标% | 包含的有知有行资产 |
-|--------|------|-------|-------------------|
-| `stablecoin` | 稳定币生息 | 35% | `stablecoin`（稳定生息） |
-| `funds` | 基金与现金 | 20% | `liquid`, `yanerhigh`, `house`, `education`, `receivable` |
-| `gold` | 黄金 | 5% | 从 `future`.breakdown["国泰黄金ETF_A"] 拆出 |
-| `stocks` | 股票 | 25% | `qieman`, `future`(扣黄金), `rex_stock`, `us_stock` |
-| `crypto` | 加密敞口 | 15% | `crypto`, `crypto_ivy` |
+| 桶 ID | 中文 | 英文 | 目标% | 颜色 |
+|--------|------|------|-------|------|
+| `stablecoin` | 稳定币生息 | Stablecoin Yield | 35% | `#10b981` |
+| `funds` | 基金与现金 | Funds | 20% | `#3b82f6` |
+| `gold` | 黄金 | Gold | 5% | `#eab308` |
+| `stocks` | 股票 | Stocks | 25% | `#8953d1` |
+| `crypto` | 加密敞口 | Crypto | 15% | `#f59e0b` |
 
-### 有知有行资产 ID 对照
+### 有知有行资产 ID 对照（05-07 更新）
 
-| 有知有行 ID | 含义 | 归入桶 |
-|-------------|------|--------|
-| `stablecoin` | 稳定生息 | stablecoin |
-| `yanerhigh` | 妍儿高端稳健 | funds |
-| `liquid` | 流动资金 | funds |
-| `house` | 妍妈买房基金 | funds |
-| `education` | 福福教育基金 | funds |
-| `receivable` | 应收款 | funds |
-| `qieman` | 且慢组合 | stocks |
-| `future` | 未来世代 | stocks (扣黄金后) |
-| `rex_stock` | A股个股 | stocks |
-| `us_stock` | 美股 | stocks |
-| `crypto` | 加密永生(BTC/SNEK/ADA) | crypto |
-| `crypto_ivy` | 加密交易 | crypto |
-| `note` | 备注 | ❌ 不计入 |
+| 有知有行 ID | 有知有行名称 | 归属 | 归入桶 | 当前金额 |
+|-------------|-------------|------|--------|---------|
+| `stablecoin` | 稳定生息 | 我 | stablecoin | ¥4,164,700 |
+| `yanerhigh` | 高端稳健 | 妍儿 | funds | ¥3,219,800 |
+| `liquid` | 流动资金 | 妍儿+我 | funds | ¥781,200 |
+| `house` | 买房基金 | 妍妈 | funds | ¥445,800 |
+| `education` | 教育基金 | 福福 | funds | ¥26,100 |
+| `receivable` | 应收款(借给他人的钱) | 我 | funds | ¥10,000 |
+| `qieman` | 且慢组合 | 我 | stocks | ¥1,014,500 |
+| `future` | 未来世代 | 我 | stocks (扣黄金后) | ¥610,200 |
+| `rex_stock` | AH股掘金 | 我 | stocks | ¥674,600 |
+| `us_stock` | 美股账户 | 我 | stocks | ¥37,300 |
+| `crypto` | 加密永生 | 我 | crypto | ¥1,041,800 |
+| `crypto_ivy` | 加密交易 | 妍儿 | crypto | ¥2,123 |
+| `note` | 备注 | — | ❌ 不计入 | — |
+
+### 未来世代 (future) 内部持仓
+
+| 基金名称 | 金额 | 归入 |
+|----------|------|------|
+| 国泰黄金ETF_A | ¥422,454 | **gold** (拆出) |
+| 其他ETF (天弘/华夏/摩根等) | ¥187,746 | stocks |
+| **合计** | **¥610,200** | |
 
 ### 黄金拆分逻辑
 
@@ -69,16 +77,29 @@
 
 1. **当前数据**：直接读 `future.breakdown["国泰黄金ETF_A"].amount`
 2. **历史快照**：没有 breakdown 子结构，用当前比例估算
-3. 拆出后：`stocks -= gold`, `gold = 拆出金额`
+3. 拆出后：`stocks -= gold_amount`, `gold = 拆出金额`
+
+## 当前配置（05-07 计算）
+
+| 桶 | 目标 | 实际 | 偏移 |
+|----|------|------|------|
+| 稳定币生息 | 35% | 34.6% | -0.4pp |
+| 基金与现金 | 20% | 37.3% | +17.3pp |
+| 黄金 | 5% | 3.5% | -1.5pp |
+| 股票 | 25% | 16.0% | -9.0pp |
+| 加密敞口 | 15% | 8.7% | -6.3pp |
+
+**净资产**: ¥12,028,123（总资产 ¥12,028,123，负债 -¥13,900 未计入）
 
 ## 代码位置
 
 | 文件 | 作用 |
 |------|------|
-| `scripts/build-portfolio-public.mjs` | 主构建脚本，包含 BUCKET_AGG、黄金拆分、current_pct 计算 |
-| `src/data/portfolio-overrides.json` | target_pct（手写）、labels、colors（手写）|
+| `scripts/build-portfolio-public.mjs` | 主构建脚本：BUCKET_AGG、黄金拆分、current_pct 计算 |
+| `src/data/portfolio-overrides.json` | target_pct（手写）、labels、colors（手写） |
 | `src/data/portfolio-public.json` | 构建产物，提交到 git |
 | `src/pages/portfolio.astro` | 前端页面 |
+| `docs/portfolio-mapping.md` | 本对照文档 |
 
 ## 手动维护项（仅 target_pct）
 
@@ -111,4 +132,4 @@
 | Gold tracker | `~/clawd/output/gold/gold-tracker.json` |
 
 ---
-*最后更新: 2025-05-08*
+*最后更新: 2026-05-07 (有知有行截图同步)*
