@@ -78,7 +78,12 @@ interface PortfolioRegimeHistoryPoint {
 }
 interface PortfolioData {
 	regime: { current: PortfolioRegimeCurrent; history_60d: PortfolioRegimeHistoryPoint[] };
-	allocation: { current: { categories: any[] } };
+	allocation: { current: {
+		categories: any[];
+		risk?: { target_vol: number; current_vol: number; sharpe_target: number; sharpe_current: number; risk_free_rate: number; temperature: number; temperature_label_en: string; temperature_label_zh: string };
+		weighted_return?: { target: number; current: number };
+		projected_annual_yield?: number;
+	} };
 	positions: PortfolioPosition[];
 	crypto: {
 		updated_at: string;
@@ -1307,9 +1312,9 @@ const stages = [
 									<span class="lang-zh">加权收益</span>
 								</span>
 								<span class="risk-metric-values font-serif">
-									<span class="risk-metric-target">{allocation.current.weighted_return.target}%</span>
-									<span class="risk-metric-arrow">→</span>
-									<span class="risk-metric-current">{allocation.current.weighted_return.current}%</span>
+								<span class="risk-metric-target">{allocation.current.weighted_return?.target ?? '-'}%</span>
+								<span class="risk-metric-arrow">→</span>
+								<span class="risk-metric-current">{allocation.current.weighted_return?.current ?? '-'}%</span>
 								</span>
 							</div>
 							<div class="risk-metric-row">
