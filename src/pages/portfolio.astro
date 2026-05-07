@@ -1153,6 +1153,20 @@ const stages = [
 								</span>
 								<strong class="font-serif">{cat.current_pct}%</strong>
 							</div>
+							<div>
+								<span class="allocation-subcard-eyebrow">
+									<span class="lang-en">Exp. Return</span>
+									<span class="lang-zh">预期年化</span>
+								</span>
+								<strong class="font-serif">{cat.expected_return_pct}%</strong>
+							</div>
+							<div>
+								<span class="allocation-subcard-eyebrow">
+									<span class="lang-en">Volatility</span>
+									<span class="lang-zh">波动率</span>
+								</span>
+								<strong class="font-serif">{cat.annual_volatility_pct}%</strong>
+							</div>
 						</div>
 						{cat.sub_tags_en && (
 							<div class="allocation-subcard-tags">
@@ -1259,8 +1273,76 @@ const stages = [
 						</div>
 					);
 				})()}
-		</section>
 
+			{/* ── Risk Profile Card ── */}
+			{(() => {
+				const r = allocation.current.risk;
+				if (!r) return null;
+				const tempPct = Math.max(0, Math.min(100, r.temperature));
+				return (
+					<div class="risk-profile-card">
+						<p class="crypto-dash-card-title">
+							<span class="lang-en">Risk Profile</span>
+							<span class="lang-zh">风险画像</span>
+						</p>
+						<div class="risk-gauge-wrap">
+							<div class="risk-gauge-track">
+								<div
+									class="risk-gauge-fill"
+									style={`width: ${tempPct}%`}
+								></div>
+							</div>
+							<div class="risk-gauge-labels">
+								<span class="risk-temp-score font-serif">{r.temperature}/100</span>
+								<span class="risk-temp-type">
+									<span class="lang-en">{r.temperature_label_en}</span>
+									<span class="lang-zh">{r.temperature_label_zh}</span>
+								</span>
+							</div>
+						</div>
+						<div class="risk-metrics-grid">
+							<div class="risk-metric-row">
+								<span class="risk-metric-label">
+									<span class="lang-en">Weighted Return</span>
+									<span class="lang-zh">加权收益</span>
+								</span>
+								<span class="risk-metric-values font-serif">
+									<span class="risk-metric-target">{allocation.current.weighted_return.target}%</span>
+									<span class="risk-metric-arrow">→</span>
+									<span class="risk-metric-current">{allocation.current.weighted_return.current}%</span>
+								</span>
+							</div>
+							<div class="risk-metric-row">
+								<span class="risk-metric-label">
+									<span class="lang-en">Portfolio Volatility</span>
+									<span class="lang-zh">组合波动率</span>
+								</span>
+								<span class="risk-metric-values font-serif">
+									<span class="risk-metric-target">{r.target_vol}%</span>
+									<span class="risk-metric-arrow">→</span>
+									<span class="risk-metric-current">{r.current_vol}%</span>
+								</span>
+							</div>
+							<div class="risk-metric-row">
+								<span class="risk-metric-label">
+									<span class="lang-en">Sharpe Ratio</span>
+									<span class="lang-zh">夏普比率</span>
+								</span>
+								<span class="risk-metric-values font-serif">
+									<span class="risk-metric-target">{r.sharpe_target}</span>
+									<span class="risk-metric-arrow">→</span>
+									<span class="risk-metric-current">{r.sharpe_current}</span>
+								</span>
+							</div>
+						</div>
+						<p class="risk-profile-note">
+							<span class="lang-en">Sharpe = (return − risk_free) / vol. Higher = better risk-adjusted return.</span>
+							<span class="lang-zh">夏普比率 = (收益率 − 无风险利率) / 波动率。越高代表风险调整后收益越好。</span>
+						</p>
+					</div>
+				);
+			})()}
+		</section>
 
 		<section class="portfolio-section fade-in-up" data-collapse id="positions-section">
 			<header class="portfolio-section-head">
@@ -3587,6 +3669,11 @@ const stages = [
 			grid-template-columns: 1fr 1fr;
 			gap: 0.6rem;
 		}
+		@media (min-width: 540px) {
+			.allocation-subcard-stats {
+				grid-template-columns: 1fr 1fr 1fr 1fr;
+			}
+		}
 		.allocation-subcard-stats > div {
 			display: grid;
 			gap: 0.2rem;
@@ -3642,6 +3729,94 @@ const stages = [
 				var(--cat-color) var(--sub-pct, 0%),
 				color-mix(in srgb, var(--cat-color) 14%, transparent) var(--sub-pct, 0%)
 			);
+		}
+
+		/* ── Risk Profile Card ── */
+		.risk-profile-card {
+			background: color-mix(in srgb, var(--p-card) 80%, transparent);
+			border: 1px solid var(--p-border);
+			border-radius: 1rem;
+			padding: 1.2rem 1.4rem;
+			margin-top: 1rem;
+		}
+		.risk-gauge-wrap {
+			margin: 0.8rem 0 1rem;
+		}
+		.risk-gauge-track {
+			width: 100%;
+			height: 0.65rem;
+			border-radius: 999px;
+			background: linear-gradient(90deg, #10b981 0%, #eab308 50%, #ef4444 100%);
+			opacity: 0.25;
+			position: relative;
+		}
+		.risk-gauge-fill {
+			position: absolute;
+			top: 0;
+			left: 0;
+			height: 100%;
+			border-radius: 999px;
+			background: linear-gradient(90deg, #10b981 0%, #eab308 50%, #ef4444 100%);
+			box-shadow: 0 0 8px rgba(234, 179, 8, 0.3);
+		}
+		.risk-gauge-labels {
+			display: flex;
+			align-items: baseline;
+			gap: 0.6rem;
+			margin-top: 0.5rem;
+		}
+		.risk-temp-score {
+			font-size: 1.2rem;
+			font-weight: 700;
+			color: var(--p-text);
+		}
+		.risk-temp-type {
+			font-size: 0.82rem;
+			color: var(--p-text-soft);
+		}
+		.risk-metrics-grid {
+			display: grid;
+			gap: 0.55rem;
+		}
+		.risk-metric-row {
+			display: flex;
+			justify-content: space-between;
+			align-items: baseline;
+			padding: 0.45rem 0;
+			border-bottom: 1px solid color-mix(in srgb, var(--p-border) 40%, transparent);
+		}
+		.risk-metric-row:last-child {
+			border-bottom: none;
+		}
+		.risk-metric-label {
+			font-size: 0.78rem;
+			letter-spacing: 0.06em;
+			text-transform: uppercase;
+			color: var(--p-text-faint);
+		}
+		.risk-metric-values {
+			display: flex;
+			align-items: baseline;
+			gap: 0.4rem;
+			font-size: 1rem;
+		}
+		.risk-metric-target {
+			color: var(--p-text-faint);
+			font-size: 0.88rem;
+		}
+		.risk-metric-arrow {
+			color: var(--p-text-faint);
+			font-size: 0.78rem;
+		}
+		.risk-metric-current {
+			color: var(--p-text);
+			font-weight: 600;
+		}
+		.risk-profile-note {
+			margin: 0.7rem 0 0;
+			font-size: 0.72rem;
+			color: var(--p-text-faint);
+			line-height: 1.5;
 		}
 
 		/* ── 8-Stage Zigzag ──────────────────────── */
