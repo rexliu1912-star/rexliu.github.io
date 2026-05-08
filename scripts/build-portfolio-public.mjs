@@ -749,6 +749,166 @@ function buildPositions(convexPositions, convexRules, convexEvents, overrides) {
   return positions;
 }
 
+// ─── Closed positions from Convex trades ─────────────────
+
+function daysBetween(startDate, endDate) {
+  if (!startDate || !endDate) return null;
+  const start = new Date(`${startDate}T00:00:00Z`);
+  const end = new Date(`${endDate}T00:00:00Z`);
+  return Math.max(0, Math.round((end - start) / 86400000));
+}
+
+function roundPct(value) {
+  if (!Number.isFinite(value)) return 0;
+  return Math.round(value);
+}
+
+function buildAutoTradePoints(sortedTrades) {
+  if (!sortedTrades.length) return [];
+  const buys = sortedTrades.filter((t) => t.side === "buy");
+  const sells = sortedTrades.filter((t) => t.side === "sell");
+  const points = [];
+
+  if (buys.length) {
+    const firstBuy = buys[0];
+    const buyQty = buys.reduce((s, t) => s + (Number(t.quantity) || 0), 0);
+    const buyCost = buys.reduce((s, t) => s + (Number(t.quantity) || 0) * (Number(t.price) || 0), 0);
+    const avgBuy = buyQty > 0 ? buyCost / buyQty : Number(firstBuy.price) || null;
+    points.push({
+      date: firstBuy.tradeDate,
+      kind: "entry",
+      action_en: "Opened position",
+      action_zh: "建立仓位",
+      price: avgBuy ? +avgBuy.toFixed(4) : null,
+      note_en: "Auto-generated from Convex trade records.",
+      note_zh: "由 Convex 交易记录自动生成。",
+    });
+  }
+
+  if (sells.length) {
+    const lastSell = sells[sells.length - 1];
+    const sellQty = sells.reduce((s, t) => s + (Number(t.quantity) || 0), 0);
+    const sellProceeds = sells.reduce((s, t) => s + (Number(t.quantity) || 0) * (Number(t.price) || 0), 0);
+    const avgSell = sellQty > 0 ? sellProceeds / sellQty : Number(lastSell.price) || null;
+    points.push({
+      date: lastSell.tradeDate,
+      kind: "exit",
+      action_en: "Closed position",
+      action_zh: "清仓",
+      price: avgSell ? +avgSell.toFixed(4) : null,
+      note_en: "Full exit detected from Convex position status.",
+      note_zh: "根据 Convex 持仓状态识别为已清仓。",
+    });
+  }
+
+  return points;
+}
+
+function buildAutoClearances(convexPositions, convexTrades, overrides) {
+  const closedStatuses = new Set(["closed", "cleared"]);
+  const tradesByAccountSymbol = new Map();
+  for (const trade of convexTrades || []) {
+    const key = `${trade.accountId || ""}::${trade.symbol}`;
+    const list = tradesByAccountSymbol.get(key) || [];
+    list.push(trade);
+    tradesByAccountSymbol.set(key, list);
+  }
+
+  const out = [];
+  for (const position of convexPositions || []) {
+    if (!closedStatuses.has(position.status)) continue;
+    if (["crypto"].includes(position.market)) continue;
+
+    const symbol = position.symbol;
+    const key = `${position.accountId || ""}::${symbol}`;
+    const sortedTrades = (tradesByAccountSymbol.get(key) || [])
+      .slice()
+      .sort((a, b) => (a.tradeDate || "").localeCompare(b.tradeDate || "") || (a._creationTime || 0) - (b._creationTime || 0));
+    if (!sortedTrades.length) continue;
+
+    const buys = sortedTrades.filter((t) => t.side === "buy");
+    const sells = sortedTrades.filter((t) => t.side === "sell");
+    if (!buys.length || !sells.length) continue;
+
+    const boughtQty = buys.reduce((s, t) => s + (Number(t.quantity) || 0), 0);
+    const soldQty = sells.reduce((s, t) => s + (Number(t.quantity) || 0), 0);
+    if (soldQty + 0.0001 < boughtQty) continue;
+
+    const buyCost = buys.reduce((s, t) => {
+      const fee = Number(t.fee) || 0;
+      const tax = Number(t.tax) || 0;
+      return s + (Number(t.quantity) || 0) * (Number(t.price) || 0) + fee + tax;
+    }, 0);
+    const sellProceeds = sells.reduce((s, t) => {
+      const fee = Number(t.fee) || 0;
+      const tax = Number(t.tax) || 0;
+      return s + (Number(t.quantity) || 0) * (Number(t.price) || 0) - fee - tax;
+    }, 0);
+    if (buyCost <= 0) continue;
+
+    const entryDate = buys[0].tradeDate;
+    const exitDate = sells[sells.length - 1].tradeDate;
+    const outcomePct = ((sellProceeds - buyCost) / buyCost) * 100;
+    const override = overrides.positions?.[symbol] || {};
+    const watchlistItem = (overrides.watchlist || []).find((item) => item.ticker === symbol) || {};
+
+    out.push({
+      ticker: symbol,
+      market: position.market,
+      name_en: override.name_en || watchlistItem.name_en || symbol,
+      name_zh: override.name_zh || watchlistItem.name_zh || symbol,
+      sector_tags_en: override.sector_tags_en || [],
+      sector_tags_zh: override.sector_tags_zh || [],
+      entry_date: entryDate,
+      exit_date: exitDate,
+      holding_days: daysBetween(entryDate, exitDate),
+      outcome_pct_rounded: roundPct(outcomePct),
+      win_rate_pct: outcomePct > 0 ? 100 : 0,
+      trade_count: sortedTrades.length,
+      reason_en: "Auto-generated closed position from Convex trade and position records.",
+      reason_zh: "由 Convex 交易与持仓记录自动生成的清仓记录。",
+      lesson_en: "Add an editorial lesson in trade-log archive only if this exit deserves a manual review.",
+      lesson_zh: "只有值得复盘的清仓，才需要在 trade-log archive 里补充人工经验。",
+      article_url: null,
+      trade_points: buildAutoTradePoints(sortedTrades),
+    });
+  }
+
+  return out;
+}
+
+function mergeClearances(localClearances, autoClearances) {
+  const byTicker = new Map();
+  for (const local of localClearances || []) {
+    if (!local?.ticker) continue;
+    byTicker.set(local.ticker, { ...local });
+  }
+
+  for (const auto of autoClearances || []) {
+    const existing = byTicker.get(auto.ticker);
+    if (!existing) {
+      byTicker.set(auto.ticker, auto);
+      continue;
+    }
+
+    byTicker.set(auto.ticker, {
+      ...auto,
+      ...existing,
+      // Convex is source of truth for mechanics. Local archive is only editorial enrichment.
+      market: auto.market,
+      entry_date: auto.entry_date,
+      exit_date: auto.exit_date,
+      holding_days: auto.holding_days,
+      outcome_pct_rounded: auto.outcome_pct_rounded,
+      win_rate_pct: auto.win_rate_pct,
+      trade_count: auto.trade_count,
+      trade_points: existing.trade_points?.length ? existing.trade_points : auto.trade_points,
+    });
+  }
+
+  return [...byTicker.values()].sort((a, b) => (b.exit_date || "").localeCompare(a.exit_date || ""));
+}
+
 // ─── Main ────────────────────────────────────────────────
 
 async function hasWorkspaceExternalData() {
@@ -797,8 +957,9 @@ async function main() {
 
   // 2. Fetch Convex structural data (with fallback to last output if down)
   console.log("📡 Fetching Convex...");
-  const [positions, rules, events] = await Promise.all([
-    convexQuery("portfolio:listPositions", { status: "active" }),
+  const [positions, trades, rules, events] = await Promise.all([
+    convexQuery("portfolio:listPositions", {}),
+    convexQuery("portfolio:listTrades", {}),
     convexQuery("portfolio:listMonitorRules", {}),
     convexQuery("portfolio:listMonitorEvents", { status: "pending" }),
   ]);
@@ -1064,7 +1225,8 @@ async function main() {
   const today = new Date().toISOString().slice(0, 10);
   const futureEvents = (events || []).filter((e) => (e.eventDate || "") >= today);
 
-  const publicPositions = buildPositions(positions, rules, events, overrides);
+  const activePositions = (positions || []).filter((p) => p.status === "active");
+  const publicPositions = buildPositions(activePositions, rules, events, overrides);
 
   // BTC/SNEK live in crypto.positions — remove duplicates from tradfi positions
   const filteredPublicPositions = publicPositions.filter(p => !['BTC', 'SNEK'].includes(p.symbol));
@@ -1153,7 +1315,11 @@ async function main() {
     console.warn(`  ⚠️  Snapshot merge failed: ${err.message}`);
   }
 
-  const clearances = tradelog?.clearances || [];
+  const autoClearances = buildAutoClearances(positions || [], trades || [], overrides);
+  const clearances = mergeClearances(tradelog?.clearances || [], autoClearances);
+  if (autoClearances.length > 0) {
+    console.log(`🧾 Closed positions: ${autoClearances.length} auto from Convex, ${clearances.length} total after editorial merge`);
+  }
   const roundtables = overrides.roundtables || [];
 
   // Aggregate trade stats across clearances
