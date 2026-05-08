@@ -763,7 +763,11 @@ function roundPct(value) {
   return Math.round(value);
 }
 
-function buildAutoTradePoints(sortedTrades) {
+function compactTradeNotes(trades) {
+  return [...new Set((trades || []).map((t) => t.note).filter(Boolean))].join(" · ");
+}
+
+function buildAutoTradePoints(sortedTrades, metrics = {}) {
   if (!sortedTrades.length) return [];
   const buys = sortedTrades.filter((t) => t.side === "buy");
   const sells = sortedTrades.filter((t) => t.side === "sell");
@@ -771,33 +775,31 @@ function buildAutoTradePoints(sortedTrades) {
 
   if (buys.length) {
     const firstBuy = buys[0];
-    const buyQty = buys.reduce((s, t) => s + (Number(t.quantity) || 0), 0);
-    const buyCost = buys.reduce((s, t) => s + (Number(t.quantity) || 0) * (Number(t.price) || 0), 0);
-    const avgBuy = buyQty > 0 ? buyCost / buyQty : Number(firstBuy.price) || null;
+    const avgBuy = metrics.avgEntryPrice ?? null;
+    const notes = compactTradeNotes(buys);
     points.push({
       date: firstBuy.tradeDate,
       kind: "entry",
-      action_en: "Opened position",
-      action_zh: "建立仓位",
+      action_en: buys.length > 1 ? "Built position" : "Opened position",
+      action_zh: buys.length > 1 ? "分批建仓" : "建立仓位",
       price: avgBuy ? +avgBuy.toFixed(4) : null,
-      note_en: "Auto-generated from Convex trade records.",
-      note_zh: "由 Convex 交易记录自动生成。",
+      note_en: notes || "Generated from Convex buy records.",
+      note_zh: notes || "由 Convex 买入记录生成。",
     });
   }
 
   if (sells.length) {
     const lastSell = sells[sells.length - 1];
-    const sellQty = sells.reduce((s, t) => s + (Number(t.quantity) || 0), 0);
-    const sellProceeds = sells.reduce((s, t) => s + (Number(t.quantity) || 0) * (Number(t.price) || 0), 0);
-    const avgSell = sellQty > 0 ? sellProceeds / sellQty : Number(lastSell.price) || null;
+    const avgSell = metrics.avgExitPrice ?? null;
+    const notes = compactTradeNotes(sells);
     points.push({
       date: lastSell.tradeDate,
       kind: "exit",
-      action_en: "Closed position",
-      action_zh: "清仓",
+      action_en: sells.length > 1 ? "Closed via staged sells" : "Closed position",
+      action_zh: sells.length > 1 ? "分批清仓" : "清仓",
       price: avgSell ? +avgSell.toFixed(4) : null,
-      note_en: "Full exit detected from Convex position status.",
-      note_zh: "根据 Convex 持仓状态识别为已清仓。",
+      note_en: notes || "Full exit detected from Convex position status.",
+      note_zh: notes || "根据 Convex 持仓状态识别为已清仓。",
     });
   }
 
@@ -846,6 +848,8 @@ function buildAutoClearances(convexPositions, convexTrades, overrides) {
     }, 0);
     if (buyCost <= 0) continue;
 
+    const avgEntryPrice = boughtQty > 0 ? buyCost / boughtQty : null;
+    const avgExitPrice = soldQty > 0 ? sellProceeds / soldQty : null;
     const entryDate = buys[0].tradeDate;
     const exitDate = sells[sells.length - 1].tradeDate;
     const outcomePct = ((sellProceeds - buyCost) / buyCost) * 100;
@@ -862,15 +866,19 @@ function buildAutoClearances(convexPositions, convexTrades, overrides) {
       entry_date: entryDate,
       exit_date: exitDate,
       holding_days: daysBetween(entryDate, exitDate),
+      outcome_pct: +outcomePct.toFixed(1),
       outcome_pct_rounded: roundPct(outcomePct),
       win_rate_pct: outcomePct > 0 ? 100 : 0,
       trade_count: sortedTrades.length,
-      reason_en: "Auto-generated closed position from Convex trade and position records.",
-      reason_zh: "由 Convex 交易与持仓记录自动生成的清仓记录。",
-      lesson_en: "Add an editorial lesson in trade-log archive only if this exit deserves a manual review.",
-      lesson_zh: "只有值得复盘的清仓，才需要在 trade-log archive 里补充人工经验。",
-      article_url: null,
-      trade_points: buildAutoTradePoints(sortedTrades),
+      currency: position.currency || buys[0]?.currency || sells[0]?.currency || null,
+      avg_entry_price: avgEntryPrice ? +avgEntryPrice.toFixed(4) : null,
+      avg_exit_price: avgExitPrice ? +avgExitPrice.toFixed(4) : null,
+      reason_en: override.clearance_reason_en || "Auto-generated closed position from Convex trade and position records.",
+      reason_zh: override.clearance_reason_zh || "由 Convex 交易与持仓记录自动生成的清仓记录。",
+      lesson_en: override.clearance_lesson_en || "Add an editorial lesson in portfolio-overrides clearances only if this exit deserves a manual review.",
+      lesson_zh: override.clearance_lesson_zh || "只有值得复盘的清仓，才需要在 portfolio-overrides clearances 里补充人工经验。",
+      article_url: override.clearance_article_url || null,
+      trade_points: buildAutoTradePoints(sortedTrades, { avgEntryPrice, avgExitPrice }),
     });
   }
 
@@ -899,9 +907,13 @@ function mergeClearances(localClearances, autoClearances) {
       entry_date: auto.entry_date,
       exit_date: auto.exit_date,
       holding_days: auto.holding_days,
+      outcome_pct: auto.outcome_pct,
       outcome_pct_rounded: auto.outcome_pct_rounded,
       win_rate_pct: auto.win_rate_pct,
       trade_count: auto.trade_count,
+      currency: auto.currency,
+      avg_entry_price: auto.avg_entry_price,
+      avg_exit_price: auto.avg_exit_price,
       trade_points: existing.trade_points?.length ? existing.trade_points : auto.trade_points,
     });
   }
@@ -1316,7 +1328,11 @@ async function main() {
   }
 
   const autoClearances = buildAutoClearances(positions || [], trades || [], overrides);
-  const clearances = mergeClearances(tradelog?.clearances || [], autoClearances);
+  const editorialClearances = [
+    ...(overrides.clearances || []),
+    ...(tradelog?.clearances || []),
+  ];
+  const clearances = mergeClearances(editorialClearances, autoClearances);
   if (autoClearances.length > 0) {
     console.log(`🧾 Closed positions: ${autoClearances.length} auto from Convex, ${clearances.length} total after editorial merge`);
   }

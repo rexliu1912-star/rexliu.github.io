@@ -1549,7 +1549,7 @@ const stages = [
 					每个关键交易点都标注：首次建仓、加仓、减仓、触发止损。备注是当时的判断，事后不改。
 				</span>
 			</p>
-			<span class="section-summary"><span class="lang-en">3 clearances</span><span class="lang-zh">3 条清仓记录</span></span>
+			<span class="section-summary"><span class="lang-en">{clearances.length} clearances</span><span class="lang-zh">{clearances.length} 条清仓记录</span></span>
 		</header>
 
 			<div class="clearance-grid">
@@ -1589,6 +1589,22 @@ const stages = [
 									</span>
 								)}
 							</div>
+							{(c.avg_entry_price != null || c.avg_exit_price != null) && (
+								<div class="clearance-meta-row clearance-price-row">
+									{c.avg_entry_price != null && (
+										<span class="clearance-chip">
+											<span class="lang-en">Entry {c.currency === 'HKD' ? 'HK$' : c.currency === 'USD' ? '$' : c.currency === 'CNY' ? '¥' : ''}{c.avg_entry_price}</span>
+											<span class="lang-zh">买入均价 {c.currency === 'HKD' ? 'HK$' : c.currency === 'USD' ? '$' : c.currency === 'CNY' ? '¥' : ''}{c.avg_entry_price}</span>
+										</span>
+									)}
+									{c.avg_exit_price != null && (
+										<span class="clearance-chip">
+											<span class="lang-en">Exit {c.currency === 'HKD' ? 'HK$' : c.currency === 'USD' ? '$' : c.currency === 'CNY' ? '¥' : ''}{c.avg_exit_price}</span>
+											<span class="lang-zh">卖出均价 {c.currency === 'HKD' ? 'HK$' : c.currency === 'USD' ? '$' : c.currency === 'CNY' ? '¥' : ''}{c.avg_exit_price}</span>
+										</span>
+									)}
+								</div>
+							)}
 						</header>
 
 						<div class="clearance-tags">
@@ -1655,7 +1671,7 @@ const stages = [
 											<span class="trade-point-kind">{tp.kind}</span>
 										)}
 										{tp.price != null && (
-											<span class="trade-point-price">{c.market === 'us' ? '$' : '¥'}{tp.price}</span>
+											<span class="trade-point-price">{c.currency === 'HKD' ? 'HK$' : c.currency === 'USD' ? '$' : c.currency === 'CNY' ? '¥' : ''}{tp.price}</span>
 										)}
 									</div>
 									<strong class="trade-point-action">
