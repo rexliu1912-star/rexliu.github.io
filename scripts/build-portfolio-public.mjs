@@ -854,6 +854,8 @@ function buildAutoClearances(convexPositions, convexTrades, overrides) {
     const exitDate = sells[sells.length - 1].tradeDate;
     const outcomePct = ((sellProceeds - buyCost) / buyCost) * 100;
     const override = overrides.positions?.[symbol] || {};
+    if (override.hide_clearance) continue;
+
     const watchlistItem = (overrides.watchlist || []).find((item) => item.ticker === symbol) || {};
 
     out.push({
