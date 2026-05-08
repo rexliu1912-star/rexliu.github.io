@@ -649,6 +649,11 @@ function sanitizeMonitorState(monitorState, dcaStatus, marketData = null, bottom
 
 // ─── Positions transform ─────────────────────────────────
 
+function redactDollarAmounts(text) {
+  if (!text || typeof text !== "string") return text || null;
+  return text.replace(/\$\s*\d[\d,.]*/g, "$XX,XXX");
+}
+
 function buildPositions(convexPositions, convexRules, convexEvents, overrides) {
   const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD in UTC
 
@@ -700,15 +705,15 @@ function buildPositions(convexPositions, convexRules, convexEvents, overrides) {
         : null;
       target = {
         price_pct_from_current: pctAway !== null ? `+${pctAway.toFixed(1)}%` : null,
-        description: primaryTarget.description || null,
-        optimistic_price: optimisticTarget ? optimisticTarget.value : null,
+        description: redactDollarAmounts(primaryTarget.description) || null,
+        optimistic_price: optimisticTarget ? null : null,
       };
     }
 
     const nextEvent = events[0]
       ? {
           date: events[0].eventDate,
-          label: events[0].event,
+          label: redactDollarAmounts(events[0].event),
           urgency: events[0].urgency || 2,
         }
       : null;
