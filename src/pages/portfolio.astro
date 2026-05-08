@@ -3622,7 +3622,7 @@ const stages = [
 		}
 		@media (min-width: 1100px) {
 			.allocation-subcards {
-				grid-template-columns: repeat(4, minmax(0, 1fr));
+				grid-template-columns: repeat(3, minmax(0, 1fr));
 			}
 		}
 		.allocation-subcard {
@@ -3632,6 +3632,9 @@ const stages = [
 			padding: 1rem 1.1rem;
 			display: grid;
 			gap: 0.65rem;
+			min-width: 0;
+			overflow: hidden;
+			container-type: inline-size;
 		}
 		.allocation-subcard-head {
 			display: flex;
@@ -3649,7 +3652,9 @@ const stages = [
 		.allocation-subcard-title {
 			margin: 0;
 			font-size: 1.05rem;
-			flex: 1;
+			flex: 1 1 0;
+			min-width: 0;
+			overflow-wrap: anywhere;
 		}
 		.allocation-drift-chip {
 			font-size: 0.72rem;
@@ -3670,14 +3675,15 @@ const stages = [
 			grid-template-columns: 1fr 1fr;
 			gap: 0.6rem;
 		}
-		@media (min-width: 540px) {
+		@container (min-width: 420px) {
 			.allocation-subcard-stats {
-				grid-template-columns: 1fr 1fr 1fr 1fr;
+				grid-template-columns: repeat(4, minmax(0, 1fr));
 			}
 		}
 		.allocation-subcard-stats > div {
 			display: grid;
 			gap: 0.2rem;
+			min-width: 0;
 		}
 		.allocation-subcard-eyebrow {
 			font-size: 0.66rem;
@@ -3700,12 +3706,15 @@ const stages = [
 			border-radius: 999px;
 			background: color-mix(in srgb, var(--cat-color) 16%, transparent);
 			color: var(--p-text-soft);
+			max-width: 100%;
+			overflow-wrap: anywhere;
 		}
 		.allocation-subcard-note {
 			margin: 0;
 			font-size: 0.85rem;
 			color: var(--p-text-soft);
 			line-height: 1.55;
+			overflow-wrap: anywhere;
 		}
 		.allocation-sub-mini {
 			display: grid;
@@ -3715,11 +3724,16 @@ const stages = [
 		}
 		.allocation-sub-mini-row {
 			display: grid;
-			grid-template-columns: auto 1fr auto;
+			grid-template-columns: minmax(0, auto) minmax(2rem, 1fr) auto;
 			align-items: center;
 			gap: 0.5rem;
 			font-size: 0.78rem;
 			color: var(--p-text-soft);
+			min-width: 0;
+		}
+		.allocation-sub-mini-row > span:first-child {
+			min-width: 0;
+			overflow-wrap: anywhere;
 		}
 		.allocation-sub-mini-bar {
 			height: 0.45rem;
