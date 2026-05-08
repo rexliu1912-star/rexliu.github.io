@@ -902,18 +902,19 @@ function mergeClearances(localClearances, autoClearances) {
     byTicker.set(auto.ticker, {
       ...auto,
       ...existing,
-      // Convex is source of truth for mechanics. Local archive is only editorial enrichment.
-      market: auto.market,
-      entry_date: auto.entry_date,
-      exit_date: auto.exit_date,
-      holding_days: auto.holding_days,
-      outcome_pct: auto.outcome_pct,
-      outcome_pct_rounded: auto.outcome_pct_rounded,
-      win_rate_pct: auto.win_rate_pct,
-      trade_count: auto.trade_count,
-      currency: auto.currency,
-      avg_entry_price: auto.avg_entry_price,
-      avg_exit_price: auto.avg_exit_price,
+      // Convex is the default source of truth for mechanics, but an explicit
+      // editorial mechanical correction may override a bad upstream trade record.
+      market: existing.market || auto.market,
+      entry_date: existing.entry_date || auto.entry_date,
+      exit_date: existing.exit_date || auto.exit_date,
+      holding_days: existing.holding_days ?? auto.holding_days,
+      outcome_pct: existing.outcome_pct ?? auto.outcome_pct,
+      outcome_pct_rounded: existing.outcome_pct_rounded ?? auto.outcome_pct_rounded,
+      win_rate_pct: existing.win_rate_pct ?? auto.win_rate_pct,
+      trade_count: existing.trade_count ?? auto.trade_count,
+      currency: existing.currency || auto.currency,
+      avg_entry_price: existing.avg_entry_price ?? auto.avg_entry_price,
+      avg_exit_price: existing.avg_exit_price ?? auto.avg_exit_price,
       trade_points: existing.trade_points?.length ? existing.trade_points : auto.trade_points,
     });
   }
