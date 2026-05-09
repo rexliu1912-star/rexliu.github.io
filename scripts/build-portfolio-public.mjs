@@ -763,8 +763,21 @@ function roundPct(value) {
   return Math.round(value);
 }
 
+function stripTradeQuantityFromNote(note) {
+  if (!note) return note;
+  return String(note)
+    .replace(/\b(sell|sold)\s+\d[\d,]*(?:\.\d+)?\s*@\s*/gi, "sold at ")
+    .replace(/\b(buy|bought)\s+\d[\d,]*(?:\.\d+)?\s*@\s*/gi, "bought at ")
+    .replace(/\b(\d[\d,]*(?:\.\d+)?)\s+shares?\s*@\s*/gi, "at ")
+    .replace(/\b(\d[\d,]*(?:\.\d+)?)\s*股\s*@\s*/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 function compactTradeNotes(trades) {
-  return [...new Set((trades || []).map((t) => t.note).filter(Boolean))].join(" · ");
+  return [
+    ...new Set((trades || []).map((t) => stripTradeQuantityFromNote(t.note)).filter(Boolean)),
+  ].join(" · ");
 }
 
 function buildAutoTradePoints(sortedTrades, metrics = {}) {
@@ -804,6 +817,34 @@ function buildAutoTradePoints(sortedTrades, metrics = {}) {
   }
 
   return points;
+}
+
+function labelTradeNote(note, action, locale = "en") {
+  const cleanNote = stripTradeQuantityFromNote(note);
+  if (!cleanNote) return cleanNote;
+  if (!/^at\s+/i.test(cleanNote) && !/^[$A-Z]{1,4}\$?\d/.test(cleanNote)) return cleanNote;
+  const actionText = String(action || "").toLowerCase();
+  const isExit = /(exit|closed|清仓|平仓|卖出|退出)/i.test(actionText);
+  const isEntry = /(open|entry|opened|建立|建仓|买入)/i.test(actionText);
+  if (locale === "zh") {
+    if (isExit) return cleanNote.replace(/^at\s+/i, "").replace(/^/, "清仓 ");
+    if (isEntry) return cleanNote.replace(/^at\s+/i, "").replace(/^/, "建仓 ");
+  }
+  if (isExit) return cleanNote.replace(/^at\s+/i, "Exit at ");
+  if (isEntry) return cleanNote.replace(/^at\s+/i, "Entry at ");
+  return cleanNote;
+}
+
+function sanitizeClearanceTradeNotes(clearance) {
+  if (!clearance?.trade_points?.length) return clearance;
+  return {
+    ...clearance,
+    trade_points: clearance.trade_points.map((point) => ({
+      ...point,
+      note_en: labelTradeNote(point.note_en, point.action_en, "en"),
+      note_zh: labelTradeNote(point.note_zh, point.action_zh, "zh"),
+    })),
+  };
 }
 
 function buildAutoClearances(convexPositions, convexTrades, overrides) {
@@ -1335,7 +1376,7 @@ async function main() {
     ...(overrides.clearances || []),
     ...(tradelog?.clearances || []),
   ];
-  const clearances = mergeClearances(editorialClearances, autoClearances);
+  const clearances = mergeClearances(editorialClearances, autoClearances).map(sanitizeClearanceTradeNotes);
   if (autoClearances.length > 0) {
     console.log(`🧾 Closed positions: ${autoClearances.length} auto from Convex, ${clearances.length} total after editorial merge`);
   }
