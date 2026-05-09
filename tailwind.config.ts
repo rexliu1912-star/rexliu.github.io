@@ -20,8 +20,18 @@ export default {
 					"Microsoft YaHei",
 					"sans-serif",
 				],
-				// 衬线字体 (Serif)：用于标题，模仿杂志/文学风格
-				serif: ["Georgia", "Cambria", "Times New Roman", "Times", "serif"],
+			// 衬线字体 (Serif)：用于标题，模仿杂志/文学风格
+			serif: [
+				"Georgia",
+				"Cambria",
+				"Times New Roman",
+				"Times",
+				"Songti SC",
+				"STSong",
+				"Noto Serif CJK SC",
+				"SimSun",
+				"serif",
+			],
 			},
 
 			// 2. 排版插件配置 (保持原样，控制 Markdown 文章内的样式)
