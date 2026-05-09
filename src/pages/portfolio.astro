@@ -199,6 +199,61 @@ const lightColors: Record<string, string> = {
 };
 const conviction: Record<string, string> = { high: "🔥", medium: "🌱", low: "❄️" };
 
+function cleanHeatmapName(name: string): string {
+	return (name || "")
+		.replace(/近半月研报调研\s*[×x]\s*圆桌讨论逻辑一致性审查/g, "")
+		.replace(/深度研究\s*[×x]\s*v2\.0\s*流程产物/g, "")
+		.replace(/阶段\s*4\s*深度研究档案/g, "")
+		.replace(/近半月研报调研/g, "")
+		.replace(/圆桌讨论逻辑一致性审查/g, "")
+		.replace(/深度研究报告/g, "")
+		.replace(/深度研究/g, "")
+		.replace(/投资逻辑一致性审查/g, "")
+		.replace(/\s{2,}/g, " ")
+		.trim();
+}
+
+function scoreStatus(score: number): { en: string; zh: string; tone: string } {
+	if (score >= 7) return { en: "Upgrade", zh: "升级区", tone: "hot" };
+	if (score >= 5) return { en: "Radar", zh: "雷达区", tone: "warm" };
+	if (score >= 3) return { en: "Watch", zh: "观察", tone: "watch" };
+	return { en: "Cold", zh: "低温", tone: "cold" };
+}
+
+function shouldShowHeatmapDate(date: string, index: number, total: number): boolean {
+	if (index === 0 || index === total - 1) return true;
+	const day = new Date(`${date}T00:00:00Z`).getUTCDay();
+	return day === 1;
+}
+
+const heatmapRows = heatmap
+	? heatmap.tickers
+		.map((ticker, index) => {
+			const series = heatmap.dates.map((date, di) => ({
+				date,
+				score: heatmap.scores[di]?.[index] ?? -1,
+			}));
+			const valid = series.filter((p) => typeof p.score === "number" && p.score >= 0);
+			const latest = valid.at(-1);
+			const previous = valid.length > 1 ? valid.at(-2) : null;
+			const latestScore = latest?.score ?? -1;
+			const delta = latestScore >= 0 && previous ? latestScore - previous.score : 0;
+			const meta = heatmap.ticker_meta?.[ticker] || {};
+			const displayName = cleanHeatmapName(meta.name || heatmap.ticker_names[ticker] || ticker) || ticker;
+			return {
+				ticker,
+				index,
+				series,
+				latestScore,
+				delta,
+				displayName,
+				market: meta.market || "",
+				status: scoreStatus(latestScore),
+			};
+		})
+		.sort((a, b) => (b.latestScore - a.latestScore) || a.ticker.localeCompare(b.ticker))
+	: [];
+
 // Signal ordering + labels for the regime 5×N history grid (used when
 // less than ~7 days of thermometer history are available — before the
 // full 60-day line chart kicks in).
@@ -1744,38 +1799,56 @@ const stages = [
 				<span class="section-summary"><span class="lang-en">{heatmap?.eligible_count || heatmap?.tickers.length || 0} active · {heatmap?.registry_count || heatmap?.tickers.length || 0} registry · {heatmap?.dates.length || 0}-day heatmap</span><span class="lang-zh">{heatmap?.eligible_count || heatmap?.tickers.length || 0} 只扫描 · {heatmap?.registry_count || heatmap?.tickers.length || 0} 只入池 · {heatmap?.dates.length || 0} 天热力图</span></span>
 			</header>
 
-			{heatmap && heatmap.tickers.length > 0 ? (
-				<div class="heatmap-wrap">
-					<div
-						class="heatmap-grid"
-						style={`grid-template-columns: auto repeat(${heatmap.dates.length}, 1fr)`}
-					>
-						<div class="heatmap-corner"></div>
-						{heatmap.dates.map((d: string) => (
-							<div class="heatmap-date-label">{d.slice(5)}</div>
-						))}
-						{heatmap.tickers.map((ticker: string, ti: number) => (
-							<>
-								<div class="heatmap-ticker-label">
-									{ticker}
-									<small>{heatmap!.ticker_names[ticker] || ""}</small>
-								</div>
-								{heatmap!.dates.map((d: string, di: number) => {
-									const score = heatmap!.scores[di]?.[ti] ?? -1;
-									const title = `${ticker} · ${d} · ${score >= 0 ? `${score}/10` : "—"}`;
-								let bg = "transparent";
-								if (score >= 7) bg = `rgba(137, 83, 209, 0.95)`;
-								else if (score >= 5) bg = `rgba(137, 83, 209, ${0.35 + (score - 5) * 0.2})`;
-								else if (score >= 3) bg = `rgba(137, 83, 209, ${0.12 + (score - 3) * 0.08})`;
-								else if (score >= 0) bg = `rgba(137, 83, 209, 0.04)`;
-									return (
-										<div class="heatmap-cell" style={`background: ${bg}`} title={title}>
-											{score >= 7 && <span class="heatmap-cell-mark">★</span>}
+			{heatmap && heatmapRows.length > 0 ? (
+				<div class="heatmap-panel">
+					<div class="heatmap-toolbar" aria-label="Watchlist heatmap legend">
+						<div class="heatmap-legend">
+							<span class="legend-dot legend-cold"></span><span>0-2</span>
+							<span class="legend-dot legend-watch"></span><span>3-4</span>
+							<span class="legend-dot legend-warm"></span><span>5-6</span>
+							<span class="legend-dot legend-hot"></span><span>7+</span>
+						</div>
+						<span class="heatmap-hint"><span class="lang-en">Sorted by latest score</span><span class="lang-zh">按最新分排序</span></span>
+					</div>
+					<div class="heatmap-wrap">
+						<div
+							class="heatmap-grid"
+							style={`grid-template-columns: minmax(11rem, 16rem) repeat(${heatmap.dates.length}, minmax(1.22rem, 1fr)) minmax(3.2rem, 4rem)`}
+						>
+							<div class="heatmap-corner"><span>Ticker</span></div>
+							{heatmap.dates.map((d: string, di: number) => (
+								<div class={`heatmap-date-label ${!shouldShowHeatmapDate(d, di, heatmap.dates.length) ? "is-muted-date" : ""}`}>{shouldShowHeatmapDate(d, di, heatmap.dates.length) ? d.slice(5) : ""}</div>
+							))}
+							<div class="heatmap-score-head"><span class="lang-en">Now</span><span class="lang-zh">当前</span></div>
+							{heatmapRows.map((row) => (
+								<>
+									<div class="heatmap-ticker-label" title={`${row.ticker} · ${row.displayName}`}>
+										<div class="heatmap-symbol-line">
+											<strong>{row.ticker}</strong>
+											{row.market && <em>{row.market}</em>}
 										</div>
-									);
-								})}
-							</>
-						))}
+										<small>{row.displayName}</small>
+									</div>
+									{row.series.map(({ date, score }) => {
+										const title = `${row.ticker} · ${date} · ${score >= 0 ? `${score}/10` : "—"}`;
+										let bg = "transparent";
+										if (score >= 7) bg = `linear-gradient(135deg, rgba(245, 158, 11, 0.98), rgba(137, 83, 209, 0.96))`;
+										else if (score >= 5) bg = `rgba(137, 83, 209, ${0.46 + (score - 5) * 0.18})`;
+										else if (score >= 3) bg = `rgba(137, 83, 209, ${0.18 + (score - 3) * 0.08})`;
+										else if (score >= 0) bg = `rgba(137, 83, 209, 0.06)`;
+										return (
+											<div class={`heatmap-cell ${score < 0 ? "is-empty" : ""}`} style={`background: ${bg}`} title={title} aria-label={title}>
+												{score >= 7 && <span class="heatmap-cell-mark">★</span>}
+											</div>
+										);
+									})}
+									<div class={`heatmap-score-pill tone-${row.status.tone}`} title={`${row.ticker} latest score`}>
+										<strong>{row.latestScore >= 0 ? row.latestScore : "—"}</strong>
+										<span>{row.delta > 0 ? `+${row.delta}` : row.delta < 0 ? row.delta : row.status.zh}</span>
+									</div>
+								</>
+							))}
+						</div>
 					</div>
 				</div>
 			) : (
@@ -3983,59 +4056,215 @@ const stages = [
 		}
 
 		/* ── Heatmap ─────────────────────────────── */
+		.heatmap-panel {
+			border: 1px solid color-mix(in srgb, var(--p-border) 78%, #8953d1 22%);
+			background:
+				radial-gradient(circle at 18% 0%, rgba(137, 83, 209, 0.14), transparent 36%),
+				color-mix(in srgb, var(--p-card) 94%, transparent);
+			border-radius: 1.35rem;
+			padding: 0.85rem;
+			box-shadow: 0 18px 60px rgba(15, 23, 42, 0.08);
+		}
+		.heatmap-toolbar {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			gap: 0.75rem;
+			padding: 0.1rem 0.2rem 0.75rem;
+			font-size: 0.72rem;
+			color: var(--p-text-faint);
+		}
+		.heatmap-legend {
+			display: flex;
+			align-items: center;
+			gap: 0.38rem;
+			flex-wrap: wrap;
+		}
+		.legend-dot {
+			width: 0.72rem;
+			height: 0.72rem;
+			border-radius: 3px;
+			display: inline-block;
+			border: 1px solid rgba(137, 83, 209, 0.18);
+		}
+		.legend-cold { background: rgba(137, 83, 209, 0.06); }
+		.legend-watch { background: rgba(137, 83, 209, 0.28); }
+		.legend-warm { background: rgba(137, 83, 209, 0.64); }
+		.legend-hot { background: linear-gradient(135deg, #f59e0b, #8953d1); }
+		.heatmap-hint {
+			white-space: nowrap;
+		}
 		.heatmap-wrap {
 			overflow-x: auto;
-			border: 1px solid var(--p-border);
-			background: color-mix(in srgb, var(--p-card) 94%, transparent);
-			border-radius: 1.25rem;
-			padding: 0.9rem;
+			padding-bottom: 0.1rem;
+			scrollbar-width: thin;
 		}
 		.heatmap-grid {
 			display: grid;
-			gap: 3px;
-			min-width: fit-content;
+			gap: 4px;
+			min-width: min(100%, 54rem);
+			align-items: stretch;
 		}
-		.heatmap-corner {
-			grid-column: 1;
-			grid-row: 1;
+		.heatmap-corner,
+		.heatmap-score-head {
+			position: sticky;
+			top: 0;
+			z-index: 2;
+			display: grid;
+			place-items: end start;
+			padding: 0 0.35rem 0.2rem;
+			font-size: 0.62rem;
+			font-weight: 700;
+			letter-spacing: 0.08em;
+			text-transform: uppercase;
+			color: var(--p-text-faint);
+			background: color-mix(in srgb, var(--p-card) 96%, transparent);
+		}
+		.heatmap-score-head {
+			place-items: center;
 		}
 		.heatmap-date-label {
 			font-size: 0.62rem;
-			color: var(--p-text-faint);
+			font-variant-numeric: tabular-nums;
+			color: color-mix(in srgb, var(--p-text-faint) 82%, var(--p-text) 18%);
 			text-align: center;
 			writing-mode: vertical-rl;
 			transform: rotate(180deg);
-			padding: 0.2rem 0;
-			min-width: 1.2rem;
+			padding: 0.28rem 0 0.18rem;
+			min-width: 1.22rem;
+			height: 2.65rem;
+			line-height: 1;
+			opacity: 0.9;
+		}
+		.heatmap-date-label.is-muted-date {
+			opacity: 0;
 		}
 		.heatmap-ticker-label {
-			font-size: 0.78rem;
-			font-weight: 600;
-			color: var(--p-text);
-			padding-right: 0.6rem;
-			text-align: right;
-			white-space: nowrap;
+			position: sticky;
+			left: 0;
+			z-index: 1;
+			min-height: 2.15rem;
+			padding: 0.32rem 0.62rem 0.32rem 0.35rem;
+			border-radius: 0.65rem;
+			background: color-mix(in srgb, var(--p-card) 96%, transparent);
+			border: 1px solid color-mix(in srgb, var(--p-border) 70%, transparent);
 			display: grid;
+			gap: 0.1rem;
 			align-items: center;
+			min-width: 0;
+		}
+		.heatmap-symbol-line {
+			display: flex;
+			align-items: center;
+			gap: 0.4rem;
+		}
+		.heatmap-symbol-line strong {
+			font-size: 0.86rem;
+			font-weight: 800;
+			letter-spacing: 0.02em;
+			color: var(--p-text);
+		}
+		.heatmap-symbol-line em {
+			font-style: normal;
+			font-size: 0.56rem;
+			font-weight: 700;
+			letter-spacing: 0.08em;
+			color: var(--p-text-faint);
+			border: 1px solid var(--p-border);
+			border-radius: 999px;
+			padding: 0.05rem 0.28rem;
 		}
 		.heatmap-ticker-label small {
 			display: block;
 			font-size: 0.64rem;
-			font-weight: 400;
+			font-weight: 500;
+			line-height: 1.18;
 			color: var(--p-text-faint);
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
 		}
 		.heatmap-cell {
-			min-width: 1.2rem;
-			height: 1.8rem;
-			border-radius: 3px;
+			min-width: 1.22rem;
+			height: 2.15rem;
+			border-radius: 0.35rem;
 			position: relative;
 			display: grid;
 			place-items: center;
+			border: 1px solid rgba(137, 83, 209, 0.08);
+			box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
+			transition: transform 0.16s ease, filter 0.16s ease, border-color 0.16s ease;
+		}
+		.heatmap-cell.is-empty {
+			background: transparent !important;
+			border-style: dashed;
+			border-color: color-mix(in srgb, var(--p-border) 60%, transparent);
+			box-shadow: none;
+			opacity: 0.42;
+		}
+		.heatmap-cell:hover {
+			transform: translateY(-1px) scale(1.08);
+			filter: saturate(1.18);
+			border-color: rgba(137, 83, 209, 0.45);
+			z-index: 3;
 		}
 		.heatmap-cell-mark {
 			color: #fff;
-			font-size: 0.6rem;
+			font-size: 0.62rem;
 			line-height: 1;
+			text-shadow: 0 1px 6px rgba(0,0,0,0.28);
+		}
+		.heatmap-score-pill {
+			min-height: 2.15rem;
+			border-radius: 0.75rem;
+			display: grid;
+			place-items: center;
+			align-content: center;
+			gap: 0.05rem;
+			font-variant-numeric: tabular-nums;
+			border: 1px solid var(--p-border);
+			background: rgba(137, 83, 209, 0.06);
+		}
+		.heatmap-score-pill strong {
+			font-size: 0.88rem;
+			line-height: 1;
+			color: var(--p-text);
+		}
+		.heatmap-score-pill span {
+			font-size: 0.56rem;
+			font-weight: 700;
+			color: var(--p-text-faint);
+		}
+		.heatmap-score-pill.tone-warm {
+			border-color: rgba(137, 83, 209, 0.38);
+			background: rgba(137, 83, 209, 0.14);
+		}
+		.heatmap-score-pill.tone-hot {
+			border-color: rgba(245, 158, 11, 0.58);
+			background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(137, 83, 209, 0.2));
+		}
+		@media (max-width: 720px) {
+			.heatmap-panel {
+				padding: 0.72rem;
+				margin-inline: -0.25rem;
+			}
+			.heatmap-toolbar {
+				align-items: flex-start;
+				flex-direction: column;
+				gap: 0.45rem;
+			}
+			.heatmap-grid {
+				min-width: 43rem;
+				gap: 3px;
+			}
+			.heatmap-ticker-label {
+				min-height: 2rem;
+			}
+			.heatmap-cell,
+			.heatmap-score-pill {
+				height: 2rem;
+				min-height: 2rem;
+			}
 		}
 
 		/* ── Positions Grid ──────────────────────── */
