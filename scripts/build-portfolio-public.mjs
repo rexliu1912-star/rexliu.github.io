@@ -401,9 +401,16 @@ function buildHeatmap(index) {
   const dates = (index.dates || []).slice(-maxDays);
   const scores = (index.scores || []).slice(-maxDays);
   const statuses = (index.statuses || []).slice(-maxDays);
+  const registryCount = index.registry_count || Object.keys(index.ticker_meta || {}).length || index.tickers.length;
+
   return {
+    source: index.source || "watchlist-scan-index",
+    registry_file: index.registry_file ? "investment-strategy/macro/watchlist-registry.json" : null,
+    registry_count: registryCount,
+    eligible_count: index.eligible_count || index.tickers.length,
     tickers: index.tickers,
     ticker_names: index.ticker_names || {},
+    ticker_meta: index.ticker_meta || {},
     dates,
     scores,
     statuses,

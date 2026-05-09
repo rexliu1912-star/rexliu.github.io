@@ -56,10 +56,16 @@ interface PortfolioPosition {
 	} | null;
 }
 interface PortfolioHeatmap {
+	source?: string;
+	registry_file?: string | null;
+	registry_count?: number;
+	eligible_count?: number;
 	tickers: string[];
 	dates: string[];
 	scores: (number | null)[][];
+	statuses?: string[][];
 	ticker_names: Record<string, string>;
+	ticker_meta?: Record<string, any>;
 }
 interface PortfolioRegimeCurrent {
 	label: string;
@@ -1729,15 +1735,14 @@ const stages = [
 				</h2>
 				<p class="portfolio-note">
 					<span class="lang-en">
-						Daily 10-point scan across 15 tickers. Darker = closer to the 7-point upgrade
-						threshold. Empty cells are days before the scan started.
+						Daily 10-point scan from Investment Strategy deep-research registry. Darker = closer to the 7-point upgrade threshold. Empty cells are days before the scan started.
 					</span>
 					<span class="lang-zh">
-					每日对 15 只标的跑 10 分评分卡。颜色越深越接近 7 分升级门槛。空格是扫描启动前的日期。
-				</span>
-			</p>
-			<span class="section-summary"><span class="lang-en">15 tickers · 14-day heatmap</span><span class="lang-zh">15 只标的 · 14 天热力图</span></span>
-		</header>
+						从 Investment Strategy 深度研究自动派生观察池，每日跑 10 分评分卡。颜色越深越接近 7 分升级门槛。空格是扫描启动前的日期。
+					</span>
+				</p>
+				<span class="section-summary"><span class="lang-en">{heatmap?.eligible_count || heatmap?.tickers.length || 0} active · {heatmap?.registry_count || heatmap?.tickers.length || 0} registry · {heatmap?.dates.length || 0}-day heatmap</span><span class="lang-zh">{heatmap?.eligible_count || heatmap?.tickers.length || 0} 只扫描 · {heatmap?.registry_count || heatmap?.tickers.length || 0} 只入池 · {heatmap?.dates.length || 0} 天热力图</span></span>
+			</header>
 
 			{heatmap && heatmap.tickers.length > 0 ? (
 				<div class="heatmap-wrap">
