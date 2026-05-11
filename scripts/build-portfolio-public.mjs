@@ -619,8 +619,8 @@ function sanitizeMonitorState(monitorState, dcaStatus, marketData = null, bottom
       signals: (macro.signals || []).slice(0, 5),
     },
     bottom_tracker: {
-      score: dca.bottom_tracker?.weighted_score ?? null,
-      status: dca.bottom_tracker?.status || null,
+      score: bottomTrackerData?.weightedScore ?? bottomTrackerData?.weighted_score ?? dca.bottom_tracker?.weighted_score ?? null,
+      status: bottomTrackerData?.marketStatus || bottomTrackerData?.market_status || dca.bottom_tracker?.status || null,
       indicators: bottomTrackerIndicators,
     },
     etf: {
@@ -1142,32 +1142,9 @@ async function main() {
     }
   }
 
-  // Enrich crypto positions with price data (timeseries > monitor state)
-  // Timeseries is always fresh (yfinance, updated on every build);
-  // monitor state may be stale if Bitget/Convex sync is delayed.
-  if (crypto?.positions && cryptoTimeseries?.data?.length >= 2) {
-    const latest = cryptoTimeseries.data[cryptoTimeseries.data.length - 1];
-    const prev = cryptoTimeseries.data[cryptoTimeseries.data.length - 2];
-
-    // BTC price + daily change from timeseries (primary source)
-    const btcPos = crypto.positions.find((p) => p.symbol === "BTC");
-    if (btcPos && latest.btc_close && prev.btc_close) {
-      btcPos.price = latest.btc_close;
-      btcPos.daily_change_pct = +((latest.btc_close - prev.btc_close) / prev.btc_close * 100).toFixed(2);
-    }
-
-    // Fallback: other coins from monitor state (SNEK etc.)
-    const monitorPositions = monitorState?.positions?.positions;
-    if (Array.isArray(monitorPositions)) {
-      for (const cp of crypto.positions) {
-        if (cp.price != null) continue; // already set from timeseries
-        const mp = monitorPositions.find((p) => p.symbol === cp.symbol);
-        if (mp?.price_usd != null) {
-          cp.price = mp.price_usd;
-        }
-      }
-    }
-  }
+  // Public crypto positions intentionally expose thesis/role only.
+  // Prices are not real-time enough for Active Positions cards; keep price data
+  // inside the Crypto Intelligence timeseries panel instead of attaching it here.
 
   // Enrich crypto positions with per-symbol news from SNEK Daily
   if (crypto?.positions) {
