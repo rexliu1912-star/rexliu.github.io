@@ -36,9 +36,6 @@ export const ui = {
 	"digest.title": { en: "Digest", zh: "精选阅读" },
 	"digest.view_all": { en: "View all digests →", zh: "查看全部精选 →" },
 
-	// SNEK Daily
-	"snek.title": { en: "SNEK Daily", zh: "SNEK 日报" },
-	"snek.view_all": { en: "View all dailies →", zh: "查看全部日报 →" },
 
 	// Builder's Log
 	"builder.title": { en: "Builder's Log", zh: "Builder's Log" },

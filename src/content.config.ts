@@ -105,21 +105,6 @@ const builderLog = defineCollection({
 	}),
 });
 
-// 7. SNEK Daily 集合
-const snekDaily = defineCollection({
-	loader: glob({ base: "./src/content/snek-daily", pattern: "**/*.{md,mdx}" }),
-	schema: z.object({
-		title: z.string(),
-		title_zh: z.string().optional(),
-		date: z.coerce.date(),
-		btc_price: z.string().optional(),
-		btc_change: z.string().optional(),
-		ada_price: z.string().optional(),
-		snek_price: z.string().optional(),
-		summary: z.string().optional(),
-		summary_zh: z.string().optional(),
-	}),
-});
 
 // 9. Bookmarks 集合
 const bookmarks = defineCollection({
@@ -141,4 +126,4 @@ const bookmarks = defineCollection({
 });
 
 // 10. 统一导出
-export const collections = { post, note, tag, digest, projects, "builder-log": builderLog, "snek-daily": snekDaily, bookmarks };
+export const collections = { post, note, tag, digest, projects, "builder-log": builderLog, bookmarks };
