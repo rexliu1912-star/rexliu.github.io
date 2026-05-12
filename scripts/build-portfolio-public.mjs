@@ -748,12 +748,6 @@ function buildPositions(convexPositions, convexRules, convexEvents, overrides) {
       stop,
       target,
       next_event: nextEvent,
-      quant_ratings: (() => {
-        if (!p.quantRatings) return null;
-        const qr = JSON.parse(p.quantRatings);
-        if (p.quantUpdated) qr.updated = p.quantUpdated;
-        return qr;
-      })(),
     };
   });
 

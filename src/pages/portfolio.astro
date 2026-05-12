@@ -54,12 +54,6 @@ interface PortfolioPosition {
 		sentiment: "positive" | "neutral" | "negative";
 		items: { title: string; snippet: string }[];
 	} | null;
-	quant_ratings?: {
-		composite: number;
-		rating: string;
-		factors: Record<string, { grade: string; score: number }>;
-		updated: string;
-	} | null;
 }
 interface PortfolioHeatmap {
 	source?: string;
@@ -1476,26 +1470,10 @@ const stages = [
 							class="position-conviction-fill"
 							style={`width: ${p.conviction === "high" ? "100" : p.conviction === "medium" ? "60" : "30"}%; background: ${convictionStroke[p.conviction] || "#9ca3af"}`}
 						></span>
-				</div>
-
-				{p.quant_ratings && (
-					<div class="quant-ratings" title={`Quant Rating: ${p.quant_ratings.composite.toFixed(1)}/5.0 · Updated ${p.quant_ratings.updated}`}>
-						<div class="quant-rating-header">
-							<span class="quant-rating-badge">{p.quant_ratings.rating}</span>
-							<span class="quant-rating-score">{p.quant_ratings.composite.toFixed(1)}</span>
-						</div>
-						<div class="quant-factors">
-							{Object.entries(p.quant_ratings.factors).map(([key, factor]) => (
-								<span class={`quant-factor quant-factor-${factor.grade.startsWith("A") ? "strong" : factor.grade.startsWith("B") ? "good" : factor.grade.startsWith("C") ? "neutral" : "weak"}`}>
-									<span class="quant-factor-label">{key.slice(0, 3).toUpperCase()}</span>
-									<span class="quant-factor-grade">{factor.grade}</span>
-								</span>
-							))}
-						</div>
 					</div>
-				)}
 
-	<footer class="position-foot">
+	
+				<footer class="position-foot">
 						{p.stop && p.target ? (
 							<div class="position-range-track" title={`${p.stop.description || "Stop"} → ${p.target.description || "Target"}`}>
 								<span class="range-label range-stop">
@@ -4368,55 +4346,6 @@ const stages = [
 			border-radius: 3px;
 			transition: width 0.6s ease;
 		}
-		/* ── Quant Ratings ── */
-		.quant-ratings {
-			display: flex;
-			align-items: center;
-			gap: 0.5rem;
-			padding: 0.4rem 0;
-			margin-top: 0.2rem;
-		}
-		.quant-rating-header {
-			display: flex;
-			align-items: baseline;
-			gap: 0.3rem;
-		}
-		.quant-rating-badge {
-			font-size: 0.72rem;
-			font-weight: 700;
-			padding: 0.15rem 0.4rem;
-			border-radius: 4px;
-			background: rgba(137, 83, 209, 0.15);
-			color: #a78bfa;
-		}
-		.quant-rating-score {
-			font-size: 0.68rem;
-			color: var(--text-muted, #9ca3af);
-		}
-		.quant-factors {
-			display: flex;
-			gap: 0.35rem;
-			flex-wrap: wrap;
-		}
-		.quant-factor {
-			display: inline-flex;
-			gap: 0.15rem;
-			font-size: 0.65rem;
-			padding: 0.1rem 0.35rem;
-			border-radius: 3px;
-			line-height: 1.4;
-		}
-		.quant-factor-label {
-			font-weight: 600;
-			opacity: 0.8;
-		}
-		.quant-factor-grade {
-			font-weight: 700;
-		}
-		.quant-factor-strong { background: rgba(16, 185, 129, 0.12); color: #34d399; }
-		.quant-factor-good { background: rgba(59, 130, 246, 0.12); color: #60a5fa; }
-		.quant-factor-neutral { background: rgba(245, 158, 11, 0.12); color: #fbbf24; }
-		.quant-factor-weak { background: rgba(239, 68, 68, 0.12); color: #f87171; }
 		.position-meta {
 			display: flex;
 			gap: 0.5rem;
