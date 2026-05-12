@@ -411,19 +411,20 @@ function buildHeatmap(index, quantRatings) {
   if (quantRatings) {
     const ratings = quantRatings.ratings || {};
     for (const ticker of index.tickers) {
-      // Try matching: raw ticker, with .SS/.SZ suffix, or yfinance form
-      const candidates = [ticker, ticker + ".SS", ticker + ".SZ", ticker + ".HK"];
-      let match = ratings[ticker];
-      if (!match) {
-        for (const c of candidates) {
-          if (ratings[c]) { match = ratings[c]; break; }
-        }
+      // Strip yfinance suffix (.SS/.SZ/.HK) for matching against quant-ratings keys
+      const stripped = ticker.replace(/\.(SS|SZ|HK)$/, "");
+      // Try: raw ticker → stripped → with common suffixes
+      const candidates = [ticker, stripped, stripped + ".SS", stripped + ".SZ", stripped + ".HK"];
+      let match = null;
+      for (const c of candidates) {
+        if (ratings[c]) { match = ratings[c]; break; }
       }
       if (match) {
         if (!enrichedMeta[ticker]) enrichedMeta[ticker] = {};
         enrichedMeta[ticker].quant = {
           composite: match.composite,
           rating: match.rating,
+          score: match.composite,
           factors: match.factors,
         };
       }
