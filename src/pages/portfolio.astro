@@ -1840,9 +1840,9 @@ const stages = [
 											</div>
 										);
 									})}
-							<div class={`heatmap-score-pill tone-${row.status.tone}`} title={row.quant ? `${row.quant.rating} · ${row.quant.score.toFixed(1)}/6` : `${row.ticker} latest score`}>
-									<strong>{row.quant ? row.quant.rating : (row.latestScore >= 0 ? row.latestScore : "—")}</strong>
-									<span>{row.quant ? row.quant.score.toFixed(1) : (row.delta > 0 ? `+${row.delta}` : row.delta < 0 ? row.delta : row.status.zh)}</span>
+							<div class={`heatmap-score-pill tone-${row.status.tone}`} title={row.quant?.rating ? `${row.quant.rating} · ${row.quant.score?.toFixed(1)}/6` : `${row.ticker} latest score`}>
+									<strong>{row.quant?.rating ?? (row.latestScore >= 0 ? row.latestScore : "—")}</strong>
+									<span>{row.quant?.score != null ? row.quant.score.toFixed(1) : (row.delta > 0 ? `+${row.delta}` : row.delta < 0 ? row.delta : row.status.zh)}</span>
 								</div>
 								</>
 							))}
