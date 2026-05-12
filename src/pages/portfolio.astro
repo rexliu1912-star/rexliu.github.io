@@ -249,6 +249,7 @@ const heatmapRows = heatmap
 				displayName,
 				market: meta.market || "",
 				status: scoreStatus(latestScore),
+				quant: meta.quant || null,
 			};
 		})
 		.sort((a, b) => (b.latestScore - a.latestScore) || a.ticker.localeCompare(b.ticker))
@@ -1806,12 +1807,20 @@ const stages = [
 							<div class="heatmap-score-head"><span class="lang-en">Now</span><span class="lang-zh">当前</span></div>
 							{heatmapRows.map((row) => (
 								<>
-									<div class="heatmap-ticker-label" title={`${row.ticker} · ${row.displayName}`}>
-										<div class="heatmap-symbol-line">
-											<strong>{row.ticker}</strong>
-											{row.market && <em>{row.market}</em>}
+							<div class="heatmap-ticker-label" title={`${row.ticker} · ${row.displayName}`}>
+									<div class="heatmap-symbol-line">
+										<strong>{row.ticker}</strong>
+										{row.market && <em>{row.market}</em>}
+									</div>
+									<small>{row.displayName}</small>
+									{row.quant && row.quant.factors && (
+										<div class="quant-bar" title={`Val ${row.quant.factors.valuation?.grade} · Gro ${row.quant.factors.growth?.grade} · Pro ${row.quant.factors.profitability?.grade} · Mom ${row.quant.factors.momentum?.grade} · EPS ${row.quant.factors.epsRevisions?.grade} · Div ${row.quant.factors.dividend?.grade}`}>
+											{["valuation","growth","profitability","momentum","epsRevisions","dividend"].map((f: string) => {
+												const g = row.quant.factors[f]?.grade || "";
+												return <span class={`qb qb-${g.replace("+","p").replace("-","m")}`}>{f.slice(0,1).toUpperCase()}</span>;
+											})}
 										</div>
-										<small>{row.displayName}</small>
+									)}
 									</div>
 									{row.series.map(({ date, score }) => {
 										const title = `${row.ticker} · ${date} · ${score >= 0 ? `${score}/10` : "—"}`;
@@ -4198,6 +4207,35 @@ const stages = [
 			line-height: 1;
 			text-shadow: 0 1px 6px rgba(0,0,0,0.28);
 		}
+		/* Quant factor bar — 6 tiny color-coded letters */
+		.quant-bar {
+			display: flex;
+			gap: 2px;
+			margin-top: 3px;
+		}
+		.quant-bar .qb {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			width: 14px;
+			height: 12px;
+			border-radius: 2px;
+			font-size: 0.5rem;
+			font-weight: 700;
+			color: #fff;
+			line-height: 1;
+		}
+		.qb-App, .qb-A  { background: #16a34a; }
+		.qb-Am           { background: #22c55e; }
+		.qb-Bp           { background: #3b82f6; }
+		.qb-B            { background: #2563eb; }
+		.qb-Bm           { background: #6366f1; }
+		.qb-Cp           { background: #8b5cf6; }
+		.qb-C            { background: #a855f7; }
+		.qb-Cm           { background: #d97706; }
+		.qb-Dp           { background: #ea580c; }
+		.qb-D            { background: #dc2626; }
+		.qb-F            { background: #991b1b; }
 		.heatmap-score-pill {
 			min-height: 2.15rem;
 			border-radius: 0.75rem;

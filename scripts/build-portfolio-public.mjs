@@ -397,7 +397,7 @@ function regimeEn(label) {
 
 // ─── Watchlist heatmap transform ─────────────────────────
 
-function buildHeatmap(index) {
+function buildHeatmap(index, quantRatings) {
   if (!index || !index.tickers) return null;
   // Keep last 30 days, pad/trim
   const maxDays = 30;
@@ -406,6 +406,30 @@ function buildHeatmap(index) {
   const statuses = (index.statuses || []).slice(-maxDays);
   const registryCount = index.registry_count || Object.keys(index.ticker_meta || {}).length || index.tickers.length;
 
+  // Enrich ticker_meta with quant rating factors
+  const enrichedMeta = JSON.parse(JSON.stringify(index.ticker_meta || {}));
+  if (quantRatings) {
+    const ratings = quantRatings.ratings || {};
+    for (const ticker of index.tickers) {
+      // Try matching: raw ticker, with .SS/.SZ suffix, or yfinance form
+      const candidates = [ticker, ticker + ".SS", ticker + ".SZ", ticker + ".HK"];
+      let match = ratings[ticker];
+      if (!match) {
+        for (const c of candidates) {
+          if (ratings[c]) { match = ratings[c]; break; }
+        }
+      }
+      if (match) {
+        if (!enrichedMeta[ticker]) enrichedMeta[ticker] = {};
+        enrichedMeta[ticker].quant = {
+          composite: match.composite,
+          rating: match.rating,
+          factors: match.factors,
+        };
+      }
+    }
+  }
+
   return {
     source: index.source || "watchlist-scan-index",
     registry_file: index.registry_file ? "investment-strategy/macro/watchlist-registry.json" : null,
@@ -413,7 +437,7 @@ function buildHeatmap(index) {
     eligible_count: index.eligible_count || index.tickers.length,
     tickers: index.tickers,
     ticker_names: index.ticker_names || {},
-    ticker_meta: index.ticker_meta || {},
+    ticker_meta: enrichedMeta,
     dates,
     scores,
     statuses,
@@ -1263,7 +1287,14 @@ async function main() {
 
   // 5. Transform + merge
   const regime = buildRegime(thermometerHistory, overrides.macro_signals_fallback);
-  const heatmap = buildHeatmap(watchlistIndex);
+  // Load quant ratings for factor-level heatmap enrichment
+  let quantRatings = null;
+  try {
+    const homeDir = process.env.HOME || path.dirname(fileURLToPath(import.meta.url)).split("/.hermes")[0];
+    const qrPath = path.join(homeDir, "clawd/data/market/quant-ratings.json");
+    quantRatings = JSON.parse(await fs.readFile(qrPath, "utf-8"));
+  } catch { /* quant ratings not yet generated */ }
+  const heatmap = buildHeatmap(watchlistIndex, quantRatings);
   // Filter events to future only (consistent with buildPositions)
   const today = new Date().toISOString().slice(0, 10);
   const futureEvents = (events || []).filter((e) => (e.eventDate || "") >= today);
