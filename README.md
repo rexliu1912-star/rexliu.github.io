@@ -43,7 +43,7 @@ Every article, digest, signal, and builder log adds a layer. The goal is that si
 | Section | What It Is |
 |---------|-----------|
 | **Posts** (`/posts/`) | Long-form essays — crypto analysis, investment philosophy, life decisions, AI experiments |
-| **Lab** (`/lab/`) | A content lab: Daily Digest, SNEK Daily, Builder's Log, Projects, Visual Thinking experiments |
+| **Lab** (`/lab/`) | A content lab: Daily Digest, Builder's Log, Projects, Visual Thinking experiments |
 | **Travel** (`/travel/`) | Interactive map of our digital nomad journey since Oct 2025 |
 | **OS** (`/os/`) | Library (books, films, shows I've consumed), X Growth data |
 | **Visual Thinking** (`/lab/visual/`) | 4 interactive math experiments — crypto cycles, neural graphs, compound growth, Bezier paths — each connected to a philosophy |
@@ -100,7 +100,6 @@ src/
 │   ├── post/       # Long-form articles
 │   ├── digest/     # Weekly digests
 │   ├── builder-log/# Builder's log entries
-│   ├── snek-daily/ # SNEK ecosystem daily
 ├── components/     # UI components
 │   ├── blog/       # MagazineView, TagAnimation, ReadingProgress
 │   └── lab/        # VisualExperiments (interactive math)

@@ -2,8 +2,11 @@
 /**
  * build-portfolio-public.mjs
  *
- * Merges Convex structural data + hand-written overrides + local history files
- * into a single sanitized JSON for the public portfolio page.
+ * Merges Convex structural data (now including display metadata) + optional
+ * hand-written overrides (fallback) + local history files into a single
+ * sanitized JSON for the public portfolio page.
+ *
+ * Data priority: Convex field > overrides.json > default value.
  *
  * Runs via `prebuild` hook (and manually during development).
  *
@@ -729,19 +732,19 @@ function buildPositions(convexPositions, convexRules, convexEvents, overrides) {
       symbol: p.symbol,
       market: p.market,
       flag: flagMap[p.market] || "🏳️",
-      sector_tags_en: override.sector_tags_en || [],
-      sector_tags_zh: override.sector_tags_zh || [],
-      thesis_en: override.thesis_en || "",
-      thesis_zh: override.thesis_zh || "",
-      stage: override.stage ?? 7,
-      status_en: override.status_en || "Active",
-      status_zh: override.status_zh || "持有中",
-      conviction: override.conviction || "medium",
-      horizon: override.horizon || "long",
-      entry_year: override.entry_year ?? null,
-      layer: override.layer || null,
-      layer_label_en: override.layer_label_en || null,
-      layer_label_zh: override.layer_label_zh || null,
+      sector_tags_en: p.sectorTagsEn || override.sector_tags_en || [],
+      sector_tags_zh: p.sectorTagsZh || override.sector_tags_zh || [],
+      thesis_en: p.thesisEn || override.thesis_en || "",
+      thesis_zh: p.thesisZh || override.thesis_zh || "",
+      stage: p.stage ?? override.stage ?? 7,
+      status_en: p.statusEn || override.status_en || "Active",
+      status_zh: p.statusZh || override.status_zh || "持有中",
+      conviction: p.conviction || override.conviction || "medium",
+      horizon: p.horizon || override.horizon || "long",
+      entry_year: p.entryYear ?? override.entry_year ?? null,
+      layer: p.layer || override.layer || null,
+      layer_label_en: p.layerLabelEn || override.layer_label_en || null,
+      layer_label_zh: p.layerLabelZh || override.layer_label_zh || null,
       stop,
       target,
       next_event: nextEvent,
