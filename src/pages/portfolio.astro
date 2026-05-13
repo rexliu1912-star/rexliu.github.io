@@ -1767,12 +1767,11 @@ const stages = [
 					<div class="heatmap-toolbar" aria-label="Watchlist heatmap legend">
 						<div class="heatmap-legend">
 							<span class="legend-qlabel">Factor:</span>
-							<span class="legend-grade" style="background:#16a34a">A</span>
-							<span class="legend-grade" style="background:#2563eb">B</span>
-							<span class="legend-grade" style="background:#8b5cf6">C</span>
-							<span class="legend-grade" style="background:#d97706">C-</span>
-							<span class="legend-grade" style="background:#dc2626">D</span>
-							<span class="legend-grade legend-grade-na">—</span>
+						<span class="legend-grade" style="background:#7c3aed">A</span>
+						<span class="legend-grade" style="background:#a78bfa">B</span>
+						<span class="legend-grade" style="background:#d4c4fc;color:#3b1f7e">C</span>
+						<span class="legend-grade" style="background:#ede9fe;color:#3b1f7e">D</span>
+						<span class="legend-grade legend-grade-na">—</span>
 						</div>
 						<span class="heatmap-hint"><span class="lang-en">Sorted by quant score</span><span class="lang-zh">按量化评分排序</span></span>
 					</div>
@@ -4158,19 +4157,20 @@ const stages = [
 			transform: scale(1.12);
 			filter: saturate(1.2);
 		}
-		/* Grade colors — warm spectrum: green→blue→purple→orange→red */
-		.qb-App, .qb-A  { background: #16a34a; }
-		.qb-Am           { background: #22c55e; }
-		.qb-Bp           { background: #3b82f6; }
-		.qb-B            { background: #2563eb; }
-		.qb-Bm           { background: #6366f1; }
-		.qb-Cp           { background: #8b5cf6; }
-		.qb-C            { background: #a855f7; }
-		.qb-Cm           { background: #d97706; }
-		.qb-Dp           { background: #ea580c; }
-		.qb-D            { background: #dc2626; }
-		.qb-F            { background: #991b1b; }
-		.qb-na           { background: var(--p-border); color: var(--p-text-faint); opacity: 0.55; }
+		/* Grade colors — single-hue purple gradient (A+ darkest → D lightest) */
+		.qb-App          { background: #5b21b6; }
+		.qb-A            { background: #6d28d9; }
+		.qb-Am           { background: #7c3aed; }
+		.qb-Bp           { background: #8b5cf6; }
+		.qb-B            { background: #a78bfa; }
+		.qb-Bm           { background: #b794f4; }
+		.qb-Cp           { background: #c4b5fd; color: #3b1f7e; }
+		.qb-C            { background: #d4c4fc; color: #3b1f7e; }
+		.qb-Cm           { background: #ddd6fe; color: #3b1f7e; }
+		.qb-Dp           { background: #ede9fe; color: #3b1f7e; }
+		.qb-D            { background: #f5f3ff; color: #6b5a8e; }
+		.qb-F            { background: #f5f3ff; color: #a09ab5; }
+		.qb-na           { background: var(--p-border); color: var(--p-text-faint); opacity: 0.45; }
 		/* Grade legend in toolbar */
 		.legend-sep {
 			display: inline-block;
