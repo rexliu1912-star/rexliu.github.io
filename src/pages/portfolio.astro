@@ -1792,6 +1792,14 @@ const stages = [
 							<span class="legend-dot legend-watch"></span><span>3-4</span>
 							<span class="legend-dot legend-warm"></span><span>5-6</span>
 							<span class="legend-dot legend-hot"></span><span>7+</span>
+							<span class="legend-sep"></span>
+							<span class="legend-qlabel">Factor:</span>
+							<span class="legend-grade" style="background:#16a34a">A</span>
+							<span class="legend-grade" style="background:#2563eb">B</span>
+							<span class="legend-grade" style="background:#8b5cf6">C</span>
+							<span class="legend-grade" style="background:#d97706">C-</span>
+							<span class="legend-grade" style="background:#dc2626">D</span>
+							<span class="legend-grade legend-grade-na">—</span>
 						</div>
 						<span class="heatmap-hint"><span class="lang-en">Sorted by latest score</span><span class="lang-zh">按最新分排序</span></span>
 					</div>
@@ -1810,23 +1818,21 @@ const stages = [
 								<div class={`heatmap-date-label ${!shouldShowHeatmapDate(d, di, heatmap.dates.length) ? "is-muted-date" : ""}`}>{shouldShowHeatmapDate(d, di, heatmap.dates.length) ? d.slice(5) : ""}</div>
 							))}
 							<div class="heatmap-score-head"><span class="lang-en">Now</span><span class="lang-zh">当前</span></div>
-							{heatmapRows.map((row) => (
-								<>
-							<div class="heatmap-ticker-label" title={`${row.ticker} · ${row.displayName}`}>
-									<div class="heatmap-symbol-line">
-										<strong>{row.ticker}</strong>
-										{row.market && <em>{row.market}</em>}
-									</div>
-									<small>{row.displayName}</small>
-									{row.quant && row.quant.factors && (
-										<div class="quant-bar" title={`Val ${row.quant.factors.valuation?.grade} · Gro ${row.quant.factors.growth?.grade} · Pro ${row.quant.factors.profitability?.grade} · Mom ${row.quant.factors.momentum?.grade} · EPS ${row.quant.factors.epsRevisions?.grade} · Div ${row.quant.factors.dividend?.grade}`}>
-											{["valuation","growth","profitability","momentum","epsRevisions","dividend"].map((f: string) => {
-												const g = row.quant.factors[f]?.grade || "";
-												return <span class={`qb qb-${g.replace("+","p").replace("-","m")}`}>{f.slice(0,1).toUpperCase()}</span>;
-											})}
-										</div>
-									)}
-									</div>
+		{heatmapRows.map((row) => (
+							<>
+						<div class="heatmap-ticker-label" title={`${row.ticker} · ${row.displayName}`}>
+								<div class="heatmap-symbol-line">
+									<strong>{row.ticker}</strong>
+									{row.market && <em>{row.market}</em>}
+								</div>
+								<small>{row.displayName}</small>
+								<div class="quant-bar" title={row.quant?.factors ? `Val ${row.quant.factors.valuation?.grade || '—'} · Gro ${row.quant.factors.growth?.grade || '—'} · Pro ${row.quant.factors.profitability?.grade || '—'} · Mom ${row.quant.factors.momentum?.grade || '—'} · EPS ${row.quant.factors.epsRevisions?.grade || '—'} · Div ${row.quant.factors.dividend?.grade || '—'}` : `${row.ticker} — no factor data`}>
+									{["valuation","growth","profitability","momentum","epsRevisions","dividend"].map((f: string) => {
+										const g = row.quant?.factors?.[f]?.grade || "";
+										return <span class={`qb ${g ? `qb-${g.replace("+","p").replace("-","m")}` : "qb-na"}`}>{f.slice(0,1).toUpperCase()}</span>;
+									})}
+								</div>
+							</div>
 									{row.series.map(({ date, score }) => {
 										const title = `${row.ticker} · ${date} · ${score >= 0 ? `${score}/10` : "—"}`;
 										let bg = "transparent";
@@ -4055,13 +4061,10 @@ const stages = [
 
 		/* ── Heatmap ─────────────────────────────── */
 		.heatmap-panel {
-			border: 1px solid color-mix(in srgb, var(--p-border) 78%, #8953d1 22%);
-			background:
-				radial-gradient(circle at 18% 0%, rgba(137, 83, 209, 0.14), transparent 36%),
-				color-mix(in srgb, var(--p-card) 94%, transparent);
+			border: 1px solid var(--p-border);
+			background: var(--p-card);
 			border-radius: 1.35rem;
 			padding: 0.85rem;
-			box-shadow: 0 18px 60px rgba(15, 23, 42, 0.08);
 		}
 		.heatmap-toolbar {
 			display: flex;
@@ -4184,7 +4187,7 @@ const stages = [
 		}
 		.heatmap-cell {
 			min-width: 1.22rem;
-			height: 2.15rem;
+			min-height: 2.15rem;
 			border-radius: 0.35rem;
 			position: relative;
 			display: grid;
@@ -4256,6 +4259,36 @@ const stages = [
 		.qb-Dp           { background: #ea580c; }
 		.qb-D            { background: #dc2626; }
 		.qb-F            { background: #991b1b; }
+		.qb-na           { background: var(--p-border); color: var(--p-text-faint); opacity: 0.55; }
+		/* Grade legend in toolbar */
+		.legend-sep {
+			display: inline-block;
+			width: 1px;
+			height: 0.8rem;
+			background: var(--p-border);
+			margin: 0 0.25rem;
+			vertical-align: middle;
+		}
+		.legend-qlabel {
+			color: var(--p-text-faint);
+			margin-right: 0.1rem;
+		}
+		.legend-grade {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			width: 1rem;
+			height: 0.78rem;
+			border-radius: 3px;
+			font-size: 0.5rem;
+			font-weight: 800;
+			color: #fff;
+			line-height: 1;
+		}
+		.legend-grade-na {
+			background: var(--p-border);
+			color: var(--p-text-faint);
+		}
 		.heatmap-score-pill {
 			min-height: 2.15rem;
 			border-radius: 0.75rem;
