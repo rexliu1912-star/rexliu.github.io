@@ -213,46 +213,24 @@ function cleanHeatmapName(name: string): string {
 		.trim();
 }
 
-function scoreStatus(score: number): { en: string; zh: string; tone: string } {
-	if (score >= 7) return { en: "Upgrade", zh: "升级区", tone: "hot" };
-	if (score >= 5) return { en: "Radar", zh: "雷达区", tone: "warm" };
-	if (score >= 3) return { en: "Watch", zh: "观察", tone: "watch" };
-	return { en: "Cold", zh: "低温", tone: "cold" };
-}
-
-function shouldShowHeatmapDate(date: string, index: number, total: number): boolean {
-	if (index === 0 || index === total - 1) return true;
-	const day = new Date(`${date}T00:00:00Z`).getUTCDay();
-	return day === 1;
-}
-
 const heatmapRows = heatmap
 	? heatmap.tickers
 		.map((ticker, index) => {
-			const series = heatmap.dates.map((date, di) => ({
-				date,
-				score: heatmap.scores[di]?.[index] ?? -1,
-			}));
-			const valid = series.filter((p) => typeof p.score === "number" && p.score >= 0);
-			const latest = valid.at(-1);
-			const previous = valid.length > 1 ? valid.at(-2) : null;
-			const latestScore = latest?.score ?? -1;
-			const delta = latestScore >= 0 && previous ? latestScore - previous.score : 0;
 			const meta = heatmap.ticker_meta?.[ticker] || {};
 			const displayName = cleanHeatmapName(meta.name || heatmap.ticker_names[ticker] || ticker) || ticker;
 			return {
 				ticker,
 				index,
-				series,
-				latestScore,
-				delta,
 				displayName,
 				market: meta.market || "",
-				status: scoreStatus(latestScore),
 				quant: meta.quant || null,
 			};
 		})
-		.sort((a, b) => (b.latestScore - a.latestScore) || a.ticker.localeCompare(b.ticker))
+		.sort((a, b) => {
+			const sa = a.quant?.score ?? -1;
+			const sb = b.quant?.score ?? -1;
+			return sb - sa || a.ticker.localeCompare(b.ticker);
+		})
 	: [];
 
 // Signal ordering + labels for the regime 5×N history grid (used when
@@ -1775,24 +1753,19 @@ const stages = [
 				</h2>
 				<p class="portfolio-note">
 					<span class="lang-en">
-						Daily 10-point scan from Investment Strategy deep-research registry. Darker = closer to the 7-point upgrade threshold. Empty cells are days before the scan started.
+						Six-factor quant ratings for the watchlist. Each factor independently graded (A+~F), with composite score and Buy/Hold recommendation on the right. Green = strong, red = weak, gray = missing data.
 					</span>
 					<span class="lang-zh">
-						从 Investment Strategy 深度研究自动派生观察池，每日跑 10 分评分卡。颜色越深越接近 7 分升级门槛。空格是扫描启动前的日期。
+						六因子量化评分驱动的观察池。每个因子独立评级（A+~F），右侧为综合评分和买卖建议。颜色越绿越强，越红越弱，灰色为数据缺失。
 					</span>
 				</p>
-				<span class="section-summary"><span class="lang-en">{heatmap?.eligible_count || heatmap?.tickers.length || 0} active · {heatmap?.registry_count || heatmap?.tickers.length || 0} registry · {heatmap?.dates.length || 0}-day heatmap</span><span class="lang-zh">{heatmap?.eligible_count || heatmap?.tickers.length || 0} 只扫描 · {heatmap?.registry_count || heatmap?.tickers.length || 0} 只入池 · {heatmap?.dates.length || 0} 天热力图</span></span>
+				<span class="section-summary"><span class="lang-en">{heatmap?.tickers.length || 0} tickers · {heatmap?.registry_count || heatmap?.tickers.length || 0} registry</span><span class="lang-zh">{heatmap?.tickers.length || 0} 只观察 · {heatmap?.registry_count || heatmap?.tickers.length || 0} 只入池</span></span>
 			</header>
 
 			{heatmap && heatmapRows.length > 0 ? (
 				<div class="heatmap-panel">
 					<div class="heatmap-toolbar" aria-label="Watchlist heatmap legend">
 						<div class="heatmap-legend">
-							<span class="legend-dot legend-cold"></span><span>0-2</span>
-							<span class="legend-dot legend-watch"></span><span>3-4</span>
-							<span class="legend-dot legend-warm"></span><span>5-6</span>
-							<span class="legend-dot legend-hot"></span><span>7+</span>
-							<span class="legend-sep"></span>
 							<span class="legend-qlabel">Factor:</span>
 							<span class="legend-grade" style="background:#16a34a">A</span>
 							<span class="legend-grade" style="background:#2563eb">B</span>
@@ -1801,57 +1774,39 @@ const stages = [
 							<span class="legend-grade" style="background:#dc2626">D</span>
 							<span class="legend-grade legend-grade-na">—</span>
 						</div>
-						<span class="heatmap-hint"><span class="lang-en">Sorted by latest score</span><span class="lang-zh">按最新分排序</span></span>
+						<span class="heatmap-hint"><span class="lang-en">Sorted by quant score</span><span class="lang-zh">按量化评分排序</span></span>
 					</div>
 					<div class="heatmap-wrap">
-						<div
-							class="heatmap-grid"
-							style={`grid-template-columns: minmax(11rem, 16rem) repeat(${heatmap.dates.length}, minmax(1.22rem, 1fr)) minmax(3.2rem, 4rem)`}
-						>
+						<div class="heatmap-grid">
 							<div class="heatmap-corner">
-									<span>Ticker</span>
-									<div class="quant-legend">
-										<span>V估值</span><span>G成长</span><span>P利润</span><span>M动量</span><span>E盈利</span><span>D股息</span>
+								<span>Ticker</span>
+							</div>
+							<div class="heatmap-factor-head">
+								<span>估值</span><span>成长</span><span>利润</span><span>动量</span><span>盈利</span><span>股息</span>
+							</div>
+							<div class="heatmap-score-head"><span class="lang-en">Score</span><span class="lang-zh">评分</span></div>
+			{heatmapRows.map((row) => (
+							<div class="heatmap-row">
+								<div class="heatmap-ticker-label" title={`${row.ticker} · ${row.displayName}`}>
+									<div class="heatmap-symbol-line">
+										<strong>{row.ticker}</strong>
+										{row.market && <em>{row.market}</em>}
 									</div>
+									<small>{row.displayName}</small>
 								</div>
-							{heatmap.dates.map((d: string, di: number) => (
-								<div class={`heatmap-date-label ${!shouldShowHeatmapDate(d, di, heatmap.dates.length) ? "is-muted-date" : ""}`}>{shouldShowHeatmapDate(d, di, heatmap.dates.length) ? d.slice(5) : ""}</div>
-							))}
-							<div class="heatmap-score-head"><span class="lang-en">Now</span><span class="lang-zh">当前</span></div>
-		{heatmapRows.map((row) => (
-							<>
-						<div class="heatmap-ticker-label" title={`${row.ticker} · ${row.displayName}`}>
-								<div class="heatmap-symbol-line">
-									<strong>{row.ticker}</strong>
-									{row.market && <em>{row.market}</em>}
-								</div>
-								<small>{row.displayName}</small>
-								<div class="quant-bar" title={row.quant?.factors ? `Val ${row.quant.factors.valuation?.grade || '—'} · Gro ${row.quant.factors.growth?.grade || '—'} · Pro ${row.quant.factors.profitability?.grade || '—'} · Mom ${row.quant.factors.momentum?.grade || '—'} · EPS ${row.quant.factors.epsRevisions?.grade || '—'} · Div ${row.quant.factors.dividend?.grade || '—'}` : `${row.ticker} — no factor data`}>
-									{["valuation","growth","profitability","momentum","epsRevisions","dividend"].map((f: string) => {
+								<div class="heatmap-factor-bar" title={row.quant?.factors ? `估值 ${row.quant.factors.valuation?.grade || '—'} · 成长 ${row.quant.factors.growth?.grade || '—'} · 利润 ${row.quant.factors.profitability?.grade || '—'} · 动量 ${row.quant.factors.momentum?.grade || '—'} · 盈利 ${row.quant.factors.epsRevisions?.grade || '—'} · 股息 ${row.quant.factors.dividend?.grade || '—'}` : `${row.ticker} — no factor data`}>
+									{["valuation","growth","profitability","momentum","epsRevisions","dividend"].map((f) => {
 										const g = row.quant?.factors?.[f]?.grade || "";
-										return <span class={`qb ${g ? `qb-${g.replace("+","p").replace("-","m")}` : "qb-na"}`}>{f.slice(0,1).toUpperCase()}</span>;
+										const css = g ? `qb-${g.replace("+","p").replace("-","m")}` : "qb-na";
+										return <span class={`fb ${css}`}>{g || "—"}</span>;
 									})}
+								</div>
+								<div class={`heatmap-score-pill tone-${row.quant?.rating === "Buy" ? "buy" : row.quant?.rating === "Hold" ? "hold" : "cold"}`} title={row.quant?.rating ? `${row.quant.rating} · ${row.quant.score?.toFixed(1)}/5` : row.ticker}>
+									<strong>{row.quant?.rating ?? "—"}</strong>
+									<span>{row.quant?.score != null ? row.quant.score.toFixed(1) : "—"}</span>
 								</div>
 							</div>
-									{row.series.map(({ date, score }) => {
-										const title = `${row.ticker} · ${date} · ${score >= 0 ? `${score}/10` : "—"}`;
-										let bg = "transparent";
-										if (score >= 7) bg = `linear-gradient(135deg, rgba(245, 158, 11, 0.98), rgba(137, 83, 209, 0.96))`;
-										else if (score >= 5) bg = `rgba(137, 83, 209, ${0.46 + (score - 5) * 0.18})`;
-										else if (score >= 3) bg = `rgba(137, 83, 209, ${0.18 + (score - 3) * 0.08})`;
-										else if (score >= 0) bg = `rgba(137, 83, 209, 0.06)`;
-										return (
-											<div class={`heatmap-cell ${score < 0 ? "is-empty" : ""}`} style={`background: ${bg}`} title={title} aria-label={title}>
-												{score >= 7 && <span class="heatmap-cell-mark">★</span>}
-											</div>
-										);
-									})}
-							<div class={`heatmap-score-pill tone-${row.status.tone}`} title={row.quant?.rating ? `${row.quant.rating} · ${row.quant.score?.toFixed(1)}/6` : `${row.ticker} latest score`}>
-									<strong>{row.quant?.rating ?? (row.latestScore >= 0 ? row.latestScore : "—")}</strong>
-									<span>{row.quant?.score != null ? row.quant.score.toFixed(1) : (row.delta > 0 ? `+${row.delta}` : row.delta < 0 ? row.delta : row.status.zh)}</span>
-								</div>
-								</>
-							))}
+						))}
 						</div>
 					</div>
 				</div>
@@ -4081,17 +4036,6 @@ const stages = [
 			gap: 0.38rem;
 			flex-wrap: wrap;
 		}
-		.legend-dot {
-			width: 0.72rem;
-			height: 0.72rem;
-			border-radius: 3px;
-			display: inline-block;
-			border: 1px solid rgba(137, 83, 209, 0.18);
-		}
-		.legend-cold { background: rgba(137, 83, 209, 0.06); }
-		.legend-watch { background: rgba(137, 83, 209, 0.28); }
-		.legend-warm { background: rgba(137, 83, 209, 0.64); }
-		.legend-hot { background: linear-gradient(135deg, #f59e0b, #8953d1); }
 		.heatmap-hint {
 			white-space: nowrap;
 		}
@@ -4102,8 +4046,8 @@ const stages = [
 		}
 		.heatmap-grid {
 			display: grid;
+			grid-template-columns: minmax(9rem, 14rem) minmax(12rem, 1fr) minmax(3.8rem, 4.5rem);
 			gap: 4px;
-			min-width: min(100%, 54rem);
 			align-items: stretch;
 		}
 		.heatmap-corner,
@@ -4124,21 +4068,23 @@ const stages = [
 		.heatmap-score-head {
 			place-items: center;
 		}
-		.heatmap-date-label {
-			font-size: 0.62rem;
-			font-variant-numeric: tabular-nums;
-			color: color-mix(in srgb, var(--p-text-faint) 82%, var(--p-text) 18%);
-			text-align: center;
-			writing-mode: vertical-rl;
-			transform: rotate(180deg);
-			padding: 0.28rem 0 0.18rem;
-			min-width: 1.22rem;
-			height: 2.65rem;
-			line-height: 1;
-			opacity: 0.9;
+		.heatmap-factor-head {
+			position: sticky;
+			top: 0;
+			z-index: 2;
+			display: grid;
+			grid-template-columns: repeat(6, 1fr);
+			gap: 3px;
+			place-items: center end;
+			padding: 0 0 0.2rem;
+			font-size: 0.58rem;
+			font-weight: 600;
+			letter-spacing: 0.04em;
+			color: var(--p-text-faint);
+			background: color-mix(in srgb, var(--p-card) 96%, transparent);
 		}
-		.heatmap-date-label.is-muted-date {
-			opacity: 0;
+		.heatmap-factor-head span {
+			opacity: 0.7;
 		}
 		.heatmap-ticker-label {
 			position: sticky;
@@ -4185,67 +4131,32 @@ const stages = [
 			text-overflow: ellipsis;
 			white-space: nowrap;
 		}
-		.heatmap-cell {
-			min-width: 1.22rem;
-			min-height: 2.15rem;
-			border-radius: 0.35rem;
-			position: relative;
+		/* Factor bar — 6 grade pills per ticker row */
+		.heatmap-row {
+			display: contents;
+		}
+		.heatmap-factor-bar {
 			display: grid;
-			place-items: center;
-			border: 1px solid rgba(137, 83, 209, 0.08);
-			box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
-			transition: transform 0.16s ease, filter 0.16s ease, border-color 0.16s ease;
-		}
-		.heatmap-cell.is-empty {
-			background: transparent !important;
-			border-style: dashed;
-			border-color: color-mix(in srgb, var(--p-border) 60%, transparent);
-			box-shadow: none;
-			opacity: 0.42;
-		}
-		.heatmap-cell:hover {
-			transform: translateY(-1px) scale(1.08);
-			filter: saturate(1.18);
-			border-color: rgba(137, 83, 209, 0.45);
-			z-index: 3;
-		}
-		.heatmap-cell-mark {
-			color: #fff;
-			font-size: 0.62rem;
-			line-height: 1;
-			text-shadow: 0 1px 6px rgba(0,0,0,0.28);
-		}
-		/* Quant factor bar — 6 pill-shaped factor badges */
-		.quant-bar {
-			display: flex;
+			grid-template-columns: repeat(6, 1fr);
 			gap: 3px;
-			margin-top: 4px;
+			align-items: center;
 		}
-		.quant-bar .qb {
+		.heatmap-factor-bar .fb {
 			display: inline-flex;
 			align-items: center;
 			justify-content: center;
-			width: 22px;
-			height: 16px;
-			border-radius: 8px;
-			font-size: 0.55rem;
+			min-height: 1.65rem;
+			border-radius: 0.35rem;
+			font-size: 0.6rem;
 			font-weight: 800;
 			color: #fff;
 			line-height: 1;
 			letter-spacing: 0.02em;
-			box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+			transition: transform 0.14s ease, filter 0.14s ease;
 		}
-		/* Legend above heatmap */
-		.quant-legend {
-			display: flex;
-			gap: 8px;
-			padding: 6px 0 4px 0;
-			font-size: 0.6rem;
-			color: var(--p-muted);
-			letter-spacing: 0.03em;
-		}
-		.quant-legend span {
-			opacity: 0.7;
+		.heatmap-factor-bar .fb:hover {
+			transform: scale(1.12);
+			filter: saturate(1.2);
 		}
 		/* Grade colors — warm spectrum: green→blue→purple→orange→red */
 		.qb-App, .qb-A  { background: #16a34a; }
@@ -4310,14 +4221,16 @@ const stages = [
 			font-weight: 700;
 			color: var(--p-text-faint);
 		}
-		.heatmap-score-pill.tone-warm {
-			border-color: rgba(137, 83, 209, 0.38);
-			background: rgba(137, 83, 209, 0.14);
+		.heatmap-score-pill.tone-buy {
+			border-color: rgba(22, 163, 74, 0.35);
+			background: rgba(22, 163, 74, 0.08);
 		}
-		.heatmap-score-pill.tone-hot {
-			border-color: rgba(245, 158, 11, 0.58);
-			background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(137, 83, 209, 0.2));
+		.heatmap-score-pill.tone-buy strong { color: #16a34a; }
+		.heatmap-score-pill.tone-hold {
+			border-color: rgba(139, 92, 246, 0.35);
+			background: rgba(139, 92, 246, 0.08);
 		}
+		.heatmap-score-pill.tone-hold strong { color: #8b5cf6; }
 		@media (max-width: 720px) {
 			.heatmap-panel {
 				padding: 0.72rem;
@@ -4335,7 +4248,6 @@ const stages = [
 			.heatmap-ticker-label {
 				min-height: 2rem;
 			}
-			.heatmap-cell,
 			.heatmap-score-pill {
 				height: 2rem;
 				min-height: 2rem;
@@ -5776,31 +5688,20 @@ const stages = [
 		animation: light-pulse 2.5s ease-in-out infinite;
 	}
 
-	/* ── 3. Heatmap: cell stagger + ticker row hover ─────────── */
-	@keyframes heatmap-cell-in {
-		from { opacity: 0; transform: scale(0.5); }
+	/* ── 3. Heatmap: factor pill stagger + ticker row hover ──── */
+	@keyframes fb-pop {
+		from { opacity: 0; transform: scale(0.6); }
 		to   { opacity: 1; transform: scale(1); }
 	}
-	.heatmap-wrap.is-visible .heatmap-cell {
+	.heatmap-wrap.is-visible .fb {
 		opacity: 0;
-		animation: heatmap-cell-in 0.3s cubic-bezier(.4,0,.2,1) forwards;
+		animation: fb-pop 0.25s cubic-bezier(.4,0,.2,1) forwards;
 	}
-	/* Stagger by column position using nth-child on the grid */
-	.heatmap-wrap.is-visible .heatmap-cell:nth-child(1)  { animation-delay: 50ms; }
-	.heatmap-wrap.is-visible .heatmap-cell:nth-child(2)  { animation-delay: 70ms; }
-	.heatmap-wrap.is-visible .heatmap-cell:nth-child(3)  { animation-delay: 90ms; }
-	.heatmap-wrap.is-visible .heatmap-cell:nth-child(4)  { animation-delay: 110ms; }
-	.heatmap-wrap.is-visible .heatmap-cell:nth-child(5)  { animation-delay: 130ms; }
-	.heatmap-wrap.is-visible .heatmap-cell:nth-child(6)  { animation-delay: 150ms; }
-	.heatmap-wrap.is-visible .heatmap-cell:nth-child(7)  { animation-delay: 170ms; }
-	.heatmap-wrap.is-visible .heatmap-cell:nth-child(8)  { animation-delay: 190ms; }
-	.heatmap-wrap.is-visible .heatmap-cell:nth-child(9)  { animation-delay: 210ms; }
-	.heatmap-wrap.is-visible .heatmap-cell:nth-child(10) { animation-delay: 230ms; }
-	.heatmap-wrap.is-visible .heatmap-cell:nth-child(11) { animation-delay: 250ms; }
-	.heatmap-wrap.is-visible .heatmap-cell:nth-child(12) { animation-delay: 270ms; }
-	.heatmap-wrap.is-visible .heatmap-cell:nth-child(13) { animation-delay: 290ms; }
-	.heatmap-wrap.is-visible .heatmap-cell:nth-child(14) { animation-delay: 310ms; }
-	.heatmap-wrap.is-visible .heatmap-cell:nth-child(15) { animation-delay: 330ms; }
+	.heatmap-wrap.is-visible .heatmap-row:nth-child(1) .fb { animation-delay: 40ms; }
+	.heatmap-wrap.is-visible .heatmap-row:nth-child(2) .fb { animation-delay: 80ms; }
+	.heatmap-wrap.is-visible .heatmap-row:nth-child(3) .fb { animation-delay: 120ms; }
+	.heatmap-wrap.is-visible .heatmap-row:nth-child(4) .fb { animation-delay: 160ms; }
+	.heatmap-wrap.is-visible .heatmap-row:nth-child(5) .fb { animation-delay: 200ms; }
 
 	/* Heatmap ticker row hover highlight */
 	.heatmap-grid {
@@ -5812,14 +5713,6 @@ const stages = [
 	.heatmap-ticker-label:hover {
 		color: #8953d1;
 		transform: translateX(3px);
-	}
-	/* Star cells: subtle pulse */
-	@keyframes star-pulse {
-		0%, 100% { opacity: 1; }
-		50%      { opacity: 0.5; }
-	}
-	.heatmap-cell-mark {
-		animation: star-pulse 2s ease-in-out infinite;
 	}
 
 	/* ── 4. Methodology: stage cards stagger + connector ─────── */
