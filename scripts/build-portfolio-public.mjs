@@ -421,11 +421,17 @@ function buildHeatmap(index, quantRatings) {
       }
       if (match) {
         if (!enrichedMeta[ticker]) enrichedMeta[ticker] = {};
+        // Normalize factor keys: backend uses dividendSafety, frontend expects dividend
+        const factors = { ...match.factors };
+        if (factors.dividendSafety && !factors.dividend) {
+          factors.dividend = factors.dividendSafety;
+          delete factors.dividendSafety;
+        }
         enrichedMeta[ticker].quant = {
           composite: match.composite,
           rating: match.rating,
           score: match.composite,
-          factors: match.factors,
+          factors,
         };
       }
     }
