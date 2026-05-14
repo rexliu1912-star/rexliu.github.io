@@ -1297,8 +1297,7 @@ async function main() {
   // Load quant ratings for factor-level heatmap enrichment
   let quantRatings = null;
   try {
-    const homeDir = process.env.HOME || path.dirname(fileURLToPath(import.meta.url)).split("/.hermes")[0];
-    const qrPath = path.join(homeDir, "clawd/data/market/quant-ratings.json");
+    const qrPath = path.join(MARKET_DATA_DIR, "quant-ratings.json");
     quantRatings = JSON.parse(await fs.readFile(qrPath, "utf-8"));
   } catch { /* quant ratings not yet generated */ }
   const heatmap = buildHeatmap(watchlistIndex, quantRatings);
