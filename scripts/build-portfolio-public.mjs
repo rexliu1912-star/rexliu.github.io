@@ -1180,63 +1180,9 @@ async function main() {
   // Prices are not real-time enough for Active Positions cards; keep price data
   // inside the Crypto Intelligence timeseries panel instead of attaching it here.
 
-  // Enrich crypto positions with per-symbol news from SNEK Daily
-  if (crypto?.positions) {
-    try {
-      const snekDailyDir = path.join(ROOT, "src/content/snek-daily");
-      const mdFiles = (await fs.readdir(snekDailyDir))
-        .filter((f) => f.endsWith(".md"))
-        .sort()
-        .reverse();
-      if (mdFiles.length > 0) {
-        const raw = await fs.readFile(path.join(snekDailyDir, mdFiles[0]), "utf-8");
-        const body = raw.replace(/^---[\s\S]*?---\s*/, "");
-
-        // Parse BTC: top headline from 🗞 BTC 要闻 section
-        const btcNewsMatch = body.match(/##\s*🗞\s*BTC\s*要闻\s*\n([\s\S]*?)(?=\n##|\n---|\Z)/);
-        const btcHeadlines = btcNewsMatch
-          ? btcNewsMatch[1].match(/•\s*\[([^\]]+)\]/g)?.map(m => m.replace(/^•\s*\[/, '').replace(/\].*/, ''))
-          : null;
-        // Parse SNEK: top headline from 🐍 SNEK 社区 section (link or plain text)
-        const snekNewsMatch = body.match(/##\s*🐍\s*SNEK\s*社区\s*\n([\s\S]*?)(?=\n##|\n---|\Z)/);
-        let snekHeadlines = null;
-        if (snekNewsMatch) {
-          // Try linked headlines first: • @handle: [text](url) or • [text](url)
-          snekHeadlines = snekNewsMatch[1].match(/•\s*(?:@\w+:?\s*)?\[([^\]]+)\]/g)?.map(m => m.replace(/^.*\[/, '').replace(/\].*/, ''));
-          // Fallback: plain text bullet lines (any non-empty)
-          if (!snekHeadlines?.length) {
-            snekHeadlines = snekNewsMatch[1].match(/(?:^|\n)\s*[-•]\s+([^\n]+)/g)?.map(m => m.replace(/^[-•\s]+/, '').trim()).filter(s => s.length > 3 && !s.startsWith('📎') && !s.startsWith('🔗'));
-          }
-        }
-
-        // BTC news — use first headline, determine sentiment from keywords
-        if (btcHeadlines?.length > 0) {
-          const headline = btcHeadlines[0];
-          const pos = /大涨|突破|流入|牛市|新高|rally|surge|inflow|bull/i;
-          const neg = /大跌|流出|暴跌|crash|outflow|bear|dump/i;
-          const sent = pos.test(headline) ? "positive" : neg.test(headline) ? "negative" : "neutral";
-          const btcPos = crypto.positions.find((p) => p.symbol === "BTC");
-          if (btcPos) btcPos.news = { summary: headline, sentiment: sent };
-        }
-
-        // SNEK news — use first headline
-        if (snekHeadlines?.length > 0) {
-          const headline = snekHeadlines[0];
-          const pos = /上涨|拉升|突破|增长|阳线|bull|surge|pump|新高/i;
-          const neg = /下跌|暴跌|崩盘|crash|dump|bear/i;
-          const sent = pos.test(headline) ? "positive" : neg.test(headline) ? "negative" : "neutral";
-          const snekPos = crypto.positions.find((p) => p.symbol === "SNEK");
-          if (snekPos) snekPos.news = { summary: headline, sentiment: sent };
-        }
-
-        const btcNews = crypto.positions.find((p) => p.symbol === "BTC")?.news?.summary;
-        const snekNews = crypto.positions.find((p) => p.symbol === "SNEK")?.news?.summary;
-        if (btcNews || snekNews) console.log(`   ✅ Crypto news: BTC="${btcNews || "—"}" SNEK="${snekNews || "—"}"`);
-      }
-    } catch (e) {
-      console.warn(`   ⚠️  SNEK Daily news enrichment skipped: ${e.message}`);
-    }
-  }
+  // SNEK Daily website content was retired: the frontend no longer renders
+  // src/content/snek-daily, and the daily job now writes local archives + Telegram only.
+  // Do not enrich public portfolio data from stale website markdown files.
 
   // Build crypto portfolio value index
   const cryptoPortfolioHistory = await buildCryptoPortfolioHistory();
