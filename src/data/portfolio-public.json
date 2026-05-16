@@ -1,18 +1,13 @@
 {
-  "generated_at": "2026-05-16T23:00:48.385Z",
+  "generated_at": "2026-05-16T23:52:38.265Z",
   "regime": {
     "current": {
       "label": "防御期",
       "label_en": "Defensive",
       "aggression": "低",
       "green_count": 1,
-      "total_signals": 4,
+      "total_signals": 3,
       "signals": {
-        "tnx": {
-          "label": "10Y UST",
-          "value": "4.6%",
-          "light": "red"
-        },
         "dxy": {
           "label": "DXY",
           "value": "99.27",
@@ -1130,6 +1125,39 @@
             "status": null
           }
         }
+      },
+      {
+        "date": "2026-05-17",
+        "regime": "防御期",
+        "green_count": 1,
+        "aggression": "低",
+        "vix": 18.43,
+        "lights": {
+          "dxy": "green",
+          "vix": "yellow",
+          "naaim": "yellow"
+        },
+        "signalDetails": {
+          "dxy": {
+            "value": 99.27,
+            "light": "green",
+            "status": null
+          },
+          "vix": {
+            "value": 18.43,
+            "light": "yellow",
+            "status": null
+          },
+          "naaim": {
+            "value": 77.34,
+            "light": "yellow",
+            "status": null
+          },
+          "policy": {
+            "light": "gray",
+            "status": null
+          }
+        }
       }
     ]
   },
@@ -1482,12 +1510,12 @@
       "layer_label_zh": "AI 算力",
       "stop": {
         "type": "stop_loss",
-        "level_pct_from_current": "-18.6%",
-        "severity": "yellow",
+        "level_pct_from_current": "-26.7%",
+        "severity": "gray",
         "description": "AAPL 止损线 ~15% below avg cost"
       },
       "target": {
-        "price_pct_from_current": "+14.7%",
+        "price_pct_from_current": "+3.3%",
         "description": "AAPL test target",
         "optimistic_price": null
       },
@@ -1497,21 +1525,21 @@
         "urgency": 2
       },
       "news": {
-        "summary": "Reuters/Yahoo: Q2 revenue $111.18B, EPS $2.01 beat; Q3 revenue growth guide 14%-17%, $100B buyback, memory cost pressure…",
+        "summary": "Revenue beat, June guidance 14%-17% growth vs 9.5% est; services strong, margin resilient despite memory cost concerns.",
         "sentiment": "positive",
         "items": [
           {
-            "title": "Apple shares rise as iPhone 17 and MacBook Neo drive forecast",
-            "snippet": "Reuters/Yahoo: Q2 revenue $111.18B, EPS $2.01 beat; Q3 revenue growth guide 14%-17%, $100B buyback, memory cost pressure noted."
+            "title": "Apple stock rallies on Q2 earnings and Q3 guidance",
+            "snippet": "Revenue beat, June guidance 14%-17% growth vs 9.5% est; services strong, margin resilient despite memory cost concerns."
           },
           {
-            "title": "Apple stock rallies on Q2 earnings and Q3 guidance",
-            "snippet": "CNBC: shares rose >3%; services revenue beat, gross margin 49.3%, CEO transition to John Ternus in September remains focus."
+            "title": "Apple R&D spending climbs to 10% of revenue on AI investments",
+            "snippet": "R&D reached 10.3% of revenue as Apple pushes AI work and WWDC becomes next catalyst."
           }
         ]
       },
       "price": 300.23,
-      "daily_change_pct": 0.68
+      "daily_change_pct": 0
     },
     {
       "symbol": "NVDA",
@@ -1538,7 +1566,12 @@
       "layer": "core",
       "layer_label_en": "Core",
       "layer_label_zh": "核心持仓",
-      "stop": null,
+      "stop": {
+        "type": "stop_loss",
+        "level_pct_from_current": "-20.2%",
+        "severity": "gray",
+        "description": "NVIDIA Corporation stop loss ~18% below cost"
+      },
       "target": null,
       "next_event": {
         "date": "2026-05-21",
@@ -1546,21 +1579,21 @@
         "urgency": 2
       },
       "news": {
-        "summary": "Yahoo: UBS raised PT to $275 from $245; expects Q1 revenue around $81B and Q2 guide $90B-$91B.",
+        "summary": "NVDA rallied over 40% in six weeks into earnings; hyperscaler AI capex remains central demand driver.",
         "sentiment": "positive",
         "items": [
           {
-            "title": "Nvidia stock soars as UBS sees massive AI demand surge ahead",
-            "snippet": "Yahoo: UBS raised PT to $275 from $245; expects Q1 revenue around $81B and Q2 guide $90B-$91B."
+            "title": "Nvidia closes out earnings season as expectations stay high",
+            "snippet": "NVDA rallied over 40% in six weeks into earnings; hyperscaler AI capex remains central demand driver."
           },
           {
-            "title": "Nvidia hits record as AI trade accelerates",
-            "snippet": "Yahoo: record close around $219, market cap ~$5.33T; May 20 earnings a key test."
+            "title": "Nvidia reports earnings Wednesday; traders expect 7% move",
+            "snippet": "Options imply big post-earnings move; analysts expect record revenue and high margins."
           }
         ]
       },
       "price": 225.32,
-      "daily_change_pct": -4.42
+      "daily_change_pct": 0
     },
     {
       "symbol": "OUST",
@@ -1587,9 +1620,14 @@
       "layer": "satellite",
       "layer_label_en": "Satellite",
       "layer_label_zh": "卫星持仓",
-      "stop": null,
+      "stop": {
+        "type": "stop_loss",
+        "level_pct_from_current": "-32.2%",
+        "severity": "gray",
+        "description": "OUST 止损 $23.63（成本$31.50 -25%，研报原设$18基于$24-26入场）"
+      },
       "target": {
-        "price_pct_from_current": "+27.0%",
+        "price_pct_from_current": "+14.7%",
         "description": "OUST 目标价 $XX,XXX（研报目标，验证连续营收增长+Rev8量产+EBITDA改善后可上修）",
         "optimistic_price": null
       },
@@ -1599,20 +1637,21 @@
         "urgency": 2
       },
       "news": {
-        "summary": "BusinessWire: revenue $49M +49% YoY, product revenue +55%, Q2 guide $49.5M-$52.5M.",
+        "summary": "Revenue $49M +49% YoY, product revenue +55%, Q2 guide $49.5M-$52.5M.",
         "sentiment": "neutral",
         "items": [
           {
             "title": "Ouster announces Q1 2026 results",
-            "snippet": "BusinessWire: revenue $49M +49% YoY, product revenue +55%, Q2 guide $49.5M-$52.5M."
+            "snippet": "Revenue $49M +49% YoY, product revenue +55%, Q2 guide $49.5M-$52.5M."
           },
           {
-            "title": "Ouster soars on Rev8 lidar/NVIDIA DRIVE news",
-            "snippet": "Yahoo: Rev8 OS digital lidar qualified for Nvidia DRIVE Hyperion platform; shares jumped 26%."
+            "title": "Ouster soars on Nvidia DRIVE Hyperion sensor qualification",
+            "snippet": "Rev8 OS qualified for NVIDIA DRIVE Hyperion platform, supporting AV developer adoption."
           }
         ]
       },
-      "price": 34.86
+      "price": 34.86,
+      "daily_change_pct": 0
     },
     {
       "symbol": "POET",
@@ -1639,9 +1678,14 @@
       "layer": "satellite",
       "layer_label_en": "Satellite",
       "layer_label_zh": "卫星持仓",
-      "stop": null,
+      "stop": {
+        "type": "stop_loss",
+        "level_pct_from_current": "-12.8%",
+        "severity": "yellow",
+        "description": "POET 止损 $13.92（成本$18.56 -25%，研报原设$6.50基于$9-11入场）"
+      },
       "target": {
-        "price_pct_from_current": "+61.6%",
+        "price_pct_from_current": "+87.9%",
         "description": "POET 目标价 $XX,XXX（研报目标，验证光引擎量产+客户拓展后可上修）",
         "optimistic_price": null
       },
@@ -1651,20 +1695,21 @@
         "urgency": 3
       },
       "news": {
-        "summary": "Investing: Q1 revenue $503k vs $2.2M consensus, adjusted EPS -$0.08; minimal product sales while commercializing.",
+        "summary": "Initial $50M order could scale to $500M over five years; stock soared to all-time high.",
         "sentiment": "negative",
         "items": [
           {
-            "title": "POET Technologies stock falls on Q1 revenue miss",
-            "snippet": "Investing: Q1 revenue $503k vs $2.2M consensus, adjusted EPS -$0.08; minimal product sales while commercializing."
+            "title": "POET bags $500M potential Lumilens deal",
+            "snippet": "Initial $50M order could scale to $500M over five years; stock soared to all-time high."
           },
           {
-            "title": "POET and Lumilens announce AI optical partnership",
-            "snippet": "Company: $50M initial PO for EOI engines, potential $500M+ over five years; samples expected late 2026, ramp in 2027."
+            "title": "POET reports Q1 2026 results",
+            "snippet": "Revenue up 202% YoY to $503k, net loss $12.3M; Lumilens/ON/Lessengers cited as demand validation."
           }
         ]
       },
-      "price": 15.97
+      "price": 15.97,
+      "daily_change_pct": 0
     },
     {
       "symbol": "QQQ",
@@ -1691,25 +1736,30 @@
       "layer": "satellite",
       "layer_label_en": "Satellite",
       "layer_label_zh": "卫星配置",
-      "stop": null,
+      "stop": {
+        "type": "stop_loss",
+        "level_pct_from_current": "-17.7%",
+        "severity": "yellow",
+        "description": "Invesco QQQ Trust stop loss ~18% below cost"
+      },
       "target": null,
       "next_event": null,
       "news": {
-        "summary": "Benzinga: investors rushed back to US stocks after March outflows; Nasdaq 100 had strongest April since 2002.",
+        "summary": "Investors rushed back into US stocks after March outflows; April Nasdaq-100 rally was strongest since 2002.",
         "sentiment": "positive",
         "items": [
           {
             "title": "QQQ records third-largest 21-day inflows ever",
-            "snippet": "Benzinga: investors rushed back to US stocks after March outflows; Nasdaq 100 had strongest April since 2002."
+            "snippet": "Investors rushed back into US stocks after March outflows; April Nasdaq-100 rally was strongest since 2002."
           },
           {
-            "title": "Inflation jumps to 3.8%, kills Fed rate-cut hopes",
-            "snippet": "Benzinga: hot CPI and higher yields are a headwind for rate-sensitive growth/QQQ names."
+            "title": "QQQ surges 15% in April",
+            "snippet": "Large-cap tech/growth appetite returned, pushing QQQ toward strongest monthly gain since 2002."
           }
         ]
       },
       "price": 708.93,
-      "daily_change_pct": -1.51
+      "daily_change_pct": 0
     },
     {
       "symbol": "SMH",
@@ -1736,25 +1786,30 @@
       "layer": "satellite",
       "layer_label_en": "Satellite",
       "layer_label_zh": "卫星配置",
-      "stop": null,
+      "stop": {
+        "type": "stop_loss",
+        "level_pct_from_current": "-15.6%",
+        "severity": "yellow",
+        "description": "VanEck Semiconductor ETF stop loss ~18% below cost"
+      },
       "target": null,
       "next_event": null,
       "news": {
-        "summary": "TS2: AMD outlook and AI hardware interest support rebound; concentrated top-holding risk remains.",
-        "sentiment": "positive",
+        "summary": "SMH up sharply over past month/year-to-date, offering broad chip exposure led by Nvidia/TSMC/Broadcom.",
+        "sentiment": "neutral",
         "items": [
           {
-            "title": "SMH ETF back in AI chip rally; risk could bite",
-            "snippet": "TS2: AMD outlook and AI hardware interest support rebound; concentrated top-holding risk remains."
+            "title": "Selling pressure in chip stocks is easing; SMH rebound",
+            "snippet": "SMH up sharply over past month/year-to-date, offering broad chip exposure led by Nvidia/TSMC/Broadcom."
           },
           {
-            "title": "SMH returned over 120% in one year; still a buy?",
-            "snippet": "Motley Fool: semiconductor equipment sales and hyperscaler capex are catalysts, but valuation/growth slowdown risk remains."
+            "title": "SMH back in AI chip rally, but concentrated risk remains",
+            "snippet": "AI hardware demand supports rally, but top-holding concentration and demand risk remain."
           }
         ]
       },
       "price": 556.34,
-      "daily_change_pct": -3.8
+      "daily_change_pct": 0
     },
     {
       "symbol": "VGT",
@@ -1781,25 +1836,30 @@
       "layer": "satellite",
       "layer_label_en": "Satellite",
       "layer_label_zh": "卫星配置",
-      "stop": null,
+      "stop": {
+        "type": "stop_loss",
+        "level_pct_from_current": "-18.0%",
+        "severity": "yellow",
+        "description": "Vanguard Information Technology ETF stop loss ~18% below cost"
+      },
       "target": null,
       "next_event": null,
       "news": {
-        "summary": "VGT split effective Apr 21; holdings concentrated in Nvidia, Apple, Microsoft; split does not change fund economics.",
-        "sentiment": "positive",
+        "summary": "Split took effect Apr 21; lower per-share price, no change to fund economics; top weights include NVDA, AAPL, MSFT.",
+        "sentiment": "negative",
         "items": [
           {
             "title": "Vanguard completed 8-for-1 split on VGT",
-            "snippet": "VGT split effective Apr 21; holdings concentrated in Nvidia, Apple, Microsoft; split does not change fund economics."
+            "snippet": "Split took effect Apr 21; lower per-share price, no change to fund economics; top weights include NVDA, AAPL, MSFT."
           },
           {
-            "title": "VGT may not be best AI ETF if seeking full AI exposure",
-            "snippet": "Motley Fool: VGT excludes Amazon, Alphabet, Meta because of sector classifications; concentrated in IT names."
+            "title": "VGT short interest grew in April",
+            "snippet": "Short interest rose 23.1% by Apr 15 while ETF traded near highs; days-to-cover remained low."
           }
         ]
       },
       "price": 113.31,
-      "daily_change_pct": -1.63
+      "daily_change_pct": 0
     }
   ],
   "crypto": {
@@ -1821,16 +1881,16 @@
         "strategy_en": "Bottom Tracker",
         "strategy_zh": "底部追踪",
         "news": {
-          "summary": "CoinDesk: ETF outflows, hawkish Fed, $82k options gamma cluster create resistance; long-term buyers rising but losses st…",
-          "sentiment": "neutral",
+          "summary": "Bitfinex flags ETF outflows, higher-for-longer rates, $82k gamma zone, and weak institutional demand.",
+          "sentiment": "negative",
           "items": [
             {
               "title": "Bitcoin recent climb to $80k may be temporary liquidity squeeze",
-              "snippet": "CoinDesk: ETF outflows, hawkish Fed, $82k options gamma cluster create resistance; long-term buyers rising but losses still high."
+              "snippet": "Bitfinex flags ETF outflows, higher-for-longer rates, $82k gamma zone, and weak institutional demand."
             },
             {
-              "title": "Bitcoin slips back to $81K after CLARITY Act optimism",
-              "snippet": "Economic Times: regulatory progress helped BTC test $82k, then pullback; institutional flows still key."
+              "title": "Bitcoin shrugs off CLARITY gains as institutions sell amid surging Treasury yields",
+              "snippet": "BTC struggles above $80k as institutions sell ETFs; CLARITY Act progress offset by rising yields."
             }
           ]
         }
@@ -1853,16 +1913,16 @@
         "strategy_en": "Signal-Driven",
         "strategy_zh": "信号驱动",
         "news": {
-          "summary": "IOHK: collaboration to advance Cardano ecosystem; SNEK described as leading Cardano token after ADA, with >40k holders a…",
+          "summary": "IO partnered with SNEK to advance Cardano; SNEK cited as largest Cardano token after ADA with broad integrations.",
           "sentiment": "neutral",
           "items": [
             {
               "title": "Input Output and SNEK forge strategic collaboration",
-              "snippet": "IOHK: collaboration to advance Cardano ecosystem; SNEK described as leading Cardano token after ADA, with >40k holders and >60 dApp integrations."
+              "snippet": "IO partnered with SNEK to advance Cardano; SNEK cited as largest Cardano token after ADA with broad integrations."
             },
             {
-              "title": "Cardano backs international exchange push for ADA and SNEK",
-              "snippet": "Crypto News Flash: Cardano Foundation voted yes on 5M ADA loan proposal for global exchange listings, with transparency conditions."
+              "title": "Cardano Foundation backs ADA and SNEK exchange-listing loan proposal",
+              "snippet": "Foundation voted YES on a ₳5M loan proposal for international listing push, with transparency/accountability conditions."
             }
           ]
         }
@@ -1870,7 +1930,7 @@
     ]
   },
   "crypto_monitor": {
-    "generated_at": "2026-05-17T06:35:55.487957+08:00",
+    "generated_at": "2026-05-17T07:49:31.126477+08:00",
     "data_freshness": {
       "market_data_available": true,
       "bottom_tracker_available": true,
@@ -1930,8 +1990,8 @@
       "signals": []
     },
     "bottom_tracker": {
-      "score": 51.8,
-      "status": "观望",
+      "score": 59.3,
+      "status": "底部特征显现，可关注",
       "indicators": [
         {
           "name_zh": "市场极度恐慌",
@@ -1949,9 +2009,9 @@
           "name_en": "Miner Capitulation",
           "status": "red",
           "score": 20,
-          "detail_en": "Drawdown: -18.5%",
-          "detail_zh": "回撤: -18.5%",
-          "delta": 0,
+          "detail_en": "Drawdown: -19.3%",
+          "detail_zh": "回撤: -19.3%",
+          "delta": 0.2,
           "desc_en": "BTC drawdown from ATH + miner revenue stress",
           "desc_zh": "BTC 距高点回撤 + 矿工收入压力"
         },
@@ -1980,11 +2040,11 @@
         {
           "name_zh": "场外资金储备",
           "name_en": "OTC Reserve (SSR)",
-          "status": "yellow",
-          "score": 50,
-          "detail_en": "，",
-          "detail_zh": "数据获取失败，使用默认值",
-          "delta": null,
+          "status": "green",
+          "score": 80,
+          "detail_en": "SSR:10.1%, Abundant OTC",
+          "detail_zh": "SSR:10.1%, 场外充裕",
+          "delta": 0.4,
           "desc_en": "Stablecoin Supply Ratio — off-exchange liquidity",
           "desc_zh": "稳定币供应比率 — 场外流动性"
         },
@@ -2313,38 +2373,38 @@
         "report_date": "2026-05-15",
         "last_reviewed": "2026-05-15",
         "quant": {
-          "composite": 4.08,
+          "composite": 3.98,
           "rating": "Buy",
-          "score": 4.08,
+          "score": 3.98,
           "factors": {
             "valuation": {
               "grade": "C",
               "score": 2.5,
               "metrics": {
-                "pe": 44.8,
-                "pb": 17,
-                "ps": 12.3,
+                "pe": 41.2,
+                "pb": 14.5,
+                "ps": 11.9,
                 "peg": 2.1,
-                "evEbitda": 39.2
+                "evEbitda": 37.2
               }
             },
             "growth": {
-              "grade": "B+",
-              "score": 3.8,
+              "grade": "B-",
+              "score": 3.2,
               "metrics": {
-                "revenueGrowth": -0.021,
-                "earningsGrowth": 0.752,
-                "epsGrowth": 0.71
+                "revenueGrowth": 0.114,
+                "earningsGrowth": 0.335,
+                "epsGrowth": 0.313
               }
             },
             "profitability": {
               "grade": "B",
               "score": 3.5,
               "metrics": {
-                "grossMargin": 0.487,
-                "operatingMargin": 0.299,
-                "netMargin": 0.278,
-                "roe": 0.389
+                "grossMargin": 0.49,
+                "operatingMargin": 0.319,
+                "netMargin": 0.293,
+                "roe": 0.397
               }
             },
             "momentum": {
@@ -2364,15 +2424,15 @@
               "metrics": {
                 "analystSentiment": 0.9,
                 "numAnalysts": 34,
-                "peRatioFwdVsTrail": 0.643
+                "peRatioFwdVsTrail": 0.667
               }
             },
             "dividend": {
               "grade": "A+",
               "score": 4.9,
               "metrics": {
-                "payoutRatio": 0.183,
-                "dividendYield": 0.48,
+                "payoutRatio": 0.173,
+                "dividendYield": 0.49,
                 "dividendRate": 2.12
               }
             }
@@ -2401,11 +2461,11 @@
               "grade": "D",
               "score": 1.5,
               "metrics": {
-                "pe": 82.6,
+                "pe": 82.7,
                 "pb": 25.2,
                 "ps": 29.5,
                 "peg": 0.96,
-                "evEbitda": 57.3
+                "evEbitda": 55.5
               }
             },
             "growth": {
@@ -2444,7 +2504,7 @@
               "metrics": {
                 "analystSentiment": 0.94,
                 "numAnalysts": 42,
-                "peRatioFwdVsTrail": 0.282
+                "peRatioFwdVsTrail": 0.281
               }
             },
             "dividend": {
@@ -2452,7 +2512,7 @@
               "score": 3.8,
               "metrics": {
                 "payoutRatio": 0.472,
-                "dividendYield": 0.59,
+                "dividendYield": 0.61,
                 "dividendRate": 2.6
               }
             }
@@ -2485,7 +2545,7 @@
                 "pb": 3.3,
                 "ps": 2.3,
                 "peg": 2.59,
-                "evEbitda": 13.4
+                "evEbitda": 13.3
               }
             },
             "growth": {
@@ -2532,7 +2592,7 @@
               "score": 4.9,
               "metrics": {
                 "payoutRatio": 0.294,
-                "dividendYield": 1.42,
+                "dividendYield": 1.43,
                 "dividendRate": 0.92
               }
             }
@@ -2565,7 +2625,7 @@
                 "pb": 2.9,
                 "ps": 3.2,
                 "peg": 3.74,
-                "evEbitda": 15.3
+                "evEbitda": 14.9
               }
             },
             "growth": {
@@ -2591,11 +2651,11 @@
               "grade": "C-",
               "score": 2.2,
               "metrics": {
-                "priceChange1M": -0.0934,
-                "priceChange3M": -0.0132,
-                "priceChange6M": -0.2617,
-                "vs50dma": -0.1016,
-                "vs200dma": -0.1786
+                "priceChange1M": -0.092,
+                "priceChange3M": -0.0117,
+                "priceChange6M": -0.2606,
+                "vs50dma": -0.1002,
+                "vs200dma": -0.1774
               }
             },
             "epsRevisions": {
@@ -2604,7 +2664,7 @@
               "metrics": {
                 "analystSentiment": 0.85,
                 "numAnalysts": 20,
-                "peRatioFwdVsTrail": 0.848
+                "peRatioFwdVsTrail": 0.849
               }
             },
             "dividend": {
@@ -2612,7 +2672,7 @@
               "score": 4.9,
               "metrics": {
                 "payoutRatio": 0.138,
-                "dividendYield": 0.62,
+                "dividendYield": 0.64,
                 "dividendRate": 1.71
               }
             }
@@ -2869,7 +2929,7 @@
               "grade": "C+",
               "score": 2.8,
               "metrics": {
-                "pe": 39.2,
+                "pe": 39,
                 "pb": 7.9,
                 "ps": 5.4,
                 "peg": 3.08,
@@ -2912,7 +2972,7 @@
               "metrics": {
                 "analystSentiment": 0.85,
                 "numAnalysts": 28,
-                "peRatioFwdVsTrail": 0.649
+                "peRatioFwdVsTrail": 0.651
               }
             },
             "dividend": {
@@ -2920,7 +2980,7 @@
               "score": 3.8,
               "metrics": {
                 "payoutRatio": 0.413,
-                "dividendYield": 1.08,
+                "dividendYield": 1.1,
                 "dividendRate": 4.4
               }
             }
@@ -2999,7 +3059,7 @@
                 "priceTargetLow": 355,
                 "analystSentiment": 0.92,
                 "numAnalysts": 52,
-                "peRatioFwdVsTrail": 0.907
+                "peRatioFwdVsTrail": 0.906
               }
             },
             "dividend": {
@@ -3039,7 +3099,7 @@
                 "pe": 13,
                 "pb": 1.9,
                 "ps": 1.9,
-                "evEbitda": 10.8
+                "evEbitda": 10.9
               }
             },
             "growth": {
@@ -3084,7 +3144,7 @@
               "score": 3.5,
               "metrics": {
                 "payoutRatio": 0.595,
-                "dividendYield": 6.31,
+                "dividendYield": 6.26,
                 "dividendRate": 0.55
               }
             }
@@ -3113,7 +3173,7 @@
               "grade": "B",
               "score": 3.5,
               "metrics": {
-                "pe": 28.4,
+                "pe": 28.3,
                 "pb": 6.6,
                 "ps": 4.2,
                 "peg": 2.33,
@@ -3156,7 +3216,7 @@
               "metrics": {
                 "analystSentiment": 0.77,
                 "numAnalysts": 13,
-                "peRatioFwdVsTrail": 0.778
+                "peRatioFwdVsTrail": 0.779
               }
             },
             "dividend": {
@@ -3197,7 +3257,7 @@
                 "pb": 8.1,
                 "ps": 4.9,
                 "peg": 2.53,
-                "evEbitda": 20
+                "evEbitda": 19.9
               }
             },
             "growth": {
@@ -3236,7 +3296,7 @@
               "metrics": {
                 "analystSentiment": 0.75,
                 "numAnalysts": 19,
-                "peRatioFwdVsTrail": 0.93
+                "peRatioFwdVsTrail": 0.927
               }
             },
             "dividend": {
@@ -3271,7 +3331,7 @@
               "grade": "C",
               "score": 2.5,
               "metrics": {
-                "pe": 40.9,
+                "pe": 41,
                 "pb": 13.5,
                 "ps": 2.4,
                 "peg": 9.46,
@@ -3312,7 +3372,7 @@
               "metrics": {
                 "analystSentiment": 0.91,
                 "numAnalysts": 22,
-                "peRatioFwdVsTrail": 0.307
+                "peRatioFwdVsTrail": 0.306
               }
             },
             "dividend": {
@@ -3399,7 +3459,7 @@
                 "priceTargetLow": 140,
                 "analystSentiment": 0.94,
                 "numAnalysts": 57,
-                "peRatioFwdVsTrail": 0.429
+                "peRatioFwdVsTrail": 0.428
               }
             },
             "dividend": {
@@ -3685,7 +3745,7 @@
               "metrics": {
                 "analystSentiment": 0.93,
                 "numAnalysts": 17,
-                "peRatioFwdVsTrail": 0.529
+                "peRatioFwdVsTrail": 0.53
               }
             },
             "dividend": {
@@ -3693,7 +3753,7 @@
               "score": 4.9,
               "metrics": {
                 "payoutRatio": 0.151,
-                "dividendYield": 0.65,
+                "dividendYield": 0.66,
                 "dividendRate": 0.92
               }
             }
@@ -3949,9 +4009,9 @@
         "report_date": "2026-04-01",
         "last_reviewed": "2026-04-01",
         "quant": {
-          "composite": 3.52,
-          "rating": "Buy",
-          "score": 3.52,
+          "composite": 3.45,
+          "rating": "Hold",
+          "score": 3.45,
           "factors": {
             "valuation": {
               "grade": "A-",
@@ -3994,10 +4054,10 @@
               }
             },
             "epsRevisions": {
-              "grade": "B-",
-              "score": 3.2,
+              "grade": "C+",
+              "score": 2.8,
               "metrics": {
-                "peRatioFwdVsTrail": 0.963
+                "peRatioFwdVsTrail": 0.97
               }
             },
             "dividend": {
@@ -6531,28 +6591,28 @@
     }
   },
   "crypto_timeseries": {
-    "generated_at": "2026-05-16T07:50:23.790558",
+    "generated_at": "2026-05-17T07:52:34.978978",
     "latest": {
-      "date": "2026-05-16",
-      "composite": 49.5,
-      "delta_composite": 3.4,
-      "btc_close": 79037,
+      "date": "2026-05-17",
+      "composite": 40.7,
+      "delta_composite": -8.8,
+      "btc_close": 78215,
       "btc_high": null,
       "btc_low": null,
       "fgi": null,
       "fgi_label": null,
-      "green_count": 1,
+      "green_count": 2,
       "indicators": {
         "fear_greed": {
-          "value": 43,
-          "status": "red"
+          "value": 31,
+          "status": "yellow"
         },
         "miner_capitulation": {
-          "value": -3.8,
+          "value": -4.8,
           "status": "red"
         },
         "black_swan": {
-          "value": 22.2,
+          "value": 31.4,
           "status": "red"
         },
         "vix": {
@@ -6560,15 +6620,15 @@
           "status": "red"
         },
         "stablecoin_ratio": {
-          "value": 9.7,
-          "status": "yellow"
+          "value": 10.1,
+          "status": "green"
         },
         "mvrv_zscore": {
-          "value": -0.93,
+          "value": -0.97,
           "status": "green"
         },
         "etf_flow": {
-          "value": 8,
+          "value": 9,
           "status": "yellow"
         },
         "dxy": {
@@ -6577,27 +6637,17 @@
         }
       },
       "indicator_deltas": {
-        "fear_greed": 9,
-        "miner_capitulation": -3,
-        "black_swan": -6.1,
-        "vix": 1.1,
-        "stablecoin_ratio": 0,
-        "mvrv_zscore": -0.13,
-        "etf_flow": -17,
-        "dxy": 0.4
+        "fear_greed": -12,
+        "miner_capitulation": -1,
+        "black_swan": 9.2,
+        "vix": 0,
+        "stablecoin_ratio": 0.4,
+        "mvrv_zscore": -0.04,
+        "etf_flow": 1,
+        "dxy": 0
       }
     },
     "data": [
-      {
-        "date": "2025-12-18",
-        "btc_close": 85462.51,
-        "btc_high": 89412.66,
-        "btc_low": 84436.31,
-        "fgi": 17,
-        "fgi_label": "Extreme Fear",
-        "composite": null,
-        "delta_composite": null
-      },
       {
         "date": "2025-12-19",
         "btc_close": 88103.38,
@@ -8070,9 +8120,9 @@
       },
       {
         "date": "2026-05-15",
-        "btc_close": 79074,
-        "btc_high": 81586.2,
-        "btc_low": 78713,
+        "btc_close": 79065.68,
+        "btc_high": 81634.84,
+        "btc_low": 78635.37,
         "fgi": 43,
         "fgi_label": "Fear",
         "composite": 46.1,
@@ -8080,13 +8130,23 @@
       },
       {
         "date": "2026-05-16",
-        "btc_close": 79037,
+        "btc_close": 78086.71,
+        "btc_high": 79159.42,
+        "btc_low": 77727.59,
+        "fgi": 31,
+        "fgi_label": "Fear",
+        "composite": 49.5,
+        "delta_composite": 3.4
+      },
+      {
+        "date": "2026-05-17",
+        "btc_close": 78215,
         "btc_high": null,
         "btc_low": null,
         "fgi": null,
         "fgi_label": null,
-        "composite": 49.5,
-        "delta_composite": 3.4
+        "composite": 40.7,
+        "delta_composite": -8.8
       }
     ]
   },
