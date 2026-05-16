@@ -73,6 +73,53 @@ function getPreview(notes?: BookNotes): string {
 	return "";
 }
 
+const zhCategoryMap: Record<string, string> = {
+	小说: "Fiction",
+	社会小说: "Social Fiction",
+	悬疑推理: "Mystery & Detective",
+	文学: "Literature",
+	散文杂著: "Essays",
+	历史: "History",
+	人物传记: "Biography",
+	传记: "Biography",
+	哲学宗教: "Philosophy",
+	哲学: "Philosophy",
+	宗教: "Religion",
+	社会文化: "Society & Culture",
+	社会: "Society",
+	文化: "Culture",
+	政治军事: "Politics & Military",
+	经济理财: "Economics & Finance",
+	经济: "Economics",
+	理财: "Finance",
+	商业: "Business",
+	管理: "Management",
+	个人成长: "Personal Growth",
+	心理: "Psychology",
+	科技互联网: "Tech & Internet",
+	艺术: "Art",
+	教育: "Education",
+	生活百科: "Lifestyle",
+};
+
+function translateZhCategory(value = "") {
+	return value
+		.split(/[-/·]/)
+		.map((part) => zhCategoryMap[part.trim()] || part.trim())
+		.filter(Boolean)
+		.join(" / ");
+}
+
+function translateDuration(value = "") {
+	return value
+		.replace(/(\d+)\s*时/g, "$1h")
+		.replace(/(\d+)\s*分/g, "$1m")
+		.replace(/(\d+)\s*小时/g, "$1h")
+		.replace(/(\d+)\s*分钟/g, "$1m")
+		.replace(/(\d+)\s*天/g, "$1d")
+		.replace(/(\d+)\s*秒/g, "$1s");
+}
+
 function ratingDots(rating: string | null | undefined): number {
 	if (!rating) return 0;
 	const m = rating.match(/^(\d+(?:\.\d+)?)\/(\d+)/);
@@ -504,10 +551,15 @@ export default function LibraryMasonry({
 
 function MasonryCard({ item }: { item: MeasuredItem }) {
 	const dots = ratingDots(item.rating);
-	const wereadBits = [
+	const wereadBitsZh = [
 		item.weread?.finishReading ? "读完" : item.weread?.bookId ? "在读" : "",
 		item.weread?.category,
 		item.weread?.rankedReadTime,
+	].filter(Boolean);
+	const wereadBitsEn = [
+		item.weread?.finishReading ? "Finished" : item.weread?.bookId ? "Reading" : "",
+		item.weread?.category ? translateZhCategory(item.weread.category) : "",
+		item.weread?.rankedReadTime ? translateDuration(item.weread.rankedReadTime) : "",
 	].filter(Boolean);
 
 	return (
@@ -527,8 +579,11 @@ function MasonryCard({ item }: { item: MeasuredItem }) {
 					{item.subtitle}
 					{item.sortDate && <span> · {item.sortDate}</span>}
 				</p>
-				{wereadBits.length > 0 && (
-					<p className="library-masonry-weread">WeRead · {wereadBits.join(" · ")}</p>
+				{wereadBitsZh.length > 0 && (
+					<p className="library-masonry-weread">
+						<span className="lang-en">WeRead · {wereadBitsEn.join(" · ")}</span>
+						<span className="lang-zh">微信读书 · {wereadBitsZh.join(" · ")}</span>
+					</p>
 				)}
 				{item.rating && dots > 0 && (
 					<div className="library-masonry-rating" role="img" aria-label={`rating ${dots} of 5`}>

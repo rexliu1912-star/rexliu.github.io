@@ -7,9 +7,10 @@
 		"postinstall": "npm rebuild sharp --force",
 		"dev": "astro dev",
 		"start": "astro dev",
+		"sync:weread": "node scripts/sync-weread-library.mjs",
 		"prebuild": "node scripts/build-portfolio-public.mjs && node scripts/preflight/portfolio-privacy-check.mjs",
 		"build": "astro build",
-		"postbuild": "node scripts/prepare-pagefind.mjs && pagefind --site dist",
+		"postbuild": "node scripts/prepare-pagefind.mjs && pagefind --site dist && (test ! -f /Users/samantha/clawd/scripts/sync-earnings-custom-stocks.py || python3 /Users/samantha/clawd/scripts/sync-earnings-custom-stocks.py)",
 		"preview": "astro preview",
 		"check": "astro check && biome check",
 		"lint": "biome check --write",
@@ -68,12 +69,7 @@
 		"typescript": "^5.9.3"
 	},
 	"pnpm": {
-		"onlyBuiltDependencies": [
-			"@biomejs/biome",
-			"@tailwindcss/oxide",
-			"esbuild",
-			"sharp"
-		],
+		"onlyBuiltDependencies": ["@biomejs/biome", "@tailwindcss/oxide", "esbuild", "sharp"],
 		"overrides": {
 			"sharp": "^0.34.5"
 		}

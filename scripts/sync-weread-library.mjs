@@ -5,7 +5,7 @@
  * Public contract:
  * - Raw API snapshots are stored under src/data/weread/raw/ for traceability.
  * - Public summary stats are stored in src/data/weread/reading-stats.json.
- * - src/data/books.json is merged additively: hand-curated fields win.
+ * - src/data/books.json is merged additively: hand-curated fields win, except WeRead covers are refreshed from WeRead.
  * - Notes/highlights are intentionally NOT synced or published here.
  */
 
@@ -168,11 +168,29 @@ async function callWeRead(apiName, params = {}) {
 }
 
 function mergeBooks(existingBooks, shelfBooks, statsByBookId) {
+	const publicShelfIds = new Set(
+		shelfBooks
+			.filter((book) => Number(book.secret || 0) === 0)
+			.map((book) => String(book.bookId || ""))
+			.filter(Boolean),
+	);
+	let prunedStale = 0;
+	const books = existingBooks.filter((book) => {
+		const wereadId = book.weread?.bookId || book.bookId;
+		const isAutoWereadEntry =
+			book.source === "weread" && String(book.slug || "").startsWith("weread-");
+		if (isAutoWereadEntry && wereadId && !publicShelfIds.has(String(wereadId))) {
+			prunedStale++;
+			return false;
+		}
+		return true;
+	});
+
 	const byWereadId = new Map();
 	const byExactTitle = new Map();
 	const byLooseTitle = new Map();
 
-	existingBooks.forEach((book, index) => {
+	books.forEach((book, index) => {
 		if (book.weread?.bookId) byWereadId.set(String(book.weread.bookId), index);
 		if (book.bookId) byWereadId.set(String(book.bookId), index);
 		byExactTitle.set(String(book.title).trim(), index);
@@ -182,7 +200,6 @@ function mergeBooks(existingBooks, shelfBooks, statsByBookId) {
 	let added = 0;
 	let updated = 0;
 	let skippedPrivate = 0;
-	const books = [...existingBooks];
 
 	for (const shelfBook of shelfBooks) {
 		const bookId = String(shelfBook.bookId || "");
@@ -219,7 +236,7 @@ function mergeBooks(existingBooks, shelfBooks, statsByBookId) {
 				...prev,
 				source: prev.source || "weread",
 				type: prev.type || "电子书",
-				cover: prev.cover || shelfBook.cover,
+				cover: shelfBook.cover || prev.cover,
 				endDate: prev.endDate || (shelfBook.finishReading ? toDate(shelfBook.readUpdateTime) : ""),
 				addedDate: prev.addedDate || toDate(shelfBook.updateTime),
 				status: prev.status || (shelfBook.finishReading ? "已读" : "在读"),
@@ -255,7 +272,7 @@ function mergeBooks(existingBooks, shelfBooks, statsByBookId) {
 		}
 	}
 
-	return { books, added, updated, skippedPrivate };
+	return { books, added, updated, skippedPrivate, prunedStale };
 }
 
 async function main() {
@@ -319,7 +336,7 @@ async function main() {
 		`   Shelf: ${publicStatsData.shelf.totalVisibleItems} visible items (${publicStatsData.shelf.books} books + ${publicStatsData.shelf.albums} albums + ${publicStatsData.shelf.hasMp ? 1 : 0} mp)`,
 	);
 	console.log(
-		`   books.json: +${result.added} added, ${result.updated} updated, ${result.skippedPrivate} private skipped`,
+		`   books.json: +${result.added} added, ${result.updated} updated, ${result.skippedPrivate} private skipped, ${result.prunedStale} stale pruned`,
 	);
 	console.log(
 		`   Annual: ${publicStatsData.annual.totalReadTimeText} · ${publicStatsData.annual.readDays} days`,
