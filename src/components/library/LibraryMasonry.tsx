@@ -7,6 +7,21 @@ type BookNotes = {
 	impact?: string;
 };
 
+type WeReadThought = {
+	id?: string;
+	content: string;
+	chapter?: string;
+	createdAt?: string;
+	rating?: number;
+};
+
+type WeReadProgress = {
+	percent?: number;
+	chapterName?: string;
+	updatedAt?: string;
+	isFinished?: boolean;
+};
+
 type WeReadMeta = {
 	bookId?: string;
 	category?: string;
@@ -14,6 +29,9 @@ type WeReadMeta = {
 	lastReadDate?: string;
 	rankedReadTime?: string;
 	badges?: string[];
+	currentlyReading?: boolean;
+	progress?: WeReadProgress;
+	thoughts?: WeReadThought[];
 };
 
 export type MasonryItem = {
@@ -65,11 +83,11 @@ function truncate(s: string, n: number): string {
 	return s.length > n ? `${s.slice(0, n)}…` : s;
 }
 
-function getPreview(notes?: BookNotes): string {
-	if (!notes) return "";
-	if (notes.quotes?.[0]) return truncate(notes.quotes[0], PREVIEW_LIMIT);
-	if (notes.core_ideas?.[0]) return truncate(notes.core_ideas[0], 100);
-	if (notes.impact) return truncate(notes.impact, 100);
+function getPreview(notes?: BookNotes, thoughts?: WeReadThought[]): string {
+	if (notes?.quotes?.[0]) return truncate(notes.quotes[0], PREVIEW_LIMIT);
+	if (notes?.core_ideas?.[0]) return truncate(notes.core_ideas[0], 100);
+	if (notes?.impact) return truncate(notes.impact, 100);
+	if (thoughts?.[0]?.content) return truncate(thoughts[0].content, PREVIEW_LIMIT);
 	return "";
 }
 
@@ -136,7 +154,7 @@ type MeasuredItem = MasonryItem & { _height: number; _preview: string };
 function measureItem(item: MasonryItem, columnWidth: number): MeasuredItem {
 	const padding = 14;
 	const innerWidth = Math.max(columnWidth - padding * 2, 120);
-	const preview = getPreview(item.notes);
+	const preview = getPreview(item.notes, item.weread?.thoughts);
 	const rDots = ratingDots(item.rating);
 
 	// Cover (2:3) spans full column width
@@ -161,6 +179,9 @@ function measureItem(item: MasonryItem, columnWidth: number): MeasuredItem {
 
 	// WeRead source/status line
 	if (item.weread?.bookId) h += 16 + 3;
+
+	// Reading progress pill/bar
+	if (item.weread?.progress?.percent !== undefined) h += 24;
 
 	// Rating dots
 	if (item.rating && rDots > 0) h += 10 + 4;
@@ -455,6 +476,37 @@ export default function LibraryMasonry({
 				[data-theme="dark"] .library-masonry-weread {
 					color: #a175e8;
 				}
+				.library-masonry-progress {
+					margin-top: 7px;
+					display: grid;
+					gap: 4px;
+				}
+				.library-masonry-progress-track {
+					height: 3px;
+					overflow: hidden;
+					border-radius: 999px;
+					background: rgba(137, 83, 209, 0.13);
+				}
+				.library-masonry-progress-fill {
+					display: block;
+					height: 100%;
+					border-radius: inherit;
+					background: ${BRAND};
+				}
+				.library-masonry-progress-copy {
+					font-family: Georgia, Cambria, "Times New Roman", Times, serif;
+					font-size: 10px;
+					line-height: 1.3;
+					color: rgb(107, 114, 128);
+				}
+				:root.dark .library-masonry-progress-fill,
+				[data-theme="dark"] .library-masonry-progress-fill {
+					background: #a175e8;
+				}
+				:root.dark .library-masonry-progress-copy,
+				[data-theme="dark"] .library-masonry-progress-copy {
+					color: rgb(156, 163, 175);
+				}
 				.library-masonry-rating {
 					display: flex;
 					gap: 3px;
@@ -561,6 +613,10 @@ function MasonryCard({ item }: { item: MeasuredItem }) {
 		item.weread?.category ? translateZhCategory(item.weread.category) : "",
 		item.weread?.rankedReadTime ? translateDuration(item.weread.rankedReadTime) : "",
 	].filter(Boolean);
+	const progressPercent = Math.max(
+		0,
+		Math.min(100, Math.round(Number(item.weread?.progress?.percent ?? 0))),
+	);
 
 	return (
 		<article
@@ -584,6 +640,33 @@ function MasonryCard({ item }: { item: MeasuredItem }) {
 						<span className="lang-en">WeRead · {wereadBitsEn.join(" · ")}</span>
 						<span className="lang-zh">微信读书 · {wereadBitsZh.join(" · ")}</span>
 					</p>
+				)}
+				{item.weread?.progress?.percent !== undefined && (
+					<div
+						className="library-masonry-progress"
+						role="progressbar"
+						aria-label={`reading progress ${progressPercent}%`}
+						aria-valuemin={0}
+						aria-valuemax={100}
+						aria-valuenow={progressPercent}
+					>
+						<span className="library-masonry-progress-track">
+							<span
+								className="library-masonry-progress-fill"
+								style={{ width: `${progressPercent}%` }}
+							/>
+						</span>
+						<span className="library-masonry-progress-copy">
+							<span className="lang-en">
+								{progressPercent}%
+								{item.weread.progress.chapterName ? ` · ${item.weread.progress.chapterName}` : ""}
+							</span>
+							<span className="lang-zh">
+								{progressPercent}%
+								{item.weread.progress.chapterName ? ` · ${item.weread.progress.chapterName}` : ""}
+							</span>
+						</span>
+					</div>
 				)}
 				{item.rating && dots > 0 && (
 					<div className="library-masonry-rating" role="img" aria-label={`rating ${dots} of 5`}>

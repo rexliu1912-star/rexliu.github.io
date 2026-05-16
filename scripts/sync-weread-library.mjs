@@ -6,7 +6,7 @@
  * - Raw API snapshots are stored under src/data/weread/raw/ for traceability.
  * - Public summary stats are stored in src/data/weread/reading-stats.json.
  * - src/data/books.json is merged additively: hand-curated fields win, except WeRead covers are refreshed from WeRead.
- * - Notes/highlights are intentionally NOT synced or published here.
+ * - Public user-written thoughts/reviews are synced; raw highlights/bookmarks are not.
  */
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
@@ -21,6 +21,19 @@ const RAW_DIR = path.join(WEREAD_DIR, "raw");
 const PUBLIC_STATS_JSON = path.join(WEREAD_DIR, "reading-stats.json");
 const API_URL = "https://i.weread.qq.com/api/agent/gateway";
 const SKILL_VERSION = "1.0.3";
+
+// Tencent WeRead gateway is reachable directly from the Mac mini, while the
+// inherited Clash proxy can make Node/undici fail with a generic "fetch failed".
+for (const proxyKey of [
+	"HTTP_PROXY",
+	"HTTPS_PROXY",
+	"ALL_PROXY",
+	"http_proxy",
+	"https_proxy",
+	"all_proxy",
+]) {
+	delete process.env[proxyKey];
+}
 
 const ENV_PATHS = [
 	path.join(process.env.HOME || "", ".hermes/profiles/samantha/.env"),
@@ -142,32 +155,108 @@ function publicStats(mode, data) {
 	};
 }
 
+export function publicProgress(data, chapters = []) {
+	const book = data?.book || data || {};
+	const percent = Math.max(0, Math.min(100, Math.round(Number(book.progress || 0))));
+	const currentChapterUid = book.chapterUid ?? undefined;
+	const chapter = chapters.find((item) => String(item.chapterUid) === String(currentChapterUid));
+	const readingTimeSeconds = Math.max(0, Math.round(Number(book.recordReadingTime || 0)));
+	return {
+		percent,
+		currentChapterUid,
+		currentChapter: chapter?.title || book.chapterName || "",
+		updatedAt: toDate(book.updateTime),
+		readingTimeSeconds,
+		readingTimeText: secondsToText(readingTimeSeconds),
+		isStarted: Boolean(book.isStartReading || percent > 0 || readingTimeSeconds > 0),
+		isFinished: percent === 100,
+		...(book.finishTime ? { finishedAt: toDate(book.finishTime) } : {}),
+	};
+}
+
+export function publicReviews(data) {
+	return (data?.reviews || [])
+		.map((item) => item.review?.review || item.review || item)
+		.filter((review) => String(review?.content || "").trim().length > 0)
+		.map((review) => ({
+			id: String(review.reviewId || review.id || ""),
+			content: String(review.content || "").trim(),
+			...(review.chapterName ? { chapter: review.chapterName } : {}),
+			...(review.createTime ? { createdAt: toDate(review.createTime) } : {}),
+			...(Number(review.star) > 0 ? { rating: Number(review.star) } : {}),
+		}));
+}
+
+async function fetchPublicBookTelemetry(book) {
+	const bookId = String(book.bookId || "");
+	if (!bookId || Number(book.secret || 0) === 1) return null;
+
+	const safeCall = async (apiName, params, fallback) => {
+		try {
+			return await callWeRead(apiName, params);
+		} catch (error) {
+			console.warn(`⚠️  WeRead ${apiName} skipped for ${bookId}: ${error.message}`);
+			return fallback;
+		}
+	};
+
+	const progressRaw = await safeCall("/book/getprogress", { bookId }, null);
+	if (!progressRaw) return null;
+	const chaptersRaw = await safeCall("/book/chapterinfo", { bookId }, { chapters: [] });
+	const reviewsRaw = await safeCall("/review/list/mine", { bookid: bookId }, { reviews: [] });
+
+	return {
+		bookId,
+		progressRaw,
+		chaptersRaw,
+		reviewsRaw,
+		progress: publicProgress(progressRaw, chaptersRaw.chapters || []),
+		reviews: publicReviews(reviewsRaw),
+	};
+}
+
 async function callWeRead(apiName, params = {}) {
 	const key = readEnvValue("WEREAD_API_KEY");
 	if (!key) throw new Error("Missing WEREAD_API_KEY in env or Hermes .env files");
 
-	const res = await fetch(API_URL, {
-		method: "POST",
-		headers: {
-			Authorization: `Bearer ${key}`,
-			"Content-Type": "application/json",
-		},
-		body: JSON.stringify({ api_name: apiName, skill_version: SKILL_VERSION, ...params }),
-	});
-	if (!res.ok) throw new Error(`${apiName} HTTP ${res.status}: ${await res.text()}`);
-	const data = await res.json();
-	if (data.upgrade_info)
-		throw new Error(
-			`WeRead skill upgrade required: ${data.upgrade_info.message || JSON.stringify(data.upgrade_info)}`,
-		);
-	if (data.errcode && data.errcode !== 0)
-		throw new Error(
-			`${apiName} errcode ${data.errcode}: ${data.errmsg || data.msg || JSON.stringify(data)}`,
-		);
-	return data;
+	let lastError;
+	for (let attempt = 1; attempt <= 3; attempt++) {
+		try {
+			const res = await fetch(API_URL, {
+				method: "POST",
+				headers: {
+					Authorization: `Bearer ${key}`,
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ api_name: apiName, skill_version: SKILL_VERSION, ...params }),
+			});
+			if (!res.ok) throw new Error(`${apiName} HTTP ${res.status}: ${await res.text()}`);
+			const data = await res.json();
+			if (data.upgrade_info)
+				throw new Error(
+					`WeRead skill upgrade required: ${data.upgrade_info.message || JSON.stringify(data.upgrade_info)}`,
+				);
+			if (data.errcode && data.errcode !== 0)
+				throw new Error(
+					`${apiName} errcode ${data.errcode}: ${data.errmsg || data.msg || JSON.stringify(data)}`,
+				);
+			return data;
+		} catch (error) {
+			lastError = error;
+			if (attempt === 3) break;
+			await new Promise((resolve) => setTimeout(resolve, attempt * 1200));
+		}
+	}
+	throw lastError;
 }
 
-function mergeBooks(existingBooks, shelfBooks, statsByBookId) {
+export function mergeBooks(
+	existingBooks,
+	shelfBooks,
+	statsByBookId,
+	progressByBookId = new Map(),
+	reviewsByBookId = new Map(),
+) {
 	const publicShelfIds = new Set(
 		shelfBooks
 			.filter((book) => Number(book.secret || 0) === 0)
@@ -214,6 +303,14 @@ function mergeBooks(existingBooks, shelfBooks, statsByBookId) {
 		const idx =
 			byWereadId.get(bookId) ?? byExactTitle.get(exactTitle) ?? byLooseTitle.get(looseTitle);
 		const readStats = statsByBookId.get(bookId);
+		const progress = progressByBookId.get(bookId);
+		const thoughts = reviewsByBookId.get(bookId) || [];
+		const currentlyReading = Boolean(
+			progress &&
+				!progress?.isFinished &&
+				Number(progress?.percent || 0) > 0 &&
+				Number(progress?.percent || 0) < 100,
+		);
 		const wereadMeta = {
 			bookId,
 			category: shelfBook.category || "",
@@ -221,6 +318,8 @@ function mergeBooks(existingBooks, shelfBooks, statsByBookId) {
 			lastReadDate: toDate(shelfBook.readUpdateTime),
 			updateDate: toDate(shelfBook.updateTime),
 			source: "weread",
+			...(progress ? { progress, currentlyReading } : {}),
+			...(thoughts.length > 0 ? { thoughts } : {}),
 			...(readStats
 				? {
 						rankedReadTime: secondsToText(readStats.readTime),
@@ -326,9 +425,33 @@ async function main() {
 	};
 	writeFileSync(PUBLIC_STATS_JSON, `${JSON.stringify(publicStatsData, null, 2)}\n`);
 
+	console.log("📚 Fetching WeRead progress + thoughts...");
+	const publicShelfBooks = (shelf.books || []).filter((book) => Number(book.secret || 0) === 0);
+	const telemetryItems = [];
+	for (const book of publicShelfBooks) {
+		const item = await fetchPublicBookTelemetry(book);
+		if (item) telemetryItems.push(item);
+	}
+	const progressByBookId = new Map(telemetryItems.map((item) => [item.bookId, item.progress]));
+	const reviewsByBookId = new Map(telemetryItems.map((item) => [item.bookId, item.reviews]));
+	writeFileSync(
+		path.join(RAW_DIR, `telemetry-${stamp}.json`),
+		JSON.stringify(telemetryItems, null, 2),
+	);
+	writeFileSync(
+		path.join(RAW_DIR, "telemetry-latest.json"),
+		JSON.stringify(telemetryItems, null, 2),
+	);
+
 	const existingBooks = JSON.parse(readFileSync(BOOKS_JSON, "utf8"));
 	const statsByBookId = buildStatsIndex(annual, overall);
-	const result = mergeBooks(existingBooks, shelf.books || [], statsByBookId);
+	const result = mergeBooks(
+		existingBooks,
+		shelf.books || [],
+		statsByBookId,
+		progressByBookId,
+		reviewsByBookId,
+	);
 	writeFileSync(BOOKS_JSON, `${JSON.stringify(result.books, null, 2)}\n`);
 
 	console.log("✅ WeRead sync complete");
@@ -346,7 +469,9 @@ async function main() {
 	);
 }
 
-main().catch((error) => {
-	console.error("❌ WeRead sync failed:", error.message);
-	process.exit(1);
-});
+if (import.meta.url === `file://${process.argv[1]}`) {
+	main().catch((error) => {
+		console.error("❌ WeRead sync failed:", error.message);
+		process.exit(1);
+	});
+}
