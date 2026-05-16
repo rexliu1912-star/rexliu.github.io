@@ -7,6 +7,15 @@ type BookNotes = {
 	impact?: string;
 };
 
+type WeReadMeta = {
+	bookId?: string;
+	category?: string;
+	finishReading?: boolean;
+	lastReadDate?: string;
+	rankedReadTime?: string;
+	badges?: string[];
+};
+
 export type MasonryItem = {
 	id: string;
 	title: string;
@@ -21,6 +30,7 @@ export type MasonryItem = {
 	notes: BookNotes | undefined;
 	reviewSlug: string | undefined;
 	hasNotes: boolean;
+	weread?: WeReadMeta | undefined;
 };
 
 type SortBy = "date" | "rating" | "notes";
@@ -101,6 +111,9 @@ function measureItem(item: MasonryItem, columnWidth: number): MeasuredItem {
 
 	// Meta row: subtitle + date
 	h += 14 + 4;
+
+	// WeRead source/status line
+	if (item.weread?.bookId) h += 16 + 3;
 
 	// Rating dots
 	if (item.rating && rDots > 0) h += 10 + 4;
@@ -229,8 +242,8 @@ export default function LibraryMasonry({
 		if (sortBy === "date") {
 			sorted.sort((a, b) => {
 				// Prefer sortDate; fallback to sortYear (for media)
-				const av = a.sortDate ? new Date(a.sortDate).valueOf() : a.sortYear ?? 0;
-				const bv = b.sortDate ? new Date(b.sortDate).valueOf() : b.sortYear ?? 0;
+				const av = a.sortDate ? new Date(a.sortDate).valueOf() : (a.sortYear ?? 0);
+				const bv = b.sortDate ? new Date(b.sortDate).valueOf() : (b.sortYear ?? 0);
 				if (!av && !bv) return 0;
 				if (!av) return 1;
 				if (!bv) return -1;
@@ -384,6 +397,17 @@ export default function LibraryMasonry({
 					margin: 4px 0 0;
 					line-height: 1.4;
 				}
+				.library-masonry-weread {
+					margin: 5px 0 0;
+					font-family: Georgia, Cambria, "Times New Roman", Times, serif;
+					font-size: 11px;
+					line-height: 1.35;
+					color: ${BRAND};
+				}
+				:root.dark .library-masonry-weread,
+				[data-theme="dark"] .library-masonry-weread {
+					color: #a175e8;
+				}
 				.library-masonry-rating {
 					display: flex;
 					gap: 3px;
@@ -480,6 +504,11 @@ export default function LibraryMasonry({
 
 function MasonryCard({ item }: { item: MeasuredItem }) {
 	const dots = ratingDots(item.rating);
+	const wereadBits = [
+		item.weread?.finishReading ? "读完" : item.weread?.bookId ? "在读" : "",
+		item.weread?.category,
+		item.weread?.rankedReadTime,
+	].filter(Boolean);
 
 	return (
 		<article
@@ -489,19 +518,7 @@ function MasonryCard({ item }: { item: MeasuredItem }) {
 			data-tags={JSON.stringify(item.tags)}
 		>
 			<div className="library-masonry-cover-wrap">
-				{item.cover ? (
-					<img
-						src={item.cover}
-						alt=""
-						className="library-masonry-cover-img"
-						loading="lazy"
-						referrerPolicy="no-referrer"
-					/>
-				) : (
-					<div className={`library-masonry-cover-fallback ${item.coverClass}`}>
-						<span>{item.title}</span>
-					</div>
-				)}
+				<MasonryCover item={item} />
 			</div>
 			<div className="library-masonry-body">
 				<h3 className="library-masonry-title">{item.title}</h3>
@@ -510,6 +527,9 @@ function MasonryCard({ item }: { item: MeasuredItem }) {
 					{item.subtitle}
 					{item.sortDate && <span> · {item.sortDate}</span>}
 				</p>
+				{wereadBits.length > 0 && (
+					<p className="library-masonry-weread">WeRead · {wereadBits.join(" · ")}</p>
+				)}
 				{item.rating && dots > 0 && (
 					<div className="library-masonry-rating" role="img" aria-label={`rating ${dots} of 5`}>
 						{[1, 2, 3, 4, 5].map((n) => (
@@ -531,5 +551,26 @@ function MasonryCard({ item }: { item: MeasuredItem }) {
 				)}
 			</div>
 		</article>
+	);
+}
+
+function MasonryCover({ item }: { item: MeasuredItem }) {
+	const [failed, setFailed] = useState(false);
+	if (item.cover && !failed) {
+		return (
+			<img
+				src={item.cover}
+				alt=""
+				className="library-masonry-cover-img"
+				loading="eager"
+				referrerPolicy="no-referrer"
+				onError={() => setFailed(true)}
+			/>
+		);
+	}
+	return (
+		<div className={`library-masonry-cover-fallback ${item.coverClass}`}>
+			<span>{item.title}</span>
+		</div>
 	);
 }

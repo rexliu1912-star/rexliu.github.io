@@ -1,140 +1,197 @@
 ---
-import PageLayout from "@/layouts/Base.astro";
 import LibraryMasonry from "@/components/library/LibraryMasonry";
 import booksData from "@/data/books.json";
 import mediaData from "@/data/media.json";
+import readingStatsData from "@/data/weread/reading-stats.json";
+import PageLayout from "@/layouts/Base.astro";
 
 type Notes = {
-  quotes?: string[];
-  core_ideas?: string[];
-  impact?: string;
+	quotes?: string[];
+	core_ideas?: string[];
+	impact?: string;
 };
 
 type BookEntry = {
-  slug?: string;
-  title: string;
-  titleEn?: string;
-  author?: string;
-  status: string;
-  type?: string;
-  rating?: string | null;
-  tags?: string[];
-  endDate?: string;
-  notes?: Notes;
-  cover?: string;
+	slug?: string;
+	title: string;
+	titleEn?: string;
+	author?: string;
+	status: string;
+	type?: string;
+	rating?: string | null;
+	tags?: string[];
+	endDate?: string;
+	notes?: Notes;
+	cover?: string;
+	reviewSlug?: string;
+	weread?: {
+		bookId?: string;
+		category?: string;
+		finishReading?: boolean;
+		lastReadDate?: string;
+		rankedReadTime?: string;
+		badges?: string[];
+	};
 };
 
 type MediaEntry = {
-  slug?: string;
-  title: string;
-  titleEn?: string;
-  year?: number;
-  status: string;
-  type: "movie" | "series" | "variety" | "documentary";
-  tags?: string[];
-  notes?: Notes;
-  cover?: string;
+	slug?: string;
+	title: string;
+	titleEn?: string;
+	year?: number;
+	status: string;
+	type: "movie" | "series" | "variety" | "documentary";
+	tags?: string[];
+	notes?: Notes;
+	cover?: string;
 };
 
 type LibraryItem = {
-  id: string;
-  title: string;
-  titleEn: string | undefined;
-  subtitle: string;
-  format: "book" | "movie" | "series" | "variety" | "documentary";
-  rating: string | null | undefined;
-  tags: string[];
-  notes: Notes | undefined;
-  meta: string | undefined;
-  sortDate: string | undefined;
-  year: number | undefined;
-  cover: string | undefined;
-  coverClass: string;
-  reviewSlug: string | undefined;
+	id: string;
+	title: string;
+	titleEn: string | undefined;
+	subtitle: string;
+	format: "book" | "movie" | "series" | "variety" | "documentary";
+	rating: string | null | undefined;
+	tags: string[];
+	notes: Notes | undefined;
+	meta: string | undefined;
+	sortDate: string | undefined;
+	year: number | undefined;
+	cover: string | undefined;
+	coverClass: string;
+	reviewSlug: string | undefined;
+	weread: BookEntry["weread"];
+};
+
+type WeReadStatItem = {
+	stat?: string;
+	counts?: string;
+};
+
+type WeReadLongestItem = {
+	cover?: string;
+	title?: string;
+	author?: string;
+	readTimeText?: string;
+};
+
+type WeReadCategoryItem = {
+	categoryTitle?: string;
+	readingTimeText?: string;
+};
+
+type WeReadStatsBlock = {
+	readStat?: WeReadStatItem[];
+	readLongest?: WeReadLongestItem[];
+	preferCategory?: WeReadCategoryItem[];
+	totalReadTimeText?: string;
+	readDays?: number;
+	preferCategoryWord?: string;
+	preferTimeWord?: string;
+};
+
+type WeReadReadingStats = {
+	updatedAt?: string;
+	shelf?: {
+		publicBooks?: number;
+		[key: string]: unknown;
+	};
+	annual?: WeReadStatsBlock;
+	overall?: WeReadStatsBlock;
 };
 
 const bookTagColors: Record<string, string> = {
-  "投资": "bg-gradient-to-br from-[#8953d1] to-[#6b3fa0]",
-  "成长": "bg-gradient-to-br from-[#3b82f6] to-[#1d4ed8]",
-  "文化": "bg-gradient-to-br from-[#f59e0b] to-[#d97706]",
-  "文学": "bg-gradient-to-br from-[#ec4899] to-[#be185d]",
-  "古琴": "bg-gradient-to-br from-[#10b981] to-[#047857]",
-  "写作": "bg-gradient-to-br from-[#6366f1] to-[#4338ca]",
+	投资: "bg-gradient-to-br from-[#8953d1] to-[#6b3fa0]",
+	成长: "bg-gradient-to-br from-[#3b82f6] to-[#1d4ed8]",
+	文化: "bg-gradient-to-br from-[#f59e0b] to-[#d97706]",
+	文学: "bg-gradient-to-br from-[#ec4899] to-[#be185d]",
+	古琴: "bg-gradient-to-br from-[#10b981] to-[#047857]",
+	写作: "bg-gradient-to-br from-[#6366f1] to-[#4338ca]",
 };
 const defaultBookColor = "bg-gradient-to-br from-[#8953d1] to-[#6b3fa0]";
 const mediaTypeColors: Record<string, string> = {
-  "movie": "bg-gradient-to-br from-[#8953d1] to-[#6b3fa0]",
-  "series": "bg-gradient-to-br from-[#3b82f6] to-[#1d4ed8]",
-  "variety": "bg-gradient-to-br from-[#f59e0b] to-[#d97706]",
-  "documentary": "bg-gradient-to-br from-[#6b7280] to-[#374151]",
+	movie: "bg-gradient-to-br from-[#8953d1] to-[#6b3fa0]",
+	series: "bg-gradient-to-br from-[#3b82f6] to-[#1d4ed8]",
+	variety: "bg-gradient-to-br from-[#f59e0b] to-[#d97706]",
+	documentary: "bg-gradient-to-br from-[#6b7280] to-[#374151]",
 };
 
 function ratingDots(rating: string | null | undefined): number {
-  if (!rating) return 0;
-  const m = rating.match(/^(\d+(?:\.\d+)?)\/(\d+)/);
-  if (m && m[1] && m[2]) {
-    return Math.round((parseFloat(m[1]) / parseFloat(m[2])) * 5);
-  }
-  const full = (rating.match(/🌕/g) || []).length;
-  const half = (rating.match(/🌗/g) || []).length;
-  return Math.min(5, Math.round(full + half * 0.5));
+	if (!rating) return 0;
+	const m = rating.match(/^(\d+(?:\.\d+)?)\/(\d+)/);
+	if (m?.[1] && m[2]) {
+		return Math.round((Number.parseFloat(m[1]) / Number.parseFloat(m[2])) * 5);
+	}
+	const full = (rating.match(/🌕/g) || []).length;
+	const half = (rating.match(/🌗/g) || []).length;
+	return Math.min(5, Math.round(full + half * 0.5));
 }
 
 function hasNotes(item: LibraryItem) {
-  return !!(
-    item.notes &&
-    ((item.notes.quotes && item.notes.quotes.length > 0) ||
-      (item.notes.core_ideas && item.notes.core_ideas.length > 0) ||
-      (item.notes.impact && item.notes.impact.trim().length > 0))
-  );
+	return !!(
+		item.notes &&
+		((item.notes.quotes && item.notes.quotes.length > 0) ||
+			(item.notes.core_ideas && item.notes.core_ideas.length > 0) ||
+			(item.notes.impact && item.notes.impact.trim().length > 0))
+	);
 }
 
 function getReactionQuote(item: LibraryItem) {
-  return item.notes?.quotes?.[0]?.slice(0, 80) ?? "";
+	return item.notes?.quotes?.[0]?.slice(0, 80) ?? "";
 }
 
 const books: LibraryItem[] = (booksData as BookEntry[])
-  .map((book, index) => ({
-    id: book.slug || `book-${index}`,
-    title: book.title,
-    titleEn: book.titleEn,
-    subtitle: book.author || "Unknown author",
-    format: "book" as const,
-    rating: book.rating,
-    tags: book.tags || [],
-    notes: book.notes,
-    meta: book.type,
-    sortDate: book.endDate && book.endDate !== "-" ? book.endDate : undefined,
-    year: undefined,
-    cover: book.cover,
-    coverClass: (book.tags && book.tags[0] ? bookTagColors[book.tags[0]] : undefined) || defaultBookColor,
-    reviewSlug: (book as any).reviewSlug,
-  }))
-  .sort((a, b) => {
-    if (!a.sortDate && !b.sortDate) return 0;
-    if (!a.sortDate) return 1;
-    if (!b.sortDate) return -1;
-    return new Date(b.sortDate).valueOf() - new Date(a.sortDate).valueOf();
-  });
+	.map((book, index) => ({
+		id: book.slug || `book-${index}`,
+		title: book.title,
+		titleEn: book.titleEn,
+		subtitle: book.author || "Unknown author",
+		format: "book" as const,
+		rating: book.rating,
+		tags: book.tags || [],
+		notes: book.notes,
+		meta: book.type,
+		sortDate: book.endDate && book.endDate !== "-" ? book.endDate : book.weread?.lastReadDate,
+		year: undefined,
+		cover: book.cover,
+		coverClass: (book.tags?.[0] ? bookTagColors[book.tags[0]] : undefined) || defaultBookColor,
+		reviewSlug: book.reviewSlug,
+		weread: book.weread,
+	}))
+	.sort((a, b) => {
+		if (!a.sortDate && !b.sortDate) return 0;
+		if (!a.sortDate) return 1;
+		if (!b.sortDate) return -1;
+		return new Date(b.sortDate).valueOf() - new Date(a.sortDate).valueOf();
+	});
 
 const media: LibraryItem[] = (mediaData as MediaEntry[])
-  .map((item, index) => ({
-    id: item.slug || `media-${index}`,
-    title: item.title,
-    titleEn: item.titleEn,
-    subtitle: item.type === "movie" ? "Film" : item.type === "series" ? "Series" : item.type === "documentary" ? "Documentary" : "Variety",
-    format: item.type,
-    rating: undefined,
-    tags: item.tags || [],
-    notes: item.notes,
-    meta: undefined,
-    sortDate: undefined,
-    year: item.year,
-    cover: item.cover,
-    coverClass: mediaTypeColors[item.type] || defaultBookColor,
-    reviewSlug: undefined,
-  }))
-  .sort((a, b) => (b.year || 0) - (a.year || 0));
+	.map((item, index) => ({
+		id: item.slug || `media-${index}`,
+		title: item.title,
+		titleEn: item.titleEn,
+		subtitle:
+			item.type === "movie"
+				? "Film"
+				: item.type === "series"
+					? "Series"
+					: item.type === "documentary"
+						? "Documentary"
+						: "Variety",
+		format: item.type,
+		rating: undefined,
+		tags: item.tags || [],
+		notes: item.notes,
+		meta: undefined,
+		sortDate: undefined,
+		year: item.year,
+		cover: item.cover,
+		coverClass: mediaTypeColors[item.type] || defaultBookColor,
+		reviewSlug: undefined,
+		weread: undefined,
+	}))
+	.sort((a, b) => (b.year || 0) - (a.year || 0));
 
 const films = media.filter((item) => item.format === "movie");
 const series = media.filter((item) => item.format === "series");
@@ -142,54 +199,75 @@ const variety = media.filter((item) => item.format === "variety");
 const documentary = media.filter((item) => item.format === "documentary");
 
 const meta = {
-  title: "Library — OS",
-  description: "Books, films, and shows that shaped how Rex thinks.",
+	title: "Library — OS",
+	description: "Books, films, and shows that shaped how Rex thinks.",
 };
 
-const statsWithNotes = books.filter(b => hasNotes(b)).length + media.filter(m => hasNotes(m)).length;
+const statsWithNotes =
+	books.filter((b) => hasNotes(b)).length + media.filter((m) => hasNotes(m)).length;
+const wereadStats = readingStatsData as WeReadReadingStats;
+const annualStats = wereadStats.annual || {};
+const overallStats = wereadStats.overall || {};
+const shelfStats = wereadStats.shelf || {};
+const annualReadBooks = annualStats.readStat?.find((item) => item.stat === "读过")?.counts || "0本";
+const annualFinishedBooks =
+	annualStats.readStat?.find((item) => item.stat === "读完")?.counts || "0本";
+const overallNotes = overallStats.readStat?.find((item) => item.stat === "笔记")?.counts || "0条";
+const topAnnualBook = annualStats.readLongest?.[0];
+const topOverallCategories = (overallStats.preferCategory || []).slice(0, 4);
+const wereadUpdatedDate = wereadStats.updatedAt
+	? new Date(wereadStats.updatedAt).toLocaleDateString("en-CA", { timeZone: "Asia/Shanghai" })
+	: "";
+const wereadBooksCount = books.filter((book) => book.weread?.bookId).length;
 
 // Prepare items for Masonry views — plain serializable objects passed to React islands
-const masonryBooks = books.map(b => ({
-  id: b.id,
-  title: b.title,
-  titleEn: b.titleEn,
-  subtitle: b.subtitle,
-  cover: b.cover,
-  coverClass: b.coverClass,
-  rating: b.rating,
-  tags: b.tags,
-  sortDate: b.sortDate,
-  sortYear: undefined,
-  notes: b.notes,
-  reviewSlug: b.reviewSlug,
-  hasNotes: hasNotes(b),
+const masonryBooks = books.map((b) => ({
+	id: b.id,
+	title: b.title,
+	titleEn: b.titleEn,
+	subtitle: b.subtitle,
+	cover: b.cover,
+	coverClass: b.coverClass,
+	rating: b.rating,
+	tags: b.tags,
+	sortDate: b.sortDate,
+	sortYear: undefined,
+	notes: b.notes,
+	reviewSlug: b.reviewSlug,
+	hasNotes: hasNotes(b),
+	weread: b.weread,
 }));
 
 function mediaSubtitle(m: LibraryItem): string {
-  const label = m.format === "movie" ? "Film" : m.format === "series" ? "Series" : m.format === "variety" ? "Variety" : "Documentary";
-  return m.year ? `${label} · ${m.year}` : label;
+	const label =
+		m.format === "movie"
+			? "Film"
+			: m.format === "series"
+				? "Series"
+				: m.format === "variety"
+					? "Variety"
+					: "Documentary";
+	return m.year ? `${label} · ${m.year}` : label;
 }
 function toMasonryMedia(m: LibraryItem) {
-  return {
-    id: m.id,
-    title: m.title,
-    titleEn: m.titleEn,
-    subtitle: mediaSubtitle(m),
-    cover: m.cover,
-    coverClass: m.coverClass,
-    rating: m.rating,
-    tags: m.tags,
-    sortDate: undefined,
-    sortYear: m.year,
-    notes: m.notes,
-    reviewSlug: undefined,
-    hasNotes: hasNotes(m),
-  };
+	return {
+		id: m.id,
+		title: m.title,
+		titleEn: m.titleEn,
+		subtitle: mediaSubtitle(m),
+		cover: m.cover,
+		coverClass: m.coverClass,
+		rating: m.rating,
+		tags: m.tags,
+		sortDate: undefined,
+		sortYear: m.year,
+		notes: m.notes,
+		reviewSlug: undefined,
+		hasNotes: hasNotes(m),
+	};
 }
 const masonryFilms = films.map(toMasonryMedia);
 const masonrySeries = series.map(toMasonryMedia);
-
-
 ---
 
 <PageLayout meta={meta}>
@@ -206,6 +284,80 @@ const masonrySeries = series.map(toMasonryMedia);
       <span class="lang-en"> with notes</span><span class="lang-zh"> 有笔记</span> ·
       <span data-countup={media.length}>0</span>
       <span class="lang-en"> films & shows</span><span class="lang-zh"> 部影视</span>
+    </p>
+  </section>
+
+  <!-- WeRead public reading stats -->
+  <section class="mb-10 overflow-hidden rounded-[1.5rem] border border-[#8953d1]/15 bg-[#fff7ed]/70 p-5 shadow-sm backdrop-blur dark:border-[#a175e8]/20 dark:bg-gray-900/50 sm:p-6">
+    <div class="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <p class="font-serif text-xs uppercase tracking-[0.28em] text-[#8953d1] dark:text-[#a175e8]">WeRead Sync</p>
+        <h2 class="mt-2 font-serif text-2xl font-semibold text-gray-950 dark:text-white">
+          <span class="lang-en">Reading telemetry</span>
+          <span class="lang-zh">微信读书轨迹</span>
+        </h2>
+      </div>
+      {wereadUpdatedDate && (
+        <p class="font-serif text-xs text-gray-400 dark:text-gray-500">
+          <span class="lang-en">Updated {wereadUpdatedDate}</span>
+          <span class="lang-zh">更新于 {wereadUpdatedDate}</span>
+        </p>
+      )}
+    </div>
+
+    <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div class="rounded-2xl border border-black/5 bg-white/65 p-4 dark:border-white/10 dark:bg-black/20">
+        <p class="font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Overall reading</span><span class="lang-zh">累计阅读</span></p>
+        <p class="mt-2 font-serif text-2xl font-semibold text-gray-950 dark:text-white">{overallStats.totalReadTimeText}</p>
+        <p class="mt-1 font-serif text-xs text-gray-500 dark:text-gray-400">{overallStats.readDays} days · {overallNotes}</p>
+      </div>
+      <div class="rounded-2xl border border-black/5 bg-white/65 p-4 dark:border-white/10 dark:bg-black/20">
+        <p class="font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">This year</span><span class="lang-zh">今年</span></p>
+        <p class="mt-2 font-serif text-2xl font-semibold text-gray-950 dark:text-white">{annualStats.totalReadTimeText}</p>
+        <p class="mt-1 font-serif text-xs text-gray-500 dark:text-gray-400">{annualReadBooks} read · {annualFinishedBooks} finished</p>
+      </div>
+      <div class="rounded-2xl border border-black/5 bg-white/65 p-4 dark:border-white/10 dark:bg-black/20">
+        <p class="font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Public shelf</span><span class="lang-zh">公开书架</span></p>
+        <p class="mt-2 font-serif text-2xl font-semibold text-gray-950 dark:text-white">{wereadBooksCount}</p>
+        <p class="mt-1 font-serif text-xs text-gray-500 dark:text-gray-400">{shelfStats.publicBooks || wereadBooksCount} WeRead books synced</p>
+      </div>
+      <div class="rounded-2xl border border-black/5 bg-white/65 p-4 dark:border-white/10 dark:bg-black/20">
+        <p class="font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Preference</span><span class="lang-zh">阅读偏好</span></p>
+        <p class="mt-2 font-serif text-lg font-semibold text-gray-950 dark:text-white">{overallStats.preferCategoryWord || "—"}</p>
+        <p class="mt-1 font-serif text-xs text-gray-500 dark:text-gray-400">{overallStats.preferTimeWord || "WeRead"}</p>
+      </div>
+    </div>
+
+    <div class="mt-5 grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
+      {topAnnualBook && (
+        <div class="rounded-2xl border border-[#8953d1]/10 bg-white/55 p-4 dark:border-[#a175e8]/15 dark:bg-black/15">
+          <p class="font-serif text-xs uppercase tracking-[0.18em] text-gray-400 dark:text-gray-500"><span class="lang-en">Longest this year</span><span class="lang-zh">今年读得最久</span></p>
+          <div class="mt-3 flex gap-3">
+            {topAnnualBook.cover && <img src={topAnnualBook.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="h-24 w-16 rounded-md object-cover shadow" />}
+            <div class="min-w-0">
+              <p class="font-serif text-base font-semibold text-gray-950 dark:text-white line-clamp-2">{topAnnualBook.title}</p>
+              <p class="mt-1 font-serif text-xs text-gray-500 dark:text-gray-400">{topAnnualBook.author}</p>
+              <p class="mt-2 font-serif text-sm text-[#8953d1] dark:text-[#a175e8]">{topAnnualBook.readTimeText}</p>
+            </div>
+          </div>
+        </div>
+      )}
+      <div class="rounded-2xl border border-[#8953d1]/10 bg-white/55 p-4 dark:border-[#a175e8]/15 dark:bg-black/15">
+        <p class="font-serif text-xs uppercase tracking-[0.18em] text-gray-400 dark:text-gray-500"><span class="lang-en">Top categories</span><span class="lang-zh">阅读类别</span></p>
+        <div class="mt-3 space-y-2">
+			{topOverallCategories.map((category) => (
+            <div class="flex items-center justify-between gap-3 font-serif text-sm">
+              <span class="text-gray-700 dark:text-gray-300">{category.categoryTitle}</span>
+              <span class="shrink-0 text-gray-400 dark:text-gray-500">{category.readingTimeText}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <p class="mt-4 font-serif text-xs leading-relaxed text-gray-400 dark:text-gray-500">
+      <span class="lang-en">Only shelf metadata and aggregate stats are public here; highlights and private notes stay local.</span>
+      <span class="lang-zh">这里只公开书架元数据和聚合统计，划线与私人笔记不会自动发布。</span>
     </p>
   </section>
 
@@ -292,6 +444,11 @@ const masonrySeries = series.map(toMasonryMedia);
               <h2 class="font-serif text-sm font-medium text-black dark:text-white leading-snug line-clamp-2">{item.title}</h2>
               {item.titleEn && <p class="lang-en mt-0.5 font-serif text-xs text-gray-600 dark:text-gray-300 truncate italic">{item.titleEn}</p>}
               <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500 truncate">{item.subtitle}</p>
+              {item.weread?.bookId && (
+                <p class="mt-1 font-serif text-[11px] text-[#8953d1] dark:text-[#a175e8] truncate">
+                  WeRead{item.weread.category ? ` · ${item.weread.category}` : ""}{item.weread.rankedReadTime ? ` · ${item.weread.rankedReadTime}` : ""}
+                </p>
+              )}
               <div class="mt-2 flex items-center gap-2">
                 {item.rating && (
                   <div class="flex gap-0.5">
@@ -339,6 +496,14 @@ const masonrySeries = series.map(toMasonryMedia);
                     <span class="lang-zh">读于 {item.sortDate}</span>
                     <span class="lang-en">Read {item.sortDate}</span>
                   </p>
+                )}
+                {item.weread?.bookId && (
+                  <div class="mt-3 flex flex-wrap gap-2 font-serif text-xs text-gray-500 dark:text-gray-400">
+                    {item.weread.category && <span class="rounded-full bg-[#8953d1]/10 px-2.5 py-1 text-[#8953d1] dark:bg-[#a175e8]/15 dark:text-[#a175e8]">WeRead · {item.weread.category}</span>}
+                    {item.weread.lastReadDate && <span class="rounded-full bg-gray-100 px-2.5 py-1 dark:bg-white/10">Last read {item.weread.lastReadDate}</span>}
+                    {item.weread.rankedReadTime && <span class="rounded-full bg-gray-100 px-2.5 py-1 dark:bg-white/10">Read time {item.weread.rankedReadTime}</span>}
+                    {item.weread.badges?.map((badge) => <span class="rounded-full bg-amber-100 px-2.5 py-1 text-amber-700 dark:bg-amber-400/15 dark:text-amber-200">{badge}</span>)}
+                  </div>
                 )}
                 {item.notes?.quotes && item.notes.quotes.length > 0 && (
                   <div class="mt-4 space-y-3">
