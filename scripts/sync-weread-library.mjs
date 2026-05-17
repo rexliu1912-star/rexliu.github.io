@@ -22,6 +22,10 @@ const PUBLIC_STATS_JSON = path.join(WEREAD_DIR, "reading-stats.json");
 const API_URL = "https://i.weread.qq.com/api/agent/gateway";
 const SKILL_VERSION = "1.0.3";
 
+function formatJson(value) {
+	return `${JSON.stringify(value, null, "\t")}\n`;
+}
+
 // Tencent WeRead gateway is reachable directly from the Mac mini, while the
 // inherited Clash proxy can make Node/undici fail with a generic "fetch failed".
 for (const proxyKey of [
@@ -423,7 +427,7 @@ async function main() {
 		annual: publicStats("annually", annual),
 		overall: publicStats("overall", overall),
 	};
-	writeFileSync(PUBLIC_STATS_JSON, `${JSON.stringify(publicStatsData, null, 2)}\n`);
+	writeFileSync(PUBLIC_STATS_JSON, formatJson(publicStatsData));
 
 	console.log("📚 Fetching WeRead progress + thoughts...");
 	const publicShelfBooks = (shelf.books || []).filter((book) => Number(book.secret || 0) === 0);
@@ -452,7 +456,7 @@ async function main() {
 		progressByBookId,
 		reviewsByBookId,
 	);
-	writeFileSync(BOOKS_JSON, `${JSON.stringify(result.books, null, 2)}\n`);
+	writeFileSync(BOOKS_JSON, formatJson(result.books));
 
 	console.log("✅ WeRead sync complete");
 	console.log(
