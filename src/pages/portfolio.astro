@@ -569,7 +569,7 @@ const stages = [
 					<span class="lang-en">The market temperature we're trading against</span>
 					<span class="lang-zh">我们在和什么样的市场做交易</span>
 				</h2>
-				<span class="section-summary"><span class="lang-en">Defensive · 1/4 green</span><span class="lang-zh">防御期 · 1/4 绿灯</span></span>
+				<span class="section-summary"><span class="lang-en">{regime?.current?.label_en ?? "Defensive"} · {regime?.current?.green_count ?? "?"}/{regime?.current?.total_signals ?? "?"} green</span><span class="lang-zh">{regime?.current?.label ?? "防御期"} · {regime?.current?.green_count ?? "?"}/{regime?.current?.total_signals ?? "?"} 绿灯</span></span>
 			</header>
 
 			<div class="regime-lights">
@@ -1403,7 +1403,7 @@ const stages = [
 					每张卡片显示板块标签、一句逻辑、距止损线距离和目标价。
 				</span>
 			</p>
-			<span class="section-summary"><span class="lang-en">7 holdings · 6 high conviction</span><span class="lang-zh">7 只持仓 · 6 只高信念</span></span>
+			<span class="section-summary"><span class="lang-en">{activePositionCount} holdings · {positions.filter(p => p.conviction === "high").length} high conviction</span><span class="lang-zh">{activePositionCount} 只持仓 · {positions.filter(p => p.conviction === "high").length} 只高信念</span></span>
 		</header>
 
 
@@ -1840,7 +1840,7 @@ const stages = [
 						每个主题 1-2 天深度研究。一句硬结论 + 一段研究范围 + 必要时的结构分层。
 					</span>
 				</p>
-				<span class="section-summary"><span class="lang-en">4 sector views</span><span class="lang-zh">4 篇赛道报告</span></span>
+				<span class="section-summary"><span class="lang-en">{sector_research.length} sector views</span><span class="lang-zh">{sector_research.length} 篇赛道报告</span></span>
 			</header>
 
 				<div class="sector-research-grid">
@@ -1910,7 +1910,7 @@ const stages = [
 						通过观察池筛选的标的会写成深度研究名片。五星置信度，徽章标注当前是否持仓。
 					</span>
 				</p>
-				<span class="section-summary"><span class="lang-en">7 deep dives</span><span class="lang-zh">7 篇深度研究</span></span>
+				<span class="section-summary"><span class="lang-en">{deep_research.length} deep dives</span><span class="lang-zh">{deep_research.length} 篇深度研究</span></span>
 			</header>
 
 				{deepSectors.map((group) => (
@@ -2000,7 +2000,7 @@ const stages = [
 					每次圆桌请 6 位嘉宾——赛道专家 / 价值派 / 宏观 / 制度 / 必含反方。没有反方 = 调研不够。
 				</span>
 			</p>
-			<span class="section-summary"><span class="lang-en">Latest 2026-04-13 · 1 session</span><span class="lang-zh">最新 2026-04-13 · 1 场圆桌</span></span>
+			<span class="section-summary"><span class="lang-en">{roundtables.length > 0 ? `Latest ${roundtables[0].date} · ${roundtables.length} session${roundtables.length > 1 ? 's' : ''}` : 'No sessions yet'}</span><span class="lang-zh">{roundtables.length > 0 ? `最新 ${roundtables[0].date} · ${roundtables.length} 场圆桌` : '暂无圆桌'}</span></span>
 		</header>
 
 			<div class="roundtable-list">
