@@ -106,24 +106,5 @@ const builderLog = defineCollection({
 });
 
 
-// 9. Bookmarks 集合
-const bookmarks = defineCollection({
-	loader: glob({ base: "./src/content/bookmarks", pattern: "**/*.{md,mdx}" }),
-	schema: z.object({
-		tweet_id: z.string(),
-		author: z.string(),
-		author_name: z.string(),
-		avatar: z.string().default(""),
-		text: z.string(),
-		card_title: z.string().default(""),
-		likes: z.number().default(0),
-		retweets: z.number().default(0),
-		url: z.string().url(),
-		created_at: z.coerce.date(),
-		bookmarked_at: z.coerce.date().optional(),
-		categories: z.array(z.string()).default(["general"]),
-	}),
-});
-
-// 10. 统一导出
-export const collections = { post, note, tag, digest, projects, "builder-log": builderLog, bookmarks };
+// 9. 统一导出
+export const collections = { post, note, tag, digest, projects, "builder-log": builderLog };

@@ -3,13 +3,11 @@ import { getCollection } from "astro:content";
 import PageLayout from "@/layouts/Base.astro";
 
 // Fetch all collections for counts & previews
-const allBookmarks = await getCollection("bookmarks");
 const allDigests = await getCollection("digest");
 const allBuilderLogs = await getCollection("builder-log");
 const allProjects = await getCollection("projects");
 
 // Counts for stat bar
-const bookmarkCount = allBookmarks.length;
 const digestCount = allDigests.length;
 const builderLogCount = allBuilderLogs.length;
 
@@ -17,16 +15,12 @@ const builderLogCount = allBuilderLogs.length;
 const sortByDate = <T extends { data: { date: Date } }>(arr: T[]) =>
 	arr.sort((a, b) => new Date(b.data.date).valueOf() - new Date(a.data.date).valueOf());
 
-const sortByCreatedAt = <T extends { data: { created_at: Date } }>(arr: T[]) =>
-	arr.sort((a, b) => new Date(b.data.created_at).valueOf() - new Date(a.data.created_at).valueOf());
-
 // Latest items for previews
-const latestBookmark = sortByCreatedAt([...allBookmarks])[0];
 const latestDigest = sortByDate([...allDigests])[0];
 const latestBuilderLog = sortByDate([...allBuilderLogs])[0];
 
-// Products: exclude Bookmarks and Library (they go in Curated)
-const excludeFromProducts = ["bookmarks", "library", "content-pipeline"];
+// Products: exclude Library (goes in Curated)
+const excludeFromProducts = ["library", "content-pipeline"];
 const otherProjects = allProjects
 	.filter(p => !excludeFromProducts.includes(p.id))
 	.sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
@@ -71,12 +65,12 @@ const meta = {
 		<!-- Stat Bar -->
 		<div class="lab-stat-bar mt-6 flex flex-wrap items-center gap-x-4 gap-y-1 font-serif text-sm">
 		<span class="lang-en">
-				<span class="lab-counter font-bold" style="color:#8953d1" data-target={bookmarkCount}>0</span>
-				<span class="text-gray-400"> tweets curated</span>
+				<span class="lab-counter font-bold" style="color:#8953d1" data-target={digestCount}>0</span>
+				<span class="text-gray-400"> curated reads</span>
 			</span>
 			<span class="lang-zh">
-				<span class="lab-counter font-bold" style="color:#8953d1" data-target={bookmarkCount}>0</span>
-				<span class="text-gray-400"> 条精选推文</span>
+				<span class="lab-counter font-bold" style="color:#8953d1" data-target={digestCount}>0</span>
+				<span class="text-gray-400"> 篇精选阅读</span>
 			</span>
 			<span class="text-gray-300 dark:text-gray-600">·</span>
 			<span class="lang-en">
@@ -185,24 +179,6 @@ const meta = {
 					<span class="lang-en">What shaped how I think</span>
 					<span class="lang-zh">塑造思维的书与片</span>
 				</p>
-				<span class="mt-auto pt-3 font-serif text-sm text-purple-400 opacity-0 transition-opacity group-hover:opacity-100">→</span>
-			</a>
-
-			<!-- Bookmarks -->
-			<a href="/lab/bookmarks/" class="lab-curated-card lab-slide-in fade-in-up group flex w-[280px] shrink-0 flex-col rounded-xl border border-gray-200 p-5 transition-all hover:border-[#8953d1]/40 dark:border-gray-800 dark:hover:border-[#a175e8]/40 lg:w-auto" style="--delay: 230ms">
-				<span class="mb-3 text-2xl">🔖</span>
-				<h3 class="mb-1 font-serif text-base font-medium text-black group-hover:text-[#8953d1] dark:text-white dark:group-hover:text-[#a175e8]">
-					Bookmarks
-				</h3>
-				<p class="font-serif text-sm text-gray-400">
-					<span class="lang-en">{bookmarkCount} curated tweets</span>
-					<span class="lang-zh">{bookmarkCount} 条精选推文</span>
-				</p>
-				{latestBookmark && (
-					<p class="mt-2 line-clamp-1 font-serif text-xs text-gray-400 dark:text-gray-500">
-						Latest: @{latestBookmark.data.author}
-					</p>
-				)}
 				<span class="mt-auto pt-3 font-serif text-sm text-purple-400 opacity-0 transition-opacity group-hover:opacity-100">→</span>
 			</a>
 
