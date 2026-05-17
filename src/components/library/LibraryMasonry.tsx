@@ -1,4 +1,3 @@
-import { layout, prepare } from "@chenglou/pretext";
 import { type RefObject, useEffect, useMemo, useRef, useState } from "react";
 
 type BookNotes = {
@@ -82,6 +81,22 @@ function truncate(s: string, n: number): string {
 	return s.length > n ? `${s.slice(0, n)}…` : s;
 }
 
+function estimateTextHeight(
+	text: string,
+	innerWidth: number,
+	fontSize: number,
+	lineHeight: number,
+) {
+	if (!text) return 0;
+	// CJK glyphs are wider than Latin glyphs; this approximation keeps Masonry stable
+	// without depending on browser-side text layout libraries during hydration.
+	let units = 0;
+	for (const char of text)
+		units += /[\u4e00-\u9fff\u3040-\u30ff\uac00-\ud7af]/.test(char) ? 1 : 0.55;
+	const charsPerLine = Math.max(6, Math.floor(innerWidth / fontSize));
+	return Math.max(lineHeight, Math.ceil(units / charsPerLine) * lineHeight);
+}
+
 function getPreview(notes?: BookNotes, thoughts?: WeReadThought[]): string {
 	if (notes?.quotes?.[0]) return truncate(notes.quotes[0], PREVIEW_LIMIT);
 	if (notes?.core_ideas?.[0]) return truncate(notes.core_ideas[0], 100);
@@ -162,13 +177,8 @@ function measureItem(item: MasonryItem, columnWidth: number): MeasuredItem {
 	// Body top padding
 	h += 12;
 
-	// Title — Pretext-measured (handles 1-line or multi-line titles accurately)
-	const titlePrepared = prepare(
-		item.title,
-		'500 16px Georgia, Cambria, "Times New Roman", Times, serif',
-	);
-	const titleLayout = layout(titlePrepared, innerWidth, 20);
-	h += titleLayout.height;
+	// Title — estimated instead of browser-side layout to keep hydration resilient.
+	h += estimateTextHeight(item.title, innerWidth, 16, 20);
 
 	// titleEn (optional, usually 1 line)
 	if (item.titleEn) h += 15 + 2;
@@ -185,14 +195,9 @@ function measureItem(item: MasonryItem, columnWidth: number): MeasuredItem {
 	// Rating dots
 	if (item.rating && rDots > 0) h += 10 + 4;
 
-	// Notes preview — Pretext-measured
+	// Notes preview.
 	if (preview) {
-		const quotePrepared = prepare(
-			preview,
-			'14px Georgia, Cambria, "Times New Roman", Times, serif',
-		);
-		const quoteLayout = layout(quotePrepared, innerWidth - 12 /* border-left + padding */, 24);
-		h += 12 /* margin */ + quoteLayout.height + 2 /* line-height buffer */;
+		h += 12 /* margin */ + estimateTextHeight(preview, innerWidth - 12, 14, 24) + 2;
 	}
 
 	// Tags row (single line, pill style)

@@ -1528,8 +1528,10 @@ const masonrySeries = series.map(toMasonryMedia);
       // If closing animation running, cut it short
       modal.classList.remove('closing');
       modalContent.innerHTML = detail.innerHTML;
+      modal.classList.add('open');
+      document.body.style.overflow = 'hidden';
 
-      document.querySelectorAll('.lib-card.is-active').forEach(c => c.classList.remove('is-active'));
+      document.querySelectorAll('.lib-card.is-active, .library-masonry-card.is-active').forEach(c => c.classList.remove('is-active'));
       cardEl.classList.add('is-active');
     }
 
@@ -1695,6 +1697,14 @@ const masonrySeries = series.map(toMasonryMedia);
     if (btnMasonry) btnMasonry.addEventListener('click', () => switchView('masonry'));
     if (btnGrid)    btnGrid.addEventListener('click',    () => switchView('grid'));
     if (btnShelf)   btnShelf.addEventListener('click',   () => switchView('shelf'));
+
+    // React island safety net: if Masonry hydration fails, keep the Library usable.
+    // Grid cards are server-rendered and carry the same detail payloads/notes.
+    setTimeout(() => {
+      if (activeView !== 'masonry') return;
+      const hasRenderedMasonryCards = !!masonryView?.querySelector('.library-masonry-card');
+      if (!hasRenderedMasonryCards && gridView) switchView('grid');
+    }, 1200);
 
     // ── Films / Series two-view toggle (masonry + grid) ──────
     function wireMediaToggle(tabKey) {
