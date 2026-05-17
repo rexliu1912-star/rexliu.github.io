@@ -120,16 +120,16 @@ type WeReadReadingStats = {
 };
 
 const bookTagColors: Record<string, string> = {
-	投资: "bg-gradient-to-br from-[#8953d1] to-[#6b3fa0]",
+	投资: "bg-[linear-gradient(135deg,var(--color-quote),var(--color-accent-2))]",
 	成长: "bg-gradient-to-br from-[#3b82f6] to-[#1d4ed8]",
 	文化: "bg-gradient-to-br from-[#f59e0b] to-[#d97706]",
 	文学: "bg-gradient-to-br from-[#ec4899] to-[#be185d]",
 	古琴: "bg-gradient-to-br from-[#10b981] to-[#047857]",
 	写作: "bg-gradient-to-br from-[#6366f1] to-[#4338ca]",
 };
-const defaultBookColor = "bg-gradient-to-br from-[#8953d1] to-[#6b3fa0]";
+const defaultBookColor = "bg-[linear-gradient(135deg,var(--color-quote),var(--color-accent-2))]";
 const mediaTypeColors: Record<string, string> = {
-	movie: "bg-gradient-to-br from-[#8953d1] to-[#6b3fa0]",
+	movie: "bg-[linear-gradient(135deg,var(--color-quote),var(--color-accent-2))]",
 	series: "bg-gradient-to-br from-[#3b82f6] to-[#1d4ed8]",
 	variety: "bg-gradient-to-br from-[#f59e0b] to-[#d97706]",
 	documentary: "bg-gradient-to-br from-[#6b7280] to-[#374151]",
@@ -407,7 +407,7 @@ const masonrySeries = series.map(toMasonryMedia);
 <PageLayout meta={meta}>
   <!-- Header -->
   <section class="mb-12">
-    <a href="/lab/" class="font-serif text-sm text-gray-400 transition-colors hover:text-[#8953d1] dark:text-gray-500 dark:hover:text-[#a175e8]">← Lab</a>
+    <a href="/lab/" class="font-serif text-sm text-gray-400 transition-colors hover:text-[var(--color-quote)] dark:text-gray-500 dark:hover:text-[var(--color-quote)]">← Lab</a>
     <h1 class="mt-4 mb-4 font-serif text-4xl font-bold dark:text-white"><span class="lang-en">Library</span><span class="lang-zh">书影音</span></h1>
     <p class="lang-en max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">Books, films, and shows that shaped how I think.</p>
     <p class="lang-zh max-w-2xl font-serif text-lg leading-relaxed text-gray-600 dark:text-gray-300">读过的书、看过的片，塑造了现在的我。</p>
@@ -422,10 +422,10 @@ const masonrySeries = series.map(toMasonryMedia);
   </section>
 
   <!-- WeRead public reading stats -->
-  <section class="mb-10 overflow-hidden rounded-[1.5rem] border border-[#8953d1]/15 bg-[#fff7ed]/70 p-5 shadow-sm backdrop-blur dark:border-[#a175e8]/20 dark:bg-gray-900/50 sm:p-6">
+  <section class="lib-section-surface mb-10 overflow-hidden rounded-[1.5rem] p-5 shadow-sm backdrop-blur sm:p-6">
     <div class="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
       <div>
-        <p class="font-serif text-xs uppercase tracking-[0.28em] text-[#8953d1] dark:text-[#a175e8]">WeRead Sync</p>
+        <p class="lib-accent font-serif text-xs uppercase tracking-[0.28em]">WeRead Sync</p>
         <h2 class="mt-2 font-serif text-2xl font-semibold text-gray-950 dark:text-white">
           <span class="lang-en">Reading telemetry</span>
           <span class="lang-zh">微信读书轨迹</span>
@@ -440,22 +440,22 @@ const masonrySeries = series.map(toMasonryMedia);
     </div>
 
     <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-      <div class="rounded-2xl border border-black/5 bg-white/65 p-4 dark:border-white/10 dark:bg-black/20">
+      <div class="lib-stat-card rounded-2xl p-4">
         <p class="font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Overall reading</span><span class="lang-zh">累计阅读</span></p>
         <p class="mt-2 font-serif text-2xl font-semibold text-gray-950 dark:text-white"><span class="lang-en">{translateDuration(overallStats.totalReadTimeText)}</span><span class="lang-zh">{overallStats.totalReadTimeText}</span></p>
         <p class="mt-1 font-serif text-xs text-gray-500 dark:text-gray-400"><span class="lang-en">{overallStats.readDays} days · {overallNotesEn}</span><span class="lang-zh">{overallStats.readDays} 天 · {overallNotes}</span></p>
       </div>
-      <div class="rounded-2xl border border-black/5 bg-white/65 p-4 dark:border-white/10 dark:bg-black/20">
+      <div class="lib-stat-card rounded-2xl p-4">
         <p class="font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">This year</span><span class="lang-zh">今年</span></p>
         <p class="mt-2 font-serif text-2xl font-semibold text-gray-950 dark:text-white"><span class="lang-en">{translateDuration(annualStats.totalReadTimeText)}</span><span class="lang-zh">{annualStats.totalReadTimeText}</span></p>
         <p class="mt-1 font-serif text-xs text-gray-500 dark:text-gray-400"><span class="lang-en">{annualReadBooksEn} read · {annualFinishedBooksEn} finished</span><span class="lang-zh">读过 {annualReadBooks} · 读完 {annualFinishedBooks}</span></p>
       </div>
-      <div class="rounded-2xl border border-black/5 bg-white/65 p-4 dark:border-white/10 dark:bg-black/20">
+      <div class="lib-stat-card rounded-2xl p-4">
         <p class="font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Public shelf</span><span class="lang-zh">公开书架</span></p>
         <p class="mt-2 font-serif text-2xl font-semibold text-gray-950 dark:text-white">{wereadBooksCount}</p>
         <p class="mt-1 font-serif text-xs text-gray-500 dark:text-gray-400"><span class="lang-en">{shelfStats.publicBooks || wereadBooksCount} WeRead books synced</span><span class="lang-zh">已同步 {shelfStats.publicBooks || wereadBooksCount} 本微信读书</span></p>
       </div>
-      <div class="rounded-2xl border border-black/5 bg-white/65 p-4 dark:border-white/10 dark:bg-black/20">
+      <div class="lib-stat-card rounded-2xl p-4">
         <p class="font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-en">Preference</span><span class="lang-zh">阅读偏好</span></p>
         <p class="mt-2 font-serif text-lg font-semibold text-gray-950 dark:text-white"><span class="lang-en">{translatePreferenceWord(overallStats.preferCategoryWord)}</span><span class="lang-zh">{overallStats.preferCategoryWord || "—"}</span></p>
         <p class="mt-1 font-serif text-xs text-gray-500 dark:text-gray-400"><span class="lang-en">{translatePreferenceWord(overallStats.preferTimeWord || "WeRead")}</span><span class="lang-zh">{overallStats.preferTimeWord || "WeRead"}</span></p>
@@ -464,19 +464,19 @@ const masonrySeries = series.map(toMasonryMedia);
 
     <div class="mt-5 grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
       {topAnnualBook && (
-        <div class="rounded-2xl border border-[#8953d1]/10 bg-white/55 p-4 dark:border-[#a175e8]/15 dark:bg-black/15">
+        <div class="lib-stat-card rounded-2xl p-4">
           <p class="font-serif text-xs uppercase tracking-[0.18em] text-gray-400 dark:text-gray-500"><span class="lang-en">Longest this year</span><span class="lang-zh">今年读得最久</span></p>
           <div class="mt-3 flex gap-3">
             {topAnnualBook.cover && <img src={topAnnualBook.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="h-24 w-16 rounded-md object-cover shadow" />}
             <div class="min-w-0">
               <p class="font-serif text-base font-semibold text-gray-950 dark:text-white line-clamp-2">{topAnnualBook.title}</p>
               <p class="mt-1 font-serif text-xs text-gray-500 dark:text-gray-400">{topAnnualBook.author}</p>
-              <p class="mt-2 font-serif text-sm text-[#8953d1] dark:text-[#a175e8]"><span class="lang-en">{translateDuration(topAnnualBook.readTimeText)}</span><span class="lang-zh">{topAnnualBook.readTimeText}</span></p>
+              <p class="lib-accent mt-2 font-serif text-sm"><span class="lang-en">{translateDuration(topAnnualBook.readTimeText)}</span><span class="lang-zh">{topAnnualBook.readTimeText}</span></p>
             </div>
           </div>
         </div>
       )}
-      <div class="rounded-2xl border border-[#8953d1]/10 bg-white/55 p-4 dark:border-[#a175e8]/15 dark:bg-black/15">
+      <div class="lib-stat-card rounded-2xl p-4">
         <p class="font-serif text-xs uppercase tracking-[0.18em] text-gray-400 dark:text-gray-500"><span class="lang-en">Top categories</span><span class="lang-zh">阅读类别</span></p>
         <div class="mt-3 space-y-2">
 			{topOverallCategories.map((category) => (
@@ -496,10 +496,10 @@ const masonrySeries = series.map(toMasonryMedia);
   </section>
 
   {currentlyReadingBooks.length > 0 && (
-    <section class="mb-8 rounded-[28px] border border-[#8953d1]/10 bg-[#fffaf0]/70 p-5 shadow-sm backdrop-blur dark:border-[#a175e8]/15 dark:bg-white/[0.03]">
+    <section class="lib-section-surface mb-8 rounded-[28px] p-5 shadow-sm backdrop-blur">
       <div class="mb-4 flex items-end justify-between gap-4">
         <div>
-          <p class="font-serif text-xs uppercase tracking-[0.22em] text-[#8953d1] dark:text-[#a175e8]"><span class="lang-en">Currently reading</span><span class="lang-zh">正在读</span></p>
+          <p class="lib-accent font-serif text-xs uppercase tracking-[0.22em]"><span class="lang-en">Currently reading</span><span class="lang-zh">正在读</span></p>
           <h2 class="mt-1 font-serif text-2xl text-gray-950 dark:text-white"><span class="lang-en">Live reading desk</span><span class="lang-zh">实时阅读桌面</span></h2>
         </div>
         <p class="hidden max-w-sm font-serif text-xs leading-relaxed text-gray-500 dark:text-gray-400 sm:block">
@@ -512,7 +512,7 @@ const masonrySeries = series.map(toMasonryMedia);
           const percent = readingProgressPercent(item);
           const firstThought = item.weread?.thoughts?.[0];
           return (
-            <article class="rounded-2xl border border-[#8953d1]/10 bg-white/65 p-4 dark:border-[#a175e8]/15 dark:bg-black/15">
+            <article class="lib-stat-card rounded-2xl p-4">
               <div class="flex gap-4">
                 {item.cover ? (
                   <img src={item.cover} alt="" loading="lazy" referrerpolicy="no-referrer" class="h-28 w-[74px] shrink-0 rounded-md object-cover shadow" />
@@ -523,8 +523,8 @@ const masonrySeries = series.map(toMasonryMedia);
                   <h3 class="font-serif text-base font-semibold leading-snug text-gray-950 dark:text-white line-clamp-2">{item.title}</h3>
                   <p class="mt-1 truncate font-serif text-xs text-gray-500 dark:text-gray-400">{item.subtitle}</p>
                   <div class="mt-3">
-                    <div class="h-1.5 overflow-hidden rounded-full bg-[#8953d1]/10 dark:bg-[#a175e8]/15">
-                      <span class="block h-full rounded-full bg-[#8953d1] dark:bg-[#a175e8]" style={`width: ${percent}%`}></span>
+                    <div class="lib-progress-track h-1.5 overflow-hidden rounded-full">
+                      <span class="lib-progress-fill block h-full rounded-full" style={`width: ${percent}%`}></span>
                     </div>
                     <p class="mt-1.5 font-serif text-xs text-gray-500 dark:text-gray-400">
                       <span class="lang-en">{percent}%{item.weread?.progress?.chapterName ? ` · ${item.weread.progress.chapterName}` : ""}</span>
@@ -534,7 +534,7 @@ const masonrySeries = series.map(toMasonryMedia);
                 </div>
               </div>
               {firstThought && (
-                <blockquote class="mt-4 border-l-2 border-[#8953d1] pl-4 font-serif text-sm leading-relaxed text-gray-700 dark:border-[#a175e8] dark:text-gray-300">{firstThought.content}</blockquote>
+                <blockquote class="lib-note-quote mt-4 border-l-2 pl-4 font-serif text-sm leading-relaxed">{firstThought.content}</blockquote>
               )}
             </article>
           );
@@ -546,19 +546,19 @@ const masonrySeries = series.map(toMasonryMedia);
   <!-- Tabs -->
   <section class="mb-4">
     <div class="flex flex-wrap gap-6 border-b border-gray-200 font-serif text-sm dark:border-gray-800">
-      <button type="button" class="lib-tab border-b-2 border-[#8953d1] pb-3 font-medium text-[#8953d1] dark:text-[#a175e8]" data-tab="books" aria-pressed="true">
+      <button type="button" class="lib-tab border-b-2 border-[var(--color-quote)] pb-3 font-medium text-[var(--color-quote)] dark:text-[var(--color-quote)]" data-tab="books" aria-pressed="true">
         <span class="lang-en">📚 Books ({books.length})</span><span class="lang-zh">📚 书籍 ({books.length})</span>
       </button>
-      <button type="button" class="lib-tab border-b-2 border-transparent pb-3 text-gray-400 hover:text-[#8953d1] dark:text-gray-500" data-tab="films" aria-pressed="false">
+      <button type="button" class="lib-tab border-b-2 border-transparent pb-3 text-gray-400 hover:text-[var(--color-quote)] dark:text-gray-500" data-tab="films" aria-pressed="false">
         <span class="lang-en">🎬 Films ({films.length})</span><span class="lang-zh">🎬 电影 ({films.length})</span>
       </button>
-      <button type="button" class="lib-tab border-b-2 border-transparent pb-3 text-gray-400 hover:text-[#8953d1] dark:text-gray-500" data-tab="series" aria-pressed="false">
+      <button type="button" class="lib-tab border-b-2 border-transparent pb-3 text-gray-400 hover:text-[var(--color-quote)] dark:text-gray-500" data-tab="series" aria-pressed="false">
         <span class="lang-en">📺 Series ({series.length})</span><span class="lang-zh">📺 剧集 ({series.length})</span>
       </button>
-      <button type="button" class="lib-tab border-b-2 border-transparent pb-3 text-gray-400 hover:text-[#8953d1] dark:text-gray-500" data-tab="variety" aria-pressed="false">
+      <button type="button" class="lib-tab border-b-2 border-transparent pb-3 text-gray-400 hover:text-[var(--color-quote)] dark:text-gray-500" data-tab="variety" aria-pressed="false">
         <span class="lang-en">🎭 Variety ({variety.length})</span><span class="lang-zh">🎭 综艺 ({variety.length})</span>
       </button>
-      <button type="button" class="lib-tab border-b-2 border-transparent pb-3 text-gray-400 hover:text-[#8953d1] dark:text-gray-500" data-tab="documentary" aria-pressed="false">
+      <button type="button" class="lib-tab border-b-2 border-transparent pb-3 text-gray-400 hover:text-[var(--color-quote)] dark:text-gray-500" data-tab="documentary" aria-pressed="false">
         <span class="lang-en">🎬 Doc ({documentary.length})</span><span class="lang-zh">🎬 纪录片 ({documentary.length})</span>
       </button>
     </div>
@@ -578,19 +578,19 @@ const masonrySeries = series.map(toMasonryMedia);
         <span class="lang-en">Filter by tag · toggle view</span>
       </p>
       <div class="flex items-center gap-2">
-        <select id="books-sort" autocomplete="off" class="font-serif text-xs text-gray-500 dark:text-gray-400 bg-transparent border border-purple-500/20 rounded-full px-3 py-1.5 cursor-pointer hover:border-purple-500/40 focus:outline-none dark:bg-gray-900/60">
+        <select id="books-sort" autocomplete="off" class="lib-sort-select rounded-full px-3 py-1.5 font-serif text-xs cursor-pointer focus:outline-none">
           <option value="date" selected data-zh="最近阅读" data-en="Recent">最近阅读</option>
           <option value="rating" data-zh="评分" data-en="Rating">评分</option>
           <option value="notes" data-zh="有笔记" data-en="With Notes">有笔记</option>
         </select>
-        <div class="inline-flex items-center rounded-full border border-purple-500/20 bg-white/70 p-1 text-sm shadow-sm backdrop-blur dark:border-purple-500/15 dark:bg-gray-900/60">
-          <button type="button" id="view-btn-masonry" class="lib-view-toggle rounded-full bg-[#8953d1] px-3 py-1.5 font-serif text-xs text-white dark:bg-[#a175e8] dark:text-black" aria-pressed="true">
+        <div class="inline-flex items-center rounded-full border border-[var(--lib-border)] bg-[var(--lib-surface)] p-1 text-sm shadow-sm backdrop-blur">
+          <button type="button" id="view-btn-masonry" class="lib-view-toggle rounded-full bg-[var(--color-quote)] px-3 py-1.5 font-serif text-xs text-white dark:bg-[var(--color-quote)] dark:text-black" aria-pressed="true">
             <span class="lang-en">📝 Masonry</span><span class="lang-zh">📝 札记</span>
           </button>
-          <button type="button" id="view-btn-grid" class="lib-view-toggle rounded-full px-3 py-1.5 font-serif text-xs text-gray-500 hover:text-[#8953d1] dark:text-gray-400 dark:hover:text-[#a175e8]" aria-pressed="false">
+          <button type="button" id="view-btn-grid" class="lib-view-toggle rounded-full px-3 py-1.5 font-serif text-xs text-gray-500 hover:text-[var(--color-quote)] dark:text-gray-400 dark:hover:text-[var(--color-quote)]" aria-pressed="false">
             <span class="lang-en">📚 Grid</span><span class="lang-zh">📚 网格</span>
           </button>
-          <button type="button" id="view-btn-shelf" class="lib-view-toggle rounded-full px-3 py-1.5 font-serif text-xs text-gray-500 hover:text-[#8953d1] dark:text-gray-400 dark:hover:text-[#a175e8]" aria-pressed="false">
+          <button type="button" id="view-btn-shelf" class="lib-view-toggle rounded-full px-3 py-1.5 font-serif text-xs text-gray-500 hover:text-[var(--color-quote)] dark:text-gray-400 dark:hover:text-[var(--color-quote)]" aria-pressed="false">
             <span class="lang-en">📖 Shelf</span><span class="lang-zh">📖 书架</span>
           </button>
         </div>
@@ -627,7 +627,7 @@ const masonrySeries = series.map(toMasonryMedia);
               {item.titleEn && <p class="lang-en mt-0.5 font-serif text-xs text-gray-600 dark:text-gray-300 truncate italic">{item.titleEn}</p>}
               <p class="mt-1 font-serif text-xs text-gray-400 dark:text-gray-500 truncate">{item.subtitle}</p>
               {item.weread?.bookId && (
-                <p class="mt-1 font-serif text-[11px] text-[#8953d1] dark:text-[#a175e8] truncate">
+                <p class="mt-1 font-serif text-[11px] text-[var(--color-quote)] dark:text-[var(--color-quote)] truncate">
                   <span class="lang-en">WeRead{item.weread.category ? ` · ${translateZhCategory(item.weread.category)}` : ""}{item.weread.rankedReadTime ? ` · ${translateDuration(item.weread.rankedReadTime)}` : ""}</span><span class="lang-zh">微信读书{item.weread.category ? ` · ${item.weread.category}` : ""}{item.weread.rankedReadTime ? ` · ${item.weread.rankedReadTime}` : ""}</span>
                 </p>
               )}
@@ -635,7 +635,7 @@ const masonrySeries = series.map(toMasonryMedia);
                 {item.rating && (
                   <div class="flex gap-0.5">
                     {[1,2,3,4,5].map(n => (
-                      <span class={`block w-1.5 h-1.5 rounded-full ${ratingDots(item.rating) >= n ? 'bg-[#8953d1]' : 'bg-gray-200 dark:bg-gray-700'}`} />
+                      <span class={`block w-1.5 h-1.5 rounded-full ${ratingDots(item.rating) >= n ? 'bg-[var(--color-quote)]' : 'bg-gray-200 dark:bg-gray-700'}`} />
                     ))}
                   </div>
                 )}
@@ -668,24 +668,24 @@ const masonrySeries = series.map(toMasonryMedia);
                 )}
                 {item.weread?.bookId && (
                   <div class="mt-3 flex flex-wrap gap-2 font-serif text-xs text-gray-500 dark:text-gray-400">
-                    {item.weread.category && <span class="rounded-full bg-[#8953d1]/10 px-2.5 py-1 text-[#8953d1] dark:bg-[#a175e8]/15 dark:text-[#a175e8]"><span class="lang-en">WeRead · {translateZhCategory(item.weread.category)}</span><span class="lang-zh">微信读书 · {item.weread.category}</span></span>}
-                    {item.weread.lastReadDate && <span class="rounded-full bg-gray-100 px-2.5 py-1 dark:bg-white/10"><span class="lang-en">Last read {item.weread.lastReadDate}</span><span class="lang-zh">最近阅读 {item.weread.lastReadDate}</span></span>}
-                    {item.weread.rankedReadTime && <span class="rounded-full bg-gray-100 px-2.5 py-1 dark:bg-white/10"><span class="lang-en">Read time {translateDuration(item.weread.rankedReadTime)}</span><span class="lang-zh">阅读时长 {item.weread.rankedReadTime}</span></span>}
-                    {item.weread.badges?.map((badge) => <span class="rounded-full bg-amber-100 px-2.5 py-1 text-amber-700 dark:bg-amber-400/15 dark:text-amber-200"><span class="lang-en">{translateBadge(badge)}</span><span class="lang-zh">{badge}</span></span>)}
-                    {item.weread.progress?.percent !== undefined && <span class="rounded-full bg-[#8953d1]/10 px-2.5 py-1 text-[#8953d1] dark:bg-[#a175e8]/15 dark:text-[#a175e8]"><span class="lang-en">Progress {readingProgressPercent(item)}%</span><span class="lang-zh">进度 {readingProgressPercent(item)}%</span></span>}
+                    {item.weread.category && <span class="rounded-full bg-[var(--color-quote)]/10 px-2.5 py-1 text-[var(--color-quote)] dark:bg-[var(--color-quote)]/15 dark:text-[var(--color-quote)]"><span class="lang-en">WeRead · {translateZhCategory(item.weread.category)}</span><span class="lang-zh">微信读书 · {item.weread.category}</span></span>}
+                    {item.weread.lastReadDate && <span class="lib-pill rounded-full px-2.5 py-1"><span class="lang-en">Last read {item.weread.lastReadDate}</span><span class="lang-zh">最近阅读 {item.weread.lastReadDate}</span></span>}
+                    {item.weread.rankedReadTime && <span class="lib-pill rounded-full px-2.5 py-1"><span class="lang-en">Read time {translateDuration(item.weread.rankedReadTime)}</span><span class="lang-zh">阅读时长 {item.weread.rankedReadTime}</span></span>}
+                    {item.weread.badges?.map((badge) => <span class="lib-pill lib-pill-warm rounded-full px-2.5 py-1"><span class="lang-en">{translateBadge(badge)}</span><span class="lang-zh">{badge}</span></span>)}
+                    {item.weread.progress?.percent !== undefined && <span class="rounded-full bg-[var(--color-quote)]/10 px-2.5 py-1 text-[var(--color-quote)] dark:bg-[var(--color-quote)]/15 dark:text-[var(--color-quote)]"><span class="lang-en">Progress {readingProgressPercent(item)}%</span><span class="lang-zh">进度 {readingProgressPercent(item)}%</span></span>}
                   </div>
                 )}
                 {item.notes?.quotes && item.notes.quotes.length > 0 && (
                   <div class="mt-4 space-y-3">
                     {item.notes.quotes.map((q) => (
-                      <blockquote class="border-l-2 border-[#8953d1] pl-4 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300 dark:border-[#a175e8]">{q}</blockquote>
+                      <blockquote class="border-l-2 border-[var(--color-quote)] pl-4 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300 dark:border-[var(--color-quote)]">{q}</blockquote>
                     ))}
                   </div>
                 )}
                 {item.notes?.core_ideas && item.notes.core_ideas.length > 0 && (
                   <ul class="mt-4 space-y-2 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300">
                     {item.notes.core_ideas.map((idea) => (
-                      <li class="flex gap-2"><span class="text-[#8953d1] dark:text-[#a175e8]">•</span><span>{idea}</span></li>
+                      <li class="flex gap-2"><span class="text-[var(--color-quote)] dark:text-[var(--color-quote)]">•</span><span>{idea}</span></li>
                     ))}
                   </ul>
                 )}
@@ -694,9 +694,9 @@ const masonrySeries = series.map(toMasonryMedia);
                 )}
                 {item.weread?.thoughts && item.weread.thoughts.length > 0 && (
                   <div class="mt-4 space-y-3">
-                    <p class="font-serif text-xs uppercase tracking-[0.18em] text-[#8953d1] dark:text-[#a175e8]"><span class="lang-en">WeRead thoughts</span><span class="lang-zh">微信读书想法</span></p>
+                    <p class="font-serif text-xs uppercase tracking-[0.18em] text-[var(--color-quote)] dark:text-[var(--color-quote)]"><span class="lang-en">WeRead thoughts</span><span class="lang-zh">微信读书想法</span></p>
                     {item.weread.thoughts.slice(0, 3).map((thought) => (
-                      <blockquote class="rounded-2xl border border-[#8953d1]/10 bg-[#8953d1]/5 p-4 font-serif text-sm leading-relaxed text-gray-700 dark:border-[#a175e8]/15 dark:bg-[#a175e8]/10 dark:text-gray-300">
+                      <blockquote class="rounded-2xl border border-[var(--color-quote)]/10 bg-[var(--color-quote)]/5 p-4 font-serif text-sm leading-relaxed text-gray-700 dark:border-[var(--color-quote)]/15 dark:bg-[var(--color-quote)]/10 dark:text-gray-300">
                         {thought.chapter && <p class="mb-2 text-xs text-gray-400 dark:text-gray-500">{thought.chapter}</p>}
                         <p>{thought.content}</p>
                       </blockquote>
@@ -709,7 +709,7 @@ const masonrySeries = series.map(toMasonryMedia);
                   </p>
                 )}
                 {item.reviewSlug && (
-                  <a href={`/posts/${item.reviewSlug}/`} class="mt-4 inline-flex items-center gap-1.5 font-serif text-sm text-[#8953d1] dark:text-[#a175e8] hover:opacity-70 transition-opacity no-underline">
+                  <a href={`/posts/${item.reviewSlug}/`} class="mt-4 inline-flex items-center gap-1.5 font-serif text-sm text-[var(--color-quote)] dark:text-[var(--color-quote)] hover:opacity-70 transition-opacity no-underline">
                     <span>📝</span>
                     <span class="lang-zh">阅读书评</span>
                     <span class="lang-en">Read Review</span>
@@ -779,11 +779,11 @@ const masonrySeries = series.map(toMasonryMedia);
       <>
         <!-- View toggle (Films) -->
         <div class="mb-5 flex items-center justify-end gap-3">
-          <div class="inline-flex items-center rounded-full border border-purple-500/20 bg-white/70 p-1 text-sm shadow-sm backdrop-blur dark:border-purple-500/15 dark:bg-gray-900/60">
-            <button type="button" id="view-btn-films-masonry" class="lib-view-toggle lib-view-toggle-films rounded-full bg-[#8953d1] px-3 py-1.5 font-serif text-xs text-white dark:bg-[#a175e8] dark:text-black" data-view="masonry" aria-pressed="true">
+          <div class="inline-flex items-center rounded-full border border-[var(--lib-border)] bg-[var(--lib-surface)] p-1 text-sm shadow-sm backdrop-blur">
+            <button type="button" id="view-btn-films-masonry" class="lib-view-toggle lib-view-toggle-films rounded-full bg-[var(--color-quote)] px-3 py-1.5 font-serif text-xs text-white dark:bg-[var(--color-quote)] dark:text-black" data-view="masonry" aria-pressed="true">
               <span class="lang-en">📝 Masonry</span><span class="lang-zh">📝 札记</span>
             </button>
-            <button type="button" id="view-btn-films-grid" class="lib-view-toggle lib-view-toggle-films rounded-full px-3 py-1.5 font-serif text-xs text-gray-500 hover:text-[#8953d1] dark:text-gray-400 dark:hover:text-[#a175e8]" data-view="grid" aria-pressed="false">
+            <button type="button" id="view-btn-films-grid" class="lib-view-toggle lib-view-toggle-films rounded-full px-3 py-1.5 font-serif text-xs text-gray-500 hover:text-[var(--color-quote)] dark:text-gray-400 dark:hover:text-[var(--color-quote)]" data-view="grid" aria-pressed="false">
               <span class="lang-en">📚 Grid</span><span class="lang-zh">📚 网格</span>
             </button>
           </div>
@@ -821,8 +821,8 @@ const masonrySeries = series.map(toMasonryMedia);
                   <h3 class="font-serif text-lg font-medium text-black dark:text-white">{item.title}</h3>
                   <p class="mt-1 font-serif text-sm text-gray-400">{item.year || "—"} · {item.tags.join(" · ")}</p>
                   {hasNotes(item) && item.year && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-zh">看于 {item.year}</span><span class="lang-en">Watched {item.year}</span></p>}
-                  {item.notes?.quotes && item.notes.quotes.length > 0 && (<div class="mt-4 space-y-3">{item.notes.quotes.map((q) => (<blockquote class="border-l-2 border-[#8953d1] pl-4 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300 dark:border-[#a175e8]">{q}</blockquote>))}</div>)}
-                  {item.notes?.core_ideas && item.notes.core_ideas.length > 0 && (<ul class="mt-4 space-y-2 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300">{item.notes.core_ideas.map((idea) => (<li class="flex gap-2"><span class="text-[#8953d1] dark:text-[#a175e8]">•</span><span>{idea}</span></li>))}</ul>)}
+                  {item.notes?.quotes && item.notes.quotes.length > 0 && (<div class="mt-4 space-y-3">{item.notes.quotes.map((q) => (<blockquote class="border-l-2 border-[var(--color-quote)] pl-4 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300 dark:border-[var(--color-quote)]">{q}</blockquote>))}</div>)}
+                  {item.notes?.core_ideas && item.notes.core_ideas.length > 0 && (<ul class="mt-4 space-y-2 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300">{item.notes.core_ideas.map((idea) => (<li class="flex gap-2"><span class="text-[var(--color-quote)] dark:text-[var(--color-quote)]">•</span><span>{idea}</span></li>))}</ul>)}
                   {!hasNotes(item) && <p class="mt-4 font-serif text-sm text-gray-500"><span class="lang-en">No notes yet.</span><span class="lang-zh">暂无笔记。</span></p>}
                 </div>
               </div>
@@ -843,11 +843,11 @@ const masonrySeries = series.map(toMasonryMedia);
       <>
         <!-- View toggle (Series) -->
         <div class="mb-5 flex items-center justify-end gap-3">
-          <div class="inline-flex items-center rounded-full border border-purple-500/20 bg-white/70 p-1 text-sm shadow-sm backdrop-blur dark:border-purple-500/15 dark:bg-gray-900/60">
-            <button type="button" id="view-btn-series-masonry" class="lib-view-toggle lib-view-toggle-series rounded-full bg-[#8953d1] px-3 py-1.5 font-serif text-xs text-white dark:bg-[#a175e8] dark:text-black" data-view="masonry" aria-pressed="true">
+          <div class="inline-flex items-center rounded-full border border-[var(--lib-border)] bg-[var(--lib-surface)] p-1 text-sm shadow-sm backdrop-blur">
+            <button type="button" id="view-btn-series-masonry" class="lib-view-toggle lib-view-toggle-series rounded-full bg-[var(--color-quote)] px-3 py-1.5 font-serif text-xs text-white dark:bg-[var(--color-quote)] dark:text-black" data-view="masonry" aria-pressed="true">
               <span class="lang-en">📝 Masonry</span><span class="lang-zh">📝 札记</span>
             </button>
-            <button type="button" id="view-btn-series-grid" class="lib-view-toggle lib-view-toggle-series rounded-full px-3 py-1.5 font-serif text-xs text-gray-500 hover:text-[#8953d1] dark:text-gray-400 dark:hover:text-[#a175e8]" data-view="grid" aria-pressed="false">
+            <button type="button" id="view-btn-series-grid" class="lib-view-toggle lib-view-toggle-series rounded-full px-3 py-1.5 font-serif text-xs text-gray-500 hover:text-[var(--color-quote)] dark:text-gray-400 dark:hover:text-[var(--color-quote)]" data-view="grid" aria-pressed="false">
               <span class="lang-en">📚 Grid</span><span class="lang-zh">📚 网格</span>
             </button>
           </div>
@@ -885,8 +885,8 @@ const masonrySeries = series.map(toMasonryMedia);
                   <h3 class="font-serif text-lg font-medium text-black dark:text-white">{item.title}</h3>
                   <p class="mt-1 font-serif text-sm text-gray-400">{item.year || "—"} · {item.tags.join(" · ")}</p>
                   {hasNotes(item) && item.year && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-zh">看于 {item.year}</span><span class="lang-en">Watched {item.year}</span></p>}
-                  {item.notes?.quotes && item.notes.quotes.length > 0 && (<div class="mt-4 space-y-3">{item.notes.quotes.map((q) => (<blockquote class="border-l-2 border-[#8953d1] pl-4 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300 dark:border-[#a175e8]">{q}</blockquote>))}</div>)}
-                  {item.notes?.core_ideas && item.notes.core_ideas.length > 0 && (<ul class="mt-4 space-y-2 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300">{item.notes.core_ideas.map((idea) => (<li class="flex gap-2"><span class="text-[#8953d1] dark:text-[#a175e8]">•</span><span>{idea}</span></li>))}</ul>)}
+                  {item.notes?.quotes && item.notes.quotes.length > 0 && (<div class="mt-4 space-y-3">{item.notes.quotes.map((q) => (<blockquote class="border-l-2 border-[var(--color-quote)] pl-4 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300 dark:border-[var(--color-quote)]">{q}</blockquote>))}</div>)}
+                  {item.notes?.core_ideas && item.notes.core_ideas.length > 0 && (<ul class="mt-4 space-y-2 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300">{item.notes.core_ideas.map((idea) => (<li class="flex gap-2"><span class="text-[var(--color-quote)] dark:text-[var(--color-quote)]">•</span><span>{idea}</span></li>))}</ul>)}
                   {!hasNotes(item) && <p class="mt-4 font-serif text-sm text-gray-500"><span class="lang-en">No notes yet.</span><span class="lang-zh">暂无笔记。</span></p>}
                 </div>
               </div>
@@ -931,8 +931,8 @@ const masonrySeries = series.map(toMasonryMedia);
                   <h3 class="font-serif text-lg font-medium text-black dark:text-white">{item.title}</h3>
                   <p class="mt-1 font-serif text-sm text-gray-400">{item.year || "—"}</p>
                   {hasNotes(item) && item.year && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-zh">看于 {item.year}</span><span class="lang-en">Watched {item.year}</span></p>}
-                  {item.notes?.quotes && item.notes.quotes.length > 0 && (<div class="mt-4 space-y-3">{item.notes.quotes.map((q) => (<blockquote class="border-l-2 border-[#8953d1] pl-4 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300 dark:border-[#a175e8]">{q}</blockquote>))}</div>)}
-                  {item.notes?.core_ideas && item.notes.core_ideas.length > 0 && (<ul class="mt-4 space-y-2 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300">{item.notes.core_ideas.map((idea) => (<li class="flex gap-2"><span class="text-[#8953d1] dark:text-[#a175e8]">•</span><span>{idea}</span></li>))}</ul>)}
+                  {item.notes?.quotes && item.notes.quotes.length > 0 && (<div class="mt-4 space-y-3">{item.notes.quotes.map((q) => (<blockquote class="border-l-2 border-[var(--color-quote)] pl-4 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300 dark:border-[var(--color-quote)]">{q}</blockquote>))}</div>)}
+                  {item.notes?.core_ideas && item.notes.core_ideas.length > 0 && (<ul class="mt-4 space-y-2 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300">{item.notes.core_ideas.map((idea) => (<li class="flex gap-2"><span class="text-[var(--color-quote)] dark:text-[var(--color-quote)]">•</span><span>{idea}</span></li>))}</ul>)}
                   {!hasNotes(item) && <p class="mt-4 font-serif text-sm text-gray-500"><span class="lang-en">No notes yet.</span><span class="lang-zh">暂无笔记。</span></p>}
                 </div>
               </div>
@@ -975,8 +975,8 @@ const masonrySeries = series.map(toMasonryMedia);
                   <h3 class="font-serif text-lg font-medium text-black dark:text-white">{item.title}</h3>
                   <p class="mt-1 font-serif text-sm text-gray-400">{item.year || "—"}</p>
                   {hasNotes(item) && item.year && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-zh">看于 {item.year}</span><span class="lang-en">Watched {item.year}</span></p>}
-                  {item.notes?.quotes && item.notes.quotes.length > 0 && (<div class="mt-4 space-y-3">{item.notes.quotes.map((q) => (<blockquote class="border-l-2 border-[#8953d1] pl-4 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300 dark:border-[#a175e8]">{q}</blockquote>))}</div>)}
-                  {item.notes?.core_ideas && item.notes.core_ideas.length > 0 && (<ul class="mt-4 space-y-2 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300">{item.notes.core_ideas.map((idea) => (<li class="flex gap-2"><span class="text-[#8953d1] dark:text-[#a175e8]">•</span><span>{idea}</span></li>))}</ul>)}
+                  {item.notes?.quotes && item.notes.quotes.length > 0 && (<div class="mt-4 space-y-3">{item.notes.quotes.map((q) => (<blockquote class="border-l-2 border-[var(--color-quote)] pl-4 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300 dark:border-[var(--color-quote)]">{q}</blockquote>))}</div>)}
+                  {item.notes?.core_ideas && item.notes.core_ideas.length > 0 && (<ul class="mt-4 space-y-2 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300">{item.notes.core_ideas.map((idea) => (<li class="flex gap-2"><span class="text-[var(--color-quote)] dark:text-[var(--color-quote)]">•</span><span>{idea}</span></li>))}</ul>)}
                   {!hasNotes(item) && <p class="mt-4 font-serif text-sm text-gray-500"><span class="lang-en">No notes yet.</span><span class="lang-zh">暂无笔记。</span></p>}
                 </div>
               </div>
@@ -999,6 +999,77 @@ const masonrySeries = series.map(toMasonryMedia);
   </div>
 
   <style>
+    :global(html) {
+      --lib-accent: var(--color-quote);
+      --lib-text: var(--color-global-text);
+      --lib-muted: var(--color-gray-500, #666);
+      --lib-faint: var(--color-gray-400, #888);
+      --lib-surface: color-mix(in oklab, var(--color-global-bg) 78%, white 22%);
+      --lib-surface-strong: color-mix(in oklab, var(--color-global-bg) 68%, white 32%);
+      --lib-border: color-mix(in oklab, var(--color-accent) 17%, transparent);
+      --lib-border-strong: color-mix(in oklab, var(--lib-accent) 24%, transparent);
+      --lib-shadow: color-mix(in oklab, var(--color-global-text) 10%, transparent);
+      --lib-accent-soft: color-mix(in oklab, var(--lib-accent) 12%, transparent);
+      --lib-backdrop: color-mix(in oklab, var(--color-global-text) 56%, transparent);
+    }
+    :global(html[data-theme="dark"]) {
+      --lib-surface: color-mix(in oklab, var(--color-global-bg) 86%, white 14%);
+      --lib-surface-strong: color-mix(in oklab, var(--color-global-bg) 80%, white 20%);
+      --lib-shadow: rgba(0, 0, 0, 0.32);
+      --lib-backdrop: rgba(0, 0, 0, 0.58);
+    }
+    :global(html[data-mood="rainy"]) {
+      --lib-surface: color-mix(in oklab, var(--color-global-bg) 80%, white 20%);
+      --lib-surface-strong: color-mix(in oklab, var(--color-global-bg) 70%, white 30%);
+      --lib-border: color-mix(in oklab, var(--color-accent) 22%, transparent);
+      --lib-shadow: rgba(45, 55, 72, 0.12);
+    }
+
+    .lib-section-surface {
+      background: var(--lib-surface);
+      border: 1px solid var(--lib-border);
+    }
+    .lib-stat-card {
+      background: var(--lib-surface-strong);
+      border: 1px solid var(--lib-border);
+      box-shadow: 0 1px 2px var(--lib-shadow);
+    }
+    .lib-accent { color: var(--lib-accent); }
+    .lib-progress-track { background: var(--lib-accent-soft); }
+    .lib-progress-fill { background: var(--lib-accent); }
+    .lib-note-quote {
+      border-color: var(--lib-accent);
+      color: var(--lib-muted);
+    }
+
+    .lib-sort-select {
+      background: transparent;
+      border: 1px solid var(--lib-border);
+      color: var(--lib-muted);
+    }
+    .lib-sort-select:hover,
+    .lib-sort-select:focus { border-color: var(--lib-border-strong); }
+    .lib-pill {
+      background: color-mix(in oklab, var(--color-accent) 10%, transparent);
+      color: var(--lib-muted);
+    }
+    .lib-pill-warm {
+      background: color-mix(in oklab, var(--lib-accent) 12%, transparent);
+      color: var(--lib-accent);
+    }
+
+    /* Tokenize legacy Tailwind arbitrary utilities used by runtime classList toggles. */
+    :global(.text-\[var\(--color-quote\)\]) { color: var(--color-quote) !important; }
+    :global(.hover\:text-\[var\(--color-quote\)\]:hover) { color: var(--color-quote) !important; }
+    :global(.bg-\[var\(--color-quote\)\]) { background-color: var(--color-quote) !important; }
+    :global(.border-\[var\(--color-quote\)\]) { border-color: var(--color-quote) !important; }
+    :global(.bg-\[var\(--color-quote\)\]\/10) { background-color: color-mix(in oklab, var(--color-quote) 10%, transparent) !important; }
+    :global(.border-\[var\(--color-quote\)\]\/10) { border-color: color-mix(in oklab, var(--color-quote) 10%, transparent) !important; }
+    :global(.border-\[var\(--color-quote\)\]\/15) { border-color: color-mix(in oklab, var(--color-quote) 15%, transparent) !important; }
+    :global(.dark .dark\:text-\[var\(--color-quote\)\]) { color: var(--color-quote) !important; }
+    :global(.dark .dark\:bg-\[var\(--color-quote\)\]) { background-color: var(--color-quote) !important; }
+    :global(.dark .dark\:border-\[var\(--color-quote\)\]) { border-color: var(--color-quote) !important; }
+
     /* ── Cursor spotlight on panels ── */
     .lib-panel {
       position: relative;
@@ -1011,38 +1082,26 @@ const masonrySeries = series.map(toMasonryMedia);
       pointer-events: none;
       background: radial-gradient(
         700px circle at var(--mx) var(--my),
-        rgba(137,83,209,0.07),
+        color-mix(in oklab, var(--lib-accent) 9%, transparent),
         transparent 50%
       );
       opacity: var(--spotlight);
       transition: opacity 0.4s ease;
       z-index: 0;
     }
-    /* ── Card surface — warm cream, matches site background ── */
+    /* ── Card surface — follows site theme tokens ── */
     .lib-card-surface {
-      /* warm cream gradient, same color family as site background */
-      background: linear-gradient(175deg, #fefcf6 0%, #f9f5ec 100%);
-      box-shadow:
-        0 1px 0 rgba(255,253,245,1) inset,          /* top warm highlight */
-        0 2px 6px rgba(120,90,40,0.07),              /* warm-toned shadow */
-        0 1px 2px rgba(0,0,0,0.04);
-      border: 1px solid rgba(180,150,100,0.10);      /* barely-there warm border */
+      background: linear-gradient(175deg, var(--lib-surface-strong) 0%, var(--lib-surface) 100%);
+      box-shadow: 0 1px 0 color-mix(in oklab, white 45%, transparent) inset,
+        0 2px 6px var(--lib-shadow),
+        0 1px 2px color-mix(in oklab, var(--color-global-text) 5%, transparent);
+      border: 1px solid var(--lib-border);
     }
     .lib-card-surface:hover {
-      box-shadow:
-        0 1px 0 rgba(255,253,245,1) inset,
-        0 8px 28px rgba(137,83,209,0.16),
-        0 2px 6px rgba(0,0,0,0.05);
-      border-color: rgba(137,83,209,0.15);
-    }
-    :global([data-theme="dark"]) .lib-card-surface {
-      background: linear-gradient(175deg, rgba(30,27,46,0.95) 0%, rgba(22,20,36,0.92) 100%);
-      border: 1px solid rgba(137,83,209,0.12);
-      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-    }
-    :global([data-theme="dark"]) .lib-card-surface:hover {
-      box-shadow: 0 8px 28px rgba(137,83,209,0.22), 0 2px 8px rgba(0,0,0,0.3);
-      border-color: rgba(137,83,209,0.25);
+      box-shadow: 0 1px 0 color-mix(in oklab, white 45%, transparent) inset,
+        0 8px 28px color-mix(in oklab, var(--lib-accent) 18%, transparent),
+        0 2px 6px var(--lib-shadow);
+      border-color: var(--lib-border-strong);
     }
     /* ── Card entry animation + 3D tilt via CSS vars ── */
     .lib-card {
@@ -1053,11 +1112,10 @@ const masonrySeries = series.map(toMasonryMedia);
     }
     .lib-card.revealed {
       opacity: 1;
-      /* CSS vars drive the tilt; JS only sets --rx/--ry/--rs */
       transform: perspective(700px) rotateX(var(--rx)) rotateY(var(--ry)) scale(var(--rs)) translateY(0px);
     }
     .lib-card.is-active {
-      box-shadow: 0 0 0 2px rgba(137,83,209,0.55), 0 8px 28px rgba(137,83,209,0.2);
+      box-shadow: 0 0 0 2px color-mix(in oklab, var(--lib-accent) 55%, transparent), 0 8px 28px color-mix(in oklab, var(--lib-accent) 20%, transparent);
     }
 
     /* ── Inline detail (kept as data container, always hidden) ── */
@@ -1080,10 +1138,9 @@ const masonrySeries = series.map(toMasonryMedia);
     .lib-tab { transition: all 0.15s ease; }
     :global(.tag-btn) { transition: all 0.15s ease; }
     :global(.tag-btn.active) {
-      background: #8953d1 !important; color: white !important; border-color: #8953d1 !important;
-    }
-    :global(.dark .tag-btn.active) {
-      background: #a175e8 !important; color: black !important; border-color: #a175e8 !important;
+      background: var(--lib-accent) !important;
+      color: var(--color-global-bg) !important;
+      border-color: var(--lib-accent) !important;
     }
 
     /* ── Frosted-glass Modal ── */
@@ -1097,7 +1154,7 @@ const masonrySeries = series.map(toMasonryMedia);
     #lib-modal.open { opacity: 1; pointer-events: auto; }
     #lib-modal-backdrop {
       position: absolute; inset: 0;
-      background: rgba(0,0,0,0.55);
+      background: var(--lib-backdrop);
       backdrop-filter: blur(6px);
       -webkit-backdrop-filter: blur(6px);
     }
@@ -1105,13 +1162,12 @@ const masonrySeries = series.map(toMasonryMedia);
     .lib-bookmark {
       position: absolute; top: -32px; right: 14px; z-index: 20;
       width: 13px; height: 32px;
-      background: #8953d1;
+      background: var(--lib-accent);
       clip-path: polygon(0 0, 100% 0, 100% 78%, 50% 100%, 0 78%);
       transition: top 0.32s cubic-bezier(0.34,1.4,0.64,1);
       pointer-events: none;
     }
     .lib-card:hover .lib-bookmark { top: 0; }
-    :global([data-theme="dark"]) .lib-bookmark { background: #a175e8; }
 
     /* ── Tab page-turn animation ── */
     @keyframes pageFromRight { from { opacity: 0; transform: translateX(48px); } to { opacity: 1; transform: translateX(0); } }
@@ -1129,43 +1185,33 @@ const masonrySeries = series.map(toMasonryMedia);
 
     #lib-modal-card {
       position: relative; z-index: 10;
-      background: #ffffff;
-      color: #1a1a1a;
+      background: var(--lib-surface-strong);
+      color: var(--lib-text);
       border-radius: 1rem;
       max-width: 640px; width: 100%;
       max-height: 88vh; overflow-y: auto;
       padding: 2rem;
-      box-shadow: 0 24px 80px rgba(0,0,0,0.22), 0 0 0 1px rgba(137,83,209,0.15);
+      box-shadow: 0 24px 80px color-mix(in oklab, var(--color-global-text) 24%, transparent), 0 0 0 1px var(--lib-border-strong);
       transform-origin: left center;
-    }
-    :global([data-theme="dark"]) #lib-modal-card {
-      background: #16162a;
-      color: #e5e7eb;
-      box-shadow: 0 24px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(137,83,209,0.25);
     }
     #lib-modal.open #lib-modal-card { animation: bookOpen 0.38s cubic-bezier(0.34,1.2,0.64,1) both; }
     #lib-modal.closing #lib-modal-card { animation: bookClose 0.22s ease both; }
-    /* Modal content text colors — explicit, not relying on inherit */
-    #lib-modal-content h3 { color: #111827; }
-    :global([data-theme="dark"]) #lib-modal-content h3 { color: #f9fafb; }
-    #lib-modal-content p, #lib-modal-content li span:last-child { color: #4b5563; }
-    :global([data-theme="dark"]) #lib-modal-content p,
-    :global([data-theme="dark"]) #lib-modal-content li span:last-child { color: #d1d5db; }
-    #lib-modal-content blockquote { color: #4b5563; border-color: #8953d1; }
-    :global([data-theme="dark"]) #lib-modal-content blockquote { color: #d1d5db; border-color: #a175e8; }
+    #lib-modal-content h3 { color: var(--lib-text); }
+    #lib-modal-content p, #lib-modal-content li span:last-child { color: var(--lib-muted); }
+    #lib-modal-content blockquote { color: var(--lib-muted); border-color: var(--lib-accent); }
     #lib-modal-close {
       position: absolute; top: 1rem; right: 1rem;
       width: 2rem; height: 2rem;
       display: flex; align-items: center; justify-content: center;
       border-radius: 9999px;
-      background: rgba(137,83,209,0.1);
-      color: #8953d1;
+      background: var(--lib-accent-soft);
+      color: var(--lib-accent);
       font-size: 1.1rem; line-height: 1;
       cursor: pointer;
       transition: background 0.15s ease;
       border: none;
     }
-    #lib-modal-close:hover { background: rgba(137,83,209,0.2); }
+    #lib-modal-close:hover { background: color-mix(in oklab, var(--lib-accent) 20%, transparent); }
 
     /* ── Shelf view ── */
     :global(.lib-view-toggle) { transition: all 0.18s ease; }
@@ -1209,9 +1255,9 @@ const masonrySeries = series.map(toMasonryMedia);
       align-items: flex-end; justify-content: flex-start;
       gap: 0.35rem;
       padding: 1rem 1rem 0;
-      border-bottom: 10px solid rgba(120,76,42,0.45);
-      border-image: linear-gradient(90deg, rgba(82,49,24,0.6), rgba(168,121,77,0.9), rgba(82,49,24,0.6)) 1;
-      background: linear-gradient(180deg, rgba(137,83,209,0.03), rgba(137,83,209,0));
+      border-bottom: 10px solid color-mix(in oklab, var(--color-accent) 36%, transparent);
+      border-image: linear-gradient(90deg, color-mix(in oklab, var(--color-accent) 48%, transparent), color-mix(in oklab, var(--lib-accent) 52%, transparent), color-mix(in oklab, var(--color-accent) 48%, transparent)) 1;
+      background: linear-gradient(180deg, color-mix(in oklab, var(--lib-accent) 4%, transparent), transparent);
       overflow-x: auto; scrollbar-width: none;
     }
     :global(.shelf-row::-webkit-scrollbar) { display: none; }
@@ -1238,7 +1284,7 @@ const masonrySeries = series.map(toMasonryMedia);
       transition: transform 0.28s ease, filter 0.28s ease;
     }
     .shelf-book { z-index: 1; isolation: isolate; }
-    .shelf-book:hover { transform: translateY(-22px) !important; filter: drop-shadow(0 16px 28px rgba(17,24,39,0.28)); z-index: 50 !important; }
+    .shelf-book:hover { transform: translateY(-22px) !important; filter: drop-shadow(0 16px 28px color-mix(in oklab, var(--color-global-text) 28%, transparent)); z-index: 50 !important; }
     .shelf-spine {
       position: relative;
       display: flex; align-items: center; justify-content: center;
@@ -1246,14 +1292,14 @@ const masonrySeries = series.map(toMasonryMedia);
       height: var(--shelf-height, 180px);
       border-radius: 10px 10px 4px 4px;
       overflow: hidden;
-      box-shadow: 0 8px 22px rgba(17,24,39,0.18),
-                  inset 1px 0 0 rgba(255,255,255,0.22),
-                  inset -2px 0 0 rgba(0,0,0,0.14);
+      box-shadow: 0 8px 22px color-mix(in oklab, var(--color-global-text) 18%, transparent),
+                  inset 1px 0 0 color-mix(in oklab, white 22%, transparent),
+                  inset -2px 0 0 color-mix(in oklab, black 14%, transparent);
       transition: transform 0.28s ease;
     }
     .shelf-spine-sheen {
       position: absolute; inset: 0;
-      background: linear-gradient(90deg, rgba(255,255,255,0.22), transparent 30%, transparent 72%, rgba(0,0,0,0.14));
+      background: linear-gradient(90deg, color-mix(in oklab, white 22%, transparent), transparent 30%, transparent 72%, color-mix(in oklab, black 14%, transparent));
     }
     .shelf-spine-title {
       position: relative; z-index: 1;
@@ -1269,8 +1315,8 @@ const masonrySeries = series.map(toMasonryMedia);
       position: absolute; left: 50%; bottom: 8px; z-index: 1;
       width: 6px; height: 6px; margin-left: -3px;
       border-radius: 999px;
-      background: rgba(255,255,255,0.75);
-      box-shadow: 0 0 10px rgba(255,255,255,0.4);
+      background: color-mix(in oklab, white 75%, transparent);
+      box-shadow: 0 0 10px color-mix(in oklab, white 40%, transparent);
     }
     .shelf-book-preview {
       position: absolute; left: 50%; bottom: 12px;
@@ -1279,7 +1325,7 @@ const masonrySeries = series.map(toMasonryMedia);
       opacity: 0; pointer-events: none;
       transition: opacity 0.28s ease, transform 0.28s ease;
       z-index: 10; border-radius: 4px;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+      box-shadow: 0 8px 30px color-mix(in oklab, black 30%, transparent);
       overflow: hidden;
     }
     .shelf-book:hover .shelf-book-preview { opacity: 1; transform: translateX(-50%) translateY(-42px) scale(1); }
@@ -1334,7 +1380,7 @@ const masonrySeries = series.map(toMasonryMedia);
         card.style.setProperty('--ry', `${x * 9}deg`);
         card.style.setProperty('--rs', '1.045');
         card.style.transition = 'transform 0.1s ease, box-shadow 0.1s ease, opacity 0.5s ease';
-        card.style.boxShadow = `${-x*14}px ${y*14}px 32px rgba(137,83,209,0.18)`;
+        card.style.boxShadow = `${-x*14}px ${y*14}px 32px color-mix(in oklab, var(--lib-accent) 18%, transparent)`;
       });
       card.addEventListener('mouseleave', () => {
         card.style.setProperty('--rx', '0deg');
@@ -1362,9 +1408,9 @@ const masonrySeries = series.map(toMasonryMedia);
       tabs.forEach(t => {
         const on = t.dataset.tab === tab;
         t.setAttribute('aria-pressed', on);
-        t.classList.toggle('border-[#8953d1]', on);
-        t.classList.toggle('text-[#8953d1]', on);
-        t.classList.toggle('dark:text-[#a175e8]', on);
+        t.classList.toggle('border-[var(--color-quote)]', on);
+        t.classList.toggle('text-[var(--color-quote)]', on);
+        t.classList.toggle('dark:text-[var(--color-quote)]', on);
         t.classList.toggle('border-transparent', !on);
         t.classList.toggle('text-gray-400', !on);
       });
@@ -1442,7 +1488,7 @@ const masonrySeries = series.map(toMasonryMedia);
       getTagsForTab().forEach(tag => {
         const btn = document.createElement('button');
         btn.type = 'button';
-        btn.className = 'tag-btn rounded-full border border-purple-500/20 px-4 py-2 font-serif text-sm text-gray-500 dark:border-purple-500/15 dark:text-gray-400';
+        btn.className = 'tag-btn rounded-full border border-[var(--lib-border)] px-4 py-2 font-serif text-sm text-gray-500 dark:text-gray-400';
         btn.innerHTML = tagLabel(tag);
         if (tag === activeTag) btn.classList.add('active');
         btn.addEventListener('click', () => {
@@ -1564,9 +1610,9 @@ const masonrySeries = series.map(toMasonryMedia);
       Object.entries(btns).forEach(([key, btn]) => {
         if (!btn) return;
         const active = key === view;
-        btn.classList.toggle('bg-[#8953d1]', active);
+        btn.classList.toggle('bg-[var(--color-quote)]', active);
         btn.classList.toggle('text-white', active);
-        btn.classList.toggle('dark:bg-[#a175e8]', active);
+        btn.classList.toggle('dark:bg-[var(--color-quote)]', active);
         btn.classList.toggle('dark:text-black', active);
         btn.classList.toggle('text-gray-500', !active);
         btn.setAttribute('aria-pressed', String(active));
@@ -1663,9 +1709,9 @@ const masonrySeries = series.map(toMasonryMedia);
         grid.classList.toggle('active',    !isM);
         [btnM, btnG].forEach((btn, i) => {
           const active = (i === 0) === isM;
-          btn.classList.toggle('bg-[#8953d1]', active);
+          btn.classList.toggle('bg-[var(--color-quote)]', active);
           btn.classList.toggle('text-white', active);
-          btn.classList.toggle('dark:bg-[#a175e8]', active);
+          btn.classList.toggle('dark:bg-[var(--color-quote)]', active);
           btn.classList.toggle('dark:text-black', active);
           btn.classList.toggle('text-gray-500', !active);
           btn.setAttribute('aria-pressed', String(active));
@@ -1730,8 +1776,8 @@ const masonrySeries = series.map(toMasonryMedia);
       } else if (sort === 'rating') {
         const cards = Array.from(booksGridEl.querySelectorAll('.lib-card[data-group="books"]'));
         const sorted = cards.sort((a, b) => {
-          const ra = (a.querySelectorAll('.bg-\\[\\#8953d1\\]') || []).length;
-          const rb = (b.querySelectorAll('.bg-\\[\\#8953d1\\]') || []).length;
+          const ra = (a.querySelectorAll('.bg-\\[var\\(--color-quote\\)\\]') || []).length;
+          const rb = (b.querySelectorAll('.bg-\\[var\\(--color-quote\\)\\]') || []).length;
           return rb - ra;
         });
         sorted.forEach(c => booksGridEl.appendChild(c));

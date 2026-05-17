@@ -60,7 +60,6 @@ type Props = {
 	initialTagFilter?: string | null;
 };
 
-const BRAND = "#8953d1";
 const COVER_ASPECT = 1.5;
 const PREVIEW_LIMIT = 120;
 
@@ -377,31 +376,43 @@ export default function LibraryMasonry({
 			)}
 
 			<style>{`
+				.library-masonry-root {
+					--library-accent: var(--color-quote);
+					--library-text: var(--color-global-text);
+					--library-muted: var(--color-gray-500, #666);
+					--library-faint: var(--color-gray-400, #888);
+					--library-card-bg: color-mix(in oklab, var(--color-global-bg) 82%, white 18%);
+					--library-card-border: color-mix(in oklab, var(--color-accent) 18%, transparent);
+					--library-card-shadow: color-mix(in oklab, var(--color-global-text) 9%, transparent);
+					--library-accent-soft: color-mix(in oklab, var(--library-accent) 13%, transparent);
+				}
+				html[data-theme="dark"] .library-masonry-root {
+					--library-card-bg: color-mix(in oklab, var(--color-global-bg) 88%, white 12%);
+					--library-card-border: color-mix(in oklab, var(--color-quote) 18%, transparent);
+					--library-card-shadow: rgba(0, 0, 0, 0.3);
+				}
+				html[data-mood="rainy"] .library-masonry-root {
+					--library-card-bg: color-mix(in oklab, var(--color-global-bg) 82%, white 18%);
+					--library-card-border: color-mix(in oklab, var(--color-accent) 20%, transparent);
+					--library-card-shadow: rgba(45, 55, 72, 0.1);
+				}
 				.library-masonry-card {
-					background: rgba(255, 250, 239, 0.55);
+					background: var(--library-card-bg);
+					border: 1px solid var(--library-card-border);
 					border-radius: 12px;
 					overflow: hidden;
 					text-decoration: none;
 					display: block;
 					color: inherit;
 					transition: transform 0.25s ease, box-shadow 0.25s ease;
-					box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+					box-shadow: 0 1px 2px var(--library-card-shadow);
 				}
-			:root.dark .library-masonry-card,
-			[data-theme="dark"] .library-masonry-card {
-				background: rgba(24, 24, 24, 0.6);
-				box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-			}
-			[data-mood="rainy"] .library-masonry-card {
-				background: rgba(216, 223, 232, 0.6);
-				box-shadow: 0 1px 2px rgba(45, 55, 72, 0.1);
-			}
 				.library-masonry-card.clickable {
 					cursor: pointer;
 				}
 				.library-masonry-card.clickable:hover {
 					transform: translateY(-3px);
-					box-shadow: 0 12px 28px rgba(137, 83, 209, 0.18);
+					box-shadow: 0 12px 28px color-mix(in oklab, var(--library-accent) 22%, transparent);
 				}
 				.library-masonry-card.clickable:hover .library-masonry-cover-img {
 					transform: scale(1.03);
@@ -409,7 +420,7 @@ export default function LibraryMasonry({
 				.library-masonry-cover-wrap {
 					aspect-ratio: 2/3;
 					overflow: hidden;
-					background: rgba(137, 83, 209, 0.05);
+					background: var(--library-accent-soft);
 				}
 				.library-masonry-cover-img {
 					width: 100%;
@@ -444,24 +455,20 @@ export default function LibraryMasonry({
 					font-size: 16px;
 					font-weight: 500;
 					line-height: 1.25;
-					color: rgba(17, 24, 39, 0.94);
+					color: var(--library-text);
 					margin: 0;
-				}
-				:root.dark .library-masonry-title,
-				[data-theme="dark"] .library-masonry-title {
-					color: rgba(243, 244, 246, 0.95);
 				}
 				.library-masonry-titleEn {
 					font-family: Georgia, serif;
 					font-style: italic;
 					font-size: 12px;
-					color: rgb(107, 114, 128);
+					color: var(--library-muted);
 					margin: 2px 0 0;
 				}
 				.library-masonry-meta {
 					font-family: Georgia, serif;
 					font-size: 11px;
-					color: rgb(156, 163, 175);
+					color: var(--library-faint);
 					margin: 4px 0 0;
 					line-height: 1.4;
 				}
@@ -470,11 +477,7 @@ export default function LibraryMasonry({
 					font-family: Georgia, Cambria, "Times New Roman", Times, serif;
 					font-size: 11px;
 					line-height: 1.35;
-					color: ${BRAND};
-				}
-				:root.dark .library-masonry-weread,
-				[data-theme="dark"] .library-masonry-weread {
-					color: #a175e8;
+					color: var(--library-accent);
 				}
 				.library-masonry-progress {
 					margin-top: 7px;
@@ -485,27 +488,19 @@ export default function LibraryMasonry({
 					height: 3px;
 					overflow: hidden;
 					border-radius: 999px;
-					background: rgba(137, 83, 209, 0.13);
+					background: var(--library-accent-soft);
 				}
 				.library-masonry-progress-fill {
 					display: block;
 					height: 100%;
 					border-radius: inherit;
-					background: ${BRAND};
+					background: var(--library-accent);
 				}
 				.library-masonry-progress-copy {
 					font-family: Georgia, Cambria, "Times New Roman", Times, serif;
 					font-size: 10px;
 					line-height: 1.3;
-					color: rgb(107, 114, 128);
-				}
-				:root.dark .library-masonry-progress-fill,
-				[data-theme="dark"] .library-masonry-progress-fill {
-					background: #a175e8;
-				}
-				:root.dark .library-masonry-progress-copy,
-				[data-theme="dark"] .library-masonry-progress-copy {
-					color: rgb(156, 163, 175);
+					color: var(--library-muted);
 				}
 				.library-masonry-rating {
 					display: flex;
@@ -516,37 +511,21 @@ export default function LibraryMasonry({
 					width: 6px;
 					height: 6px;
 					border-radius: 50%;
-					background: rgb(229, 231, 235);
+					background: color-mix(in oklab, var(--library-muted) 25%, transparent);
 					display: block;
 				}
-			:root.dark .library-masonry-rating-dot,
-			[data-theme="dark"] .library-masonry-rating-dot {
-				background: rgb(55, 65, 81);
-			}
-			[data-mood="rainy"] .library-masonry-rating-dot {
-				background: rgb(160, 175, 200);
-			}
 				.library-masonry-rating-dot.filled {
-					background: ${BRAND};
-				}
-				:root.dark .library-masonry-rating-dot.filled,
-				[data-theme="dark"] .library-masonry-rating-dot.filled {
-					background: #a175e8;
+					background: var(--library-accent);
 				}
 				.library-masonry-quote {
-					border-left: 3px solid ${BRAND};
+					border-left: 3px solid var(--library-accent);
 					padding-left: 10px;
 					margin: 12px 0 0;
 					font-family: Georgia, Cambria, "Times New Roman", Times, serif;
 					font-size: 14px;
 					line-height: 1.7;
-					color: rgba(75, 85, 99, 0.92);
+					color: var(--library-muted);
 					font-style: normal;
-				}
-				:root.dark .library-masonry-quote,
-				[data-theme="dark"] .library-masonry-quote {
-					border-left-color: #a175e8;
-					color: rgba(209, 213, 219, 0.9);
 				}
 				.library-masonry-tags {
 					margin-top: 10px;
@@ -557,23 +536,18 @@ export default function LibraryMasonry({
 				.library-masonry-tag {
 					font-family: Georgia, serif;
 					font-size: 10px;
-					color: rgb(107, 114, 128);
-					background: rgba(137, 83, 209, 0.08);
+					color: var(--library-muted);
+					background: var(--library-accent-soft);
 					padding: 3px 7px;
 					border-radius: 4px;
 					line-height: 1.3;
-				}
-				:root.dark .library-masonry-tag,
-				[data-theme="dark"] .library-masonry-tag {
-					color: rgb(156, 163, 175);
-					background: rgba(161, 117, 232, 0.15);
 				}
 				.library-masonry-empty {
 					padding: 40px 20px;
 					text-align: center;
 					font-family: Georgia, serif;
 					font-size: 14px;
-					color: rgb(156, 163, 175);
+					color: var(--library-faint);
 				}
 				[data-masonry-reveal] {
 					opacity: 0;

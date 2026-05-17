@@ -181,7 +181,7 @@ const GA_ID = "G-1EC76EZ517";
 		>
 			<div
 				id="player-container"
-				class="custom-glow flex h-10 w-10 items-center justify-start overflow-hidden rounded-full border border-[#8953d1]/40 bg-white/70 backdrop-blur-md transition-[width,box-shadow,border-color] duration-500 ease-in-out dark:border-[#8953d1]/30 dark:bg-[#1a1a1a]/70"
+				class="custom-glow flex h-10 w-10 items-center justify-start overflow-hidden rounded-full border border-[color-mix(in_srgb,var(--color-quote)_40%,transparent)] bg-white/70 backdrop-blur-md transition-[width,box-shadow,border-color] duration-500 ease-in-out dark:bg-[#1a1a1a]/70"
 			>
 				<button
 					id="play-button"
@@ -192,7 +192,7 @@ const GA_ID = "G-1EC76EZ517";
 					<svg
 						id="music-icon"
 						aria-hidden="true"
-						class="text-[#8953d1] transition-opacity duration-300"
+						class="text-[var(--color-quote)] transition-opacity duration-300"
 						xmlns="http://www.w3.org/2000/svg"
 						width="18"
 						height="18"
@@ -213,9 +213,9 @@ const GA_ID = "G-1EC76EZ517";
 						aria-hidden="true"
 						class="absolute inset-0 flex items-center justify-center gap-[2px] opacity-0 transition-opacity duration-300"
 					>
-						<div class="bar h-1 w-[2px] rounded-full bg-[#8953d1]"></div>
-						<div class="bar h-3 w-[2px] rounded-full bg-[#8953d1]"></div>
-						<div class="bar h-2 w-[2px] rounded-full bg-[#8953d1]"></div>
+						<div class="bar h-1 w-[2px] rounded-full bg-[var(--color-quote)]"></div>
+						<div class="bar h-3 w-[2px] rounded-full bg-[var(--color-quote)]"></div>
+						<div class="bar h-2 w-[2px] rounded-full bg-[var(--color-quote)]"></div>
 					</div>
 				</button>
 				<div
@@ -224,7 +224,7 @@ const GA_ID = "G-1EC76EZ517";
 				>
 					<div class="flex w-28 flex-col overflow-hidden whitespace-nowrap"
 					>
-						<span class="font-serif text-[8px] font-bold tracking-wider text-[#8953d1]/80 italic"
+						<span class="font-serif text-[8px] font-bold tracking-wider text-[color-mix(in_srgb,var(--color-quote)_80%,transparent)] italic"
 							>Now Playing</span
 						>
 						<div id="current-song-container"
@@ -242,7 +242,7 @@ const GA_ID = "G-1EC76EZ517";
 						id="next-button"
 						type="button"
 						aria-label="Next track"
-						class="ml-1 p-1 text-gray-400 transition-colors hover:text-[#8953d1]"
+						class="ml-1 p-1 text-gray-400 transition-colors hover:text-[var(--color-quote)]"
 						title="Next"
 					>
 						<svg
@@ -296,9 +296,9 @@ const GA_ID = "G-1EC76EZ517";
 
 			.is-playing #player-container {
 				box-shadow:
-					0 0 20px -5px rgba(137, 83, 209, 0.4),
-					0 4px 6px -2px rgba(137, 83, 209, 0.1);
-				border-color: rgba(137, 83, 209, 0.6) !important;
+				box-shadow: 0 0 15px color-mix(in srgb, var(--color-quote) 15%, transparent),
+					0 4px 6px -2px color-mix(in srgb, var(--color-quote) 10%, transparent);
+				border-color: color-mix(in srgb, var(--color-quote) 60%, transparent) !important;
 			}
 
 			.player-expanded #player-container {
@@ -375,8 +375,8 @@ const GA_ID = "G-1EC76EZ517";
 			.cactus-tag:hover,
 			.flex.flex-wrap.gap-2 a:hover,
 			aside ul.flex.flex-wrap a:hover {
-				color: #8953d1 !important;
-				background-color: rgba(137, 83, 209, 0.05) !important;
+				color: var(--color-quote) !important;
+				background-color: color-mix(in srgb, var(--color-quote) 5%, transparent) !important;
 				transform: translateY(-1px) !important;
 				opacity: 1;
 			}

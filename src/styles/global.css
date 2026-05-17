@@ -73,6 +73,7 @@
 			--color-link: #3b5275;
 			--color-accent: #5a7399;
 			--color-accent-2: #1e2d42;
+			--color-quote: #5a7399;
 			--color-gray-400: #8899aa;
 			--color-gray-500: #667788;
 			--color-gray-600: #4a5d6e;
@@ -80,8 +81,8 @@
 		&[data-mood="rainy"] body::before {
 			background:
 				radial-gradient(ellipse at 15% 75%, rgba(100, 120, 150, 0.25) 0%, transparent 55%),
-				radial-gradient(ellipse at 85% 65%, rgba(90, 110, 145, 0.20) 0%, transparent 50%),
-				radial-gradient(ellipse at 50% 95%, rgba(110, 130, 165, 0.30) 0%, transparent 40%),
+				radial-gradient(ellipse at 85% 65%, rgba(90, 110, 145, 0.2) 0%, transparent 50%),
+				radial-gradient(ellipse at 50% 95%, rgba(110, 130, 165, 0.3) 0%, transparent 40%),
 				linear-gradient(to bottom, transparent 40%, rgba(130, 150, 180, 0.15) 100%);
 		}
 	}
@@ -127,40 +128,90 @@
    ═══════════════════════════════════════════════════════════════ */
 html[data-mood="rainy"] {
 	/* Text colors — warm grays → cold blue-grays */
-	.text-black, [class*="text-black"] { color: #2d3748 !important; }
-	.text-gray-400 { color: #8899aa !important; }
-	.text-gray-500 { color: #667788 !important; }
-	.text-gray-600 { color: #4a5d6e !important; }
+	.text-black,
+	[class*="text-black"] {
+		color: #2d3748 !important;
+	}
+	.text-gray-400 {
+		color: #8899aa !important;
+	}
+	.text-gray-500 {
+		color: #667788 !important;
+	}
+	.text-gray-600 {
+		color: #4a5d6e !important;
+	}
 
 	/* Background colors */
-	.bg-white { background-color: #e2e8ef !important; }
-	.bg-white\/50, .bg-white\/60, .bg-white\/70, .bg-white\/80,
-	.bg-white\/90, .bg-white\/95 { background-color: rgba(226, 232, 239, var(--tw-bg-opacity, 0.7)) !important; }
+	.bg-white {
+		background-color: #e2e8ef !important;
+	}
+	.bg-white\/50,
+	.bg-white\/60,
+	.bg-white\/70,
+	.bg-white\/80,
+	.bg-white\/90,
+	.bg-white\/95 {
+		background-color: rgba(226, 232, 239, var(--tw-bg-opacity, 0.7)) !important;
+	}
 
 	/* Gray backgrounds */
-	.bg-gray-100 { background-color: rgba(200, 210, 222, 0.6) !important; }
-	.bg-gray-200 { background-color: rgba(190, 202, 216, 0.7) !important; }
-	.bg-gray-700 { background-color: rgba(74, 93, 110, 0.6) !important; }
-	.bg-gray-800 { background-color: rgba(45, 55, 72, 0.5) !important; }
+	.bg-gray-100 {
+		background-color: rgba(200, 210, 222, 0.6) !important;
+	}
+	.bg-gray-200 {
+		background-color: rgba(190, 202, 216, 0.7) !important;
+	}
+	.bg-gray-700 {
+		background-color: rgba(74, 93, 110, 0.6) !important;
+	}
+	.bg-gray-800 {
+		background-color: rgba(45, 55, 72, 0.5) !important;
+	}
 
 	/* Border colors */
-	.border-gray-200 { border-color: rgba(100, 120, 155, 0.25) !important; }
-	.border-gray-300 { border-color: rgba(100, 120, 155, 0.35) !important; }
-	.border-gray-800 { border-color: rgba(45, 55, 72, 0.35) !important; }
+	.border-gray-200 {
+		border-color: rgba(100, 120, 155, 0.25) !important;
+	}
+	.border-gray-300 {
+		border-color: rgba(100, 120, 155, 0.35) !important;
+	}
+	.border-gray-800 {
+		border-color: rgba(45, 55, 72, 0.35) !important;
+	}
 
 	/* Warm cream → cold gray-blue card */
-	.bg-\[\#fff8eb\], .bg-\[\#fffaef\] { background-color: #e2e8ef !important; }
+	.bg-\[\#fff8eb\],
+	.bg-\[\#fffaef\] {
+		background-color: #e2e8ef !important;
+	}
 
 	/* x-growth: inner card backgrounds */
-	.bg-black\/\[0\.02\] { background-color: rgba(45, 55, 72, 0.04) !important; }
-	.bg-black\/\[0\.03\] { background-color: rgba(45, 55, 72, 0.05) !important; }
-	.bg-white\/\[0\.04\] { background-color: rgba(45, 55, 72, 0.04) !important; }
-	.bg-white\/\[0\.03\] { background-color: rgba(45, 55, 72, 0.03) !important; }
+	.bg-black\/\[0\.02\] {
+		background-color: rgba(45, 55, 72, 0.04) !important;
+	}
+	.bg-black\/\[0\.03\] {
+		background-color: rgba(45, 55, 72, 0.05) !important;
+	}
+	.bg-white\/\[0\.04\] {
+		background-color: rgba(45, 55, 72, 0.04) !important;
+	}
+	.bg-white\/\[0\.03\] {
+		background-color: rgba(45, 55, 72, 0.03) !important;
+	}
 
 	/* x-growth: border opacity */
-	.border-black\/8, .border-black\/6 { border-color: rgba(100, 120, 155, 0.15) !important; }
-	.border-black\/\[0\.06\] { border-color: rgba(100, 120, 155, 0.12) !important; }
-	.border-white\/10, .border-white\/8 { border-color: rgba(100, 120, 155, 0.18) !important; }
+	.border-black\/8,
+	.border-black\/6 {
+		border-color: rgba(100, 120, 155, 0.15) !important;
+	}
+	.border-black\/\[0\.06\] {
+		border-color: rgba(100, 120, 155, 0.12) !important;
+	}
+	.border-white\/10,
+	.border-white\/8 {
+		border-color: rgba(100, 120, 155, 0.18) !important;
+	}
 
 	/* Prose overrides */
 	--tw-prose-hr: 0.5px dashed rgba(100, 120, 155, 0.4);
@@ -285,7 +336,7 @@ article a:not(.no-underline) {
 .animated-link::after,
 .prose a:not(.no-underline)::after,
 article a:not(.no-underline)::after {
-	content: '';
+	content: "";
 	position: absolute;
 	left: 0;
 	bottom: -2px;
@@ -537,14 +588,26 @@ html[data-lang="zh"] .lang-en {
 
 /* Page enter: main content fades up from slight offset */
 @keyframes page-fade-in {
-	from { opacity: 0; transform: translateY(8px); }
-	to   { opacity: 1; transform: translateY(0); }
+	from {
+		opacity: 0;
+		transform: translateY(8px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
 }
 
 /* Page exit: main content fades up and out */
 @keyframes page-fade-out {
-	from { opacity: 1; transform: translateY(0); }
-	to   { opacity: 0; transform: translateY(-8px); }
+	from {
+		opacity: 1;
+		transform: translateY(0);
+	}
+	to {
+		opacity: 0;
+		transform: translateY(-8px);
+	}
 }
 
 /* Override Astro's default fade keyframes with our directional ones */

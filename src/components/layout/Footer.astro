@@ -1,6 +1,5 @@
 ---
 const year = new Date().getFullYear();
-const BRAND_PURPLE = "#8953d1";
 ---
 
 <footer
@@ -13,13 +12,13 @@ const BRAND_PURPLE = "#8953d1";
 
 	<div class="mb-1">
 		&copy; {year}
-		<span style={`color: ${BRAND_PURPLE}; font-weight: 500;`}>Rex Liu</span>
+		<span class="font-medium text-[var(--color-quote)]">Rex Liu</span>
 	</div>
 
 	<div class="flex items-center gap-x-3 text-xs opacity-80">
 		<a
 			href="/"
-			class="transition-colors hover:text-[#8953d1] hover:underline hover:underline-offset-4"
+			class="transition-colors hover:text-[var(--color-quote)] hover:underline hover:underline-offset-4"
 		>
 			rexliu.io
 		</a>
@@ -67,12 +66,12 @@ const BRAND_PURPLE = "#8953d1";
 
 	.quote-refresh:hover,
 	.quote-refresh:focus-visible {
-		color: #8953d1;
+		color: var(--color-quote);
 		transform: rotate(20deg);
 	}
 
 	.quote-refresh:focus-visible {
-		outline: 2px solid #8953d1;
+		outline: 2px solid var(--color-quote);
 		outline-offset: 3px;
 		border-radius: 4px;
 	}
