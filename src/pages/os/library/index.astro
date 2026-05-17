@@ -146,19 +146,57 @@ function ratingDots(rating: string | null | undefined): number {
 	return Math.min(5, Math.round(full + half * 0.5));
 }
 
+const noteStripChars = new Set("，。、“”‘’：:；;！!？?（）()《》[]【】\"'.,·-—_".split(""));
+
+function normalizeNoteText(value = "") {
+	return [...value.toLowerCase()]
+		.filter((char) => !/\s/.test(char) && !noteStripChars.has(char))
+		.join("");
+}
+
+function manualNoteTexts(item: LibraryItem) {
+	return [
+		...(item.notes?.quotes || []),
+		...(item.notes?.core_ideas || []),
+		item.notes?.impact || "",
+	].filter((text) => text.trim().length > 0);
+}
+
+function isSameNote(a: string, b: string) {
+	const left = normalizeNoteText(a);
+	const right = normalizeNoteText(b);
+	if (!left || !right) return false;
+	if (left === right) return true;
+	const minLength = Math.min(left.length, right.length);
+	if (minLength < 24) return false;
+	return left.includes(right) || right.includes(left);
+}
+
+function getVisibleWeReadThoughts(item: LibraryItem) {
+	const manualTexts = manualNoteTexts(item);
+	const seen = new Set<string>();
+	return (item.weread?.thoughts || []).filter((thought) => {
+		const content = thought.content?.trim() || "";
+		const key = normalizeNoteText(content);
+		if (!key || seen.has(key)) return false;
+		seen.add(key);
+		return !manualTexts.some((manualText) => isSameNote(content, manualText));
+	});
+}
+
+function hasManualNotes(item: LibraryItem) {
+	return manualNoteTexts(item).length > 0;
+}
+
 function hasNotes(item: LibraryItem) {
-	return !!(
-		(item.notes &&
-			((item.notes.quotes && item.notes.quotes.length > 0) ||
-				(item.notes.core_ideas && item.notes.core_ideas.length > 0) ||
-				(item.notes.impact && item.notes.impact.trim().length > 0))) ||
-		(item.weread?.thoughts && item.weread.thoughts.length > 0)
-	);
+	return hasManualNotes(item) || getVisibleWeReadThoughts(item).length > 0;
 }
 
 function getNoteQuote(item: LibraryItem) {
 	return (
-		item.notes?.quotes?.[0]?.slice(0, 80) ?? item.weread?.thoughts?.[0]?.content.slice(0, 80) ?? ""
+		item.notes?.quotes?.[0]?.slice(0, 80) ??
+		getVisibleWeReadThoughts(item)[0]?.content.slice(0, 80) ??
+		""
 	);
 }
 
@@ -355,22 +393,25 @@ const currentlyReadingBooks = books
 	.slice(0, 3);
 
 // Prepare items for Masonry views — plain serializable objects passed to React islands
-const masonryBooks = books.map((b) => ({
-	id: b.id,
-	title: b.title,
-	titleEn: b.titleEn,
-	subtitle: b.subtitle,
-	cover: b.cover,
-	coverClass: b.coverClass,
-	rating: b.rating,
-	tags: b.tags,
-	sortDate: b.sortDate,
-	sortYear: undefined,
-	notes: b.notes,
-	reviewSlug: b.reviewSlug,
-	hasNotes: hasNotes(b),
-	weread: b.weread,
-}));
+const masonryBooks = books.map((b) => {
+	const visibleWeReadThoughts = getVisibleWeReadThoughts(b);
+	return {
+		id: b.id,
+		title: b.title,
+		titleEn: b.titleEn,
+		subtitle: b.subtitle,
+		cover: b.cover,
+		coverClass: b.coverClass,
+		rating: b.rating,
+		tags: b.tags,
+		sortDate: b.sortDate,
+		sortYear: undefined,
+		notes: b.notes,
+		reviewSlug: b.reviewSlug,
+		hasNotes: hasNotes(b),
+		weread: b.weread ? { ...b.weread, thoughts: visibleWeReadThoughts } : undefined,
+	};
+});
 
 function mediaSubtitle(m: LibraryItem): string {
 	const label =
@@ -605,7 +646,9 @@ const masonrySeries = series.map(toMasonryMedia);
     <!-- Grid view -->
     <div id="books-grid-view" class="books-grid-view">
     <div class="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4" id="books-grid">
-      {books.map((item) => (
+      {books.map((item) => {
+        const visibleWeReadThoughts = getVisibleWeReadThoughts(item);
+        return (
         <Fragment>
           <article
             class="lib-card group cursor-pointer overflow-hidden rounded-xl transition-all lib-card-surface"
@@ -692,10 +735,10 @@ const masonrySeries = series.map(toMasonryMedia);
                 {item.notes?.impact && item.notes.impact.trim() && (
                   <p class="mt-4 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300">{item.notes.impact}</p>
                 )}
-                {item.weread?.thoughts && item.weread.thoughts.length > 0 && (
+                {visibleWeReadThoughts.length > 0 && (
                   <div class="mt-4 space-y-3">
                     <p class="font-serif text-xs uppercase tracking-[0.18em] text-[var(--color-quote)] dark:text-[var(--color-quote)]"><span class="lang-en">WeRead thoughts</span><span class="lang-zh">微信读书想法</span></p>
-                    {item.weread.thoughts.slice(0, 3).map((thought) => (
+                    {visibleWeReadThoughts.slice(0, 3).map((thought) => (
                       <blockquote class="rounded-2xl border border-[var(--color-quote)]/10 bg-[var(--color-quote)]/5 p-4 font-serif text-sm leading-relaxed text-gray-700 dark:border-[var(--color-quote)]/15 dark:bg-[var(--color-quote)]/10 dark:text-gray-300">
                         {thought.chapter && <p class="mb-2 text-xs text-gray-400 dark:text-gray-500">{thought.chapter}</p>}
                         <p>{thought.content}</p>
@@ -720,7 +763,8 @@ const masonrySeries = series.map(toMasonryMedia);
             </div>
           </div>
         </Fragment>
-      ))}
+        );
+      })}
     </div>
     </div>{/* end books-grid-view */}
 
