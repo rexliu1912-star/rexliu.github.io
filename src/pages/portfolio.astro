@@ -900,20 +900,24 @@ const stages = [
 								<span class="portfolio-metric-score font-serif" style={`color: ${healthColor}`}>{health.toFixed(1)}</span>
 								<span class="portfolio-metric-max font-serif">/5.0</span>
 							</div>
-							<span class="portfolio-metric-badge" style={`background: ${healthColor}20; color: ${healthColor}`}>
+							<span class="portfolio-metric-badge" style={`background: ${healthColor}18; color: ${healthColor}`}>
 								<span class="lang-en">{healthLabel}</span>
 								<span class="lang-zh">{healthLabelZh}</span>
 							</span>
+							<p class="portfolio-metric-desc">
+								<span class="lang-en">Composite score across quant factors — valuation, momentum, growth & risk. Higher = stronger fundamental & technical positioning.</span>
+								<span class="lang-zh">量化综合评分，涵盖估值、动量、成长性与风险四因子。越高代表基本面和技术面定位越强。</span>
+							</p>
 						</div>
 					)}
 					{pBeta != null && (
-						<div class="portfolio-metric-card" style="--metric-color: #6366f1">
+						<div class="portfolio-metric-card" style="--metric-color: #8b5cf6">
 							<p class="portfolio-metric-label">
 								<span class="lang-en">Portfolio Beta</span>
 								<span class="lang-zh">组合Beta</span>
 							</p>
 							<div class="portfolio-metric-value-wrap">
-								<span class="portfolio-metric-score font-serif">{pBeta.toFixed(2)}</span>
+								<span class="portfolio-metric-score font-serif" style="color: #8b5cf6">{pBeta.toFixed(2)}</span>
 								{eBeta != null && (
 									<>
 										<span class="portfolio-metric-sep">/</span>
@@ -922,9 +926,13 @@ const stages = [
 								)}
 							</div>
 							<span class="portfolio-metric-hint">
-								<span class="lang-en">Portfolio / Equity-only</span>
-								<span class="lang-zh">全组合 / 仅股票</span>
+								<span class="lang-en">Portfolio / Equity-only β</span>
+								<span class="lang-zh">全组合 / 仅股票 β</span>
 							</span>
+							<p class="portfolio-metric-desc">
+								<span class="lang-en">Sensitivity to market moves. β=1 tracks the market; &gt;1 amplifies swings; &lt;1 dampens them. Portfolio β blends all assets; equity β isolates stock exposure.</span>
+								<span class="lang-zh">对市场波动的敏感度。β=1 跟随大盘，&gt;1 放大波动，&lt;1 缓冲波动。组合 β 包含所有资产，股票 β 仅衡量股票敞口。</span>
+							</p>
 						</div>
 					)}
 				</div>
@@ -6011,25 +6019,28 @@ const stages = [
 
 	/* ── Health & Beta Metrics ── */
 	.portfolio-metrics-row {
-		display: flex;
+		display: grid;
+		grid-template-columns: 1fr 1fr;
 		gap: 1rem;
 		margin-bottom: 1.5rem;
 	}
+	@media (max-width: 640px) {
+		.portfolio-metrics-row { grid-template-columns: 1fr; }
+	}
 	.portfolio-metric-card {
-		flex: 1;
-		background: var(--portfolio-card-bg, rgba(15, 23, 42, 0.6));
-		border: 1px solid var(--portfolio-card-border, rgba(100, 116, 139, 0.15));
-		border-radius: 12px;
-		padding: 1.25rem 1.5rem;
+		border: 1px solid var(--p-border);
+		background: var(--p-card);
+		border-radius: 1rem;
+		padding: 1.25rem 1.4rem;
 		display: flex;
 		flex-direction: column;
-		gap: 0.5rem;
+		gap: 0.45rem;
 	}
 	.portfolio-metric-label {
-		font-size: 0.75rem;
+		font-size: 0.72rem;
 		text-transform: uppercase;
-		letter-spacing: 0.05em;
-		color: #94a3b8;
+		letter-spacing: 0.06em;
+		color: var(--p-text-faint);
 		margin: 0;
 	}
 	.portfolio-metric-value-wrap {
@@ -6040,25 +6051,25 @@ const stages = [
 	.portfolio-metric-score {
 		font-size: 2rem;
 		font-weight: 700;
-		color: var(--metric-color, #e2e8f0);
+		color: var(--metric-color, var(--p-text));
 	}
 	.portfolio-metric-max {
 		font-size: 1rem;
-		color: #64748b;
+		color: var(--p-text-faint);
 	}
 	.portfolio-metric-sep {
 		font-size: 1.5rem;
-		color: #475569;
+		color: var(--p-text-faint);
 	}
 	.portfolio-metric-sub {
-		font-size: 1.25rem;
-		color: #94a3b8;
+		font-size: 1.15rem;
+		color: var(--p-text-soft);
 	}
 	.portfolio-metric-badge {
 		display: inline-block;
-		padding: 0.2rem 0.6rem;
+		padding: 0.15rem 0.55rem;
 		border-radius: 999px;
-		font-size: 0.7rem;
+		font-size: 0.68rem;
 		font-weight: 600;
 		text-transform: uppercase;
 		letter-spacing: 0.03em;
@@ -6066,7 +6077,13 @@ const stages = [
 	}
 	.portfolio-metric-hint {
 		font-size: 0.7rem;
-		color: #64748b;
+		color: var(--p-text-faint);
+	}
+	.portfolio-metric-desc {
+		font-size: 0.78rem;
+		line-height: 1.5;
+		color: var(--p-text-faint);
+		margin: 0.4rem 0 0;
 	}
 
 	/* ── Analytics Trend Charts ── */
@@ -6077,17 +6094,26 @@ const stages = [
 		margin-bottom: 1.5rem;
 	}
 	.analytics-trend-chart {
-		background: var(--portfolio-card-bg, rgba(15, 23, 42, 0.6));
-		border: 1px solid var(--portfolio-card-border, rgba(100, 116, 139, 0.15));
-		border-radius: 12px;
+		background: var(--p-card);
+		border: 1px solid var(--p-border);
+		border-radius: 1rem;
 		padding: 1rem 1.25rem;
 	}
 	.analytics-trend-chart canvas {
 		height: 180px !important;
 	}
 
+	/* ── Light / Rainy overrides for metric cards + charts ── */
+	:global(html[data-theme='light']) .portfolio-metric-desc,
+	:global(html[data-theme='light']) .analytics-trend-chart canvas {
+		color: rgba(30, 20, 50, 0.55);
+	}
+	:global(html[data-mood='rainy']) .portfolio-metric-desc,
+	:global(html[data-mood='rainy']) .analytics-trend-chart canvas {
+		color: rgba(45, 55, 72, 0.55);
+	}
+
 	@media (max-width: 640px) {
-		.portfolio-metrics-row { flex-direction: column; }
 		.analytics-trend-wrap { grid-template-columns: 1fr; }
 	}
 	</style>
