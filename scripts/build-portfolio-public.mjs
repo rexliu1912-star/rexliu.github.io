@@ -1427,6 +1427,71 @@ async function main() {
         const targetAmount = totalAssets * (cat.target_pct / 100);
         cat.gap_amount = Math.round(targetAmount - actualPcts[cat.id]);
       }
+
+      // Dynamic sub-generation for stocks: compute A-share / HK / US split
+      // from actual asset amounts instead of hardcoded values.
+      if (cat.id === "stocks") {
+        const STOCK_MARKET_MAP = {
+          rex_stock: "cn",   // A-share individual stocks
+          us_stock: "us",    // US individual stocks
+          qieman: "cn",      // 且慢 smart advisor (A-share fund composite)
+          future: "mixed",   // QDII / mixed — needs sub-breakdown
+        };
+        const MARKET_LABELS = {
+          cn: { label_en: "A-share", label_zh: "A 股" },
+          hk: { label_en: "Hong Kong", label_zh: "港股" },
+          us: { label_en: "US", label_zh: "美股" },
+          mixed: { label_en: "Global Funds", label_zh: "全球基金" },
+        };
+
+        // future breakdown → market mapping (excluding gold which is already subtracted)
+        const FUTURE_MARKET_MAP = {
+          "天弘信息技术ETF": "cn",
+          "华宝外科科技": "cn",
+          "华夏有色金属ETF": "cn",
+          "天弘越南市场": "mixed",
+          "天弘中证美互联": "us",
+          "创金合信全球互联": "us",
+          "摩根纳斯达克100": "us",
+          "摩根纳斯达克100_2": "us",
+          "摩根标普500": "us",
+          "大成纳斯达克100ETF": "us",
+          "天弘标普500": "us",
+          "嘉实全球产业升级": "mixed",
+          "易方达全球精选": "mixed",
+          "其他小仓位": "mixed",
+        };
+
+        const marketAmounts = { cn: 0, hk: 0, us: 0, mixed: 0 };
+        for (const [assetId, mkt] of Object.entries(STOCK_MARKET_MAP)) {
+          const amt = assetMap[assetId] || 0;
+          if (mkt === "mixed" && assetId === "future") {
+            // Break down future by individual fund
+            const futureAsset = privatePortfolio.assets.find(a => a.id === "future");
+            const bd = futureAsset?.breakdown || {};
+            for (const [fundName, fundData] of Object.entries(bd)) {
+              if (fundName === "国泰黄金ETF_A") continue; // gold already subtracted from stocks
+              const fundAmt = fundData?.amount || 0;
+              const fundMkt = FUTURE_MARKET_MAP[fundName] || "mixed";
+              marketAmounts[fundMkt] += fundAmt;
+            }
+          } else if (mkt) {
+            marketAmounts[mkt] += amt;
+          }
+        }
+
+        // Only show markets with actual positions, sorted by amount descending
+        const stocksTotal = Object.values(marketAmounts).reduce((s, v) => s + v, 0);
+        const sub = Object.entries(marketAmounts)
+          .filter(([, amt]) => amt > 0)
+          .sort(([, a], [, b]) => b - a)
+          .map(([mkt, amt]) => ({
+            id: mkt,
+            ...MARKET_LABELS[mkt],
+            pct: stocksTotal > 0 ? Math.round((amt / totalAssets) * 1000) / 10 : 0,
+          }));
+        cat.sub = sub;
+      }
     }
     // Weighted expected returns
     const targetReturn = computedAllocation.categories.reduce((s, c) => s + (c.target_pct / 100) * (c.expected_return_pct || 0), 0);
