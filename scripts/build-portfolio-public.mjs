@@ -1457,6 +1457,42 @@ async function main() {
     console.log(`   ✅ Risk profile: vol ${currentVol.toFixed(1)}%, temp ${tempScore}, sharpe ${computedAllocation.risk.sharpe_current}`);
   }
 
+  // ── Portfolio Analytics: Health + Beta ──
+  let analyticsHistory = [];
+  const ANALYTICS_HISTORY_PATH = path.join(MARKET_DATA_DIR, "portfolio-analytics-history.json");
+  try {
+    analyticsHistory = await readJson(ANALYTICS_HISTORY_PATH, []);
+  } catch { /* first run */ }
+
+  let healthScore = quantRatings?.portfolioHealth ?? null;
+  let portfolioBeta = null;
+  let equityBeta = null;
+  try {
+    const betaData = await readJson(path.join(MARKET_DATA_DIR, "portfolio-beta.json"), null);
+    portfolioBeta = betaData?.portfolio_beta ?? null;
+    equityBeta = betaData?.equity_beta ?? null;
+  } catch { /* no beta data yet */ }
+
+  // Inject into allocation.current
+  computedAllocation.health = healthScore;
+  computedAllocation.portfolio_beta = portfolioBeta;
+  computedAllocation.equity_beta = equityBeta;
+
+  // Append to history (keep last 90 days)
+  const todayStr = new Date().toISOString().slice(0, 10);
+  if (healthScore != null || portfolioBeta != null) {
+    const lastEntry = analyticsHistory[analyticsHistory.length - 1];
+    if (!lastEntry || lastEntry.date !== todayStr) {
+      analyticsHistory.push({ date: todayStr, health: healthScore, portfolio_beta: portfolioBeta, equity_beta: equityBeta });
+    } else {
+      lastEntry.health = healthScore ?? lastEntry.health;
+      lastEntry.portfolio_beta = portfolioBeta ?? lastEntry.portfolio_beta;
+      lastEntry.equity_beta = equityBeta ?? lastEntry.equity_beta;
+    }
+    analyticsHistory = analyticsHistory.slice(-90);
+    try { await fs.writeFile(ANALYTICS_HISTORY_PATH, JSON.stringify(analyticsHistory, null, 2)); } catch {}
+  }
+
   const output = {
     generated_at: new Date().toISOString(),
     regime,
@@ -1476,12 +1512,13 @@ async function main() {
     crypto_timeseries: cryptoTimeseries,
     gold_tracker: goldTracker,
     gold_timeseries: goldTimeseries,
+    analytics_history: analyticsHistory,
   };
 
   await fs.writeFile(OUTPUT_PATH, JSON.stringify(output, null, 2) + "\n");
   console.log(`\n✅ Wrote ${OUTPUT_PATH}`);
   console.log(
-    `   ${stats.active_positions} positions, ${stats.markets} markets, ${stats.tracked_rules} rules, ${stats.upcoming_events} events, ${regime.history_60d.length}-day regime history, ${heatmap ? heatmap.dates.length : 0}-day heatmap, ${clearances.length} clearances, ${roundtables.length} roundtables, ${allocationHistory.history.length}-month allocation history`
+    `   ${stats.active_positions} positions, ${stats.markets} markets, ${stats.tracked_rules} rules, ${stats.upcoming_events} events, ${regime.history_60d.length}-day regime history, ${heatmap ? heatmap.dates.length : 0}-day heatmap, ${clearances.length} clearances, ${roundtables.length} roundtables, ${allocationHistory.history.length}-month allocation history, health=${healthScore ?? "n/a"}, β=${portfolioBeta ?? "n/a"}`
   );
 }
 

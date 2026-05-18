@@ -89,6 +89,9 @@ interface PortfolioData {
 		risk?: { target_vol: number; current_vol: number; sharpe_target: number; sharpe_current: number; risk_free_rate: number; temperature: number; temperature_label_en: string; temperature_label_zh: string };
 		weighted_return?: { target: number; current: number };
 		projected_annual_yield?: number;
+		health?: number;
+		portfolio_beta?: number;
+		equity_beta?: number;
 	} };
 	positions: PortfolioPosition[];
 	crypto: {
@@ -127,6 +130,7 @@ interface PortfolioData {
 		days_since_last_clearance: number | null;
 	};
 	generated_at: string;
+	analytics_history?: { date: string; health: number | null; portfolio_beta: number | null; equity_beta: number | null }[];
 }
 
 const portfolioData = rawPortfolioData as unknown as PortfolioData;
@@ -311,6 +315,7 @@ const dataJson = JSON.stringify({
 	crypto_timeseries: cryptoTS,
 	crypto_portfolio_history: (portfolioData as any)?.crypto_portfolio_history,
 	allocation_history: (portfolioData as any)?.allocation_history,
+	analytics_history: (portfolioData as any)?.analytics_history,
 	gold_timeseries: goldTS,
 });
 
@@ -873,6 +878,58 @@ const stages = [
 			);
 		})()}
 
+		{/* ── Health & Beta Metrics ── */}
+		{(() => {
+			const health = allocation.current.health;
+			const pBeta = allocation.current.portfolio_beta;
+			const eBeta = allocation.current.equity_beta;
+			if (health == null && pBeta == null) return null;
+			const healthColor = health >= 4 ? "#10b981" : health >= 3 ? "#f59e0b" : "#ef4444";
+			const healthLabel = health >= 4.5 ? "Strong" : health >= 3.5 ? "Healthy" : health >= 2.5 ? "Fair" : "Weak";
+			const healthLabelZh = health >= 4.5 ? "强劲" : health >= 3.5 ? "健康" : health >= 2.5 ? "一般" : "偏弱";
+			return (
+				<div class="portfolio-metrics-row">
+					{health != null && (
+						<div class="portfolio-metric-card" style={`--metric-color: ${healthColor}`}>
+							<p class="portfolio-metric-label">
+								<span class="lang-en">Portfolio Health</span>
+								<span class="lang-zh">组合健康度</span>
+							</p>
+							<div class="portfolio-metric-value-wrap">
+								<span class="portfolio-metric-score font-serif" style={`color: ${healthColor}`}>{health.toFixed(1)}</span>
+								<span class="portfolio-metric-max font-serif">/5.0</span>
+							</div>
+							<span class="portfolio-metric-badge" style={`background: ${healthColor}20; color: ${healthColor}`}>
+								<span class="lang-en">{healthLabel}</span>
+								<span class="lang-zh">{healthLabelZh}</span>
+							</span>
+						</div>
+					)}
+					{pBeta != null && (
+						<div class="portfolio-metric-card" style="--metric-color: #6366f1">
+							<p class="portfolio-metric-label">
+								<span class="lang-en">Portfolio Beta</span>
+								<span class="lang-zh">组合Beta</span>
+							</p>
+							<div class="portfolio-metric-value-wrap">
+								<span class="portfolio-metric-score font-serif">{pBeta.toFixed(2)}</span>
+								{eBeta != null && (
+									<>
+										<span class="portfolio-metric-sep">/</span>
+										<span class="portfolio-metric-sub font-serif">{eBeta.toFixed(2)}</span>
+									</>
+								)}
+							</div>
+							<span class="portfolio-metric-hint">
+								<span class="lang-en">Portfolio / Equity-only</span>
+								<span class="lang-zh">全组合 / 仅股票</span>
+							</span>
+						</div>
+					)}
+				</div>
+			);
+		})()}
+
 		<div class="allocation-subcards">
 				{allocation.current.categories.map((cat) => (
 					<article class="allocation-subcard" style={`--cat-color: ${cat.color}`}>
@@ -946,6 +1003,31 @@ const stages = [
 						)}
 					</article>
 				))}
+
+			{/* ── Health & Beta Trend Charts ── */}
+			{(() => {
+				const ah = (portfolioData as any)?.analytics_history;
+				if (!ah || ah.length < 2) return null;
+
+				return (
+					<div class="analytics-trend-wrap">
+						<div class="analytics-trend-chart">
+							<p class="portfolio-kicker" style="margin-bottom: 0.5rem;">
+								<span class="lang-en">Health Trend</span>
+								<span class="lang-zh">健康度趋势</span>
+							</p>
+							<canvas id="healthTrendChart" class="crypto-chart-canvas" aria-label="Portfolio Health Trend"></canvas>
+						</div>
+						<div class="analytics-trend-chart">
+							<p class="portfolio-kicker" style="margin-bottom: 0.5rem;">
+								<span class="lang-en">Beta Trend</span>
+								<span class="lang-zh">Beta趋势</span>
+							</p>
+							<canvas id="betaTrendChart" class="crypto-chart-canvas" aria-label="Portfolio Beta Trend"></canvas>
+						</div>
+					</div>
+				);
+			})()}
 
 			{/* ── Layer 5: Allocation Drift Trend ── */}
 				{(() => {
@@ -2630,6 +2712,87 @@ const stages = [
 			}
 
 
+			// ── Health Trend Chart ──
+			(function initHealthTrend() {
+				const canvas = document.getElementById('healthTrendChart');
+				if (!canvas) return;
+				const ah = data.analytics_history;
+				if (!ah || ah.length < 2) return;
+				const labels = ah.map(d => d.date.slice(5)); // MM-DD
+				const healthData = ah.map(d => d.health);
+				if (Chart.getChart(canvas)) Chart.getChart(canvas).destroy();
+				new Chart(canvas.getContext('2d'), {
+					type: 'line',
+					data: {
+						labels,
+						datasets: [{
+							label: 'Health',
+							data: healthData,
+							borderColor: '#10b981',
+							backgroundColor: 'rgba(16,185,129,0.1)',
+							fill: true,
+							tension: 0.3,
+							pointRadius: healthData.length > 30 ? 0 : 3,
+							pointBackgroundColor: '#10b981',
+							borderWidth: 2,
+						}]
+					},
+					options: chartOptions({
+						plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => `${ctx.parsed.y.toFixed(1)} / 5.0` } } },
+						scales: {
+							y: { min: 0, max: 5, ticks: { stepSize: 1, color: axisColor(), font: chartFont() }, grid: { color: gridColor() } },
+							x: { ticks: { color: axisColor(), maxTicksLimit: 10, font: chartFont() }, grid: { display: false } }
+						}
+					}),
+				});
+			})();
+
+			// ── Beta Trend Chart ──
+			(function initBetaTrend() {
+				const canvas = document.getElementById('betaTrendChart');
+				if (!canvas) return;
+				const ah = data.analytics_history;
+				if (!ah || ah.length < 2) return;
+				const labels = ah.map(d => d.date.slice(5));
+				const pBeta = ah.map(d => d.portfolio_beta);
+				const eBeta = ah.map(d => d.equity_beta);
+				const datasets = [{
+					label: 'Portfolio β',
+					data: pBeta,
+					borderColor: '#6366f1',
+					backgroundColor: 'rgba(99,102,241,0.1)',
+					fill: true,
+					tension: 0.3,
+					pointRadius: pBeta.length > 30 ? 0 : 3,
+					borderWidth: 2,
+				}];
+				if (eBeta.some(v => v != null)) {
+					datasets.push({
+						label: 'Equity β',
+						data: eBeta,
+						borderColor: '#f59e0b',
+						borderDash: [5, 3],
+						tension: 0.3,
+						pointRadius: eBeta.length > 30 ? 0 : 3,
+						borderWidth: 1.5,
+						fill: false,
+					});
+				}
+				if (Chart.getChart(canvas)) Chart.getChart(canvas).destroy();
+				new Chart(canvas.getContext('2d'), {
+					type: 'line',
+					data: { labels, datasets },
+					options: chartOptions({
+						plugins: { legend: { labels: { color: axisColor(), boxWidth: 12, font: chartFont() } }, tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y?.toFixed(2)}` } } },
+						scales: {
+							y: { ticks: { color: axisColor(), font: chartFont() }, grid: { color: gridColor() } },
+							x: { ticks: { color: axisColor(), maxTicksLimit: 10, font: chartFont() }, grid: { display: false } }
+						}
+					}),
+				});
+			})();
+
+
 			// Regime VIX chart (interactive version)
 			const regimeCanvas = document.getElementById('regimeChart');
 			if (regimeCanvas && data.regime?.history_60d?.length >= 2) {
@@ -3047,7 +3210,8 @@ const stages = [
 	function __lazyInitCharts() {
 		const canvasIds = [
 			'regimeChart', 'cryptoBtcTrendChart', 'cryptoPortfolioIndexChart',
-			'cryptoAllocationDriftChart', 'goldPriceChart', 'goldDevChart'
+			'cryptoAllocationDriftChart', 'goldPriceChart', 'goldDevChart',
+			'healthTrendChart', 'betaTrendChart'
 		];
 		let chartsInitialized = false;
 		const observer = new IntersectionObserver((entries) => {
@@ -5843,5 +6007,87 @@ const stages = [
 
 	/* ── Allocation History ── */
 	.alloc-history-wrap { padding:.5rem 1rem; }
+
+	/* ── Health & Beta Metrics ── */
+	.portfolio-metrics-row {
+		display: flex;
+		gap: 1rem;
+		margin-bottom: 1.5rem;
+	}
+	.portfolio-metric-card {
+		flex: 1;
+		background: var(--portfolio-card-bg, rgba(15, 23, 42, 0.6));
+		border: 1px solid var(--portfolio-card-border, rgba(100, 116, 139, 0.15));
+		border-radius: 12px;
+		padding: 1.25rem 1.5rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+	.portfolio-metric-label {
+		font-size: 0.75rem;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		color: #94a3b8;
+		margin: 0;
+	}
+	.portfolio-metric-value-wrap {
+		display: flex;
+		align-items: baseline;
+		gap: 0.25rem;
+	}
+	.portfolio-metric-score {
+		font-size: 2rem;
+		font-weight: 700;
+		color: var(--metric-color, #e2e8f0);
+	}
+	.portfolio-metric-max {
+		font-size: 1rem;
+		color: #64748b;
+	}
+	.portfolio-metric-sep {
+		font-size: 1.5rem;
+		color: #475569;
+	}
+	.portfolio-metric-sub {
+		font-size: 1.25rem;
+		color: #94a3b8;
+	}
+	.portfolio-metric-badge {
+		display: inline-block;
+		padding: 0.2rem 0.6rem;
+		border-radius: 999px;
+		font-size: 0.7rem;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.03em;
+		width: fit-content;
+	}
+	.portfolio-metric-hint {
+		font-size: 0.7rem;
+		color: #64748b;
+	}
+
+	/* ── Analytics Trend Charts ── */
+	.analytics-trend-wrap {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 1.5rem;
+		margin-bottom: 1.5rem;
+	}
+	.analytics-trend-chart {
+		background: var(--portfolio-card-bg, rgba(15, 23, 42, 0.6));
+		border: 1px solid var(--portfolio-card-border, rgba(100, 116, 139, 0.15));
+		border-radius: 12px;
+		padding: 1rem 1.25rem;
+	}
+	.analytics-trend-chart canvas {
+		height: 180px !important;
+	}
+
+	@media (max-width: 640px) {
+		.portfolio-metrics-row { flex-direction: column; }
+		.analytics-trend-wrap { grid-template-columns: 1fr; }
+	}
 	</style>
 </PageLayout>
