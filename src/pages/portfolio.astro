@@ -884,9 +884,10 @@ const stages = [
 			const pBeta = allocation.current.portfolio_beta;
 			const eBeta = allocation.current.equity_beta;
 			if (health == null && pBeta == null) return null;
-			const healthColor = health >= 4 ? "#10b981" : health >= 3 ? "#f59e0b" : "#ef4444";
-			const healthLabel = health >= 4.5 ? "Strong" : health >= 3.5 ? "Healthy" : health >= 2.5 ? "Fair" : "Weak";
-			const healthLabelZh = health >= 4.5 ? "强劲" : health >= 3.5 ? "健康" : health >= 2.5 ? "一般" : "偏弱";
+			const h = health ?? 0;
+			const healthColor = h >= 4 ? "#10b981" : h >= 3 ? "#f59e0b" : "#ef4444";
+			const healthLabel = h >= 4.5 ? "Strong" : h >= 3.5 ? "Healthy" : h >= 2.5 ? "Fair" : "Weak";
+			const healthLabelZh = h >= 4.5 ? "强劲" : h >= 3.5 ? "健康" : h >= 2.5 ? "一般" : "偏弱";
 			return (
 				<div class="portfolio-metrics-row">
 					{health != null && (
