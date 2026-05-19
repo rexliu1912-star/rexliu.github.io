@@ -1825,10 +1825,10 @@ const stages = [
 					<div class="heatmap-toolbar" aria-label="Watchlist heatmap legend">
 						<div class="heatmap-legend">
 							<span class="legend-qlabel">Factor:</span>
-						<span class="legend-grade" style="background:#7c3aed">A</span>
-						<span class="legend-grade" style="background:#a78bfa">B</span>
-						<span class="legend-grade" style="background:#d4c4fc;color:#3b1f7e">C</span>
-						<span class="legend-grade" style="background:#ede9fe;color:#3b1f7e">D</span>
+						<span class="legend-grade" style="background:#22c55e;color:#fff">A</span>
+						<span class="legend-grade" style="background:#fde047;color:#713f12">B</span>
+						<span class="legend-grade" style="background:#fb923c;color:#7c2d12">C</span>
+						<span class="legend-grade" style="background:#dc2626;color:#fff">D</span>
 						<span class="legend-grade legend-grade-na">—</span>
 						</div>
 						<span class="heatmap-hint"><span class="lang-en">Sorted by quant score</span><span class="lang-zh">按量化评分排序</span></span>
@@ -1858,7 +1858,7 @@ const stages = [
 										return <span class={`fb ${css}`}>{g || "—"}</span>;
 									})}
 								</div>
-								<div class={`heatmap-score-pill tone-${row.quant?.rating === "Buy" ? "buy" : row.quant?.rating === "Hold" ? "hold" : "cold"}`} title={row.quant?.rating ? `${row.quant.rating} · ${row.quant.score?.toFixed(1)}/5` : row.ticker}>
+									<div class={`heatmap-score-pill tone-${row.quant?.rating === "Strong Buy" ? "strong-buy" : row.quant?.rating === "Buy" ? "buy" : row.quant?.rating === "Hold" ? "hold" : "cold"}`} title={row.quant?.rating ? `${row.quant.rating} · ${row.quant.score?.toFixed(1)}/5` : row.ticker}>
 									<strong>{row.quant?.rating ?? "—"}</strong>
 									<span>{row.quant?.score != null ? row.quant.score.toFixed(1) : "—"}</span>
 								</div>
@@ -3971,19 +3971,19 @@ const stages = [
 			transform: scale(1.12);
 			filter: saturate(1.2);
 		}
-		/* Grade colors — single-hue purple gradient (A+ darkest → D lightest) */
-		.qb-App          { background: #5b21b6; }
-		.qb-A            { background: #6d28d9; }
-		.qb-Am           { background: #7c3aed; }
-		.qb-Bp           { background: #8b5cf6; }
-		.qb-B            { background: #a78bfa; }
-		.qb-Bm           { background: #b794f4; }
-		.qb-Cp           { background: #c4b5fd; color: #3b1f7e; }
-		.qb-C            { background: #d4c4fc; color: #3b1f7e; }
-		.qb-Cm           { background: #ddd6fe; color: #3b1f7e; }
-		.qb-Dp           { background: #ede9fe; color: #3b1f7e; }
-		.qb-D            { background: #f5f3ff; color: #6b5a8e; }
-		.qb-F            { background: #f5f3ff; color: #a09ab5; }
+		/* Grade colors — semantic heat scale (green A+ → yellow B → orange C → red D/F) */
+		.qb-App          { background: #15803d; color: #fff; }
+		.qb-A            { background: #22c55e; color: #fff; }
+		.qb-Am           { background: #4ade80; color: #166534; }
+		.qb-Bp           { background: #86efac; color: #166534; }
+		.qb-B            { background: #fde047; color: #713f12; }
+		.qb-Bm           { background: #facc15; color: #713f12; }
+		.qb-Cp           { background: #fdba74; color: #7c2d12; }
+		.qb-C            { background: #fb923c; color: #7c2d12; }
+		.qb-Cm           { background: #f97316; color: #fff; }
+		.qb-Dp           { background: #ef4444; color: #fff; }
+		.qb-D            { background: #dc2626; color: #fff; }
+		.qb-F            { background: #991b1b; color: #fff; }
 		.qb-na           { background: var(--p-border); color: var(--p-text-faint); opacity: 0.45; }
 		/* Grade legend in toolbar */
 		.legend-sep {
@@ -4040,6 +4040,11 @@ const stages = [
 			background: rgba(22, 163, 74, 0.08);
 		}
 		.heatmap-score-pill.tone-buy strong { color: #16a34a; }
+		.heatmap-score-pill.tone-strong-buy {
+			border-color: rgba(234, 179, 8, 0.45);
+			background: linear-gradient(135deg, rgba(234, 179, 8, 0.12), rgba(251, 191, 36, 0.06));
+		}
+		.heatmap-score-pill.tone-strong-buy strong { color: #ca8a04; }
 		.heatmap-score-pill.tone-hold {
 			border-color: rgba(139, 92, 246, 0.35);
 			background: rgba(139, 92, 246, 0.08);
