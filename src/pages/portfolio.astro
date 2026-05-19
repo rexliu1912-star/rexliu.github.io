@@ -1825,10 +1825,10 @@ const stages = [
 					<div class="heatmap-toolbar" aria-label="Watchlist heatmap legend">
 						<div class="heatmap-legend">
 							<span class="legend-qlabel">Factor:</span>
-						<span class="legend-grade" style="background:#22c55e;color:#fff">A</span>
-						<span class="legend-grade" style="background:#fde047;color:#713f12">B</span>
-						<span class="legend-grade" style="background:#fb923c;color:#7c2d12">C</span>
-						<span class="legend-grade" style="background:#dc2626;color:#fff">D</span>
+						<span class="legend-grade" style="background:hsl(268,55%,52%);color:#fff">A</span>
+						<span class="legend-grade" style="background:hsl(258,40%,76%);color:#3b1f7e">B</span>
+						<span class="legend-grade" style="background:hsl(248,30%,90%);color:#4c3a6e">C</span>
+						<span class="legend-grade" style="background:hsl(240,15%,97%);color:#6b5a8e">D</span>
 						<span class="legend-grade legend-grade-na">—</span>
 						</div>
 						<span class="heatmap-hint"><span class="lang-en">Sorted by quant score</span><span class="lang-zh">按量化评分排序</span></span>
@@ -3888,7 +3888,7 @@ const stages = [
 			display: grid;
 			grid-template-columns: repeat(6, 1fr);
 			gap: 3px;
-			place-items: center end;
+			place-items: center;
 			padding: 0 0 0.2rem;
 			font-size: 0.58rem;
 			font-weight: 600;
@@ -3971,19 +3971,32 @@ const stages = [
 			transform: scale(1.12);
 			filter: saturate(1.2);
 		}
-		/* Grade colors — semantic heat scale (green A+ → yellow B → orange C → red D/F) */
-		.qb-App          { background: #15803d; color: #fff; }
-		.qb-A            { background: #22c55e; color: #fff; }
-		.qb-Am           { background: #4ade80; color: #166534; }
-		.qb-Bp           { background: #86efac; color: #166534; }
-		.qb-B            { background: #fde047; color: #713f12; }
-		.qb-Bm           { background: #facc15; color: #713f12; }
-		.qb-Cp           { background: #fdba74; color: #7c2d12; }
-		.qb-C            { background: #fb923c; color: #7c2d12; }
-		.qb-Cm           { background: #f97316; color: #fff; }
-		.qb-Dp           { background: #ef4444; color: #fff; }
-		.qb-D            { background: #dc2626; color: #fff; }
-		.qb-F            { background: #991b1b; color: #fff; }
+		/* Grade colors — purple depth scale (A deep → D faint) with theme awareness */
+		.qb-App          { background: hsl(270, 60%, 42%); color: #fff; }
+		.qb-A            { background: hsl(268, 55%, 52%); color: #fff; }
+		.qb-Am           { background: hsl(265, 50%, 60%); color: #fff; }
+		.qb-Bp           { background: hsl(262, 45%, 68%); color: #fff; }
+		.qb-B            { background: hsl(258, 40%, 76%); color: #3b1f7e; }
+		.qb-Bm           { background: hsl(255, 38%, 82%); color: #3b1f7e; }
+		.qb-Cp           { background: hsl(250, 35%, 87%); color: #4c3a6e; }
+		.qb-C            { background: hsl(248, 30%, 90%); color: #4c3a6e; }
+		.qb-Cm           { background: hsl(245, 25%, 93%); color: #5b4f7a; }
+		.qb-Dp           { background: hsl(240, 20%, 95%); color: #6b5a8e; }
+		.qb-D            { background: hsl(240, 15%, 97%); color: #8a82a0; }
+		.qb-F            { background: hsl(240, 10%, 97%); color: #a09ab5; }
+		/* Dark theme: boost lightness */
+		:global(html:not([data-theme='light'])) .qb-App          { background: hsl(270, 65%, 50%); }
+		:global(html:not([data-theme='light'])) .qb-A            { background: hsl(268, 60%, 58%); }
+		:global(html:not([data-theme='light'])) .qb-Am           { background: hsl(265, 55%, 65%); }
+		:global(html:not([data-theme='light'])) .qb-Bp           { background: hsl(262, 50%, 72%); }
+		:global(html:not([data-theme='light'])) .qb-B            { background: hsl(258, 45%, 80%); color: #1a0a3e; }
+		:global(html:not([data-theme='light'])) .qb-Bm           { background: hsl(255, 42%, 86%); color: #1a0a3e; }
+		:global(html:not([data-theme='light'])) .qb-Cp           { background: hsl(250, 38%, 89%); color: #2d1f4e; }
+		:global(html:not([data-theme='light'])) .qb-C            { background: hsl(248, 32%, 92%); color: #2d1f4e; }
+		:global(html:not([data-theme='light'])) .qb-Cm           { background: hsl(245, 28%, 94%); color: #3d3560; }
+		:global(html:not([data-theme='light'])) .qb-Dp           { background: hsl(240, 22%, 96%); color: #4c4570; }
+		:global(html:not([data-theme='light'])) .qb-D            { background: hsl(240, 18%, 97%); color: #5e5790; }
+		:global(html:not([data-theme='light'])) .qb-F            { background: hsl(240, 12%, 97%); color: #7a74a0; }
 		.qb-na           { background: var(--p-border); color: var(--p-text-faint); opacity: 0.45; }
 		/* Grade legend in toolbar */
 		.legend-sep {
