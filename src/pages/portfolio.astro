@@ -69,35 +69,6 @@ interface PortfolioHeatmap {
 	ticker_names: Record<string, string>;
 	ticker_meta?: Record<string, any>;
 }
-interface PortfolioDriverSignal {
-	key: string;
-	label_en: string;
-	label_zh: string;
-	type: string;
-	status: "tailwind" | "neutral" | "headwind";
-	change: "up" | "flat" | "down";
-	confidence: "high" | "medium" | "low";
-	impacted: { symbol: string; name?: string; market?: string; kind?: string }[];
-	impacted_count: number;
-	evidence_en: string;
-	evidence_zh: string;
-}
-interface PortfolioDriverSignals {
-	generated_at: string;
-	source?: { news_digest_at?: string | null; quant_ratings_date?: string | null; inputs?: string[] };
-	summary: {
-		posture: "constructive" | "balanced" | "defensive";
-		label_en: string;
-		label_zh: string;
-		net_score: number;
-		tailwinds: number;
-		neutral: number;
-		headwinds: number;
-		weekly_signal_en: string;
-		weekly_signal_zh: string;
-	};
-	factors: PortfolioDriverSignal[];
-}
 interface PortfolioRegimeCurrent {
 	label: string;
 	label_en: string;
@@ -150,7 +121,6 @@ interface PortfolioData {
 	crypto_monitor: any | null;
 	gold_tracker: any | null;
 	watchlist_heatmap: PortfolioHeatmap | null;
-	driver_signals?: PortfolioDriverSignals | null;
 	clearances: any[];
 	stats: {
 		active_positions: number;
@@ -174,7 +144,6 @@ const {
 	crypto_monitor: cryptoMonitor,
 	gold_tracker: goldTracker,
 	watchlist_heatmap: heatmap,
-	driver_signals: driverSignals,
 	clearances,
 	stats,
 	generated_at,
@@ -316,7 +285,6 @@ const dataJson = JSON.stringify({
 	allocation,
 	heatmap,
 	positions,
-	driver_signals: driverSignals,
 	clearances,
 	crypto_timeseries: cryptoTS,
 	crypto_portfolio_history: (portfolioData as any)?.crypto_portfolio_history,
@@ -326,15 +294,6 @@ const dataJson = JSON.stringify({
 });
 
 const updatedLabel = new Date(generated_at).toISOString().split("T")[0];
-
-const driverStatusMeta: Record<string, { en: string; zh: string; color: string; icon: string }> = {
-	tailwind: { en: "Tailwind", zh: "顺风", color: "#10b981", icon: "↗" },
-	neutral: { en: "Neutral", zh: "中性", color: "#f59e0b", icon: "→" },
-	headwind: { en: "Headwind", zh: "逆风", color: "#ef4444", icon: "↘" },
-};
-const driverChangeIcon: Record<string, string> = { up: "↑", flat: "→", down: "↓" };
-const driverRows = (driverSignals?.factors || []).slice(0, 12);
-const driverUpdatedLabel = driverSignals?.generated_at ? new Date(driverSignals.generated_at).toISOString().split("T")[0] : updatedLabel;
 
 const meta = {
 	title: "Portfolio · Rex Liu",
@@ -564,7 +523,6 @@ const stages = [
 		<nav class="portfolio-section-nav" aria-label="Section navigation">
 			<a href="#allocation-section"><span class="lang-en">Allocation</span><span class="lang-zh">配置</span></a>
 			<a href="#regime-section"><span class="lang-en">Regime</span><span class="lang-zh">宏观</span></a>
-			{driverSignals && <a href="#driver-radar-section"><span class="lang-en">Drivers</span><span class="lang-zh">因子</span></a>}
 			<a href="#positions-section"><span class="lang-en">Positions</span><span class="lang-zh">持仓</span></a>
 			{cryptoMonitor && <a href="#crypto-mgmt-section"><span class="lang-en">Crypto</span><span class="lang-zh">加密</span></a>}
 			<a href="#gold-tracker-section"><span class="lang-en">Gold</span><span class="lang-zh">黄金</span></a>
@@ -1489,54 +1447,6 @@ const stages = [
 			</div>
 		</section>
 
-		{driverSignals && (
-			<section class="portfolio-section fade-in-up driver-radar-section" data-collapse id="driver-radar-section">
-				<header class="portfolio-section-head">
-					<p class="portfolio-kicker"><span class="lang-en">Driver Radar · Weekly signal map</span><span class="lang-zh">因子雷达 · 周度信号图</span></p>
-					<h2 class="font-serif text-3xl font-semibold"><span class="lang-en">What is pushing the portfolio this week</span><span class="lang-zh">这周真正推动组合的因子</span></h2>
-					<p class="portfolio-note"><span class="lang-en">Each driver rolls up macro lights, quant scores, news digest and the positions it touches.</span><span class="lang-zh">每个因子汇总宏观灯号、量化评分、新闻摘要，以及它影响的持仓。</span></p>
-					<span class="section-summary"><span class="lang-en">{driverSignals.summary.label_en} · {driverSignals.summary.weekly_signal_en}</span><span class="lang-zh">{driverSignals.summary.label_zh} · {driverSignals.summary.weekly_signal_zh}</span></span>
-				</header>
-
-				<div class={`driver-radar-hero posture-${driverSignals.summary.posture}`}>
-					<div>
-						<p class="driver-eyebrow"><span class="lang-en">Portfolio posture</span><span class="lang-zh">组合姿态</span></p>
-						<strong class="font-serif"><span class="lang-en">{driverSignals.summary.label_en}</span><span class="lang-zh">{driverSignals.summary.label_zh}</span></strong>
-						<span class="driver-weekly"><span class="lang-en">Net driver score {driverSignals.summary.net_score}</span><span class="lang-zh">净因子分 {driverSignals.summary.net_score}</span></span>
-					</div>
-					<div class="driver-counts" aria-label="Driver status counts">
-						<span><b>{driverSignals.summary.tailwinds}</b><small><span class="lang-en">Tailwinds</span><span class="lang-zh">顺风</span></small></span>
-						<span><b>{driverSignals.summary.neutral}</b><small><span class="lang-en">Neutral</span><span class="lang-zh">中性</span></small></span>
-						<span><b>{driverSignals.summary.headwinds}</b><small><span class="lang-en">Headwinds</span><span class="lang-zh">逆风</span></small></span>
-					</div>
-				</div>
-
-				<div class="driver-radar-grid">
-					{driverRows.map((driver) => {
-						const meta = (driverStatusMeta[driver.status] ?? driverStatusMeta.neutral)!;
-						return (
-							<article class={`driver-card driver-${driver.status}`}>
-								<header class="driver-card-head">
-									<div>
-										<p class="driver-label"><span class="lang-en">{driver.label_en}</span><span class="lang-zh">{driver.label_zh}</span></p>
-										<span class="driver-type">{driver.type} · {driver.confidence}</span>
-									</div>
-									<span class="driver-status" style={`--driver-color:${meta.color}`}><b>{meta.icon}</b><span class="lang-en">{meta.en}</span><span class="lang-zh">{meta.zh}</span><em>{driverChangeIcon[driver.change]}</em></span>
-								</header>
-								<p class="driver-evidence"><span class="lang-en">{driver.evidence_en}</span><span class="lang-zh">{driver.evidence_zh}</span></p>
-								<div class="driver-impacted">
-									{driver.impacted.slice(0, 6).map((p) => <span>{p.symbol}</span>)}
-									{driver.impacted_count > 6 && <span>+{driver.impacted_count - 6}</span>}
-								</div>
-							</article>
-						);
-					})}
-				</div>
-
-				<p class="driver-updated"><span class="lang-en">Last driver refresh: {driverUpdatedLabel} · sources: factor tags, macro thermometer, quant ratings, news digest</span><span class="lang-zh">因子更新时间：{driverUpdatedLabel} · 来源：因子标签、宏观温度计、量化评分、新闻摘要</span></p>
-			</section>
-		)}
-
 		<section class="portfolio-section fade-in-up" data-collapse id="positions-section">
 			<header class="portfolio-section-head">
 				<p class="portfolio-kicker">
@@ -2241,7 +2151,6 @@ const stages = [
 			const defaultOpen = new Set([
 				'allocation-section',
 				'regime-section',
-				'driver-radar-section',
 				'positions-section',
 				'crypto-mgmt-section',
 				'gold-tracker-section',
@@ -2313,15 +2222,6 @@ const stages = [
 					target.addEventListener('animationend', () => target.classList.remove('section-highlight'), { once: true });
 				});
 			});
-
-			// Open a directly-linked collapsible section on first load as well.
-			const initialHash = window.location.hash?.slice(1);
-			if (initialHash) {
-				const initialTarget = document.getElementById(initialHash);
-				if (initialTarget?.hasAttribute('data-collapse') && initialTarget.classList.contains('is-collapsed')) {
-					toggleSection(initialTarget, true);
-				}
-			}
 		}
 
 		}
@@ -3165,162 +3065,6 @@ const stages = [
 		.gold-gauge-value small { font-size: .72rem; color: var(--p-text-faint); }
 		@media (max-width: 860px) { .gold-charts-row { grid-template-columns: 1fr; } }
 
-		/* ── Driver Radar ───────────────────────── */
-		.driver-radar-section {
-			position: relative;
-		}
-		.driver-radar-hero {
-			display: grid;
-			grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
-			gap: 1rem;
-			align-items: stretch;
-			margin: 1rem 0;
-			padding: 1rem;
-			border: 1px solid var(--p-border);
-			border-radius: 1rem;
-			background: var(--p-card);
-		}
-		.driver-eyebrow {
-			margin: 0 0 0.5rem;
-			font-size: 0.72rem;
-			letter-spacing: 0.08em;
-			text-transform: uppercase;
-			color: var(--p-text-faint);
-		}
-		.driver-radar-hero strong {
-			display: block;
-			font-size: clamp(1.25rem, 2vw, 1.55rem);
-			line-height: 1.15;
-			color: var(--p-text);
-		}
-		.driver-weekly {
-			display: inline-flex;
-			margin-top: 0.45rem;
-			color: var(--p-text-faint);
-			font-size: 0.82rem;
-		}
-		.driver-counts {
-			display: grid;
-			grid-template-columns: repeat(3, 1fr);
-			gap: 0.5rem;
-		}
-		.driver-counts span {
-			display: grid;
-			gap: 0.25rem;
-			align-content: center;
-			min-height: 4.5rem;
-			padding: 0.65rem;
-			border: 1px solid color-mix(in srgb, var(--p-border) 70%, transparent);
-			border-radius: 0.75rem;
-			background: color-mix(in srgb, var(--p-card) 72%, rgba(137, 83, 209, 0.1));
-		}
-		.driver-counts b {
-			font-family: var(--font-serif);
-			font-size: 1.45rem;
-			line-height: 1;
-			color: var(--p-text);
-		}
-		.driver-counts small {
-			font-size: 0.66rem;
-			font-weight: 700;
-			color: var(--p-text-faint);
-			text-transform: uppercase;
-			letter-spacing: 0.08em;
-		}
-		.driver-radar-grid {
-			display: grid;
-			grid-template-columns: repeat(3, minmax(0, 1fr));
-			gap: 1rem;
-		}
-		.driver-card {
-			position: relative;
-			padding: 1.1rem 1.15rem;
-			border: 1px solid var(--p-border);
-			border-radius: 1.25rem;
-			background: color-mix(in srgb, var(--p-card) 94%, transparent);
-			display: grid;
-			gap: 0.7rem;
-		}
-		.driver-tailwind { --driver-color: #10b981; }
-		.driver-neutral { --driver-color: #f59e0b; }
-		.driver-headwind { --driver-color: #ef4444; }
-		.driver-card-head {
-			display: flex;
-			justify-content: space-between;
-			gap: 0.8rem;
-			align-items: flex-start;
-		}
-		.driver-label {
-			margin: 0;
-			font-family: var(--font-serif);
-			font-size: 1.05rem;
-			line-height: 1.2;
-			color: var(--p-text);
-		}
-		.driver-type {
-			display: inline-block;
-			margin-top: 0.25rem;
-			font-size: 0.66rem;
-			font-weight: 700;
-			text-transform: uppercase;
-			letter-spacing: 0.08em;
-			color: var(--p-text-faint);
-		}
-		.driver-status {
-			display: inline-flex;
-			align-items: center;
-			gap: 0.25rem;
-			flex-shrink: 0;
-			padding: 0.2rem 0.55rem;
-			border-radius: 999px;
-			border: 1px solid color-mix(in srgb, var(--driver-color) 35%, transparent);
-			background: color-mix(in srgb, var(--driver-color) 10%, transparent);
-			color: var(--driver-color);
-			font-size: 0.72rem;
-		}
-		.driver-status em {
-			font-style: normal;
-			opacity: 0.72;
-			margin-left: 0.18rem;
-		}
-		.driver-evidence {
-			margin: 0;
-			color: var(--p-text-soft);
-			font-size: 0.9rem;
-			line-height: 1.6;
-			border-left: 2px solid rgba(137, 83, 209, 0.4);
-			padding-left: 0.85rem;
-		}
-		.driver-impacted {
-			display: flex;
-			flex-wrap: wrap;
-			gap: 0.32rem;
-		}
-		.driver-impacted span {
-			display: inline-flex;
-			align-items: center;
-			padding: 0.18rem 0.5rem;
-			border-radius: 999px;
-			border: 1px solid color-mix(in srgb, var(--p-border) 80%, transparent);
-			background: color-mix(in srgb, var(--p-bg) 58%, rgba(255, 255, 255, 0.08));
-			font-size: 0.69rem;
-			line-height: 1.3;
-			color: var(--p-text-soft);
-		}
-		.driver-updated {
-			margin: 0.9rem 0 0;
-			font-size: 0.82rem;
-			color: var(--p-text-faint);
-		}
-		@media (max-width: 980px) {
-			.driver-radar-hero,
-			.driver-radar-grid { grid-template-columns: 1fr; }
-		}
-		@media (max-width: 640px) {
-			.driver-counts { grid-template-columns: 1fr; }
-			.driver-card-head { flex-direction: column; }
-		}
-
 		/* ── Section Nav ────────────────────────── */
 		.portfolio-section-nav {
 			display: flex;
@@ -3467,7 +3211,7 @@ const stages = [
 		.portfolio-section {
 			display: grid;
 			gap: 1.5rem;
-			scroll-margin-top: 6rem;
+			scroll-margin-top: 2rem;
 		}
 		.portfolio-section-head {
 			display: grid;
