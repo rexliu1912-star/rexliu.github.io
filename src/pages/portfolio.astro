@@ -3171,158 +3171,153 @@ const stages = [
 		}
 		.driver-radar-hero {
 			display: grid;
-			grid-template-columns: minmax(0, 1.15fr) minmax(280px, .85fr);
+			grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
 			gap: 1rem;
 			align-items: stretch;
-			margin-bottom: 1rem;
-			padding: 1.2rem;
-			border: 1px solid color-mix(in srgb, var(--p-border) 72%, transparent);
-			border-radius: 28px;
-			background: radial-gradient(circle at 12% 0%, rgba(99,102,241,.18), transparent 34%), linear-gradient(135deg, rgba(255,255,255,.075), rgba(255,255,255,.028));
-			box-shadow: 0 24px 80px rgba(0,0,0,.24);
+			margin: 1rem 0;
+			padding: 1rem;
+			border: 1px solid var(--p-border);
+			border-radius: 1rem;
+			background: var(--p-card);
 		}
-		.driver-radar-hero.posture-constructive { background: radial-gradient(circle at 12% 0%, rgba(16,185,129,.18), transparent 34%), linear-gradient(135deg, rgba(255,255,255,.075), rgba(255,255,255,.028)); }
-		.driver-radar-hero.posture-defensive { background: radial-gradient(circle at 12% 0%, rgba(239,68,68,.18), transparent 34%), linear-gradient(135deg, rgba(255,255,255,.075), rgba(255,255,255,.028)); }
 		.driver-eyebrow {
-			margin: 0 0 .4rem;
-			font-size: .72rem;
-			letter-spacing: .16em;
+			margin: 0 0 0.5rem;
+			font-size: 0.72rem;
+			letter-spacing: 0.08em;
 			text-transform: uppercase;
 			color: var(--p-text-faint);
 		}
 		.driver-radar-hero strong {
 			display: block;
-			font-size: clamp(2rem, 4vw, 3.7rem);
-			line-height: 1;
+			font-size: clamp(1.25rem, 2vw, 1.55rem);
+			line-height: 1.15;
 			color: var(--p-text);
 		}
 		.driver-weekly {
 			display: inline-flex;
-			margin-top: .7rem;
-			color: var(--p-text-muted);
-			font-size: .92rem;
+			margin-top: 0.45rem;
+			color: var(--p-text-faint);
+			font-size: 0.82rem;
 		}
 		.driver-counts {
 			display: grid;
 			grid-template-columns: repeat(3, 1fr);
-			gap: .7rem;
+			gap: 0.5rem;
 		}
 		.driver-counts span {
 			display: grid;
-			place-items: center;
-			min-height: 118px;
-			border: 1px solid color-mix(in srgb, var(--p-border) 65%, transparent);
-			border-radius: 22px;
-			background: rgba(0,0,0,.18);
+			gap: 0.25rem;
+			align-content: center;
+			min-height: 4.5rem;
+			padding: 0.65rem;
+			border: 1px solid color-mix(in srgb, var(--p-border) 70%, transparent);
+			border-radius: 0.75rem;
+			background: color-mix(in srgb, var(--p-card) 72%, rgba(137, 83, 209, 0.1));
 		}
 		.driver-counts b {
 			font-family: var(--font-serif);
-			font-size: 2.2rem;
+			font-size: 1.45rem;
 			line-height: 1;
 			color: var(--p-text);
 		}
 		.driver-counts small {
-			font-size: .72rem;
+			font-size: 0.66rem;
+			font-weight: 700;
 			color: var(--p-text-faint);
 			text-transform: uppercase;
-			letter-spacing: .12em;
+			letter-spacing: 0.08em;
 		}
 		.driver-radar-grid {
 			display: grid;
 			grid-template-columns: repeat(3, minmax(0, 1fr));
-			gap: .85rem;
+			gap: 1rem;
 		}
 		.driver-card {
 			position: relative;
-			overflow: hidden;
-			padding: 1rem;
-			border: 1px solid color-mix(in srgb, var(--p-border) 68%, transparent);
-			border-radius: 22px;
-			background: linear-gradient(180deg, rgba(255,255,255,.062), rgba(255,255,255,.025));
-			min-height: 210px;
+			padding: 1.1rem 1.15rem;
+			border: 1px solid var(--p-border);
+			border-radius: 1.25rem;
+			background: color-mix(in srgb, var(--p-card) 94%, transparent);
+			display: grid;
+			gap: 0.7rem;
 		}
-		.driver-card::before {
-			content: "";
-			position: absolute;
-			inset: 0 auto 0 0;
-			width: 3px;
-			background: var(--driver-tone, #f59e0b);
-			opacity: .95;
-		}
-		.driver-tailwind { --driver-tone: #10b981; }
-		.driver-neutral { --driver-tone: #f59e0b; }
-		.driver-headwind { --driver-tone: #ef4444; }
+		.driver-tailwind { --driver-color: #10b981; }
+		.driver-neutral { --driver-color: #f59e0b; }
+		.driver-headwind { --driver-color: #ef4444; }
 		.driver-card-head {
 			display: flex;
 			justify-content: space-between;
-			gap: .8rem;
+			gap: 0.8rem;
 			align-items: flex-start;
-			margin-bottom: .8rem;
 		}
 		.driver-label {
 			margin: 0;
 			font-family: var(--font-serif);
-			font-size: 1.18rem;
+			font-size: 1.05rem;
+			line-height: 1.2;
 			color: var(--p-text);
 		}
 		.driver-type {
 			display: inline-block;
-			margin-top: .25rem;
-			font-size: .72rem;
+			margin-top: 0.25rem;
+			font-size: 0.66rem;
+			font-weight: 700;
 			text-transform: uppercase;
-			letter-spacing: .12em;
+			letter-spacing: 0.08em;
 			color: var(--p-text-faint);
 		}
 		.driver-status {
 			display: inline-flex;
 			align-items: center;
-			gap: .25rem;
+			gap: 0.25rem;
 			flex-shrink: 0;
-			padding: .34rem .55rem;
+			padding: 0.2rem 0.55rem;
 			border-radius: 999px;
-			border: 1px solid color-mix(in srgb, var(--driver-color) 42%, transparent);
-			background: color-mix(in srgb, var(--driver-color) 13%, transparent);
+			border: 1px solid color-mix(in srgb, var(--driver-color) 35%, transparent);
+			background: color-mix(in srgb, var(--driver-color) 10%, transparent);
 			color: var(--driver-color);
-			font-size: .72rem;
-			font-weight: 700;
+			font-size: 0.72rem;
 		}
 		.driver-status em {
 			font-style: normal;
-			opacity: .72;
-			margin-left: .18rem;
+			opacity: 0.72;
+			margin-left: 0.18rem;
 		}
 		.driver-evidence {
-			margin: 0 0 1rem;
-			color: var(--p-text-muted);
-			font-size: .9rem;
+			margin: 0;
+			color: var(--p-text-soft);
+			font-size: 0.9rem;
 			line-height: 1.6;
+			border-left: 2px solid rgba(137, 83, 209, 0.4);
+			padding-left: 0.85rem;
 		}
 		.driver-impacted {
 			display: flex;
 			flex-wrap: wrap;
-			gap: .38rem;
-			margin-top: auto;
+			gap: 0.32rem;
 		}
 		.driver-impacted span {
-			padding: .28rem .5rem;
+			display: inline-flex;
+			align-items: center;
+			padding: 0.18rem 0.5rem;
 			border-radius: 999px;
-			border: 1px solid rgba(255,255,255,.11);
-			background: rgba(255,255,255,.055);
-			font-family: var(--font-mono);
-			font-size: .72rem;
-			color: var(--p-text-muted);
+			border: 1px solid color-mix(in srgb, var(--p-border) 80%, transparent);
+			background: color-mix(in srgb, var(--p-bg) 58%, rgba(255, 255, 255, 0.08));
+			font-size: 0.69rem;
+			line-height: 1.3;
+			color: var(--p-text-soft);
 		}
 		.driver-updated {
-			margin: .9rem 0 0;
-			font-size: .82rem;
+			margin: 0.9rem 0 0;
+			font-size: 0.82rem;
 			color: var(--p-text-faint);
 		}
 		@media (max-width: 980px) {
-			.driver-radar-hero, .driver-radar-grid { grid-template-columns: 1fr; }
+			.driver-radar-hero,
+			.driver-radar-grid { grid-template-columns: 1fr; }
 		}
 		@media (max-width: 640px) {
 			.driver-counts { grid-template-columns: 1fr; }
-			.driver-counts span { min-height: 86px; }
 			.driver-card-head { flex-direction: column; }
 		}
 
