@@ -829,8 +829,8 @@ function compactTradeNotes(trades) {
 
 function buildAutoTradePoints(sortedTrades, metrics = {}) {
   if (!sortedTrades.length) return [];
-  const buys = sortedTrades.filter((t) => t.side === "buy");
-  const sells = sortedTrades.filter((t) => t.side === "sell");
+  const buys = sortedTrades.filter((t) => String(t.side || "").toLowerCase() === "buy");
+  const sells = sortedTrades.filter((t) => String(t.side || "").toLowerCase() === "sell");
   const points = [];
 
   if (buys.length) {
@@ -916,8 +916,8 @@ function buildAutoClearances(convexPositions, convexTrades, overrides) {
       .sort((a, b) => (a.tradeDate || "").localeCompare(b.tradeDate || "") || (a._creationTime || 0) - (b._creationTime || 0));
     if (!sortedTrades.length) continue;
 
-    const buys = sortedTrades.filter((t) => t.side === "buy");
-    const sells = sortedTrades.filter((t) => t.side === "sell");
+    const buys = sortedTrades.filter((t) => String(t.side || "").toLowerCase() === "buy");
+    const sells = sortedTrades.filter((t) => String(t.side || "").toLowerCase() === "sell");
     if (!buys.length || !sells.length) continue;
 
     const boughtQty = buys.reduce((s, t) => s + (Number(t.quantity) || 0), 0);
