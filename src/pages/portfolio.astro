@@ -2241,6 +2241,7 @@ const stages = [
 			const defaultOpen = new Set([
 				'allocation-section',
 				'regime-section',
+				'driver-radar-section',
 				'positions-section',
 				'crypto-mgmt-section',
 				'gold-tracker-section',
@@ -2312,6 +2313,15 @@ const stages = [
 					target.addEventListener('animationend', () => target.classList.remove('section-highlight'), { once: true });
 				});
 			});
+
+			// Open a directly-linked collapsible section on first load as well.
+			const initialHash = window.location.hash?.slice(1);
+			if (initialHash) {
+				const initialTarget = document.getElementById(initialHash);
+				if (initialTarget?.hasAttribute('data-collapse') && initialTarget.classList.contains('is-collapsed')) {
+					toggleSection(initialTarget, true);
+				}
+			}
 		}
 
 		}
@@ -3462,7 +3472,7 @@ const stages = [
 		.portfolio-section {
 			display: grid;
 			gap: 1.5rem;
-			scroll-margin-top: 2rem;
+			scroll-margin-top: 6rem;
 		}
 		.portfolio-section-head {
 			display: grid;
