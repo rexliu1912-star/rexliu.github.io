@@ -480,6 +480,8 @@ function sanitizeCrypto(privatePortfolio) {
       thesis_zh: "非衍生品的货币主权押注。通过底部追踪信号 DCA——系统不预测价格，只判断建仓窗口。",
       strategy_en: "Bottom Tracker",
       strategy_zh: "底部追踪",
+      driver_factors_en: ["Liquidity", "USD", "Regulation"],
+      driver_factors_zh: ["流动性", "美元", "监管"],
     },
     SNEK: {
       tags_en: ["Cardano Ecosystem", "Community", "Meme"],
@@ -488,6 +490,8 @@ function sanitizeCrypto(privatePortfolio) {
       thesis_zh: "Cardano 生态敞口。看社区热度、KOL 活跃度和链上健康度，不走传统技术分析。",
       strategy_en: "Signal-Driven",
       strategy_zh: "信号驱动",
+      driver_factors_en: ["Cardano Liquidity", "Community Momentum", "Regulation"],
+      driver_factors_zh: ["Cardano 流动性", "社区动能", "监管"],
     },
   };
 
@@ -765,6 +769,8 @@ function buildPositions(convexPositions, convexRules, convexEvents, overrides) {
       flag: flagMap[p.market] || "🏳️",
       sector_tags_en: p.sectorTagsEn || override.sector_tags_en || [],
       sector_tags_zh: p.sectorTagsZh || override.sector_tags_zh || [],
+      driver_factors_en: override.driver_factors_en || [],
+      driver_factors_zh: override.driver_factors_zh || [],
       thesis_en: p.thesisEn || override.thesis_en || "",
       thesis_zh: p.thesisZh || override.thesis_zh || "",
       stage: p.stage ?? override.stage ?? 7,

@@ -33,6 +33,8 @@ interface PortfolioPosition {
 	flag: string;
 	sector_tags_en: string[];
 	sector_tags_zh: string[];
+	driver_factors_en?: string[];
+	driver_factors_zh?: string[];
 	thesis_en: string;
 	thesis_zh: string;
 	stage: number;
@@ -105,6 +107,8 @@ interface PortfolioData {
 			thesis_zh: string;
 			strategy_en: string;
 			strategy_zh: string;
+			driver_factors_en?: string[];
+			driver_factors_zh?: string[];
 			price?: number;
 			daily_change_pct?: number;
 			news?: {
@@ -1494,6 +1498,23 @@ const stages = [
 							<span class="lang-zh">{p.thesis_zh}</span>
 						</p>
 
+						{(p.driver_factors_en?.length || p.driver_factors_zh?.length) ? (
+							<div class="position-drivers" aria-label={`Main drivers for ${p.symbol}`}>
+								<span class="position-drivers-label">
+									<span class="lang-en">Drivers</span>
+									<span class="lang-zh">主要驱动</span>
+								</span>
+								<div class="position-driver-tags">
+									{(p.driver_factors_en || []).map((factor, i) => (
+										<span class="position-driver-tag">
+											<span class="lang-en">{factor}</span>
+											<span class="lang-zh">{p.driver_factors_zh?.[i] || factor}</span>
+										</span>
+									))}
+								</div>
+							</div>
+						) : null}
+
 					<div
 						class="position-conviction-bar"
 						title={`Conviction: ${p.conviction}`}
@@ -1584,6 +1605,23 @@ const stages = [
 							<span class="lang-en">{cp.thesis_en}</span>
 							<span class="lang-zh">{cp.thesis_zh}</span>
 						</p>
+
+						{(cp.driver_factors_en?.length || cp.driver_factors_zh?.length) ? (
+							<div class="position-drivers" aria-label={`Main drivers for ${cp.symbol}`}>
+								<span class="position-drivers-label">
+									<span class="lang-en">Drivers</span>
+									<span class="lang-zh">主要驱动</span>
+								</span>
+								<div class="position-driver-tags">
+									{(cp.driver_factors_en || []).map((factor: string, i: number) => (
+										<span class="position-driver-tag">
+											<span class="lang-en">{factor}</span>
+											<span class="lang-zh">{cp.driver_factors_zh?.[i] || factor}</span>
+										</span>
+									))}
+								</div>
+							</div>
+						) : null}
 
 						<div
 							class="position-conviction-bar"
@@ -4165,6 +4203,38 @@ const stages = [
 			color: var(--p-text-soft);
 			border-left: 2px solid rgba(137, 83, 209, 0.4);
 			padding-left: 0.85rem;
+		}
+		.position-drivers {
+			display: grid;
+			gap: 0.38rem;
+			padding: 0.58rem 0.65rem;
+			border: 1px solid color-mix(in srgb, var(--p-border) 70%, transparent);
+			border-radius: 0.75rem;
+			background: color-mix(in srgb, var(--p-card) 72%, rgba(137, 83, 209, 0.1));
+		}
+		.position-drivers-label {
+			font-size: 0.66rem;
+			font-weight: 700;
+			letter-spacing: 0.08em;
+			text-transform: uppercase;
+			color: var(--p-text-faint);
+		}
+		.position-driver-tags {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.32rem;
+		}
+		.position-driver-tag {
+			display: inline-flex;
+			align-items: center;
+			padding: 0.18rem 0.5rem;
+			border-radius: 999px;
+			font-size: 0.69rem;
+			line-height: 1.3;
+			color: var(--p-text-soft);
+			background: color-mix(in srgb, var(--p-bg) 58%, rgba(255, 255, 255, 0.08));
+			border: 1px solid color-mix(in srgb, var(--p-border) 80%, transparent);
+			white-space: nowrap;
 		}
 		.position-conviction-bar {
 			display: block;
