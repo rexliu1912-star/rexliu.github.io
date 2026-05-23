@@ -780,6 +780,78 @@ const stages = [
 			</div>
 		</div>
 
+		{/* ── Layer 5: Allocation Drift Trend ── */}
+		{(() => {
+					const ah = (portfolioData as any)?.allocation_history?.history;
+					if (!ah || ah.length < 2) return null;
+
+					const buckets = allocation.current.categories;
+					const idToKey = {
+						"stablecoin": "stablecoin",
+						"funds": "funds",
+						"gold": "gold",
+						"stocks": "stocks",
+						"crypto": "crypto"
+					};
+
+					const W = 720, H = 220;
+					const pad = { l: 44, r: 16, t: 14, b: 28 };
+					const cW = W - pad.l - pad.r;
+					const cH = H - pad.t - pad.b;
+
+					const xOf = (i: number) => pad.l + (i / Math.max(1, ah.length - 1)) * cW;
+					const yPct = (v: number) => pad.t + cH - (v / 60) * cH;
+
+					return (
+						<div class="crypto-alloc-trend-wrap">
+							<p class="crypto-dash-card-title">
+								<span class="lang-en">Allocation Drift</span>
+								<span class="lang-zh">配置偏移趋势</span>
+							</p>
+							<canvas id="cryptoAllocationDriftChart" class="crypto-chart-canvas allocation-drift-chart" aria-label="Allocation Drift"></canvas>
+							<svg viewBox={`0 0 ${W} ${H}`} class="crypto-chart-svg" preserveAspectRatio="xMidYMid meet">
+								{[0, 15, 30, 45].map(v => (
+									<>
+										<line x1={pad.l} y1={yPct(v).toFixed(1)} x2={W - pad.r} y2={yPct(v).toFixed(1)} stroke="color-mix(in srgb, var(--p-border) 35%, transparent)" stroke-width="0.5" />
+										<text x={pad.l - 6} y={yPct(v).toFixed(1)} font-size="8" fill="color-mix(in srgb, var(--p-text-faint) 60%, transparent)" text-anchor="end" dominant-baseline="middle">{v}%</text>
+									</>
+								))}
+								{buckets.map((b: any) => {
+									const key = idToKey[b.id as keyof typeof idToKey];
+									if (!key) return null;
+									const linePts = ah.map((h: any, i: number) => {
+										const v = h.buckets?.[key] ?? 0;
+										return `${xOf(i).toFixed(1)},${yPct(v).toFixed(1)}`;
+									}).join(" ");
+									const current = ah[ah.length - 1]?.buckets?.[key] ?? 0;
+									const target = b.target_pct;
+									const isDrifted = Math.abs(current - target) >= 5;
+									return (
+										<>
+											<polyline points={linePts} fill="none" stroke={b.color} stroke-width={isDrifted ? "2.2" : "1.5"} stroke-linejoin="round" stroke-linecap="round" stroke-dasharray={isDrifted ? "none" : "4 2"} opacity={isDrifted ? "1" : "0.6"} />
+											<line x1={pad.l} y1={yPct(target).toFixed(1)} x2={W - pad.r} y2={yPct(target).toFixed(1)} stroke={b.color} stroke-width="0.6" stroke-dasharray="2 4" opacity="0.35" />
+										</>
+									);
+								})}
+								{ah.map((h: any, i: number) => {
+									const x = xOf(i).toFixed(1);
+									return <text x={x} y={H - 6} font-size="7.5" fill="color-mix(in srgb, var(--p-text-faint) 50%, transparent)" text-anchor="middle">{h.date}</text>;
+								})}
+								{buckets.map((b: any, i: number) => {
+									const lx = pad.l + i * 110;
+									return (
+										<>
+											<line x1={lx} y1="10" x2={lx + 14} y2="10" stroke={b.color} stroke-width="1.8" />
+											<text x={lx + 18} y="10" font-size="7.5" fill="color-mix(in srgb, var(--p-text-faint) 70%, transparent)" dominant-baseline="middle"><tspan class="lang-en">{b.label_en}</tspan><tspan class="lang-zh">{b.label_zh}</tspan></text>
+										</>
+									);
+								})}
+								<text x={W - pad.r} y="10" font-size="7.5" fill="color-mix(in srgb, var(--p-text-faint) 45%, transparent)" text-anchor="end"><span class="lang-en">- - target</span><span class="lang-zh">- - 目标</span></text>
+							</svg>
+						</div>
+					);
+				})()}
+
 		{/* ── Risk Profile Card ── */}
 		{(() => {
 			const r = allocation.current.risk;
@@ -859,6 +931,8 @@ const stages = [
 			const healthColor = h >= 4 ? "#10b981" : h >= 3 ? "#f59e0b" : "#ef4444";
 			const healthLabel = h >= 4.5 ? "Strong" : h >= 3.5 ? "Healthy" : h >= 2.5 ? "Fair" : "Weak";
 			const healthLabelZh = h >= 4.5 ? "强劲" : h >= 3.5 ? "健康" : h >= 2.5 ? "一般" : "偏弱";
+			const analyticsHistory = (portfolioData as any)?.analytics_history;
+			const hasAnalyticsTrend = analyticsHistory && analyticsHistory.length >= 2;
 			return (
 				<div class="portfolio-metrics-row">
 					{health != null && (
@@ -879,6 +953,15 @@ const stages = [
 								<span class="lang-en">Composite score across quant factors — valuation, momentum, growth & risk. Higher = stronger fundamental & technical positioning.</span>
 								<span class="lang-zh">量化综合评分，涵盖估值、动量、成长性与风险四因子。越高代表基本面和技术面定位越强。</span>
 							</p>
+							{hasAnalyticsTrend && (
+								<div class="analytics-trend-chart inline-trend-chart">
+									<p class="portfolio-kicker" style="margin-bottom: 0.5rem;">
+										<span class="lang-en">Health Trend</span>
+										<span class="lang-zh">健康度趋势</span>
+									</p>
+									<canvas id="healthTrendChart" class="crypto-chart-canvas" aria-label="Portfolio Health Trend"></canvas>
+								</div>
+							)}
 						</div>
 					)}
 					{pBeta != null && (
@@ -904,6 +987,15 @@ const stages = [
 								<span class="lang-en">Sensitivity to market moves. β=1 tracks the market; &gt;1 amplifies swings; &lt;1 dampens them. Portfolio β blends all assets; equity β isolates stock exposure.</span>
 								<span class="lang-zh">对市场波动的敏感度。β=1 跟随大盘，&gt;1 放大波动，&lt;1 缓冲波动。组合 β 包含所有资产，股票 β 仅衡量股票敞口。</span>
 							</p>
+							{hasAnalyticsTrend && (
+								<div class="analytics-trend-chart inline-trend-chart">
+									<p class="portfolio-kicker" style="margin-bottom: 0.5rem;">
+										<span class="lang-en">Beta Trend</span>
+										<span class="lang-zh">Beta趋势</span>
+									</p>
+									<canvas id="betaTrendChart" class="crypto-chart-canvas" aria-label="Portfolio Beta Trend"></canvas>
+								</div>
+							)}
 						</div>
 					)}
 				</div>
@@ -984,102 +1076,6 @@ const stages = [
 					</article>
 				))}
 
-			{/* ── Health & Beta Trend Charts ── */}
-			{(() => {
-				const ah = (portfolioData as any)?.analytics_history;
-				if (!ah || ah.length < 2) return null;
-
-				return (
-					<div class="analytics-trend-wrap">
-						<div class="analytics-trend-chart">
-							<p class="portfolio-kicker" style="margin-bottom: 0.5rem;">
-								<span class="lang-en">Health Trend</span>
-								<span class="lang-zh">健康度趋势</span>
-							</p>
-							<canvas id="healthTrendChart" class="crypto-chart-canvas" aria-label="Portfolio Health Trend"></canvas>
-						</div>
-						<div class="analytics-trend-chart">
-							<p class="portfolio-kicker" style="margin-bottom: 0.5rem;">
-								<span class="lang-en">Beta Trend</span>
-								<span class="lang-zh">Beta趋势</span>
-							</p>
-							<canvas id="betaTrendChart" class="crypto-chart-canvas" aria-label="Portfolio Beta Trend"></canvas>
-						</div>
-					</div>
-				);
-			})()}
-
-			{/* ── Layer 5: Allocation Drift Trend ── */}
-				{(() => {
-					const ah = (portfolioData as any)?.allocation_history?.history;
-					if (!ah || ah.length < 2) return null;
-
-					const buckets = allocation.current.categories;
-					const idToKey = {
-						"stablecoin": "stablecoin",
-						"funds": "funds",
-						"gold": "gold",
-						"stocks": "stocks",
-						"crypto": "crypto"
-					};
-
-					const W = 720, H = 220;
-					const pad = { l: 44, r: 16, t: 14, b: 28 };
-					const cW = W - pad.l - pad.r;
-					const cH = H - pad.t - pad.b;
-
-					const xOf = (i: number) => pad.l + (i / Math.max(1, ah.length - 1)) * cW;
-					const yPct = (v: number) => pad.t + cH - (v / 60) * cH;
-
-					return (
-						<div class="crypto-alloc-trend-wrap">
-							<p class="crypto-dash-card-title">
-								<span class="lang-en">Allocation Drift</span>
-								<span class="lang-zh">配置偏移趋势</span>
-							</p>
-							<canvas id="cryptoAllocationDriftChart" class="crypto-chart-canvas allocation-drift-chart" aria-label="Allocation Drift"></canvas>
-							<svg viewBox={`0 0 ${W} ${H}`} class="crypto-chart-svg" preserveAspectRatio="xMidYMid meet">
-								{[0, 15, 30, 45].map(v => (
-									<>
-										<line x1={pad.l} y1={yPct(v).toFixed(1)} x2={W - pad.r} y2={yPct(v).toFixed(1)} stroke="color-mix(in srgb, var(--p-border) 35%, transparent)" stroke-width="0.5" />
-										<text x={pad.l - 6} y={yPct(v).toFixed(1)} font-size="8" fill="color-mix(in srgb, var(--p-text-faint) 60%, transparent)" text-anchor="end" dominant-baseline="middle">{v}%</text>
-									</>
-								))}
-								{buckets.map((b: any) => {
-									const key = idToKey[b.id as keyof typeof idToKey];
-									if (!key) return null;
-									const linePts = ah.map((h: any, i: number) => {
-										const v = h.buckets?.[key] ?? 0;
-										return `${xOf(i).toFixed(1)},${yPct(v).toFixed(1)}`;
-									}).join(" ");
-									const current = ah[ah.length - 1]?.buckets?.[key] ?? 0;
-									const target = b.target_pct;
-									const isDrifted = Math.abs(current - target) >= 5;
-									return (
-										<>
-											<polyline points={linePts} fill="none" stroke={b.color} stroke-width={isDrifted ? "2.2" : "1.5"} stroke-linejoin="round" stroke-linecap="round" stroke-dasharray={isDrifted ? "none" : "4 2"} opacity={isDrifted ? "1" : "0.6"} />
-											<line x1={pad.l} y1={yPct(target).toFixed(1)} x2={W - pad.r} y2={yPct(target).toFixed(1)} stroke={b.color} stroke-width="0.6" stroke-dasharray="2 4" opacity="0.35" />
-										</>
-									);
-								})}
-								{ah.map((h: any, i: number) => {
-									const x = xOf(i).toFixed(1);
-									return <text x={x} y={H - 6} font-size="7.5" fill="color-mix(in srgb, var(--p-text-faint) 50%, transparent)" text-anchor="middle">{h.date}</text>;
-								})}
-								{buckets.map((b: any, i: number) => {
-									const lx = pad.l + i * 110;
-									return (
-										<>
-											<line x1={lx} y1="10" x2={lx + 14} y2="10" stroke={b.color} stroke-width="1.8" />
-											<text x={lx + 18} y="10" font-size="7.5" fill="color-mix(in srgb, var(--p-text-faint) 70%, transparent)" dominant-baseline="middle"><tspan class="lang-en">{b.label_en}</tspan><tspan class="lang-zh">{b.label_zh}</tspan></text>
-										</>
-									);
-								})}
-								<text x={W - pad.r} y="10" font-size="7.5" fill="color-mix(in srgb, var(--p-text-faint) 45%, transparent)" text-anchor="end"><span class="lang-en">- - target</span><span class="lang-zh">- - 目标</span></text>
-							</svg>
-						</div>
-					);
-				})()}
 
 		</section>
 	
@@ -5827,6 +5823,11 @@ const stages = [
 		border: 1px solid var(--p-border);
 		border-radius: 1rem;
 		padding: 1rem 1.25rem;
+	}
+	.inline-trend-chart {
+		margin-top: 0.75rem;
+		background: color-mix(in srgb, var(--metric-color, var(--p-card)) 6%, var(--p-card));
+		border-color: color-mix(in srgb, var(--metric-color, var(--p-border)) 24%, var(--p-border));
 	}
 	.analytics-trend-chart canvas {
 		height: 180px !important;
