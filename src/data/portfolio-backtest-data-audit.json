@@ -1,0 +1,170 @@
+{
+  "generated_at": "2026-05-23T03:29:38.390270+00:00",
+  "verdict": "short_sanity_replay",
+  "coverage": {
+    "market_snapshot_days": 82,
+    "return_proxy_min_days": 174,
+    "has_crypto_proxy": true,
+    "has_gold_proxy": true,
+    "has_long_health_beta_history": false,
+    "needs_external_stock_proxy": true,
+    "needs_historical_sentiment_or_proxy": true
+  },
+  "sources": {
+    "market_snapshots": {
+      "start": "2026-03-02",
+      "end": "2026-05-23",
+      "observations": 82,
+      "path": "/Users/samantha/clawd/data/market",
+      "exists": true,
+      "fields": [
+        "sections.macro",
+        "sections.crypto",
+        "fear_greed",
+        "treasury_10y",
+        "sofr"
+      ],
+      "quality": "medium",
+      "notes": [
+        "Dated snapshots are the main replay spine for model inputs."
+      ]
+    },
+    "crypto_timeseries": {
+      "start": "2025-12-01",
+      "end": "2026-05-23",
+      "observations": 174,
+      "path": "/Users/samantha/clawd/data/crypto-timeseries.json",
+      "exists": true,
+      "fields": [
+        "btc_close",
+        "fgi",
+        "composite",
+        "indicators"
+      ],
+      "quality": "strong",
+      "notes": [
+        "btc_close observations: 174",
+        "fgi observations: 150"
+      ]
+    },
+    "gold_timeseries": {
+      "start": "2025-05-02",
+      "end": "2026-05-23",
+      "observations": 274,
+      "path": "/Users/samantha/clawd/data/gold-timeseries.json",
+      "exists": true,
+      "fields": [
+        "xau_usd",
+        "m2_trillion",
+        "premium_pct",
+        "signal_status"
+      ],
+      "quality": "strong",
+      "notes": [
+        "xau_usd observations: 274"
+      ]
+    },
+    "portfolio_analytics_history": {
+      "start": "2026-05-18",
+      "end": "2026-05-23",
+      "observations": 6,
+      "path": "/Users/samantha/clawd/data/market/portfolio-analytics-history.json",
+      "exists": true,
+      "fields": [
+        "health",
+        "portfolio_beta",
+        "equity_beta"
+      ],
+      "quality": "weak",
+      "notes": [
+        "Currently useful for recent health/beta replay, not long-horizon validation."
+      ]
+    },
+    "latest_health_indicators": {
+      "start": null,
+      "end": null,
+      "observations": 0,
+      "path": "/Users/samantha/clawd/data/market/health-indicators-latest.json",
+      "exists": true,
+      "fields": [
+        "gold_fair_value",
+        "oil_premium",
+        "smh_igv"
+      ],
+      "quality": "latest_only",
+      "notes": []
+    },
+    "latest_beta": {
+      "start": null,
+      "end": null,
+      "observations": 0,
+      "path": "/Users/samantha/clawd/data/market/portfolio-beta.json",
+      "exists": true,
+      "fields": [
+        "portfolio_beta",
+        "equity_beta"
+      ],
+      "quality": "latest_only",
+      "notes": []
+    },
+    "latest_quant_ratings": {
+      "start": null,
+      "end": null,
+      "observations": 0,
+      "path": "/Users/samantha/clawd/data/market/quant-ratings.json",
+      "exists": true,
+      "fields": [
+        "portfolioHealth",
+        "holdings"
+      ],
+      "quality": "latest_only",
+      "notes": []
+    },
+    "latest_sentiment": {
+      "start": null,
+      "end": null,
+      "observations": 0,
+      "path": "/Users/samantha/clawd/data/market/sentiment-latest.json",
+      "exists": true,
+      "fields": [
+        "vix",
+        "breadth",
+        "pcr"
+      ],
+      "quality": "latest_only",
+      "notes": []
+    }
+  },
+  "required_for_backtest": [
+    {
+      "bucket": "stablecoin",
+      "status": "available",
+      "source": "portfolio APR or default carry"
+    },
+    {
+      "bucket": "funds",
+      "status": "partial",
+      "source": "SOFR/risk-free from market snapshots or fallback"
+    },
+    {
+      "bucket": "gold",
+      "status": "available",
+      "source": "/Users/samantha/clawd/data/gold-timeseries.json"
+    },
+    {
+      "bucket": "stocks",
+      "status": "needs_proxy",
+      "source": "SPY/QQQ or real portfolio proxy"
+    },
+    {
+      "bucket": "crypto",
+      "status": "available",
+      "source": "/Users/samantha/clawd/data/crypto-timeseries.json"
+    }
+  ],
+  "next_steps": [
+    "Build harness now, but label first run as short sanity replay unless external historical inputs extend model snapshots.",
+    "Add SPY/QQQ stock proxy before judging return improvement.",
+    "Refactor allocation model into pure snapshot function before replaying history."
+  ]
+}
