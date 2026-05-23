@@ -12,7 +12,7 @@
 		"backtest:portfolio": "python3 scripts/portfolio-allocation-backtest.py --output src/data/portfolio-allocation-backtest.json --report docs/research/portfolio-allocation-backtest.md",
 		"prebuild": "pnpm model:portfolio && node scripts/build-portfolio-public.mjs && node scripts/preflight/portfolio-privacy-check.mjs",
 		"build": "astro build",
-		"postbuild": "node scripts/prepare-pagefind.mjs && pagefind --site dist && (test ! -f /Users/samantha/clawd/scripts/sync-earnings-custom-stocks.py || python3 /Users/samantha/clawd/scripts/sync-earnings-custom-stocks.py)",
+		"postbuild": "node scripts/prepare-pagefind.mjs && pagefind --site dist && node scripts/postbuild-sync-custom-stocks.mjs",
 		"preview": "astro preview",
 		"check": "astro check && biome check",
 		"lint": "biome check --write",
