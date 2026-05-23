@@ -1,0 +1,109 @@
+{
+  "_meta": {
+    "schema": "capital-mobility-risk.v1",
+    "description": "Public-facing capital mobility risk factor for the portfolio dashboard. Scores cross-border investment access risk from 0 to 10 using policy pressure, channel friction, legal quota pressure, enforcement intensity, and reversibility risk.",
+    "last_updated": "2026-05-23",
+    "update_cadence": "weekly_or_policy_event"
+  },
+  "score": 6,
+  "max_score": 10,
+  "status_en": "Elevated",
+  "status_zh": "升温",
+  "trend_en": "Tightening",
+  "trend_zh": "收紧",
+  "color": "#f59e0b",
+  "summary_en": "Cross-border investment access is tightening; treat offshore liquidity as a strategic constraint, not just a yield choice.",
+  "summary_zh": "跨境投资通道正在收紧；境外流动性应被视为战略约束，而不只是收益选择。",
+  "chips": [
+    {
+      "label_en": "Policy",
+      "label_zh": "政策",
+      "value_en": "High",
+      "value_zh": "偏高",
+      "level": "high"
+    },
+    {
+      "label_en": "Channels",
+      "label_zh": "通道",
+      "value_en": "Tightening",
+      "value_zh": "收紧",
+      "level": "medium"
+    },
+    {
+      "label_en": "QDII",
+      "label_zh": "QDII",
+      "value_en": "Watch",
+      "value_zh": "观察",
+      "level": "medium"
+    }
+  ],
+  "factors": [
+    {
+      "id": "policy_pressure",
+      "label_en": "Policy Pressure",
+      "label_zh": "政策压力",
+      "score": 2,
+      "max_score": 2,
+      "status_en": "High",
+      "status_zh": "偏高",
+      "monitor_en": "Multi-agency rectification, CSRC/SAFE/PBOC/NFRA announcements, illegal cross-border securities keywords.",
+      "monitor_zh": "八部门整治、证监会/外管局/央行/金融监管总局公告，以及非法跨境证券关键词。"
+    },
+    {
+      "id": "channel_friction",
+      "label_en": "Channel Friction",
+      "label_zh": "通道摩擦",
+      "score": 1,
+      "max_score": 2,
+      "status_en": "Tightening",
+      "status_zh": "收紧",
+      "monitor_en": "Hong Kong bank onboarding, offshore broker China service changes, remittance and funding requirements.",
+      "monitor_zh": "港卡开户要求、境外券商中国区服务变化、汇款与入金材料要求。"
+    },
+    {
+      "id": "legal_quota_pressure",
+      "label_en": "Legal Quota Pressure",
+      "label_zh": "合法额度压力",
+      "score": 1,
+      "max_score": 2,
+      "status_en": "Watch",
+      "status_zh": "观察",
+      "monitor_en": "QDII quota changes, fund purchase limits, QDII premium/discount, Wealth Management Connect usage.",
+      "monitor_zh": "QDII额度变化、基金限购、QDII溢价/折价、跨境理财通额度使用率。"
+    },
+    {
+      "id": "enforcement_intensity",
+      "label_en": "Enforcement Intensity",
+      "label_zh": "执法强度",
+      "score": 1,
+      "max_score": 2,
+      "status_en": "Active",
+      "status_zh": "活跃",
+      "monitor_en": "Broker/platform penalties, intermediary crackdowns, account-opening tutorial or traffic acquisition enforcement.",
+      "monitor_zh": "券商/平台处罚、中介整治、开户教程或引流内容执法。"
+    },
+    {
+      "id": "reversibility_risk",
+      "label_en": "Reversibility Risk",
+      "label_zh": "可逆性风险",
+      "score": 1,
+      "max_score": 2,
+      "status_en": "Watch",
+      "status_zh": "观察",
+      "monitor_en": "Inbound remittance review, source-of-funds documents, tax/CRS/address proof requirements.",
+      "monitor_zh": "资金回流审查、资金来源证明、税务/CRS/地址证明要求。"
+    }
+  ],
+  "sources_en": [
+    "Regulator announcements: CSRC, SAFE, PBOC, NFRA",
+    "QDII and cross-border wealth management quota disclosures",
+    "Hong Kong bank and offshore broker service notices",
+    "Penalty announcements and enforcement cases"
+  ],
+  "sources_zh": [
+    "监管公告：证监会、外管局、央行、金融监管总局",
+    "QDII与跨境理财通额度披露",
+    "港银与境外券商服务通知",
+    "处罚公告与执法案例"
+  ]
+}

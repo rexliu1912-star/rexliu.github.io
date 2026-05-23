@@ -30,6 +30,7 @@ const WORKSPACE_ROOT = path.resolve(ROOT, "../..");
 // ─── Paths ───────────────────────────────────────────────
 const OVERRIDES_PATH = path.join(ROOT, "src/data/portfolio-overrides.json");
 const ALLOCATION_MODEL_PATH = path.join(ROOT, "src/data/portfolio-model-targets.json");
+const CAPITAL_MOBILITY_RISK_PATH = path.join(ROOT, "src/data/capital-mobility-risk.json");
 const OUTPUT_PATH = path.join(ROOT, "src/data/portfolio-public.json");
 const THERMOMETER_HISTORY = path.join(WORKSPACE_ROOT, "output/research/investment-strategy/macro/thermometer-history.jsonl");
 const WATCHLIST_INDEX = path.join(WORKSPACE_ROOT, "output/research/investment-strategy/macro/watchlist-scan-index.json");
@@ -1399,6 +1400,10 @@ async function main() {
     console.log(`🧾 Closed positions: ${autoClearances.length} auto from Convex, ${clearances.length} total after editorial merge`);
   }
   const roundtables = overrides.roundtables || [];
+  const capitalMobilityRisk = await readJson(CAPITAL_MOBILITY_RISK_PATH, null);
+  if (capitalMobilityRisk) {
+    console.log(`🧭 Capital mobility risk: ${capitalMobilityRisk.score}/${capitalMobilityRisk.max_score} ${capitalMobilityRisk.status_en}`);
+  }
 
   // Aggregate trade stats across clearances
   const totalTrades = clearances.reduce((sum, c) => sum + (c.trade_count || 0), 0);
@@ -1626,6 +1631,7 @@ async function main() {
     gold_tracker: goldTracker,
     gold_timeseries: goldTimeseries,
     analytics_history: analyticsHistory,
+    capital_mobility_risk: capitalMobilityRisk,
   };
 
   await fs.writeFile(OUTPUT_PATH, JSON.stringify(output, null, 2) + "\n");
