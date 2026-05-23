@@ -9,6 +9,7 @@
 		"start": "astro dev",
 		"sync:weread": "node scripts/sync-weread-library.mjs",
 		"model:portfolio": "python3 scripts/portfolio-allocation-model.py",
+		"backtest:portfolio": "python3 scripts/portfolio-allocation-backtest.py --output src/data/portfolio-allocation-backtest.json --report docs/research/portfolio-allocation-backtest.md",
 		"prebuild": "pnpm model:portfolio && node scripts/build-portfolio-public.mjs && node scripts/preflight/portfolio-privacy-check.mjs",
 		"build": "astro build",
 		"postbuild": "node scripts/prepare-pagefind.mjs && pagefind --site dist && (test ! -f /Users/samantha/clawd/scripts/sync-earnings-custom-stocks.py || python3 /Users/samantha/clawd/scripts/sync-earnings-custom-stocks.py)",

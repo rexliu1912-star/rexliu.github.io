@@ -119,8 +119,8 @@ def smooth_targets(raw: dict[str, float], previous: dict[str, float] | None) -> 
     return normalize_with_bounds(smoothed)
 
 
-def current_allocation() -> dict[str, float]:
-    private = read_json(PRIVATE_PORTFOLIO, {}) or {}
+def current_allocation(private: dict[str, Any] | None = None) -> dict[str, float]:
+    private = private if private is not None else (read_json(PRIVATE_PORTFOLIO, {}) or {})
     total = private.get("totalAssets") or 0
     assets = {a.get("id"): a for a in private.get("assets", [])}
     if not total:
@@ -138,17 +138,32 @@ def current_allocation() -> dict[str, float]:
     return {k: round((v / total) * 100, 1) for k, v in amounts.items()}
 
 
-def build_model(no_smooth: bool, output_path: Path) -> dict[str, Any]:
-    latest_market = read_json(latest_market_file() or Path("/nonexistent"), {}) or {}
-    sentiment = read_json(MARKET / "sentiment-latest.json", {}) or {}
-    health = read_json(MARKET / "health-indicators-latest.json", {}) or {}
-    beta = read_json(MARKET / "portfolio-beta.json", {}) or {}
-    quant = read_json(MARKET / "quant-ratings.json", {}) or {}
-    crypto_ts = read_json(DATA / "crypto-timeseries.json", {}) or {}
-    crypto_state = read_json(DATA / "crypto-monitor-state.json", {}) or {}
-    gold_tracker = read_json(DATA / "gold-tracker.json", {}) or {}
-    gold_ts = read_json(DATA / "gold-timeseries.json", {}) or {}
-    private = read_json(PRIVATE_PORTFOLIO, {}) or {}
+def load_current_inputs() -> dict[str, Any]:
+    return {
+        "latest_market": read_json(latest_market_file() or Path("/nonexistent"), {}) or {},
+        "sentiment": read_json(MARKET / "sentiment-latest.json", {}) or {},
+        "health": read_json(MARKET / "health-indicators-latest.json", {}) or {},
+        "beta": read_json(MARKET / "portfolio-beta.json", {}) or {},
+        "quant": read_json(MARKET / "quant-ratings.json", {}) or {},
+        "crypto_ts": read_json(DATA / "crypto-timeseries.json", {}) or {},
+        "crypto_state": read_json(DATA / "crypto-monitor-state.json", {}) or {},
+        "gold_tracker": read_json(DATA / "gold-tracker.json", {}) or {},
+        "gold_ts": read_json(DATA / "gold-timeseries.json", {}) or {},
+        "private": read_json(PRIVATE_PORTFOLIO, {}) or {},
+    }
+
+
+def build_model_from_inputs(inputs: dict[str, Any], no_smooth: bool, previous: dict[str, float] | None = None, source: str = "local-files") -> dict[str, Any]:
+    latest_market = inputs.get("latest_market") or {}
+    sentiment = inputs.get("sentiment") or {}
+    health = inputs.get("health") or {}
+    beta = inputs.get("beta") or {}
+    quant = inputs.get("quant") or {}
+    crypto_ts = inputs.get("crypto_ts") or {}
+    crypto_state = inputs.get("crypto_state") or {}
+    gold_tracker = inputs.get("gold_tracker") or {}
+    gold_ts = inputs.get("gold_ts") or {}
+    private = inputs.get("private") or {}
 
     macro = ((latest_market.get("sections") or {}).get("macro") or {})
     crypto_market = ((latest_market.get("sections") or {}).get("crypto") or {})
@@ -208,10 +223,8 @@ def build_model(no_smooth: bool, output_path: Path) -> dict[str, Any]:
         raw[k] += ((signal_scores[k] - 50) / 50) * signal_tilt_caps[k]
 
     raw_targets = normalize_with_bounds(raw)
-    previous = None
-    if not no_smooth:
-        prev_model = read_json(output_path, {}) or {}
-        previous = {c.get("id"): c.get("target_pct") for c in prev_model.get("categories", []) if c.get("id") in BUCKETS}
+    if not no_smooth and previous is not None:
+        previous = {k: float(previous[k]) for k in BUCKETS if previous.get(k) is not None}
     targets = smooth_targets(raw_targets, previous) if not no_smooth else raw_targets
 
     btc_prices = [d.get("btc_close") for d in crypto_ts.get("data", []) if d.get("btc_close")]
@@ -228,7 +241,7 @@ def build_model(no_smooth: bool, output_path: Path) -> dict[str, Any]:
         "crypto": round(clamp(8.0 + signal_scores["crypto"] / 8, 8.0, 18.0), 1),
     }
     vols = {"stablecoin": 1.0, "funds": 3.0, "gold": gold_vol, "stocks": stocks_vol, "crypto": crypto_vol}
-    current = current_allocation()
+    current = current_allocation(private)
 
     rationale = {
         "stablecoin": (f"APR {stable_apr:.1f}% and regime {regime} keep liquidity floor high.", f"稳定币 APR {stable_apr:.1f}%，当前 {regime} 环境下维持流动性底座。"),
@@ -268,6 +281,7 @@ def build_model(no_smooth: bool, output_path: Path) -> dict[str, Any]:
             "version": "0.1.0",
             "generated_at": datetime.now(timezone.utc).isoformat(),
             "smoothing": None if no_smooth else {"alpha": SMOOTHING_ALPHA, "max_daily_move_pp": MAX_DAILY_MOVE_PP},
+            "source": source,
             "source_files": {
                 "market": str(latest_market_file()) if latest_market_file() else None,
                 "sentiment": str(MARKET / "sentiment-latest.json"),
@@ -284,13 +298,24 @@ def build_model(no_smooth: bool, output_path: Path) -> dict[str, Any]:
     }
 
 
+def build_model(no_smooth: bool, output_path: Path, snapshot_fixture: Path | None = None) -> dict[str, Any]:
+    if snapshot_fixture:
+        return build_model_from_inputs(read_json(snapshot_fixture, {}) or {}, no_smooth=no_smooth, previous=None, source="snapshot-fixture")
+    previous = None
+    if not no_smooth:
+        prev_model = read_json(output_path, {}) or {}
+        previous = {c.get("id"): c.get("target_pct") for c in prev_model.get("categories", []) if c.get("id") in BUCKETS}
+    return build_model_from_inputs(load_current_inputs(), no_smooth=no_smooth, previous=previous, source="local-files")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--output", default=str(DEFAULT_OUTPUT))
     parser.add_argument("--no-smooth", action="store_true", help="disable previous-target smoothing for tests/backtests")
+    parser.add_argument("--snapshot-fixture", help="read model inputs from a fixture JSON instead of latest local files")
     args = parser.parse_args()
     output = Path(args.output)
-    model = build_model(no_smooth=args.no_smooth, output_path=output)
+    model = build_model(no_smooth=args.no_smooth, output_path=output, snapshot_fixture=Path(args.snapshot_fixture) if args.snapshot_fixture else None)
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(model, ensure_ascii=False, indent=2) + "\n")
     print(f"✅ portfolio model: {model['regime']['name']} score={model['regime']['score']} -> {output}")

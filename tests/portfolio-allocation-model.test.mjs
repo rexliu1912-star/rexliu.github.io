@@ -7,6 +7,61 @@ import path from "node:path";
 const root = path.resolve(import.meta.dirname, "..");
 const script = path.join(root, "scripts", "portfolio-allocation-model.py");
 const out = path.join(os.tmpdir(), `portfolio-model-${process.pid}.json`);
+const fixture = path.join(os.tmpdir(), `portfolio-model-fixture-${process.pid}.json`);
+const fixtureOut = path.join(os.tmpdir(), `portfolio-model-fixture-out-${process.pid}.json`);
+
+fs.writeFileSync(fixture, JSON.stringify({
+  latest_market: {
+    sections: {
+      macro: {
+        fear_greed: { value: 20 },
+        treasury_10y: { value: 4.2 },
+        sofr: { value: 3.6 }
+      }
+    }
+  },
+  sentiment: {
+    indicators: {
+      breadth: { average: 35 },
+      vix: { value: 31 },
+      pcr: { pcr_oi: 1.35 }
+    }
+  },
+  health: {
+    smh_igv: { trend: "risk-off" },
+    oil_premium: { level: "high" },
+    gold_fair_value: { level: "normal" }
+  },
+  beta: { equity_beta: 1.4 },
+  quant: { portfolioHealth: 3.2 },
+  crypto_ts: {
+    latest: { fgi: 20, composite: 35 },
+    data: Array.from({ length: 30 }, (_, i) => ({ date: `2026-01-${String(i + 1).padStart(2, "0")}`, btc_close: 100 + i }))
+  },
+  crypto_state: {},
+  gold_tracker: { signal: { status: "yellow" } },
+  gold_ts: { data: Array.from({ length: 30 }, (_, i) => ({ date: `2026-01-${String(i + 1).padStart(2, "0")}`, xau_usd: 3000 + i })) },
+  private: {
+    totalAssets: 100,
+    assets: [{ id: "stablecoin", amount: 30, apr: 5.1 }]
+  }
+}), "utf8");
+
+execFileSync("python3", [script, "--snapshot-fixture", fixture, "--output", fixtureOut, "--no-smooth"], {
+  cwd: root,
+  stdio: "pipe",
+  encoding: "utf8",
+});
+const fixtureModel = JSON.parse(fs.readFileSync(fixtureOut, "utf8"));
+assert.equal(fixtureModel._meta.schema, "portfolio-allocation-model/v1");
+assert.equal(fixtureModel._meta.source, "snapshot-fixture");
+assert.equal(fixtureModel.categories.length, 5);
+const fixtureSum = fixtureModel.categories.reduce((acc, c) => acc + c.target_pct, 0);
+assert.ok(Math.abs(fixtureSum - 100) <= 0.2, `fixture targets must sum to 100, got ${fixtureSum}`);
+const fixtureById = Object.fromEntries(fixtureModel.categories.map((c) => [c.id, c]));
+assert.ok(fixtureById.stocks.target_pct < 25, "stress fixture should reduce stocks below base target");
+assert.ok(fixtureById.crypto.target_pct < 10, "stress fixture should reduce crypto below base target");
+assert.ok(fixtureById.stablecoin.target_pct > 30, "stress fixture should raise liquidity above base target");
 
 execFileSync("python3", [script, "--output", out, "--no-smooth"], {
   cwd: root,
@@ -49,3 +104,6 @@ assert.ok(publicBuildScript.includes("portfolio-model-targets.json"), "public bu
 assert.ok(publicBuildScript.includes("applyAllocationModel"), "public build applies model targets to allocation config");
 
 fs.unlinkSync(out);
+fs.rmSync(fixture, { force: true });
+fs.rmSync(fixtureOut, { force: true });
+console.log("✅ portfolio allocation model test passed");
