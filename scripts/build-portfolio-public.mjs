@@ -29,6 +29,7 @@ const WORKSPACE_ROOT = path.resolve(ROOT, "../..");
 
 // ─── Paths ───────────────────────────────────────────────
 const OVERRIDES_PATH = path.join(ROOT, "src/data/portfolio-overrides.json");
+const ALLOCATION_MODEL_PATH = path.join(ROOT, "src/data/portfolio-model-targets.json");
 const OUTPUT_PATH = path.join(ROOT, "src/data/portfolio-public.json");
 const THERMOMETER_HISTORY = path.join(WORKSPACE_ROOT, "output/research/investment-strategy/macro/thermometer-history.jsonl");
 const WATCHLIST_INDEX = path.join(WORKSPACE_ROOT, "output/research/investment-strategy/macro/watchlist-scan-index.json");
@@ -71,6 +72,40 @@ async function readJsonl(filepath, fallback = []) {
     console.warn(`  ⚠️  Cannot read ${filepath}: ${err.code || err.message}`);
     return fallback;
   }
+}
+
+function applyAllocationModel(overrides, allocationModel) {
+  const allocation = JSON.parse(JSON.stringify(overrides.allocation || { categories: [] }));
+  const modelById = new Map((allocationModel?.categories || []).map((category) => [category.id, category]));
+
+  allocation.model = allocationModel
+    ? {
+        schema: allocationModel._meta?.schema || null,
+        version: allocationModel._meta?.version || null,
+        generated_at: allocationModel._meta?.generated_at || null,
+        regime: allocationModel.regime || null,
+      }
+    : null;
+  allocation.risk_free_rate = allocationModel?.risk_free_rate_pct ?? 3;
+  allocation.categories = (allocation.categories || []).map((category) => {
+    const modelCategory = modelById.get(category.id);
+    if (!modelCategory) return category;
+    return {
+      ...category,
+      target_pct: modelCategory.target_pct ?? category.target_pct,
+      model_target_pct: modelCategory.target_pct ?? category.target_pct,
+      raw_model_target_pct: modelCategory.raw_target_pct ?? null,
+      signal_score: modelCategory.signal_score ?? null,
+      expected_return_pct: modelCategory.expected_return_pct ?? category.expected_return_pct,
+      annual_volatility_pct: modelCategory.annual_volatility_pct ?? category.annual_volatility_pct,
+      model_action: modelCategory.action || null,
+      model_rationale_en: modelCategory.rationale_en || null,
+      model_rationale_zh: modelCategory.rationale_zh || null,
+      model_current_pct: modelCategory.current_pct ?? null,
+      model_drift_pp: modelCategory.drift_pp ?? null,
+    };
+  });
+  return allocation;
 }
 
 async function convexQuery(path, args = {}) {
@@ -1051,11 +1086,18 @@ async function main() {
     return;
   }
 
-  // 1. Load editorial overrides (required)
+  // 1. Load editorial overrides (required) + generated allocation model (optional)
   const overrides = await readJson(OVERRIDES_PATH);
   if (!overrides) {
     console.error("❌ Missing portfolio-overrides.json — cannot build");
     process.exit(1);
+  }
+  const allocationModel = await readJson(ALLOCATION_MODEL_PATH, null);
+  const allocationConfig = applyAllocationModel(overrides, allocationModel);
+  if (allocationModel) {
+    console.log(`🧠 Allocation model: ${allocationModel.regime?.name || "unknown"} score=${allocationModel.regime?.score ?? "n/a"}`);
+  } else {
+    console.warn("   ⚠️  No allocation model output — falling back to portfolio-overrides allocation");
   }
 
   // 2. Fetch Convex structural data (with fallback to last output if down)
@@ -1100,8 +1142,8 @@ async function main() {
   const cryptoMonitor = sanitizeMonitorState(monitorState, dcaStatus, marketData, bottomTrackerRaw);
   if (cryptoMonitor) {
     console.log(`   ✅ Monitor: ${cryptoMonitor.action_signals.length} action signal(s), DCA ${cryptoMonitor.dca.status}`);
-    // Derive four-bucket overview from allocation categories (from overrides)
-    const allocCats = overrides?.allocation?.categories || [];
+    // Derive four-bucket overview from allocation categories (model-enriched when available)
+    const allocCats = allocationConfig?.categories || [];
     cryptoMonitor.buckets = allocCats.map((c) => ({
       id: c.id,
       label_en: c.label_en || c.id,
@@ -1399,7 +1441,7 @@ async function main() {
   };
 
   // Compute real allocation current_pct from privatePortfolio data
-  const computedAllocation = JSON.parse(JSON.stringify(overrides.allocation));
+  const computedAllocation = JSON.parse(JSON.stringify(allocationConfig));
   if (privatePortfolio && privatePortfolio.assets) {
     const totalAssets = privatePortfolio.totalAssets || 1;
     // Sum up actual values per bucket using same BUCKET_AGG mapping
@@ -1510,8 +1552,8 @@ async function main() {
     // Portfolio risk (weighted volatility)
     const targetVol = computedAllocation.categories.reduce((s, c) => s + (c.target_pct / 100) * (c.annual_volatility_pct || 0), 0);
     const currentVol = computedAllocation.categories.reduce((s, c) => s + ((c.current_pct || 0) / 100) * (c.annual_volatility_pct || 0), 0);
-    // Risk-adjusted return (Sharpe-like, risk-free = 3%)
-    const riskFree = 3;
+    // Risk-adjusted return (Sharpe-like)
+    const riskFree = computedAllocation.risk_free_rate ?? 3;
     computedAllocation.risk = {
       target_vol: Math.round(targetVol * 10) / 10,
       current_vol: Math.round(currentVol * 10) / 10,

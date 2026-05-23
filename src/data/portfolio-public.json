@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-23T02:51:40.427Z",
+  "generated_at": "2026-05-23T03:15:14.843Z",
   "regime": {
     "current": {
       "label": "中性期",
@@ -1413,9 +1413,9 @@
           "id": "stablecoin",
           "label_en": "Stablecoin Yield",
           "label_zh": "稳定币生息",
-          "target_pct": 30,
+          "target_pct": 30.9,
           "current_pct": 35.1,
-          "drift_pp": 5.1,
+          "drift_pp": 4.2,
           "color": "#10b981",
           "sub_tags_en": [
             "USDT",
@@ -1431,15 +1431,23 @@
           "note_zh": "底座层——带息、低 beta、抗衰退",
           "expected_return_pct": 5,
           "annual_volatility_pct": 1,
-          "gap_amount": -607409
+          "model_target_pct": 30.9,
+          "raw_model_target_pct": 30.9,
+          "signal_score": 80,
+          "model_action": "trim",
+          "model_rationale_en": "APR 5.0% and regime neutral keep liquidity floor high.",
+          "model_rationale_zh": "稳定币 APR 5.0%，当前 neutral 环境下维持流动性底座。",
+          "model_current_pct": 35.1,
+          "model_drift_pp": 4.2,
+          "gap_amount": -500691
         },
         {
           "id": "funds",
           "label_en": "Funds",
           "label_zh": "基金与现金",
-          "target_pct": 25,
+          "target_pct": 30.9,
           "current_pct": 37.9,
-          "drift_pp": 12.9,
+          "drift_pp": 7,
           "color": "#3b82f6",
           "sub_tags_en": [
             "Cash & Deposits",
@@ -1453,17 +1461,25 @@
           ],
           "note_en": "Cash buffer + conservative wealth management + earmarked funds (housing, education, receivable)",
           "note_zh": "现金缓冲 + 保守理财 + 专项资金（买房/教育/应收）",
-          "expected_return_pct": 3,
+          "expected_return_pct": 3.1,
           "annual_volatility_pct": 3,
-          "gap_amount": -1534871
+          "model_target_pct": 30.9,
+          "raw_model_target_pct": 30.9,
+          "signal_score": 77.5,
+          "model_action": "trim",
+          "model_rationale_en": "SOFR 3.51% supports conservative cash/fund carry.",
+          "model_rationale_zh": "SOFR 3.51%，保守现金/基金仍有持有收益。",
+          "model_current_pct": 37.9,
+          "model_drift_pp": 7,
+          "gap_amount": -835271
         },
         {
           "id": "gold",
           "label_en": "Gold",
           "label_zh": "黄金",
-          "target_pct": 5,
+          "target_pct": 3.3,
           "current_pct": 3.6,
-          "drift_pp": -1.4,
+          "drift_pp": 0.3,
           "color": "#eab308",
           "sub_tags_en": [
             "XAU ETF",
@@ -1475,17 +1491,25 @@
           ],
           "note_en": "Long-cycle liquidity hedge — not a candle chart. M2 inversion system entry.",
           "note_zh": "长周期流动性对冲——不看五分钟K线。M2 倒挂体系入场。",
-          "expected_return_pct": 6,
-          "annual_volatility_pct": 15,
-          "gap_amount": 170428
+          "expected_return_pct": 3.5,
+          "annual_volatility_pct": 27,
+          "model_target_pct": 3.3,
+          "raw_model_target_pct": 3.3,
+          "signal_score": 37,
+          "model_action": "hold",
+          "model_rationale_en": "Gold signal yellow; fair-value premium level extreme caps target.",
+          "model_rationale_zh": "黄金信号 yellow；公允价溢价 extreme，限制目标仓位上行。",
+          "model_current_pct": 3.6,
+          "model_drift_pp": 0.3,
+          "gap_amount": -31152
         },
         {
           "id": "stocks",
           "label_en": "Stocks",
           "label_zh": "股票",
-          "target_pct": 25,
+          "target_pct": 26.2,
           "current_pct": 14.6,
-          "drift_pp": -10.4,
+          "drift_pp": -11.6,
           "color": "#8953d1",
           "sub_tags_en": [
             "AI Power",
@@ -1499,9 +1523,17 @@
           ],
           "note_en": "Long + swing mix — AI-electricity core with opportunistic overlays",
           "note_zh": "长期 + 波段组合——AI 电力核心 + 机会主义叠加",
-          "expected_return_pct": 8,
-          "annual_volatility_pct": 20,
-          "gap_amount": 1237131,
+          "expected_return_pct": 9.2,
+          "annual_volatility_pct": 23.2,
+          "model_target_pct": 26.2,
+          "raw_model_target_pct": 26.2,
+          "signal_score": 71.2,
+          "model_action": "add",
+          "model_rationale_en": "Portfolio health 4.0/5.0, equity beta 1.45, regime score 55.0.",
+          "model_rationale_zh": "组合健康度 4.0/5.0，股票 beta 1.45，宏观分数 55.0。",
+          "model_current_pct": 14.6,
+          "model_drift_pp": -11.6,
+          "gap_amount": 1379422,
           "sub": [
             {
               "id": "cn",
@@ -1527,9 +1559,9 @@
           "id": "crypto",
           "label_en": "Crypto",
           "label_zh": "加密敞口",
-          "target_pct": 10,
+          "target_pct": 8.7,
           "current_pct": 8.8,
-          "drift_pp": -1.2,
+          "drift_pp": 0.1,
           "color": "#f59e0b",
           "sub_tags_en": [
             "BTC",
@@ -1541,23 +1573,41 @@
           ],
           "note_en": "Asymmetric bet — long-duration, non-correlated, high-volatility core",
           "note_zh": "不对称下注——长久期、低相关、高波动核心",
-          "expected_return_pct": 15,
-          "annual_volatility_pct": 65,
-          "gap_amount": 141841
+          "expected_return_pct": 13.7,
+          "annual_volatility_pct": 44.7,
+          "model_target_pct": 8.7,
+          "raw_model_target_pct": 8.7,
+          "signal_score": 45.2,
+          "model_action": "hold",
+          "model_rationale_en": "Crypto composite 40.2, fear/greed 27; capped at 15%.",
+          "model_rationale_zh": "Crypto composite 40.2，恐惧贪婪 27；上限 15%。",
+          "model_current_pct": 8.8,
+          "model_drift_pp": 0.1,
+          "gap_amount": -12309
         }
       ],
+      "model": {
+        "schema": "portfolio-allocation-model/v1",
+        "version": "0.1.0",
+        "generated_at": "2026-05-23T03:15:12.887126+00:00",
+        "regime": {
+          "name": "neutral",
+          "score": 55
+        }
+      },
+      "risk_free_rate": 3.51,
       "weighted_return": {
-        "target": 6.1,
+        "target": 6.2,
         "current": 5.6
       },
-      "projected_annual_yield": 663553,
+      "projected_annual_yield": 664585,
       "risk": {
-        "target_vol": 13.3,
-        "current_vol": 10.7,
-        "sharpe_target": 0.23,
-        "sharpe_current": 0.24,
-        "risk_free_rate": 3,
-        "temperature": 18,
+        "target_vol": 12.1,
+        "current_vol": 9.8,
+        "sharpe_target": 0.22,
+        "sharpe_current": 0.21,
+        "risk_free_rate": 3.51,
+        "temperature": 16,
         "temperature_label_en": "Defensive",
         "temperature_label_zh": "防御型"
       },
@@ -2496,7 +2546,7 @@
         "label_en": "Stablecoin Yield",
         "label_zh": "稳定币生息",
         "current_pct": 35,
-        "target_pct": 30,
+        "target_pct": 30.9,
         "drift_pp": 5,
         "color": "#10b981",
         "sub_tags_en": [
@@ -2515,7 +2565,7 @@
         "label_en": "Funds",
         "label_zh": "基金与现金",
         "current_pct": 34.6,
-        "target_pct": 25,
+        "target_pct": 30.9,
         "drift_pp": 9.6,
         "color": "#3b82f6",
         "sub_tags_en": [
@@ -2534,7 +2584,7 @@
         "label_en": "Gold",
         "label_zh": "黄金",
         "current_pct": 3.4,
-        "target_pct": 5,
+        "target_pct": 3.3,
         "drift_pp": -1.6,
         "color": "#eab308",
         "sub_tags_en": [
@@ -2551,7 +2601,7 @@
         "label_en": "Stocks",
         "label_zh": "股票",
         "current_pct": 19,
-        "target_pct": 25,
+        "target_pct": 26.2,
         "drift_pp": -6,
         "color": "#8953d1",
         "sub_tags_en": [
@@ -2570,7 +2620,7 @@
         "label_en": "Crypto",
         "label_zh": "加密敞口",
         "current_pct": 8,
-        "target_pct": 10,
+        "target_pct": 8.7,
         "drift_pp": -2,
         "color": "#f59e0b",
         "sub_tags_en": [
