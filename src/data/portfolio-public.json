@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-26T13:57:44.253Z",
+  "generated_at": "2026-05-26T14:48:00.711Z",
   "regime": {
     "current": {
       "label": "中性期",
@@ -1562,9 +1562,9 @@
           "id": "funds",
           "label_en": "Funds",
           "label_zh": "基金与现金",
-          "target_pct": 30.9,
+          "target_pct": 30.8,
           "current_pct": 37.9,
-          "drift_pp": 7,
+          "drift_pp": 7.1,
           "color": "#3b82f6",
           "sub_tags_en": [
             "Cash & Deposits",
@@ -1580,15 +1580,15 @@
           "note_zh": "现金缓冲 + 保守理财 + 专项资金（买房/教育/应收）",
           "expected_return_pct": 3.1,
           "annual_volatility_pct": 3,
-          "model_target_pct": 30.9,
+          "model_target_pct": 30.8,
           "raw_model_target_pct": 30.7,
           "signal_score": 77.5,
           "model_action": "trim",
           "model_rationale_en": "SOFR 3.51% supports conservative cash/fund carry.",
           "model_rationale_zh": "SOFR 3.51%，保守现金/基金仍有持有收益。",
           "model_current_pct": 37.9,
-          "model_drift_pp": 7,
-          "gap_amount": -835271
+          "model_drift_pp": 7.1,
+          "gap_amount": -847128
         },
         {
           "id": "gold",
@@ -1624,9 +1624,9 @@
           "id": "stocks",
           "label_en": "Stocks",
           "label_zh": "股票",
-          "target_pct": 26.3,
+          "target_pct": 26.4,
           "current_pct": 14.6,
-          "drift_pp": -11.7,
+          "drift_pp": -11.8,
           "color": "#8953d1",
           "sub_tags_en": [
             "AI Power",
@@ -1642,15 +1642,15 @@
           "note_zh": "长期 + 波段组合——AI 电力核心 + 机会主义叠加",
           "expected_return_pct": 9.4,
           "annual_volatility_pct": 23.2,
-          "model_target_pct": 26.3,
+          "model_target_pct": 26.4,
           "raw_model_target_pct": 26.5,
           "signal_score": 73.9,
           "model_action": "add",
           "model_rationale_en": "Portfolio health 4.2/5.0, equity beta 1.45, regime score 55.0.",
           "model_rationale_zh": "组合健康度 4.2/5.0，股票 beta 1.45，宏观分数 55.0。",
           "model_current_pct": 14.6,
-          "model_drift_pp": -11.7,
-          "gap_amount": 1391280,
+          "model_drift_pp": -11.8,
+          "gap_amount": 1403138,
           "sub": [
             {
               "id": "cn",
@@ -1706,7 +1706,7 @@
       "model": {
         "schema": "portfolio-allocation-model/v1",
         "version": "0.1.0",
-        "generated_at": "2026-05-26T13:57:42.799761+00:00",
+        "generated_at": "2026-05-26T14:47:58.740232+00:00",
         "regime": {
           "name": "neutral",
           "score": 55
@@ -1935,12 +1935,12 @@
       "layer_label_zh": "AI 算力",
       "stop": {
         "type": "stop_loss",
-        "level_pct_from_current": "-29.1%",
+        "level_pct_from_current": "-29.3%",
         "severity": "gray",
         "description": "AAPL 止损线 ~15% below avg cost"
       },
       "target": {
-        "price_pct_from_current": "+-0.2%",
+        "price_pct_from_current": "+-0.4%",
         "description": "AAPL test target",
         "optimistic_price": null
       },
@@ -2019,6 +2019,54 @@
       "daily_change_pct": 0
     },
     {
+      "symbol": "CEG",
+      "market": "us",
+      "flag": "🇺🇸",
+      "sector_tags_en": [
+        "energy",
+        "nuclear",
+        "utilities"
+      ],
+      "sector_tags_zh": [
+        "能源",
+        "核电",
+        "公用事业"
+      ],
+      "driver_factors_en": [
+        "AI Capex",
+        "PPA Demand",
+        "Nuclear Policy"
+      ],
+      "driver_factors_zh": [
+        "AI capex",
+        "长协/PPA需求",
+        "核电政策"
+      ],
+      "thesis_en": "Nuclear-powered clean energy; data center power demand upside",
+      "thesis_zh": "核电清洁能源，数据中心电力需求上行",
+      "stage": 4,
+      "status_en": "Long · Core",
+      "status_zh": "长期 · 底仓",
+      "conviction": "high",
+      "horizon": "long",
+      "entry_year": 2026,
+      "layer": "satellite",
+      "layer_label_en": "Baseload Generation",
+      "layer_label_zh": "基荷发电",
+      "stop": {
+        "type": "stop_loss",
+        "level_pct_from_current": "-19.0%",
+        "severity": "yellow",
+        "description": "CEG stop loss: 18% below renewed entry cost $305.78"
+      },
+      "target": null,
+      "next_event": {
+        "date": "2026-06-15",
+        "label": "FERC / NRC nuclear-data-center co-location policy window: watch BTMG, TMI-1 restart, and state-level opposition updates.",
+        "urgency": 3
+      }
+    },
+    {
       "symbol": "GOOGL",
       "market": "us",
       "flag": "🇺🇸",
@@ -2047,7 +2095,7 @@
       "layer_label_zh": "核心持仓",
       "stop": {
         "type": "stop_loss",
-        "level_pct_from_current": "-17.6%",
+        "level_pct_from_current": "-17.9%",
         "severity": "yellow",
         "description": "GOOGL stop loss ~18% below avg cost ($386.98)"
       },
@@ -2099,7 +2147,7 @@
       "layer_label_zh": "AI互连/ASIC",
       "stop": {
         "type": "stop_loss",
-        "level_pct_from_current": "-18.4%",
+        "level_pct_from_current": "-16.2%",
         "severity": "yellow",
         "description": "Marvell Technology, Inc. stop loss ~18% below cost"
       },
@@ -2139,8 +2187,8 @@
       "layer_label_zh": "AI内存周期",
       "stop": {
         "type": "stop_loss",
-        "level_pct_from_current": "-18.7%",
-        "severity": "yellow",
+        "level_pct_from_current": "-21.6%",
+        "severity": "gray",
         "description": "Micron Technology, Inc. stop loss ~18% below cost"
       },
       "target": null,
@@ -2187,7 +2235,7 @@
       "layer_label_zh": "核心持仓",
       "stop": {
         "type": "stop_loss",
-        "level_pct_from_current": "-16.0%",
+        "level_pct_from_current": "-16.5%",
         "severity": "yellow",
         "description": "NVIDIA stop loss ~18% below updated avg cost ($220.96)"
       },
@@ -2247,8 +2295,8 @@
       "layer_label_zh": "卫星配置",
       "stop": {
         "type": "stop_loss",
-        "level_pct_from_current": "-19.8%",
-        "severity": "yellow",
+        "level_pct_from_current": "-20.2%",
+        "severity": "gray",
         "description": "Invesco QQQ Trust stop loss ~18% below cost"
       },
       "target": null,
@@ -2299,7 +2347,7 @@
       "layer_label_zh": "卫星配置",
       "stop": {
         "type": "stop_loss",
-        "level_pct_from_current": "-23.5%",
+        "level_pct_from_current": "-24.1%",
         "severity": "gray",
         "description": "QTUM stop loss ~18% below avg cost ($146.38)"
       },
@@ -2359,7 +2407,7 @@
       "layer_label_zh": "核心",
       "stop": {
         "type": "stop_loss",
-        "level_pct_from_current": "-21.3%",
+        "level_pct_from_current": "-22.1%",
         "severity": "gray",
         "description": "VanEck Semiconductor ETF stop loss ~18% below cost"
       },
@@ -2411,8 +2459,8 @@
       "layer_label_zh": "周期存储弹性",
       "stop": {
         "type": "stop_loss",
-        "level_pct_from_current": "-17.1%",
-        "severity": "yellow",
+        "level_pct_from_current": "-20.0%",
+        "severity": "gray",
         "description": "Sandisk Corporation stop loss ~18% below cost"
       },
       "target": null,
@@ -2451,7 +2499,7 @@
       "layer_label_zh": "太空可选性篮子",
       "stop": {
         "type": "stop_loss",
-        "level_pct_from_current": "-18.7%",
+        "level_pct_from_current": "-19.8%",
         "severity": "yellow",
         "description": "Procure Space ETF stop loss ~18% below cost"
       },
@@ -2495,7 +2543,7 @@
       "layer_label_zh": "卫星配置",
       "stop": {
         "type": "stop_loss",
-        "level_pct_from_current": "-20.9%",
+        "level_pct_from_current": "-21.6%",
         "severity": "gray",
         "description": "Vanguard Information Technology ETF stop loss ~18% below cost"
       },
@@ -2841,7 +2889,7 @@
         "label_en": "Funds",
         "label_zh": "基金与现金",
         "current_pct": 34.6,
-        "target_pct": 30.9,
+        "target_pct": 30.8,
         "drift_pp": 9.6,
         "color": "#3b82f6",
         "sub_tags_en": [
@@ -2877,7 +2925,7 @@
         "label_en": "Stocks",
         "label_zh": "股票",
         "current_pct": 19,
-        "target_pct": 26.3,
+        "target_pct": 26.4,
         "drift_pp": -6,
         "color": "#8953d1",
         "sub_tags_en": [
@@ -7744,57 +7792,6 @@
       ]
     },
     {
-      "ticker": "CEG",
-      "market": "us",
-      "name_en": "CEG",
-      "name_zh": "CEG",
-      "sector_tags_en": [
-        "AI Power",
-        "Nuclear",
-        "PPA"
-      ],
-      "sector_tags_zh": [
-        "AI 电力",
-        "核电",
-        "长协"
-      ],
-      "entry_date": "2026-04-15",
-      "exit_date": "2026-05-08",
-      "holding_days": 23,
-      "outcome_pct": 2.8,
-      "outcome_pct_rounded": 3,
-      "win_rate_pct": 100,
-      "trade_count": 2,
-      "currency": "USD",
-      "avg_entry_price": 297.28,
-      "avg_exit_price": 305.46,
-      "reason_en": "Closed because ETFs are currently a better fit for my trading style than single-stock tactical positions.",
-      "reason_zh": "当前判断：ETF 相对更适合自己做交易，所以先退出单一个股仓位。",
-      "lesson_en": "If I don't have long-term conviction in a stock, holding through noise is hard. Strategy should shift toward vehicles I can own and trade with more discipline.",
-      "lesson_zh": "如果对这些股票没有长期持仓信心，一直持有会很困难。后续策略要调整：少做缺乏长期信念的单一个股，更多用更适合自己的 ETF 工具来交易。",
-      "article_url": null,
-      "trade_points": [
-        {
-          "date": "2026-04-15",
-          "kind": "entry",
-          "action_en": "Opened position",
-          "action_zh": "建立仓位",
-          "price": 297.28,
-          "note_en": "美股成长建仓",
-          "note_zh": "美股成长建仓"
-        },
-        {
-          "date": "2026-05-08",
-          "kind": "exit",
-          "action_en": "Closed position",
-          "action_zh": "清仓",
-          "price": 305.46,
-          "note_en": "清仓：截图成交，Constellation Energy sold at 305.46",
-          "note_zh": "清仓：截图成交，Constellation Energy sold at 305.46"
-        }
-      ]
-    },
-    {
       "ticker": "HOOD",
       "market": "us",
       "name_en": "Robinhood Markets",
@@ -8071,15 +8068,15 @@
     }
   ],
   "stats": {
-    "active_positions": 12,
+    "active_positions": 13,
     "markets": 2,
-    "tracked_rules": 51,
-    "upcoming_events": 9,
+    "tracked_rules": 53,
+    "upcoming_events": 12,
     "weekly_scan_hits": 13,
-    "total_trades": 67,
-    "closed_positions": 10,
-    "win_rate_pct": 90,
-    "realized_pnl_pct": 60,
+    "total_trades": 65,
+    "closed_positions": 9,
+    "win_rate_pct": 89,
+    "realized_pnl_pct": 57,
     "days_since_last_clearance": 7
   },
   "crypto_portfolio_history": {
