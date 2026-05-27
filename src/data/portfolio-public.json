@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-26T14:48:00.711Z",
+  "generated_at": "2026-05-27T00:16:43.658Z",
   "regime": {
     "current": {
       "label": "中性期",
@@ -10,17 +10,17 @@
       "signals": {
         "tnx": {
           "label": "10Y UST",
-          "value": "4.56%",
-          "light": "red"
+          "value": "4.49%",
+          "light": "yellow"
         },
         "dxy": {
           "label": "DXY",
-          "value": "99.24",
+          "value": "99.09",
           "light": "green"
         },
         "vix": {
           "label": "VIX",
-          "value": "16.59",
+          "value": "17.01",
           "light": "green"
         },
         "naaim": {
@@ -1520,6 +1520,45 @@
             "status": null
           }
         }
+      },
+      {
+        "date": "2026-05-27",
+        "regime": "中性期",
+        "green_count": 2,
+        "aggression": "中",
+        "vix": 17.01,
+        "lights": {
+          "tnx": "yellow",
+          "dxy": "green",
+          "vix": "green",
+          "naaim": "red"
+        },
+        "signalDetails": {
+          "tnx": {
+            "value": 4.49,
+            "light": "yellow",
+            "status": null
+          },
+          "dxy": {
+            "value": 99.09,
+            "light": "green",
+            "status": null
+          },
+          "vix": {
+            "value": 17.01,
+            "light": "green",
+            "status": null
+          },
+          "naaim": {
+            "value": 82.02,
+            "light": "red",
+            "status": null
+          },
+          "policy": {
+            "light": "gray",
+            "status": null
+          }
+        }
       }
     ]
   },
@@ -1641,13 +1680,13 @@
           "note_en": "Long + swing mix — AI-electricity core with opportunistic overlays",
           "note_zh": "长期 + 波段组合——AI 电力核心 + 机会主义叠加",
           "expected_return_pct": 9.4,
-          "annual_volatility_pct": 23.2,
+          "annual_volatility_pct": 23.5,
           "model_target_pct": 26.4,
           "raw_model_target_pct": 26.5,
           "signal_score": 73.9,
           "model_action": "add",
-          "model_rationale_en": "Portfolio health 4.2/5.0, equity beta 1.45, regime score 55.0.",
-          "model_rationale_zh": "组合健康度 4.2/5.0，股票 beta 1.45，宏观分数 55.0。",
+          "model_rationale_en": "Portfolio health 4.2/5.0, equity beta 1.47, regime score 55.0.",
+          "model_rationale_zh": "组合健康度 4.2/5.0，股票 beta 1.47，宏观分数 55.0。",
           "model_current_pct": 14.6,
           "model_drift_pp": -11.8,
           "gap_amount": 1403138,
@@ -1706,7 +1745,7 @@
       "model": {
         "schema": "portfolio-allocation-model/v1",
         "version": "0.1.0",
-        "generated_at": "2026-05-26T14:47:58.740232+00:00",
+        "generated_at": "2026-05-26T19:30:45.542709+00:00",
         "regime": {
           "name": "neutral",
           "score": 55
@@ -1719,7 +1758,7 @@
       },
       "projected_annual_yield": 667004,
       "risk": {
-        "target_vol": 12.1,
+        "target_vol": 12.2,
         "current_vol": 9.8,
         "sharpe_target": 0.23,
         "sharpe_current": 0.22,
@@ -1730,7 +1769,7 @@
       },
       "health": 4.2,
       "portfolio_beta": 1.43,
-      "equity_beta": 1.45
+      "equity_beta": 1.47
     }
   },
   "sector_research": [
@@ -2655,12 +2694,12 @@
     ]
   },
   "crypto_monitor": {
-    "generated_at": "2026-05-26T06:35:39.450133+08:00",
+    "generated_at": "2026-05-27T06:35:17.883455+08:00",
     "data_freshness": {
       "market_data_available": true,
       "bottom_tracker_available": true,
       "dca_status_available": true,
-      "market_data_date": "2026-05-26"
+      "market_data_date": "2026-05-27"
     },
     "allocation": {
       "crypto": {
@@ -2678,10 +2717,14 @@
     },
     "macro": {
       "fear_greed": {
-        "value": 29,
+        "value": 33,
         "label": "Fear"
       },
       "fear_greed_7d": [
+        {
+          "value": 33,
+          "label": "Fear"
+        },
         {
           "value": 29,
           "label": "Fear"
@@ -2705,17 +2748,13 @@
         {
           "value": 28,
           "label": "Fear"
-        },
-        {
-          "value": 24,
-          "label": "Extreme Fear"
         }
       ],
       "btc_change_24h": null,
       "signals": []
     },
     "bottom_tracker": {
-      "score": 60.3,
+      "score": 56.4,
       "status": "底部特征显现，可关注",
       "indicators": [
         {
@@ -2723,9 +2762,9 @@
           "name_en": "Fear & Greed Index",
           "status": "yellow",
           "score": 50,
-          "detail_en": "Current:30",
-          "detail_zh": "当前:30",
-          "delta": 5,
+          "detail_en": "Current:34",
+          "detail_zh": "当前:34",
+          "delta": 4,
           "desc_en": "Crypto market sentiment composite (0–100)",
           "desc_zh": "加密市场情绪综合指数（0–100）"
         },
@@ -2745,9 +2784,9 @@
           "name_en": "Black Swan Intensity",
           "status": "red",
           "score": 20,
-          "detail_en": "BSS:32.0",
-          "detail_zh": "BSS:32.0",
-          "delta": -1,
+          "detail_en": "BSS:31.2",
+          "detail_zh": "BSS:31.2",
+          "delta": -0.8,
           "desc_en": "Multi-factor tail-risk model (BSS)",
           "desc_zh": "多因子尾部风险模型（BSS）"
         },
@@ -2756,9 +2795,9 @@
           "name_en": "Macro VIX",
           "status": "red",
           "score": 20,
-          "detail_en": "VIX:16.6",
-          "detail_zh": "VIX:16.6",
-          "delta": -0.1,
+          "detail_en": "VIX:17.0",
+          "detail_zh": "VIX:17.0",
+          "delta": 0.4,
           "desc_en": "S&P 500 implied volatility",
           "desc_zh": "标普500隐含波动率"
         },
@@ -2778,9 +2817,9 @@
           "name_en": "MVRV Z-Score",
           "status": "green",
           "score": 80,
-          "detail_en": "Z:-0.99, Severely Undervalued",
-          "detail_zh": "Z:-0.99, 严重低估",
-          "delta": 0.02,
+          "detail_en": "Z:-1.06, Severely Undervalued",
+          "detail_zh": "Z:-1.06, 严重低估",
+          "delta": -0.07,
           "desc_en": "Market-to-Realized Value ratio (deviation from historical mean)",
           "desc_zh": "市值/已实现价值比（偏离历史均值程度）"
         },
@@ -2789,9 +2828,9 @@
           "name_en": "BTC ETF Flow",
           "status": "yellow",
           "score": 50,
-          "detail_en": "-14M, Neutral Flow",
-          "detail_zh": "-14M, 资金中性",
-          "delta": 0,
+          "detail_en": "+112M, Neutral Flow",
+          "detail_zh": "+112M, 资金中性",
+          "delta": 126,
           "desc_en": "Daily net inflow/outflow of spot BTC ETFs (USD millions)",
           "desc_zh": "BTC 现货 ETF 每日净流入/流出（百万美元）"
         },
@@ -2800,16 +2839,16 @@
           "name_en": "Dollar Index (DXY)",
           "status": "red",
           "score": 20,
-          "detail_en": "DXY:99.2, Weak USD risk-on",
-          "detail_zh": "DXY:99.2, 美元偏弱",
-          "delta": 0.2,
+          "detail_en": "DXY:99.1, Weak USD risk-on",
+          "detail_zh": "DXY:99.1, 美元偏弱",
+          "delta": -0.1,
           "desc_en": "US Dollar strength — inverse correlation with BTC",
           "desc_zh": "美元强度 — 与 BTC 负相关"
         }
       ]
     },
     "etf": {
-      "btc_etf_net_flow_m": -14,
+      "btc_etf_net_flow_m": 112,
       "etfs": []
     },
     "dca": {
@@ -3010,7 +3049,7 @@
     "source": "investment-strategy-registry",
     "registry_file": "investment-strategy/macro/watchlist-registry.json",
     "registry_count": 36,
-    "eligible_count": 32,
+    "eligible_count": 29,
     "tickers": [
       "AAOI",
       "AAPL",
@@ -3032,7 +3071,6 @@
       "ILMN",
       "LITE",
       "LNG",
-      "MOD",
       "MRVL",
       "MU",
       "NOW",
@@ -3040,10 +3078,8 @@
       "OUST",
       "POET",
       "TEM",
-      "TSLA",
       "VRT",
-      "VST",
-      "WMB"
+      "VST"
     ],
     "ticker_names": {
       "AAOI": "Applied Optoelectronics v2.0 完整调研报告",
@@ -3066,7 +3102,6 @@
       "ILMN": "Illumina v2.0 完整调研报告",
       "LITE": "Lumentum Holdings v2.0 完整调研报告",
       "LNG": "Cheniere Energy 近半月研报调研 × 圆桌讨论逻辑一致性审查",
-      "MOD": "Modine Manufacturing 阶段 4 深度研究档案",
       "MRVL": "Marvell Technology 完整投资调研报告",
       "MU": "Micron Technology v2.0 完整调研报告",
       "NOW": "ServiceNow v2.0 完整调研报告",
@@ -3074,10 +3109,8 @@
       "OUST": "Ouster v2.0 完整调研报告",
       "POET": "Technologies v2.0 完整调研报告",
       "TEM": "Tempus AI 大师圆桌决策简报",
-      "TSLA": "Tesla 深度研究报告",
       "VRT": "Vertiv Holdings（NYSE: ）公司深研：AI 数据中心“电力 + 热管理”纯度最高的一档",
-      "VST": "AI Inflection Radar Weekly Report — 2026 05 11",
-      "WMB": "Williams Companies 阶段 4 深度研究档案"
+      "VST": "AI Inflection Radar Weekly Report — 2026 05 11"
     },
     "ticker_meta": {
       "AAOI": {
@@ -4617,21 +4650,6 @@
           }
         }
       },
-      "MOD": {
-        "ticker": "MOD",
-        "name": "Modine Manufacturing 阶段 4 深度研究档案",
-        "market": "US",
-        "status": "rejected",
-        "thesis": "Modine 是全球领先的数据中心液冷 + HVAC 龙头,Climate Solutions 占营收 70%+、数据中心业务增速 +78%,FY28 目标数据中心营收 $2B;但 52 周涨 +212% 后认知差消失,Fwd PE 30× / R:R < 1,当前是\"好公司错价格\"教科书案例。",
-        "quant_rating": null,
-        "target": 290,
-        "stoploss": null,
-        "pe_threshold": 30,
-        "catalysts": [],
-        "invalidation": null,
-        "report_date": "2026-04-01",
-        "last_reviewed": "2026-04-01"
-      },
       "MRVL": {
         "ticker": "MRVL",
         "name": "Marvell Technology 完整投资调研报告",
@@ -5172,21 +5190,6 @@
           }
         }
       },
-      "TSLA": {
-        "ticker": "TSLA",
-        "name": "Tesla 深度研究报告",
-        "market": "US",
-        "status": "in_portfolio",
-        "thesis": "业务 | 电动汽车、能源存储（Megapack/Powerwall）、自动驾驶（FSD/AI5）、机器人（Optimus）、Robotaxi（Cybercab）",
-        "quant_rating": null,
-        "target": null,
-        "stoploss": 8,
-        "pe_threshold": null,
-        "catalysts": [],
-        "invalidation": null,
-        "report_date": "2026-04-01",
-        "last_reviewed": "2026-04-01"
-      },
       "VRT": {
         "ticker": "VRT",
         "name": "Vertiv Holdings（NYSE: ）公司深研：AI 数据中心“电力 + 热管理”纯度最高的一档",
@@ -5349,25 +5352,9 @@
             }
           }
         }
-      },
-      "WMB": {
-        "ticker": "WMB",
-        "name": "Williams Companies 阶段 4 深度研究档案",
-        "market": "US",
-        "status": "rejected",
-        "thesis": "Williams 是美国最大天然气管道公司(Transco 主干 + Northwest Pipeline),52 年连续派息 + 2.40× AFFO 覆盖 + SSE / Power Express 扩张对接 AI 数据中心需求,但 PE 34× / 股息率 2.97% 已失去高息防御属性,R:R 0.48-1.08 触发铁律否决。",
-        "quant_rating": null,
-        "target": null,
-        "stoploss": null,
-        "pe_threshold": 33.5,
-        "catalysts": [],
-        "invalidation": null,
-        "report_date": "2026-04-01",
-        "last_reviewed": "2026-04-01"
       }
     },
     "dates": [
-      "2026-04-27",
       "2026-04-28",
       "2026-04-29",
       "2026-04-30",
@@ -5396,7 +5383,8 @@
       "2026-05-23",
       "2026-05-24",
       "2026-05-25",
-      "2026-05-26"
+      "2026-05-26",
+      "2026-05-27"
     ],
     "scores": [
       [
@@ -5411,40 +5399,6 @@
         -1,
         -1,
         -1,
-        5,
-        3,
-        -1,
-        -1,
-        -1,
-        3,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1
-      ],
-      [
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
         6,
         4,
         -1,
@@ -5462,9 +5416,6 @@
         -1,
         -1,
         -1,
-        -1,
-        -1,
-        -1,
         -1
       ],
       [
@@ -5496,9 +5447,6 @@
         -1,
         -1,
         -1,
-        -1,
-        -1,
-        -1,
         -1
       ],
       [
@@ -5519,9 +5467,6 @@
         -1,
         -1,
         3,
-        -1,
-        -1,
-        -1,
         -1,
         -1,
         -1,
@@ -5564,6 +5509,34 @@
         -1,
         -1,
         -1,
+        -1
+      ],
+      [
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        4,
+        5,
+        -1,
+        -1,
+        -1,
+        4,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
         -1,
         -1,
         -1,
@@ -5598,9 +5571,6 @@
         -1,
         -1,
         -1,
-        -1,
-        -1,
-        -1,
         -1
       ],
       [
@@ -5621,43 +5591,6 @@
         -1,
         -1,
         4,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1
-      ],
-      [
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        4,
-        5,
-        -1,
-        -1,
-        -1,
-        4,
-        -1,
-        -1,
-        -1,
         -1,
         -1,
         -1,
@@ -5700,9 +5633,6 @@
         -1,
         -1,
         -1,
-        -1,
-        -1,
-        -1,
         -1
       ],
       [
@@ -5734,9 +5664,6 @@
         -1,
         -1,
         -1,
-        -1,
-        -1,
-        -1,
         -1
       ],
       [
@@ -5757,9 +5684,6 @@
         -1,
         -1,
         4,
-        -1,
-        -1,
-        -1,
         -1,
         -1,
         -1,
@@ -5791,9 +5715,6 @@
         -1,
         -1,
         5,
-        -1,
-        -1,
-        -1,
         -1,
         -1,
         -1,
@@ -5831,13 +5752,10 @@
         -1,
         -1,
         -1,
-        -1,
         6,
         -1,
         -1,
         6,
-        -1,
-        -1,
         -1,
         -1
       ],
@@ -5865,13 +5783,10 @@
         -1,
         -1,
         -1,
-        -1,
         6,
         -1,
         -1,
         4,
-        -1,
-        -1,
         -1,
         -1
       ],
@@ -5899,15 +5814,12 @@
         -1,
         -1,
         -1,
-        -1,
         6,
         -1,
         -1,
         4,
         -1,
-        -1,
-        4,
-        -1
+        4
       ],
       [
         -1,
@@ -5933,15 +5845,12 @@
         -1,
         -1,
         -1,
-        -1,
         5,
         -1,
         -1,
         5,
         -1,
-        -1,
-        4,
-        -1
+        4
       ],
       [
         -1,
@@ -5967,15 +5876,12 @@
         -1,
         -1,
         -1,
-        -1,
         5,
         -1,
         -1,
         5,
         -1,
-        -1,
-        4,
-        -1
+        4
       ],
       [
         -1,
@@ -6001,15 +5907,12 @@
         -1,
         -1,
         -1,
-        -1,
         5,
         5,
         -1,
         5,
         -1,
-        -1,
-        4,
-        -1
+        4
       ],
       [
         -1,
@@ -6035,15 +5938,12 @@
         -1,
         -1,
         -1,
-        -1,
         4,
         5,
         -1,
         5,
         -1,
-        -1,
-        3,
-        -1
+        3
       ],
       [
         -1,
@@ -6069,15 +5969,12 @@
         -1,
         -1,
         -1,
-        -1,
         3,
         5,
         -1,
         4,
         -1,
-        -1,
-        3,
-        -1
+        3
       ],
       [
         -1,
@@ -6101,7 +5998,6 @@
         -1,
         4,
         -1,
-        -1,
         4,
         5,
         3,
@@ -6109,9 +6005,7 @@
         -1,
         4,
         -1,
-        -1,
-        3,
-        -1
+        3
       ],
       [
         -1,
@@ -6135,7 +6029,6 @@
         -1,
         4,
         -1,
-        -1,
         4,
         5,
         3,
@@ -6143,9 +6036,7 @@
         -1,
         4,
         -1,
-        -1,
-        3,
-        -1
+        3
       ],
       [
         5,
@@ -6169,7 +6060,6 @@
         -1,
         4,
         -1,
-        -1,
         3,
         5,
         4,
@@ -6177,9 +6067,7 @@
         -1,
         4,
         -1,
-        -1,
-        3,
-        -1
+        3
       ],
       [
         5,
@@ -6202,7 +6090,6 @@
         3,
         -1,
         4,
-        -1,
         -1,
         4,
         3,
@@ -6211,9 +6098,7 @@
         7,
         4,
         -1,
-        -1,
-        3,
-        -1
+        3
       ],
       [
         3,
@@ -6237,7 +6122,6 @@
         6,
         3,
         -1,
-        -1,
         5,
         3,
         4,
@@ -6245,9 +6129,7 @@
         5,
         3,
         -1,
-        -1,
-        5,
-        -1
+        5
       ],
       [
         4,
@@ -6271,7 +6153,6 @@
         4,
         4,
         -1,
-        -1,
         3,
         3,
         3,
@@ -6279,9 +6160,7 @@
         4,
         2,
         -1,
-        -1,
-        4,
-        -1
+        4
       ],
       [
         3,
@@ -6305,7 +6184,6 @@
         5,
         4,
         -1,
-        -1,
         4,
         4,
         4,
@@ -6313,9 +6191,7 @@
         4,
         2,
         -1,
-        -1,
-        4,
-        -1
+        4
       ],
       [
         3,
@@ -6339,7 +6215,6 @@
         5,
         4,
         -1,
-        -1,
         4,
         4,
         4,
@@ -6347,9 +6222,7 @@
         4,
         2,
         -1,
-        -1,
-        4,
-        -1
+        4
       ],
       [
         3,
@@ -6373,17 +6246,14 @@
         5,
         4,
         -1,
-        -1,
         4,
         4,
         4,
         3,
         4,
         2,
-        -1,
         4,
-        4,
-        -1
+        4
       ],
       [
         3,
@@ -6406,7 +6276,6 @@
         5,
         6,
         4,
-        3,
         2,
         3,
         4,
@@ -6414,9 +6283,38 @@
         3,
         5,
         3,
-        5,
         4,
-        1,
+        1
+      ],
+      [
+        4,
+        2,
+        5,
+        5,
+        5,
+        2,
+        3,
+        2,
+        4,
+        5,
+        5,
+        6,
+        4,
+        3,
+        4,
+        3,
+        5,
+        5,
+        6,
+        3,
+        3,
+        4,
+        3,
+        4,
+        3,
+        6,
+        3,
+        4,
         3
       ]
     ],
@@ -6450,9 +6348,6 @@
         "",
         "",
         "",
-        "",
-        "",
-        "",
         ""
       ],
       [
@@ -6473,43 +6368,6 @@
         "",
         "",
         "⬜ 不变",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
-      ],
-      [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "🟡 优先",
-        "⬜ 不变",
-        "",
-        "",
-        "",
-        "⬜ 不变",
-        "",
-        "",
-        "",
         "",
         "",
         "",
@@ -6552,9 +6410,6 @@
         "",
         "",
         "",
-        "",
-        "",
-        "",
         ""
       ],
       [
@@ -6575,43 +6430,6 @@
         "",
         "",
         "⬜ 不变",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
-      ],
-      [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "⬜ 不变",
-        "🟡 接近",
-        "",
-        "",
-        "",
-        "⬜ 不变",
-        "",
-        "",
-        "",
         "",
         "",
         "",
@@ -6654,6 +6472,34 @@
         "",
         "",
         "",
+        ""
+      ],
+      [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "⬜ 不变",
+        "🟡 接近",
+        "",
+        "",
+        "",
+        "⬜ 不变",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
         "",
         "",
         "",
@@ -6688,9 +6534,6 @@
         "",
         "",
         "",
-        "",
-        "",
-        "",
         ""
       ],
       [
@@ -6711,9 +6554,6 @@
         "",
         "",
         "⬜ 不变",
-        "",
-        "",
-        "",
         "",
         "",
         "",
@@ -6745,9 +6585,6 @@
         "",
         "",
         "⬜ 不变",
-        "",
-        "",
-        "",
         "",
         "",
         "",
@@ -6790,9 +6627,6 @@
         "",
         "",
         "",
-        "",
-        "",
-        "",
         ""
       ],
       [
@@ -6813,9 +6647,6 @@
         "",
         "",
         "🟡 接近",
-        "",
-        "",
-        "",
         "",
         "",
         "",
@@ -6853,13 +6684,10 @@
         "",
         "",
         "",
-        "",
         "🟡 接近",
         "",
         "",
         "🟡 接近",
-        "",
-        "",
         "",
         ""
       ],
@@ -6887,13 +6715,10 @@
         "",
         "",
         "",
-        "",
         "🟡 接近",
         "",
         "",
         "⬜ 不变",
-        "",
-        "",
         "",
         ""
       ],
@@ -6921,15 +6746,12 @@
         "",
         "",
         "",
-        "",
         "🟡 接近",
         "",
         "",
         "⬜ 不变",
         "",
-        "",
-        "⬜ 不变",
-        ""
+        "⬜ 不变"
       ],
       [
         "",
@@ -6955,15 +6777,12 @@
         "",
         "",
         "",
-        "",
         "🟡 接近",
         "",
         "",
         "🟡 接近",
         "",
-        "",
-        "⬜ 不变",
-        ""
+        "⬜ 不变"
       ],
       [
         "",
@@ -6989,15 +6808,12 @@
         "",
         "",
         "",
-        "",
         "🟡 接近",
         "",
         "",
         "🟡 接近",
         "",
-        "",
-        "⬜ 不变",
-        ""
+        "⬜ 不变"
       ],
       [
         "",
@@ -7023,15 +6839,12 @@
         "",
         "",
         "",
-        "",
         "🟡 接近",
         "🟡 接近",
         "",
         "🟡 接近",
         "",
-        "",
-        "⬜ 不变",
-        ""
+        "⬜ 不变"
       ],
       [
         "",
@@ -7057,15 +6870,12 @@
         "",
         "",
         "",
-        "",
         "⬜ 不变",
         "🟡 接近",
         "",
         "🟡 接近",
         "",
-        "",
-        "⬜ 不变",
-        ""
+        "⬜ 不变"
       ],
       [
         "",
@@ -7091,15 +6901,12 @@
         "",
         "",
         "",
-        "",
         "⬜ 不变",
         "🟡 接近",
         "",
         "⬜ 不变",
         "",
-        "",
-        "⬜ 不变",
-        ""
+        "⬜ 不变"
       ],
       [
         "",
@@ -7122,7 +6929,6 @@
         "⬜ 不变",
         "",
         "⬜ 不变",
-        "",
         "",
         "⬜ 不变",
         "🟡 优先",
@@ -7131,9 +6937,7 @@
         "",
         "⬜ 不变",
         "",
-        "",
-        "⬜ 不变",
-        ""
+        "⬜ 不变"
       ],
       [
         "",
@@ -7157,7 +6961,6 @@
         "",
         "⬜ 不变",
         "",
-        "",
         "⬜ 不变",
         "🟡 接近",
         "⬜ 不变",
@@ -7165,9 +6968,7 @@
         "",
         "⬜ 不变",
         "",
-        "",
-        "⬜ 不变",
-        ""
+        "⬜ 不变"
       ],
       [
         "🟡 接近",
@@ -7191,7 +6992,6 @@
         "",
         "⬜ 不变",
         "",
-        "",
         "⬜ 不变",
         "🟡 接近",
         "⬜ 不变",
@@ -7199,9 +6999,7 @@
         "",
         "⬜ 不变",
         "",
-        "",
-        "⬜ 不变",
-        ""
+        "⬜ 不变"
       ],
       [
         "🟡 接近",
@@ -7224,7 +7022,6 @@
         "⬜ 不变",
         "",
         "⬜ 不变",
-        "",
         "",
         "⬜ 不变",
         "⬜ 不变",
@@ -7233,9 +7030,7 @@
         "🟢 升级",
         "⬜ 不变",
         "",
-        "",
-        "⬜ 不变",
-        ""
+        "⬜ 不变"
       ],
       [
         "⬜ 不变",
@@ -7259,7 +7054,6 @@
         "🟡 接近",
         "⬜ 不变",
         "",
-        "",
         "🟡 接近",
         "⬜ 不变",
         "⬜ 不变",
@@ -7267,9 +7061,7 @@
         "🟡 接近",
         "⬜ 不变",
         "",
-        "",
-        "🟡 接近",
-        ""
+        "🟡 接近"
       ],
       [
         "⬜ 不变",
@@ -7293,7 +7085,6 @@
         "⬜ 不变",
         "⬜ 不变",
         "",
-        "",
         "⬜ 不变",
         "⬜ 不变",
         "⬜ 不变",
@@ -7301,9 +7092,7 @@
         "⬜ 不变",
         "⬜ 不变",
         "",
-        "",
-        "⬜ 不变",
-        ""
+        "⬜ 不变"
       ],
       [
         "⬜ 不变",
@@ -7327,7 +7116,6 @@
         "🟡 接近",
         "⬜ 不变",
         "",
-        "",
         "⬜ 不变",
         "⬜ 不变",
         "⬜ 不变",
@@ -7335,9 +7123,7 @@
         "⬜ 不变",
         "⬜ 不变",
         "",
-        "",
-        "⬜ 不变",
-        ""
+        "⬜ 不变"
       ],
       [
         "⬜ 不变",
@@ -7361,7 +7147,6 @@
         "🟡 接近",
         "⬜ 不变",
         "",
-        "",
         "⬜ 不变",
         "⬜ 不变",
         "⬜ 不变",
@@ -7369,9 +7154,7 @@
         "⬜ 不变",
         "⬜ 不变",
         "",
-        "",
-        "⬜ 不变",
-        ""
+        "⬜ 不变"
       ],
       [
         "⬜ 不变",
@@ -7395,17 +7178,14 @@
         "🟡 接近",
         "⬜ 不变",
         "",
-        "",
         "⬜ 不变",
         "⬜ 不变",
         "⬜ 不变",
         "⬜ 不变",
         "⬜ 不变",
         "⬜ 不变",
-        "",
         "⬜ 不变",
-        "⬜ 不变",
-        ""
+        "⬜ 不变"
       ],
       [
         "⬜ 不变",
@@ -7431,10 +7211,38 @@
         "⬜ 不变",
         "⬜ 不变",
         "⬜ 不变",
-        "⬜ 不变",
         "🟡 接近",
         "⬜ 不变",
         "🟡 接近",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变"
+      ],
+      [
+        "⬜ 不变",
+        "⬜ 不变",
+        "🟡 接近",
+        "🟡 接近",
+        "🟡 接近",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "🟡 接近",
+        "🟡 接近",
+        "🟡 接近",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "🟡 接近",
+        "🟡 接近",
+        "🟡 接近",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
         "⬜ 不变",
         "🟡 接近",
         "⬜ 不变",
@@ -7443,13 +7251,7 @@
       ]
     ]
   },
-  "short_list": [
-    {
-      "ticker": "CRM",
-      "name": "Salesforce v2.0 完整调研报告",
-      "score": 7
-    }
-  ],
+  "short_list": [],
   "clearances": [
     {
       "ticker": "NOW",
@@ -8072,12 +7874,12 @@
     "markets": 2,
     "tracked_rules": 53,
     "upcoming_events": 12,
-    "weekly_scan_hits": 13,
+    "weekly_scan_hits": 10,
     "total_trades": 65,
     "closed_positions": 9,
     "win_rate_pct": 89,
     "realized_pnl_pct": 57,
-    "days_since_last_clearance": 7
+    "days_since_last_clearance": 8
   },
   "crypto_portfolio_history": {
     "data": [
@@ -10250,43 +10052,43 @@
     ]
   },
   "gold_tracker": {
-    "generated_at": "2026-05-25T23:01:50.038365+00:00",
+    "generated_at": "2026-05-26T23:01:21.920843+00:00",
     "price": {
-      "xau_usd": 4576.3,
-      "day_change_pct": 1.22,
+      "xau_usd": 4503.5,
+      "day_change_pct": -0.39,
       "week_52_high": 5586.2,
       "week_52_low": 3242.4,
-      "drawdown_from_peak_pct": -16.79,
+      "drawdown_from_peak_pct": -18.12,
       "peak_price": 5500
     },
     "technical": {
-      "bollinger_mid_weekly": 4789.96,
+      "bollinger_mid_weekly": 4786.32,
       "above_bollinger_mid": false,
-      "bollinger_mid_pct_diff": -4.46
+      "bollinger_mid_pct_diff": -5.91
     },
     "monetary": {
-      "m2_trillion": 23.12,
-      "m2_date": "2026-04-06",
+      "m2_trillion": 22.88,
+      "m2_date": "2026-05-04",
       "m2_trigger_line": 24,
-      "m2_to_trigger_pct": 96.3,
-      "gold_m2_ratio": 197.936851,
-      "ratio_display": 197.9,
+      "m2_to_trigger_pct": 95.3,
+      "gold_m2_ratio": 196.831294,
+      "ratio_display": 196.8,
       "inversion_status": "normal",
       "inversion_label_en": "Normal Range",
       "inversion_label_zh": "正常区间"
     },
     "cost_floor": {
       "aisc_usd": 1750,
-      "price_above_aisc_pct": 161.5
+      "price_above_aisc_pct": 157.3
     },
     "premium": {
-      "shfe_cny_per_gram": 994.5,
-      "lbma_usd_per_oz": 4575.46,
-      "usd_cny": 6.783,
-      "international_cny_per_gram": 997.81,
-      "premium_pct": -0.33,
-      "source": "sge:Au99.99 + sina:hf_XAU + sina:fx_susdcny",
-      "updated_at": "2026年05月26日 02:29:56"
+      "shfe_cny_per_gram": 982.1,
+      "lbma_usd_per_oz": 4512.09,
+      "usd_cny": 6.786,
+      "international_cny_per_gram": 984.43,
+      "premium_pct": -0.24,
+      "source": "sge:data_DelayedQuotes + sina:hf_XAU + sina:fx_susdcny",
+      "updated_at": null
     },
     "signal": {
       "status": "yellow",
@@ -10295,7 +10097,7 @@
     }
   },
   "gold_timeseries": {
-    "generated_at": "2026-05-25T23:01:50.040820+00:00",
+    "generated_at": "2026-05-26T23:01:21.923917+00:00",
     "data": [
       {
         "date": "2025-05-02",
@@ -12789,6 +12591,15 @@
         "bollinger_mid_pct_diff": -4.46,
         "premium_pct": -0.33,
         "signal_status": "yellow"
+      },
+      {
+        "date": "2026-05-27",
+        "xau_usd": 4503.5,
+        "m2_trillion": 22.88,
+        "gold_m2_ratio": 196.831294,
+        "bollinger_mid_pct_diff": -5.91,
+        "premium_pct": -0.24,
+        "signal_status": "yellow"
       }
     ]
   },
@@ -12845,7 +12656,13 @@
       "date": "2026-05-26",
       "health": 4.2,
       "portfolio_beta": 1.43,
-      "equity_beta": 1.45
+      "equity_beta": 1.47
+    },
+    {
+      "date": "2026-05-27",
+      "health": 4.2,
+      "portfolio_beta": 1.43,
+      "equity_beta": 1.47
     }
   ],
   "capital_mobility_risk": {
