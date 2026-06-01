@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-31T23:51:35.226Z",
+  "generated_at": "2026-06-01T23:01:21.575Z",
   "regime": {
     "current": {
       "label": "中性期",
@@ -15,7 +15,7 @@
         },
         "dxy": {
           "label": "DXY",
-          "value": "98.98",
+          "value": "98.99",
           "light": "green"
         },
         "vix": {
@@ -1735,7 +1735,7 @@
             "status": null
           },
           "dxy": {
-            "value": 98.98,
+            "value": 98.99,
             "light": "green",
             "status": null
           },
@@ -1765,8 +1765,8 @@
           "label_en": "Stablecoin Yield",
           "label_zh": "稳定币生息",
           "target_pct": 30.9,
-          "current_pct": 35,
-          "drift_pp": 4.1,
+          "current_pct": 40.3,
+          "drift_pp": 9.4,
           "color": "#10b981",
           "sub_tags_en": [
             "USDT",
@@ -1788,17 +1788,17 @@
           "model_action": "trim",
           "model_rationale_en": "APR 5.0% and regime neutral keep liquidity floor high.",
           "model_rationale_zh": "稳定币 APR 5.0%，当前 neutral 环境下维持流动性底座。",
-          "model_current_pct": 35,
-          "model_drift_pp": 4.1,
-          "gap_amount": -485221
+          "model_current_pct": 40.3,
+          "model_drift_pp": 9.4,
+          "gap_amount": -1091252
         },
         {
           "id": "funds",
           "label_en": "Funds",
           "label_zh": "基金与现金",
           "target_pct": 30.9,
-          "current_pct": 33.1,
-          "drift_pp": 2.2,
+          "current_pct": 44.1,
+          "drift_pp": 13.2,
           "color": "#3b82f6",
           "sub_tags_en": [
             "Cash & Deposits",
@@ -1816,13 +1816,13 @@
           "annual_volatility_pct": 3,
           "model_target_pct": 30.9,
           "raw_model_target_pct": 30.8,
-          "signal_score": 78.1,
+          "signal_score": 78.2,
           "model_action": "trim",
-          "model_rationale_en": "SOFR 3.62% supports conservative cash/fund carry.",
-          "model_rationale_zh": "SOFR 3.62%，保守现金/基金仍有持有收益。",
-          "model_current_pct": 33.1,
-          "model_drift_pp": 2.2,
-          "gap_amount": -265921
+          "model_rationale_en": "SOFR 3.63% supports conservative cash/fund carry.",
+          "model_rationale_zh": "SOFR 3.63%，保守现金/基金仍有持有收益。",
+          "model_current_pct": 44.1,
+          "model_drift_pp": 13.2,
+          "gap_amount": -1533252
         },
         {
           "id": "gold",
@@ -1852,15 +1852,15 @@
           "model_rationale_zh": "黄金信号 yellow；公允价溢价 extreme，限制目标仓位上行。",
           "model_current_pct": 0,
           "model_drift_pp": -3.3,
-          "gap_amount": 391779
+          "gap_amount": 381876
         },
         {
           "id": "stocks",
           "label_en": "Stocks",
           "label_zh": "股票",
           "target_pct": 25.9,
-          "current_pct": 8.4,
-          "drift_pp": -17.5,
+          "current_pct": 8.8,
+          "drift_pp": -17.1,
           "color": "#8953d1",
           "sub_tags_en": [
             "AI Power",
@@ -1874,23 +1874,23 @@
           ],
           "note_en": "Long + swing mix — AI-electricity core with opportunistic overlays",
           "note_zh": "长期 + 波段组合——AI 电力核心 + 机会主义叠加",
-          "expected_return_pct": 8.9,
+          "expected_return_pct": 9,
           "annual_volatility_pct": 16.6,
           "model_target_pct": 25.9,
           "raw_model_target_pct": 26,
-          "signal_score": 68.5,
+          "signal_score": 68.9,
           "model_action": "add",
-          "model_rationale_en": "Portfolio health 4.0/5.0, equity beta 1.04, regime score 47.0.",
-          "model_rationale_zh": "组合健康度 4.0/5.0，股票 beta 1.04，宏观分数 47.0。",
-          "model_current_pct": 8.4,
-          "model_drift_pp": -17.5,
-          "gap_amount": 2081974,
+          "model_rationale_en": "Portfolio health 3.9/5.0, equity beta 1.04, regime score 52.0.",
+          "model_rationale_zh": "组合健康度 3.9/5.0，股票 beta 1.04，宏观分数 52.0。",
+          "model_current_pct": 8.8,
+          "model_drift_pp": -17.1,
+          "gap_amount": 1979148,
           "sub": [
             {
               "id": "cn",
               "label_en": "A-share",
               "label_zh": "A 股",
-              "pct": 8.4
+              "pct": 8.8
             }
           ]
         },
@@ -1918,39 +1918,39 @@
           "raw_model_target_pct": 9,
           "signal_score": 48.7,
           "model_action": "add",
-          "model_rationale_en": "Crypto composite 43.7, fear/greed 27; capped at 15%.",
-          "model_rationale_zh": "Crypto composite 43.7，恐惧贪婪 27；上限 15%。",
+          "model_rationale_en": "Crypto composite 43.7, fear/greed 30; capped at 15%.",
+          "model_rationale_zh": "Crypto composite 43.7，恐惧贪婪 30；上限 15%。",
           "model_current_pct": 6.7,
           "model_drift_pp": -2.3,
-          "gap_amount": 268289
+          "gap_amount": 263480
         }
       ],
       "model": {
         "schema": "portfolio-allocation-model/v1",
         "version": "0.1.0",
-        "generated_at": "2026-05-31T23:51:33.456757+00:00",
+        "generated_at": "2026-06-01T23:01:18.377384+00:00",
         "regime": {
           "name": "neutral",
-          "score": 47
+          "score": 52
         }
       },
-      "risk_free_rate": 3.62,
+      "risk_free_rate": 3.63,
       "weighted_return": {
         "target": 6.2,
-        "current": 4.5
+        "current": 5.2
       },
-      "projected_annual_yield": 534423,
+      "projected_annual_yield": 597451,
       "risk": {
         "target_vol": 10.3,
-        "current_vol": 5.6,
+        "current_vol": 6.1,
         "sharpe_target": 0.25,
-        "sharpe_current": 0.16,
-        "risk_free_rate": 3.62,
-        "temperature": 9,
+        "sharpe_current": 0.25,
+        "risk_free_rate": 3.63,
+        "temperature": 10,
         "temperature_label_en": "Defensive",
         "temperature_label_zh": "防御型"
       },
-      "health": 4,
+      "health": 3.9,
       "portfolio_beta": 1.15,
       "equity_beta": 1.04
     }
@@ -2302,58 +2302,6 @@
         ]
       },
       "price": 380.34,
-      "daily_change_pct": 0
-    },
-    {
-      "symbol": "IREN",
-      "market": "us",
-      "flag": "🇺🇸",
-      "sector_tags_en": [
-        "Bitcoin Mining",
-        "AI Infrastructure",
-        "Renewable Energy"
-      ],
-      "sector_tags_zh": [
-        "比特币挖矿",
-        "AI基础设施",
-        "可再生能源"
-      ],
-      "driver_factors_en": [],
-      "driver_factors_zh": [],
-      "thesis_en": "Bitcoin mining + AI data center pivot. Cheap renewable energy advantage for HPC/AI workloads.",
-      "thesis_zh": "比特币挖矿+AI数据中心转型。低成本可再生能源优势支撑HPC/AI算力。",
-      "stage": 3,
-      "status_en": "Active",
-      "status_zh": "持有中",
-      "conviction": "medium",
-      "horizon": "medium",
-      "entry_year": 2026,
-      "layer": "L1",
-      "layer_label_en": "Compute Infrastructure",
-      "layer_label_zh": "算力基础设施",
-      "stop": {
-        "type": "stop_loss",
-        "level_pct_from_current": "-19.2%",
-        "severity": "yellow",
-        "description": "IREN stop loss 18% below avg cost $62.63"
-      },
-      "target": null,
-      "next_event": null,
-      "news": {
-        "summary": "IREN moving from Bitcoin mining to AI infrastructure; $1.6B Dell hardware deal and NVIDIA/Microsoft contracts.",
-        "sentiment": "negative",
-        "items": [
-          {
-            "title": "IREN AI infrastructure transition",
-            "snippet": "IREN moving from Bitcoin mining to AI infrastructure; $1.6B Dell hardware deal and NVIDIA/Microsoft contracts."
-          },
-          {
-            "title": "IREN investor announcements",
-            "snippet": "Targeting $4.4B ARR with Blackwell deployment and $3B convertible notes offering."
-          }
-        ]
-      },
-      "price": 63.54,
       "daily_change_pct": 0
     },
     {
@@ -2863,100 +2811,14 @@
       "daily_change_pct": 0
     }
   ],
-  "crypto": {
-    "updated_at": "2026-05-01T07:26:13.923422",
-    "positions": [
-      {
-        "symbol": "BTC",
-        "role": "core",
-        "tags_en": [
-          "Digital Gold",
-          "Macro Uncertainty Hedge"
-        ],
-        "tags_zh": [
-          "数字黄金",
-          "宏观对冲"
-        ],
-        "thesis_en": "Non-derivative bet on sovereign money. DCA through bottom-tracker signals — the system doesn't predict price, it detects accumulation windows.",
-        "thesis_zh": "非衍生品的货币主权押注。通过底部追踪信号 DCA——系统不预测价格，只判断建仓窗口。",
-        "strategy_en": "Bottom Tracker",
-        "strategy_zh": "底部追踪",
-        "driver_factors_en": [
-          "Liquidity",
-          "USD",
-          "Regulation"
-        ],
-        "driver_factors_zh": [
-          "流动性",
-          "美元",
-          "监管"
-        ],
-        "news": {
-          "summary": "SpaceX reportedly maintains a $1.45B Bitcoin treasury.",
-          "sentiment": "neutral",
-          "items": [
-            {
-              "title": "SpaceX IPO with Bitcoin treasury",
-              "snippet": "SpaceX reportedly maintains a $1.45B Bitcoin treasury."
-            },
-            {
-              "title": "US Treasury seized Iran crypto",
-              "snippet": "Regulatory enforcement remains active around crypto assets."
-            }
-          ]
-        }
-      },
-      {
-        "symbol": "SNEK",
-        "role": "community",
-        "tags_en": [
-          "Cardano Ecosystem",
-          "Community",
-          "Meme"
-        ],
-        "tags_zh": [
-          "Cardano 生态",
-          "社区驱动",
-          "Meme"
-        ],
-        "thesis_en": "Cardano ecosystem proxy. Managed by community sentiment, KOL activity, and on-chain health — not traditional TA.",
-        "thesis_zh": "Cardano 生态敞口。看社区热度、KOL 活跃度和链上健康度，不走传统技术分析。",
-        "strategy_en": "Signal-Driven",
-        "strategy_zh": "信号驱动",
-        "driver_factors_en": [
-          "Cardano Liquidity",
-          "Community Momentum",
-          "Regulation"
-        ],
-        "driver_factors_zh": [
-          "Cardano 流动性",
-          "社区动能",
-          "监管"
-        ],
-        "news": {
-          "summary": "Cardano meme coin launchpad introduced creator fees paid in ADA.",
-          "sentiment": "neutral",
-          "items": [
-            {
-              "title": "Snek.fun rolls out ADA rewards",
-              "snippet": "Cardano meme coin launchpad introduced creator fees paid in ADA."
-            },
-            {
-              "title": "Latest Snek News Update",
-              "snippet": "SNEK featured among top Cardano memecoins; gamification/NFT plans and community activity noted."
-            }
-          ]
-        }
-      }
-    ]
-  },
+  "crypto": null,
   "crypto_monitor": {
-    "generated_at": "2026-06-01T06:35:01.495826+08:00",
+    "generated_at": "2026-06-02T06:36:56.123650+08:00",
     "data_freshness": {
       "market_data_available": true,
       "bottom_tracker_available": true,
       "dca_status_available": true,
-      "market_data_date": "2026-06-01"
+      "market_data_date": "2026-06-02"
     },
     "allocation": {
       "crypto": {
@@ -2966,18 +2828,22 @@
         "status": "underweight"
       },
       "stablecoin": {
-        "pct": 35,
+        "pct": 40.3,
         "target_pct": 40,
-        "gap_pp": -5,
+        "gap_pp": 0.3,
         "status": "normal"
       }
     },
     "macro": {
       "fear_greed": {
-        "value": 27,
+        "value": 30,
         "label": "Fear"
       },
       "fear_greed_7d": [
+        {
+          "value": 30,
+          "label": "Fear"
+        },
         {
           "value": 27,
           "label": "Fear"
@@ -3001,17 +2867,13 @@
         {
           "value": 33,
           "label": "Fear"
-        },
-        {
-          "value": 29,
-          "label": "Fear"
         }
       ],
       "btc_change_24h": null,
       "signals": []
     },
     "bottom_tracker": {
-      "score": 56.3,
+      "score": 65,
       "status": "底部特征显现，可关注",
       "indicators": [
         {
@@ -3019,9 +2881,9 @@
           "name_en": "Fear & Greed Index",
           "status": "yellow",
           "score": 50,
-          "detail_en": "Current:28",
-          "detail_zh": "当前:28",
-          "delta": 5,
+          "detail_en": "Current:29",
+          "detail_zh": "当前:29",
+          "delta": 1,
           "desc_en": "Crypto market sentiment composite (0–100)",
           "desc_zh": "加密市场情绪综合指数（0–100）"
         },
@@ -3041,9 +2903,9 @@
           "name_en": "Black Swan Intensity",
           "status": "red",
           "score": 20,
-          "detail_en": "BSS:39.2",
-          "detail_zh": "BSS:39.2",
-          "delta": 19.2,
+          "detail_en": "BSS:44.4",
+          "detail_zh": "BSS:44.4",
+          "delta": 5.2,
           "desc_en": "Multi-factor tail-risk model (BSS)",
           "desc_zh": "多因子尾部风险模型（BSS）"
         },
@@ -3052,20 +2914,20 @@
           "name_en": "Macro VIX",
           "status": "red",
           "score": 20,
-          "detail_en": "VIX:15.3",
-          "detail_zh": "VIX:15.3",
-          "delta": 0,
+          "detail_en": "VIX:16.0",
+          "detail_zh": "VIX:16.0",
+          "delta": 0.7,
           "desc_en": "S&P 500 implied volatility",
           "desc_zh": "标普500隐含波动率"
         },
         {
           "name_zh": "场外资金储备",
           "name_en": "OTC Reserve (SSR)",
-          "status": "yellow",
-          "score": 50,
-          "detail_en": "，",
-          "detail_zh": "数据获取失败，使用默认值",
-          "delta": null,
+          "status": "green",
+          "score": 80,
+          "detail_en": "SSR:10.4%, Abundant OTC",
+          "detail_zh": "SSR:10.4%, 场外充裕",
+          "delta": 0,
           "desc_en": "Stablecoin Supply Ratio — off-exchange liquidity",
           "desc_zh": "稳定币供应比率 — 场外流动性"
         },
@@ -3074,9 +2936,9 @@
           "name_en": "MVRV Z-Score",
           "status": "green",
           "score": 80,
-          "detail_en": "Z:-1.13, Severely Undervalued",
-          "detail_zh": "Z:-1.13, 严重低估",
-          "delta": 0.01,
+          "detail_en": "Z:-1.28, Severely Undervalued",
+          "detail_zh": "Z:-1.28, 严重低估",
+          "delta": -0.15,
           "desc_en": "Market-to-Realized Value ratio (deviation from historical mean)",
           "desc_zh": "市值/已实现价值比（偏离历史均值程度）"
         },
@@ -3085,9 +2947,9 @@
           "name_en": "BTC ETF Flow",
           "status": "yellow",
           "score": 50,
-          "detail_en": "-4M, Neutral Flow",
-          "detail_zh": "-4M, 资金中性",
-          "delta": 0,
+          "detail_en": "+32M, Neutral Flow",
+          "detail_zh": "+32M, 资金中性",
+          "delta": 36,
           "desc_en": "Daily net inflow/outflow of spot BTC ETFs (USD millions)",
           "desc_zh": "BTC 现货 ETF 每日净流入/流出（百万美元）"
         },
@@ -3096,41 +2958,41 @@
           "name_en": "Dollar Index (DXY)",
           "status": "red",
           "score": 20,
-          "detail_en": "DXY:99.0, Weak USD risk-on",
-          "detail_zh": "DXY:99.0, 美元偏弱",
-          "delta": 0.1,
+          "detail_en": "DXY:99.2, Weak USD risk-on",
+          "detail_zh": "DXY:99.2, 美元偏弱",
+          "delta": 0.2,
           "desc_en": "US Dollar strength — inverse correlation with BTC",
           "desc_zh": "美元强度 — 与 BTC 负相关"
         }
       ]
     },
     "etf": {
-      "btc_etf_net_flow_m": -4,
-      "btc_etf_total_volume_m": 2093,
+      "btc_etf_net_flow_m": 32,
+      "btc_etf_total_volume_m": 2788,
       "source": "yfinance-estimate",
       "etfs": [
         {
           "ticker": "IBIT",
-          "volume_usd_m": 1664
+          "volume_usd_m": 2181
         },
         {
           "ticker": "FBTC",
-          "volume_usd_m": 189
+          "volume_usd_m": 319
         },
         {
           "ticker": "GBTC",
-          "volume_usd_m": 131
+          "volume_usd_m": 156
         },
         {
           "ticker": "ARKB",
-          "volume_usd_m": 45
+          "volume_usd_m": 52
         },
         {
           "ticker": "BITB",
-          "volume_usd_m": 64
+          "volume_usd_m": 79
         }
       ],
-      "date": "2026-06-01"
+      "date": "2026-06-02"
     },
     "dca": {
       "status": "closed",
@@ -3168,20 +3030,15 @@
       "chain_supply_status": "normal"
     },
     "snek": {
-      "has_position": true,
+      "has_position": false,
       "signals": [],
-      "note": "流动性/社区热度数据由 Alpha Radar 提供"
+      "note": null
     },
     "action_signals": [
       {
         "priority": 1,
         "type": "crypto_underweight",
         "detail": "Crypto 6.7% (target 15%), DCA closed"
-      },
-      {
-        "priority": 2,
-        "type": "stablecoin_underweight",
-        "detail": "Stablecoin 35% (target 40%)"
       }
     ],
     "buckets": [
@@ -3325,8 +3182,8 @@
   "watchlist_heatmap": {
     "source": "investment-strategy-registry",
     "registry_file": "investment-strategy/macro/watchlist-registry.json",
-    "registry_count": 36,
-    "eligible_count": 29,
+    "registry_count": 39,
+    "eligible_count": 35,
     "tickers": [
       "AAOI",
       "AAPL",
@@ -3338,6 +3195,7 @@
       "COIN",
       "CRCL",
       "CRM",
+      "CRWD",
       "CRWV",
       "EQT",
       "ETN",
@@ -3348,15 +3206,20 @@
       "ILMN",
       "LITE",
       "LNG",
+      "MOD",
       "MRVL",
       "MU",
+      "NEE",
       "NOW",
       "NVDA",
       "OUST",
       "POET",
+      "PWR",
       "TEM",
+      "TSLA",
       "VRT",
-      "VST"
+      "VST",
+      "WMB"
     ],
     "ticker_names": {
       "AAOI": "Applied Optoelectronics v2.0 完整调研报告",
@@ -3365,10 +3228,11 @@
       "AVGO": "Broadcom 大师圆桌决策简报",
       "BKR": "Baker Hughes v2.0 刷新报告",
       "BOT": "RoboStrategy— 私募机器人资产上市壳研究",
-      "CEG": "Constellation Energy 近半月研报调研 × 圆桌讨论逻辑一致性审查",
+      "CEG": "AI Inflection Radar Weekly Report — 2026 06 01",
       "COIN": "Coinbase Global 深度研究 × v2.0 流程产物",
       "CRCL": "Circle Internet Group 深度研究 × v2.0 流程产物",
       "CRM": "Salesforce v2.0 完整调研报告",
+      "CRWD": "CrowdStrike v2.0 完整调研报告",
       "CRWV": "CoreWeave 大师圆桌决策简报",
       "EQT": "Corporation 阶段 4 深度研究档案",
       "ETN": "Eaton Corporation 近半月研报调研 × 圆桌讨论逻辑一致性审查",
@@ -3379,15 +3243,20 @@
       "ILMN": "Illumina v2.0 完整调研报告",
       "LITE": "Lumentum Holdings v2.0 完整调研报告",
       "LNG": "Cheniere Energy 近半月研报调研 × 圆桌讨论逻辑一致性审查",
+      "MOD": "Modine Manufacturing 阶段 4 深度研究档案",
       "MRVL": "Marvell Technology 完整投资调研报告",
       "MU": "Micron Technology v2.0 完整调研报告",
+      "NEE": "NextEra Energy v2.0 完整调研报告",
       "NOW": "ServiceNow v2.0 完整调研报告",
       "NVDA": "NVIDIA 深度研究报告",
       "OUST": "Ouster v2.0 完整调研报告",
       "POET": "Technologies v2.0 完整调研报告",
+      "PWR": "Quanta Services v2.0 完整调研报告",
       "TEM": "Tempus AI 大师圆桌决策简报",
+      "TSLA": "Tesla 深度研究报告",
       "VRT": "Vertiv Holdings（NYSE: ）公司深研：AI 数据中心“电力 + 热管理”纯度最高的一档",
-      "VST": "AI Inflection Radar Weekly Report — 2026 05 11"
+      "VST": "AI Inflection Radar Weekly Report — 2026 05 11",
+      "WMB": "Williams Companies 阶段 4 深度研究档案"
     },
     "ticker_meta": {
       "AAOI": {
@@ -3395,18 +3264,18 @@
         "name": "Applied Optoelectronics v2.0 完整调研报告",
         "market": "US",
         "status": "watching",
-        "thesis": "我的判断：AAOI 是 AI 光模块周期里弹性非常大的供应链票，但现在更像“高 beta 产能兑现期权”，不是舒服的长期买点。 Q1 2026 data-center revenue +154% YoY，800G 首次向大型 hyperscaler volume shipment，800G/1.6T 产能从 Q1 近 10 万只/月扩到年底目标 >65 万只/月；这是真变化。但公司仍 GAAP / non-GAAP 亏损，Q1 operating cash flow -$85M，客户集中和 Digicomm AR 集中非常刺眼，且股价 6 个月约 +72",
+        "thesis": "我的判断：AAOI 是 AI 光模块里弹性最猛的一类票，但不是 Rex 组合里的舒服核心仓；它是“800G/1.6T 产能兑现期权”。 需求端是真变化：公司已披露 800G 对大型 hyperscaler 的首次 volume shipment，1.6T 首个大客户 volume order 超过 $200M，年底 800G/1.6T 产能目标超过 500k–650k units/month。但资本市场已经把故事打得很满：TTM P/S 约 27x、仍亏损、OCF/FCF 深度为负、客户/应收集中极高，还叠加 ATM 稀释。",
         "quant_rating": {
           "composite": 3.78,
           "rating": "Buy"
         },
         "target": 230,
         "stoploss": 115,
-        "pe_threshold": 36.3,
+        "pe_threshold": null,
         "catalysts": [],
         "invalidation": null,
-        "report_date": "2026-05-19",
-        "last_reviewed": "2026-05-19",
+        "report_date": "2026-06-01",
+        "last_reviewed": "2026-06-01",
         "quant": {
           "composite": 3.78,
           "rating": "Buy",
@@ -3416,8 +3285,8 @@
               "grade": "B",
               "score": 3.5,
               "metrics": {
-                "pb": 11.3,
-                "ps": 25.1,
+                "pb": 12.5,
+                "ps": 27.7,
                 "peg": 0.78
               }
             },
@@ -3442,11 +3311,11 @@
               "grade": "A+",
               "score": 4.9,
               "metrics": {
-                "priceChange1M": 0.1541,
-                "priceChange3M": 1.8152,
-                "priceChange6M": 6.3236,
-                "vs50dma": 0.0705,
-                "vs200dma": 1.402
+                "priceChange1M": 0.142,
+                "priceChange3M": 2.0029,
+                "priceChange6M": 7.3547,
+                "vs50dma": 0.168,
+                "vs200dma": 1.6164
               }
             },
             "epsRevisions": {
@@ -3482,62 +3351,55 @@
         "report_date": "2026-04-01",
         "last_reviewed": "2026-04-01",
         "quant": {
-          "composite": 3.82,
+          "composite": 3.78,
           "rating": "Buy",
-          "score": 3.82,
+          "score": 3.78,
           "factors": {
             "valuation": {
-              "grade": "B-",
-              "score": 3.2,
+              "grade": "C+",
+              "score": 2.8,
               "metrics": {
-                "pe": 34.1,
-                "pb": 51.8,
-                "ps": 9.2,
-                "peg": 1.51,
-                "evEbitda": 27
+                "pe": 37.2,
+                "pb": 42.4,
+                "ps": 10,
+                "peg": 2.72,
+                "evEbitda": 28.8
               }
             },
             "growth": {
-              "grade": "C-",
-              "score": 2.2,
+              "grade": "C+",
+              "score": 2.8,
               "metrics": {
-                "revenueGrowth": 0.064,
-                "earningsGrowth": 0.195,
-                "epsGrowth": 0.226,
-                "ebitdaGrowth": 0.07,
-                "fcfGrowth": -0.092
+                "revenueGrowth": 0.166,
+                "earningsGrowth": 0.218,
+                "epsGrowth": 0.194
               }
             },
             "profitability": {
               "grade": "B",
               "score": 3.5,
               "metrics": {
-                "grossMargin": 0.469,
-                "operatingMargin": 0.32,
-                "netMargin": 0.269,
-                "interestCoverage": 0,
-                "roic": 0.52,
+                "grossMargin": 0.479,
+                "operatingMargin": 0.323,
+                "netMargin": 0.272,
                 "roe": 1.415
               }
             },
             "momentum": {
-              "grade": "A-",
-              "score": 4.2,
+              "grade": "B+",
+              "score": 3.8,
               "metrics": {
-                "priceChange1M": 0.1538,
-                "priceChange3M": 0.1477,
-                "priceChange6M": 0.1689,
-                "vs50dma": 0.1343,
-                "vs200dma": 0.1875
+                "priceChange1M": 0.14,
+                "priceChange3M": 0.1231,
+                "priceChange6M": 0.1527,
+                "vs50dma": 0.1137,
+                "vs200dma": 0.1693
               }
             },
             "epsRevisions": {
               "grade": "A+",
               "score": 4.9,
               "metrics": {
-                "priceTarget": 319.44,
-                "priceTargetHigh": 400,
-                "priceTargetLow": 253,
                 "analystSentiment": 0.8,
                 "numAnalysts": 43,
                 "peRatioFwdVsTrail": 0.861
@@ -3547,9 +3409,9 @@
               "grade": "A+",
               "score": 4.9,
               "metrics": {
-                "payoutRatio": 0.138,
-                "dividendYield": 0.004,
-                "dividendRate": 1.03
+                "payoutRatio": 0.126,
+                "dividendYield": 0.35,
+                "dividendRate": 1.08
               }
             }
           }
@@ -3581,8 +3443,8 @@
               "grade": "C",
               "score": 2.5,
               "metrics": {
-                "pe": 42.4,
-                "pb": 14.9,
+                "pe": 42.5,
+                "pb": 15,
                 "ps": 12.3,
                 "peg": 1.53,
                 "evEbitda": 38.4
@@ -3611,11 +3473,11 @@
               "grade": "A+",
               "score": 4.9,
               "metrics": {
-                "priceChange1M": 0.1824,
-                "priceChange3M": 0.1923,
-                "priceChange6M": 0.9766,
-                "vs50dma": 0.1342,
-                "vs200dma": 0.542
+                "priceChange1M": 0.1815,
+                "priceChange3M": 0.1446,
+                "priceChange6M": 1.0145,
+                "vs50dma": 0.1324,
+                "vs200dma": 0.54
               }
             },
             "epsRevisions": {
@@ -3662,9 +3524,9 @@
               "grade": "D",
               "score": 1.5,
               "metrics": {
-                "pe": 86.9,
-                "pb": 26.5,
-                "ps": 31,
+                "pe": 89.3,
+                "pb": 27.2,
+                "ps": 31.8,
                 "peg": 0.97,
                 "evEbitda": 58.2
               }
@@ -3692,11 +3554,11 @@
               "grade": "A",
               "score": 4.5,
               "metrics": {
-                "priceChange1M": 0.1174,
-                "priceChange3M": 0.3755,
-                "priceChange6M": 0.3091,
-                "vs50dma": 0.1584,
-                "vs200dma": 0.2714
+                "priceChange1M": 0.1323,
+                "priceChange3M": 0.3844,
+                "priceChange6M": 0.3537,
+                "vs50dma": 0.1818,
+                "vs200dma": 0.3037
               }
             },
             "epsRevisions": {
@@ -3743,9 +3605,9 @@
               "grade": "B+",
               "score": 3.8,
               "metrics": {
-                "pe": 20.4,
-                "pb": 3.3,
-                "ps": 2.3,
+                "pe": 20.1,
+                "pb": 3.2,
+                "ps": 2.2,
                 "peg": 2.56,
                 "evEbitda": 13.2
               }
@@ -3773,11 +3635,11 @@
               "grade": "B",
               "score": 3.5,
               "metrics": {
-                "priceChange1M": -0.0529,
-                "priceChange3M": -0.0097,
-                "priceChange6M": 0.3437,
-                "vs50dma": 0.0014,
-                "vs200dma": 0.1943
+                "priceChange1M": -0.083,
+                "priceChange3M": -0.0264,
+                "priceChange6M": 0.3179,
+                "vs50dma": -0.0149,
+                "vs200dma": 0.1735
               }
             },
             "epsRevisions": {
@@ -3834,30 +3696,30 @@
       },
       "CEG": {
         "ticker": "CEG",
-        "name": "Constellation Energy 近半月研报调研 × 圆桌讨论逻辑一致性审查",
+        "name": "AI Inflection Radar Weekly Report — 2026 06 01",
         "market": "US",
         "status": "watching",
-        "thesis": "本文采用 research-report-analyzer Skill(买方视角可交易结论提炼器),将近半月多源研报与公告数据压缩为\"主命题 → 三条硬结论 → 因果拓扑 → 置信度\"四段式,末尾附与 2026-04-13 圆桌讨论的一致性审查表。CEG 在圆桌原方案中属于\"条件通过\"标的(需 PE <30x 才买),当前 TTM PE 30.3x / Fwd PE 24.6x 刚好触及触发条件。",
+        "thesis": "AI Inflection Radar Weekly Report — 2026-06-01",
         "quant_rating": null,
-        "target": 460,
+        "target": null,
         "stoploss": null,
-        "pe_threshold": 30,
+        "pe_threshold": null,
         "catalysts": [],
         "invalidation": null,
-        "report_date": "2026-04-01",
-        "last_reviewed": "2026-04-01",
+        "report_date": "2026-06-01",
+        "last_reviewed": "2026-06-01",
         "quant": {
-          "composite": 3.87,
+          "composite": 3.75,
           "rating": "Buy",
-          "score": 3.87,
+          "score": 3.75,
           "factors": {
             "valuation": {
               "grade": "B+",
               "score": 3.8,
               "metrics": {
-                "pe": 25,
-                "pb": 3.1,
-                "ps": 3.5,
+                "pe": 23.5,
+                "pb": 2.9,
+                "ps": 3.3,
                 "peg": 3.74,
                 "evEbitda": 15.8
               }
@@ -3882,14 +3744,14 @@
               }
             },
             "momentum": {
-              "grade": "C",
-              "score": 2.5,
+              "grade": "D+",
+              "score": 1.8,
               "metrics": {
-                "priceChange1M": -0.0573,
-                "priceChange3M": -0.0769,
-                "priceChange6M": -0.1479,
-                "vs50dma": -0.0151,
-                "vs200dma": -0.1072
+                "priceChange1M": -0.0865,
+                "priceChange3M": -0.1663,
+                "priceChange6M": -0.1995,
+                "vs50dma": -0.0699,
+                "vs200dma": -0.1588
               }
             },
             "epsRevisions": {
@@ -3928,17 +3790,17 @@
         "report_date": "2026-04-01",
         "last_reviewed": "2026-04-01",
         "quant": {
-          "composite": 3.1,
+          "composite": 3,
           "rating": "Hold",
-          "score": 3.1,
+          "score": 3,
           "factors": {
             "valuation": {
               "grade": "D+",
               "score": 1.8,
               "metrics": {
-                "pe": 69.5,
-                "pb": 3.7,
-                "ps": 7.9,
+                "pe": 65.5,
+                "pb": 3.5,
+                "ps": 7.5,
                 "peg": 1.05,
                 "evEbitda": 47.2
               }
@@ -3961,14 +3823,14 @@
               }
             },
             "momentum": {
-              "grade": "C+",
-              "score": 2.8,
+              "grade": "C-",
+              "score": 2.2,
               "metrics": {
-                "priceChange1M": -0.0261,
-                "priceChange3M": 0.1666,
-                "priceChange6M": -0.2838,
-                "vs50dma": -0.0017,
-                "vs200dma": -0.2391
+                "priceChange1M": -0.0201,
+                "priceChange3M": -0.0319,
+                "priceChange6M": -0.3198,
+                "vs50dma": -0.0571,
+                "vs200dma": -0.281
               }
             },
             "epsRevisions": {
@@ -4010,11 +3872,11 @@
           "score": 3.47,
           "factors": {
             "valuation": {
-              "grade": "A",
-              "score": 4.5,
+              "grade": "A+",
+              "score": 4.9,
               "metrics": {
-                "pb": 8.2,
-                "ps": 10.6,
+                "pb": 7.6,
+                "ps": 9.8,
                 "peg": 4.34
               }
             },
@@ -4038,14 +3900,14 @@
               }
             },
             "momentum": {
-              "grade": "A+",
-              "score": 4.9,
+              "grade": "A",
+              "score": 4.5,
               "metrics": {
-                "priceChange1M": 0.1977,
-                "priceChange3M": 0.8413,
-                "priceChange6M": 0.4754,
-                "vs50dma": 0.0669,
-                "vs200dma": 0.0991
+                "priceChange1M": 0.0954,
+                "priceChange3M": 0.2591,
+                "priceChange6M": 0.3666,
+                "vs50dma": -0.0073,
+                "vs200dma": 0.0206
               }
             },
             "epsRevisions": {
@@ -4084,17 +3946,17 @@
         "report_date": "2026-05-18",
         "last_reviewed": "2026-05-18",
         "quant": {
-          "composite": 3.9,
+          "composite": 3.97,
           "rating": "Buy",
-          "score": 3.9,
+          "score": 3.97,
           "factors": {
             "valuation": {
               "grade": "B+",
               "score": 3.8,
               "metrics": {
-                "pe": 22.1,
-                "pb": 4.6,
-                "ps": 3.7,
+                "pe": 24,
+                "pb": 5,
+                "ps": 4,
                 "peg": 0.93,
                 "evEbitda": 14.5
               }
@@ -4119,14 +3981,14 @@
               }
             },
             "momentum": {
-              "grade": "C+",
-              "score": 2.8,
+              "grade": "B-",
+              "score": 3.2,
               "metrics": {
-                "priceChange1M": 0.0539,
-                "priceChange3M": 0.0332,
-                "priceChange6M": -0.1905,
-                "vs50dma": 0.0577,
-                "vs200dma": -0.1336
+                "priceChange1M": 0.1438,
+                "priceChange3M": 0.0837,
+                "priceChange6M": -0.1086,
+                "vs50dma": 0.1456,
+                "vs200dma": -0.0597
               }
             },
             "epsRevisions": {
@@ -4135,7 +3997,7 @@
               "metrics": {
                 "analystSentiment": 0.88,
                 "numAnalysts": 52,
-                "peRatioFwdVsTrail": 0.558
+                "peRatioFwdVsTrail": 0.556
               }
             },
             "dividend": {
@@ -4145,6 +4007,80 @@
                 "payoutRatio": 0.196,
                 "dividendYield": 0.92,
                 "dividendRate": 1.76
+              }
+            }
+          }
+        }
+      },
+      "CRWD": {
+        "ticker": "CRWD",
+        "name": "CrowdStrike v2.0 完整调研报告",
+        "market": "US",
+        "status": "watching",
+        "thesis": "CrowdStrike 是网络安全里最强的一批资产：云原生 Falcon 平台、端点遥测网络效应、模块化扩张、ARR 超 $5B 后仍能 20%+ 增长，且自由现金流质量很好。但当前 $731 对应约 30.5x FY27 revenue guide / 120x FY26 FCF，价格已经把“AI 安全平台 + 2036 年 $20B ARR 目标 + 事故完全修复”都提前吃进去了。",
+        "quant_rating": null,
+        "target": null,
+        "stoploss": null,
+        "pe_threshold": null,
+        "catalysts": [],
+        "invalidation": null,
+        "report_date": "2026-05-31",
+        "last_reviewed": "2026-05-31",
+        "quant": {
+          "composite": 3.75,
+          "rating": "Buy",
+          "score": 3.75,
+          "factors": {
+            "valuation": {
+              "grade": "C",
+              "score": 2.5,
+              "metrics": {
+                "pb": 43.4,
+                "ps": 40.1,
+                "peg": 6.03
+              }
+            },
+            "growth": {
+              "grade": "B-",
+              "score": 3.2,
+              "metrics": {
+                "revenueGrowth": 0.233
+              }
+            },
+            "profitability": {
+              "grade": "C",
+              "score": 2.5,
+              "metrics": {
+                "grossMargin": 0.748,
+                "operatingMargin": 0.01,
+                "netMargin": -0.034,
+                "roe": -0.041
+              }
+            },
+            "momentum": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "priceChange1M": 0.6773,
+                "priceChange3M": 1.0885,
+                "priceChange6M": 0.4771,
+                "vs50dma": 0.5513,
+                "vs200dma": 0.608
+              }
+            },
+            "epsRevisions": {
+              "grade": "A",
+              "score": 4.5,
+              "metrics": {
+                "analystSentiment": 0.86,
+                "numAnalysts": 51
+              }
+            },
+            "dividend": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "payoutRatio": 0
               }
             }
           }
@@ -4165,16 +4101,16 @@
         "report_date": "2026-05-08",
         "last_reviewed": "2026-05-08",
         "quant": {
-          "composite": 4.2,
+          "composite": 4.25,
           "rating": "Buy",
-          "score": 4.2,
+          "score": 4.25,
           "factors": {
             "valuation": {
-              "grade": "A+",
-              "score": 4.9,
+              "grade": "A",
+              "score": 4.5,
               "metrics": {
-                "pb": 12.2,
-                "ps": 9.6,
+                "pb": 14.1,
+                "ps": 11,
                 "evEbitda": 30.6
               }
             },
@@ -4196,14 +4132,14 @@
               }
             },
             "momentum": {
-              "grade": "A-",
-              "score": 4.2,
+              "grade": "A+",
+              "score": 4.9,
               "metrics": {
-                "priceChange1M": 0.0379,
-                "priceChange3M": 0.103,
-                "priceChange6M": 0.454,
-                "vs50dma": 0.0556,
-                "vs200dma": 0.0992
+                "priceChange1M": 0.1011,
+                "priceChange3M": 0.2828,
+                "priceChange6M": 0.6786,
+                "vs50dma": 0.2013,
+                "vs200dma": 0.2612
               }
             },
             "epsRevisions": {
@@ -4247,7 +4183,7 @@
               "grade": "A",
               "score": 4.5,
               "metrics": {
-                "pe": 10.4,
+                "pe": 10.5,
                 "pb": 1.4,
                 "ps": 3.7,
                 "peg": 2.49,
@@ -4277,11 +4213,11 @@
               "grade": "C",
               "score": 2.5,
               "metrics": {
-                "priceChange1M": -0.073,
-                "priceChange3M": -0.0569,
-                "priceChange6M": -0.0644,
-                "vs50dma": -0.0721,
-                "vs200dma": -0.0227
+                "priceChange1M": -0.0606,
+                "priceChange3M": -0.0649,
+                "priceChange6M": -0.0522,
+                "vs50dma": -0.0618,
+                "vs200dma": -0.0153
               }
             },
             "epsRevisions": {
@@ -4328,9 +4264,9 @@
               "grade": "C+",
               "score": 2.8,
               "metrics": {
-                "pe": 39.2,
+                "pe": 39,
                 "pb": 7.9,
-                "ps": 5.5,
+                "ps": 5.4,
                 "peg": 3.02,
                 "evEbitda": 27.9
               }
@@ -4358,11 +4294,11 @@
               "grade": "B",
               "score": 3.5,
               "metrics": {
-                "priceChange1M": -0.0275,
-                "priceChange3M": 0.0758,
-                "priceChange6M": 0.1757,
-                "vs50dma": 0.0199,
-                "vs200dma": 0.1036
+                "priceChange1M": -0.0261,
+                "priceChange3M": 0.0744,
+                "priceChange6M": 0.1863,
+                "vs50dma": 0.0137,
+                "vs200dma": 0.0984
               }
             },
             "epsRevisions": {
@@ -4401,41 +4337,37 @@
         "report_date": "2026-04-01",
         "last_reviewed": "2026-04-01",
         "quant": {
-          "composite": 4.13,
+          "composite": 4.3,
           "rating": "Buy",
-          "score": 4.13,
+          "score": 4.3,
           "factors": {
             "valuation": {
               "grade": "B",
               "score": 3.5,
               "metrics": {
                 "pe": 28.7,
-                "pb": 9.1,
-                "ps": 9.4,
-                "peg": 0.84,
-                "evEbitda": 21.2
+                "pb": 9.5,
+                "ps": 10.8,
+                "peg": 1.5,
+                "evEbitda": 28.4
               }
             },
             "growth": {
-              "grade": "B-",
-              "score": 3.2,
+              "grade": "A-",
+              "score": 4.2,
               "metrics": {
-                "revenueGrowth": 0.151,
-                "earningsGrowth": 0.32,
-                "epsGrowth": 0.342,
-                "ebitdaGrowth": 0.329,
-                "fcfGrowth": 0.007
+                "revenueGrowth": 0.218,
+                "earningsGrowth": 0.82,
+                "epsGrowth": 0.812
               }
             },
             "profitability": {
               "grade": "B+",
               "score": 3.8,
               "metrics": {
-                "grossMargin": 0.597,
-                "operatingMargin": 0.321,
-                "netMargin": 0.328,
-                "interestCoverage": 903.3,
-                "roic": 0.218,
+                "grossMargin": 0.604,
+                "operatingMargin": 0.361,
+                "netMargin": 0.379,
                 "roe": 0.389
               }
             },
@@ -4443,20 +4375,17 @@
               "grade": "A",
               "score": 4.5,
               "metrics": {
-                "priceChange1M": 0.0874,
-                "priceChange3M": 0.2242,
-                "priceChange6M": 0.3362,
-                "vs50dma": 0.0943,
-                "vs200dma": 0.2691
+                "priceChange1M": 0.0749,
+                "priceChange3M": 0.203,
+                "priceChange6M": 0.325,
+                "vs50dma": 0.0779,
+                "vs200dma": 0.2515
               }
             },
             "epsRevisions": {
               "grade": "A+",
               "score": 4.9,
               "metrics": {
-                "priceTarget": 406.28,
-                "priceTargetHigh": 460,
-                "priceTargetLow": 355,
                 "analystSentiment": 0.91,
                 "numAnalysts": 53,
                 "peRatioFwdVsTrail": 0.905
@@ -4466,9 +4395,9 @@
               "grade": "A+",
               "score": 4.9,
               "metrics": {
-                "payoutRatio": 0.076,
-                "dividendYield": 0.0026,
-                "dividendRate": 0.83
+                "payoutRatio": 0.064,
+                "dividendYield": 0.23,
+                "dividendRate": 0.88
               }
             }
           }
@@ -4497,7 +4426,7 @@
               "grade": "A+",
               "score": 4.9,
               "metrics": {
-                "pe": 8.5,
+                "pe": 8.7,
                 "pb": 1.5,
                 "ps": 1.6,
                 "evEbitda": 8.3
@@ -4526,11 +4455,11 @@
               "grade": "B",
               "score": 3.5,
               "metrics": {
-                "priceChange1M": -0.1277,
-                "priceChange3M": 0.1007,
-                "priceChange6M": 0.2585,
-                "vs50dma": -0.077,
-                "vs200dma": 0.1897
+                "priceChange1M": -0.1126,
+                "priceChange3M": 0.1254,
+                "priceChange6M": 0.2696,
+                "vs50dma": -0.0605,
+                "vs200dma": 0.2104
               }
             },
             "epsRevisions": {
@@ -4567,17 +4496,17 @@
         "report_date": "2026-04-01",
         "last_reviewed": "2026-04-01",
         "quant": {
-          "composite": 3.75,
+          "composite": 3.7,
           "rating": "Buy",
-          "score": 3.75,
+          "score": 3.7,
           "factors": {
             "valuation": {
               "grade": "C",
               "score": 2.5,
               "metrics": {
-                "pe": 45.8,
-                "pb": 9.1,
-                "ps": 18.4,
+                "pe": 42.2,
+                "pb": 8.4,
+                "ps": 17,
                 "peg": 2.64
               }
             },
@@ -4601,14 +4530,14 @@
               }
             },
             "momentum": {
-              "grade": "B",
-              "score": 3.5,
+              "grade": "B-",
+              "score": 3.2,
               "metrics": {
-                "priceChange1M": 0.149,
-                "priceChange3M": 0.2849,
-                "priceChange6M": -0.1869,
-                "vs50dma": 0.2282,
-                "vs200dma": -0.0925
+                "priceChange1M": 0.2214,
+                "priceChange3M": 0.1217,
+                "priceChange6M": -0.2392,
+                "vs50dma": 0.1288,
+                "vs200dma": -0.1622
               }
             },
             "epsRevisions": {
@@ -4645,17 +4574,17 @@
         "report_date": "2026-04-01",
         "last_reviewed": "2026-04-01",
         "quant": {
-          "composite": 3.45,
+          "composite": 3.4,
           "rating": "Hold",
-          "score": 3.45,
+          "score": 3.4,
           "factors": {
             "valuation": {
               "grade": "B",
               "score": 3.5,
               "metrics": {
-                "pe": 28,
-                "pb": 6.6,
-                "ps": 4.2,
+                "pe": 27.2,
+                "pb": 6.4,
+                "ps": 4,
                 "peg": 2.29,
                 "evEbitda": 18.6
               }
@@ -4680,14 +4609,14 @@
               }
             },
             "momentum": {
-              "grade": "C+",
-              "score": 2.8,
+              "grade": "C",
+              "score": 2.5,
               "metrics": {
-                "priceChange1M": -0.1279,
-                "priceChange3M": -0.0957,
-                "priceChange6M": 0.1363,
-                "vs50dma": -0.0593,
-                "vs200dma": 0.0174
+                "priceChange1M": -0.1562,
+                "priceChange3M": -0.125,
+                "priceChange6M": 0.1107,
+                "vs50dma": -0.0865,
+                "vs200dma": -0.0135
               }
             },
             "epsRevisions": {
@@ -4737,8 +4666,8 @@
               "grade": "B",
               "score": 3.5,
               "metrics": {
-                "pe": 29.6,
-                "pb": 9.3,
+                "pe": 29.5,
+                "pb": 9.2,
                 "ps": 5.6,
                 "peg": 2.86,
                 "evEbitda": 22.6
@@ -4767,11 +4696,11 @@
               "grade": "A+",
               "score": 4.9,
               "metrics": {
-                "priceChange1M": 0.284,
-                "priceChange3M": 0.326,
-                "priceChange6M": 0.3571,
-                "vs50dma": 0.218,
-                "vs200dma": 0.3328
+                "priceChange1M": 0.3498,
+                "priceChange3M": 0.3332,
+                "priceChange6M": 0.3321,
+                "vs50dma": 0.2079,
+                "vs200dma": 0.3255
               }
             },
             "epsRevisions": {
@@ -4816,9 +4745,9 @@
               "grade": "F",
               "score": 1,
               "metrics": {
-                "pe": 151.6,
-                "pb": 72.1,
-                "ps": 26.7,
+                "pe": 154,
+                "pb": 73.3,
+                "ps": 27.2,
                 "peg": 0.63,
                 "evEbitda": 120.8
               }
@@ -4844,11 +4773,11 @@
               "grade": "A+",
               "score": 4.9,
               "metrics": {
-                "priceChange1M": 0.0804,
-                "priceChange3M": 0.2422,
-                "priceChange6M": 2.5319,
-                "vs50dma": -0.0122,
-                "vs200dma": 0.8669
+                "priceChange1M": 0.0119,
+                "priceChange3M": 0.2006,
+                "priceChange6M": 2.5101,
+                "vs50dma": 0.0013,
+                "vs200dma": 0.8811
               }
             },
             "epsRevisions": {
@@ -4885,16 +4814,16 @@
         "report_date": "2026-04-01",
         "last_reviewed": "2026-04-01",
         "quant": {
-          "composite": 3.2,
+          "composite": 3.27,
           "rating": "Hold",
-          "score": 3.2,
+          "score": 3.27,
           "factors": {
             "valuation": {
               "grade": "C+",
               "score": 2.8,
               "metrics": {
-                "pe": 38,
-                "pb": 12.6,
+                "pe": 39.2,
+                "pb": 13,
                 "ps": 2.3,
                 "peg": 9.46,
                 "evEbitda": 13
@@ -4918,14 +4847,14 @@
               }
             },
             "momentum": {
-              "grade": "C+",
-              "score": 2.8,
+              "grade": "B-",
+              "score": 3.2,
               "metrics": {
-                "priceChange1M": -0.1494,
-                "priceChange3M": 0.02,
-                "priceChange6M": 0.05,
-                "vs50dma": -0.1389,
-                "vs200dma": -0.0187
+                "priceChange1M": -0.1468,
+                "priceChange3M": 0.0525,
+                "priceChange6M": 0.0961,
+                "vs50dma": -0.1092,
+                "vs200dma": 0.0112
               }
             },
             "epsRevisions": {
@@ -4948,6 +4877,21 @@
             }
           }
         }
+      },
+      "MOD": {
+        "ticker": "MOD",
+        "name": "Modine Manufacturing 阶段 4 深度研究档案",
+        "market": "US",
+        "status": "rejected",
+        "thesis": "Modine 是全球领先的数据中心液冷 + HVAC 龙头,Climate Solutions 占营收 70%+、数据中心业务增速 +78%,FY28 目标数据中心营收 $2B;但 52 周涨 +212% 后认知差消失,Fwd PE 30× / R:R < 1,当前是\"好公司错价格\"教科书案例。",
+        "quant_rating": null,
+        "target": 290,
+        "stoploss": null,
+        "pe_threshold": 30,
+        "catalysts": [],
+        "invalidation": null,
+        "report_date": "2026-04-01",
+        "last_reviewed": "2026-04-01"
       },
       "MRVL": {
         "ticker": "MRVL",
@@ -4975,9 +4919,9 @@
               "grade": "D+",
               "score": 1.8,
               "metrics": {
-                "pe": 70.4,
-                "pb": 12.1,
-                "ps": 20.6,
+                "pe": 72.9,
+                "pb": 12.6,
+                "ps": 21.3,
                 "peg": 1.17,
                 "evEbitda": 66.7
               }
@@ -5005,11 +4949,11 @@
               "grade": "A+",
               "score": 4.9,
               "metrics": {
-                "priceChange1M": 0.3379,
-                "priceChange3M": 1.6164,
-                "priceChange6M": 1.4596,
-                "vs50dma": 0.3978,
-                "vs200dma": 1.0839
+                "priceChange1M": 0.3544,
+                "priceChange3M": 1.6219,
+                "priceChange6M": 1.6984,
+                "vs50dma": 0.4221,
+                "vs200dma": 1.1411
               }
             },
             "epsRevisions": {
@@ -5059,9 +5003,9 @@
               "grade": "C",
               "score": 2.5,
               "metrics": {
-                "pe": 45.9,
-                "pb": 15.1,
-                "ps": 18.8,
+                "pe": 48.7,
+                "pb": 16.1,
+                "ps": 20,
                 "peg": 0.33,
                 "evEbitda": 29.7
               }
@@ -5089,11 +5033,11 @@
               "grade": "A+",
               "score": 4.9,
               "metrics": {
-                "priceChange1M": 0.9255,
-                "priceChange3M": 1.3239,
-                "priceChange6M": 3.0165,
-                "vs50dma": 0.7416,
-                "vs200dma": 1.8677
+                "priceChange1M": 0.9892,
+                "priceChange3M": 1.405,
+                "priceChange6M": 3.5171,
+                "vs50dma": 0.8116,
+                "vs200dma": 2.0056
               }
             },
             "epsRevisions": {
@@ -5117,6 +5061,90 @@
           }
         }
       },
+      "NEE": {
+        "ticker": "NEE",
+        "name": "NextEra Energy v2.0 完整调研报告",
+        "market": "US",
+        "status": "watching",
+        "thesis": "NEE 是 AI 电力瓶颈里最值得长期跟踪的“低 beta 核心底仓型”资产之一：它不是 PWR 那种施工执行层，也不是 VST/CEG 那种 merchant power 高弹性，而是把受监管电网、发电资产、可再生开发、储能、天然气、核电、融资能力和大负载客户管线打包成一个可长期滚动投资的平台。Q1 2026 已经验证基本盘：调整 EPS $1.09，同比增长 10%；FPL regulatory capital employed 同比增长 8.8%；Energy Resources 单季新增 4GW renewables/storage backlo",
+        "quant_rating": {
+          "composite": 3.9,
+          "rating": "Buy"
+        },
+        "target": 105,
+        "stoploss": 72,
+        "pe_threshold": null,
+        "catalysts": [],
+        "invalidation": null,
+        "report_date": "2026-06-01",
+        "last_reviewed": "2026-06-01",
+        "quant": {
+          "composite": 3.9,
+          "rating": "Buy",
+          "score": 3.9,
+          "factors": {
+            "valuation": {
+              "grade": "B+",
+              "score": 3.8,
+              "metrics": {
+                "pe": 21.6,
+                "pb": 3.2,
+                "ps": 6.4,
+                "peg": 1.92,
+                "evEbitda": 20.9
+              }
+            },
+            "growth": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "revenueGrowth": 0.073,
+                "earningsGrowth": 1.6,
+                "epsGrowth": 1.619
+              }
+            },
+            "profitability": {
+              "grade": "B+",
+              "score": 3.8,
+              "metrics": {
+                "grossMargin": 0.614,
+                "operatingMargin": 0.302,
+                "netMargin": 0.294,
+                "roe": 0.103
+              }
+            },
+            "momentum": {
+              "grade": "C",
+              "score": 2.5,
+              "metrics": {
+                "priceChange1M": -0.0974,
+                "priceChange3M": -0.1002,
+                "priceChange6M": 0.0179,
+                "vs50dma": -0.0792,
+                "vs200dma": 0.0057
+              }
+            },
+            "epsRevisions": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "analystSentiment": 0.8,
+                "numAnalysts": 19,
+                "peRatioFwdVsTrail": 0.896
+              }
+            },
+            "dividend": {
+              "grade": "B",
+              "score": 3.5,
+              "metrics": {
+                "payoutRatio": 0.59,
+                "dividendYield": 2.86,
+                "dividendRate": 2.49
+              }
+            }
+          }
+        }
+      },
       "NOW": {
         "ticker": "NOW",
         "name": "ServiceNow v2.0 完整调研报告",
@@ -5135,17 +5163,17 @@
         "report_date": "2026-05-18",
         "last_reviewed": "2026-05-18",
         "quant": {
-          "composite": 3.47,
-          "rating": "Hold",
-          "score": 3.47,
+          "composite": 3.53,
+          "rating": "Buy",
+          "score": 3.53,
           "factors": {
             "valuation": {
               "grade": "D+",
               "score": 1.8,
               "metrics": {
-                "pe": 74,
-                "pb": 10.9,
-                "ps": 9.2,
+                "pe": 79.2,
+                "pb": 11.7,
+                "ps": 9.8,
                 "peg": 1.21,
                 "evEbitda": 43.5
               }
@@ -5170,14 +5198,14 @@
               }
             },
             "momentum": {
-              "grade": "B+",
-              "score": 3.8,
+              "grade": "A-",
+              "score": 4.2,
               "metrics": {
-                "priceChange1M": 0.3744,
-                "priceChange3M": 0.2135,
-                "priceChange6M": -0.256,
-                "vs50dma": 0.2738,
-                "vs200dma": -0.1209
+                "priceChange1M": 0.4979,
+                "priceChange3M": 0.2775,
+                "priceChange6M": -0.1861,
+                "vs50dma": 0.3582,
+                "vs200dma": -0.0575
               }
             },
             "epsRevisions": {
@@ -5214,62 +5242,55 @@
         "report_date": "2026-05-04",
         "last_reviewed": "2026-05-04",
         "quant": {
-          "composite": 4.2,
+          "composite": 4.43,
           "rating": "Buy",
-          "score": 4.2,
+          "score": 4.43,
           "factors": {
             "valuation": {
-              "grade": "C+",
-              "score": 2.8,
+              "grade": "B-",
+              "score": 3.2,
               "metrics": {
-                "pe": 37.7,
-                "pb": 28.8,
-                "ps": 21,
-                "peg": 0.57,
-                "evEbitda": 31.4
+                "pe": 33.9,
+                "pb": 34.1,
+                "ps": 21.1,
+                "peg": 0.65,
+                "evEbitda": 30.6
               }
             },
             "growth": {
-              "grade": "A-",
-              "score": 4.2,
+              "grade": "A+",
+              "score": 4.9,
               "metrics": {
-                "revenueGrowth": 0.655,
-                "earningsGrowth": 0.647,
-                "epsGrowth": 0.66,
-                "ebitdaGrowth": 0.678,
-                "fcfGrowth": 0.589
+                "revenueGrowth": 0.852,
+                "earningsGrowth": 2.145,
+                "epsGrowth": 2.106
               }
             },
             "profitability": {
               "grade": "A+",
               "score": 4.9,
               "metrics": {
-                "grossMargin": 0.711,
-                "operatingMargin": 0.604,
-                "netMargin": 0.556,
-                "interestCoverage": 503.4,
-                "roic": 0.629,
+                "grossMargin": 0.741,
+                "operatingMargin": 0.656,
+                "netMargin": 0.63,
                 "roe": 1.143
               }
             },
             "momentum": {
-              "grade": "B",
-              "score": 3.5,
+              "grade": "B+",
+              "score": 3.8,
               "metrics": {
-                "priceChange1M": -0.0095,
-                "priceChange3M": 0.0949,
-                "priceChange6M": 0.1316,
-                "vs50dma": 0.0591,
-                "vs200dma": 0.1252
+                "priceChange1M": 0.0554,
+                "priceChange3M": 0.1293,
+                "priceChange6M": 0.2178,
+                "vs50dma": 0.1031,
+                "vs200dma": 0.1757
               }
             },
             "epsRevisions": {
               "grade": "A+",
               "score": 4.9,
               "metrics": {
-                "priceTarget": 277.91,
-                "priceTargetHigh": 400,
-                "priceTargetLow": 140,
                 "analystSentiment": 0.94,
                 "numAnalysts": 58,
                 "peRatioFwdVsTrail": 0.515
@@ -5279,9 +5300,9 @@
               "grade": "A+",
               "score": 4.9,
               "metrics": {
-                "payoutRatio": 0.008,
-                "dividendYield": 0.0002,
-                "dividendRate": 0.04
+                "payoutRatio": 0.006,
+                "dividendYield": 0.47,
+                "dividendRate": 1
               }
             }
           }
@@ -5313,8 +5334,8 @@
               "grade": "A-",
               "score": 4.2,
               "metrics": {
-                "pb": 10.6,
-                "ps": 15.8
+                "pb": 10.3,
+                "ps": 15.4
               }
             },
             "growth": {
@@ -5338,11 +5359,11 @@
               "grade": "A+",
               "score": 4.9,
               "metrics": {
-                "priceChange1M": 0.7623,
-                "priceChange3M": 1.4692,
-                "priceChange6M": 1.2012,
-                "vs50dma": 0.728,
-                "vs200dma": 0.7692
+                "priceChange1M": 0.7514,
+                "priceChange3M": 1.2591,
+                "priceChange6M": 1.132,
+                "vs50dma": 0.6491,
+                "vs200dma": 0.7147
               }
             },
             "epsRevisions": {
@@ -5389,8 +5410,8 @@
               "grade": "F",
               "score": 1,
               "metrics": {
-                "pb": 8.8,
-                "ps": 1973.5
+                "pb": 10,
+                "ps": 2242.2
               }
             },
             "growth": {
@@ -5414,11 +5435,11 @@
               "grade": "A+",
               "score": 4.9,
               "metrics": {
-                "priceChange1M": 0.5305,
-                "priceChange3M": 1.0115,
-                "priceChange6M": 1.9472,
-                "vs50dma": 0.2947,
-                "vs200dma": 0.7485
+                "priceChange1M": 1.1157,
+                "priceChange3M": 1.1956,
+                "priceChange6M": 2.255,
+                "vs50dma": 0.4474,
+                "vs200dma": 0.9743
               }
             },
             "dividend": {
@@ -5426,6 +5447,90 @@
               "score": 4.9,
               "metrics": {
                 "payoutRatio": 0
+              }
+            }
+          }
+        }
+      },
+      "PWR": {
+        "ticker": "PWR",
+        "name": "Quanta Services v2.0 完整调研报告",
+        "market": "US",
+        "status": "watching",
+        "thesis": "PWR 是 AI 基建里比 VRT 更偏“电网施工与工程确定性”的核心铲子股：它不卖 GPU，也不直接卖数据中心设备，而是把发电、输电、配电、变电站、大负载接入、通信和能源基础设施项目落到地上。Q1 2026 已经给出强验证：收入 $7.87B，同比增长 26.3%；调整 EPS $2.68，同比增长 50.6%；调整 EBITDA $686.4M，同比增长 36.2%；总 backlog $48.5B，RPO $26.2B；公司上调 2026 全年指引至收入 $34.7B–$35.2B、调整 EPS $13.55–$14.25、调整 EBITDA $3",
+        "quant_rating": {
+          "composite": 3.58,
+          "rating": "Buy"
+        },
+        "target": 860,
+        "stoploss": 500,
+        "pe_threshold": null,
+        "catalysts": [],
+        "invalidation": null,
+        "report_date": "2026-06-01",
+        "last_reviewed": "2026-06-01",
+        "quant": {
+          "composite": 3.58,
+          "rating": "Buy",
+          "score": 3.58,
+          "factors": {
+            "valuation": {
+              "grade": "D",
+              "score": 1.5,
+              "metrics": {
+                "pe": 95.5,
+                "pb": 11.5,
+                "ps": 3.5,
+                "peg": 1.96,
+                "evEbitda": 42.4
+              }
+            },
+            "growth": {
+              "grade": "B+",
+              "score": 3.8,
+              "metrics": {
+                "revenueGrowth": 0.263,
+                "earningsGrowth": 0.51,
+                "epsGrowth": 0.529
+              }
+            },
+            "profitability": {
+              "grade": "D",
+              "score": 1.5,
+              "metrics": {
+                "grossMargin": 0.151,
+                "operatingMargin": 0.042,
+                "netMargin": 0.037,
+                "roe": 0.135
+              }
+            },
+            "momentum": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "priceChange1M": 0.1028,
+                "priceChange3M": 0.2321,
+                "priceChange6M": 0.5788,
+                "vs50dma": 0.0591,
+                "vs200dma": 0.3797
+              }
+            },
+            "epsRevisions": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "analystSentiment": 0.88,
+                "numAnalysts": 26,
+                "peRatioFwdVsTrail": 0.442
+              }
+            },
+            "dividend": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "payoutRatio": 0.058,
+                "dividendYield": 0.06,
+                "dividendRate": 0.44
               }
             }
           }
@@ -5446,16 +5551,16 @@
         "report_date": "2026-05-08",
         "last_reviewed": "2026-05-08",
         "quant": {
-          "composite": 3.58,
+          "composite": 3.63,
           "rating": "Buy",
-          "score": 3.58,
+          "score": 3.63,
           "factors": {
             "valuation": {
               "grade": "A+",
               "score": 4.9,
               "metrics": {
-                "pb": 18.3,
-                "ps": 6.6
+                "pb": 18.5,
+                "ps": 6.7
               }
             },
             "growth": {
@@ -5476,14 +5581,14 @@
               }
             },
             "momentum": {
-              "grade": "C-",
-              "score": 2.2,
+              "grade": "C",
+              "score": 2.5,
               "metrics": {
-                "priceChange1M": -0.0123,
-                "priceChange3M": -0.1291,
-                "priceChange6M": -0.2398,
-                "vs50dma": 0.0285,
-                "vs200dma": -0.2357
+                "priceChange1M": 0.0226,
+                "priceChange3M": -0.0477,
+                "priceChange6M": -0.2339,
+                "vs50dma": 0.0414,
+                "vs200dma": -0.2244
               }
             },
             "epsRevisions": {
@@ -5504,6 +5609,21 @@
           }
         }
       },
+      "TSLA": {
+        "ticker": "TSLA",
+        "name": "Tesla 深度研究报告",
+        "market": "US",
+        "status": "in_portfolio",
+        "thesis": "业务 | 电动汽车、能源存储（Megapack/Powerwall）、自动驾驶（FSD/AI5）、机器人（Optimus）、Robotaxi（Cybercab）",
+        "quant_rating": null,
+        "target": null,
+        "stoploss": 8,
+        "pe_threshold": null,
+        "catalysts": [],
+        "invalidation": null,
+        "report_date": "2026-04-01",
+        "last_reviewed": "2026-04-01"
+      },
       "VRT": {
         "ticker": "VRT",
         "name": "Vertiv Holdings（NYSE: ）公司深研：AI 数据中心“电力 + 热管理”纯度最高的一档",
@@ -5522,17 +5642,17 @@
         "report_date": "2026-05-25",
         "last_reviewed": "2026-05-25",
         "quant": {
-          "composite": 3.98,
+          "composite": 3.93,
           "rating": "Buy",
-          "score": 3.98,
+          "score": 3.93,
           "factors": {
             "valuation": {
-              "grade": "D+",
-              "score": 1.8,
+              "grade": "D",
+              "score": 1.5,
               "metrics": {
-                "pe": 79.3,
-                "pb": 30.6,
-                "ps": 11.2,
+                "pe": 80.5,
+                "pb": 31.1,
+                "ps": 11.3,
                 "peg": 1.58,
                 "evEbitda": 51.2
               }
@@ -5560,11 +5680,11 @@
               "grade": "A+",
               "score": 4.9,
               "metrics": {
-                "priceChange1M": 0.035,
-                "priceChange3M": 0.2474,
-                "priceChange6M": 0.8956,
-                "vs50dma": 0.0272,
-                "vs200dma": 0.4947
+                "priceChange1M": 0.0459,
+                "priceChange3M": 0.2217,
+                "priceChange6M": 0.9437,
+                "vs50dma": 0.0384,
+                "vs200dma": 0.5096
               }
             },
             "epsRevisions": {
@@ -5611,9 +5731,9 @@
               "grade": "B",
               "score": 3.5,
               "metrics": {
-                "pe": 26.8,
-                "pb": 20.7,
-                "ps": 2.8,
+                "pe": 26,
+                "pb": 20.1,
+                "ps": 2.7,
                 "peg": 0.48,
                 "evEbitda": 11.2
               }
@@ -5639,11 +5759,11 @@
               "grade": "C",
               "score": 2.5,
               "metrics": {
-                "priceChange1M": -0.0055,
-                "priceChange3M": -0.0651,
-                "priceChange6M": -0.0819,
-                "vs50dma": 0.0379,
-                "vs200dma": -0.0733
+                "priceChange1M": 0.0119,
+                "priceChange3M": -0.1114,
+                "priceChange6M": -0.1054,
+                "vs50dma": 0.0096,
+                "vs200dma": -0.0987
               }
             },
             "epsRevisions": {
@@ -5666,10 +5786,24 @@
             }
           }
         }
+      },
+      "WMB": {
+        "ticker": "WMB",
+        "name": "Williams Companies 阶段 4 深度研究档案",
+        "market": "US",
+        "status": "rejected",
+        "thesis": "Williams 是美国最大天然气管道公司(Transco 主干 + Northwest Pipeline),52 年连续派息 + 2.40× AFFO 覆盖 + SSE / Power Express 扩张对接 AI 数据中心需求,但 PE 34× / 股息率 2.97% 已失去高息防御属性,R:R 0.48-1.08 触发铁律否决。",
+        "quant_rating": null,
+        "target": null,
+        "stoploss": null,
+        "pe_threshold": 33.5,
+        "catalysts": [],
+        "invalidation": null,
+        "report_date": "2026-04-01",
+        "last_reviewed": "2026-04-01"
       }
     },
     "dates": [
-      "2026-05-01",
       "2026-05-02",
       "2026-05-03",
       "2026-05-04",
@@ -5698,7 +5832,8 @@
       "2026-05-27",
       "2026-05-28",
       "2026-05-29",
-      "2026-05-30"
+      "2026-05-30",
+      "2026-06-01"
     ],
     "scores": [
       [
@@ -5713,36 +5848,6 @@
         -1,
         -1,
         -1,
-        3,
-        5,
-        -1,
-        -1,
-        -1,
-        4,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1
-      ],
-      [
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
         -1,
         4,
         5,
@@ -5761,9 +5866,15 @@
         -1,
         -1,
         -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
         -1
       ],
       [
+        -1,
         -1,
         -1,
         -1,
@@ -5792,9 +5903,15 @@
         -1,
         -1,
         -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
         -1
       ],
       [
+        -1,
         -1,
         -1,
         -1,
@@ -5823,9 +5940,15 @@
         -1,
         -1,
         -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
         -1
       ],
       [
+        -1,
         -1,
         -1,
         -1,
@@ -5854,9 +5977,15 @@
         -1,
         -1,
         -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
         -1
       ],
       [
+        -1,
         -1,
         -1,
         -1,
@@ -5885,9 +6014,15 @@
         -1,
         -1,
         -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
         -1
       ],
       [
+        -1,
         -1,
         -1,
         -1,
@@ -5916,9 +6051,15 @@
         -1,
         -1,
         -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
         -1
       ],
       [
+        -1,
         -1,
         -1,
         -1,
@@ -5936,6 +6077,11 @@
         -1,
         -1,
         5,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
         -1,
         -1,
         -1,
@@ -5960,6 +6106,7 @@
         -1,
         5,
         -1,
+        -1,
         4,
         5,
         6,
@@ -5973,10 +6120,15 @@
         -1,
         -1,
         -1,
-        6,
         -1,
         -1,
         6,
+        -1,
+        -1,
+        -1,
+        6,
+        -1,
+        -1,
         -1,
         -1
       ],
@@ -5991,6 +6143,7 @@
         -1,
         5,
         -1,
+        -1,
         4,
         5,
         6,
@@ -6004,10 +6157,15 @@
         -1,
         -1,
         -1,
+        -1,
+        -1,
         6,
         -1,
         -1,
+        -1,
         4,
+        -1,
+        -1,
         -1,
         -1
       ],
@@ -6022,6 +6180,7 @@
         -1,
         5,
         -1,
+        -1,
         4,
         5,
         6,
@@ -6035,12 +6194,17 @@
         -1,
         -1,
         -1,
+        -1,
+        -1,
         6,
+        -1,
         -1,
         -1,
         4,
         -1,
-        4
+        -1,
+        4,
+        -1
       ],
       [
         -1,
@@ -6053,6 +6217,7 @@
         -1,
         5,
         -1,
+        -1,
         4,
         5,
         5,
@@ -6066,12 +6231,17 @@
         -1,
         -1,
         -1,
-        5,
         -1,
         -1,
         5,
         -1,
-        4
+        -1,
+        -1,
+        5,
+        -1,
+        -1,
+        4,
+        -1
       ],
       [
         -1,
@@ -6084,6 +6254,7 @@
         -1,
         5,
         -1,
+        -1,
         4,
         3,
         4,
@@ -6097,12 +6268,17 @@
         -1,
         -1,
         -1,
-        5,
         -1,
         -1,
         5,
         -1,
-        4
+        -1,
+        -1,
+        5,
+        -1,
+        -1,
+        4,
+        -1
       ],
       [
         -1,
@@ -6114,6 +6290,7 @@
         3,
         -1,
         5,
+        -1,
         -1,
         4,
         5,
@@ -6128,12 +6305,17 @@
         -1,
         -1,
         -1,
+        -1,
+        -1,
         5,
         5,
         -1,
+        -1,
         5,
         -1,
-        4
+        -1,
+        4,
+        -1
       ],
       [
         -1,
@@ -6145,6 +6327,7 @@
         3,
         -1,
         5,
+        -1,
         -1,
         3,
         5,
@@ -6159,12 +6342,17 @@
         -1,
         -1,
         -1,
+        -1,
+        -1,
         4,
         5,
         -1,
+        -1,
         5,
         -1,
-        3
+        -1,
+        3,
+        -1
       ],
       [
         -1,
@@ -6176,6 +6364,7 @@
         3,
         -1,
         5,
+        -1,
         -1,
         5,
         5,
@@ -6190,12 +6379,17 @@
         -1,
         -1,
         -1,
+        -1,
+        -1,
         3,
         5,
         -1,
+        -1,
         4,
         -1,
-        3
+        -1,
+        3,
+        -1
       ],
       [
         -1,
@@ -6208,6 +6402,7 @@
         3,
         5,
         -1,
+        -1,
         5,
         5,
         6,
@@ -6219,14 +6414,19 @@
         -1,
         4,
         -1,
+        -1,
         4,
+        -1,
         5,
         3,
         5,
         -1,
+        -1,
         4,
         -1,
-        3
+        -1,
+        3,
+        -1
       ],
       [
         -1,
@@ -6239,6 +6439,7 @@
         3,
         5,
         7,
+        -1,
         5,
         5,
         6,
@@ -6250,14 +6451,19 @@
         -1,
         4,
         -1,
+        -1,
         4,
+        -1,
         5,
         3,
         5,
         -1,
+        -1,
         4,
         -1,
-        3
+        -1,
+        3,
+        -1
       ],
       [
         5,
@@ -6270,6 +6476,7 @@
         3,
         4,
         6,
+        -1,
         4,
         5,
         5,
@@ -6281,14 +6488,19 @@
         -1,
         4,
         -1,
+        -1,
         3,
+        -1,
         5,
         4,
         3,
         -1,
+        -1,
         4,
         -1,
-        3
+        -1,
+        3,
+        -1
       ],
       [
         5,
@@ -6301,6 +6513,7 @@
         2,
         4,
         5,
+        -1,
         3,
         3,
         6,
@@ -6312,14 +6525,19 @@
         -1,
         4,
         -1,
+        -1,
         4,
+        -1,
         3,
         3,
         5,
         7,
+        -1,
         4,
         -1,
-        3
+        -1,
+        3,
+        -1
       ],
       [
         3,
@@ -6332,6 +6550,7 @@
         2,
         3,
         3,
+        -1,
         5,
         6,
         4,
@@ -6343,14 +6562,19 @@
         6,
         3,
         -1,
+        -1,
         5,
+        -1,
         3,
         4,
         3,
         5,
+        -1,
         3,
         -1,
-        5
+        -1,
+        5,
+        -1
       ],
       [
         4,
@@ -6363,6 +6587,7 @@
         1,
         3,
         6,
+        -1,
         5,
         6,
         4,
@@ -6374,14 +6599,19 @@
         4,
         4,
         -1,
+        -1,
         3,
+        -1,
         3,
         3,
         3,
         4,
+        -1,
         2,
         -1,
-        4
+        -1,
+        4,
+        -1
       ],
       [
         3,
@@ -6394,6 +6624,7 @@
         2,
         4,
         4,
+        -1,
         5,
         6,
         4,
@@ -6405,14 +6636,19 @@
         5,
         4,
         -1,
+        -1,
         4,
+        -1,
         4,
         4,
         3,
         4,
+        -1,
         2,
         -1,
-        4
+        -1,
+        4,
+        -1
       ],
       [
         3,
@@ -6425,6 +6661,7 @@
         2,
         4,
         4,
+        -1,
         5,
         6,
         4,
@@ -6436,14 +6673,19 @@
         5,
         4,
         -1,
+        -1,
         4,
+        -1,
         4,
         4,
         3,
         4,
+        -1,
         2,
         -1,
-        4
+        -1,
+        4,
+        -1
       ],
       [
         3,
@@ -6456,6 +6698,7 @@
         2,
         4,
         4,
+        -1,
         5,
         6,
         4,
@@ -6467,14 +6710,19 @@
         5,
         4,
         -1,
+        -1,
         4,
+        -1,
         4,
         4,
         3,
         4,
+        -1,
         2,
+        -1,
         4,
-        4
+        4,
+        -1
       ],
       [
         3,
@@ -6487,6 +6735,7 @@
         2,
         6,
         7,
+        -1,
         5,
         5,
         4,
@@ -6497,15 +6746,20 @@
         5,
         6,
         4,
+        -1,
         2,
         3,
+        -1,
         4,
         6,
         3,
         5,
+        -1,
         3,
+        -1,
         4,
-        1
+        1,
+        -1
       ],
       [
         4,
@@ -6518,6 +6772,7 @@
         2,
         4,
         5,
+        -1,
         5,
         6,
         4,
@@ -6528,15 +6783,20 @@
         5,
         6,
         3,
+        -1,
         3,
         4,
+        -1,
         3,
         4,
         3,
         6,
+        -1,
         3,
+        -1,
         4,
-        3
+        3,
+        -1
       ],
       [
         3,
@@ -6549,6 +6809,7 @@
         2,
         2,
         5,
+        -1,
         4,
         3,
         5,
@@ -6559,15 +6820,20 @@
         5,
         5,
         3,
+        -1,
         3,
         3,
+        -1,
         4,
         5,
         4,
         6,
+        -1,
         2,
+        -1,
         4,
-        2
+        2,
+        -1
       ],
       [
         3,
@@ -6580,6 +6846,7 @@
         2,
         5,
         6,
+        -1,
         6,
         3,
         4,
@@ -6590,15 +6857,20 @@
         4,
         5,
         5,
+        -1,
         2,
         3,
+        -1,
         5,
         4,
         4,
         5,
+        -1,
         3,
+        -1,
         4,
-        2
+        2,
+        -1
       ],
       [
         4,
@@ -6611,6 +6883,7 @@
         3,
         6,
         2,
+        -1,
         5,
         3,
         4,
@@ -6621,15 +6894,57 @@
         4,
         4,
         3,
+        -1,
+        3,
+        4,
+        -1,
+        4,
+        5,
+        4,
+        5,
+        -1,
+        2,
+        -1,
+        4,
+        3,
+        -1
+      ],
+      [
+        4,
+        4,
+        3,
+        5,
+        5,
+        4,
+        3,
+        3,
+        5,
+        0,
+        4,
+        4,
         3,
         4,
         4,
         5,
+        3,
+        5,
+        4,
+        4,
+        4,
+        3,
+        2,
+        2,
+        6,
+        3,
+        3,
         4,
         5,
-        2,
-        4,
-        3
+        3,
+        1,
+        5,
+        3,
+        3,
+        4
       ]
     ],
     "statuses": [
@@ -6645,36 +6960,6 @@
         "",
         "",
         "",
-        "⬜ 不变",
-        "🟡 接近",
-        "",
-        "",
-        "",
-        "⬜ 不变",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
-      ],
-      [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
         "",
         "⬜ 不变",
         "🟡 接近",
@@ -6693,9 +6978,15 @@
         "",
         "",
         "",
+        "",
+        "",
+        "",
+        "",
+        "",
         ""
       ],
       [
+        "",
         "",
         "",
         "",
@@ -6724,9 +7015,15 @@
         "",
         "",
         "",
+        "",
+        "",
+        "",
+        "",
+        "",
         ""
       ],
       [
+        "",
         "",
         "",
         "",
@@ -6755,32 +7052,6 @@
         "",
         "",
         "",
-        ""
-      ],
-      [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "⬜ 不变",
-        "⬜ 不变",
-        "",
-        "",
-        "",
-        "⬜ 不变",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
         "",
         "",
         "",
@@ -6789,6 +7060,44 @@
         ""
       ],
       [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "⬜ 不变",
+        "⬜ 不变",
+        "",
+        "",
+        "",
+        "⬜ 不变",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      [
+        "",
         "",
         "",
         "",
@@ -6817,9 +7126,15 @@
         "",
         "",
         "",
+        "",
+        "",
+        "",
+        "",
+        "",
         ""
       ],
       [
+        "",
         "",
         "",
         "",
@@ -6848,9 +7163,15 @@
         "",
         "",
         "",
+        "",
+        "",
+        "",
+        "",
+        "",
         ""
       ],
       [
+        "",
         "",
         "",
         "",
@@ -6879,36 +7200,10 @@
         "",
         "",
         "",
-        ""
-      ],
-      [
         "",
         "",
         "",
-        "⬜ 不变",
         "",
-        "",
-        "⬜ 不变",
-        "",
-        "🟡 接近",
-        "",
-        "⬜ 不变",
-        "🟡 接近",
-        "🟡 接近",
-        "⬜ 不变",
-        "⬜ 不变",
-        "",
-        "⬜ 不变",
-        "",
-        "",
-        "🟡 优先",
-        "",
-        "",
-        "",
-        "🟡 接近",
-        "",
-        "",
-        "🟡 接近",
         "",
         ""
       ],
@@ -6923,6 +7218,7 @@
         "",
         "🟡 接近",
         "",
+        "",
         "⬜ 不变",
         "🟡 接近",
         "🟡 接近",
@@ -6936,10 +7232,52 @@
         "",
         "",
         "",
+        "",
+        "",
+        "🟡 接近",
+        "",
+        "",
+        "",
+        "🟡 接近",
+        "",
+        "",
+        "",
+        ""
+      ],
+      [
+        "",
+        "",
+        "",
+        "⬜ 不变",
+        "",
+        "",
+        "⬜ 不变",
+        "",
         "🟡 接近",
         "",
         "",
         "⬜ 不变",
+        "🟡 接近",
+        "🟡 接近",
+        "⬜ 不变",
+        "⬜ 不变",
+        "",
+        "⬜ 不变",
+        "",
+        "",
+        "🟡 优先",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "🟡 接近",
+        "",
+        "",
+        "",
+        "⬜ 不变",
+        "",
+        "",
         "",
         ""
       ],
@@ -6954,36 +7292,6 @@
         "",
         "🟡 接近",
         "",
-        "⬜ 不变",
-        "🟡 接近",
-        "🟡 接近",
-        "⬜ 不变",
-        "⬜ 不变",
-        "",
-        "⬜ 不变",
-        "",
-        "",
-        "🟡 优先",
-        "",
-        "",
-        "",
-        "🟡 接近",
-        "",
-        "",
-        "⬜ 不变",
-        "",
-        "⬜ 不变"
-      ],
-      [
-        "",
-        "",
-        "",
-        "⬜ 不变",
-        "⬜ 不变",
-        "",
-        "⬜ 不变",
-        "",
-        "🟡 接近",
         "",
         "⬜ 不变",
         "🟡 接近",
@@ -6998,12 +7306,17 @@
         "",
         "",
         "",
-        "🟡 接近",
         "",
         "",
         "🟡 接近",
         "",
-        "⬜ 不变"
+        "",
+        "",
+        "⬜ 不变",
+        "",
+        "",
+        "⬜ 不变",
+        ""
       ],
       [
         "",
@@ -7015,6 +7328,44 @@
         "⬜ 不变",
         "",
         "🟡 接近",
+        "",
+        "",
+        "⬜ 不变",
+        "🟡 接近",
+        "🟡 接近",
+        "⬜ 不变",
+        "⬜ 不变",
+        "",
+        "⬜ 不变",
+        "",
+        "",
+        "🟡 优先",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "🟡 接近",
+        "",
+        "",
+        "",
+        "🟡 接近",
+        "",
+        "",
+        "⬜ 不变",
+        ""
+      ],
+      [
+        "",
+        "",
+        "",
+        "⬜ 不变",
+        "⬜ 不变",
+        "",
+        "⬜ 不变",
+        "",
+        "🟡 接近",
+        "",
         "",
         "⬜ 不变",
         "⬜ 不变",
@@ -7029,12 +7380,17 @@
         "",
         "",
         "",
-        "🟡 接近",
         "",
         "",
         "🟡 接近",
         "",
-        "⬜ 不变"
+        "",
+        "",
+        "🟡 接近",
+        "",
+        "",
+        "⬜ 不变",
+        ""
       ],
       [
         "",
@@ -7046,6 +7402,7 @@
         "⬜ 不变",
         "",
         "🟡 接近",
+        "",
         "",
         "⬜ 不变",
         "🟡 接近",
@@ -7060,12 +7417,17 @@
         "",
         "",
         "",
+        "",
+        "",
         "🟡 接近",
         "🟡 接近",
         "",
+        "",
         "🟡 接近",
         "",
-        "⬜ 不变"
+        "",
+        "⬜ 不变",
+        ""
       ],
       [
         "",
@@ -7078,25 +7440,31 @@
         "",
         "🟡 接近",
         "",
-        "⬜ 不变",
-        "🟡 接近",
-        "🟡 接近",
-        "⬜ 不变",
-        "⬜ 不变",
-        "",
-        "⬜ 不变",
-        "⬜ 不变",
-        "",
-        "⬜ 不变",
-        "",
-        "",
         "",
         "⬜ 不变",
         "🟡 接近",
+        "🟡 接近",
+        "⬜ 不变",
+        "⬜ 不变",
+        "",
+        "⬜ 不变",
+        "⬜ 不变",
+        "",
+        "⬜ 不变",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "⬜ 不变",
+        "🟡 接近",
+        "",
         "",
         "🟡 接近",
         "",
-        "⬜ 不变"
+        "",
+        "⬜ 不变",
+        ""
       ],
       [
         "",
@@ -7109,6 +7477,7 @@
         "",
         "🟡 接近",
         "",
+        "",
         "🟡 接近",
         "🟡 接近",
         "🟡 接近",
@@ -7122,12 +7491,17 @@
         "",
         "",
         "",
+        "",
+        "",
         "⬜ 不变",
         "🟡 接近",
         "",
+        "",
         "⬜ 不变",
         "",
-        "⬜ 不变"
+        "",
+        "⬜ 不变",
+        ""
       ],
       [
         "",
@@ -7140,6 +7514,7 @@
         "⬜ 不变",
         "🟡 接近",
         "",
+        "",
         "🟡 接近",
         "🟡 接近",
         "🟡 接近",
@@ -7151,14 +7526,19 @@
         "",
         "⬜ 不变",
         "",
+        "",
         "⬜ 不变",
+        "",
         "🟡 优先",
         "⬜ 不变",
         "🟡 接近",
         "",
+        "",
         "⬜ 不变",
         "",
-        "⬜ 不变"
+        "",
+        "⬜ 不变",
+        ""
       ],
       [
         "",
@@ -7171,6 +7551,7 @@
         "⬜ 不变",
         "🟡 接近",
         "🟢 升级",
+        "",
         "🟡 接近",
         "🟡 接近",
         "🟡 接近",
@@ -7182,14 +7563,19 @@
         "",
         "⬜ 不变",
         "",
+        "",
         "⬜ 不变",
+        "",
         "🟡 接近",
         "⬜ 不变",
         "🟡 接近",
         "",
+        "",
         "⬜ 不变",
         "",
-        "⬜ 不变"
+        "",
+        "⬜ 不变",
+        ""
       ],
       [
         "🟡 接近",
@@ -7202,6 +7588,7 @@
         "⬜ 不变",
         "⬜ 不变",
         "🟡 接近",
+        "",
         "⬜ 不变",
         "🟡 接近",
         "🟡 接近",
@@ -7213,14 +7600,19 @@
         "",
         "⬜ 不变",
         "",
+        "",
         "⬜ 不变",
+        "",
         "🟡 接近",
         "⬜ 不变",
         "⬜ 不变",
         "",
+        "",
         "⬜ 不变",
         "",
-        "⬜ 不变"
+        "",
+        "⬜ 不变",
+        ""
       ],
       [
         "🟡 接近",
@@ -7233,6 +7625,7 @@
         "⬜ 不变",
         "⬜ 不变",
         "🟡 接近",
+        "",
         "⬜ 不变",
         "⬜ 不变",
         "🟡 接近",
@@ -7244,200 +7637,241 @@
         "",
         "⬜ 不变",
         "",
+        "",
+        "⬜ 不变",
+        "",
+        "⬜ 不变",
+        "⬜ 不变",
+        "🟡 接近",
+        "🟢 升级",
+        "",
+        "⬜ 不变",
+        "",
+        "",
+        "⬜ 不变",
+        ""
+      ],
+      [
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "🟡 接近",
+        "",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "",
+        "🟡 接近",
+        "🟡 接近",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "🟡 接近",
+        "⬜ 不变",
+        "",
+        "",
+        "🟡 接近",
+        "",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "🟡 接近",
+        "",
+        "⬜ 不变",
+        "",
+        "",
+        "🟡 接近",
+        ""
+      ],
+      [
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "🟡 接近",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "🟡 接近",
+        "",
+        "🟡 接近",
+        "🟡 接近",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "",
+        "",
+        "⬜ 不变",
+        "",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "",
+        "⬜ 不变",
+        "",
+        "",
+        "⬜ 不变",
+        ""
+      ],
+      [
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "🟡 接近",
+        "🟡 接近",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "",
+        "🟡 接近",
+        "🟡 接近",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "🟡 接近",
+        "⬜ 不变",
+        "🟡 接近",
+        "⬜ 不变",
+        "",
+        "",
+        "⬜ 不变",
+        "",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "",
+        "⬜ 不变",
+        "",
+        "",
+        "⬜ 不变",
+        ""
+      ],
+      [
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "🟡 接近",
+        "🟡 接近",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "",
+        "🟡 接近",
+        "🟡 接近",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "🟡 接近",
+        "⬜ 不变",
+        "🟡 接近",
+        "⬜ 不变",
+        "",
+        "",
+        "⬜ 不变",
+        "",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "",
+        "⬜ 不变",
+        "",
+        "",
+        "⬜ 不变",
+        ""
+      ],
+      [
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "🟡 接近",
+        "🟡 接近",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "",
+        "🟡 接近",
+        "🟡 接近",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "🟡 接近",
+        "⬜ 不变",
+        "🟡 接近",
+        "⬜ 不变",
+        "",
+        "",
+        "⬜ 不变",
+        "",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "",
+        "⬜ 不变",
+        "",
+        "⬜ 不变",
+        "⬜ 不变",
+        ""
+      ],
+      [
+        "⬜ 不变",
+        "⬜ 不变",
+        "🟡 接近",
+        "🟡 接近",
+        "⬜ 不变",
         "⬜ 不变",
         "⬜ 不变",
         "⬜ 不变",
         "🟡 接近",
         "🟢 升级",
-        "⬜ 不变",
-        "",
-        "⬜ 不变"
-      ],
-      [
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "🟡 接近",
-        "",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "🟡 接近",
-        "🟡 接近",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "🟡 接近",
-        "⬜ 不变",
         "",
         "🟡 接近",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
         "🟡 接近",
-        "⬜ 不变",
-        "",
-        "🟡 接近"
-      ],
-      [
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "🟡 接近",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "🟡 接近",
-        "🟡 接近",
-        "🟡 接近",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "",
-        "⬜ 不变"
-      ],
-      [
-        "⬜ 不变",
-        "⬜ 不变",
         "⬜ 不变",
         "🟡 接近",
         "🟡 接近",
         "⬜ 不变",
         "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
         "🟡 接近",
-        "🟡 接近",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "🟡 接近",
-        "⬜ 不变",
         "🟡 接近",
         "⬜ 不变",
         "",
         "⬜ 不变",
         "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
         "",
-        "⬜ 不变"
-      ],
-      [
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "🟡 接近",
-        "🟡 接近",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "🟡 接近",
-        "🟡 接近",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
         "⬜ 不变",
         "🟡 接近",
         "⬜ 不变",
         "🟡 接近",
+        "",
         "⬜ 不变",
         "",
         "⬜ 不变",
         "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "",
-        "⬜ 不变"
-      ],
-      [
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "🟡 接近",
-        "🟡 接近",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "🟡 接近",
-        "🟡 接近",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "🟡 接近",
-        "⬜ 不变",
-        "🟡 接近",
-        "⬜ 不变",
-        "",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变"
-      ],
-      [
-        "⬜ 不变",
-        "⬜ 不变",
-        "🟡 接近",
-        "🟡 接近",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "🟡 接近",
-        "🟢 升级",
-        "🟡 接近",
-        "🟡 接近",
-        "⬜ 不变",
-        "🟡 接近",
-        "🟡 接近",
-        "⬜ 不变",
-        "⬜ 不变",
-        "🟡 接近",
-        "🟡 接近",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "🟡 接近",
-        "⬜ 不变",
-        "🟡 接近",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变"
+        ""
       ],
       [
         "⬜ 不变",
@@ -7450,6 +7884,7 @@
         "⬜ 不变",
         "⬜ 不变",
         "🟡 接近",
+        "",
         "🟡 接近",
         "🟡 接近",
         "⬜ 不变",
@@ -7460,15 +7895,20 @@
         "🟡 接近",
         "🟡 接近",
         "⬜ 不变",
+        "",
         "⬜ 不变",
         "⬜ 不变",
+        "",
         "⬜ 不变",
         "⬜ 不变",
         "⬜ 不变",
         "🟡 接近",
+        "",
+        "⬜ 不变",
+        "",
         "⬜ 不变",
         "⬜ 不变",
-        "⬜ 不变"
+        ""
       ],
       [
         "⬜ 不变",
@@ -7481,6 +7921,7 @@
         "⬜ 不变",
         "⬜ 不变",
         "🟡 接近",
+        "",
         "⬜ 不变",
         "⬜ 不变",
         "🟡 接近",
@@ -7491,15 +7932,20 @@
         "🟡 接近",
         "🟡 接近",
         "⬜ 不变",
+        "",
         "⬜ 不变",
         "⬜ 不变",
+        "",
         "⬜ 不变",
         "🟡 接近",
         "⬜ 不变",
         "🟡 接近",
+        "",
+        "⬜ 不变",
+        "",
         "⬜ 不变",
         "⬜ 不变",
-        "⬜ 不变"
+        ""
       ],
       [
         "⬜ 不变",
@@ -7512,6 +7958,7 @@
         "⬜ 不变",
         "🟡 接近",
         "🟡 接近",
+        "",
         "🟡 接近",
         "⬜ 不变",
         "⬜ 不变",
@@ -7522,15 +7969,20 @@
         "⬜ 不变",
         "🟡 接近",
         "🟡 优先",
+        "",
         "⬜ 不变",
         "⬜ 不变",
+        "",
         "🟡 接近",
         "⬜ 不变",
         "⬜ 不变",
         "🟡 接近",
+        "",
+        "⬜ 不变",
+        "",
         "⬜ 不变",
         "⬜ 不变",
-        "⬜ 不变"
+        ""
       ],
       [
         "⬜ 不变",
@@ -7543,6 +7995,7 @@
         "⬜ 不变",
         "🟡 接近",
         "⬜ 不变",
+        "",
         "🟡 接近",
         "⬜ 不变",
         "⬜ 不变",
@@ -7553,10 +8006,52 @@
         "⬜ 不变",
         "⬜ 不变",
         "⬜ 不变",
+        "",
+        "⬜ 不变",
+        "⬜ 不变",
+        "",
+        "⬜ 不变",
+        "🟡 接近",
+        "⬜ 不变",
+        "🟡 接近",
+        "",
+        "⬜ 不变",
+        "",
+        "⬜ 不变",
+        "⬜ 不变",
+        ""
+      ],
+      [
         "⬜ 不变",
         "⬜ 不变",
         "⬜ 不变",
         "🟡 接近",
+        "🟡 接近",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "🟡 接近",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "🟡 接近",
+        "⬜ 不变",
+        "🟡 接近",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "🟡 接近",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "🟡 接近",
+        "⬜ 不变",
         "⬜ 不变",
         "🟡 接近",
         "⬜ 不变",
@@ -8313,8 +8808,8 @@
     }
   ],
   "stats": {
-    "active_positions": 13,
-    "markets": 3,
+    "active_positions": 12,
+    "markets": 2,
     "tracked_rules": 53,
     "upcoming_events": 11,
     "weekly_scan_hits": 8,
@@ -8322,7 +8817,7 @@
     "closed_positions": 12,
     "win_rate_pct": 83,
     "realized_pnl_pct": 65,
-    "days_since_last_clearance": 4
+    "days_since_last_clearance": 5
   },
   "crypto_portfolio_history": {
     "data": [
@@ -10490,43 +10985,43 @@
     ]
   },
   "gold_tracker": {
-    "generated_at": "2026-05-31T23:00:41.304500+00:00",
+    "generated_at": "2026-06-01T23:01:17.930198+00:00",
     "price": {
-      "xau_usd": 4569.4,
-      "day_change_pct": 1.07,
+      "xau_usd": 4513.9,
+      "day_change_pct": -1.02,
       "week_52_high": 5586.2,
       "week_52_low": 3253.8,
-      "drawdown_from_peak_pct": -16.92,
+      "drawdown_from_peak_pct": -17.93,
       "peak_price": 5500
     },
     "technical": {
-      "bollinger_mid_weekly": 4789.61,
+      "bollinger_mid_weekly": 4785.44,
       "above_bollinger_mid": false,
-      "bollinger_mid_pct_diff": -4.6
+      "bollinger_mid_pct_diff": -5.67
     },
     "monetary": {
       "m2_trillion": 22.88,
       "m2_date": "2026-05-04",
       "m2_trigger_line": 24,
       "m2_to_trigger_pct": 95.3,
-      "gold_m2_ratio": 199.711538,
-      "ratio_display": 199.7,
+      "gold_m2_ratio": 197.285839,
+      "ratio_display": 197.3,
       "inversion_status": "normal",
       "inversion_label_en": "Normal Range",
       "inversion_label_zh": "正常区间"
     },
     "cost_floor": {
       "aisc_usd": 1750,
-      "price_above_aisc_pct": 161.1
+      "price_above_aisc_pct": 157.9
     },
     "premium": {
-      "shfe_cny_per_gram": null,
-      "lbma_usd_per_oz": null,
-      "usd_cny": null,
-      "international_cny_per_gram": null,
-      "premium_pct": null,
-      "source": null,
-      "updated_at": null
+      "shfe_cny_per_gram": 968.1,
+      "lbma_usd_per_oz": 4483.99,
+      "usd_cny": 6.7666,
+      "international_cny_per_gram": 975.5,
+      "premium_pct": -0.76,
+      "source": "sge:Au99.99 + sina:hf_XAU + sina:fx_susdcny",
+      "updated_at": "2026年06月02日 02:29:54"
     },
     "signal": {
       "status": "yellow",
@@ -10535,7 +11030,7 @@
     }
   },
   "gold_timeseries": {
-    "generated_at": "2026-05-31T23:00:41.308363+00:00",
+    "generated_at": "2026-06-01T23:01:17.933240+00:00",
     "data": [
       {
         "date": "2025-05-02",
@@ -13083,6 +13578,15 @@
         "bollinger_mid_pct_diff": -4.6,
         "premium_pct": null,
         "signal_status": "yellow"
+      },
+      {
+        "date": "2026-06-02",
+        "xau_usd": 4513.9,
+        "m2_trillion": 22.88,
+        "gold_m2_ratio": 197.285839,
+        "bollinger_mid_pct_diff": -5.67,
+        "premium_pct": -0.76,
+        "signal_status": "yellow"
       }
     ]
   },
@@ -13168,6 +13672,12 @@
     {
       "date": "2026-05-31",
       "health": 4,
+      "portfolio_beta": 1.15,
+      "equity_beta": 1.04
+    },
+    {
+      "date": "2026-06-01",
+      "health": 3.9,
       "portfolio_beta": 1.15,
       "equity_beta": 1.04
     }
