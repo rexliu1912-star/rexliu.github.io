@@ -1,32 +1,32 @@
 {
-  "generated_at": "2026-06-08T23:00:26.240Z",
+  "generated_at": "2026-06-08T23:52:23.136Z",
   "regime": {
     "current": {
       "label": "防御期",
       "label_en": "Defensive",
       "aggression": "低",
       "green_count": 0,
-      "total_signals": 3,
+      "total_signals": 4,
       "signals": {
         "tnx": {
           "label": "10Y UST",
-          "value": "4.54%",
+          "value": "4.55%",
           "light": "red"
         },
         "dxy": {
           "label": "DXY",
-          "value": "100.09",
+          "value": "100",
           "light": "yellow"
         },
         "vix": {
           "label": "VIX",
-          "value": "21.51",
+          "value": "18.92",
           "light": "yellow"
         },
         "naaim": {
           "label": "NAAIM",
-          "value": "69.4",
-          "light": "yellow"
+          "value": "86.82",
+          "light": "red"
         },
         "policy": {
           "label": "Policy",
@@ -2023,6 +2023,45 @@
             "status": null
           }
         }
+      },
+      {
+        "date": "2026-06-09",
+        "regime": "防御期",
+        "green_count": 0,
+        "aggression": "低",
+        "vix": 18.92,
+        "lights": {
+          "tnx": "red",
+          "dxy": "yellow",
+          "vix": "yellow",
+          "naaim": "red"
+        },
+        "signalDetails": {
+          "tnx": {
+            "value": 4.55,
+            "light": "red",
+            "status": null
+          },
+          "dxy": {
+            "value": 100,
+            "light": "yellow",
+            "status": null
+          },
+          "vix": {
+            "value": 18.92,
+            "light": "yellow",
+            "status": null
+          },
+          "naaim": {
+            "value": 86.82,
+            "light": "red",
+            "status": null
+          },
+          "policy": {
+            "light": "gray",
+            "status": null
+          }
+        }
       }
     ]
   },
@@ -2033,9 +2072,9 @@
           "id": "stablecoin",
           "label_en": "Stablecoin Yield",
           "label_zh": "稳定币生息",
-          "target_pct": 36.6,
+          "target_pct": 36.7,
           "current_pct": 40.3,
-          "drift_pp": 3.7,
+          "drift_pp": 3.6,
           "color": "#10b981",
           "sub_tags_en": [
             "USDT",
@@ -2051,23 +2090,23 @@
           "note_zh": "底座层——带息、低 beta、抗衰退",
           "expected_return_pct": 5,
           "annual_volatility_pct": 1,
-          "model_target_pct": 36.6,
-          "raw_model_target_pct": 36.7,
+          "model_target_pct": 36.7,
+          "raw_model_target_pct": 36.8,
           "signal_score": 88,
           "model_action": "trim",
           "model_rationale_en": "APR 5.0% and regime defensive keep liquidity floor high.",
           "model_rationale_zh": "稳定币 APR 5.0%，当前 defensive 环境下维持流动性底座。",
           "model_current_pct": 40.3,
-          "model_drift_pp": 3.7,
-          "gap_amount": -431648
+          "model_drift_pp": 3.6,
+          "gap_amount": -420076
         },
         {
           "id": "funds",
           "label_en": "Funds",
           "label_zh": "基金与现金",
-          "target_pct": 33.9,
+          "target_pct": 34,
           "current_pct": 44.1,
-          "drift_pp": 10.2,
+          "drift_pp": 10.1,
           "color": "#3b82f6",
           "sub_tags_en": [
             "Cash & Deposits",
@@ -2083,15 +2122,15 @@
           "note_zh": "现金缓冲 + 保守理财 + 专项资金（买房/教育/应收）",
           "expected_return_pct": 3.2,
           "annual_volatility_pct": 3,
-          "model_target_pct": 33.9,
-          "raw_model_target_pct": 34,
+          "model_target_pct": 34,
+          "raw_model_target_pct": 34.1,
           "signal_score": 78.2,
           "model_action": "trim",
           "model_rationale_en": "SOFR 3.63% supports conservative cash/fund carry.",
           "model_rationale_zh": "SOFR 3.63%，保守现金/基金仍有持有收益。",
           "model_current_pct": 44.1,
-          "model_drift_pp": 10.2,
-          "gap_amount": -1186092
+          "model_drift_pp": 10.1,
+          "gap_amount": -1174520
         },
         {
           "id": "gold",
@@ -2114,7 +2153,7 @@
           "expected_return_pct": 3.5,
           "annual_volatility_pct": 27,
           "model_target_pct": 4.6,
-          "raw_model_target_pct": 4.6,
+          "raw_model_target_pct": 4.7,
           "signal_score": 37,
           "model_action": "add",
           "model_rationale_en": "Gold signal yellow; fair-value premium level extreme caps target.",
@@ -2127,9 +2166,9 @@
           "id": "stocks",
           "label_en": "Stocks",
           "label_zh": "股票",
-          "target_pct": 19.8,
+          "target_pct": 19.6,
           "current_pct": 8.8,
-          "drift_pp": -11,
+          "drift_pp": -10.8,
           "color": "#8953d1",
           "sub_tags_en": [
             "AI Power",
@@ -2143,17 +2182,17 @@
           ],
           "note_en": "Long + swing mix — AI-electricity core with opportunistic overlays",
           "note_zh": "长期 + 波段组合——AI 电力核心 + 机会主义叠加",
-          "expected_return_pct": 8.2,
-          "annual_volatility_pct": 16.8,
-          "model_target_pct": 19.8,
-          "raw_model_target_pct": 19.7,
-          "signal_score": 62.9,
+          "expected_return_pct": 8.1,
+          "annual_volatility_pct": 16.6,
+          "model_target_pct": 19.6,
+          "raw_model_target_pct": 19.4,
+          "signal_score": 59.1,
           "model_action": "add",
-          "model_rationale_en": "Portfolio health 4.0/5.0, equity beta 1.05, regime score 31.0.",
-          "model_rationale_zh": "组合健康度 4.0/5.0，股票 beta 1.05，宏观分数 31.0。",
+          "model_rationale_en": "Portfolio health 3.5/5.0, equity beta 1.04, regime score 39.0.",
+          "model_rationale_zh": "组合健康度 3.5/5.0，股票 beta 1.04，宏观分数 39.0。",
           "model_current_pct": 8.8,
-          "model_drift_pp": -11,
-          "gap_amount": 1273256,
+          "model_drift_pp": -10.8,
+          "gap_amount": 1250112,
           "sub": [
             {
               "id": "cn",
@@ -2181,14 +2220,14 @@
           ],
           "note_en": "Asymmetric bet — long-duration, non-correlated, high-volatility core",
           "note_zh": "不对称下注——长久期、低相关、高波动核心",
-          "expected_return_pct": 10.7,
-          "annual_volatility_pct": 35.3,
+          "expected_return_pct": 10.6,
+          "annual_volatility_pct": 35.1,
           "model_target_pct": 5.1,
           "raw_model_target_pct": 5,
-          "signal_score": 21.9,
+          "signal_score": 20.4,
           "model_action": "hold",
-          "model_rationale_en": "Crypto composite 16.9, fear/greed 9; capped at 15%.",
-          "model_rationale_zh": "Crypto composite 16.9，恐惧贪婪 9；上限 15%。",
+          "model_rationale_en": "Crypto composite 15.4, fear/greed 9; capped at 15%.",
+          "model_rationale_zh": "Crypto composite 15.4，恐惧贪婪 9；上限 15%。",
           "model_current_pct": 6.7,
           "model_drift_pp": 1.6,
           "gap_amount": -187828
@@ -2197,21 +2236,21 @@
       "model": {
         "schema": "portfolio-allocation-model/v1",
         "version": "0.1.0",
-        "generated_at": "2026-06-08T23:00:24.211026+00:00",
+        "generated_at": "2026-06-08T23:52:21.720612+00:00",
         "regime": {
           "name": "defensive",
-          "score": 31
+          "score": 39
         }
       },
       "risk_free_rate": 3.63,
       "weighted_return": {
         "target": 5.2,
-        "current": 4.9
+        "current": 4.8
       },
-      "projected_annual_yield": 562943,
+      "projected_annual_yield": 561149,
       "risk": {
-        "target_vol": 7.8,
-        "current_vol": 5.6,
+        "target_vol": 7.7,
+        "current_vol": 5.5,
         "sharpe_target": 0.21,
         "sharpe_current": 0.22,
         "risk_free_rate": 3.63,
@@ -2219,9 +2258,9 @@
         "temperature_label_en": "Defensive",
         "temperature_label_zh": "防御型"
       },
-      "health": 4,
-      "portfolio_beta": 1.14,
-      "equity_beta": 1.05
+      "health": null,
+      "portfolio_beta": 1.13,
+      "equity_beta": 1.04
     }
   },
   "sector_research": [
@@ -2426,28 +2465,28 @@
       "layer_label_zh": "AI 算力",
       "stop": {
         "type": "stop_loss",
-        "level_pct_from_current": "-28.4%",
+        "level_pct_from_current": "-27.0%",
         "severity": "gray",
         "description": "AAPL 止损线 ~15% below avg cost"
       },
       "target": {
-        "price_pct_from_current": "+0.9%",
+        "price_pct_from_current": "+2.8%",
         "description": "AAPL test target",
         "optimistic_price": null
       },
       "next_event": null,
       "news": {
-        "summary": "X: WWDC/Apple Intelligence event risk dominates; sentiment mixed, valuation/\"sell the news\" caution vs services+AI moat …",
-        "sentiment": "negative",
+        "summary": "X: WWDC后短线“sell the news”，但长期AI/服务/生态叙事仍偏多；分析师目标价保持积极",
+        "sentiment": "neutral",
         "items": [
           {
-            "title": "X: WWDC/Apple Intelligence event risk dominates",
-            "snippet": "X: WWDC/Apple Intelligence event risk dominates; sentiment mixed, valuation/\"sell the news\" caution vs services+AI moat optimism."
+            "title": "X sentiment",
+            "snippet": "X: WWDC后短线“sell the news”，但长期AI/服务/生态叙事仍偏多；分析师目标价保持积极。"
           }
         ]
       },
-      "price": 307.34,
-      "daily_change_pct": 0
+      "price": 301.54,
+      "daily_change_pct": -1.89
     },
     {
       "symbol": "CEG",
@@ -2486,7 +2525,7 @@
       "layer_label_zh": "基荷发电",
       "stop": {
         "type": "stop_loss",
-        "level_pct_from_current": "-1.6%",
+        "level_pct_from_current": "--0.0%",
         "severity": "red",
         "description": "CEG stop loss: 18% below renewed entry cost $305.78"
       },
@@ -2497,17 +2536,17 @@
         "urgency": 3
       },
       "news": {
-        "summary": "X: sentiment bullish long-term on AI power/nuclear demand; recent weakness framed as buy-the-dip, with Three Mile Island…",
+        "summary": "X: 情绪强多，AI电力/核电需求叙事主导；二级发行造成的回调被视作买点",
         "sentiment": "neutral",
         "items": [
           {
-            "title": "X: sentiment bullish long-term on AI power/nuclear demand",
-            "snippet": "X: sentiment bullish long-term on AI power/nuclear demand; recent weakness framed as buy-the-dip, with Three Mile Island restart/regulatory catalysts."
+            "title": "X sentiment",
+            "snippet": "X: 情绪强多，AI电力/核电需求叙事主导；二级发行造成的回调被视作买点。"
           }
         ]
       },
-      "price": 254.83,
-      "daily_change_pct": 0
+      "price": 250.67,
+      "daily_change_pct": -1.63
     },
     {
       "symbol": "GOOGL",
@@ -2538,24 +2577,24 @@
       "layer_label_zh": "核心持仓",
       "stop": {
         "type": "stop_loss",
-        "level_pct_from_current": "-13.9%",
+        "level_pct_from_current": "-12.7%",
         "severity": "yellow",
         "description": "GOOGL stop loss ~18% below avg cost ($386.98)"
       },
       "target": null,
       "next_event": null,
       "news": {
-        "summary": "X: sentiment bullish on Gemini/Gemma, Cloud AI and Berkshire-backed AI capital raise; dilution/capex ROI are key concern…",
-        "sentiment": "positive",
+        "summary": "X: AI/cloud/TPU/Apple合作叙事支撑偏多；搜索被AI侵蚀和估值执行风险是主要分歧",
+        "sentiment": "negative",
         "items": [
           {
-            "title": "X: sentiment bullish on Gemini/Gemma, Cloud AI and Berkshire-backed AI capital raise",
-            "snippet": "X: sentiment bullish on Gemini/Gemma, Cloud AI and Berkshire-backed AI capital raise; dilution/capex ROI are key concerns."
+            "title": "X sentiment",
+            "snippet": "X: AI/cloud/TPU/Apple合作叙事支撑偏多；搜索被AI侵蚀和估值执行风险是主要分歧。"
           }
         ]
       },
-      "price": 368.53,
-      "daily_change_pct": 0
+      "price": 363.31,
+      "daily_change_pct": -1.42
     },
     {
       "symbol": "MU",
@@ -2588,17 +2627,17 @@
       "target": null,
       "next_event": null,
       "news": {
-        "summary": "X: sentiment strongly bullish structurally on HBM/AI memory supercycle; near-term volatility around June 24 earnings and…",
+        "summary": "X: HBM/DRAM/NAND受AI需求拉动，分析师上调目标价，情绪明显偏多但波动大",
         "sentiment": "positive",
         "items": [
           {
-            "title": "X: sentiment strongly bullish structurally on HBM/AI memory supercycle",
-            "snippet": "X: sentiment strongly bullish structurally on HBM/AI memory supercycle; near-term volatility around June 24 earnings and post-parabolic pullback."
+            "title": "X sentiment",
+            "snippet": "X: HBM/DRAM/NAND受AI需求拉动，分析师上调目标价，情绪明显偏多但波动大。"
           }
         ]
       },
-      "price": 864.01,
-      "daily_change_pct": 0
+      "price": 949.28,
+      "daily_change_pct": 9.87
     },
     {
       "symbol": "NVDA",
@@ -2637,24 +2676,24 @@
       "layer_label_zh": "核心持仓",
       "stop": {
         "type": "stop_loss",
-        "level_pct_from_current": "-11.7%",
+        "level_pct_from_current": "-13.2%",
         "severity": "yellow",
         "description": "NVIDIA stop loss ~18% below updated avg cost ($220.96)"
       },
       "target": null,
       "next_event": null,
       "news": {
-        "summary": "X: sentiment strongly bullish on AI infrastructure, SK Hynix/Vera Rubin memory partnerships and demand shortages; bubble…",
-        "sentiment": "positive",
+        "summary": "X: 长线AI领导者叙事强，回调多被视作买点；短线受技术位、出口管制和估值预期影响更分歧",
+        "sentiment": "neutral",
         "items": [
           {
-            "title": "X: sentiment strongly bullish on AI infrastructure, SK Hynix/Vera Rubin memory partnerships and demand shortages",
-            "snippet": "X: sentiment strongly bullish on AI infrastructure, SK Hynix/Vera Rubin memory partnerships and demand shortages; bubble/valuation worries secondary."
+            "title": "X sentiment",
+            "snippet": "X: 长线AI领导者叙事强，回调多被视作买点；短线受技术位、出口管制和估值预期影响更分歧。"
           }
         ]
       },
-      "price": 205.1,
-      "daily_change_pct": 0
+      "price": 208.64,
+      "daily_change_pct": 1.73
     },
     {
       "symbol": "QQQ",
@@ -2693,24 +2732,24 @@
       "layer_label_zh": "卫星配置",
       "stop": {
         "type": "stop_loss",
-        "level_pct_from_current": "-17.2%",
+        "level_pct_from_current": "-18.5%",
         "severity": "yellow",
         "description": "Invesco QQQ Trust stop loss ~18% below cost"
       },
       "target": null,
       "next_event": null,
       "news": {
-        "summary": "X: sentiment mixed after sharp tech pullback; short-term cautious on rates/geopolitics, medium-term still buyable AI/gro…",
-        "sentiment": "positive",
+        "summary": "X: 纳指ETF长期偏多，短线在急跌后反弹；市场担心仓位拥挤和宏观扰动",
+        "sentiment": "neutral",
         "items": [
           {
-            "title": "X: sentiment mixed after sharp tech pullback",
-            "snippet": "X: sentiment mixed after sharp tech pullback; short-term cautious on rates/geopolitics, medium-term still buyable AI/growth uptrend if supports hold."
+            "title": "X sentiment",
+            "snippet": "X: 纳指ETF长期偏多，短线在急跌后反弹；市场担心仓位拥挤和宏观扰动。"
           }
         ]
       },
-      "price": 705.06,
-      "daily_change_pct": 0
+      "price": 716.07,
+      "daily_change_pct": 1.56
     },
     {
       "symbol": "SMH",
@@ -2749,24 +2788,24 @@
       "layer_label_zh": "核心",
       "stop": {
         "type": "stop_loss",
-        "level_pct_from_current": "-17.6%",
-        "severity": "yellow",
+        "level_pct_from_current": "-21.5%",
+        "severity": "gray",
         "description": "VanEck Semiconductor ETF stop loss ~18% below cost"
       },
       "target": null,
       "next_event": null,
       "news": {
-        "summary": "X: sentiment cautiously optimistic; AI chip fundamentals intact but short-term resistance, geopolitics and crowding/prof…",
+        "summary": "X: 半导体ETF长期AI信仰仍强，但短线对拥挤交易、AI需求兑现和技术回调有明显谨慎",
         "sentiment": "neutral",
         "items": [
           {
-            "title": "X: sentiment cautiously optimistic",
-            "snippet": "X: sentiment cautiously optimistic; AI chip fundamentals intact but short-term resistance, geopolitics and crowding/profit-taking weigh."
+            "title": "X sentiment",
+            "snippet": "X: 半导体ETF长期AI信仰仍强，但短线对拥挤交易、AI需求兑现和技术回调有明显谨慎。"
           }
         ]
       },
-      "price": 569.69,
-      "daily_change_pct": 0
+      "price": 598.16,
+      "daily_change_pct": 5
     },
     {
       "symbol": "VGT",
@@ -2805,24 +2844,24 @@
       "layer_label_zh": "卫星配置",
       "stop": {
         "type": "stop_loss",
-        "level_pct_from_current": "-19.4%",
-        "severity": "yellow",
+        "level_pct_from_current": "-20.7%",
+        "severity": "gray",
         "description": "Vanguard Information Technology ETF stop loss ~18% below cost"
       },
       "target": null,
       "next_event": null,
       "news": {
-        "summary": "X: retail sentiment positive on VGT as low-cost tech/AI exposure; caution is sector concentration and elevated valuation…",
-        "sentiment": "neutral",
+        "summary": "X: 被当作长期科技核心ETF，散户偏多，少见直接看空；风险集中在科技估值与板块轮动",
+        "sentiment": "negative",
         "items": [
           {
-            "title": "X: retail sentiment positive on VGT as low-cost tech/AI exposure",
-            "snippet": "X: retail sentiment positive on VGT as low-cost tech/AI exposure; caution is sector concentration and elevated valuation."
+            "title": "X sentiment",
+            "snippet": "X: 被当作长期科技核心ETF，散户偏多，少见直接看空；风险集中在科技估值与板块轮动。"
           }
         ]
       },
-      "price": 115.28,
-      "daily_change_pct": 0
+      "price": 117.25,
+      "daily_change_pct": 1.71
     },
     {
       "symbol": "159381",
@@ -2853,24 +2892,24 @@
       "layer_label_zh": "卫星",
       "stop": {
         "type": "stop_loss",
-        "level_pct_from_current": "--62.7%",
+        "level_pct_from_current": "--68.5%",
         "severity": "red",
         "description": "CHINA ASSET MANAGEMENT CO 止损线 跌破成本价约18%"
       },
       "target": null,
       "next_event": null,
       "news": {
-        "summary": "X: direct discussion thin; proxy 双创/硬科技 ETF sentiment is short-term cautious after outflows/科技回调, long-term supported by…",
+        "summary": "X: 直接讨论少，映射到科创AI/机器人/硬科技，长期政策+国产化偏多，短期随全球AI估值震荡",
         "sentiment": "neutral",
         "items": [
           {
-            "title": "X: direct discussion thin",
-            "snippet": "X: direct discussion thin; proxy 双创/硬科技 ETF sentiment is short-term cautious after outflows/科技回调, long-term supported by AI/半导体政策主线."
+            "title": "X sentiment",
+            "snippet": "X: 直接讨论少，映射到科创AI/机器人/硬科技，长期政策+国产化偏多，短期随全球AI估值震荡。"
           }
         ]
       },
-      "price": 1.334,
-      "daily_change_pct": 0
+      "price": 1.288,
+      "daily_change_pct": -3.45
     },
     {
       "symbol": "159632",
@@ -2901,10 +2940,16 @@
       "target": null,
       "next_event": null,
       "news": {
-        "summary": "Nasdaq cross-border ETF, pending first scan.",
+        "summary": "X: 国内纳指ETF资金情绪偏乐观，高溢价显示逢跌买入意愿，但新买入需小心溢价回落",
         "sentiment": "neutral",
-        "items": []
-      }
+        "items": [
+          {
+            "title": "X sentiment",
+            "snippet": "X: 国内纳指ETF资金情绪偏乐观，高溢价显示逢跌买入意愿，但新买入需小心溢价回落。"
+          }
+        ]
+      },
+      "price": 2.341
     },
     {
       "symbol": "588000",
@@ -2933,24 +2978,24 @@
       "layer_label_zh": "卫星",
       "stop": {
         "type": "stop_loss",
-        "level_pct_from_current": "-8.1%",
+        "level_pct_from_current": "-3.7%",
         "severity": "red",
         "description": "588000 止损线 跌破成本价约18%"
       },
       "target": null,
       "next_event": null,
       "news": {
-        "summary": "X: 科创50ETF short-term weak after >4% index pullback and momentum deterioration; medium-term still core China AI/国产替代工具.",
+        "summary": "X: 科创50短期明显偏弱，科技板块风险释放，等待止跌；长期仍看硬科技国产化",
         "sentiment": "negative",
         "items": [
           {
-            "title": "X: 科创50ETF short-term weak after >4% index pullback and momentum deterioration",
-            "snippet": "X: 科创50ETF short-term weak after >4% index pullback and momentum deterioration; medium-term still core China AI/国产替代工具."
+            "title": "X sentiment",
+            "snippet": "X: 科创50短期明显偏弱，科技板块风险释放，等待止跌；长期仍看硬科技国产化。"
           }
         ]
       },
-      "price": 1.763,
-      "daily_change_pct": 0
+      "price": 1.683,
+      "daily_change_pct": -4.54
     }
   ],
   "crypto": null,
@@ -3044,9 +3089,9 @@
           "name_en": "Miner Capitulation",
           "status": "yellow",
           "score": 50,
-          "detail_en": "Drawdown: -23.3%",
-          "detail_zh": "回撤: -23.3%",
-          "delta": 3.7,
+          "detail_en": "Drawdown: -34.7%",
+          "detail_zh": "回撤: -34.7%",
+          "delta": 0.5,
           "desc_en": "BTC drawdown from ATH + miner revenue stress",
           "desc_zh": "BTC 距高点回撤 + 矿工收入压力"
         },
@@ -3199,7 +3244,7 @@
         "label_en": "Stablecoin Yield",
         "label_zh": "稳定币生息",
         "current_pct": 35,
-        "target_pct": 36.6,
+        "target_pct": 36.7,
         "drift_pp": 5,
         "color": "#10b981",
         "sub_tags_en": [
@@ -3218,7 +3263,7 @@
         "label_en": "Funds",
         "label_zh": "基金与现金",
         "current_pct": 34.6,
-        "target_pct": 33.9,
+        "target_pct": 34,
         "drift_pp": 9.6,
         "color": "#3b82f6",
         "sub_tags_en": [
@@ -3254,7 +3299,7 @@
         "label_en": "Stocks",
         "label_zh": "股票",
         "current_pct": 19,
-        "target_pct": 19.8,
+        "target_pct": 19.6,
         "drift_pp": -6,
         "color": "#8953d1",
         "sub_tags_en": [
@@ -3411,66 +3456,7 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-06-01",
-        "last_reviewed": "2026-06-01",
-        "quant": {
-          "composite": 3.78,
-          "rating": "Buy",
-          "score": 3.78,
-          "factors": {
-            "valuation": {
-              "grade": "B",
-              "score": 3.5,
-              "metrics": {
-                "pb": 12.6,
-                "ps": 28,
-                "peg": 0.78
-              }
-            },
-            "growth": {
-              "grade": "A-",
-              "score": 4.2,
-              "metrics": {
-                "revenueGrowth": 0.514
-              }
-            },
-            "profitability": {
-              "grade": "F",
-              "score": 1,
-              "metrics": {
-                "grossMargin": 0.296,
-                "operatingMargin": -0.086,
-                "netMargin": -0.085,
-                "roe": -0.061
-              }
-            },
-            "momentum": {
-              "grade": "A+",
-              "score": 4.9,
-              "metrics": {
-                "priceChange1M": -0.0198,
-                "priceChange3M": 0.8565,
-                "priceChange6M": 6.8772,
-                "vs50dma": 0.1292,
-                "vs200dma": 1.5238
-              }
-            },
-            "epsRevisions": {
-              "grade": "A-",
-              "score": 4.2,
-              "metrics": {
-                "analystSentiment": 0.73,
-                "numAnalysts": 5
-              }
-            },
-            "dividend": {
-              "grade": "A+",
-              "score": 4.9,
-              "metrics": {
-                "payoutRatio": 0
-              }
-            }
-          }
-        }
+        "last_reviewed": "2026-06-01"
       },
       "AMAT": {
         "ticker": "AMAT",
@@ -3488,73 +3474,7 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-05-15",
-        "last_reviewed": "2026-05-15",
-        "quant": {
-          "composite": 3.98,
-          "rating": "Buy",
-          "score": 3.98,
-          "factors": {
-            "valuation": {
-              "grade": "C",
-              "score": 2.5,
-              "metrics": {
-                "pe": 42.5,
-                "pb": 15,
-                "ps": 12.4,
-                "peg": 1.54,
-                "evEbitda": 38.7
-              }
-            },
-            "growth": {
-              "grade": "B-",
-              "score": 3.2,
-              "metrics": {
-                "revenueGrowth": 0.114,
-                "earningsGrowth": 0.335,
-                "epsGrowth": 0.313
-              }
-            },
-            "profitability": {
-              "grade": "B",
-              "score": 3.5,
-              "metrics": {
-                "grossMargin": 0.49,
-                "operatingMargin": 0.319,
-                "netMargin": 0.293,
-                "roe": 0.397
-              }
-            },
-            "momentum": {
-              "grade": "A+",
-              "score": 4.9,
-              "metrics": {
-                "priceChange1M": 0.1041,
-                "priceChange3M": 0.2911,
-                "priceChange6M": 0.9667,
-                "vs50dma": 0.1088,
-                "vs200dma": 0.5121
-              }
-            },
-            "epsRevisions": {
-              "grade": "A+",
-              "score": 4.9,
-              "metrics": {
-                "analystSentiment": 0.9,
-                "numAnalysts": 36,
-                "peRatioFwdVsTrail": 0.659
-              }
-            },
-            "dividend": {
-              "grade": "A+",
-              "score": 4.9,
-              "metrics": {
-                "payoutRatio": 0.173,
-                "dividendYield": 0.47,
-                "dividendRate": 2.12
-              }
-            }
-          }
-        }
+        "last_reviewed": "2026-05-15"
       },
       "AVGO": {
         "ticker": "AVGO",
@@ -3569,73 +3489,7 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-05-08",
-        "last_reviewed": "2026-05-08",
-        "quant": {
-          "composite": 3.83,
-          "rating": "Buy",
-          "score": 3.83,
-          "factors": {
-            "valuation": {
-              "grade": "D+",
-              "score": 1.8,
-              "metrics": {
-                "pe": 64.1,
-                "pb": 20.9,
-                "ps": 24.2,
-                "peg": 0.71,
-                "evEbitda": 44.7
-              }
-            },
-            "growth": {
-              "grade": "A",
-              "score": 4.5,
-              "metrics": {
-                "revenueGrowth": 0.479,
-                "earningsGrowth": 0.854,
-                "epsGrowth": 0.875
-              }
-            },
-            "profitability": {
-              "grade": "A",
-              "score": 4.5,
-              "metrics": {
-                "grossMargin": 0.763,
-                "operatingMargin": 0.49,
-                "netMargin": 0.388,
-                "roe": 0.373
-              }
-            },
-            "momentum": {
-              "grade": "B",
-              "score": 3.5,
-              "metrics": {
-                "priceChange1M": -0.0974,
-                "priceChange3M": 0.2316,
-                "priceChange6M": 0.0247,
-                "vs50dma": -0.0318,
-                "vs200dma": 0.0868
-              }
-            },
-            "epsRevisions": {
-              "grade": "A+",
-              "score": 4.9,
-              "metrics": {
-                "analystSentiment": 0.93,
-                "numAnalysts": 45,
-                "peRatioFwdVsTrail": 0.312
-              }
-            },
-            "dividend": {
-              "grade": "B+",
-              "score": 3.8,
-              "metrics": {
-                "payoutRatio": 0.413,
-                "dividendYield": 0.67,
-                "dividendRate": 2.6
-              }
-            }
-          }
-        }
+        "last_reviewed": "2026-05-08"
       },
       "BKR": {
         "ticker": "BKR",
@@ -3650,73 +3504,7 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-05-11",
-        "last_reviewed": "2026-05-11",
-        "quant": {
-          "composite": 3.85,
-          "rating": "Buy",
-          "score": 3.85,
-          "factors": {
-            "valuation": {
-              "grade": "A-",
-              "score": 4.2,
-              "metrics": {
-                "pe": 20,
-                "pb": 3.2,
-                "ps": 2.2,
-                "peg": 2.51,
-                "evEbitda": 13
-              }
-            },
-            "growth": {
-              "grade": "A",
-              "score": 4.5,
-              "metrics": {
-                "revenueGrowth": 0.025,
-                "earningsGrowth": 1.325,
-                "epsGrowth": 1.313
-              }
-            },
-            "profitability": {
-              "grade": "C-",
-              "score": 2.2,
-              "metrics": {
-                "grossMargin": 0.236,
-                "operatingMargin": 0.123,
-                "netMargin": 0.112,
-                "roe": 0.172
-              }
-            },
-            "momentum": {
-              "grade": "B",
-              "score": 3.5,
-              "metrics": {
-                "priceChange1M": -0.0766,
-                "priceChange3M": 0.0041,
-                "priceChange6M": 0.2771,
-                "vs50dma": -0.0225,
-                "vs200dma": 0.1585
-              }
-            },
-            "epsRevisions": {
-              "grade": "B+",
-              "score": 3.8,
-              "metrics": {
-                "analystSentiment": 0.85,
-                "numAnalysts": 21,
-                "peRatioFwdVsTrail": 1.125
-              }
-            },
-            "dividend": {
-              "grade": "A+",
-              "score": 4.9,
-              "metrics": {
-                "payoutRatio": 0.294,
-                "dividendYield": 1.47,
-                "dividendRate": 0.92
-              }
-            }
-          }
-        }
+        "last_reviewed": "2026-05-11"
       },
       "BOT": {
         "ticker": "BOT",
@@ -3731,23 +3519,7 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-05-22",
-        "last_reviewed": "2026-05-22",
-        "quant": {
-          "composite": 1,
-          "rating": "Strong Sell",
-          "score": 1,
-          "factors": {
-            "profitability": {
-              "grade": "F",
-              "score": 1,
-              "metrics": {
-                "grossMargin": 0,
-                "operatingMargin": 0,
-                "netMargin": 0
-              }
-            }
-          }
-        }
+        "last_reviewed": "2026-05-22"
       },
       "COIN": {
         "ticker": "COIN",
@@ -3762,69 +3534,7 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-04-01",
-        "last_reviewed": "2026-04-01",
-        "quant": {
-          "composite": 2.95,
-          "rating": "Hold",
-          "score": 2.95,
-          "factors": {
-            "valuation": {
-              "grade": "C-",
-              "score": 2.2,
-              "metrics": {
-                "pe": 56.2,
-                "pb": 3,
-                "ps": 6.4,
-                "peg": 0.85,
-                "evEbitda": 37.6
-              }
-            },
-            "growth": {
-              "grade": "F",
-              "score": 1,
-              "metrics": {
-                "revenueGrowth": -0.308
-              }
-            },
-            "profitability": {
-              "grade": "B-",
-              "score": 3.2,
-              "metrics": {
-                "grossMargin": 0.855,
-                "operatingMargin": -0.071,
-                "netMargin": 0.127,
-                "roe": 0.067
-              }
-            },
-            "momentum": {
-              "grade": "D",
-              "score": 1.5,
-              "metrics": {
-                "priceChange1M": -0.2293,
-                "priceChange3M": -0.1643,
-                "priceChange6M": -0.4046,
-                "vs50dma": -0.1842,
-                "vs200dma": -0.3771
-              }
-            },
-            "epsRevisions": {
-              "grade": "A+",
-              "score": 4.9,
-              "metrics": {
-                "analystSentiment": 0.8,
-                "numAnalysts": 30,
-                "peRatioFwdVsTrail": 0.545
-              }
-            },
-            "dividend": {
-              "grade": "A+",
-              "score": 4.9,
-              "metrics": {
-                "payoutRatio": 0
-              }
-            }
-          }
-        }
+        "last_reviewed": "2026-04-01"
       },
       "CRCL": {
         "ticker": "CRCL",
@@ -3839,68 +3549,7 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-04-01",
-        "last_reviewed": "2026-04-01",
-        "quant": {
-          "composite": 3.08,
-          "rating": "Hold",
-          "score": 3.08,
-          "factors": {
-            "valuation": {
-              "grade": "A+",
-              "score": 4.9,
-              "metrics": {
-                "pb": 5.8,
-                "ps": 7.5,
-                "peg": 4.34
-              }
-            },
-            "growth": {
-              "grade": "F",
-              "score": 1,
-              "metrics": {
-                "revenueGrowth": 0.2,
-                "earningsGrowth": -0.809,
-                "epsGrowth": -0.147
-              }
-            },
-            "profitability": {
-              "grade": "F",
-              "score": 1,
-              "metrics": {
-                "grossMargin": 0.081,
-                "operatingMargin": 0.065,
-                "netMargin": -0.028,
-                "roe": -0.03
-              }
-            },
-            "momentum": {
-              "grade": "C-",
-              "score": 2.2,
-              "metrics": {
-                "priceChange1M": -0.297,
-                "priceChange3M": -0.1942,
-                "priceChange6M": 0.1037,
-                "vs50dma": -0.2246,
-                "vs200dma": -0.2095
-              }
-            },
-            "epsRevisions": {
-              "grade": "A",
-              "score": 4.5,
-              "metrics": {
-                "analystSentiment": 0.76,
-                "numAnalysts": 22
-              }
-            },
-            "dividend": {
-              "grade": "A+",
-              "score": 4.9,
-              "metrics": {
-                "payoutRatio": 0
-              }
-            }
-          }
-        }
+        "last_reviewed": "2026-04-01"
       },
       "CRM": {
         "ticker": "CRM",
@@ -3918,73 +3567,7 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-05-18",
-        "last_reviewed": "2026-05-18",
-        "quant": {
-          "composite": 3.85,
-          "rating": "Buy",
-          "score": 3.85,
-          "factors": {
-            "valuation": {
-              "grade": "B+",
-              "score": 3.8,
-              "metrics": {
-                "pe": 21.5,
-                "pb": 4.4,
-                "ps": 3.6,
-                "peg": 0.9,
-                "evEbitda": 14.2
-              }
-            },
-            "growth": {
-              "grade": "B",
-              "score": 3.5,
-              "metrics": {
-                "revenueGrowth": 0.133,
-                "earningsGrowth": 0.522,
-                "epsGrowth": 0.367
-              }
-            },
-            "profitability": {
-              "grade": "B",
-              "score": 3.5,
-              "metrics": {
-                "grossMargin": 0.776,
-                "operatingMargin": 0.218,
-                "netMargin": 0.187,
-                "roe": 0.169
-              }
-            },
-            "momentum": {
-              "grade": "C",
-              "score": 2.5,
-              "metrics": {
-                "priceChange1M": -0.0071,
-                "priceChange3M": -0.0506,
-                "priceChange6M": -0.1781,
-                "vs50dma": 0.0245,
-                "vs200dma": -0.1541
-              }
-            },
-            "epsRevisions": {
-              "grade": "A+",
-              "score": 4.9,
-              "metrics": {
-                "analystSentiment": 0.87,
-                "numAnalysts": 53,
-                "peRatioFwdVsTrail": 0.555
-              }
-            },
-            "dividend": {
-              "grade": "A+",
-              "score": 4.9,
-              "metrics": {
-                "payoutRatio": 0.196,
-                "dividendYield": 0.95,
-                "dividendRate": 1.76
-              }
-            }
-          }
-        }
+        "last_reviewed": "2026-05-18"
       },
       "CRWD": {
         "ticker": "CRWD",
@@ -3999,67 +3582,7 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-05-31",
-        "last_reviewed": "2026-05-31",
-        "quant": {
-          "composite": 3.87,
-          "rating": "Buy",
-          "score": 3.87,
-          "factors": {
-            "valuation": {
-              "grade": "B-",
-              "score": 3.2,
-              "metrics": {
-                "pb": 36.9,
-                "ps": 33.5,
-                "peg": 5.46,
-                "evEbitda": 2817.4
-              }
-            },
-            "growth": {
-              "grade": "B-",
-              "score": 3.2,
-              "metrics": {
-                "revenueGrowth": 0.256
-              }
-            },
-            "profitability": {
-              "grade": "C",
-              "score": 2.5,
-              "metrics": {
-                "grossMargin": 0.751,
-                "operatingMargin": -0.022,
-                "netMargin": -0.006,
-                "roe": -0.002
-              }
-            },
-            "momentum": {
-              "grade": "A+",
-              "score": 4.9,
-              "metrics": {
-                "priceChange1M": 0.4081,
-                "priceChange3M": 0.7143,
-                "priceChange6M": 0.324,
-                "vs50dma": 0.3012,
-                "vs200dma": 0.4037
-              }
-            },
-            "epsRevisions": {
-              "grade": "A",
-              "score": 4.5,
-              "metrics": {
-                "analystSentiment": 0.87,
-                "numAnalysts": 51
-              }
-            },
-            "dividend": {
-              "grade": "A+",
-              "score": 4.9,
-              "metrics": {
-                "payoutRatio": 0
-              }
-            }
-          }
-        }
+        "last_reviewed": "2026-05-31"
       },
       "CRWV": {
         "ticker": "CRWV",
@@ -4074,66 +3597,7 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-05-08",
-        "last_reviewed": "2026-05-08",
-        "quant": {
-          "composite": 4.2,
-          "rating": "Buy",
-          "score": 4.2,
-          "factors": {
-            "valuation": {
-              "grade": "A+",
-              "score": 4.9,
-              "metrics": {
-                "pb": 11.2,
-                "ps": 8.8,
-                "evEbitda": 29
-              }
-            },
-            "growth": {
-              "grade": "A+",
-              "score": 4.9,
-              "metrics": {
-                "revenueGrowth": 1.116
-              }
-            },
-            "profitability": {
-              "grade": "D+",
-              "score": 1.8,
-              "metrics": {
-                "grossMargin": 0.694,
-                "operatingMargin": -0.069,
-                "netMargin": -0.256,
-                "roe": -0.407
-              }
-            },
-            "momentum": {
-              "grade": "A-",
-              "score": 4.2,
-              "metrics": {
-                "priceChange1M": -0.215,
-                "priceChange3M": 0.3607,
-                "priceChange6M": 0.364,
-                "vs50dma": -0.0595,
-                "vs200dma": 0.0046
-              }
-            },
-            "epsRevisions": {
-              "grade": "A",
-              "score": 4.5,
-              "metrics": {
-                "analystSentiment": 0.82,
-                "numAnalysts": 33
-              }
-            },
-            "dividend": {
-              "grade": "A+",
-              "score": 4.9,
-              "metrics": {
-                "payoutRatio": 0
-              }
-            }
-          }
-        }
+        "last_reviewed": "2026-05-08"
       },
       "EQT": {
         "ticker": "EQT",
@@ -4148,73 +3612,7 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-04-01",
-        "last_reviewed": "2026-04-01",
-        "quant": {
-          "composite": 4.18,
-          "rating": "Buy",
-          "score": 4.18,
-          "factors": {
-            "valuation": {
-              "grade": "A",
-              "score": 4.5,
-              "metrics": {
-                "pe": 10.2,
-                "pb": 1.3,
-                "ps": 3.6,
-                "peg": 2.44,
-                "evEbitda": 5.6
-              }
-            },
-            "growth": {
-              "grade": "A+",
-              "score": 4.9,
-              "metrics": {
-                "revenueGrowth": 0.499,
-                "earningsGrowth": 4.9,
-                "epsGrowth": 5.142
-              }
-            },
-            "profitability": {
-              "grade": "A",
-              "score": 4.5,
-              "metrics": {
-                "grossMargin": 0.81,
-                "operatingMargin": 0.574,
-                "netMargin": 0.351,
-                "roe": 0.134
-              }
-            },
-            "momentum": {
-              "grade": "C",
-              "score": 2.5,
-              "metrics": {
-                "priceChange1M": -0.0821,
-                "priceChange3M": -0.1251,
-                "priceChange6M": -0.0606,
-                "vs50dma": -0.0754,
-                "vs200dma": -0.0453
-              }
-            },
-            "epsRevisions": {
-              "grade": "B+",
-              "score": 3.8,
-              "metrics": {
-                "analystSentiment": 0.88,
-                "numAnalysts": 24,
-                "peRatioFwdVsTrail": 1.14
-              }
-            },
-            "dividend": {
-              "grade": "A+",
-              "score": 4.9,
-              "metrics": {
-                "payoutRatio": 0.122,
-                "dividendYield": 1.23,
-                "dividendRate": 0.66
-              }
-            }
-          }
-        }
+        "last_reviewed": "2026-04-01"
       },
       "ETN": {
         "ticker": "ETN",
@@ -4229,73 +3627,7 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-04-01",
-        "last_reviewed": "2026-04-01",
-        "quant": {
-          "composite": 3.17,
-          "rating": "Hold",
-          "score": 3.17,
-          "factors": {
-            "valuation": {
-              "grade": "C+",
-              "score": 2.8,
-              "metrics": {
-                "pe": 38.7,
-                "pb": 7.8,
-                "ps": 5.4,
-                "peg": 2.99,
-                "evEbitda": 27.6
-              }
-            },
-            "growth": {
-              "grade": "D",
-              "score": 1.5,
-              "metrics": {
-                "revenueGrowth": 0.168,
-                "earningsGrowth": -0.094,
-                "epsGrowth": -0.102
-              }
-            },
-            "profitability": {
-              "grade": "C",
-              "score": 2.5,
-              "metrics": {
-                "grossMargin": 0.371,
-                "operatingMargin": 0.161,
-                "netMargin": 0.14,
-                "roe": 0.208
-              }
-            },
-            "momentum": {
-              "grade": "B",
-              "score": 3.5,
-              "metrics": {
-                "priceChange1M": -0.0337,
-                "priceChange3M": 0.1201,
-                "priceChange6M": 0.2053,
-                "vs50dma": -0.0037,
-                "vs200dma": 0.0862
-              }
-            },
-            "epsRevisions": {
-              "grade": "A+",
-              "score": 4.9,
-              "metrics": {
-                "analystSentiment": 0.86,
-                "numAnalysts": 27,
-                "peRatioFwdVsTrail": 0.65
-              }
-            },
-            "dividend": {
-              "grade": "B+",
-              "score": 3.8,
-              "metrics": {
-                "payoutRatio": 0.413,
-                "dividendYield": 1.11,
-                "dividendRate": 4.4
-              }
-            }
-          }
-        }
+        "last_reviewed": "2026-04-01"
       },
       "HAFN": {
         "ticker": "HAFN",
@@ -4310,70 +3642,7 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-05-09",
-        "last_reviewed": "2026-05-09",
-        "quant": {
-          "composite": 3.22,
-          "rating": "Hold",
-          "score": 3.22,
-          "factors": {
-            "valuation": {
-              "grade": "A+",
-              "score": 4.9,
-              "metrics": {
-                "pe": 8.1,
-                "pb": 1.4,
-                "ps": 1.5,
-                "evEbitda": 8
-              }
-            },
-            "growth": {
-              "grade": "A+",
-              "score": 4.9,
-              "metrics": {
-                "revenueGrowth": 0.225,
-                "earningsGrowth": 1.841,
-                "epsGrowth": 1.844
-              }
-            },
-            "profitability": {
-              "grade": "C",
-              "score": 2.5,
-              "metrics": {
-                "grossMargin": 0.293,
-                "operatingMargin": 0.223,
-                "netMargin": 0.19,
-                "roe": 0.189
-              }
-            },
-            "momentum": {
-              "grade": "B-",
-              "score": 3.2,
-              "metrics": {
-                "priceChange1M": -0.2009,
-                "priceChange3M": 0.0152,
-                "priceChange6M": 0.314,
-                "vs50dma": -0.0928,
-                "vs200dma": 0.1632
-              }
-            },
-            "epsRevisions": {
-              "grade": "F",
-              "score": 1,
-              "metrics": {
-                "peRatioFwdVsTrail": 1.406
-              }
-            },
-            "dividend": {
-              "grade": "C+",
-              "score": 2.8,
-              "metrics": {
-                "payoutRatio": 0.606,
-                "dividendYield": 10.05,
-                "dividendRate": 0.73
-              }
-            }
-          }
-        }
+        "last_reviewed": "2026-05-09"
       },
       "HOOD": {
         "ticker": "HOOD",
@@ -4388,70 +3657,7 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-04-01",
-        "last_reviewed": "2026-04-01",
-        "quant": {
-          "composite": 3.68,
-          "rating": "Buy",
-          "score": 3.68,
-          "factors": {
-            "valuation": {
-              "grade": "C+",
-              "score": 2.8,
-              "metrics": {
-                "pe": 40,
-                "pb": 8,
-                "ps": 16.1,
-                "peg": 2.31
-              }
-            },
-            "growth": {
-              "grade": "C-",
-              "score": 2.2,
-              "metrics": {
-                "revenueGrowth": 0.151,
-                "earningsGrowth": 0.027,
-                "epsGrowth": 0.042
-              }
-            },
-            "profitability": {
-              "grade": "A",
-              "score": 4.5,
-              "metrics": {
-                "grossMargin": 0.922,
-                "operatingMargin": 0.385,
-                "netMargin": 0.411,
-                "roe": 0.215
-              }
-            },
-            "momentum": {
-              "grade": "C+",
-              "score": 2.8,
-              "metrics": {
-                "priceChange1M": 0.0706,
-                "priceChange3M": 0.0841,
-                "priceChange6M": -0.2827,
-                "vs50dma": 0.0539,
-                "vs200dma": -0.2016
-              }
-            },
-            "epsRevisions": {
-              "grade": "A+",
-              "score": 4.9,
-              "metrics": {
-                "analystSentiment": 0.83,
-                "numAnalysts": 24,
-                "peRatioFwdVsTrail": 0.738
-              }
-            },
-            "dividend": {
-              "grade": "A+",
-              "score": 4.9,
-              "metrics": {
-                "payoutRatio": 0
-              }
-            }
-          }
-        }
+        "last_reviewed": "2026-04-01"
       },
       "HUBB": {
         "ticker": "HUBB",
@@ -4466,73 +3672,7 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-04-01",
-        "last_reviewed": "2026-04-01",
-        "quant": {
-          "composite": 3.52,
-          "rating": "Buy",
-          "score": 3.52,
-          "factors": {
-            "valuation": {
-              "grade": "B",
-              "score": 3.5,
-              "metrics": {
-                "pe": 28.2,
-                "pb": 6.7,
-                "ps": 4.2,
-                "peg": 2.31,
-                "evEbitda": 18.7
-              }
-            },
-            "growth": {
-              "grade": "C",
-              "score": 2.5,
-              "metrics": {
-                "revenueGrowth": 0.111,
-                "earningsGrowth": 0.125,
-                "epsGrowth": 0.114
-              }
-            },
-            "profitability": {
-              "grade": "C",
-              "score": 2.5,
-              "metrics": {
-                "grossMargin": 0.357,
-                "operatingMargin": 0.177,
-                "netMargin": 0.151,
-                "roe": 0.258
-              }
-            },
-            "momentum": {
-              "grade": "B-",
-              "score": 3.2,
-              "metrics": {
-                "priceChange1M": -0.0582,
-                "priceChange3M": -0.021,
-                "priceChange6M": 0.1346,
-                "vs50dma": -0.0503,
-                "vs200dma": 0.0217
-              }
-            },
-            "epsRevisions": {
-              "grade": "A+",
-              "score": 4.9,
-              "metrics": {
-                "analystSentiment": 0.79,
-                "numAnalysts": 13,
-                "peRatioFwdVsTrail": 0.778
-              }
-            },
-            "dividend": {
-              "grade": "A",
-              "score": 4.5,
-              "metrics": {
-                "payoutRatio": 0.324,
-                "dividendYield": 1.19,
-                "dividendRate": 5.68
-              }
-            }
-          }
-        }
+        "last_reviewed": "2026-04-01"
       },
       "ILMN": {
         "ticker": "ILMN",
@@ -4550,71 +3690,7 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-05-14",
-        "last_reviewed": "2026-05-14",
-        "quant": {
-          "composite": 3.78,
-          "rating": "Buy",
-          "score": 3.78,
-          "factors": {
-            "valuation": {
-              "grade": "B",
-              "score": 3.5,
-              "metrics": {
-                "pe": 29.5,
-                "pb": 9.2,
-                "ps": 5.6,
-                "peg": 2.85,
-                "evEbitda": 22.5
-              }
-            },
-            "growth": {
-              "grade": "D+",
-              "score": 1.8,
-              "metrics": {
-                "revenueGrowth": 0.048,
-                "earningsGrowth": 0.061,
-                "epsGrowth": 0.023
-              }
-            },
-            "profitability": {
-              "grade": "B",
-              "score": 3.5,
-              "metrics": {
-                "grossMargin": 0.683,
-                "operatingMargin": 0.183,
-                "netMargin": 0.194,
-                "roe": 0.338
-              }
-            },
-            "momentum": {
-              "grade": "A",
-              "score": 4.5,
-              "metrics": {
-                "priceChange1M": 0.1672,
-                "priceChange3M": 0.2529,
-                "priceChange6M": 0.2887,
-                "vs50dma": 0.1778,
-                "vs200dma": 0.3102
-              }
-            },
-            "epsRevisions": {
-              "grade": "A",
-              "score": 4.5,
-              "metrics": {
-                "analystSentiment": 0.73,
-                "numAnalysts": 18,
-                "peRatioFwdVsTrail": 0.929
-              }
-            },
-            "dividend": {
-              "grade": "A+",
-              "score": 4.9,
-              "metrics": {
-                "payoutRatio": 0
-              }
-            }
-          }
-        }
+        "last_reviewed": "2026-05-14"
       },
       "LITE": {
         "ticker": "LITE",
@@ -4629,69 +3705,7 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-05-20",
-        "last_reviewed": "2026-05-20",
-        "quant": {
-          "composite": 3.83,
-          "rating": "Buy",
-          "score": 3.83,
-          "factors": {
-            "valuation": {
-              "grade": "F",
-              "score": 1,
-              "metrics": {
-                "pe": 151.5,
-                "pb": 72.8,
-                "ps": 27,
-                "peg": 0.63,
-                "evEbitda": 122
-              }
-            },
-            "growth": {
-              "grade": "A",
-              "score": 4.5,
-              "metrics": {
-                "revenueGrowth": 0.901
-              }
-            },
-            "profitability": {
-              "grade": "C+",
-              "score": 2.8,
-              "metrics": {
-                "grossMargin": 0.408,
-                "operatingMargin": 0.218,
-                "netMargin": 0.177,
-                "roe": 0.228
-              }
-            },
-            "momentum": {
-              "grade": "A+",
-              "score": 4.9,
-              "metrics": {
-                "priceChange1M": -0.1316,
-                "priceChange3M": 0.2437,
-                "priceChange6M": 1.885,
-                "vs50dma": -0.0223,
-                "vs200dma": 0.8052
-              }
-            },
-            "epsRevisions": {
-              "grade": "A+",
-              "score": 4.9,
-              "metrics": {
-                "analystSentiment": 0.88,
-                "numAnalysts": 24,
-                "peRatioFwdVsTrail": 0.315
-              }
-            },
-            "dividend": {
-              "grade": "A+",
-              "score": 4.9,
-              "metrics": {
-                "payoutRatio": 0
-              }
-            }
-          }
-        }
+        "last_reviewed": "2026-05-20"
       },
       "LNG": {
         "ticker": "LNG",
@@ -4706,71 +3720,7 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-04-01",
-        "last_reviewed": "2026-04-01",
-        "quant": {
-          "composite": 3.22,
-          "rating": "Hold",
-          "score": 3.22,
-          "factors": {
-            "valuation": {
-              "grade": "C",
-              "score": 2.5,
-              "metrics": {
-                "pe": 40.5,
-                "pb": 13.4,
-                "ps": 2.4,
-                "peg": 9.46,
-                "evEbitda": 13.5
-              }
-            },
-            "growth": {
-              "grade": "B-",
-              "score": 3.2,
-              "metrics": {
-                "revenueGrowth": 0.242
-              }
-            },
-            "profitability": {
-              "grade": "F",
-              "score": 1,
-              "metrics": {
-                "grossMargin": 0.33,
-                "operatingMargin": -0.537,
-                "netMargin": 0.071,
-                "roe": 0.289
-              }
-            },
-            "momentum": {
-              "grade": "B-",
-              "score": 3.2,
-              "metrics": {
-                "priceChange1M": -0.1119,
-                "priceChange3M": -0.0272,
-                "priceChange6M": 0.1732,
-                "vs50dma": -0.0678,
-                "vs200dma": 0.0415
-              }
-            },
-            "epsRevisions": {
-              "grade": "A+",
-              "score": 4.9,
-              "metrics": {
-                "analystSentiment": 0.92,
-                "numAnalysts": 22,
-                "peRatioFwdVsTrail": 0.302
-              }
-            },
-            "dividend": {
-              "grade": "A",
-              "score": 4.5,
-              "metrics": {
-                "payoutRatio": 0.357,
-                "dividendYield": 0.93,
-                "dividendRate": 2.22
-              }
-            }
-          }
-        }
+        "last_reviewed": "2026-04-01"
       },
       "MRVL": {
         "ticker": "MRVL",
@@ -4788,73 +3738,7 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-05-01",
-        "last_reviewed": "2026-05-01",
-        "quant": {
-          "composite": 3.4,
-          "rating": "Hold",
-          "score": 3.4,
-          "factors": {
-            "valuation": {
-              "grade": "D",
-              "score": 1.5,
-              "metrics": {
-                "pe": 90.9,
-                "pb": 12.7,
-                "ps": 26.4,
-                "peg": 1.49,
-                "evEbitda": 85.5
-              }
-            },
-            "growth": {
-              "grade": "F",
-              "score": 1,
-              "metrics": {
-                "revenueGrowth": 0.276,
-                "earningsGrowth": -0.804,
-                "epsGrowth": -0.806
-              }
-            },
-            "profitability": {
-              "grade": "B-",
-              "score": 3.2,
-              "metrics": {
-                "grossMargin": 0.515,
-                "operatingMargin": 0.145,
-                "netMargin": 0.29,
-                "roe": 0.16
-              }
-            },
-            "momentum": {
-              "grade": "A+",
-              "score": 4.9,
-              "metrics": {
-                "priceChange1M": 0.5613,
-                "priceChange3M": 2.4009,
-                "priceChange6M": 2.1482,
-                "vs50dma": 0.5936,
-                "vs200dma": 1.5476
-              }
-            },
-            "epsRevisions": {
-              "grade": "A+",
-              "score": 4.9,
-              "metrics": {
-                "analystSentiment": 0.91,
-                "numAnalysts": 41,
-                "peRatioFwdVsTrail": 0.47
-              }
-            },
-            "dividend": {
-              "grade": "A+",
-              "score": 4.9,
-              "metrics": {
-                "payoutRatio": 0.083,
-                "dividendYield": 0.09,
-                "dividendRate": 0.24
-              }
-            }
-          }
-        }
+        "last_reviewed": "2026-05-01"
       },
       "NEE": {
         "ticker": "NEE",
@@ -4872,73 +3756,7 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-06-01",
-        "last_reviewed": "2026-06-01",
-        "quant": {
-          "composite": 3.95,
-          "rating": "Buy",
-          "score": 3.95,
-          "factors": {
-            "valuation": {
-              "grade": "B+",
-              "score": 3.8,
-              "metrics": {
-                "pe": 21.8,
-                "pb": 3.2,
-                "ps": 6.4,
-                "peg": 1.89,
-                "evEbitda": 20.7
-              }
-            },
-            "growth": {
-              "grade": "A+",
-              "score": 4.9,
-              "metrics": {
-                "revenueGrowth": 0.073,
-                "earningsGrowth": 1.6,
-                "epsGrowth": 1.619
-              }
-            },
-            "profitability": {
-              "grade": "B+",
-              "score": 3.8,
-              "metrics": {
-                "grossMargin": 0.614,
-                "operatingMargin": 0.302,
-                "netMargin": 0.294,
-                "roe": 0.103
-              }
-            },
-            "momentum": {
-              "grade": "C+",
-              "score": 2.8,
-              "metrics": {
-                "priceChange1M": -0.1019,
-                "priceChange3M": -0.0661,
-                "priceChange6M": 0.0336,
-                "vs50dma": -0.0589,
-                "vs200dma": 0.0202
-              }
-            },
-            "epsRevisions": {
-              "grade": "A+",
-              "score": 4.9,
-              "metrics": {
-                "analystSentiment": 0.8,
-                "numAnalysts": 19,
-                "peRatioFwdVsTrail": 0.896
-              }
-            },
-            "dividend": {
-              "grade": "B",
-              "score": 3.5,
-              "metrics": {
-                "payoutRatio": 0.59,
-                "dividendYield": 2.9,
-                "dividendRate": 2.49
-              }
-            }
-          }
-        }
+        "last_reviewed": "2026-06-01"
       },
       "NOW": {
         "ticker": "NOW",
@@ -4956,71 +3774,7 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-05-18",
-        "last_reviewed": "2026-05-18",
-        "quant": {
-          "composite": 3.3,
-          "rating": "Hold",
-          "score": 3.3,
-          "factors": {
-            "valuation": {
-              "grade": "D+",
-              "score": 1.8,
-              "metrics": {
-                "pe": 66.9,
-                "pb": 9.9,
-                "ps": 8.3,
-                "peg": 1.09,
-                "evEbitda": 39.2
-              }
-            },
-            "growth": {
-              "grade": "C-",
-              "score": 2.2,
-              "metrics": {
-                "revenueGrowth": 0.221,
-                "earningsGrowth": 0.023,
-                "epsGrowth": 0.02
-              }
-            },
-            "profitability": {
-              "grade": "B-",
-              "score": 3.2,
-              "metrics": {
-                "grossMargin": 0.766,
-                "operatingMargin": 0.133,
-                "netMargin": 0.126,
-                "roe": 0.161
-              }
-            },
-            "momentum": {
-              "grade": "C+",
-              "score": 2.8,
-              "metrics": {
-                "priceChange1M": 0.2221,
-                "priceChange3M": -0.0065,
-                "priceChange6M": -0.3108,
-                "vs50dma": 0.1352,
-                "vs200dma": -0.1978
-              }
-            },
-            "epsRevisions": {
-              "grade": "A+",
-              "score": 4.9,
-              "metrics": {
-                "analystSentiment": 0.91,
-                "numAnalysts": 44,
-                "peRatioFwdVsTrail": 0.334
-              }
-            },
-            "dividend": {
-              "grade": "A+",
-              "score": 4.9,
-              "metrics": {
-                "payoutRatio": 0
-              }
-            }
-          }
-        }
+        "last_reviewed": "2026-05-18"
       },
       "OUST": {
         "ticker": "OUST",
@@ -5038,65 +3792,7 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-05-14",
-        "last_reviewed": "2026-05-14",
-        "quant": {
-          "composite": 4,
-          "rating": "Buy",
-          "score": 4,
-          "factors": {
-            "valuation": {
-              "grade": "A",
-              "score": 4.5,
-              "metrics": {
-                "pb": 9.1,
-                "ps": 13.6
-              }
-            },
-            "growth": {
-              "grade": "B+",
-              "score": 3.8,
-              "metrics": {
-                "revenueGrowth": 0.489
-              }
-            },
-            "profitability": {
-              "grade": "F",
-              "score": 1,
-              "metrics": {
-                "grossMargin": 0.477,
-                "operatingMargin": -0.395,
-                "netMargin": -0.301,
-                "roe": -0.252
-              }
-            },
-            "momentum": {
-              "grade": "A+",
-              "score": 4.9,
-              "metrics": {
-                "priceChange1M": 0.3874,
-                "priceChange3M": 0.8269,
-                "priceChange6M": 0.8568,
-                "vs50dma": 0.3672,
-                "vs200dma": 0.5079
-              }
-            },
-            "epsRevisions": {
-              "grade": "A+",
-              "score": 4.9,
-              "metrics": {
-                "analystSentiment": 0.94,
-                "numAnalysts": 7
-              }
-            },
-            "dividend": {
-              "grade": "A+",
-              "score": 4.9,
-              "metrics": {
-                "payoutRatio": 0
-              }
-            }
-          }
-        }
+        "last_reviewed": "2026-05-14"
       },
       "POET": {
         "ticker": "POET",
@@ -5114,65 +3810,7 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-05-15",
-        "last_reviewed": "2026-05-15",
-        "quant": {
-          "composite": 3.6,
-          "rating": "Buy",
-          "score": 3.6,
-          "factors": {
-            "valuation": {
-              "grade": "F",
-              "score": 1,
-              "metrics": {
-                "pb": 8.5,
-                "ps": 1450.2
-              }
-            },
-            "growth": {
-              "grade": "A+",
-              "score": 4.9,
-              "metrics": {
-                "revenueGrowth": 2.019
-              }
-            },
-            "profitability": {
-              "grade": "F",
-              "score": 1,
-              "metrics": {
-                "grossMargin": 1,
-                "operatingMargin": -35.5,
-                "netMargin": 0,
-                "roe": -0.339
-              }
-            },
-            "momentum": {
-              "grade": "A+",
-              "score": 4.9,
-              "metrics": {
-                "priceChange1M": 0.2877,
-                "priceChange3M": 0.6847,
-                "priceChange6M": 1.5616,
-                "vs50dma": 0.1515,
-                "vs200dma": 0.6348
-              }
-            },
-            "epsRevisions": {
-              "grade": "A+",
-              "score": 4.9,
-              "metrics": {
-                "analystSentiment": 1.2,
-                "numAnalysts": 1
-              }
-            },
-            "dividend": {
-              "grade": "A+",
-              "score": 4.9,
-              "metrics": {
-                "payoutRatio": 0
-              }
-            }
-          }
-        }
+        "last_reviewed": "2026-05-15"
       },
       "PWR": {
         "ticker": "PWR",
@@ -5190,73 +3828,7 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-06-01",
-        "last_reviewed": "2026-06-01",
-        "quant": {
-          "composite": 3.52,
-          "rating": "Buy",
-          "score": 3.52,
-          "factors": {
-            "valuation": {
-              "grade": "D",
-              "score": 1.5,
-              "metrics": {
-                "pe": 95.2,
-                "pb": 11.5,
-                "ps": 3.5,
-                "peg": 1.92,
-                "evEbitda": 41.5
-              }
-            },
-            "growth": {
-              "grade": "B+",
-              "score": 3.8,
-              "metrics": {
-                "revenueGrowth": 0.263,
-                "earningsGrowth": 0.51,
-                "epsGrowth": 0.529
-              }
-            },
-            "profitability": {
-              "grade": "D",
-              "score": 1.5,
-              "metrics": {
-                "grossMargin": 0.151,
-                "operatingMargin": 0.042,
-                "netMargin": 0.037,
-                "roe": 0.135
-              }
-            },
-            "momentum": {
-              "grade": "A",
-              "score": 4.5,
-              "metrics": {
-                "priceChange1M": -0.0991,
-                "priceChange3M": 0.2284,
-                "priceChange6M": 0.5711,
-                "vs50dma": 0.0442,
-                "vs200dma": 0.3656
-              }
-            },
-            "epsRevisions": {
-              "grade": "A+",
-              "score": 4.9,
-              "metrics": {
-                "analystSentiment": 0.88,
-                "numAnalysts": 26,
-                "peRatioFwdVsTrail": 0.443
-              }
-            },
-            "dividend": {
-              "grade": "A+",
-              "score": 4.9,
-              "metrics": {
-                "payoutRatio": 0.058,
-                "dividendYield": 0.06,
-                "dividendRate": 0.44
-              }
-            }
-          }
-        }
+        "last_reviewed": "2026-06-01"
       },
       "TEM": {
         "ticker": "TEM",
@@ -5271,65 +3843,7 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-05-08",
-        "last_reviewed": "2026-05-08",
-        "quant": {
-          "composite": 3.47,
-          "rating": "Hold",
-          "score": 3.47,
-          "factors": {
-            "valuation": {
-              "grade": "A+",
-              "score": 4.9,
-              "metrics": {
-                "pb": 20,
-                "ps": 6.1
-              }
-            },
-            "growth": {
-              "grade": "B",
-              "score": 3.5,
-              "metrics": {
-                "revenueGrowth": 0.361
-              }
-            },
-            "profitability": {
-              "grade": "D",
-              "score": 1.5,
-              "metrics": {
-                "grossMargin": 0.634,
-                "operatingMargin": -0.243,
-                "netMargin": -0.222,
-                "roe": -0.816
-              }
-            },
-            "momentum": {
-              "grade": "D",
-              "score": 1.5,
-              "metrics": {
-                "priceChange1M": -0.1413,
-                "priceChange3M": -0.0967,
-                "priceChange6M": -0.3896,
-                "vs50dma": -0.057,
-                "vs200dma": -0.2906
-              }
-            },
-            "epsRevisions": {
-              "grade": "A",
-              "score": 4.5,
-              "metrics": {
-                "analystSentiment": 0.79,
-                "numAnalysts": 15
-              }
-            },
-            "dividend": {
-              "grade": "A+",
-              "score": 4.9,
-              "metrics": {
-                "payoutRatio": 0
-              }
-            }
-          }
-        }
+        "last_reviewed": "2026-05-08"
       },
       "VRT": {
         "ticker": "VRT",
@@ -5347,73 +3861,7 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-05-25",
-        "last_reviewed": "2026-05-25",
-        "quant": {
-          "composite": 3.92,
-          "rating": "Buy",
-          "score": 3.92,
-          "factors": {
-            "valuation": {
-              "grade": "D+",
-              "score": 1.8,
-              "metrics": {
-                "pe": 75.7,
-                "pb": 29.2,
-                "ps": 10.6,
-                "peg": 1.51,
-                "evEbitda": 48.8
-              }
-            },
-            "growth": {
-              "grade": "A+",
-              "score": 4.9,
-              "metrics": {
-                "revenueGrowth": 0.301,
-                "earningsGrowth": 1.357,
-                "epsGrowth": 1.371
-              }
-            },
-            "profitability": {
-              "grade": "C",
-              "score": 2.5,
-              "metrics": {
-                "grossMargin": 0.372,
-                "operatingMargin": 0.164,
-                "netMargin": 0.144,
-                "roe": 0.451
-              }
-            },
-            "momentum": {
-              "grade": "A",
-              "score": 4.5,
-              "metrics": {
-                "priceChange1M": -0.1188,
-                "priceChange3M": 0.2297,
-                "priceChange6M": 0.7802,
-                "vs50dma": -0.0401,
-                "vs200dma": 0.3915
-              }
-            },
-            "epsRevisions": {
-              "grade": "A+",
-              "score": 4.9,
-              "metrics": {
-                "analystSentiment": 0.9,
-                "numAnalysts": 25,
-                "peRatioFwdVsTrail": 0.449
-              }
-            },
-            "dividend": {
-              "grade": "A+",
-              "score": 4.9,
-              "metrics": {
-                "payoutRatio": 0.05,
-                "dividendYield": 0.08,
-                "dividendRate": 0.25
-              }
-            }
-          }
-        }
+        "last_reviewed": "2026-05-25"
       },
       "VST": {
         "ticker": "VST",
@@ -5428,71 +3876,7 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-05-11",
-        "last_reviewed": "2026-05-11",
-        "quant": {
-          "composite": 3.78,
-          "rating": "Buy",
-          "score": 3.78,
-          "factors": {
-            "valuation": {
-              "grade": "B+",
-              "score": 3.8,
-              "metrics": {
-                "pe": 24.9,
-                "pb": 19.2,
-                "ps": 2.6,
-                "peg": 0.44,
-                "evEbitda": 10.6
-              }
-            },
-            "growth": {
-              "grade": "B+",
-              "score": 3.8,
-              "metrics": {
-                "revenueGrowth": 0.434
-              }
-            },
-            "profitability": {
-              "grade": "C+",
-              "score": 2.8,
-              "metrics": {
-                "grossMargin": 0.386,
-                "operatingMargin": 0.266,
-                "netMargin": 0.115,
-                "roe": 0.429
-              }
-            },
-            "momentum": {
-              "grade": "C",
-              "score": 2.5,
-              "metrics": {
-                "priceChange1M": -0.0725,
-                "priceChange3M": -0.0788,
-                "priceChange6M": -0.1483,
-                "vs50dma": -0.0364,
-                "vs200dma": -0.134
-              }
-            },
-            "epsRevisions": {
-              "grade": "A+",
-              "score": 4.9,
-              "metrics": {
-                "analystSentiment": 0.92,
-                "numAnalysts": 17,
-                "peRatioFwdVsTrail": 0.546
-              }
-            },
-            "dividend": {
-              "grade": "A+",
-              "score": 4.9,
-              "metrics": {
-                "payoutRatio": 0.151,
-                "dividendYield": 0.62,
-                "dividendRate": 0.92
-              }
-            }
-          }
-        }
+        "last_reviewed": "2026-05-11"
       }
     },
     "dates": [
@@ -8728,12 +7112,12 @@
     }
   },
   "crypto_timeseries": {
-    "generated_at": "2026-06-08T07:51:55.449007",
+    "generated_at": "2026-06-09T07:52:19.395072",
     "latest": {
-      "date": "2026-06-08",
-      "composite": 16.9,
-      "delta_composite": 1.4,
-      "btc_close": 62804,
+      "date": "2026-06-09",
+      "composite": 15.4,
+      "delta_composite": -1.5,
+      "btc_close": 63334,
       "btc_high": null,
       "btc_low": null,
       "fgi": null,
@@ -8741,65 +7125,55 @@
       "green_count": 3,
       "indicators": {
         "fear_greed": {
-          "value": 12,
+          "value": 8,
           "status": "green"
         },
         "miner_capitulation": {
-          "value": -23.5,
+          "value": -22.9,
           "status": "yellow"
         },
         "black_swan": {
-          "value": 70,
+          "value": 72.2,
           "status": "yellow"
         },
         "vix": {
-          "value": 21.5,
+          "value": 18.9,
           "status": "red"
         },
         "stablecoin_ratio": {
-          "value": 12.3,
+          "value": 11.8,
           "status": "green"
         },
         "mvrv_zscore": {
-          "value": -1.66,
+          "value": -1.63,
           "status": "green"
         },
         "etf_flow": {
-          "value": 112,
+          "value": -24,
           "status": "yellow"
         },
         "dxy": {
-          "value": 100.1,
-          "status": "yellow"
+          "value": 100,
+          "status": "red"
         }
       },
       "indicator_deltas": {
-        "fear_greed": 0,
-        "miner_capitulation": 2.8,
-        "black_swan": -1.2,
-        "vix": 0,
-        "stablecoin_ratio": 0,
-        "mvrv_zscore": 0.14,
-        "etf_flow": 0,
-        "dxy": 0
+        "fear_greed": -4,
+        "miner_capitulation": 0.6,
+        "black_swan": 2.2,
+        "vix": -2.6,
+        "stablecoin_ratio": -0.5,
+        "mvrv_zscore": 0.03,
+        "etf_flow": -136,
+        "dxy": -0.1
       }
     },
     "data": [
       {
-        "date": "2026-01-10",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
-        "fgi": 25,
-        "fgi_label": "Extreme Fear",
-        "composite": null,
-        "delta_composite": null
-      },
-      {
         "date": "2026-01-11",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 90827.46,
+        "btc_high": 91155.23,
+        "btc_low": 90212.02,
         "fgi": 29,
         "fgi_label": "Fear",
         "composite": null,
@@ -8807,9 +7181,9 @@
       },
       {
         "date": "2026-01-12",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 91192.99,
+        "btc_high": 92395.52,
+        "btc_low": 90055.02,
         "fgi": 27,
         "fgi_label": "Fear",
         "composite": null,
@@ -8817,9 +7191,9 @@
       },
       {
         "date": "2026-01-13",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 95321.78,
+        "btc_high": 96011.62,
+        "btc_low": 90941.93,
         "fgi": 26,
         "fgi_label": "Fear",
         "composite": null,
@@ -8827,9 +7201,9 @@
       },
       {
         "date": "2026-01-14",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 96929.33,
+        "btc_high": 97860.6,
+        "btc_low": 94583.05,
         "fgi": 48,
         "fgi_label": "Neutral",
         "composite": null,
@@ -8837,9 +7211,9 @@
       },
       {
         "date": "2026-01-15",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 95551.19,
+        "btc_high": 97150.17,
+        "btc_low": 95103.24,
         "fgi": 61,
         "fgi_label": "Greed",
         "composite": null,
@@ -8847,9 +7221,9 @@
       },
       {
         "date": "2026-01-16",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 95525.12,
+        "btc_high": 95801.89,
+        "btc_low": 94259.27,
         "fgi": 49,
         "fgi_label": "Neutral",
         "composite": null,
@@ -8857,9 +7231,9 @@
       },
       {
         "date": "2026-01-17",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 95099.92,
+        "btc_high": 95598.48,
+        "btc_low": 95005.62,
         "fgi": 50,
         "fgi_label": "Neutral",
         "composite": null,
@@ -8867,9 +7241,9 @@
       },
       {
         "date": "2026-01-18",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 93634.43,
+        "btc_high": 95491.51,
+        "btc_low": 93588.87,
         "fgi": 49,
         "fgi_label": "Neutral",
         "composite": null,
@@ -8877,9 +7251,9 @@
       },
       {
         "date": "2026-01-19",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 92553.59,
+        "btc_high": 93660.83,
+        "btc_low": 92089.25,
         "fgi": 44,
         "fgi_label": "Fear",
         "composite": null,
@@ -8887,9 +7261,9 @@
       },
       {
         "date": "2026-01-20",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 88310.91,
+        "btc_high": 92798.43,
+        "btc_low": 87814.93,
         "fgi": 32,
         "fgi_label": "Fear",
         "composite": null,
@@ -8897,9 +7271,9 @@
       },
       {
         "date": "2026-01-21",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 89376.96,
+        "btc_high": 90430.41,
+        "btc_low": 87231.57,
         "fgi": 24,
         "fgi_label": "Extreme Fear",
         "composite": null,
@@ -8907,9 +7281,9 @@
       },
       {
         "date": "2026-01-22",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 89462.45,
+        "btc_high": 90258.96,
+        "btc_low": 88438.45,
         "fgi": 20,
         "fgi_label": "Extreme Fear",
         "composite": null,
@@ -8917,9 +7291,9 @@
       },
       {
         "date": "2026-01-23",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 89503.88,
+        "btc_high": 91100.25,
+        "btc_low": 88486.36,
         "fgi": 24,
         "fgi_label": "Extreme Fear",
         "composite": null,
@@ -8927,9 +7301,9 @@
       },
       {
         "date": "2026-01-24",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 89110.73,
+        "btc_high": 89811.61,
+        "btc_low": 89044.29,
         "fgi": 25,
         "fgi_label": "Extreme Fear",
         "composite": null,
@@ -8937,9 +7311,9 @@
       },
       {
         "date": "2026-01-25",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 86572.22,
+        "btc_high": 89193.15,
+        "btc_low": 86003.71,
         "fgi": 25,
         "fgi_label": "Extreme Fear",
         "composite": null,
@@ -8947,9 +7321,9 @@
       },
       {
         "date": "2026-01-26",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 88267.14,
+        "btc_high": 88743.07,
+        "btc_low": 86429.29,
         "fgi": 20,
         "fgi_label": "Extreme Fear",
         "composite": null,
@@ -8957,9 +7331,9 @@
       },
       {
         "date": "2026-01-27",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 89102.57,
+        "btc_high": 89427.12,
+        "btc_low": 87228.92,
         "fgi": 29,
         "fgi_label": "Fear",
         "composite": null,
@@ -8967,9 +7341,9 @@
       },
       {
         "date": "2026-01-28",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 89184.57,
+        "btc_high": 90439.29,
+        "btc_low": 88721.46,
         "fgi": 29,
         "fgi_label": "Fear",
         "composite": null,
@@ -8977,9 +7351,9 @@
       },
       {
         "date": "2026-01-29",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 84561.59,
+        "btc_high": 89200.78,
+        "btc_low": 83250.6,
         "fgi": 26,
         "fgi_label": "Fear",
         "composite": null,
@@ -8987,9 +7361,9 @@
       },
       {
         "date": "2026-01-30",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 84128.66,
+        "btc_high": 84602.16,
+        "btc_low": 81071.48,
         "fgi": 16,
         "fgi_label": "Extreme Fear",
         "composite": null,
@@ -8997,9 +7371,9 @@
       },
       {
         "date": "2026-01-31",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 78621.12,
+        "btc_high": 84136.92,
+        "btc_low": 75815.88,
         "fgi": 20,
         "fgi_label": "Extreme Fear",
         "composite": null,
@@ -9007,9 +7381,9 @@
       },
       {
         "date": "2026-02-01",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 76974.45,
+        "btc_high": 79322.61,
+        "btc_low": 75698.9,
         "fgi": 14,
         "fgi_label": "Extreme Fear",
         "composite": null,
@@ -9017,9 +7391,9 @@
       },
       {
         "date": "2026-02-02",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 78688.77,
+        "btc_high": 79258.61,
+        "btc_low": 74551.34,
         "fgi": 14,
         "fgi_label": "Extreme Fear",
         "composite": null,
@@ -9027,9 +7401,9 @@
       },
       {
         "date": "2026-02-03",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 75633.55,
+        "btc_high": 79118.85,
+        "btc_low": 72897.14,
         "fgi": 17,
         "fgi_label": "Extreme Fear",
         "composite": null,
@@ -9037,9 +7411,9 @@
       },
       {
         "date": "2026-02-04",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 73019.7,
+        "btc_high": 76864.66,
+        "btc_low": 71779.93,
         "fgi": 14,
         "fgi_label": "Extreme Fear",
         "composite": null,
@@ -9047,9 +7421,9 @@
       },
       {
         "date": "2026-02-05",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 62702.1,
+        "btc_high": 73161.55,
+        "btc_low": 62353.54,
         "fgi": 12,
         "fgi_label": "Extreme Fear",
         "composite": null,
@@ -9057,9 +7431,9 @@
       },
       {
         "date": "2026-02-06",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 70555.39,
+        "btc_high": 71681.3,
+        "btc_low": 60074.2,
         "fgi": 9,
         "fgi_label": "Extreme Fear",
         "composite": null,
@@ -9067,9 +7441,9 @@
       },
       {
         "date": "2026-02-07",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 69281.97,
+        "btc_high": 71611.15,
+        "btc_low": 67364.45,
         "fgi": 6,
         "fgi_label": "Extreme Fear",
         "composite": null,
@@ -9077,9 +7451,9 @@
       },
       {
         "date": "2026-02-08",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 70264.73,
+        "btc_high": 72206.91,
+        "btc_low": 68852.9,
         "fgi": 7,
         "fgi_label": "Extreme Fear",
         "composite": null,
@@ -9087,9 +7461,9 @@
       },
       {
         "date": "2026-02-09",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 70120.78,
+        "btc_high": 71369.97,
+        "btc_low": 68291.03,
         "fgi": 14,
         "fgi_label": "Extreme Fear",
         "composite": null,
@@ -9097,9 +7471,9 @@
       },
       {
         "date": "2026-02-10",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 68793.96,
+        "btc_high": 70464.27,
+        "btc_low": 67913.09,
         "fgi": 9,
         "fgi_label": "Extreme Fear",
         "composite": null,
@@ -9107,9 +7481,9 @@
       },
       {
         "date": "2026-02-11",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 66991.97,
+        "btc_high": 69242.68,
+        "btc_low": 65757.3,
         "fgi": 11,
         "fgi_label": "Extreme Fear",
         "composite": null,
@@ -9117,9 +7491,9 @@
       },
       {
         "date": "2026-02-12",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 66221.84,
+        "btc_high": 68339.49,
+        "btc_low": 65092.11,
         "fgi": 5,
         "fgi_label": "Extreme Fear",
         "composite": null,
@@ -9127,9 +7501,9 @@
       },
       {
         "date": "2026-02-13",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 68857.84,
+        "btc_high": 69382.84,
+        "btc_low": 65835.78,
         "fgi": 9,
         "fgi_label": "Extreme Fear",
         "composite": null,
@@ -9137,9 +7511,9 @@
       },
       {
         "date": "2026-02-14",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 69767.62,
+        "btc_high": 70481.16,
+        "btc_low": 68706.62,
         "fgi": 9,
         "fgi_label": "Extreme Fear",
         "composite": null,
@@ -9147,9 +7521,9 @@
       },
       {
         "date": "2026-02-15",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 68788.19,
+        "btc_high": 70939.29,
+        "btc_low": 68052.55,
         "fgi": 8,
         "fgi_label": "Extreme Fear",
         "composite": null,
@@ -9157,9 +7531,9 @@
       },
       {
         "date": "2026-02-16",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 68843.16,
+        "btc_high": 70067.23,
+        "btc_low": 67301.59,
         "fgi": 12,
         "fgi_label": "Extreme Fear",
         "composite": null,
@@ -9167,9 +7541,9 @@
       },
       {
         "date": "2026-02-17",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 67494.22,
+        "btc_high": 69201.87,
+        "btc_low": 66615.28,
         "fgi": 10,
         "fgi_label": "Extreme Fear",
         "composite": null,
@@ -9177,9 +7551,9 @@
       },
       {
         "date": "2026-02-18",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 66425.32,
+        "btc_high": 68434.43,
+        "btc_low": 65845.9,
         "fgi": 8,
         "fgi_label": "Extreme Fear",
         "composite": null,
@@ -9187,9 +7561,9 @@
       },
       {
         "date": "2026-02-19",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 66957.52,
+        "btc_high": 67277.12,
+        "btc_low": 65637.43,
         "fgi": 9,
         "fgi_label": "Extreme Fear",
         "composite": null,
@@ -9197,9 +7571,9 @@
       },
       {
         "date": "2026-02-20",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 68005.42,
+        "btc_high": 68269.03,
+        "btc_low": 66452.48,
         "fgi": 7,
         "fgi_label": "Extreme Fear",
         "composite": null,
@@ -9207,9 +7581,9 @@
       },
       {
         "date": "2026-02-21",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 68003.77,
+        "btc_high": 68657.7,
+        "btc_low": 67533.07,
         "fgi": 8,
         "fgi_label": "Extreme Fear",
         "composite": null,
@@ -9217,9 +7591,9 @@
       },
       {
         "date": "2026-02-22",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 67659.39,
+        "btc_high": 68235.23,
+        "btc_low": 67185.6,
         "fgi": 9,
         "fgi_label": "Extreme Fear",
         "composite": null,
@@ -9227,9 +7601,9 @@
       },
       {
         "date": "2026-02-23",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 64616.74,
+        "btc_high": 67668.43,
+        "btc_low": 63924.44,
         "fgi": 5,
         "fgi_label": "Extreme Fear",
         "composite": null,
@@ -9237,9 +7611,9 @@
       },
       {
         "date": "2026-02-24",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 64080.04,
+        "btc_high": 64992.16,
+        "btc_low": 62553.19,
         "fgi": 8,
         "fgi_label": "Extreme Fear",
         "composite": null,
@@ -9247,9 +7621,9 @@
       },
       {
         "date": "2026-02-25",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 67960.12,
+        "btc_high": 69953.53,
+        "btc_low": 63942.48,
         "fgi": 11,
         "fgi_label": "Extreme Fear",
         "composite": null,
@@ -9257,9 +7631,9 @@
       },
       {
         "date": "2026-02-26",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 67453.77,
+        "btc_high": 68843.35,
+        "btc_low": 66523.73,
         "fgi": 11,
         "fgi_label": "Extreme Fear",
         "composite": null,
@@ -9267,9 +7641,9 @@
       },
       {
         "date": "2026-02-27",
-        "btc_close": 67450,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 65881.8,
+        "btc_high": 68220.41,
+        "btc_low": 64946.04,
         "fgi": 13,
         "fgi_label": "Extreme Fear",
         "composite": 12.4,
@@ -9277,9 +7651,9 @@
       },
       {
         "date": "2026-02-28",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 66995.86,
+        "btc_high": 67714.52,
+        "btc_low": 63062.22,
         "fgi": 11,
         "fgi_label": "Extreme Fear",
         "composite": null,
@@ -9287,9 +7661,9 @@
       },
       {
         "date": "2026-03-01",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 65738.1,
+        "btc_high": 68162.82,
+        "btc_low": 65076.73,
         "fgi": 14,
         "fgi_label": "Extreme Fear",
         "composite": null,
@@ -9297,9 +7671,9 @@
       },
       {
         "date": "2026-03-02",
-        "btc_close": 65994,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 68775.85,
+        "btc_high": 70044,
+        "btc_low": 65303.14,
         "fgi": 10,
         "fgi_label": "Extreme Fear",
         "composite": 16.6,
@@ -9307,9 +7681,9 @@
       },
       {
         "date": "2026-03-03",
-        "btc_close": 69407,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 68293.65,
+        "btc_high": 69232.89,
+        "btc_low": 66237.62,
         "fgi": 14,
         "fgi_label": "Extreme Fear",
         "composite": 30.4,
@@ -9317,9 +7691,9 @@
       },
       {
         "date": "2026-03-04",
-        "btc_close": 68264,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 72710.58,
+        "btc_high": 74051.8,
+        "btc_low": 67437.41,
         "fgi": 10,
         "fgi_label": "Extreme Fear",
         "composite": 21.5,
@@ -9327,9 +7701,9 @@
       },
       {
         "date": "2026-03-05",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 70841.12,
+        "btc_high": 73555.79,
+        "btc_low": 70654.88,
         "fgi": 22,
         "fgi_label": "Extreme Fear",
         "composite": 16.9,
@@ -9337,9 +7711,9 @@
       },
       {
         "date": "2026-03-06",
-        "btc_close": 71244,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 68136.49,
+        "btc_high": 71378.57,
+        "btc_low": 67757.82,
         "fgi": 18,
         "fgi_label": "Extreme Fear",
         "composite": 33,
@@ -9347,9 +7721,9 @@
       },
       {
         "date": "2026-03-07",
-        "btc_close": 68284,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 67272.59,
+        "btc_high": 68515.16,
+        "btc_low": 66969.26,
         "fgi": 12,
         "fgi_label": "Extreme Fear",
         "composite": 32.8,
@@ -9357,9 +7731,9 @@
       },
       {
         "date": "2026-03-08",
-        "btc_close": 67434,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 65969.78,
+        "btc_high": 68177.79,
+        "btc_low": 65639.2,
         "fgi": 12,
         "fgi_label": "Extreme Fear",
         "composite": 19.1,
@@ -9367,9 +7741,9 @@
       },
       {
         "date": "2026-03-09",
-        "btc_close": 66327,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 68402.38,
+        "btc_high": 69474.95,
+        "btc_low": 65858.01,
         "fgi": 8,
         "fgi_label": "Extreme Fear",
         "composite": 17.5,
@@ -9377,9 +7751,9 @@
       },
       {
         "date": "2026-03-10",
-        "btc_close": 68753,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 69926.92,
+        "btc_high": 71770.9,
+        "btc_low": 68402.72,
         "fgi": 13,
         "fgi_label": "Extreme Fear",
         "composite": 31.6,
@@ -9387,9 +7761,9 @@
       },
       {
         "date": "2026-03-11",
-        "btc_close": 69506,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 70204.88,
+        "btc_high": 71337.66,
+        "btc_low": 68998.87,
         "fgi": 15,
         "fgi_label": "Extreme Fear",
         "composite": 24.6,
@@ -9397,9 +7771,9 @@
       },
       {
         "date": "2026-03-12",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 70493.46,
+        "btc_high": 70775.83,
+        "btc_low": 69230.16,
         "fgi": 18,
         "fgi_label": "Extreme Fear",
         "composite": null,
@@ -9407,9 +7781,9 @@
       },
       {
         "date": "2026-03-13",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 70968.27,
+        "btc_high": 73927.33,
+        "btc_low": 70410.73,
         "fgi": 15,
         "fgi_label": "Extreme Fear",
         "composite": null,
@@ -9417,9 +7791,9 @@
       },
       {
         "date": "2026-03-14",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 71214.62,
+        "btc_high": 71291.2,
+        "btc_low": 70339.59,
         "fgi": 16,
         "fgi_label": "Extreme Fear",
         "composite": null,
@@ -9427,9 +7801,9 @@
       },
       {
         "date": "2026-03-15",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 72789.91,
+        "btc_high": 73173.01,
+        "btc_low": 70882.42,
         "fgi": 15,
         "fgi_label": "Extreme Fear",
         "composite": null,
@@ -9437,9 +7811,9 @@
       },
       {
         "date": "2026-03-16",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 74861.09,
+        "btc_high": 74901.86,
+        "btc_low": 72300.63,
         "fgi": 23,
         "fgi_label": "Extreme Fear",
         "composite": null,
@@ -9447,9 +7821,9 @@
       },
       {
         "date": "2026-03-17",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 73922.48,
+        "btc_high": 75988.4,
+        "btc_low": 73444.23,
         "fgi": 28,
         "fgi_label": "Fear",
         "composite": null,
@@ -9457,9 +7831,9 @@
       },
       {
         "date": "2026-03-18",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 71245.58,
+        "btc_high": 74658.98,
+        "btc_low": 70503.86,
         "fgi": 26,
         "fgi_label": "Fear",
         "composite": null,
@@ -9467,9 +7841,9 @@
       },
       {
         "date": "2026-03-19",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 69912.79,
+        "btc_high": 71598.84,
+        "btc_low": 68805.52,
         "fgi": 23,
         "fgi_label": "Extreme Fear",
         "composite": null,
@@ -9477,9 +7851,9 @@
       },
       {
         "date": "2026-03-20",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 70522.59,
+        "btc_high": 71346.8,
+        "btc_low": 69398.88,
         "fgi": 11,
         "fgi_label": "Extreme Fear",
         "composite": null,
@@ -9487,9 +7861,9 @@
       },
       {
         "date": "2026-03-21",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 68711.52,
+        "btc_high": 71051.27,
+        "btc_low": 68602.91,
         "fgi": 12,
         "fgi_label": "Extreme Fear",
         "composite": null,
@@ -9497,9 +7871,9 @@
       },
       {
         "date": "2026-03-22",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 67845.21,
+        "btc_high": 69561.77,
+        "btc_low": 67372.88,
         "fgi": 10,
         "fgi_label": "Extreme Fear",
         "composite": null,
@@ -9507,9 +7881,9 @@
       },
       {
         "date": "2026-03-23",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 70914.86,
+        "btc_high": 71782.26,
+        "btc_low": 67458.84,
         "fgi": 8,
         "fgi_label": "Extreme Fear",
         "composite": null,
@@ -9517,9 +7891,9 @@
       },
       {
         "date": "2026-03-24",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 70517.86,
+        "btc_high": 71371.3,
+        "btc_low": 68920.7,
         "fgi": 11,
         "fgi_label": "Extreme Fear",
         "composite": null,
@@ -9527,9 +7901,9 @@
       },
       {
         "date": "2026-03-25",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 71309.88,
+        "btc_high": 71985.74,
+        "btc_low": 70383.59,
         "fgi": 14,
         "fgi_label": "Extreme Fear",
         "composite": null,
@@ -9537,9 +7911,9 @@
       },
       {
         "date": "2026-03-26",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 68791.62,
+        "btc_high": 71410.39,
+        "btc_low": 68118.35,
         "fgi": 10,
         "fgi_label": "Extreme Fear",
         "composite": null,
@@ -9547,9 +7921,9 @@
       },
       {
         "date": "2026-03-27",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 66338.38,
+        "btc_high": 69117.53,
+        "btc_low": 65532.57,
         "fgi": 13,
         "fgi_label": "Extreme Fear",
         "composite": null,
@@ -9557,9 +7931,9 @@
       },
       {
         "date": "2026-03-28",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 66319.7,
+        "btc_high": 67232.86,
+        "btc_low": 65906.74,
         "fgi": 12,
         "fgi_label": "Extreme Fear",
         "composite": null,
@@ -9567,9 +7941,9 @@
       },
       {
         "date": "2026-03-29",
-        "btc_close": 66557,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 65954.92,
+        "btc_high": 67052.95,
+        "btc_low": 64971.71,
         "fgi": 9,
         "fgi_label": "Extreme Fear",
         "composite": 20.4,
@@ -9577,9 +7951,9 @@
       },
       {
         "date": "2026-03-30",
-        "btc_close": 66372,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 66691.45,
+        "btc_high": 68087.29,
+        "btc_low": 65759.8,
         "fgi": 8,
         "fgi_label": "Extreme Fear",
         "composite": 12.8,
@@ -9587,9 +7961,9 @@
       },
       {
         "date": "2026-03-31",
-        "btc_close": 66642,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 68233.31,
+        "btc_high": 68495.27,
+        "btc_low": 65950.44,
         "fgi": 11,
         "fgi_label": "Extreme Fear",
         "composite": 12.3,
@@ -9597,9 +7971,9 @@
       },
       {
         "date": "2026-04-01",
-        "btc_close": 68126,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 68078.55,
+        "btc_high": 69230.36,
+        "btc_low": 67555.36,
         "fgi": 8,
         "fgi_label": "Extreme Fear",
         "composite": 15.9,
@@ -9607,9 +7981,9 @@
       },
       {
         "date": "2026-04-02",
-        "btc_close": 68179,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 66888.57,
+        "btc_high": 68633.15,
+        "btc_low": 65725.26,
         "fgi": 12,
         "fgi_label": "Extreme Fear",
         "composite": 37.7,
@@ -9617,9 +7991,9 @@
       },
       {
         "date": "2026-04-03",
-        "btc_close": 66983,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 66931.1,
+        "btc_high": 67296.23,
+        "btc_low": 66281.54,
         "fgi": 9,
         "fgi_label": "Extreme Fear",
         "composite": 31.2,
@@ -9627,9 +8001,9 @@
       },
       {
         "date": "2026-04-04",
-        "btc_close": 66887,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 67290.52,
+        "btc_high": 67515.02,
+        "btc_low": 66769.64,
         "fgi": 11,
         "fgi_label": "Extreme Fear",
         "composite": 28.6,
@@ -9637,9 +8011,9 @@
       },
       {
         "date": "2026-04-05",
-        "btc_close": 67366,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 68981.9,
+        "btc_high": 69087.66,
+        "btc_low": 66610.63,
         "fgi": 12,
         "fgi_label": "Extreme Fear",
         "composite": 22.8,
@@ -9647,9 +8021,9 @@
       },
       {
         "date": "2026-04-06",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 68859.83,
+        "btc_high": 70305.42,
+        "btc_low": 68347.08,
         "fgi": 13,
         "fgi_label": "Extreme Fear",
         "composite": null,
@@ -9657,9 +8031,9 @@
       },
       {
         "date": "2026-04-07",
-        "btc_close": 68642,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 71940.7,
+        "btc_high": 72732.43,
+        "btc_low": 67740.51,
         "fgi": 11,
         "fgi_label": "Extreme Fear",
         "composite": 17.4,
@@ -9667,9 +8041,9 @@
       },
       {
         "date": "2026-04-08",
-        "btc_close": 71946,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 71123.36,
+        "btc_high": 72825.19,
+        "btc_low": 70707.47,
         "fgi": 17,
         "fgi_label": "Extreme Fear",
         "composite": 21.9,
@@ -9677,9 +8051,9 @@
       },
       {
         "date": "2026-04-09",
-        "btc_close": 70973,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 71767.83,
+        "btc_high": 73107.27,
+        "btc_low": 70486.36,
         "fgi": 14,
         "fgi_label": "Extreme Fear",
         "composite": 21.8,
@@ -9687,9 +8061,9 @@
       },
       {
         "date": "2026-04-10",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 72979.05,
+        "btc_high": 73440.12,
+        "btc_low": 71434.83,
         "fgi": 16,
         "fgi_label": "Extreme Fear",
         "composite": 33.4,
@@ -9697,9 +8071,9 @@
       },
       {
         "date": "2026-04-11",
-        "btc_close": 72826,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 73054.27,
+        "btc_high": 73784.23,
+        "btc_low": 72556.34,
         "fgi": 15,
         "fgi_label": "Extreme Fear",
         "composite": 35.9,
@@ -9707,9 +8081,9 @@
       },
       {
         "date": "2026-04-12",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 70753.41,
+        "btc_high": 73154.03,
+        "btc_low": 70540.57,
         "fgi": 16,
         "fgi_label": "Extreme Fear",
         "composite": null,
@@ -9717,9 +8091,9 @@
       },
       {
         "date": "2026-04-13",
-        "btc_close": 70800,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 74484.64,
+        "btc_high": 74896.31,
+        "btc_low": 70588.52,
         "fgi": 12,
         "fgi_label": "Extreme Fear",
         "composite": 48.3,
@@ -9727,9 +8101,9 @@
       },
       {
         "date": "2026-04-14",
-        "btc_close": 74541,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 74181.61,
+        "btc_high": 76061.76,
+        "btc_low": 73877.2,
         "fgi": 21,
         "fgi_label": "Extreme Fear",
         "composite": 31.8,
@@ -9737,9 +8111,9 @@
       },
       {
         "date": "2026-04-15",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 74805.08,
+        "btc_high": 75409.27,
+        "btc_low": 73549.2,
         "fgi": 23,
         "fgi_label": "Extreme Fear",
         "composite": null,
@@ -9747,9 +8121,9 @@
       },
       {
         "date": "2026-04-16",
-        "btc_close": 74811,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 75152.13,
+        "btc_high": 75506.57,
+        "btc_low": 73346.27,
         "fgi": 23,
         "fgi_label": "Extreme Fear",
         "composite": 31,
@@ -9757,9 +8131,9 @@
       },
       {
         "date": "2026-04-17",
-        "btc_close": 74918,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 77126.88,
+        "btc_high": 78320.68,
+        "btc_low": 74558.6,
         "fgi": 21,
         "fgi_label": "Extreme Fear",
         "composite": 38.6,
@@ -9767,9 +8141,9 @@
       },
       {
         "date": "2026-04-18",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 75726.21,
+        "btc_high": 77416.7,
+        "btc_low": 75504.95,
         "fgi": 26,
         "fgi_label": "Fear",
         "composite": null,
@@ -9777,9 +8151,9 @@
       },
       {
         "date": "2026-04-19",
-        "btc_close": 75838,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 73856.35,
+        "btc_high": 76243.09,
+        "btc_low": 73802.38,
         "fgi": 27,
         "fgi_label": "Fear",
         "composite": 34.6,
@@ -9787,9 +8161,9 @@
       },
       {
         "date": "2026-04-20",
-        "btc_close": 73971,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 75872.52,
+        "btc_high": 76575.36,
+        "btc_low": 73775.57,
         "fgi": 29,
         "fgi_label": "Fear",
         "composite": 39.7,
@@ -9797,9 +8171,9 @@
       },
       {
         "date": "2026-04-21",
-        "btc_close": 75719,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 76352.77,
+        "btc_high": 76881.48,
+        "btc_low": 74852.67,
         "fgi": 33,
         "fgi_label": "Fear",
         "composite": 49.7,
@@ -9807,9 +8181,9 @@
       },
       {
         "date": "2026-04-22",
-        "btc_close": 75695,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 78203.1,
+        "btc_high": 79468,
+        "btc_low": 76159.58,
         "fgi": 32,
         "fgi_label": "Fear",
         "composite": 38.6,
@@ -9817,9 +8191,9 @@
       },
       {
         "date": "2026-04-23",
-        "btc_close": 78609,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 78268.95,
+        "btc_high": 78676.94,
+        "btc_low": 77014.45,
         "fgi": 46,
         "fgi_label": "Fear",
         "composite": 38.3,
@@ -9827,9 +8201,9 @@
       },
       {
         "date": "2026-04-24",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 77455.31,
+        "btc_high": 78554.09,
+        "btc_low": 77318.45,
         "fgi": 39,
         "fgi_label": "Fear",
         "composite": null,
@@ -9837,9 +8211,9 @@
       },
       {
         "date": "2026-04-25",
-        "btc_close": null,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 77612.02,
+        "btc_high": 77882.64,
+        "btc_low": 77184.66,
         "fgi": 31,
         "fgi_label": "Fear",
         "composite": null,
@@ -9847,9 +8221,9 @@
       },
       {
         "date": "2026-04-26",
-        "btc_close": 77565,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 78657.54,
+        "btc_high": 78923.56,
+        "btc_low": 77334.89,
         "fgi": 33,
         "fgi_label": "Fear",
         "composite": 36.8,
@@ -9857,9 +8231,9 @@
       },
       {
         "date": "2026-04-27",
-        "btc_close": 78347,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 77366.62,
+        "btc_high": 79488.17,
+        "btc_low": 76481.34,
         "fgi": 47,
         "fgi_label": "Neutral",
         "composite": 53,
@@ -9867,9 +8241,9 @@
       },
       {
         "date": "2026-04-28",
-        "btc_close": 77052,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 76350.67,
+        "btc_high": 77483.87,
+        "btc_low": 75673.6,
         "fgi": 33,
         "fgi_label": "Fear",
         "composite": 47.7,
@@ -9877,9 +8251,9 @@
       },
       {
         "date": "2026-04-29",
-        "btc_close": 76202,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 75776.13,
+        "btc_high": 77884.97,
+        "btc_low": 74958.57,
         "fgi": 26,
         "fgi_label": "Fear",
         "composite": 38.9,
@@ -9887,9 +8261,9 @@
       },
       {
         "date": "2026-04-30",
-        "btc_close": 75562,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 76304.32,
+        "btc_high": 76611.48,
+        "btc_low": 75318.98,
         "fgi": 29,
         "fgi_label": "Fear",
         "composite": 33.7,
@@ -9897,9 +8271,9 @@
       },
       {
         "date": "2026-05-01",
-        "btc_close": 76204,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 78179,
+        "btc_high": 78894.98,
+        "btc_low": 76294.7,
         "fgi": 26,
         "fgi_label": "Fear",
         "composite": 35.4,
@@ -9907,9 +8281,9 @@
       },
       {
         "date": "2026-05-02",
-        "btc_close": 78138,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 78657.25,
+        "btc_high": 79119.79,
+        "btc_low": 78031.96,
         "fgi": 39,
         "fgi_label": "Fear",
         "composite": 34.9,
@@ -9917,9 +8291,9 @@
       },
       {
         "date": "2026-05-03",
-        "btc_close": 78778,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 78538.23,
+        "btc_high": 79402.36,
+        "btc_low": 78073.08,
         "fgi": 47,
         "fgi_label": "Neutral",
         "composite": 46.4,
@@ -9927,9 +8301,9 @@
       },
       {
         "date": "2026-05-04",
-        "btc_close": 79166,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 79827.91,
+        "btc_high": 80742.36,
+        "btc_low": 78217.96,
         "fgi": 40,
         "fgi_label": "Fear",
         "composite": 51.7,
@@ -9937,9 +8311,9 @@
       },
       {
         "date": "2026-05-05",
-        "btc_close": 79950,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 80927.05,
+        "btc_high": 81751.45,
+        "btc_low": 79787.58,
         "fgi": 50,
         "fgi_label": "Neutral",
         "composite": 53.1,
@@ -9947,9 +8321,9 @@
       },
       {
         "date": "2026-05-06",
-        "btc_close": 81115,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 81427.53,
+        "btc_high": 82792.21,
+        "btc_low": 80751.02,
         "fgi": 46,
         "fgi_label": "Fear",
         "composite": 52.9,
@@ -9957,9 +8331,9 @@
       },
       {
         "date": "2026-05-07",
-        "btc_close": 81349,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 80009.99,
+        "btc_high": 81684.95,
+        "btc_low": 79522.66,
         "fgi": 47,
         "fgi_label": "Neutral",
         "composite": 51.4,
@@ -9967,9 +8341,9 @@
       },
       {
         "date": "2026-05-08",
-        "btc_close": 79905,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 80186.77,
+        "btc_high": 80447.27,
+        "btc_low": 79205.52,
         "fgi": 38,
         "fgi_label": "Fear",
         "composite": 50.9,
@@ -9977,9 +8351,9 @@
       },
       {
         "date": "2026-05-09",
-        "btc_close": 80271,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 80664.37,
+        "btc_high": 81030.06,
+        "btc_low": 80119.93,
         "fgi": 38,
         "fgi_label": "Fear",
         "composite": 45.4,
@@ -9987,9 +8361,9 @@
       },
       {
         "date": "2026-05-10",
-        "btc_close": 80743,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 82138.93,
+        "btc_high": 82430.17,
+        "btc_low": 80274.13,
         "fgi": 47,
         "fgi_label": "Neutral",
         "composite": 45.5,
@@ -9997,9 +8371,9 @@
       },
       {
         "date": "2026-05-11",
-        "btc_close": 80972,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 81728.3,
+        "btc_high": 82326.23,
+        "btc_low": 80451.42,
         "fgi": 48,
         "fgi_label": "Neutral",
         "composite": 51.6,
@@ -10007,9 +8381,9 @@
       },
       {
         "date": "2026-05-12",
-        "btc_close": 81837,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 80477.49,
+        "btc_high": 81753.03,
+        "btc_low": 79832.1,
         "fgi": 49,
         "fgi_label": "Neutral",
         "composite": 52.2,
@@ -10017,9 +8391,9 @@
       },
       {
         "date": "2026-05-13",
-        "btc_close": 80663,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 79277.12,
+        "btc_high": 81276.67,
+        "btc_low": 78725.51,
         "fgi": 42,
         "fgi_label": "Fear",
         "composite": 52,
@@ -10027,9 +8401,9 @@
       },
       {
         "date": "2026-05-14",
-        "btc_close": 79246,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 81051.25,
+        "btc_high": 82005.96,
+        "btc_low": 78909.68,
         "fgi": 34,
         "fgi_label": "Fear",
         "composite": 56,
@@ -10037,9 +8411,9 @@
       },
       {
         "date": "2026-05-15",
-        "btc_close": 81490,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 79065.68,
+        "btc_high": 81634.84,
+        "btc_low": 78635.37,
         "fgi": 43,
         "fgi_label": "Fear",
         "composite": 46.1,
@@ -10047,9 +8421,9 @@
       },
       {
         "date": "2026-05-16",
-        "btc_close": 79037,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 78131.44,
+        "btc_high": 79173.5,
+        "btc_low": 77630.73,
         "fgi": 31,
         "fgi_label": "Fear",
         "composite": 49.5,
@@ -10057,9 +8431,9 @@
       },
       {
         "date": "2026-05-17",
-        "btc_close": 78215,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 77429.35,
+        "btc_high": 78539.4,
+        "btc_low": 76783.41,
         "fgi": 27,
         "fgi_label": "Fear",
         "composite": 40.7,
@@ -10067,9 +8441,9 @@
       },
       {
         "date": "2026-05-18",
-        "btc_close": 77104,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 76954.17,
+        "btc_high": 77749.32,
+        "btc_low": 76029.23,
         "fgi": 28,
         "fgi_label": "Fear",
         "composite": 37.6,
@@ -10077,9 +8451,9 @@
       },
       {
         "date": "2026-05-19",
-        "btc_close": 77094,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 76750.91,
+        "btc_high": 77346.87,
+        "btc_low": 76082.37,
         "fgi": 25,
         "fgi_label": "Extreme Fear",
         "composite": 38.4,
@@ -10087,9 +8461,9 @@
       },
       {
         "date": "2026-05-20",
-        "btc_close": 76619,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 77457.77,
+        "btc_high": 77775.57,
+        "btc_low": 76463.65,
         "fgi": 27,
         "fgi_label": "Fear",
         "composite": 42.8,
@@ -10097,9 +8471,9 @@
       },
       {
         "date": "2026-05-21",
-        "btc_close": 77656,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 77539.17,
+        "btc_high": 78100.56,
+        "btc_low": 76655.44,
         "fgi": 29,
         "fgi_label": "Fear",
         "composite": 48.7,
@@ -10107,9 +8481,9 @@
       },
       {
         "date": "2026-05-22",
-        "btc_close": 77524,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 75488.24,
+        "btc_high": 77819.45,
+        "btc_low": 75323.88,
         "fgi": 28,
         "fgi_label": "Fear",
         "composite": 40.5,
@@ -10117,9 +8491,9 @@
       },
       {
         "date": "2026-05-23",
-        "btc_close": 75698,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 76673.37,
+        "btc_high": 77288.12,
+        "btc_low": 74255.23,
         "fgi": 28,
         "fgi_label": "Fear",
         "composite": 40.2,
@@ -10127,9 +8501,9 @@
       },
       {
         "date": "2026-05-24",
-        "btc_close": 76443,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 76981.12,
+        "btc_high": 77372.54,
+        "btc_low": 76019.89,
         "fgi": 25,
         "fgi_label": "Extreme Fear",
         "composite": 45.6,
@@ -10137,9 +8511,9 @@
       },
       {
         "date": "2026-05-25",
-        "btc_close": 76802,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 77279.93,
+        "btc_high": 77804.92,
+        "btc_low": 76833.04,
         "fgi": 30,
         "fgi_label": "Fear",
         "composite": 36.1,
@@ -10147,9 +8521,9 @@
       },
       {
         "date": "2026-05-26",
-        "btc_close": 77064,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 75825.73,
+        "btc_high": 77990.87,
+        "btc_low": 75569.47,
         "fgi": 34,
         "fgi_label": "Fear",
         "composite": 39.7,
@@ -10157,9 +8531,9 @@
       },
       {
         "date": "2026-05-27",
-        "btc_close": 75726,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 74344.7,
+        "btc_high": 76014.3,
+        "btc_low": 74136.5,
         "fgi": 25,
         "fgi_label": "Extreme Fear",
         "composite": 43.6,
@@ -10167,9 +8541,9 @@
       },
       {
         "date": "2026-05-28",
-        "btc_close": 74478,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 73536.55,
+        "btc_high": 74460.12,
+        "btc_low": 72493.41,
         "fgi": 22,
         "fgi_label": "Extreme Fear",
         "composite": 41.2,
@@ -10177,9 +8551,9 @@
       },
       {
         "date": "2026-05-29",
-        "btc_close": 73469,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 73372.52,
+        "btc_high": 74218.56,
+        "btc_low": 72435.62,
         "fgi": 23,
         "fgi_label": "Extreme Fear",
         "composite": 43.4,
@@ -10187,9 +8561,9 @@
       },
       {
         "date": "2026-05-30",
-        "btc_close": 73446,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 73754.84,
+        "btc_high": 74020.76,
+        "btc_low": 73125.23,
         "fgi": 23,
         "fgi_label": "Extreme Fear",
         "composite": 44.1,
@@ -10197,9 +8571,9 @@
       },
       {
         "date": "2026-05-31",
-        "btc_close": 73781,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 73579.69,
+        "btc_high": 74153.5,
+        "btc_low": 73315.02,
         "fgi": 28,
         "fgi_label": "Fear",
         "composite": 44.2,
@@ -10207,9 +8581,9 @@
       },
       {
         "date": "2026-06-01",
-        "btc_close": 73848,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 71319.77,
+        "btc_high": 73969.57,
+        "btc_low": 70599.51,
         "fgi": 29,
         "fgi_label": "Fear",
         "composite": 36.9,
@@ -10217,9 +8591,9 @@
       },
       {
         "date": "2026-06-02",
-        "btc_close": 71131,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 66703.66,
+        "btc_high": 71334.95,
+        "btc_low": 66127.27,
         "fgi": 23,
         "fgi_label": "Extreme Fear",
         "composite": 35,
@@ -10227,9 +8601,9 @@
       },
       {
         "date": "2026-06-03",
-        "btc_close": 67102,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 64014.37,
+        "btc_high": 67402.93,
+        "btc_low": 64009.68,
         "fgi": 11,
         "fgi_label": "Extreme Fear",
         "composite": 35.1,
@@ -10237,9 +8611,9 @@
       },
       {
         "date": "2026-06-04",
-        "btc_close": 65124,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 63801.57,
+        "btc_high": 64664.45,
+        "btc_low": 61335.75,
         "fgi": 12,
         "fgi_label": "Extreme Fear",
         "composite": 20,
@@ -10247,9 +8621,9 @@
       },
       {
         "date": "2026-06-05",
-        "btc_close": 63286,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 60922.67,
+        "btc_high": 63901.52,
+        "btc_low": 59108.92,
         "fgi": 12,
         "fgi_label": "Extreme Fear",
         "composite": 19.5,
@@ -10257,9 +8631,9 @@
       },
       {
         "date": "2026-06-06",
-        "btc_close": 61568,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 60867.41,
+        "btc_high": 61491.7,
+        "btc_low": 59496.62,
         "fgi": 12,
         "fgi_label": "Extreme Fear",
         "composite": 16.5,
@@ -10267,9 +8641,9 @@
       },
       {
         "date": "2026-06-07",
-        "btc_close": 60552,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 63239.52,
+        "btc_high": 64128.04,
+        "btc_low": 60724.07,
         "fgi": 12,
         "fgi_label": "Extreme Fear",
         "composite": 15.5,
@@ -10277,13 +8651,23 @@
       },
       {
         "date": "2026-06-08",
-        "btc_close": 62804,
+        "btc_close": 63049.73,
+        "btc_high": 64166.36,
+        "btc_low": 62450.61,
+        "fgi": 8,
+        "fgi_label": "Extreme Fear",
+        "composite": 16.9,
+        "delta_composite": 1.4
+      },
+      {
+        "date": "2026-06-09",
+        "btc_close": 63334,
         "btc_high": null,
         "btc_low": null,
         "fgi": null,
         "fgi_label": null,
-        "composite": 16.9,
-        "delta_composite": 1.4
+        "composite": 15.4,
+        "delta_composite": -1.5
       }
     ]
   },
@@ -13086,8 +11470,8 @@
     {
       "date": "2026-06-08",
       "health": 4,
-      "portfolio_beta": 1.14,
-      "equity_beta": 1.05
+      "portfolio_beta": 1.13,
+      "equity_beta": 1.04
     }
   ],
   "capital_mobility_risk": {
