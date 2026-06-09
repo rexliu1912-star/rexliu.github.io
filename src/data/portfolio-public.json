@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-09T23:01:15.734Z",
+  "generated_at": "2026-06-09T23:52:59.581Z",
   "regime": {
     "current": {
       "label": "防御期",
@@ -10,17 +10,17 @@
       "signals": {
         "tnx": {
           "label": "10Y UST",
-          "value": "4.55%",
+          "value": "4.53%",
           "light": "red"
         },
         "dxy": {
           "label": "DXY",
-          "value": "100.04",
+          "value": "100",
           "light": "yellow"
         },
         "vix": {
           "label": "VIX",
-          "value": "18.92",
+          "value": "19.87",
           "light": "yellow"
         },
         "naaim": {
@@ -2062,6 +2062,45 @@
             "status": null
           }
         }
+      },
+      {
+        "date": "2026-06-10",
+        "regime": "防御期",
+        "green_count": 0,
+        "aggression": "低",
+        "vix": 19.87,
+        "lights": {
+          "tnx": "red",
+          "dxy": "yellow",
+          "vix": "yellow",
+          "naaim": "red"
+        },
+        "signalDetails": {
+          "tnx": {
+            "value": 4.53,
+            "light": "red",
+            "status": null
+          },
+          "dxy": {
+            "value": 100,
+            "light": "yellow",
+            "status": null
+          },
+          "vix": {
+            "value": 19.87,
+            "light": "yellow",
+            "status": null
+          },
+          "naaim": {
+            "value": 86.82,
+            "light": "red",
+            "status": null
+          },
+          "policy": {
+            "light": "gray",
+            "status": null
+          }
+        }
       }
     ]
   },
@@ -2072,9 +2111,9 @@
           "id": "stablecoin",
           "label_en": "Stablecoin Yield",
           "label_zh": "稳定币生息",
-          "target_pct": 36.7,
+          "target_pct": 33.6,
           "current_pct": 40.3,
-          "drift_pp": 3.6,
+          "drift_pp": 6.7,
           "color": "#10b981",
           "sub_tags_en": [
             "USDT",
@@ -2090,23 +2129,23 @@
           "note_zh": "底座层——带息、低 beta、抗衰退",
           "expected_return_pct": 5,
           "annual_volatility_pct": 1,
-          "model_target_pct": 36.7,
-          "raw_model_target_pct": 36.8,
-          "signal_score": 88,
+          "model_target_pct": 33.6,
+          "raw_model_target_pct": 31.3,
+          "signal_score": 80,
           "model_action": "trim",
-          "model_rationale_en": "APR 5.0% and regime defensive keep liquidity floor high.",
-          "model_rationale_zh": "稳定币 APR 5.0%，当前 defensive 环境下维持流动性底座。",
+          "model_rationale_en": "APR 5.0% and regime neutral keep liquidity floor high.",
+          "model_rationale_zh": "稳定币 APR 5.0%，当前 neutral 环境下维持流动性底座。",
           "model_current_pct": 40.3,
-          "model_drift_pp": 3.6,
-          "gap_amount": -420076
+          "model_drift_pp": 6.7,
+          "gap_amount": -778808
         },
         {
           "id": "funds",
           "label_en": "Funds",
           "label_zh": "基金与现金",
-          "target_pct": 34.1,
+          "target_pct": 32.5,
           "current_pct": 44.1,
-          "drift_pp": 10,
+          "drift_pp": 11.6,
           "color": "#3b82f6",
           "sub_tags_en": [
             "Cash & Deposits",
@@ -2122,23 +2161,23 @@
           "note_zh": "现金缓冲 + 保守理财 + 专项资金（买房/教育/应收）",
           "expected_return_pct": 3.2,
           "annual_volatility_pct": 3,
-          "model_target_pct": 34.1,
-          "raw_model_target_pct": 34.1,
+          "model_target_pct": 32.5,
+          "raw_model_target_pct": 31.2,
           "signal_score": 78.2,
           "model_action": "trim",
           "model_rationale_en": "SOFR 3.63% supports conservative cash/fund carry.",
           "model_rationale_zh": "SOFR 3.63%，保守现金/基金仍有持有收益。",
           "model_current_pct": 44.1,
-          "model_drift_pp": 10,
-          "gap_amount": -1162948
+          "model_drift_pp": 11.6,
+          "gap_amount": -1348100
         },
         {
           "id": "gold",
           "label_en": "Gold",
           "label_zh": "黄金",
-          "target_pct": 4.6,
+          "target_pct": 4.7,
           "current_pct": 0,
-          "drift_pp": -4.6,
+          "drift_pp": -4.7,
           "color": "#eab308",
           "sub_tags_en": [
             "XAU ETF",
@@ -2150,25 +2189,25 @@
           ],
           "note_en": "Long-cycle liquidity hedge — not a candle chart. M2 inversion system entry.",
           "note_zh": "长周期流动性对冲——不看五分钟K线。M2 倒挂体系入场。",
-          "expected_return_pct": 3.5,
+          "expected_return_pct": 4.2,
           "annual_volatility_pct": 27,
-          "model_target_pct": 4.6,
-          "raw_model_target_pct": 4.7,
-          "signal_score": 37,
+          "model_target_pct": 4.7,
+          "raw_model_target_pct": 4.8,
+          "signal_score": 55,
           "model_action": "add",
-          "model_rationale_en": "Gold signal yellow; fair-value premium level extreme caps target.",
-          "model_rationale_zh": "黄金信号 yellow；公允价溢价 extreme，限制目标仓位上行。",
+          "model_rationale_en": "Gold signal yellow; fair-value premium level normal caps target.",
+          "model_rationale_zh": "黄金信号 yellow；公允价溢价 normal，限制目标仓位上行。",
           "model_current_pct": 0,
-          "model_drift_pp": -4.6,
-          "gap_amount": 532312
+          "model_drift_pp": -4.7,
+          "gap_amount": 543884
         },
         {
           "id": "stocks",
           "label_en": "Stocks",
           "label_zh": "股票",
-          "target_pct": 19.5,
+          "target_pct": 23,
           "current_pct": 8.8,
-          "drift_pp": -10.7,
+          "drift_pp": -14.2,
           "color": "#8953d1",
           "sub_tags_en": [
             "AI Power",
@@ -2182,17 +2221,17 @@
           ],
           "note_en": "Long + swing mix — AI-electricity core with opportunistic overlays",
           "note_zh": "长期 + 波段组合——AI 电力核心 + 机会主义叠加",
-          "expected_return_pct": 8.1,
+          "expected_return_pct": 8.3,
           "annual_volatility_pct": 16.6,
-          "model_target_pct": 19.5,
-          "raw_model_target_pct": 19.4,
-          "signal_score": 59.1,
+          "model_target_pct": 23,
+          "raw_model_target_pct": 25.7,
+          "signal_score": 61.6,
           "model_action": "add",
-          "model_rationale_en": "Portfolio health 3.5/5.0, equity beta 1.04, regime score 39.0.",
-          "model_rationale_zh": "组合健康度 3.5/5.0，股票 beta 1.04，宏观分数 39.0。",
+          "model_rationale_en": "Portfolio health 3.5/5.0, equity beta 1.04, regime score 46.0.",
+          "model_rationale_zh": "组合健康度 3.5/5.0，股票 beta 1.04，宏观分数 46.0。",
           "model_current_pct": 8.8,
-          "model_drift_pp": -10.7,
-          "gap_amount": 1238540,
+          "model_drift_pp": -14.2,
+          "gap_amount": 1643560,
           "sub": [
             {
               "id": "cn",
@@ -2206,9 +2245,9 @@
           "id": "crypto",
           "label_en": "Crypto",
           "label_zh": "加密敞口",
-          "target_pct": 5.1,
+          "target_pct": 6.2,
           "current_pct": 6.7,
-          "drift_pp": 1.6,
+          "drift_pp": 0.5,
           "color": "#f59e0b",
           "sub_tags_en": [
             "BTC",
@@ -2220,36 +2259,36 @@
           ],
           "note_en": "Asymmetric bet — long-duration, non-correlated, high-volatility core",
           "note_zh": "不对称下注——长久期、低相关、高波动核心",
-          "expected_return_pct": 10.6,
+          "expected_return_pct": 10.4,
           "annual_volatility_pct": 35.1,
-          "model_target_pct": 5.1,
-          "raw_model_target_pct": 5,
-          "signal_score": 20.4,
+          "model_target_pct": 6.2,
+          "raw_model_target_pct": 7,
+          "signal_score": 19.2,
           "model_action": "hold",
-          "model_rationale_en": "Crypto composite 15.4, fear/greed 9; capped at 15%.",
-          "model_rationale_zh": "Crypto composite 15.4，恐惧贪婪 9；上限 15%。",
+          "model_rationale_en": "Crypto composite 14.2, fear/greed 9; capped at 15%.",
+          "model_rationale_zh": "Crypto composite 14.2，恐惧贪婪 9；上限 15%。",
           "model_current_pct": 6.7,
-          "model_drift_pp": 1.6,
-          "gap_amount": -187828
+          "model_drift_pp": 0.5,
+          "gap_amount": -60536
         }
       ],
       "model": {
         "schema": "portfolio-allocation-model/v1",
         "version": "0.1.0",
-        "generated_at": "2026-06-09T23:01:13.656385+00:00",
+        "generated_at": "2026-06-09T23:52:58.221549+00:00",
         "regime": {
-          "name": "defensive",
-          "score": 39
+          "name": "neutral",
+          "score": 46
         }
       },
       "risk_free_rate": 3.63,
       "weighted_return": {
-        "target": 5.2,
-        "current": 4.8
+        "target": 5.5,
+        "current": 4.9
       },
-      "projected_annual_yield": 561149,
+      "projected_annual_yield": 561635,
       "risk": {
-        "target_vol": 7.7,
+        "target_vol": 8.6,
         "current_vol": 5.5,
         "sharpe_target": 0.21,
         "sharpe_current": 0.22,
@@ -2465,28 +2504,28 @@
       "layer_label_zh": "AI 算力",
       "stop": {
         "type": "stop_loss",
-        "level_pct_from_current": "-27.0%",
+        "level_pct_from_current": "-24.3%",
         "severity": "gray",
         "description": "AAPL 止损线 ~15% below avg cost"
       },
       "target": {
-        "price_pct_from_current": "+2.8%",
+        "price_pct_from_current": "+6.7%",
         "description": "AAPL test target",
         "optimistic_price": null
       },
       "next_event": null,
       "news": {
-        "summary": "X: WWDC后短线“sell the news”，但长期AI/服务/生态叙事仍偏多；分析师目标价保持积极",
+        "summary": "x_search narrative enhancement only",
         "sentiment": "neutral",
         "items": [
           {
-            "title": "X sentiment",
-            "snippet": "X: WWDC后短线“sell the news”，但长期AI/服务/生态叙事仍偏多；分析师目标价保持积极。"
+            "title": "X: WWDC 后短线情绪承压，AI/Siri 更新被认为缺少 near-term monetization；长期仍有生态+设备基数支撑。",
+            "snippet": "x_search narrative enhancement only"
           }
         ]
       },
-      "price": 301.54,
-      "daily_change_pct": -1.89
+      "price": 290.55,
+      "daily_change_pct": -3.64
     },
     {
       "symbol": "CEG",
@@ -2525,7 +2564,7 @@
       "layer_label_zh": "基荷发电",
       "stop": {
         "type": "stop_loss",
-        "level_pct_from_current": "--0.0%",
+        "level_pct_from_current": "-0.4%",
         "severity": "red",
         "description": "CEG stop loss: 18% below renewed entry cost $305.78"
       },
@@ -2536,17 +2575,17 @@
         "urgency": 3
       },
       "news": {
-        "summary": "X: 情绪强多，AI电力/核电需求叙事主导；二级发行造成的回调被视作买点",
+        "summary": "x_search narrative enhancement only",
         "sentiment": "neutral",
         "items": [
           {
-            "title": "X sentiment",
-            "snippet": "X: 情绪强多，AI电力/核电需求叙事主导；二级发行造成的回调被视作买点。"
+            "title": "X: AI data center 电力需求+nuclear baseload 叙事强，近期供给/二级出售造成波动但被多头视作回调机会。",
+            "snippet": "x_search narrative enhancement only"
           }
         ]
       },
-      "price": 250.67,
-      "daily_change_pct": -1.63
+      "price": 251.65,
+      "daily_change_pct": 0.39
     },
     {
       "symbol": "GOOGL",
@@ -2577,24 +2616,24 @@
       "layer_label_zh": "核心持仓",
       "stop": {
         "type": "stop_loss",
-        "level_pct_from_current": "-12.7%",
+        "level_pct_from_current": "-12.9%",
         "severity": "yellow",
         "description": "GOOGL stop loss ~18% below avg cost ($386.98)"
       },
       "target": null,
       "next_event": null,
       "news": {
-        "summary": "X: AI/cloud/TPU/Apple合作叙事支撑偏多；搜索被AI侵蚀和估值执行风险是主要分歧",
-        "sentiment": "negative",
+        "summary": "x_search narrative enhancement only",
+        "sentiment": "neutral",
         "items": [
           {
-            "title": "X sentiment",
-            "snippet": "X: AI/cloud/TPU/Apple合作叙事支撑偏多；搜索被AI侵蚀和估值执行风险是主要分歧。"
+            "title": "X: AI/cloud/TPU/Gemini 叙事偏多，机构背书强；大额融资/稀释是主要近端压力。",
+            "snippet": "x_search narrative enhancement only"
           }
         ]
       },
-      "price": 363.31,
-      "daily_change_pct": -1.42
+      "price": 364.26,
+      "daily_change_pct": 0.26
     },
     {
       "symbol": "MU",
@@ -2627,17 +2666,17 @@
       "target": null,
       "next_event": null,
       "news": {
-        "summary": "X: HBM/DRAM/NAND受AI需求拉动，分析师上调目标价，情绪明显偏多但波动大",
+        "summary": "x_search narrative enhancement only",
         "sentiment": "positive",
         "items": [
           {
-            "title": "X sentiment",
-            "snippet": "X: HBM/DRAM/NAND受AI需求拉动，分析师上调目标价，情绪明显偏多但波动大。"
+            "title": "X: HBM/AI memory 叙事强，分析师上调带来乐观；仍需防存储周期和财报前波动。",
+            "snippet": "x_search narrative enhancement only"
           }
         ]
       },
-      "price": 949.28,
-      "daily_change_pct": 9.87
+      "price": 935.89,
+      "daily_change_pct": -1.41
     },
     {
       "symbol": "NVDA",
@@ -2676,24 +2715,24 @@
       "layer_label_zh": "核心持仓",
       "stop": {
         "type": "stop_loss",
-        "level_pct_from_current": "-13.2%",
+        "level_pct_from_current": "-13.0%",
         "severity": "yellow",
         "description": "NVIDIA stop loss ~18% below updated avg cost ($220.96)"
       },
       "target": null,
       "next_event": null,
       "news": {
-        "summary": "X: 长线AI领导者叙事强，回调多被视作买点；短线受技术位、出口管制和估值预期影响更分歧",
+        "summary": "x_search narrative enhancement only",
         "sentiment": "neutral",
         "items": [
           {
-            "title": "X sentiment",
-            "snippet": "X: 长线AI领导者叙事强，回调多被视作买点；短线受技术位、出口管制和估值预期影响更分歧。"
+            "title": "X: 长线仍偏多，AI demand/backlog/robotics 支撑；短线技术面和板块回撤带来谨慎。",
+            "snippet": "x_search narrative enhancement only"
           }
         ]
       },
-      "price": 208.64,
-      "daily_change_pct": 1.73
+      "price": 208.19,
+      "daily_change_pct": -0.22
     },
     {
       "symbol": "QQQ",
@@ -2732,24 +2771,24 @@
       "layer_label_zh": "卫星配置",
       "stop": {
         "type": "stop_loss",
-        "level_pct_from_current": "-18.5%",
+        "level_pct_from_current": "-17.6%",
         "severity": "yellow",
         "description": "Invesco QQQ Trust stop loss ~18% below cost"
       },
       "target": null,
       "next_event": null,
       "news": {
-        "summary": "X: 纳指ETF长期偏多，短线在急跌后反弹；市场担心仓位拥挤和宏观扰动",
+        "summary": "x_search narrative enhancement only",
         "sentiment": "neutral",
         "items": [
           {
-            "title": "X sentiment",
-            "snippet": "X: 纳指ETF长期偏多，短线在急跌后反弹；市场担心仓位拥挤和宏观扰动。"
+            "title": "X: 中长期看多 Nasdaq/AI，但短期波动、杠杆出清和宏观事件让交易者偏谨慎。",
+            "snippet": "x_search narrative enhancement only"
           }
         ]
       },
-      "price": 716.07,
-      "daily_change_pct": 1.56
+      "price": 707.83,
+      "daily_change_pct": -1.15
     },
     {
       "symbol": "SMH",
@@ -2788,24 +2827,24 @@
       "layer_label_zh": "核心",
       "stop": {
         "type": "stop_loss",
-        "level_pct_from_current": "-21.5%",
+        "level_pct_from_current": "-20.6%",
         "severity": "gray",
         "description": "VanEck Semiconductor ETF stop loss ~18% below cost"
       },
       "target": null,
       "next_event": null,
       "news": {
-        "summary": "X: 半导体ETF长期AI信仰仍强，但短线对拥挤交易、AI需求兑现和技术回调有明显谨慎",
+        "summary": "x_search narrative enhancement only",
         "sentiment": "neutral",
         "items": [
           {
-            "title": "X sentiment",
-            "snippet": "X: 半导体ETF长期AI信仰仍强，但短线对拥挤交易、AI需求兑现和技术回调有明显谨慎。"
+            "title": "X: 半导体 ETF 情绪分裂，AI 长线多头仍买跌，但拥挤度、杠杆和估值警告很响。",
+            "snippet": "x_search narrative enhancement only"
           }
         ]
       },
-      "price": 598.16,
-      "daily_change_pct": 5
+      "price": 591.01,
+      "daily_change_pct": -1.2
     },
     {
       "symbol": "VGT",
@@ -2844,24 +2883,24 @@
       "layer_label_zh": "卫星配置",
       "stop": {
         "type": "stop_loss",
-        "level_pct_from_current": "-20.7%",
-        "severity": "gray",
+        "level_pct_from_current": "-19.2%",
+        "severity": "yellow",
         "description": "Vanguard Information Technology ETF stop loss ~18% below cost"
       },
       "target": null,
       "next_event": null,
       "news": {
-        "summary": "X: 被当作长期科技核心ETF，散户偏多，少见直接看空；风险集中在科技估值与板块轮动",
+        "summary": "x_search narrative enhancement only",
         "sentiment": "negative",
         "items": [
           {
-            "title": "X sentiment",
-            "snippet": "X: 被当作长期科技核心ETF，散户偏多，少见直接看空；风险集中在科技估值与板块轮动。"
+            "title": "X: 长期 tech ETF 情绪偏多，低费率+历史表现支持；部分声音提示成长仓位风险回报下降。",
+            "snippet": "x_search narrative enhancement only"
           }
         ]
       },
-      "price": 117.25,
-      "daily_change_pct": 1.71
+      "price": 114.99,
+      "daily_change_pct": -1.93
     },
     {
       "symbol": "159381",
@@ -2892,24 +2931,24 @@
       "layer_label_zh": "卫星",
       "stop": {
         "type": "stop_loss",
-        "level_pct_from_current": "--68.5%",
+        "level_pct_from_current": "--61.5%",
         "severity": "red",
         "description": "CHINA ASSET MANAGEMENT CO 止损线 跌破成本价约18%"
       },
       "target": null,
       "next_event": null,
       "news": {
-        "summary": "X: 直接讨论少，映射到科创AI/机器人/硬科技，长期政策+国产化偏多，短期随全球AI估值震荡",
+        "summary": "x_search narrative enhancement only",
         "sentiment": "neutral",
         "items": [
           {
-            "title": "X sentiment",
-            "snippet": "X: 直接讨论少，映射到科创AI/机器人/硬科技，长期政策+国产化偏多，短期随全球AI估值震荡。"
+            "title": "X: 创业板人工智能 ETF 讨论量低但偏正面，有加仓和 AI 主题布局声音。",
+            "snippet": "x_search narrative enhancement only"
           }
         ]
       },
-      "price": 1.288,
-      "daily_change_pct": -3.45
+      "price": 1.344,
+      "daily_change_pct": 4.35
     },
     {
       "symbol": "159632",
@@ -2940,16 +2979,17 @@
       "target": null,
       "next_event": null,
       "news": {
-        "summary": "X: 国内纳指ETF资金情绪偏乐观，高溢价显示逢跌买入意愿，但新买入需小心溢价回落",
-        "sentiment": "neutral",
+        "summary": "x_search narrative enhancement only",
+        "sentiment": "negative",
         "items": [
           {
-            "title": "X sentiment",
-            "snippet": "X: 国内纳指ETF资金情绪偏乐观，高溢价显示逢跌买入意愿，但新买入需小心溢价回落。"
+            "title": "X: 创业板指数 ETF 随成长股大涨，短期乐观但非狂热，核心风险是缩量和解套盘。",
+            "snippet": "x_search narrative enhancement only"
           }
         ]
       },
-      "price": 2.341
+      "price": 2.427,
+      "daily_change_pct": 3.67
     },
     {
       "symbol": "588000",
@@ -2978,24 +3018,24 @@
       "layer_label_zh": "卫星",
       "stop": {
         "type": "stop_loss",
-        "level_pct_from_current": "-3.7%",
+        "level_pct_from_current": "-7.7%",
         "severity": "red",
         "description": "588000 止损线 跌破成本价约18%"
       },
       "target": null,
       "next_event": null,
       "news": {
-        "summary": "X: 科创50短期明显偏弱，科技板块风险释放，等待止跌；长期仍看硬科技国产化",
-        "sentiment": "negative",
+        "summary": "x_search narrative enhancement only",
+        "sentiment": "neutral",
         "items": [
           {
-            "title": "X sentiment",
-            "snippet": "X: 科创50短期明显偏弱，科技板块风险释放，等待止跌；长期仍看硬科技国产化。"
+            "title": "X: 科创50 反弹情绪修复，半导体/AI硬件带动；缩量反弹让市场偏谨慎。",
+            "snippet": "x_search narrative enhancement only"
           }
         ]
       },
-      "price": 1.683,
-      "daily_change_pct": -4.54
+      "price": 1.755,
+      "daily_change_pct": 4.28
     }
   ],
   "crypto": null,
@@ -3089,9 +3129,9 @@
           "name_en": "Miner Capitulation",
           "status": "yellow",
           "score": 50,
-          "detail_en": "Drawdown: -34.7%",
-          "detail_zh": "回撤: -34.7%",
-          "delta": 0.5,
+          "detail_en": "Drawdown: -36.2%",
+          "detail_zh": "回撤: -36.2%",
+          "delta": 0.3,
           "desc_en": "BTC drawdown from ATH + miner revenue stress",
           "desc_zh": "BTC 距高点回撤 + 矿工收入压力"
         },
@@ -3244,7 +3284,7 @@
         "label_en": "Stablecoin Yield",
         "label_zh": "稳定币生息",
         "current_pct": 35,
-        "target_pct": 36.7,
+        "target_pct": 33.6,
         "drift_pp": 5,
         "color": "#10b981",
         "sub_tags_en": [
@@ -3263,7 +3303,7 @@
         "label_en": "Funds",
         "label_zh": "基金与现金",
         "current_pct": 34.6,
-        "target_pct": 34.1,
+        "target_pct": 32.5,
         "drift_pp": 9.6,
         "color": "#3b82f6",
         "sub_tags_en": [
@@ -3282,7 +3322,7 @@
         "label_en": "Gold",
         "label_zh": "黄金",
         "current_pct": 3.4,
-        "target_pct": 4.6,
+        "target_pct": 4.7,
         "drift_pp": -1.6,
         "color": "#eab308",
         "sub_tags_en": [
@@ -3299,7 +3339,7 @@
         "label_en": "Stocks",
         "label_zh": "股票",
         "current_pct": 19,
-        "target_pct": 19.5,
+        "target_pct": 23,
         "drift_pp": -6,
         "color": "#8953d1",
         "sub_tags_en": [
@@ -3318,7 +3358,7 @@
         "label_en": "Crypto",
         "label_zh": "加密敞口",
         "current_pct": 8,
-        "target_pct": 5.1,
+        "target_pct": 6.2,
         "drift_pp": -2,
         "color": "#f59e0b",
         "sub_tags_en": [
@@ -7118,12 +7158,12 @@
     }
   },
   "crypto_timeseries": {
-    "generated_at": "2026-06-09T07:52:19.395072",
+    "generated_at": "2026-06-10T07:52:55.524942",
     "latest": {
-      "date": "2026-06-09",
-      "composite": 15.4,
-      "delta_composite": -1.5,
-      "btc_close": 63334,
+      "date": "2026-06-10",
+      "composite": 14.2,
+      "delta_composite": -1.2,
+      "btc_close": 61849,
       "btc_high": null,
       "btc_low": null,
       "fgi": null,
@@ -7131,31 +7171,31 @@
       "green_count": 3,
       "indicators": {
         "fear_greed": {
-          "value": 8,
+          "value": 10,
           "status": "green"
         },
         "miner_capitulation": {
-          "value": -22.9,
+          "value": -24.7,
           "status": "yellow"
         },
         "black_swan": {
-          "value": 72.2,
+          "value": 72.9,
           "status": "yellow"
         },
         "vix": {
-          "value": 18.9,
+          "value": 19.9,
           "status": "red"
         },
         "stablecoin_ratio": {
-          "value": 11.8,
+          "value": 12,
           "status": "green"
         },
         "mvrv_zscore": {
-          "value": -1.63,
+          "value": -1.69,
           "status": "green"
         },
         "etf_flow": {
-          "value": -24,
+          "value": -25,
           "status": "yellow"
         },
         "dxy": {
@@ -7164,34 +7204,24 @@
         }
       },
       "indicator_deltas": {
-        "fear_greed": -4,
-        "miner_capitulation": 0.6,
-        "black_swan": 2.2,
-        "vix": -2.6,
-        "stablecoin_ratio": -0.5,
-        "mvrv_zscore": 0.03,
-        "etf_flow": -136,
-        "dxy": -0.1
+        "fear_greed": 2,
+        "miner_capitulation": -1.8,
+        "black_swan": 0.7,
+        "vix": 1,
+        "stablecoin_ratio": 0.2,
+        "mvrv_zscore": -0.06,
+        "etf_flow": -1,
+        "dxy": 0
       }
     },
     "data": [
-      {
-        "date": "2026-01-11",
-        "btc_close": 90827.46,
-        "btc_high": 91155.23,
-        "btc_low": 90212.02,
-        "fgi": 29,
-        "fgi_label": "Fear",
-        "composite": null,
-        "delta_composite": null
-      },
       {
         "date": "2026-01-12",
         "btc_close": 91192.99,
         "btc_high": 92395.52,
         "btc_low": 90055.02,
-        "fgi": 27,
-        "fgi_label": "Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7200,8 +7230,8 @@
         "btc_close": 95321.78,
         "btc_high": 96011.62,
         "btc_low": 90941.93,
-        "fgi": 26,
-        "fgi_label": "Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7210,8 +7240,8 @@
         "btc_close": 96929.33,
         "btc_high": 97860.6,
         "btc_low": 94583.05,
-        "fgi": 48,
-        "fgi_label": "Neutral",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7220,8 +7250,8 @@
         "btc_close": 95551.19,
         "btc_high": 97150.17,
         "btc_low": 95103.24,
-        "fgi": 61,
-        "fgi_label": "Greed",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7230,8 +7260,8 @@
         "btc_close": 95525.12,
         "btc_high": 95801.89,
         "btc_low": 94259.27,
-        "fgi": 49,
-        "fgi_label": "Neutral",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7240,8 +7270,8 @@
         "btc_close": 95099.92,
         "btc_high": 95598.48,
         "btc_low": 95005.62,
-        "fgi": 50,
-        "fgi_label": "Neutral",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7250,8 +7280,8 @@
         "btc_close": 93634.43,
         "btc_high": 95491.51,
         "btc_low": 93588.87,
-        "fgi": 49,
-        "fgi_label": "Neutral",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7260,8 +7290,8 @@
         "btc_close": 92553.59,
         "btc_high": 93660.83,
         "btc_low": 92089.25,
-        "fgi": 44,
-        "fgi_label": "Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7270,8 +7300,8 @@
         "btc_close": 88310.91,
         "btc_high": 92798.43,
         "btc_low": 87814.93,
-        "fgi": 32,
-        "fgi_label": "Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7280,8 +7310,8 @@
         "btc_close": 89376.96,
         "btc_high": 90430.41,
         "btc_low": 87231.57,
-        "fgi": 24,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7290,8 +7320,8 @@
         "btc_close": 89462.45,
         "btc_high": 90258.96,
         "btc_low": 88438.45,
-        "fgi": 20,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7300,8 +7330,8 @@
         "btc_close": 89503.88,
         "btc_high": 91100.25,
         "btc_low": 88486.36,
-        "fgi": 24,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7310,8 +7340,8 @@
         "btc_close": 89110.73,
         "btc_high": 89811.61,
         "btc_low": 89044.29,
-        "fgi": 25,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7320,8 +7350,8 @@
         "btc_close": 86572.22,
         "btc_high": 89193.15,
         "btc_low": 86003.71,
-        "fgi": 25,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7330,8 +7360,8 @@
         "btc_close": 88267.14,
         "btc_high": 88743.07,
         "btc_low": 86429.29,
-        "fgi": 20,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7340,8 +7370,8 @@
         "btc_close": 89102.57,
         "btc_high": 89427.12,
         "btc_low": 87228.92,
-        "fgi": 29,
-        "fgi_label": "Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7350,8 +7380,8 @@
         "btc_close": 89184.57,
         "btc_high": 90439.29,
         "btc_low": 88721.46,
-        "fgi": 29,
-        "fgi_label": "Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7360,8 +7390,8 @@
         "btc_close": 84561.59,
         "btc_high": 89200.78,
         "btc_low": 83250.6,
-        "fgi": 26,
-        "fgi_label": "Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7370,8 +7400,8 @@
         "btc_close": 84128.66,
         "btc_high": 84602.16,
         "btc_low": 81071.48,
-        "fgi": 16,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7380,8 +7410,8 @@
         "btc_close": 78621.12,
         "btc_high": 84136.92,
         "btc_low": 75815.88,
-        "fgi": 20,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7390,8 +7420,8 @@
         "btc_close": 76974.45,
         "btc_high": 79322.61,
         "btc_low": 75698.9,
-        "fgi": 14,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7400,8 +7430,8 @@
         "btc_close": 78688.77,
         "btc_high": 79258.61,
         "btc_low": 74551.34,
-        "fgi": 14,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7410,8 +7440,8 @@
         "btc_close": 75633.55,
         "btc_high": 79118.85,
         "btc_low": 72897.14,
-        "fgi": 17,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7420,8 +7450,8 @@
         "btc_close": 73019.7,
         "btc_high": 76864.66,
         "btc_low": 71779.93,
-        "fgi": 14,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7430,8 +7460,8 @@
         "btc_close": 62702.1,
         "btc_high": 73161.55,
         "btc_low": 62353.54,
-        "fgi": 12,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7440,8 +7470,8 @@
         "btc_close": 70555.39,
         "btc_high": 71681.3,
         "btc_low": 60074.2,
-        "fgi": 9,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7450,8 +7480,8 @@
         "btc_close": 69281.97,
         "btc_high": 71611.15,
         "btc_low": 67364.45,
-        "fgi": 6,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7460,8 +7490,8 @@
         "btc_close": 70264.73,
         "btc_high": 72206.91,
         "btc_low": 68852.9,
-        "fgi": 7,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7470,8 +7500,8 @@
         "btc_close": 70120.78,
         "btc_high": 71369.97,
         "btc_low": 68291.03,
-        "fgi": 14,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7480,8 +7510,8 @@
         "btc_close": 68793.96,
         "btc_high": 70464.27,
         "btc_low": 67913.09,
-        "fgi": 9,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7490,8 +7520,8 @@
         "btc_close": 66991.97,
         "btc_high": 69242.68,
         "btc_low": 65757.3,
-        "fgi": 11,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7500,8 +7530,8 @@
         "btc_close": 66221.84,
         "btc_high": 68339.49,
         "btc_low": 65092.11,
-        "fgi": 5,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7510,8 +7540,8 @@
         "btc_close": 68857.84,
         "btc_high": 69382.84,
         "btc_low": 65835.78,
-        "fgi": 9,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7520,8 +7550,8 @@
         "btc_close": 69767.62,
         "btc_high": 70481.16,
         "btc_low": 68706.62,
-        "fgi": 9,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7530,8 +7560,8 @@
         "btc_close": 68788.19,
         "btc_high": 70939.29,
         "btc_low": 68052.55,
-        "fgi": 8,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7540,8 +7570,8 @@
         "btc_close": 68843.16,
         "btc_high": 70067.23,
         "btc_low": 67301.59,
-        "fgi": 12,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7550,8 +7580,8 @@
         "btc_close": 67494.22,
         "btc_high": 69201.87,
         "btc_low": 66615.28,
-        "fgi": 10,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7560,8 +7590,8 @@
         "btc_close": 66425.32,
         "btc_high": 68434.43,
         "btc_low": 65845.9,
-        "fgi": 8,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7570,8 +7600,8 @@
         "btc_close": 66957.52,
         "btc_high": 67277.12,
         "btc_low": 65637.43,
-        "fgi": 9,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7580,8 +7610,8 @@
         "btc_close": 68005.42,
         "btc_high": 68269.03,
         "btc_low": 66452.48,
-        "fgi": 7,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7590,8 +7620,8 @@
         "btc_close": 68003.77,
         "btc_high": 68657.7,
         "btc_low": 67533.07,
-        "fgi": 8,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7600,8 +7630,8 @@
         "btc_close": 67659.39,
         "btc_high": 68235.23,
         "btc_low": 67185.6,
-        "fgi": 9,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7610,8 +7640,8 @@
         "btc_close": 64616.74,
         "btc_high": 67668.43,
         "btc_low": 63924.44,
-        "fgi": 5,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7620,8 +7650,8 @@
         "btc_close": 64080.04,
         "btc_high": 64992.16,
         "btc_low": 62553.19,
-        "fgi": 8,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7630,8 +7660,8 @@
         "btc_close": 67960.12,
         "btc_high": 69953.53,
         "btc_low": 63942.48,
-        "fgi": 11,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7640,8 +7670,8 @@
         "btc_close": 67453.77,
         "btc_high": 68843.35,
         "btc_low": 66523.73,
-        "fgi": 11,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7650,8 +7680,8 @@
         "btc_close": 65881.8,
         "btc_high": 68220.41,
         "btc_low": 64946.04,
-        "fgi": 13,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 12.4,
         "delta_composite": null
       },
@@ -7660,8 +7690,8 @@
         "btc_close": 66995.86,
         "btc_high": 67714.52,
         "btc_low": 63062.22,
-        "fgi": 11,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7670,8 +7700,8 @@
         "btc_close": 65738.1,
         "btc_high": 68162.82,
         "btc_low": 65076.73,
-        "fgi": 14,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7680,8 +7710,8 @@
         "btc_close": 68775.85,
         "btc_high": 70044,
         "btc_low": 65303.14,
-        "fgi": 10,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 16.6,
         "delta_composite": 4.2
       },
@@ -7690,8 +7720,8 @@
         "btc_close": 68293.65,
         "btc_high": 69232.89,
         "btc_low": 66237.62,
-        "fgi": 14,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 30.4,
         "delta_composite": 13.8
       },
@@ -7700,8 +7730,8 @@
         "btc_close": 72710.58,
         "btc_high": 74051.8,
         "btc_low": 67437.41,
-        "fgi": 10,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 21.5,
         "delta_composite": -8.9
       },
@@ -7710,8 +7740,8 @@
         "btc_close": 70841.12,
         "btc_high": 73555.79,
         "btc_low": 70654.88,
-        "fgi": 22,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 16.9,
         "delta_composite": -4.6
       },
@@ -7720,8 +7750,8 @@
         "btc_close": 68136.49,
         "btc_high": 71378.57,
         "btc_low": 67757.82,
-        "fgi": 18,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 33,
         "delta_composite": 16.1
       },
@@ -7730,8 +7760,8 @@
         "btc_close": 67272.59,
         "btc_high": 68515.16,
         "btc_low": 66969.26,
-        "fgi": 12,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 32.8,
         "delta_composite": -0.2
       },
@@ -7740,8 +7770,8 @@
         "btc_close": 65969.78,
         "btc_high": 68177.79,
         "btc_low": 65639.2,
-        "fgi": 12,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 19.1,
         "delta_composite": -13.7
       },
@@ -7750,8 +7780,8 @@
         "btc_close": 68402.38,
         "btc_high": 69474.95,
         "btc_low": 65858.01,
-        "fgi": 8,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 17.5,
         "delta_composite": -1.6
       },
@@ -7760,8 +7790,8 @@
         "btc_close": 69926.92,
         "btc_high": 71770.9,
         "btc_low": 68402.72,
-        "fgi": 13,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 31.6,
         "delta_composite": 14.1
       },
@@ -7770,8 +7800,8 @@
         "btc_close": 70204.88,
         "btc_high": 71337.66,
         "btc_low": 68998.87,
-        "fgi": 15,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 24.6,
         "delta_composite": -7
       },
@@ -7780,8 +7810,8 @@
         "btc_close": 70493.46,
         "btc_high": 70775.83,
         "btc_low": 69230.16,
-        "fgi": 18,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7790,8 +7820,8 @@
         "btc_close": 70968.27,
         "btc_high": 73927.33,
         "btc_low": 70410.73,
-        "fgi": 15,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7800,8 +7830,8 @@
         "btc_close": 71214.62,
         "btc_high": 71291.2,
         "btc_low": 70339.59,
-        "fgi": 16,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7810,8 +7840,8 @@
         "btc_close": 72789.91,
         "btc_high": 73173.01,
         "btc_low": 70882.42,
-        "fgi": 15,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7820,8 +7850,8 @@
         "btc_close": 74861.09,
         "btc_high": 74901.86,
         "btc_low": 72300.63,
-        "fgi": 23,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7830,8 +7860,8 @@
         "btc_close": 73922.48,
         "btc_high": 75988.4,
         "btc_low": 73444.23,
-        "fgi": 28,
-        "fgi_label": "Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7840,8 +7870,8 @@
         "btc_close": 71245.58,
         "btc_high": 74658.98,
         "btc_low": 70503.86,
-        "fgi": 26,
-        "fgi_label": "Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7850,8 +7880,8 @@
         "btc_close": 69912.79,
         "btc_high": 71598.84,
         "btc_low": 68805.52,
-        "fgi": 23,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7860,8 +7890,8 @@
         "btc_close": 70522.59,
         "btc_high": 71346.8,
         "btc_low": 69398.88,
-        "fgi": 11,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7870,8 +7900,8 @@
         "btc_close": 68711.52,
         "btc_high": 71051.27,
         "btc_low": 68602.91,
-        "fgi": 12,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7880,8 +7910,8 @@
         "btc_close": 67845.21,
         "btc_high": 69561.77,
         "btc_low": 67372.88,
-        "fgi": 10,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7890,8 +7920,8 @@
         "btc_close": 70914.86,
         "btc_high": 71782.26,
         "btc_low": 67458.84,
-        "fgi": 8,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7900,8 +7930,8 @@
         "btc_close": 70517.86,
         "btc_high": 71371.3,
         "btc_low": 68920.7,
-        "fgi": 11,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7910,8 +7940,8 @@
         "btc_close": 71309.88,
         "btc_high": 71985.74,
         "btc_low": 70383.59,
-        "fgi": 14,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7920,8 +7950,8 @@
         "btc_close": 68791.62,
         "btc_high": 71410.39,
         "btc_low": 68118.35,
-        "fgi": 10,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7930,8 +7960,8 @@
         "btc_close": 66338.38,
         "btc_high": 69117.53,
         "btc_low": 65532.57,
-        "fgi": 13,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7940,8 +7970,8 @@
         "btc_close": 66319.7,
         "btc_high": 67232.86,
         "btc_low": 65906.74,
-        "fgi": 12,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -7950,8 +7980,8 @@
         "btc_close": 65954.92,
         "btc_high": 67052.95,
         "btc_low": 64971.71,
-        "fgi": 9,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 20.4,
         "delta_composite": -4.2
       },
@@ -7960,8 +7990,8 @@
         "btc_close": 66691.45,
         "btc_high": 68087.29,
         "btc_low": 65759.8,
-        "fgi": 8,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 12.8,
         "delta_composite": -7.6
       },
@@ -7970,8 +8000,8 @@
         "btc_close": 68233.31,
         "btc_high": 68495.27,
         "btc_low": 65950.44,
-        "fgi": 11,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 12.3,
         "delta_composite": -0.5
       },
@@ -7980,8 +8010,8 @@
         "btc_close": 68078.55,
         "btc_high": 69230.36,
         "btc_low": 67555.36,
-        "fgi": 8,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 15.9,
         "delta_composite": 3.6
       },
@@ -7990,8 +8020,8 @@
         "btc_close": 66888.57,
         "btc_high": 68633.15,
         "btc_low": 65725.26,
-        "fgi": 12,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 37.7,
         "delta_composite": 21.8
       },
@@ -8000,8 +8030,8 @@
         "btc_close": 66931.1,
         "btc_high": 67296.23,
         "btc_low": 66281.54,
-        "fgi": 9,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 31.2,
         "delta_composite": -6.5
       },
@@ -8010,8 +8040,8 @@
         "btc_close": 67290.52,
         "btc_high": 67515.02,
         "btc_low": 66769.64,
-        "fgi": 11,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 28.6,
         "delta_composite": -2.6
       },
@@ -8020,8 +8050,8 @@
         "btc_close": 68981.9,
         "btc_high": 69087.66,
         "btc_low": 66610.63,
-        "fgi": 12,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 22.8,
         "delta_composite": -5.8
       },
@@ -8030,8 +8060,8 @@
         "btc_close": 68859.83,
         "btc_high": 70305.42,
         "btc_low": 68347.08,
-        "fgi": 13,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -8040,8 +8070,8 @@
         "btc_close": 71940.7,
         "btc_high": 72732.43,
         "btc_low": 67740.51,
-        "fgi": 11,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 17.4,
         "delta_composite": -5.4
       },
@@ -8050,8 +8080,8 @@
         "btc_close": 71123.36,
         "btc_high": 72825.19,
         "btc_low": 70707.47,
-        "fgi": 17,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 21.9,
         "delta_composite": 4.5
       },
@@ -8060,8 +8090,8 @@
         "btc_close": 71767.83,
         "btc_high": 73107.27,
         "btc_low": 70486.36,
-        "fgi": 14,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 21.8,
         "delta_composite": -0.1
       },
@@ -8070,8 +8100,8 @@
         "btc_close": 72979.05,
         "btc_high": 73440.12,
         "btc_low": 71434.83,
-        "fgi": 16,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 33.4,
         "delta_composite": 11.6
       },
@@ -8080,8 +8110,8 @@
         "btc_close": 73054.27,
         "btc_high": 73784.23,
         "btc_low": 72556.34,
-        "fgi": 15,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 35.9,
         "delta_composite": 2.5
       },
@@ -8090,8 +8120,8 @@
         "btc_close": 70753.41,
         "btc_high": 73154.03,
         "btc_low": 70540.57,
-        "fgi": 16,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -8100,8 +8130,8 @@
         "btc_close": 74484.64,
         "btc_high": 74896.31,
         "btc_low": 70588.52,
-        "fgi": 12,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 48.3,
         "delta_composite": 12.4
       },
@@ -8110,8 +8140,8 @@
         "btc_close": 74181.61,
         "btc_high": 76061.76,
         "btc_low": 73877.2,
-        "fgi": 21,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 31.8,
         "delta_composite": -16.5
       },
@@ -8120,8 +8150,8 @@
         "btc_close": 74805.08,
         "btc_high": 75409.27,
         "btc_low": 73549.2,
-        "fgi": 23,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -8130,8 +8160,8 @@
         "btc_close": 75152.13,
         "btc_high": 75506.57,
         "btc_low": 73346.27,
-        "fgi": 23,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 31,
         "delta_composite": -0.8
       },
@@ -8140,8 +8170,8 @@
         "btc_close": 77126.88,
         "btc_high": 78320.68,
         "btc_low": 74558.6,
-        "fgi": 21,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 38.6,
         "delta_composite": 7.6
       },
@@ -8150,8 +8180,8 @@
         "btc_close": 75726.21,
         "btc_high": 77416.7,
         "btc_low": 75504.95,
-        "fgi": 26,
-        "fgi_label": "Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -8160,8 +8190,8 @@
         "btc_close": 73856.35,
         "btc_high": 76243.09,
         "btc_low": 73802.38,
-        "fgi": 27,
-        "fgi_label": "Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 34.6,
         "delta_composite": -4
       },
@@ -8170,8 +8200,8 @@
         "btc_close": 75872.52,
         "btc_high": 76575.36,
         "btc_low": 73775.57,
-        "fgi": 29,
-        "fgi_label": "Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 39.7,
         "delta_composite": 5.1
       },
@@ -8180,8 +8210,8 @@
         "btc_close": 76352.77,
         "btc_high": 76881.48,
         "btc_low": 74852.67,
-        "fgi": 33,
-        "fgi_label": "Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 49.7,
         "delta_composite": 10
       },
@@ -8190,8 +8220,8 @@
         "btc_close": 78203.1,
         "btc_high": 79468,
         "btc_low": 76159.58,
-        "fgi": 32,
-        "fgi_label": "Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 38.6,
         "delta_composite": -11.1
       },
@@ -8200,8 +8230,8 @@
         "btc_close": 78268.95,
         "btc_high": 78676.94,
         "btc_low": 77014.45,
-        "fgi": 46,
-        "fgi_label": "Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 38.3,
         "delta_composite": -0.3
       },
@@ -8210,8 +8240,8 @@
         "btc_close": 77455.31,
         "btc_high": 78554.09,
         "btc_low": 77318.45,
-        "fgi": 39,
-        "fgi_label": "Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -8220,8 +8250,8 @@
         "btc_close": 77612.02,
         "btc_high": 77882.64,
         "btc_low": 77184.66,
-        "fgi": 31,
-        "fgi_label": "Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": null,
         "delta_composite": null
       },
@@ -8230,8 +8260,8 @@
         "btc_close": 78657.54,
         "btc_high": 78923.56,
         "btc_low": 77334.89,
-        "fgi": 33,
-        "fgi_label": "Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 36.8,
         "delta_composite": -1.5
       },
@@ -8240,8 +8270,8 @@
         "btc_close": 77366.62,
         "btc_high": 79488.17,
         "btc_low": 76481.34,
-        "fgi": 47,
-        "fgi_label": "Neutral",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 53,
         "delta_composite": 16.2
       },
@@ -8250,8 +8280,8 @@
         "btc_close": 76350.67,
         "btc_high": 77483.87,
         "btc_low": 75673.6,
-        "fgi": 33,
-        "fgi_label": "Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 47.7,
         "delta_composite": -5.3
       },
@@ -8260,8 +8290,8 @@
         "btc_close": 75776.13,
         "btc_high": 77884.97,
         "btc_low": 74958.57,
-        "fgi": 26,
-        "fgi_label": "Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 38.9,
         "delta_composite": -8.8
       },
@@ -8270,8 +8300,8 @@
         "btc_close": 76304.32,
         "btc_high": 76611.48,
         "btc_low": 75318.98,
-        "fgi": 29,
-        "fgi_label": "Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 33.7,
         "delta_composite": -5.2
       },
@@ -8280,8 +8310,8 @@
         "btc_close": 78179,
         "btc_high": 78894.98,
         "btc_low": 76294.7,
-        "fgi": 26,
-        "fgi_label": "Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 35.4,
         "delta_composite": 1.7
       },
@@ -8290,8 +8320,8 @@
         "btc_close": 78657.25,
         "btc_high": 79119.79,
         "btc_low": 78031.96,
-        "fgi": 39,
-        "fgi_label": "Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 34.9,
         "delta_composite": -0.5
       },
@@ -8300,8 +8330,8 @@
         "btc_close": 78538.23,
         "btc_high": 79402.36,
         "btc_low": 78073.08,
-        "fgi": 47,
-        "fgi_label": "Neutral",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 46.4,
         "delta_composite": 11.5
       },
@@ -8310,8 +8340,8 @@
         "btc_close": 79827.91,
         "btc_high": 80742.36,
         "btc_low": 78217.96,
-        "fgi": 40,
-        "fgi_label": "Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 51.7,
         "delta_composite": 5.3
       },
@@ -8320,8 +8350,8 @@
         "btc_close": 80927.05,
         "btc_high": 81751.45,
         "btc_low": 79787.58,
-        "fgi": 50,
-        "fgi_label": "Neutral",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 53.1,
         "delta_composite": 1.4
       },
@@ -8330,8 +8360,8 @@
         "btc_close": 81427.53,
         "btc_high": 82792.21,
         "btc_low": 80751.02,
-        "fgi": 46,
-        "fgi_label": "Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 52.9,
         "delta_composite": -0.2
       },
@@ -8340,8 +8370,8 @@
         "btc_close": 80009.99,
         "btc_high": 81684.95,
         "btc_low": 79522.66,
-        "fgi": 47,
-        "fgi_label": "Neutral",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 51.4,
         "delta_composite": -1.5
       },
@@ -8350,8 +8380,8 @@
         "btc_close": 80186.77,
         "btc_high": 80447.27,
         "btc_low": 79205.52,
-        "fgi": 38,
-        "fgi_label": "Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 50.9,
         "delta_composite": -0.5
       },
@@ -8360,8 +8390,8 @@
         "btc_close": 80664.37,
         "btc_high": 81030.06,
         "btc_low": 80119.93,
-        "fgi": 38,
-        "fgi_label": "Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 45.4,
         "delta_composite": -5.5
       },
@@ -8370,8 +8400,8 @@
         "btc_close": 82138.93,
         "btc_high": 82430.17,
         "btc_low": 80274.13,
-        "fgi": 47,
-        "fgi_label": "Neutral",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 45.5,
         "delta_composite": 0.1
       },
@@ -8380,8 +8410,8 @@
         "btc_close": 81728.3,
         "btc_high": 82326.23,
         "btc_low": 80451.42,
-        "fgi": 48,
-        "fgi_label": "Neutral",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 51.6,
         "delta_composite": 6.1
       },
@@ -8390,8 +8420,8 @@
         "btc_close": 80477.49,
         "btc_high": 81753.03,
         "btc_low": 79832.1,
-        "fgi": 49,
-        "fgi_label": "Neutral",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 52.2,
         "delta_composite": 0.6
       },
@@ -8400,8 +8430,8 @@
         "btc_close": 79277.12,
         "btc_high": 81276.67,
         "btc_low": 78725.51,
-        "fgi": 42,
-        "fgi_label": "Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 52,
         "delta_composite": -0.2
       },
@@ -8410,8 +8440,8 @@
         "btc_close": 81051.25,
         "btc_high": 82005.96,
         "btc_low": 78909.68,
-        "fgi": 34,
-        "fgi_label": "Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 56,
         "delta_composite": 4
       },
@@ -8420,8 +8450,8 @@
         "btc_close": 79065.68,
         "btc_high": 81634.84,
         "btc_low": 78635.37,
-        "fgi": 43,
-        "fgi_label": "Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 46.1,
         "delta_composite": -9.9
       },
@@ -8430,8 +8460,8 @@
         "btc_close": 78131.44,
         "btc_high": 79173.5,
         "btc_low": 77630.73,
-        "fgi": 31,
-        "fgi_label": "Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 49.5,
         "delta_composite": 3.4
       },
@@ -8440,8 +8470,8 @@
         "btc_close": 77429.35,
         "btc_high": 78539.4,
         "btc_low": 76783.41,
-        "fgi": 27,
-        "fgi_label": "Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 40.7,
         "delta_composite": -8.8
       },
@@ -8450,8 +8480,8 @@
         "btc_close": 76954.17,
         "btc_high": 77749.32,
         "btc_low": 76029.23,
-        "fgi": 28,
-        "fgi_label": "Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 37.6,
         "delta_composite": -3.1
       },
@@ -8460,8 +8490,8 @@
         "btc_close": 76750.91,
         "btc_high": 77346.87,
         "btc_low": 76082.37,
-        "fgi": 25,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 38.4,
         "delta_composite": 0.8
       },
@@ -8470,8 +8500,8 @@
         "btc_close": 77457.77,
         "btc_high": 77775.57,
         "btc_low": 76463.65,
-        "fgi": 27,
-        "fgi_label": "Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 42.8,
         "delta_composite": 4.4
       },
@@ -8480,8 +8510,8 @@
         "btc_close": 77539.17,
         "btc_high": 78100.56,
         "btc_low": 76655.44,
-        "fgi": 29,
-        "fgi_label": "Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 48.7,
         "delta_composite": 5.9
       },
@@ -8490,8 +8520,8 @@
         "btc_close": 75488.24,
         "btc_high": 77819.45,
         "btc_low": 75323.88,
-        "fgi": 28,
-        "fgi_label": "Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 40.5,
         "delta_composite": -8.2
       },
@@ -8500,8 +8530,8 @@
         "btc_close": 76673.37,
         "btc_high": 77288.12,
         "btc_low": 74255.23,
-        "fgi": 28,
-        "fgi_label": "Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 40.2,
         "delta_composite": -0.3
       },
@@ -8510,8 +8540,8 @@
         "btc_close": 76981.12,
         "btc_high": 77372.54,
         "btc_low": 76019.89,
-        "fgi": 25,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 45.6,
         "delta_composite": 5.4
       },
@@ -8520,8 +8550,8 @@
         "btc_close": 77279.93,
         "btc_high": 77804.92,
         "btc_low": 76833.04,
-        "fgi": 30,
-        "fgi_label": "Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 36.1,
         "delta_composite": -9.5
       },
@@ -8530,8 +8560,8 @@
         "btc_close": 75825.73,
         "btc_high": 77990.87,
         "btc_low": 75569.47,
-        "fgi": 34,
-        "fgi_label": "Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 39.7,
         "delta_composite": 3.6
       },
@@ -8540,8 +8570,8 @@
         "btc_close": 74344.7,
         "btc_high": 76014.3,
         "btc_low": 74136.5,
-        "fgi": 25,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 43.6,
         "delta_composite": 3.9
       },
@@ -8550,8 +8580,8 @@
         "btc_close": 73536.55,
         "btc_high": 74460.12,
         "btc_low": 72493.41,
-        "fgi": 22,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 41.2,
         "delta_composite": -2.4
       },
@@ -8560,8 +8590,8 @@
         "btc_close": 73372.52,
         "btc_high": 74218.56,
         "btc_low": 72435.62,
-        "fgi": 23,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 43.4,
         "delta_composite": 2.2
       },
@@ -8570,8 +8600,8 @@
         "btc_close": 73754.84,
         "btc_high": 74020.76,
         "btc_low": 73125.23,
-        "fgi": 23,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 44.1,
         "delta_composite": 0.7
       },
@@ -8580,8 +8610,8 @@
         "btc_close": 73579.69,
         "btc_high": 74153.5,
         "btc_low": 73315.02,
-        "fgi": 28,
-        "fgi_label": "Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 44.2,
         "delta_composite": 0.1
       },
@@ -8590,8 +8620,8 @@
         "btc_close": 71319.77,
         "btc_high": 73969.57,
         "btc_low": 70599.51,
-        "fgi": 29,
-        "fgi_label": "Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 36.9,
         "delta_composite": -7.3
       },
@@ -8600,8 +8630,8 @@
         "btc_close": 66703.66,
         "btc_high": 71334.95,
         "btc_low": 66127.27,
-        "fgi": 23,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 35,
         "delta_composite": -1.9
       },
@@ -8610,8 +8640,8 @@
         "btc_close": 64014.37,
         "btc_high": 67402.93,
         "btc_low": 64009.68,
-        "fgi": 11,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 35.1,
         "delta_composite": 0.1
       },
@@ -8620,8 +8650,8 @@
         "btc_close": 63801.57,
         "btc_high": 64664.45,
         "btc_low": 61335.75,
-        "fgi": 12,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 20,
         "delta_composite": -15.1
       },
@@ -8630,8 +8660,8 @@
         "btc_close": 60922.67,
         "btc_high": 63901.52,
         "btc_low": 59108.92,
-        "fgi": 12,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 19.5,
         "delta_composite": -0.5
       },
@@ -8640,8 +8670,8 @@
         "btc_close": 60867.41,
         "btc_high": 61491.7,
         "btc_low": 59496.62,
-        "fgi": 12,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 16.5,
         "delta_composite": -3
       },
@@ -8650,30 +8680,40 @@
         "btc_close": 63239.52,
         "btc_high": 64128.04,
         "btc_low": 60724.07,
-        "fgi": 12,
-        "fgi_label": "Extreme Fear",
+        "fgi": null,
+        "fgi_label": null,
         "composite": 15.5,
         "delta_composite": -1
       },
       {
         "date": "2026-06-08",
-        "btc_close": 63049.73,
-        "btc_high": 64166.36,
-        "btc_low": 62450.61,
-        "fgi": 8,
-        "fgi_label": "Extreme Fear",
+        "btc_close": 63090.59,
+        "btc_high": 64185.77,
+        "btc_low": 62384.67,
+        "fgi": null,
+        "fgi_label": null,
         "composite": 16.9,
         "delta_composite": 1.4
       },
       {
         "date": "2026-06-09",
-        "btc_close": 63334,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 61637.12,
+        "btc_high": 63484.54,
+        "btc_low": 60782.84,
         "fgi": null,
         "fgi_label": null,
         "composite": 15.4,
         "delta_composite": -1.5
+      },
+      {
+        "date": "2026-06-10",
+        "btc_close": 61849,
+        "btc_high": null,
+        "btc_low": null,
+        "fgi": null,
+        "fgi_label": null,
+        "composite": 14.2,
+        "delta_composite": -1.2
       }
     ]
   },
