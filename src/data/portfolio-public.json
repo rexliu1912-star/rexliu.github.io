@@ -1,27 +1,22 @@
 {
-  "generated_at": "2026-06-12T00:17:29.338Z",
+  "generated_at": "2026-06-13T23:53:19.675Z",
   "regime": {
     "current": {
-      "label": "防御期",
-      "label_en": "Defensive",
-      "aggression": "低",
-      "green_count": 1,
-      "total_signals": 4,
+      "label": "中性期",
+      "label_en": "Neutral",
+      "aggression": "中",
+      "green_count": 2,
+      "total_signals": 3,
       "signals": {
-        "tnx": {
-          "label": "10Y UST",
-          "value": "4.46%",
-          "light": "yellow"
-        },
         "dxy": {
           "label": "DXY",
-          "value": "99.73",
+          "value": "99.75",
           "light": "green"
         },
         "vix": {
           "label": "VIX",
-          "value": "19.44",
-          "light": "yellow"
+          "value": "17.68",
+          "light": "green"
         },
         "naaim": {
           "label": "NAAIM",
@@ -2178,6 +2173,78 @@
             "status": null
           }
         }
+      },
+      {
+        "date": "2026-06-13",
+        "regime": "中性期",
+        "green_count": 2,
+        "aggression": "中",
+        "vix": 17.68,
+        "lights": {
+          "tnx": "yellow",
+          "dxy": "green",
+          "vix": "green",
+          "naaim": "yellow"
+        },
+        "signalDetails": {
+          "tnx": {
+            "value": 4.49,
+            "light": "yellow",
+            "status": null
+          },
+          "dxy": {
+            "value": 99.81,
+            "light": "green",
+            "status": null
+          },
+          "vix": {
+            "value": 17.68,
+            "light": "green",
+            "status": null
+          },
+          "naaim": {
+            "value": 79.27,
+            "light": "yellow",
+            "status": null
+          },
+          "policy": {
+            "light": "gray",
+            "status": null
+          }
+        }
+      },
+      {
+        "date": "2026-06-14",
+        "regime": "中性期",
+        "green_count": 2,
+        "aggression": "中",
+        "vix": 17.68,
+        "lights": {
+          "dxy": "green",
+          "vix": "green",
+          "naaim": "yellow"
+        },
+        "signalDetails": {
+          "dxy": {
+            "value": 99.75,
+            "light": "green",
+            "status": null
+          },
+          "vix": {
+            "value": 17.68,
+            "light": "green",
+            "status": null
+          },
+          "naaim": {
+            "value": 79.27,
+            "light": "yellow",
+            "status": null
+          },
+          "policy": {
+            "light": "gray",
+            "status": null
+          }
+        }
       }
     ]
   },
@@ -2188,9 +2255,9 @@
           "id": "stablecoin",
           "label_en": "Stablecoin Yield",
           "label_zh": "稳定币生息",
-          "target_pct": 36.5,
+          "target_pct": 32.8,
           "current_pct": 40.3,
-          "drift_pp": 3.8,
+          "drift_pp": 7.5,
           "color": "#10b981",
           "sub_tags_en": [
             "USDT",
@@ -2206,23 +2273,23 @@
           "note_zh": "底座层——带息、低 beta、抗衰退",
           "expected_return_pct": 5,
           "annual_volatility_pct": 1,
-          "model_target_pct": 36.5,
-          "raw_model_target_pct": 36.8,
-          "signal_score": 88,
+          "model_target_pct": 32.8,
+          "raw_model_target_pct": 31.4,
+          "signal_score": 80,
           "model_action": "trim",
-          "model_rationale_en": "APR 5.0% and regime defensive keep liquidity floor high.",
-          "model_rationale_zh": "稳定币 APR 5.0%，当前 defensive 环境下维持流动性底座。",
+          "model_rationale_en": "APR 5.0% and regime neutral keep liquidity floor high.",
+          "model_rationale_zh": "稳定币 APR 5.0%，当前 neutral 环境下维持流动性底座。",
           "model_current_pct": 40.3,
-          "model_drift_pp": 3.8,
-          "gap_amount": -443220
+          "model_drift_pp": 7.5,
+          "gap_amount": -871384
         },
         {
           "id": "funds",
           "label_en": "Funds",
           "label_zh": "基金与现金",
-          "target_pct": 34,
+          "target_pct": 32,
           "current_pct": 44.1,
-          "drift_pp": 10.1,
+          "drift_pp": 12.1,
           "color": "#3b82f6",
           "sub_tags_en": [
             "Cash & Deposits",
@@ -2236,25 +2303,25 @@
           ],
           "note_en": "Cash buffer + conservative wealth management + earmarked funds (housing, education, receivable)",
           "note_zh": "现金缓冲 + 保守理财 + 专项资金（买房/教育/应收）",
-          "expected_return_pct": 3.2,
+          "expected_return_pct": 3.1,
           "annual_volatility_pct": 3,
-          "model_target_pct": 34,
-          "raw_model_target_pct": 34.1,
-          "signal_score": 78,
+          "model_target_pct": 32,
+          "raw_model_target_pct": 31.2,
+          "signal_score": 77.5,
           "model_action": "trim",
-          "model_rationale_en": "SOFR 3.59% supports conservative cash/fund carry.",
-          "model_rationale_zh": "SOFR 3.59%，保守现金/基金仍有持有收益。",
+          "model_rationale_en": "SOFR 3.50% supports conservative cash/fund carry.",
+          "model_rationale_zh": "SOFR 3.50%，保守现金/基金仍有持有收益。",
           "model_current_pct": 44.1,
-          "model_drift_pp": 10.1,
-          "gap_amount": -1174520
+          "model_drift_pp": 12.1,
+          "gap_amount": -1405960
         },
         {
           "id": "gold",
           "label_en": "Gold",
           "label_zh": "黄金",
-          "target_pct": 4.7,
+          "target_pct": 4.1,
           "current_pct": 0,
-          "drift_pp": -4.7,
+          "drift_pp": -4.1,
           "color": "#eab308",
           "sub_tags_en": [
             "XAU ETF",
@@ -2268,23 +2335,23 @@
           "note_zh": "长周期流动性对冲——不看五分钟K线。M2 倒挂体系入场。",
           "expected_return_pct": 3.5,
           "annual_volatility_pct": 27,
-          "model_target_pct": 4.7,
-          "raw_model_target_pct": 4.7,
+          "model_target_pct": 4.1,
+          "raw_model_target_pct": 3.8,
           "signal_score": 37,
           "model_action": "add",
           "model_rationale_en": "Gold signal yellow; fair-value premium level extreme caps target.",
           "model_rationale_zh": "黄金信号 yellow；公允价溢价 extreme，限制目标仓位上行。",
           "model_current_pct": 0,
-          "model_drift_pp": -4.7,
-          "gap_amount": 543884
+          "model_drift_pp": -4.1,
+          "gap_amount": 474452
         },
         {
           "id": "stocks",
           "label_en": "Stocks",
           "label_zh": "股票",
-          "target_pct": 19.7,
+          "target_pct": 24.2,
           "current_pct": 8.8,
-          "drift_pp": -10.9,
+          "drift_pp": -15.4,
           "color": "#8953d1",
           "sub_tags_en": [
             "AI Power",
@@ -2298,17 +2365,17 @@
           ],
           "note_en": "Long + swing mix — AI-electricity core with opportunistic overlays",
           "note_zh": "长期 + 波段组合——AI 电力核心 + 机会主义叠加",
-          "expected_return_pct": 8.1,
-          "annual_volatility_pct": 16.6,
-          "model_target_pct": 19.7,
-          "raw_model_target_pct": 19.4,
-          "signal_score": 59.1,
+          "expected_return_pct": 8.6,
+          "annual_volatility_pct": 16,
+          "model_target_pct": 24.2,
+          "raw_model_target_pct": 26,
+          "signal_score": 63.9,
           "model_action": "add",
-          "model_rationale_en": "Portfolio health 3.5/5.0, equity beta 1.04, regime score 39.0.",
-          "model_rationale_zh": "组合健康度 3.5/5.0，股票 beta 1.04，宏观分数 39.0。",
+          "model_rationale_en": "Portfolio health 3.6/5.0, equity beta 0.63, regime score 49.0.",
+          "model_rationale_zh": "组合健康度 3.6/5.0，股票 beta 0.63，宏观分数 49.0。",
           "model_current_pct": 8.8,
-          "model_drift_pp": -10.9,
-          "gap_amount": 1261684,
+          "model_drift_pp": -15.4,
+          "gap_amount": 1782424,
           "sub": [
             {
               "id": "cn",
@@ -2322,9 +2389,9 @@
           "id": "crypto",
           "label_en": "Crypto",
           "label_zh": "加密敞口",
-          "target_pct": 5.1,
+          "target_pct": 6.9,
           "current_pct": 6.7,
-          "drift_pp": 1.6,
+          "drift_pp": -0.2,
           "color": "#f59e0b",
           "sub_tags_en": [
             "BTC",
@@ -2336,47 +2403,47 @@
           ],
           "note_en": "Asymmetric bet — long-duration, non-correlated, high-volatility core",
           "note_zh": "不对称下注——长久期、低相关、高波动核心",
-          "expected_return_pct": 11.7,
-          "annual_volatility_pct": 35.3,
-          "model_target_pct": 5.1,
-          "raw_model_target_pct": 5,
-          "signal_score": 29.7,
+          "expected_return_pct": 11.1,
+          "annual_volatility_pct": 34.8,
+          "model_target_pct": 6.9,
+          "raw_model_target_pct": 7.6,
+          "signal_score": 25,
           "model_action": "hold",
-          "model_rationale_en": "Crypto composite 24.7, fear/greed 13; capped at 15%.",
-          "model_rationale_zh": "Crypto composite 24.7，恐惧贪婪 13；上限 15%。",
+          "model_rationale_en": "Crypto composite 20.0, fear/greed 14; capped at 15%.",
+          "model_rationale_zh": "Crypto composite 20.0，恐惧贪婪 14；上限 15%。",
           "model_current_pct": 6.7,
-          "model_drift_pp": 1.6,
-          "gap_amount": -187828
+          "model_drift_pp": -0.2,
+          "gap_amount": 20468
         }
       ],
       "model": {
         "schema": "portfolio-allocation-model/v1",
         "version": "0.1.0",
-        "generated_at": "2026-06-11T23:45:36.496487+00:00",
+        "generated_at": "2026-06-13T23:53:18.285378+00:00",
         "regime": {
-          "name": "defensive",
-          "score": 39
+          "name": "neutral",
+          "score": 49
         }
       },
-      "risk_free_rate": 3.59,
+      "risk_free_rate": 3.5,
       "weighted_return": {
-        "target": 5.3,
+        "target": 5.6,
         "current": 4.9
       },
-      "projected_annual_yield": 569678,
+      "projected_annual_yield": 565014,
       "risk": {
-        "target_vol": 7.7,
-        "current_vol": 5.6,
-        "sharpe_target": 0.22,
-        "sharpe_current": 0.24,
-        "risk_free_rate": 3.59,
+        "target_vol": 8.7,
+        "current_vol": 5.5,
+        "sharpe_target": 0.24,
+        "sharpe_current": 0.25,
+        "risk_free_rate": 3.5,
         "temperature": 9,
         "temperature_label_en": "Defensive",
         "temperature_label_zh": "防御型"
       },
-      "health": null,
-      "portfolio_beta": 1.12,
-      "equity_beta": 1.04
+      "health": 3.6,
+      "portfolio_beta": 0.73,
+      "equity_beta": 0.63
     }
   },
   "sector_research": [
@@ -2581,32 +2648,32 @@
       "layer_label_zh": "AI 算力",
       "stop": {
         "type": "stop_loss",
-        "level_pct_from_current": "-25.6%",
+        "level_pct_from_current": "-24.4%",
         "severity": "gray",
         "description": "AAPL 止损线 ~15% below avg cost"
       },
       "target": {
-        "price_pct_from_current": "+4.9%",
+        "price_pct_from_current": "+6.5%",
         "description": "AAPL test target",
         "optimistic_price": null
       },
       "next_event": null,
       "news": {
-        "summary": "What&#x27;s going on at Apple (NASDAQ:AAPL)? Read today&#x27;s AAPL news from trusted media outlets at MarketBeat.",
+        "summary": "Post-WWDC reaction remains mixed: investors debate Apple AI/Siri updates, AI monetization and cash-flow moat; stock pull…",
         "sentiment": "positive",
         "items": [
           {
-            "title": "AAPL News Today | Why did Apple stock go up today? $AAPL",
-            "snippet": "What&#x27;s going on at Apple (NASDAQ:AAPL)? Read today&#x27;s AAPL news from trusted media outlets at MarketBeat."
+            "title": "Apple Inc. (AAPL) recent news",
+            "snippet": "Post-WWDC reaction remains mixed: investors debate Apple AI/Siri updates, AI monetization and cash-flow moat; stock pulled back in June after the even"
           },
           {
-            "title": "(AAPL.O) | Stock Price &amp; Latest News | Reuters",
-            "snippet": "About Apple Inc (AAPL.O) Company Information Apple Inc. designs, manufactures and markets smartphones, personal computers, tablets, wearables and acce"
+            "title": "X sentiment: mixed short term, bullish longer term",
+            "snippet": "X discussion frames WWDC as short-term disappointment but long-term Apple Intelligence/upgrade-cycle optionality remains constructive."
           }
         ]
       },
-      "price": 295.63,
-      "daily_change_pct": 1.39
+      "price": 291.13,
+      "daily_change_pct": 0
     },
     {
       "symbol": "CEG",
@@ -2645,28 +2712,32 @@
       "layer_label_zh": "基荷发电",
       "stop": {
         "type": "stop_loss",
-        "level_pct_from_current": "--1.6%",
+        "level_pct_from_current": "-1.2%",
         "severity": "red",
         "description": "CEG stop loss: 18% below renewed entry cost $305.78"
       },
       "target": null,
-      "next_event": null,
+      "next_event": {
+        "date": "2026-06-15",
+        "label": "FERC / NRC nuclear-data-center co-location policy window: watch BTMG, TMI-1 restart, and state-level opposition updates.",
+        "urgency": 3
+      },
       "news": {
-        "summary": "What&#x27;s going on at Constellation Energy (NASDAQ:CEG)? Read today&#x27;s CEG news from trusted media outlets at Mark…",
+        "summary": "CEG completed a $90M upgrade at Limerick Clean Energy Center; also recently completed secondary offering/share repurchas…",
         "sentiment": "positive",
         "items": [
           {
-            "title": "CEG News Today | Why did Constellation Energy stock go down today?",
-            "snippet": "What&#x27;s going on at Constellation Energy (NASDAQ:CEG)? Read today&#x27;s CEG news from trusted media outlets at MarketBeat."
+            "title": "Constellation Energy completes $90M Limerick outage upgrade",
+            "snippet": "CEG completed a $90M upgrade at Limerick Clean Energy Center; also recently completed secondary offering/share repurchase activities."
           },
           {
-            "title": "CEG Stock | Constellation Energy Corporation Price, Quote, News ...",
-            "snippet": "Track CEG Stock with real-time price updates, overview, analysis, insider insights, and Smart Score ratings. Get Constellation Energy Corporation news"
+            "title": "X sentiment: strongly bullish AI/nuclear power theme",
+            "snippet": "Discussion focuses on nuclear baseload demand for AI data centers, Microsoft PPA, Calpine acquisition and long-term EPS growth."
           }
         ]
       },
-      "price": 246.71,
-      "daily_change_pct": 1.82
+      "price": 253.76,
+      "daily_change_pct": 0
     },
     {
       "symbol": "GOOGL",
@@ -2697,67 +2768,28 @@
       "layer_label_zh": "核心持仓",
       "stop": {
         "type": "stop_loss",
-        "level_pct_from_current": "-11.3%",
+        "level_pct_from_current": "-11.8%",
         "severity": "yellow",
         "description": "GOOGL stop loss ~18% below avg cost ($386.98)"
       },
       "target": null,
       "next_event": null,
       "news": {
-        "summary": "Alphabet is listed on the large-cap section of the Nasdaq under the ticker symbols GOOGL and GOOG; both classes of stock…",
+        "summary": "Recent items cite TPU orders, SpaceX exposure narrative and German AI Overviews liability ruling.",
         "sentiment": "neutral",
         "items": [
           {
-            "title": "Alphabet Inc Class A (GOOGL) Stock Price &amp; News - Google Finance",
-            "snippet": "Alphabet is listed on the large-cap section of the Nasdaq under the ticker symbols GOOGL and GOOG; both classes of stock are components of major stock"
-          }
-        ]
-      },
-      "price": 357.77,
-      "daily_change_pct": 0.39
-    },
-    {
-      "symbol": "MU",
-      "market": "us",
-      "flag": "🇺🇸",
-      "sector_tags_en": [
-        "Semiconductor",
-        "Memory",
-        "AI Infrastructure"
-      ],
-      "sector_tags_zh": [
-        "半导体",
-        "存储器",
-        "AI基础设施"
-      ],
-      "driver_factors_en": [],
-      "driver_factors_zh": [],
-      "thesis_en": "HBM/DRAM upcycle beneficiary with high AI memory torque; monitor pricing discipline and cycle rollover risk.",
-      "thesis_zh": "HBM/DRAM 上行周期受益者，AI 内存弹性强；核心风险是价格纪律与周期反转。",
-      "stage": 4,
-      "status_en": "Active",
-      "status_zh": "持有中",
-      "conviction": "medium",
-      "horizon": "medium",
-      "entry_year": 2026,
-      "layer": "satellite",
-      "layer_label_en": "AI memory cycle",
-      "layer_label_zh": "AI内存周期",
-      "stop": null,
-      "target": null,
-      "next_event": null,
-      "news": {
-        "summary": "What&#x27;s going on at Micron Technology (NASDAQ:MU)? Read today&#x27;s MU news from trusted media outlets at MarketBea…",
-        "sentiment": "neutral",
-        "items": [
+            "title": "Alphabet AI infrastructure and legal headlines",
+            "snippet": "Recent items cite TPU orders, SpaceX exposure narrative and German AI Overviews liability ruling."
+          },
           {
-            "title": "MU News Today | Why did Micron Technology stock drop today?",
-            "snippet": "What&#x27;s going on at Micron Technology (NASDAQ:MU)? Read today&#x27;s MU news from trusted media outlets at MarketBeat."
+            "title": "X sentiment: predominantly bullish",
+            "snippet": "GOOGL discussion emphasizes AI/cloud backlog, analyst target raises, valuation support and capex/dilution as key risk."
           }
         ]
       },
-      "price": 995.87,
-      "daily_change_pct": 11.66
+      "price": 359.68,
+      "daily_change_pct": 0
     },
     {
       "symbol": "NVDA",
@@ -2796,24 +2828,28 @@
       "layer_label_zh": "核心持仓",
       "stop": {
         "type": "stop_loss",
-        "level_pct_from_current": "-11.6%",
+        "level_pct_from_current": "-11.7%",
         "severity": "yellow",
         "description": "NVIDIA stop loss ~18% below updated avg cost ($220.96)"
       },
       "target": null,
       "next_event": null,
       "news": {
-        "summary": "What&#x27;s going on at NVIDIA (NASDAQ:NVDA)? Read today&#x27;s NVDA news from trusted media outlets at MarketBeat.",
+        "summary": "NVIDIA selected SK Hynix as memory supplier for Vera chip; demand and possible memory shortages remain a key AI infrastr…",
         "sentiment": "positive",
         "items": [
           {
-            "title": "NVDA News Today | Why did NVIDIA stock go down today?",
-            "snippet": "What&#x27;s going on at NVIDIA (NASDAQ:NVDA)? Read today&#x27;s NVDA news from trusted media outlets at MarketBeat."
+            "title": "Nvidia signs multi-year SK Hynix pact for next-gen chips",
+            "snippet": "NVIDIA selected SK Hynix as memory supplier for Vera chip; demand and possible memory shortages remain a key AI infrastructure theme."
+          },
+          {
+            "title": "X sentiment: bullish long-term, cautious near-term",
+            "snippet": "NVDA remains core AI holding in X chatter, with buy-the-dip tone offset by short-term technical and crowded-trade concerns."
           }
         ]
       },
-      "price": 204.87,
-      "daily_change_pct": 2.22
+      "price": 205.19,
+      "daily_change_pct": 0
     },
     {
       "symbol": "QQQ",
@@ -2852,28 +2888,28 @@
       "layer_label_zh": "卫星配置",
       "stop": {
         "type": "stop_loss",
-        "level_pct_from_current": "-18.6%",
+        "level_pct_from_current": "-19.1%",
         "severity": "yellow",
         "description": "Invesco QQQ Trust stop loss ~18% below cost"
       },
       "target": null,
       "next_event": null,
       "news": {
-        "summary": "What&#x27;s going on at Invesco QQQ (NASDAQ:QQQ)? Read today&#x27;s QQQ news from trusted media outlets at MarketBeat.",
-        "sentiment": "positive",
+        "summary": "Recent coverage includes QQQ/QQQM comparisons and debate over whether tech correction has run far enough.",
+        "sentiment": "negative",
         "items": [
           {
-            "title": "QQQ News Today | Why did Invesco QQQ go up today? - MarketBeat",
-            "snippet": "What&#x27;s going on at Invesco QQQ (NASDAQ:QQQ)? Read today&#x27;s QQQ news from trusted media outlets at MarketBeat."
+            "title": "QQQ market outlook and ETF comparisons",
+            "snippet": "Recent coverage includes QQQ/QQQM comparisons and debate over whether tech correction has run far enough."
           },
           {
-            "title": "QQQ Stock Price - Invesco QQQ Trust Quote ETF | Morningstar",
-            "snippet": "Check QQQ stock price for Invesco QQQ Trust ETF, review total assets, see historical growth, and review the analyst rating from Morningstar."
+            "title": "X sentiment: cautiously bullish after pullback",
+            "snippet": "QQQ traders cite oversold recovery, options/gamma setup and contrarian bearish AAII sentiment; bubble/IPO/rebalance risks remain."
           }
         ]
       },
-      "price": 717.12,
-      "daily_change_pct": 3.38
+      "price": 721.34,
+      "daily_change_pct": 0
     },
     {
       "symbol": "SMH",
@@ -2912,28 +2948,28 @@
       "layer_label_zh": "核心",
       "stop": {
         "type": "stop_loss",
-        "level_pct_from_current": "-23.0%",
+        "level_pct_from_current": "-24.3%",
         "severity": "gray",
         "description": "VanEck Semiconductor ETF stop loss ~18% below cost"
       },
       "target": null,
       "next_event": null,
       "news": {
-        "summary": "Should You Buy or Sell VanEck Semiconductor ETF Stock? Get The Latest SMH Stock Price, Constituents List, Holdings Data,…",
+        "summary": "Recent SMH coverage compares semiconductor ETFs and flags hyperscaler capex guidance as key July earnings watch item.",
         "sentiment": "positive",
         "items": [
           {
-            "title": "VanEck Semiconductor ETF (SMH) Price, Holdings, &amp; News",
-            "snippet": "Should You Buy or Sell VanEck Semiconductor ETF Stock? Get The Latest SMH Stock Price, Constituents List, Holdings Data, Headlines, and Short Interest"
+            "title": "Semiconductor ETF focus remains on AI capex",
+            "snippet": "Recent SMH coverage compares semiconductor ETFs and flags hyperscaler capex guidance as key July earnings watch item."
           },
           {
-            "title": "VanEck Semiconductor ETF (SMH) Stock Latest News - SMH News Today",
-            "snippet": "Get the latest market news for VanEck Semiconductor ETF (SMH). Research SMH stock and other companies. We&#x27;re 100% free for everything."
+            "title": "X sentiment: bullish but volatile",
+            "snippet": "SMH viewed as AI/semiconductor leadership vehicle; traders watch $600-$620 resistance/support and mixed options flow."
           }
         ]
       },
-      "price": 609.45,
-      "daily_change_pct": 6.75
+      "price": 619.96,
+      "daily_change_pct": 0
     },
     {
       "symbol": "VGT",
@@ -2972,28 +3008,28 @@
       "layer_label_zh": "卫星配置",
       "stop": {
         "type": "stop_loss",
-        "level_pct_from_current": "-19.9%",
-        "severity": "yellow",
+        "level_pct_from_current": "-20.4%",
+        "severity": "gray",
         "description": "Vanguard Information Technology ETF stop loss ~18% below cost"
       },
       "target": null,
       "next_event": null,
       "news": {
-        "summary": "Should You Buy or Sell Vanguard Information Technology ETF Stock? Get The Latest VGT Stock Price, Constituents List, Hol…",
+        "summary": "Vanguard VGT completed an 8:1 split in April; recent analysis compares VGT with QQQ/SOXX as tech/AI exposure vehicles.",
         "sentiment": "neutral",
         "items": [
           {
-            "title": "Vanguard Information Technology ETF (VGT) Price, Holdings, &amp; News",
-            "snippet": "Should You Buy or Sell Vanguard Information Technology ETF Stock? Get The Latest VGT Stock Price, Constituents List, Holdings Data, and Headlines at M"
+            "title": "VGT tech ETF comparisons and share split",
+            "snippet": "Vanguard VGT completed an 8:1 split in April; recent analysis compares VGT with QQQ/SOXX as tech/AI exposure vehicles."
           },
           {
-            "title": "Vanguard Information Technology ETF (VGT) News Today",
-            "snippet": "What&#x27;s going on at Vanguard Information Technology ETF (NYSEARCA:VGT)? Read today&#x27;s VGT news from trusted media outlets at MarketBeat."
+            "title": "X sentiment: positive long-term core tech ETF",
+            "snippet": "Retail discussion favors VGT as low-cost tech exposure and DCA/core holding, with concentration/valuation as main caveat."
           }
         ]
       },
-      "price": 116.07,
-      "daily_change_pct": 3.32
+      "price": 116.74,
+      "daily_change_pct": 0
     },
     {
       "symbol": "159381",
@@ -3024,28 +3060,28 @@
       "layer_label_zh": "卫星",
       "stop": {
         "type": "stop_loss",
-        "level_pct_from_current": "--71.0%",
+        "level_pct_from_current": "--71.8%",
         "severity": "red",
         "description": "CHINA ASSET MANAGEMENT CO 止损线 跌破成本价约18%"
       },
       "target": null,
       "next_event": null,
       "news": {
-        "summary": "Get detailed information about the ChinaAMC SZSE ChiNext AI ETF",
-        "sentiment": "positive",
+        "summary": "近期创业板人工智能相关ETF受CPO/光模块反弹带动，部分产品单日涨幅接近4%",
+        "sentiment": "negative",
         "items": [
           {
-            "title": "159381 Stock Price | ChinaAMC SZSE ChiNext AI ETF - Investing.com",
-            "snippet": "Get detailed information about the ChinaAMC SZSE ChiNext AI ETF. View the current 159381 stock price chart, historical data, premarket price, dividend"
+            "title": "创业板人工智能板块随CPO/光模块反弹",
+            "snippet": "近期创业板人工智能相关ETF受CPO/光模块反弹带动，部分产品单日涨幅接近4%。"
           },
           {
-            "title": "159381 Quote - ChinaAMC ChiNext AI ETF Fund - Bloomberg",
-            "snippet": "Performance charts for ChinaAMC ChiNext AI ETF (159381 - Type ETF) including intraday, historical and comparison charts, technical analysis and trend "
+            "title": "X情绪：短期谨慎，长期看国产AI替代",
+            "snippet": "讨论提示AI主题ETF持仓重合度和估值风险，但国产算力/光模块长期逻辑仍被看好。"
           }
         ]
       },
-      "price": 1.269,
-      "daily_change_pct": -2.61
+      "price": 1.263,
+      "daily_change_pct": 0
     },
     {
       "symbol": "159632",
@@ -3076,21 +3112,56 @@
       "target": null,
       "next_event": null,
       "news": {
-        "summary": "Get detailed information about the Huaan NASDAQ 100 (QDII) ETF",
-        "sentiment": "positive",
+        "summary": "159632近期发布二级市场交易价格溢价风险提示，估值显示溢价率约7%，净值随纳指反弹",
+        "sentiment": "negative",
         "items": [
           {
-            "title": "159632 Stock Price | Huaan NASDAQ 100(QDII) ETF - Investing.com",
-            "snippet": "Get detailed information about the Huaan NASDAQ 100 (QDII) ETF. View the current 159632 stock price chart, historical data, premarket price, dividend "
+            "title": "纳斯达克ETF华安提示溢价风险",
+            "snippet": "159632近期发布二级市场交易价格溢价风险提示，估值显示溢价率约7%，净值随纳指反弹。"
           },
           {
-            "title": "HuaAn Nasdaq 100 Index ETF (159632) - Investing.com IN",
-            "snippet": "Get the live Huaan NASDAQ 100(QDII) share price for the 159632 ETF, plus charts, technical analysis, historical data and the latest Huaan NASDAQ 100(Q"
+            "title": "X情绪：积极偏乐观",
+            "snippet": "讨论把159632视为便捷配置美股科技/纳指100的工具，需关注溢价率、汇率和QDII额度。"
           }
         ]
       },
-      "price": 2.337,
-      "daily_change_pct": -0.97
+      "price": 2.376,
+      "daily_change_pct": 0
+    },
+    {
+      "symbol": "518880",
+      "market": "cn",
+      "flag": "🇨🇳",
+      "sector_tags_en": [],
+      "sector_tags_zh": [],
+      "driver_factors_en": [],
+      "driver_factors_zh": [],
+      "thesis_en": "",
+      "thesis_zh": "",
+      "stage": 7,
+      "status_en": "Active",
+      "status_zh": "持有中",
+      "conviction": "medium",
+      "horizon": "long",
+      "entry_year": null,
+      "layer": null,
+      "layer_label_en": null,
+      "layer_label_zh": null,
+      "stop": null,
+      "target": null,
+      "next_event": null,
+      "news": {
+        "summary": "长期配置派继续定投，短线交易派担心黄金只是技术反弹，强调止盈止损",
+        "sentiment": "neutral",
+        "items": [
+          {
+            "title": "X情绪：分化且短期谨慎",
+            "snippet": "长期配置派继续定投，短线交易派担心黄金只是技术反弹，强调止盈止损。"
+          }
+        ]
+      },
+      "price": 8.659,
+      "daily_change_pct": 0
     },
     {
       "symbol": "588000",
@@ -3126,27 +3197,31 @@
       "target": null,
       "next_event": null,
       "news": {
-        "summary": "About ChinaAMC SSE STAR 50 ETF (588000.SS) Company Information Address Contact Information",
+        "summary": "报道指出科创50近期波动加大，资金分歧明显；也有资金净流入和改革深化配置价值讨论",
         "sentiment": "neutral",
         "items": [
           {
-            "title": "(588000.SS) | Stock Price &amp; Latest News | Reuters",
-            "snippet": "About ChinaAMC SSE STAR 50 ETF (588000.SS) Company Information Address Contact Information"
+            "title": "科创50ETF波动和资金分歧加大",
+            "snippet": "报道指出科创50近期波动加大，资金分歧明显；也有资金净流入和改革深化配置价值讨论。"
+          },
+          {
+            "title": "X情绪：谨慎分化",
+            "snippet": "短期高估值、解禁、筹码拥挤压制追高情绪；长期硬科技逻辑仍在。"
           }
         ]
       },
       "price": 1.756,
-      "daily_change_pct": 0.69
+      "daily_change_pct": 0
     }
   ],
   "crypto": null,
   "crypto_monitor": {
-    "generated_at": "2026-06-12T06:35:43.920817+08:00",
+    "generated_at": "2026-06-14T06:36:19.415992+08:00",
     "data_freshness": {
       "market_data_available": true,
       "bottom_tracker_available": true,
       "dca_status_available": true,
-      "market_data_date": "2026-06-12"
+      "market_data_date": "2026-06-14"
     },
     "allocation": {
       "crypto": {
@@ -3164,10 +3239,18 @@
     },
     "macro": {
       "fear_greed": {
-        "value": 13,
+        "value": 14,
         "label": "Extreme Fear"
       },
       "fear_greed_7d": [
+        {
+          "value": 14,
+          "label": "Extreme Fear"
+        },
+        {
+          "value": 13,
+          "label": "Extreme Fear"
+        },
         {
           "value": 13,
           "label": "Extreme Fear"
@@ -3187,14 +3270,6 @@
         {
           "value": 11,
           "label": "Extreme Fear"
-        },
-        {
-          "value": 11,
-          "label": "Extreme Fear"
-        },
-        {
-          "value": 13,
-          "label": "Extreme Fear"
         }
       ],
       "btc_change_24h": null,
@@ -3202,16 +3277,16 @@
         {
           "type": "fgi_extreme_fear",
           "severity": "P2",
-          "message": "Fear & Greed 13 (Extreme Fear) — 极端恐慌",
+          "message": "Fear & Greed 14 (Extreme Fear) — 极端恐慌",
           "data": {
-            "fgi_value": 13,
+            "fgi_value": 14,
             "fgi_label": "Extreme Fear"
           }
         }
       ]
     },
     "bottom_tracker": {
-      "score": 75.3,
+      "score": 80,
       "status": "强烈底部信号，建议建仓",
       "indicators": [
         {
@@ -3219,9 +3294,9 @@
           "name_en": "Fear & Greed Index",
           "status": "green",
           "score": 80,
-          "detail_en": "Current:12",
-          "detail_zh": "当前:12",
-          "delta": 3,
+          "detail_en": "Current:13",
+          "detail_zh": "当前:13",
+          "delta": 1,
           "desc_en": "Crypto market sentiment composite (0–100)",
           "desc_zh": "加密市场情绪综合指数（0–100）"
         },
@@ -3230,9 +3305,9 @@
           "name_en": "Miner Capitulation",
           "status": "yellow",
           "score": 50,
-          "detail_en": "Drawdown: -34.5%",
-          "detail_zh": "回撤: -34.5%",
-          "delta": -0.1,
+          "detail_en": "Drawdown: -32.5%",
+          "detail_zh": "回撤: -32.5%",
+          "delta": 0.2,
           "desc_en": "BTC drawdown from ATH + miner revenue stress",
           "desc_zh": "BTC 距高点回撤 + 矿工收入压力"
         },
@@ -3241,9 +3316,9 @@
           "name_en": "Black Swan Intensity",
           "status": "yellow",
           "score": 50,
-          "detail_en": "BSS:66.8",
-          "detail_zh": "BSS:66.8",
-          "delta": -5.7,
+          "detail_en": "BSS:60.5",
+          "detail_zh": "BSS:60.5",
+          "delta": -4.2,
           "desc_en": "Multi-factor tail-risk model (BSS)",
           "desc_zh": "多因子尾部风险模型（BSS）"
         },
@@ -3252,20 +3327,20 @@
           "name_en": "Macro VIX",
           "status": "red",
           "score": 20,
-          "detail_en": "VIX:19.4",
-          "detail_zh": "VIX:19.4",
-          "delta": -2.8,
+          "detail_en": "VIX:17.7",
+          "detail_zh": "VIX:17.7",
+          "delta": 0,
           "desc_en": "S&P 500 implied volatility",
           "desc_zh": "标普500隐含波动率"
         },
         {
           "name_zh": "场外资金储备",
           "name_en": "OTC Reserve (SSR)",
-          "status": "yellow",
-          "score": 50,
-          "detail_en": "，",
-          "detail_zh": "数据获取失败，使用默认值",
-          "delta": null,
+          "status": "green",
+          "score": 80,
+          "detail_en": "SSR:11.6%, Abundant OTC",
+          "detail_zh": "SSR:11.6%, 场外充裕",
+          "delta": -0.2,
           "desc_en": "Stablecoin Supply Ratio — off-exchange liquidity",
           "desc_zh": "稳定币供应比率 — 场外流动性"
         },
@@ -3274,9 +3349,9 @@
           "name_en": "MVRV Z-Score",
           "status": "green",
           "score": 80,
-          "detail_en": "Z:-1.58, Severely Undervalued",
-          "detail_zh": "Z:-1.58, 严重低估",
-          "delta": 0.13,
+          "detail_en": "Z:-1.51, Severely Undervalued",
+          "detail_zh": "Z:-1.51, 严重低估",
+          "delta": 0.06,
           "desc_en": "Market-to-Realized Value ratio (deviation from historical mean)",
           "desc_zh": "市值/已实现价值比（偏离历史均值程度）"
         },
@@ -3285,9 +3360,9 @@
           "name_en": "BTC ETF Flow",
           "status": "yellow",
           "score": 50,
-          "detail_en": "-46M, Neutral Flow",
-          "detail_zh": "-46M, 资金中性",
-          "delta": 15,
+          "detail_en": "-60M, Neutral Flow",
+          "detail_zh": "-60M, 资金中性",
+          "delta": 4,
           "desc_en": "Daily net inflow/outflow of spot BTC ETFs (USD millions)",
           "desc_zh": "BTC 现货 ETF 每日净流入/流出（百万美元）"
         },
@@ -3296,17 +3371,41 @@
           "name_en": "Dollar Index (DXY)",
           "status": "red",
           "score": 20,
-          "detail_en": "DXY:99.7, Weak USD risk-on",
-          "detail_zh": "DXY:99.7, 美元偏弱",
-          "delta": -0.4,
+          "detail_en": "DXY:99.8, Weak USD risk-on",
+          "detail_zh": "DXY:99.8, 美元偏弱",
+          "delta": 0,
           "desc_en": "US Dollar strength — inverse correlation with BTC",
           "desc_zh": "美元强度 — 与 BTC 负相关"
         }
       ]
     },
     "etf": {
-      "btc_etf_net_flow_m": -46,
-      "etfs": []
+      "btc_etf_net_flow_m": -60,
+      "btc_etf_total_volume_m": 1707,
+      "source": "yfinance-estimate",
+      "etfs": [
+        {
+          "ticker": "IBIT",
+          "volume_usd_m": 1313
+        },
+        {
+          "ticker": "FBTC",
+          "volume_usd_m": 180
+        },
+        {
+          "ticker": "GBTC",
+          "volume_usd_m": 110
+        },
+        {
+          "ticker": "ARKB",
+          "volume_usd_m": 35
+        },
+        {
+          "ticker": "BITB",
+          "volume_usd_m": 70
+        }
+      ],
+      "date": "2026-06-14"
     },
     "dca": {
       "status": "closed",
@@ -3361,7 +3460,7 @@
         "label_en": "Stablecoin Yield",
         "label_zh": "稳定币生息",
         "current_pct": 35,
-        "target_pct": 36.5,
+        "target_pct": 32.8,
         "drift_pp": 5,
         "color": "#10b981",
         "sub_tags_en": [
@@ -3380,7 +3479,7 @@
         "label_en": "Funds",
         "label_zh": "基金与现金",
         "current_pct": 34.6,
-        "target_pct": 34,
+        "target_pct": 32,
         "drift_pp": 9.6,
         "color": "#3b82f6",
         "sub_tags_en": [
@@ -3399,7 +3498,7 @@
         "label_en": "Gold",
         "label_zh": "黄金",
         "current_pct": 3.4,
-        "target_pct": 4.7,
+        "target_pct": 4.1,
         "drift_pp": -1.6,
         "color": "#eab308",
         "sub_tags_en": [
@@ -3416,7 +3515,7 @@
         "label_en": "Stocks",
         "label_zh": "股票",
         "current_pct": 19,
-        "target_pct": 19.7,
+        "target_pct": 24.2,
         "drift_pp": -6,
         "color": "#8953d1",
         "sub_tags_en": [
@@ -3435,7 +3534,7 @@
         "label_en": "Crypto",
         "label_zh": "加密敞口",
         "current_pct": 8,
-        "target_pct": 5.1,
+        "target_pct": 6.9,
         "drift_pp": -2,
         "color": "#f59e0b",
         "sub_tags_en": [
@@ -3497,7 +3596,7 @@
     "source": "investment-strategy-registry",
     "registry_file": "investment-strategy/macro/watchlist-registry.json",
     "registry_count": 39,
-    "eligible_count": 27,
+    "eligible_count": 28,
     "tickers": [
       "AAOI",
       "AMAT",
@@ -3518,6 +3617,7 @@
       "LITE",
       "LNG",
       "MRVL",
+      "MU",
       "NEE",
       "NOW",
       "OUST",
@@ -3547,6 +3647,7 @@
       "LITE": "Lumentum Holdings v2.0 完整调研报告",
       "LNG": "Cheniere Energy 近半月研报调研 × 圆桌讨论逻辑一致性审查",
       "MRVL": "Marvell Technology 完整投资调研报告",
+      "MU": "Micron Technology v2.0 完整调研报告",
       "NEE": "NextEra Energy v2.0 完整调研报告",
       "NOW": "ServiceNow v2.0 完整调研报告",
       "OUST": "Ouster v2.0 完整调研报告",
@@ -3573,7 +3674,66 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-06-01",
-        "last_reviewed": "2026-06-01"
+        "last_reviewed": "2026-06-01",
+        "quant": {
+          "composite": 3.78,
+          "rating": "Buy",
+          "score": 3.78,
+          "factors": {
+            "valuation": {
+              "grade": "B",
+              "score": 3.5,
+              "metrics": {
+                "pb": 12.1,
+                "ps": 26.8,
+                "peg": 0.78
+              }
+            },
+            "growth": {
+              "grade": "A-",
+              "score": 4.2,
+              "metrics": {
+                "revenueGrowth": 0.514
+              }
+            },
+            "profitability": {
+              "grade": "F",
+              "score": 1,
+              "metrics": {
+                "grossMargin": 0.296,
+                "operatingMargin": -0.086,
+                "netMargin": -0.085,
+                "roe": -0.061
+              }
+            },
+            "momentum": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "priceChange1M": -0.1021,
+                "priceChange3M": 0.403,
+                "priceChange6M": 5.4969,
+                "vs50dma": 0.0231,
+                "vs200dma": 1.2871
+              }
+            },
+            "epsRevisions": {
+              "grade": "A-",
+              "score": 4.2,
+              "metrics": {
+                "analystSentiment": 0.73,
+                "numAnalysts": 5
+              }
+            },
+            "dividend": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "payoutRatio": 0
+              }
+            }
+          }
+        }
       },
       "AMAT": {
         "ticker": "AMAT",
@@ -3591,7 +3751,73 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-05-15",
-        "last_reviewed": "2026-05-15"
+        "last_reviewed": "2026-05-15",
+        "quant": {
+          "composite": 3.93,
+          "rating": "Buy",
+          "score": 3.93,
+          "factors": {
+            "valuation": {
+              "grade": "C-",
+              "score": 2.2,
+              "metrics": {
+                "pe": 53.5,
+                "pb": 18.8,
+                "ps": 15.5,
+                "peg": 1.89,
+                "evEbitda": 48.5
+              }
+            },
+            "growth": {
+              "grade": "B-",
+              "score": 3.2,
+              "metrics": {
+                "revenueGrowth": 0.114,
+                "earningsGrowth": 0.335,
+                "epsGrowth": 0.313
+              }
+            },
+            "profitability": {
+              "grade": "B",
+              "score": 3.5,
+              "metrics": {
+                "grossMargin": 0.49,
+                "operatingMargin": 0.319,
+                "netMargin": 0.293,
+                "roe": 0.397
+              }
+            },
+            "momentum": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "priceChange1M": 0.3172,
+                "priceChange3M": 0.6421,
+                "priceChange6M": 1.1432,
+                "vs50dma": 0.3289,
+                "vs200dma": 0.8382
+              }
+            },
+            "epsRevisions": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "analystSentiment": 0.9,
+                "numAnalysts": 36,
+                "peRatioFwdVsTrail": 0.653
+              }
+            },
+            "dividend": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "payoutRatio": 0.173,
+                "dividendYield": 0.37,
+                "dividendRate": 2.12
+              }
+            }
+          }
+        }
       },
       "AVGO": {
         "ticker": "AVGO",
@@ -3606,7 +3832,73 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-05-08",
-        "last_reviewed": "2026-05-08"
+        "last_reviewed": "2026-05-08",
+        "quant": {
+          "composite": 3.78,
+          "rating": "Buy",
+          "score": 3.78,
+          "factors": {
+            "valuation": {
+              "grade": "D+",
+              "score": 1.8,
+              "metrics": {
+                "pe": 63.7,
+                "pb": 20.7,
+                "ps": 24.1,
+                "peg": 0.69,
+                "evEbitda": 44.3
+              }
+            },
+            "growth": {
+              "grade": "A",
+              "score": 4.5,
+              "metrics": {
+                "revenueGrowth": 0.479,
+                "earningsGrowth": 0.854,
+                "epsGrowth": 0.875
+              }
+            },
+            "profitability": {
+              "grade": "A",
+              "score": 4.5,
+              "metrics": {
+                "grossMargin": 0.763,
+                "operatingMargin": 0.49,
+                "netMargin": 0.388,
+                "roe": 0.373
+              }
+            },
+            "momentum": {
+              "grade": "B-",
+              "score": 3.2,
+              "metrics": {
+                "priceChange1M": -0.0888,
+                "priceChange3M": 0.1176,
+                "priceChange6M": 0.0053,
+                "vs50dma": -0.06,
+                "vs200dma": 0.0694
+              }
+            },
+            "epsRevisions": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "analystSentiment": 0.93,
+                "numAnalysts": 45,
+                "peRatioFwdVsTrail": 0.31
+              }
+            },
+            "dividend": {
+              "grade": "B+",
+              "score": 3.8,
+              "metrics": {
+                "payoutRatio": 0.413,
+                "dividendYield": 0.68,
+                "dividendRate": 2.6
+              }
+            }
+          }
+        }
       },
       "BKR": {
         "ticker": "BKR",
@@ -3621,7 +3913,73 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-05-11",
-        "last_reviewed": "2026-05-11"
+        "last_reviewed": "2026-05-11",
+        "quant": {
+          "composite": 3.83,
+          "rating": "Buy",
+          "score": 3.83,
+          "factors": {
+            "valuation": {
+              "grade": "B+",
+              "score": 3.8,
+              "metrics": {
+                "pe": 20.2,
+                "pb": 3.2,
+                "ps": 2.2,
+                "peg": 2.53,
+                "evEbitda": 13.1
+              }
+            },
+            "growth": {
+              "grade": "A",
+              "score": 4.5,
+              "metrics": {
+                "revenueGrowth": 0.025,
+                "earningsGrowth": 1.325,
+                "epsGrowth": 1.313
+              }
+            },
+            "profitability": {
+              "grade": "C-",
+              "score": 2.2,
+              "metrics": {
+                "grossMargin": 0.236,
+                "operatingMargin": 0.123,
+                "netMargin": 0.112,
+                "roe": 0.172
+              }
+            },
+            "momentum": {
+              "grade": "B+",
+              "score": 3.8,
+              "metrics": {
+                "priceChange1M": -0.0322,
+                "priceChange3M": 0.0676,
+                "priceChange6M": 0.2852,
+                "vs50dma": -0.0174,
+                "vs200dma": 0.1578
+              }
+            },
+            "epsRevisions": {
+              "grade": "B+",
+              "score": 3.8,
+              "metrics": {
+                "analystSentiment": 0.85,
+                "numAnalysts": 21,
+                "peRatioFwdVsTrail": 1.125
+              }
+            },
+            "dividend": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "payoutRatio": 0.294,
+                "dividendYield": 1.46,
+                "dividendRate": 0.92
+              }
+            }
+          }
+        }
       },
       "BOT": {
         "ticker": "BOT",
@@ -3636,7 +3994,30 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-05-22",
-        "last_reviewed": "2026-05-22"
+        "last_reviewed": "2026-05-22",
+        "quant": {
+          "composite": 2.95,
+          "rating": "Hold",
+          "score": 2.95,
+          "factors": {
+            "profitability": {
+              "grade": "F",
+              "score": 1,
+              "metrics": {
+                "grossMargin": 0,
+                "operatingMargin": 0,
+                "netMargin": 0
+              }
+            },
+            "momentum": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "priceChange1M": 0.3933
+              }
+            }
+          }
+        }
       },
       "COIN": {
         "ticker": "COIN",
@@ -3651,7 +4032,69 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-04-01",
-        "last_reviewed": "2026-04-01"
+        "last_reviewed": "2026-04-01",
+        "quant": {
+          "composite": 2.95,
+          "rating": "Hold",
+          "score": 2.95,
+          "factors": {
+            "valuation": {
+              "grade": "C-",
+              "score": 2.2,
+              "metrics": {
+                "pe": 58.7,
+                "pb": 3.1,
+                "ps": 6.7,
+                "peg": 0.89,
+                "evEbitda": 39.5
+              }
+            },
+            "growth": {
+              "grade": "F",
+              "score": 1,
+              "metrics": {
+                "revenueGrowth": -0.308
+              }
+            },
+            "profitability": {
+              "grade": "B-",
+              "score": 3.2,
+              "metrics": {
+                "grossMargin": 0.855,
+                "operatingMargin": -0.071,
+                "netMargin": 0.127,
+                "roe": 0.067
+              }
+            },
+            "momentum": {
+              "grade": "D",
+              "score": 1.5,
+              "metrics": {
+                "priceChange1M": -0.2305,
+                "priceChange3M": -0.187,
+                "priceChange6M": -0.3931,
+                "vs50dma": -0.14,
+                "vs200dma": -0.3368
+              }
+            },
+            "epsRevisions": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "analystSentiment": 0.8,
+                "numAnalysts": 30,
+                "peRatioFwdVsTrail": 0.547
+              }
+            },
+            "dividend": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "payoutRatio": 0
+              }
+            }
+          }
+        }
       },
       "CRCL": {
         "ticker": "CRCL",
@@ -3666,7 +4109,68 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-04-01",
-        "last_reviewed": "2026-04-01"
+        "last_reviewed": "2026-04-01",
+        "quant": {
+          "composite": 2.92,
+          "rating": "Hold",
+          "score": 2.92,
+          "factors": {
+            "valuation": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "pb": 5.6,
+                "ps": 7.3,
+                "peg": 4.34
+              }
+            },
+            "growth": {
+              "grade": "F",
+              "score": 1,
+              "metrics": {
+                "revenueGrowth": 0.2,
+                "earningsGrowth": -0.809,
+                "epsGrowth": -0.147
+              }
+            },
+            "profitability": {
+              "grade": "F",
+              "score": 1,
+              "metrics": {
+                "grossMargin": 0.081,
+                "operatingMargin": 0.065,
+                "netMargin": -0.028,
+                "roe": -0.03
+              }
+            },
+            "momentum": {
+              "grade": "D",
+              "score": 1.5,
+              "metrics": {
+                "priceChange1M": -0.3705,
+                "priceChange3M": -0.3408,
+                "priceChange6M": 0.0052,
+                "vs50dma": -0.2386,
+                "vs200dma": -0.2237
+              }
+            },
+            "epsRevisions": {
+              "grade": "A-",
+              "score": 4.2,
+              "metrics": {
+                "analystSentiment": 0.75,
+                "numAnalysts": 22
+              }
+            },
+            "dividend": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "payoutRatio": 0
+              }
+            }
+          }
+        }
       },
       "CRM": {
         "ticker": "CRM",
@@ -3684,7 +4188,73 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-05-18",
-        "last_reviewed": "2026-05-18"
+        "last_reviewed": "2026-05-18",
+        "quant": {
+          "composite": 3.8,
+          "rating": "Buy",
+          "score": 3.8,
+          "factors": {
+            "valuation": {
+              "grade": "A-",
+              "score": 4.2,
+              "metrics": {
+                "pe": 19.2,
+                "pb": 4,
+                "ps": 3.2,
+                "peg": 0.79,
+                "evEbitda": 12.9
+              }
+            },
+            "growth": {
+              "grade": "B",
+              "score": 3.5,
+              "metrics": {
+                "revenueGrowth": 0.133,
+                "earningsGrowth": 0.522,
+                "epsGrowth": 0.367
+              }
+            },
+            "profitability": {
+              "grade": "B",
+              "score": 3.5,
+              "metrics": {
+                "grossMargin": 0.776,
+                "operatingMargin": 0.218,
+                "netMargin": 0.187,
+                "roe": 0.169
+              }
+            },
+            "momentum": {
+              "grade": "D+",
+              "score": 1.8,
+              "metrics": {
+                "priceChange1M": -0.0291,
+                "priceChange3M": -0.1446,
+                "priceChange6M": -0.2885,
+                "vs50dma": -0.0763,
+                "vs200dma": -0.2359
+              }
+            },
+            "epsRevisions": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "analystSentiment": 0.87,
+                "numAnalysts": 52,
+                "peRatioFwdVsTrail": 0.555
+              }
+            },
+            "dividend": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "payoutRatio": 0.196,
+                "dividendYield": 1.06,
+                "dividendRate": 1.76
+              }
+            }
+          }
+        }
       },
       "CRWD": {
         "ticker": "CRWD",
@@ -3699,7 +4269,67 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-05-31",
-        "last_reviewed": "2026-05-31"
+        "last_reviewed": "2026-05-31",
+        "quant": {
+          "composite": 3.87,
+          "rating": "Buy",
+          "score": 3.87,
+          "factors": {
+            "valuation": {
+              "grade": "B-",
+              "score": 3.2,
+              "metrics": {
+                "pb": 37.5,
+                "ps": 34.1,
+                "peg": 5.56,
+                "evEbitda": 2868
+              }
+            },
+            "growth": {
+              "grade": "B-",
+              "score": 3.2,
+              "metrics": {
+                "revenueGrowth": 0.256
+              }
+            },
+            "profitability": {
+              "grade": "C",
+              "score": 2.5,
+              "metrics": {
+                "grossMargin": 0.751,
+                "operatingMargin": -0.022,
+                "netMargin": -0.006,
+                "roe": -0.002
+              }
+            },
+            "momentum": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "priceChange1M": 0.2501,
+                "priceChange3M": 0.5649,
+                "priceChange6M": 0.3218,
+                "vs50dma": 0.2558,
+                "vs200dma": 0.4101
+              }
+            },
+            "epsRevisions": {
+              "grade": "A",
+              "score": 4.5,
+              "metrics": {
+                "analystSentiment": 0.87,
+                "numAnalysts": 51
+              }
+            },
+            "dividend": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "payoutRatio": 0
+              }
+            }
+          }
+        }
       },
       "CRWV": {
         "ticker": "CRWV",
@@ -3714,7 +4344,66 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-05-08",
-        "last_reviewed": "2026-05-08"
+        "last_reviewed": "2026-05-08",
+        "quant": {
+          "composite": 4.2,
+          "rating": "Buy",
+          "score": 4.2,
+          "factors": {
+            "valuation": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "pb": 11.2,
+                "ps": 8.8,
+                "evEbitda": 29
+              }
+            },
+            "growth": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "revenueGrowth": 1.116
+              }
+            },
+            "profitability": {
+              "grade": "D+",
+              "score": 1.8,
+              "metrics": {
+                "grossMargin": 0.694,
+                "operatingMargin": -0.069,
+                "netMargin": -0.256,
+                "roe": -0.407
+              }
+            },
+            "momentum": {
+              "grade": "A-",
+              "score": 4.2,
+              "metrics": {
+                "priceChange1M": -0.0668,
+                "priceChange3M": 0.3421,
+                "priceChange6M": 0.3225,
+                "vs50dma": -0.0774,
+                "vs200dma": 0.0046
+              }
+            },
+            "epsRevisions": {
+              "grade": "A",
+              "score": 4.5,
+              "metrics": {
+                "analystSentiment": 0.82,
+                "numAnalysts": 33
+              }
+            },
+            "dividend": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "payoutRatio": 0
+              }
+            }
+          }
+        }
       },
       "EQT": {
         "ticker": "EQT",
@@ -3729,7 +4418,73 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-04-01",
-        "last_reviewed": "2026-04-01"
+        "last_reviewed": "2026-04-01",
+        "quant": {
+          "composite": 4.2,
+          "rating": "Buy",
+          "score": 4.2,
+          "factors": {
+            "valuation": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "pe": 9.9,
+                "pb": 1.3,
+                "ps": 3.5,
+                "peg": 2.36,
+                "evEbitda": 5.5
+              }
+            },
+            "growth": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "revenueGrowth": 0.499,
+                "earningsGrowth": 4.9,
+                "epsGrowth": 5.142
+              }
+            },
+            "profitability": {
+              "grade": "A",
+              "score": 4.5,
+              "metrics": {
+                "grossMargin": 0.81,
+                "operatingMargin": 0.574,
+                "netMargin": 0.351,
+                "roe": 0.134
+              }
+            },
+            "momentum": {
+              "grade": "C-",
+              "score": 2.2,
+              "metrics": {
+                "priceChange1M": -0.0688,
+                "priceChange3M": -0.1576,
+                "priceChange6M": -0.1086,
+                "vs50dma": -0.0873,
+                "vs200dma": -0.0777
+              }
+            },
+            "epsRevisions": {
+              "grade": "B+",
+              "score": 3.8,
+              "metrics": {
+                "analystSentiment": 0.88,
+                "numAnalysts": 24,
+                "peRatioFwdVsTrail": 1.137
+              }
+            },
+            "dividend": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "payoutRatio": 0.122,
+                "dividendYield": 1.27,
+                "dividendRate": 0.66
+              }
+            }
+          }
+        }
       },
       "ETN": {
         "ticker": "ETN",
@@ -3744,7 +4499,73 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-04-01",
-        "last_reviewed": "2026-04-01"
+        "last_reviewed": "2026-04-01",
+        "quant": {
+          "composite": 3.17,
+          "rating": "Hold",
+          "score": 3.17,
+          "factors": {
+            "valuation": {
+              "grade": "C+",
+              "score": 2.8,
+              "metrics": {
+                "pe": 38.3,
+                "pb": 7.7,
+                "ps": 5.3,
+                "peg": 2.96,
+                "evEbitda": 27.3
+              }
+            },
+            "growth": {
+              "grade": "D",
+              "score": 1.5,
+              "metrics": {
+                "revenueGrowth": 0.168,
+                "earningsGrowth": -0.094,
+                "epsGrowth": -0.102
+              }
+            },
+            "profitability": {
+              "grade": "C",
+              "score": 2.5,
+              "metrics": {
+                "grossMargin": 0.371,
+                "operatingMargin": 0.161,
+                "netMargin": 0.14,
+                "roe": 0.208
+              }
+            },
+            "momentum": {
+              "grade": "B",
+              "score": 3.5,
+              "metrics": {
+                "priceChange1M": -0.0253,
+                "priceChange3M": 0.087,
+                "priceChange6M": 0.1819,
+                "vs50dma": -0.0245,
+                "vs200dma": 0.0702
+              }
+            },
+            "epsRevisions": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "analystSentiment": 0.86,
+                "numAnalysts": 27,
+                "peRatioFwdVsTrail": 0.65
+              }
+            },
+            "dividend": {
+              "grade": "B+",
+              "score": 3.8,
+              "metrics": {
+                "payoutRatio": 0.413,
+                "dividendYield": 1.12,
+                "dividendRate": 4.4
+              }
+            }
+          }
+        }
       },
       "HAFN": {
         "ticker": "HAFN",
@@ -3759,7 +4580,70 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-05-09",
-        "last_reviewed": "2026-05-09"
+        "last_reviewed": "2026-05-09",
+        "quant": {
+          "composite": 3.32,
+          "rating": "Hold",
+          "score": 3.32,
+          "factors": {
+            "valuation": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "pe": 8.3,
+                "pb": 1.5,
+                "ps": 1.6,
+                "evEbitda": 8.2
+              }
+            },
+            "growth": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "revenueGrowth": 0.225,
+                "earningsGrowth": 1.841,
+                "epsGrowth": 1.844
+              }
+            },
+            "profitability": {
+              "grade": "C",
+              "score": 2.5,
+              "metrics": {
+                "grossMargin": 0.293,
+                "operatingMargin": 0.223,
+                "netMargin": 0.19,
+                "roe": 0.189
+              }
+            },
+            "momentum": {
+              "grade": "B+",
+              "score": 3.8,
+              "metrics": {
+                "priceChange1M": -0.1289,
+                "priceChange3M": 0.0398,
+                "priceChange6M": 0.4252,
+                "vs50dma": -0.0663,
+                "vs200dma": 0.1878
+              }
+            },
+            "epsRevisions": {
+              "grade": "F",
+              "score": 1,
+              "metrics": {
+                "peRatioFwdVsTrail": 1.406
+              }
+            },
+            "dividend": {
+              "grade": "C+",
+              "score": 2.8,
+              "metrics": {
+                "payoutRatio": 0.606,
+                "dividendYield": 9.76,
+                "dividendRate": 0.73
+              }
+            }
+          }
+        }
       },
       "HOOD": {
         "ticker": "HOOD",
@@ -3774,7 +4658,70 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-04-01",
-        "last_reviewed": "2026-04-01"
+        "last_reviewed": "2026-04-01",
+        "quant": {
+          "composite": 3.7,
+          "rating": "Buy",
+          "score": 3.7,
+          "factors": {
+            "valuation": {
+              "grade": "C",
+              "score": 2.5,
+              "metrics": {
+                "pe": 45.2,
+                "pb": 9,
+                "ps": 18.2,
+                "peg": 2.61
+              }
+            },
+            "growth": {
+              "grade": "C-",
+              "score": 2.2,
+              "metrics": {
+                "revenueGrowth": 0.151,
+                "earningsGrowth": 0.027,
+                "epsGrowth": 0.042
+              }
+            },
+            "profitability": {
+              "grade": "A",
+              "score": 4.5,
+              "metrics": {
+                "grossMargin": 0.922,
+                "operatingMargin": 0.385,
+                "netMargin": 0.411,
+                "roe": 0.215
+              }
+            },
+            "momentum": {
+              "grade": "B-",
+              "score": 3.2,
+              "metrics": {
+                "priceChange1M": 0.1906,
+                "priceChange3M": 0.1867,
+                "priceChange6M": -0.2601,
+                "vs50dma": 0.1614,
+                "vs200dma": -0.0935
+              }
+            },
+            "epsRevisions": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "analystSentiment": 0.83,
+                "numAnalysts": 24,
+                "peRatioFwdVsTrail": 0.735
+              }
+            },
+            "dividend": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "payoutRatio": 0
+              }
+            }
+          }
+        }
       },
       "HUBB": {
         "ticker": "HUBB",
@@ -3789,7 +4736,71 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-04-01",
-        "last_reviewed": "2026-04-01"
+        "last_reviewed": "2026-04-01",
+        "quant": {
+          "composite": 3.45,
+          "rating": "Hold",
+          "score": 3.45,
+          "factors": {
+            "valuation": {
+              "grade": "B",
+              "score": 3.5,
+              "metrics": {
+                "pe": 28.2,
+                "pb": 6.7,
+                "ps": 4.2,
+                "peg": 2.31,
+                "evEbitda": 18.7
+              }
+            },
+            "growth": {
+              "grade": "C",
+              "score": 2.5,
+              "metrics": {
+                "revenueGrowth": 0.111,
+                "earningsGrowth": 0.125,
+                "epsGrowth": 0.114
+              }
+            },
+            "profitability": {
+              "grade": "C",
+              "score": 2.5,
+              "metrics": {
+                "grossMargin": 0.357,
+                "operatingMargin": 0.177,
+                "netMargin": 0.151,
+                "roe": 0.258
+              }
+            },
+            "momentum": {
+              "grade": "B-",
+              "score": 3.2,
+              "metrics": {
+                "priceChange1M": -0.0158,
+                "priceChange3M": 0.0006,
+                "priceChange6M": 0.122,
+                "vs50dma": -0.0489,
+                "vs200dma": 0.0193
+              }
+            },
+            "epsRevisions": {
+              "grade": "A",
+              "score": 4.5,
+              "metrics": {
+                "peRatioFwdVsTrail": 0.778
+              }
+            },
+            "dividend": {
+              "grade": "A",
+              "score": 4.5,
+              "metrics": {
+                "payoutRatio": 0.324,
+                "dividendYield": 1.19,
+                "dividendRate": 5.68
+              }
+            }
+          }
+        }
       },
       "ILMN": {
         "ticker": "ILMN",
@@ -3807,7 +4818,71 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-05-14",
-        "last_reviewed": "2026-05-14"
+        "last_reviewed": "2026-05-14",
+        "quant": {
+          "composite": 3.78,
+          "rating": "Buy",
+          "score": 3.78,
+          "factors": {
+            "valuation": {
+              "grade": "B",
+              "score": 3.5,
+              "metrics": {
+                "pe": 29.2,
+                "pb": 9.1,
+                "ps": 5.5,
+                "peg": 2.82,
+                "evEbitda": 22.3
+              }
+            },
+            "growth": {
+              "grade": "D+",
+              "score": 1.8,
+              "metrics": {
+                "revenueGrowth": 0.048,
+                "earningsGrowth": 0.061,
+                "epsGrowth": 0.023
+              }
+            },
+            "profitability": {
+              "grade": "B",
+              "score": 3.5,
+              "metrics": {
+                "grossMargin": 0.683,
+                "operatingMargin": 0.183,
+                "netMargin": 0.194,
+                "roe": 0.338
+              }
+            },
+            "momentum": {
+              "grade": "A",
+              "score": 4.5,
+              "metrics": {
+                "priceChange1M": 0.1048,
+                "priceChange3M": 0.3157,
+                "priceChange6M": 0.262,
+                "vs50dma": 0.1358,
+                "vs200dma": 0.2834
+              }
+            },
+            "epsRevisions": {
+              "grade": "A",
+              "score": 4.5,
+              "metrics": {
+                "analystSentiment": 0.74,
+                "numAnalysts": 18,
+                "peRatioFwdVsTrail": 0.93
+              }
+            },
+            "dividend": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "payoutRatio": 0
+              }
+            }
+          }
+        }
       },
       "LITE": {
         "ticker": "LITE",
@@ -3822,7 +4897,69 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-05-20",
-        "last_reviewed": "2026-05-20"
+        "last_reviewed": "2026-05-20",
+        "quant": {
+          "composite": 3.83,
+          "rating": "Buy",
+          "score": 3.83,
+          "factors": {
+            "valuation": {
+              "grade": "F",
+              "score": 1,
+              "metrics": {
+                "pe": 161.4,
+                "pb": 77.7,
+                "ps": 28.8,
+                "peg": 0.63,
+                "evEbitda": 130.1
+              }
+            },
+            "growth": {
+              "grade": "A",
+              "score": 4.5,
+              "metrics": {
+                "revenueGrowth": 0.901
+              }
+            },
+            "profitability": {
+              "grade": "C+",
+              "score": 2.8,
+              "metrics": {
+                "grossMargin": 0.408,
+                "operatingMargin": 0.218,
+                "netMargin": 0.177,
+                "roe": 0.228
+              }
+            },
+            "momentum": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "priceChange1M": -0.0714,
+                "priceChange3M": 0.3714,
+                "priceChange6M": 2.0434,
+                "vs50dma": 0.0231,
+                "vs200dma": 0.853
+              }
+            },
+            "epsRevisions": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "analystSentiment": 0.89,
+                "numAnalysts": 25,
+                "peRatioFwdVsTrail": 0.315
+              }
+            },
+            "dividend": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "payoutRatio": 0
+              }
+            }
+          }
+        }
       },
       "LNG": {
         "ticker": "LNG",
@@ -3837,7 +4974,71 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-04-01",
-        "last_reviewed": "2026-04-01"
+        "last_reviewed": "2026-04-01",
+        "quant": {
+          "composite": 3.22,
+          "rating": "Hold",
+          "score": 3.22,
+          "factors": {
+            "valuation": {
+              "grade": "C",
+              "score": 2.5,
+              "metrics": {
+                "pe": 40.8,
+                "pb": 13.5,
+                "ps": 2.4,
+                "peg": 9.46,
+                "evEbitda": 13.6
+              }
+            },
+            "growth": {
+              "grade": "B-",
+              "score": 3.2,
+              "metrics": {
+                "revenueGrowth": 0.242
+              }
+            },
+            "profitability": {
+              "grade": "F",
+              "score": 1,
+              "metrics": {
+                "grossMargin": 0.33,
+                "operatingMargin": -0.537,
+                "netMargin": 0.071,
+                "roe": 0.289
+              }
+            },
+            "momentum": {
+              "grade": "B-",
+              "score": 3.2,
+              "metrics": {
+                "priceChange1M": -0.0124,
+                "priceChange3M": -0.016,
+                "priceChange6M": 0.1586,
+                "vs50dma": -0.0403,
+                "vs200dma": 0.0519
+              }
+            },
+            "epsRevisions": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "analystSentiment": 0.92,
+                "numAnalysts": 21,
+                "peRatioFwdVsTrail": 0.303
+              }
+            },
+            "dividend": {
+              "grade": "A",
+              "score": 4.5,
+              "metrics": {
+                "payoutRatio": 0.357,
+                "dividendYield": 0.92,
+                "dividendRate": 2.22
+              }
+            }
+          }
+        }
       },
       "MRVL": {
         "ticker": "MRVL",
@@ -3855,7 +5056,157 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-05-01",
-        "last_reviewed": "2026-05-01"
+        "last_reviewed": "2026-05-01",
+        "quant": {
+          "composite": 3.4,
+          "rating": "Hold",
+          "score": 3.4,
+          "factors": {
+            "valuation": {
+              "grade": "D",
+              "score": 1.5,
+              "metrics": {
+                "pe": 96.1,
+                "pb": 13.4,
+                "ps": 28.1,
+                "peg": 1.58,
+                "evEbitda": 90.8
+              }
+            },
+            "growth": {
+              "grade": "F",
+              "score": 1,
+              "metrics": {
+                "revenueGrowth": 0.276,
+                "earningsGrowth": -0.804,
+                "epsGrowth": -0.806
+              }
+            },
+            "profitability": {
+              "grade": "B-",
+              "score": 3.2,
+              "metrics": {
+                "grossMargin": 0.515,
+                "operatingMargin": 0.145,
+                "netMargin": 0.29,
+                "roe": 0.16
+              }
+            },
+            "momentum": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "priceChange1M": 0.7003,
+                "priceChange3M": 1.9994,
+                "priceChange6M": 2.0148,
+                "vs50dma": 0.5285,
+                "vs200dma": 1.579
+              }
+            },
+            "epsRevisions": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "analystSentiment": 0.91,
+                "numAnalysts": 41,
+                "peRatioFwdVsTrail": 0.471
+              }
+            },
+            "dividend": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "payoutRatio": 0.083,
+                "dividendYield": 0.09,
+                "dividendRate": 0.24
+              }
+            }
+          }
+        }
+      },
+      "MU": {
+        "ticker": "MU",
+        "name": "Micron Technology v2.0 完整调研报告",
+        "market": "US",
+        "status": "watching",
+        "thesis": "我的判断：MU 是这轮 AI infrastructure 里最硬的“存储供给瓶颈”资产之一，但当前不是无脑买点。 这不是传统 PC/手机补库存驱动的内存小周期，而是 HBM + 数据中心 DRAM/NAND 同时把行业拉进供给约束；Micron FQ2 FY26 已经做到 $23.86B revenue、74.9% non-GAAP GM、$12.20 EPS，FQ3 指引更夸张到 $33.5B revenue / ~81% GM / $19.15 EPS。问题也很直接：股价一年约 +595%、三个月 +62%，市场已经把“AI 记忆体超级周期”定价得",
+        "quant_rating": {
+          "composite": 4.55,
+          "rating": "Strong Buy"
+        },
+        "target": 850,
+        "stoploss": 490,
+        "pe_threshold": null,
+        "catalysts": [],
+        "invalidation": null,
+        "report_date": "2026-05-19",
+        "last_reviewed": "2026-05-19",
+        "quant": {
+          "composite": 4.43,
+          "rating": "Buy",
+          "score": 4.43,
+          "factors": {
+            "valuation": {
+              "grade": "C",
+              "score": 2.5,
+              "metrics": {
+                "pe": 46.3,
+                "pb": 15.3,
+                "ps": 19,
+                "peg": 0.34,
+                "evEbitda": 30
+              }
+            },
+            "growth": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "revenueGrowth": 1.963,
+                "earningsGrowth": 7.56,
+                "epsGrowth": 7.708
+              }
+            },
+            "profitability": {
+              "grade": "A",
+              "score": 4.5,
+              "metrics": {
+                "grossMargin": 0.584,
+                "operatingMargin": 0.676,
+                "netMargin": 0.415,
+                "roe": 0.398
+              }
+            },
+            "momentum": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "priceChange1M": 0.2805,
+                "priceChange3M": 1.4361,
+                "priceChange6M": 3.1021,
+                "vs50dma": 0.4486,
+                "vs200dma": 1.5725
+              }
+            },
+            "epsRevisions": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "analystSentiment": 0.9,
+                "numAnalysts": 40,
+                "peRatioFwdVsTrail": 0.189
+              }
+            },
+            "dividend": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "payoutRatio": 0.022,
+                "dividendYield": 0.06,
+                "dividendRate": 0.6
+              }
+            }
+          }
+        }
       },
       "NEE": {
         "ticker": "NEE",
@@ -3873,7 +5224,73 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-06-01",
-        "last_reviewed": "2026-06-01"
+        "last_reviewed": "2026-06-01",
+        "quant": {
+          "composite": 3.95,
+          "rating": "Buy",
+          "score": 3.95,
+          "factors": {
+            "valuation": {
+              "grade": "B+",
+              "score": 3.8,
+              "metrics": {
+                "pe": 21.8,
+                "pb": 3.2,
+                "ps": 6.4,
+                "peg": 1.9,
+                "evEbitda": 20.7
+              }
+            },
+            "growth": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "revenueGrowth": 0.073,
+                "earningsGrowth": 1.6,
+                "epsGrowth": 1.619
+              }
+            },
+            "profitability": {
+              "grade": "B+",
+              "score": 3.8,
+              "metrics": {
+                "grossMargin": 0.614,
+                "operatingMargin": 0.302,
+                "netMargin": 0.294,
+                "roe": 0.103
+              }
+            },
+            "momentum": {
+              "grade": "C+",
+              "score": 2.8,
+              "metrics": {
+                "priceChange1M": -0.0843,
+                "priceChange3M": -0.0537,
+                "priceChange6M": 0.0311,
+                "vs50dma": -0.0505,
+                "vs200dma": 0.0186
+              }
+            },
+            "epsRevisions": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "analystSentiment": 0.8,
+                "numAnalysts": 19,
+                "peRatioFwdVsTrail": 0.896
+              }
+            },
+            "dividend": {
+              "grade": "B",
+              "score": 3.5,
+              "metrics": {
+                "payoutRatio": 0.59,
+                "dividendYield": 2.9,
+                "dividendRate": 2.49
+              }
+            }
+          }
+        }
       },
       "NOW": {
         "ticker": "NOW",
@@ -3891,7 +5308,71 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-05-18",
-        "last_reviewed": "2026-05-18"
+        "last_reviewed": "2026-05-18",
+        "quant": {
+          "composite": 3.2,
+          "rating": "Hold",
+          "score": 3.2,
+          "factors": {
+            "valuation": {
+              "grade": "D+",
+              "score": 1.8,
+              "metrics": {
+                "pe": 60.8,
+                "pb": 9,
+                "ps": 7.5,
+                "peg": 0.99,
+                "evEbitda": 35.5
+              }
+            },
+            "growth": {
+              "grade": "C-",
+              "score": 2.2,
+              "metrics": {
+                "revenueGrowth": 0.221,
+                "earningsGrowth": 0.023,
+                "epsGrowth": 0.02
+              }
+            },
+            "profitability": {
+              "grade": "B-",
+              "score": 3.2,
+              "metrics": {
+                "grossMargin": 0.766,
+                "operatingMargin": 0.133,
+                "netMargin": 0.126,
+                "roe": 0.161
+              }
+            },
+            "momentum": {
+              "grade": "C-",
+              "score": 2.2,
+              "metrics": {
+                "priceChange1M": 0.1478,
+                "priceChange3M": -0.124,
+                "priceChange6M": -0.3804,
+                "vs50dma": 0.0279,
+                "vs200dma": -0.2621
+              }
+            },
+            "epsRevisions": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "analystSentiment": 0.91,
+                "numAnalysts": 44,
+                "peRatioFwdVsTrail": 0.334
+              }
+            },
+            "dividend": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "payoutRatio": 0
+              }
+            }
+          }
+        }
       },
       "OUST": {
         "ticker": "OUST",
@@ -3909,7 +5390,65 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-05-14",
-        "last_reviewed": "2026-05-14"
+        "last_reviewed": "2026-05-14",
+        "quant": {
+          "composite": 4,
+          "rating": "Buy",
+          "score": 4,
+          "factors": {
+            "valuation": {
+              "grade": "A",
+              "score": 4.5,
+              "metrics": {
+                "pb": 9.2,
+                "ps": 13.7
+              }
+            },
+            "growth": {
+              "grade": "B+",
+              "score": 3.8,
+              "metrics": {
+                "revenueGrowth": 0.489
+              }
+            },
+            "profitability": {
+              "grade": "F",
+              "score": 1,
+              "metrics": {
+                "grossMargin": 0.477,
+                "operatingMargin": -0.395,
+                "netMargin": -0.301,
+                "roe": -0.252
+              }
+            },
+            "momentum": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "priceChange1M": 0.4686,
+                "priceChange3M": 0.7792,
+                "priceChange6M": 0.8066,
+                "vs50dma": 0.2775,
+                "vs200dma": 0.4993
+              }
+            },
+            "epsRevisions": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "analystSentiment": 0.94,
+                "numAnalysts": 7
+              }
+            },
+            "dividend": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "payoutRatio": 0
+              }
+            }
+          }
+        }
       },
       "POET": {
         "ticker": "POET",
@@ -3927,7 +5466,65 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-05-15",
-        "last_reviewed": "2026-05-15"
+        "last_reviewed": "2026-05-15",
+        "quant": {
+          "composite": 3.6,
+          "rating": "Buy",
+          "score": 3.6,
+          "factors": {
+            "valuation": {
+              "grade": "F",
+              "score": 1,
+              "metrics": {
+                "pb": 9,
+                "ps": 1532.1
+              }
+            },
+            "growth": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "revenueGrowth": 2.019
+              }
+            },
+            "profitability": {
+              "grade": "F",
+              "score": 1,
+              "metrics": {
+                "grossMargin": 1,
+                "operatingMargin": -35.5,
+                "netMargin": 0,
+                "roe": -0.339
+              }
+            },
+            "momentum": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "priceChange1M": -0.0874,
+                "priceChange3M": 0.79,
+                "priceChange6M": 1.6774,
+                "vs50dma": 0.1485,
+                "vs200dma": 0.6903
+              }
+            },
+            "epsRevisions": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "analystSentiment": 1.2,
+                "numAnalysts": 1
+              }
+            },
+            "dividend": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "payoutRatio": 0
+              }
+            }
+          }
+        }
       },
       "PWR": {
         "ticker": "PWR",
@@ -3945,7 +5542,73 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-06-01",
-        "last_reviewed": "2026-06-01"
+        "last_reviewed": "2026-06-01",
+        "quant": {
+          "composite": 3.52,
+          "rating": "Buy",
+          "score": 3.52,
+          "factors": {
+            "valuation": {
+              "grade": "D",
+              "score": 1.5,
+              "metrics": {
+                "pe": 97.1,
+                "pb": 11.7,
+                "ps": 3.5,
+                "peg": 1.95,
+                "evEbitda": 42.2
+              }
+            },
+            "growth": {
+              "grade": "B+",
+              "score": 3.8,
+              "metrics": {
+                "revenueGrowth": 0.263,
+                "earningsGrowth": 0.51,
+                "epsGrowth": 0.529
+              }
+            },
+            "profitability": {
+              "grade": "D",
+              "score": 1.5,
+              "metrics": {
+                "grossMargin": 0.151,
+                "operatingMargin": 0.042,
+                "netMargin": 0.037,
+                "roe": 0.135
+              }
+            },
+            "momentum": {
+              "grade": "A",
+              "score": 4.5,
+              "metrics": {
+                "priceChange1M": -0.0758,
+                "priceChange3M": 0.255,
+                "priceChange6M": 0.5571,
+                "vs50dma": 0.0416,
+                "vs200dma": 0.3698
+              }
+            },
+            "epsRevisions": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "analystSentiment": 0.88,
+                "numAnalysts": 26,
+                "peRatioFwdVsTrail": 0.443
+              }
+            },
+            "dividend": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "payoutRatio": 0.058,
+                "dividendYield": 0.06,
+                "dividendRate": 0.44
+              }
+            }
+          }
+        }
       },
       "TEM": {
         "ticker": "TEM",
@@ -3960,7 +5623,65 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-05-08",
-        "last_reviewed": "2026-05-08"
+        "last_reviewed": "2026-05-08",
+        "quant": {
+          "composite": 3.58,
+          "rating": "Buy",
+          "score": 3.58,
+          "factors": {
+            "valuation": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "pb": 20.6,
+                "ps": 6.3
+              }
+            },
+            "growth": {
+              "grade": "B",
+              "score": 3.5,
+              "metrics": {
+                "revenueGrowth": 0.361
+              }
+            },
+            "profitability": {
+              "grade": "D",
+              "score": 1.5,
+              "metrics": {
+                "grossMargin": 0.634,
+                "operatingMargin": -0.243,
+                "netMargin": -0.222,
+                "roe": -0.816
+              }
+            },
+            "momentum": {
+              "grade": "C-",
+              "score": 2.2,
+              "metrics": {
+                "priceChange1M": 0.0185,
+                "priceChange3M": -0.0605,
+                "priceChange6M": -0.3535,
+                "vs50dma": -0.0371,
+                "vs200dma": -0.2615
+              }
+            },
+            "epsRevisions": {
+              "grade": "A",
+              "score": 4.5,
+              "metrics": {
+                "analystSentiment": 0.79,
+                "numAnalysts": 15
+              }
+            },
+            "dividend": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "payoutRatio": 0
+              }
+            }
+          }
+        }
       },
       "VRT": {
         "ticker": "VRT",
@@ -3978,7 +5699,73 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-05-25",
-        "last_reviewed": "2026-05-25"
+        "last_reviewed": "2026-05-25",
+        "quant": {
+          "composite": 3.92,
+          "rating": "Buy",
+          "score": 3.92,
+          "factors": {
+            "valuation": {
+              "grade": "D+",
+              "score": 1.8,
+              "metrics": {
+                "pe": 76.3,
+                "pb": 29.4,
+                "ps": 10.7,
+                "peg": 1.52,
+                "evEbitda": 49.1
+              }
+            },
+            "growth": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "revenueGrowth": 0.301,
+                "earningsGrowth": 1.357,
+                "epsGrowth": 1.371
+              }
+            },
+            "profitability": {
+              "grade": "C",
+              "score": 2.5,
+              "metrics": {
+                "grossMargin": 0.372,
+                "operatingMargin": 0.164,
+                "netMargin": 0.144,
+                "roe": 0.451
+              }
+            },
+            "momentum": {
+              "grade": "A",
+              "score": 4.5,
+              "metrics": {
+                "priceChange1M": -0.175,
+                "priceChange3M": 0.1218,
+                "priceChange6M": 0.6745,
+                "vs50dma": -0.0463,
+                "vs200dma": 0.3757
+              }
+            },
+            "epsRevisions": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "analystSentiment": 0.91,
+                "numAnalysts": 26,
+                "peRatioFwdVsTrail": 0.449
+              }
+            },
+            "dividend": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "payoutRatio": 0.05,
+                "dividendYield": 0.08,
+                "dividendRate": 0.25
+              }
+            }
+          }
+        }
       },
       "VST": {
         "ticker": "VST",
@@ -3993,11 +5780,74 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-05-11",
-        "last_reviewed": "2026-05-11"
+        "last_reviewed": "2026-05-11",
+        "quant": {
+          "composite": 3.78,
+          "rating": "Buy",
+          "score": 3.78,
+          "factors": {
+            "valuation": {
+              "grade": "B+",
+              "score": 3.8,
+              "metrics": {
+                "pe": 24.8,
+                "pb": 19.1,
+                "ps": 2.6,
+                "peg": 0.44,
+                "evEbitda": 10.6
+              }
+            },
+            "growth": {
+              "grade": "B+",
+              "score": 3.8,
+              "metrics": {
+                "revenueGrowth": 0.434
+              }
+            },
+            "profitability": {
+              "grade": "C+",
+              "score": 2.8,
+              "metrics": {
+                "grossMargin": 0.386,
+                "operatingMargin": 0.266,
+                "netMargin": 0.115,
+                "roe": 0.429
+              }
+            },
+            "momentum": {
+              "grade": "C",
+              "score": 2.5,
+              "metrics": {
+                "priceChange1M": 0.0078,
+                "priceChange3M": -0.0984,
+                "priceChange6M": -0.1398,
+                "vs50dma": -0.037,
+                "vs200dma": -0.1326
+              }
+            },
+            "epsRevisions": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "analystSentiment": 0.93,
+                "numAnalysts": 17,
+                "peRatioFwdVsTrail": 0.546
+              }
+            },
+            "dividend": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "payoutRatio": 0.151,
+                "dividendYield": 0.62,
+                "dividendRate": 0.92
+              }
+            }
+          }
+        }
       }
     },
     "dates": [
-      "2026-05-10",
       "2026-05-11",
       "2026-05-12",
       "2026-05-13",
@@ -4026,42 +5876,14 @@
       "2026-06-09",
       "2026-06-10",
       "2026-06-11",
-      "2026-06-12"
+      "2026-06-12",
+      "2026-06-13"
     ],
     "scores": [
       [
         -1,
         -1,
         4,
-        -1,
-        -1,
-        -1,
-        5,
-        -1,
-        -1,
-        4,
-        5,
-        6,
-        3,
-        -1,
-        3,
-        -1,
-        -1,
-        5,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        4,
-        -1,
-        -1
-      ],
-      [
-        -1,
-        -1,
-        4,
         3,
         -1,
         -1,
@@ -4083,6 +5905,7 @@
         -1,
         -1,
         -1,
+        -1,
         4,
         -1,
         4
@@ -4112,34 +5935,6 @@
         -1,
         -1,
         -1,
-        5,
-        -1,
-        4
-      ],
-      [
-        -1,
-        -1,
-        4,
-        3,
-        -1,
-        -1,
-        5,
-        -1,
-        -1,
-        4,
-        3,
-        4,
-        4,
-        -1,
-        4,
-        -1,
-        -1,
-        5,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
         -1,
         5,
         -1,
@@ -4156,6 +5951,36 @@
         -1,
         -1,
         4,
+        3,
+        4,
+        4,
+        -1,
+        4,
+        -1,
+        -1,
+        5,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        5,
+        -1,
+        4
+      ],
+      [
+        -1,
+        -1,
+        4,
+        3,
+        -1,
+        -1,
+        5,
+        -1,
+        -1,
+        4,
         5,
         4,
         5,
@@ -4164,6 +5989,7 @@
         4,
         -1,
         5,
+        -1,
         -1,
         -1,
         -1,
@@ -4193,6 +6019,7 @@
         4,
         -1,
         4,
+        -1,
         -1,
         -1,
         -1,
@@ -4225,6 +6052,7 @@
         -1,
         -1,
         -1,
+        -1,
         5,
         -1,
         -1,
@@ -4251,6 +6079,7 @@
         4,
         -1,
         4,
+        -1,
         -1,
         -1,
         5,
@@ -4282,6 +6111,7 @@
         4,
         -1,
         -1,
+        -1,
         5,
         5,
         -1,
@@ -4309,6 +6139,7 @@
         5,
         -1,
         4,
+        -1,
         -1,
         -1,
         5,
@@ -4338,6 +6169,7 @@
         3,
         -1,
         4,
+        -1,
         -1,
         -1,
         3,
@@ -4367,6 +6199,7 @@
         2,
         6,
         3,
+        -1,
         -1,
         -1,
         3,
@@ -4398,6 +6231,7 @@
         4,
         -1,
         -1,
+        -1,
         3,
         3,
         4,
@@ -4427,34 +6261,6 @@
         4,
         -1,
         -1,
-        4,
-        3,
-        4,
-        -1,
-        2,
-        -1,
-        4
-      ],
-      [
-        3,
-        4,
-        5,
-        5,
-        2,
-        2,
-        4,
-        4,
-        -1,
-        5,
-        6,
-        4,
-        4,
-        3,
-        5,
-        4,
-        5,
-        4,
-        -1,
         -1,
         4,
         3,
@@ -4483,6 +6289,37 @@
         4,
         5,
         4,
+        -1,
+        -1,
+        -1,
+        4,
+        3,
+        4,
+        -1,
+        2,
+        -1,
+        4
+      ],
+      [
+        3,
+        4,
+        5,
+        5,
+        2,
+        2,
+        4,
+        4,
+        -1,
+        5,
+        6,
+        4,
+        4,
+        3,
+        5,
+        4,
+        5,
+        4,
+        -1,
         -1,
         -1,
         4,
@@ -4513,6 +6350,7 @@
         6,
         4,
         2,
+        -1,
         -1,
         4,
         3,
@@ -4543,6 +6381,7 @@
         3,
         3,
         -1,
+        -1,
         3,
         3,
         6,
@@ -4572,6 +6411,7 @@
         3,
         3,
         -1,
+        -1,
         4,
         4,
         6,
@@ -4601,6 +6441,7 @@
         5,
         2,
         -1,
+        -1,
         5,
         4,
         5,
@@ -4629,6 +6470,7 @@
         4,
         3,
         3,
+        -1,
         -1,
         4,
         4,
@@ -4658,6 +6500,7 @@
         4,
         4,
         2,
+        -1,
         6,
         3,
         4,
@@ -4687,6 +6530,7 @@
         5,
         2,
         2,
+        -1,
         4,
         3,
         4,
@@ -4716,6 +6560,7 @@
         5,
         5,
         2,
+        -1,
         4,
         5,
         5,
@@ -4745,6 +6590,7 @@
         5,
         4,
         2,
+        -1,
         4,
         5,
         5,
@@ -4774,6 +6620,7 @@
         5,
         5,
         3,
+        -1,
         5,
         5,
         4,
@@ -4803,6 +6650,7 @@
         4,
         5,
         2,
+        -1,
         6,
         3,
         4,
@@ -4832,6 +6680,7 @@
         4,
         4,
         3,
+        -1,
         8,
         3,
         5,
@@ -4861,6 +6710,7 @@
         4,
         5,
         4,
+        -1,
         7,
         3,
         3,
@@ -4890,12 +6740,43 @@
         4,
         5,
         3,
+        -1,
         8,
         3,
         3,
         6,
         4,
         2,
+        4,
+        4
+      ],
+      [
+        4,
+        2,
+        5,
+        4,
+        3,
+        3,
+        1,
+        6,
+        3,
+        4,
+        3,
+        4,
+        7,
+        2,
+        4,
+        3,
+        4,
+        4,
+        3,
+        3,
+        6,
+        4,
+        3,
+        6,
+        4,
+        3,
         4,
         4
       ]
@@ -4905,35 +6786,6 @@
         "",
         "",
         "⬜ 不变",
-        "",
-        "",
-        "",
-        "🟡 接近",
-        "",
-        "",
-        "⬜ 不变",
-        "🟡 接近",
-        "🟡 接近",
-        "⬜ 不变",
-        "",
-        "⬜ 不变",
-        "",
-        "",
-        "🟡 优先",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "⬜ 不变",
-        "",
-        ""
-      ],
-      [
-        "",
-        "",
-        "⬜ 不变",
         "⬜ 不变",
         "",
         "",
@@ -4949,6 +6801,7 @@
         "",
         "",
         "🟡 优先",
+        "",
         "",
         "",
         "",
@@ -4984,6 +6837,7 @@
         "",
         "",
         "",
+        "",
         "🟡 接近",
         "",
         "⬜ 不变"
@@ -5013,6 +6867,7 @@
         "",
         "",
         "",
+        "",
         "🟡 接近",
         "",
         "⬜ 不变"
@@ -5039,34 +6894,6 @@
         "",
         "",
         "",
-        "🟡 接近",
-        "",
-        "",
-        "🟡 接近",
-        "",
-        "⬜ 不变"
-      ],
-      [
-        "",
-        "⬜ 不变",
-        "⬜ 不变",
-        "🟡 接近",
-        "",
-        "",
-        "🟡 接近",
-        "",
-        "",
-        "⬜ 不变",
-        "🟡 接近",
-        "🟡 接近",
-        "⬜ 不变",
-        "",
-        "⬜ 不变",
-        "⬜ 不变",
-        "",
-        "⬜ 不变",
-        "",
-        "",
         "",
         "🟡 接近",
         "",
@@ -5079,6 +6906,36 @@
         "",
         "⬜ 不变",
         "⬜ 不变",
+        "🟡 接近",
+        "",
+        "",
+        "🟡 接近",
+        "",
+        "",
+        "⬜ 不变",
+        "🟡 接近",
+        "🟡 接近",
+        "⬜ 不变",
+        "",
+        "⬜ 不变",
+        "⬜ 不变",
+        "",
+        "⬜ 不变",
+        "",
+        "",
+        "",
+        "",
+        "🟡 接近",
+        "",
+        "",
+        "🟡 接近",
+        "",
+        "⬜ 不变"
+      ],
+      [
+        "",
+        "⬜ 不变",
+        "⬜ 不变",
         "⬜ 不变",
         "",
         "",
@@ -5094,6 +6951,7 @@
         "⬜ 不变",
         "",
         "⬜ 不变",
+        "",
         "",
         "",
         "",
@@ -5123,6 +6981,7 @@
         "⬜ 不变",
         "",
         "⬜ 不变",
+        "",
         "",
         "",
         "🟡 优先",
@@ -5154,6 +7013,7 @@
         "⬜ 不变",
         "",
         "",
+        "",
         "🟡 接近",
         "🟡 接近",
         "",
@@ -5183,6 +7043,7 @@
         "⬜ 不变",
         "",
         "",
+        "",
         "🟡 接近",
         "⬜ 不变",
         "",
@@ -5210,6 +7071,7 @@
         "⬜ 不变",
         "",
         "⬜ 不变",
+        "",
         "",
         "",
         "⬜ 不变",
@@ -5239,6 +7101,7 @@
         "⬜ 不变",
         "🟡 接近",
         "⬜ 不变",
+        "",
         "",
         "",
         "⬜ 不变",
@@ -5270,34 +7133,6 @@
         "⬜ 不变",
         "",
         "",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "",
-        "⬜ 不变",
-        "",
-        "⬜ 不变"
-      ],
-      [
-        "⬜ 不变",
-        "⬜ 不变",
-        "🟡 接近",
-        "🟡 接近",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "",
-        "🟡 接近",
-        "🟡 接近",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "🟡 接近",
-        "⬜ 不变",
-        "🟡 接近",
-        "⬜ 不变",
-        "",
         "",
         "⬜ 不变",
         "⬜ 不变",
@@ -5328,6 +7163,7 @@
         "⬜ 不变",
         "",
         "",
+        "",
         "⬜ 不变",
         "⬜ 不变",
         "⬜ 不变",
@@ -5355,6 +7191,37 @@
         "⬜ 不变",
         "🟡 接近",
         "⬜ 不变",
+        "",
+        "",
+        "",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "",
+        "⬜ 不变",
+        "",
+        "⬜ 不变"
+      ],
+      [
+        "⬜ 不变",
+        "⬜ 不变",
+        "🟡 接近",
+        "🟡 接近",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "",
+        "🟡 接近",
+        "🟡 接近",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "🟡 接近",
+        "⬜ 不变",
+        "🟡 接近",
+        "⬜ 不变",
+        "",
         "",
         "",
         "⬜ 不变",
@@ -5386,34 +7253,6 @@
         "⬜ 不变",
         "⬜ 不变",
         "",
-        "⬜ 不变",
-        "⬜ 不变",
-        "🟡 接近",
-        "",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变"
-      ],
-      [
-        "⬜ 不变",
-        "🟡 接近",
-        "🟡 接近",
-        "🟡 接近",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "🟡 接近",
-        "",
-        "🟡 接近",
-        "🟡 接近",
-        "⬜ 不变",
-        "⬜ 不变",
-        "⬜ 不变",
-        "🟡 接近",
-        "🟡 接近",
-        "🟡 接近",
-        "⬜ 不变",
-        "⬜ 不变",
         "",
         "⬜ 不变",
         "⬜ 不变",
@@ -5433,6 +7272,36 @@
         "⬜ 不变",
         "🟡 接近",
         "",
+        "🟡 接近",
+        "🟡 接近",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "🟡 接近",
+        "🟡 接近",
+        "🟡 接近",
+        "⬜ 不变",
+        "⬜ 不变",
+        "",
+        "",
+        "⬜ 不变",
+        "⬜ 不变",
+        "🟡 接近",
+        "",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变"
+      ],
+      [
+        "⬜ 不变",
+        "🟡 接近",
+        "🟡 接近",
+        "🟡 接近",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "🟡 接近",
+        "",
         "⬜ 不变",
         "⬜ 不变",
         "🟡 接近",
@@ -5443,6 +7312,7 @@
         "🟡 接近",
         "⬜ 不变",
         "⬜ 不变",
+        "",
         "",
         "⬜ 不变",
         "⬜ 不变",
@@ -5473,6 +7343,7 @@
         "🟡 优先",
         "⬜ 不变",
         "",
+        "",
         "🟡 接近",
         "⬜ 不变",
         "🟡 接近",
@@ -5502,6 +7373,7 @@
         "⬜ 不变",
         "⬜ 不变",
         "",
+        "",
         "⬜ 不变",
         "⬜ 不变",
         "🟡 接近",
@@ -5530,6 +7402,7 @@
         "⬜ 不变",
         "⬜ 不变",
         "⬜ 不变",
+        "",
         "🟡 接近",
         "⬜ 不变",
         "⬜ 不变",
@@ -5559,6 +7432,7 @@
         "🟡 接近",
         "⬜ 不变",
         "⬜ 不变",
+        "",
         "⬜ 不变",
         "⬜ 不变",
         "⬜ 不变",
@@ -5588,6 +7462,7 @@
         "🟡 接近",
         "🟡 优先",
         "⬜ 不变",
+        "",
         "⬜ 不变",
         "🟡 接近",
         "🟡 接近",
@@ -5617,6 +7492,7 @@
         "🟡 接近",
         "⬜ 不变",
         "⬜ 不变",
+        "",
         "⬜ 不变",
         "🟡 接近",
         "🟡 接近",
@@ -5646,6 +7522,7 @@
         "🟡 接近",
         "🟡 优先",
         "⬜ 不变",
+        "",
         "🟡 接近",
         "🟡 接近",
         "⬜ 不变",
@@ -5675,6 +7552,7 @@
         "⬜ 不变",
         "🟡 优先",
         "⬜ 不变",
+        "",
         "🟡 接近",
         "⬜ 不变",
         "⬜ 不变",
@@ -5704,6 +7582,7 @@
         "⬜ 不变",
         "⬜ 不变",
         "⬜ 不变",
+        "",
         "🟢 升级",
         "⬜ 不变",
         "🟡 接近",
@@ -5733,6 +7612,7 @@
         "⬜ 不变",
         "🟡 优先",
         "⬜ 不变",
+        "",
         "🟢 升级",
         "⬜ 不变",
         "⬜ 不变",
@@ -5762,7 +7642,38 @@
         "⬜ 不变",
         "🟡 优先",
         "⬜ 不变",
+        "",
         "🟢 升级",
+        "⬜ 不变",
+        "⬜ 不变",
+        "🟡 接近",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变"
+      ],
+      [
+        "⬜ 不变",
+        "⬜ 不变",
+        "🟡 接近",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "🟡 接近",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "🟢 升级",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "⬜ 不变",
+        "🟡 接近",
         "⬜ 不变",
         "⬜ 不变",
         "🟡 接近",
@@ -5775,12 +7686,55 @@
   },
   "short_list": [
     {
-      "ticker": "NEE",
-      "name": "NextEra Energy v2.0 完整调研报告",
-      "score": 8
+      "ticker": "HAFN",
+      "name": "Hafnia Limited v2.0 刷新报告",
+      "score": 7
     }
   ],
   "clearances": [
+    {
+      "ticker": "MU",
+      "market": "us",
+      "name_en": "MU",
+      "name_zh": "MU",
+      "sector_tags_en": [],
+      "sector_tags_zh": [],
+      "entry_date": "2026-05-26",
+      "exit_date": "2026-06-12",
+      "holding_days": 17,
+      "outcome_pct": 18,
+      "outcome_pct_rounded": 18,
+      "win_rate_pct": 100,
+      "trade_count": 4,
+      "currency": "USD",
+      "avg_entry_price": 850.3035,
+      "avg_exit_price": 1003.436,
+      "reason_en": "Auto-generated closed position from Convex trade and position records.",
+      "reason_zh": "由 Convex 交易与持仓记录自动生成的清仓记录。",
+      "lesson_en": "Add an editorial lesson in portfolio-overrides clearances only if this exit deserves a manual review.",
+      "lesson_zh": "只有值得复盘的清仓，才需要在 portfolio-overrides clearances 里补充人工经验。",
+      "article_url": null,
+      "trade_points": [
+        {
+          "date": "2026-05-26",
+          "kind": "entry",
+          "action_en": "Opened position",
+          "action_zh": "建立仓位",
+          "price": 850.3035,
+          "note_en": "BIT MP00002929 order-list screenshot; filled buy: 美光科技 3 @ 850.3035",
+          "note_zh": "BIT MP00002929 order-list screenshot; filled buy: 美光科技 3 @ 850.3035"
+        },
+        {
+          "date": "2026-06-12",
+          "kind": "exit",
+          "action_en": "Closed via staged sells",
+          "action_zh": "分批清仓",
+          "price": 1003.436,
+          "note_en": "BIT.com auto-sync · 减仓MU · 清仓MU",
+          "note_zh": "BIT.com auto-sync · 减仓MU · 清仓MU"
+        }
+      ]
+    },
     {
       "ticker": "SNDK",
       "market": "us",
@@ -6615,14 +8569,14 @@
   "stats": {
     "active_positions": 11,
     "markets": 2,
-    "tracked_rules": 47,
-    "upcoming_events": 0,
+    "tracked_rules": 45,
+    "upcoming_events": 8,
     "weekly_scan_hits": 5,
-    "total_trades": 78,
-    "closed_positions": 14,
-    "win_rate_pct": 86,
-    "realized_pnl_pct": 73,
-    "days_since_last_clearance": 7
+    "total_trades": 82,
+    "closed_positions": 15,
+    "win_rate_pct": 87,
+    "realized_pnl_pct": 91,
+    "days_since_last_clearance": 1
   },
   "crypto_portfolio_history": {
     "data": [
@@ -7235,78 +9189,63 @@
     }
   },
   "crypto_timeseries": {
-    "generated_at": "2026-06-12T07:45:34.183474",
+    "generated_at": "2026-06-14T07:53:15.098864",
     "latest": {
-      "date": "2026-06-12",
-      "composite": 24.7,
-      "delta_composite": 11.7,
-      "btc_close": 63494,
+      "date": "2026-06-14",
+      "composite": 20,
+      "delta_composite": 1.8,
+      "btc_close": 64504,
       "btc_high": null,
       "btc_low": null,
       "fgi": null,
       "fgi_label": null,
-      "green_count": 2,
+      "green_count": 3,
       "indicators": {
         "fear_greed": {
-          "value": 12,
+          "value": 13,
           "status": "green"
         },
         "miner_capitulation": {
-          "value": -21.7,
+          "value": -20.4,
           "status": "yellow"
         },
         "black_swan": {
-          "value": 66.8,
+          "value": 60.5,
           "status": "yellow"
         },
         "vix": {
-          "value": 19.4,
+          "value": 17.7,
           "status": "red"
         },
+        "stablecoin_ratio": {
+          "value": 11.6,
+          "status": "green"
+        },
         "mvrv_zscore": {
-          "value": -1.58,
+          "value": -1.51,
           "status": "green"
         },
         "etf_flow": {
-          "value": -46,
+          "value": -60,
           "status": "yellow"
         },
         "dxy": {
-          "value": 99.7,
+          "value": 99.8,
           "status": "red"
         }
       },
       "indicator_deltas": {
-        "fear_greed": 3,
-        "miner_capitulation": 3.3,
-        "black_swan": -5.7,
-        "vix": -2.8,
-        "mvrv_zscore": 0.13,
-        "etf_flow": 15,
-        "dxy": -0.4
+        "fear_greed": 0,
+        "miner_capitulation": 1.3,
+        "black_swan": -4.2,
+        "vix": 0,
+        "stablecoin_ratio": -0.2,
+        "mvrv_zscore": 0.06,
+        "etf_flow": 4,
+        "dxy": 0
       }
     },
     "data": [
-      {
-        "date": "2026-01-14",
-        "btc_close": 96929.33,
-        "btc_high": 97860.6,
-        "btc_low": 94583.05,
-        "fgi": 48,
-        "fgi_label": "Neutral",
-        "composite": null,
-        "delta_composite": null
-      },
-      {
-        "date": "2026-01-15",
-        "btc_close": 95551.19,
-        "btc_high": 97150.17,
-        "btc_low": 95103.24,
-        "fgi": 61,
-        "fgi_label": "Greed",
-        "composite": null,
-        "delta_composite": null
-      },
       {
         "date": "2026-01-16",
         "btc_close": 95525.12,
@@ -8769,9 +10708,9 @@
       },
       {
         "date": "2026-06-11",
-        "btc_close": 63567.08,
-        "btc_high": 63697.82,
-        "btc_low": 61456.17,
+        "btc_close": 63561.05,
+        "btc_high": 63851.95,
+        "btc_low": 61447.97,
         "fgi": 12,
         "fgi_label": "Extreme Fear",
         "composite": 13,
@@ -8779,54 +10718,74 @@
       },
       {
         "date": "2026-06-12",
-        "btc_close": 63494,
+        "btc_close": 63543.2,
+        "btc_high": 64334.02,
+        "btc_low": 62778.79,
+        "fgi": 12,
+        "fgi_label": "Extreme Fear",
+        "composite": 24.7,
+        "delta_composite": 11.7
+      },
+      {
+        "date": "2026-06-13",
+        "btc_close": 64372.01,
+        "btc_high": 64549.15,
+        "btc_low": 63458.68,
+        "fgi": 13,
+        "fgi_label": "Extreme Fear",
+        "composite": 18.2,
+        "delta_composite": -6.5
+      },
+      {
+        "date": "2026-06-14",
+        "btc_close": 64504,
         "btc_high": null,
         "btc_low": null,
         "fgi": null,
         "fgi_label": null,
-        "composite": 24.7,
-        "delta_composite": 11.7
+        "composite": 20,
+        "delta_composite": 1.8
       }
     ]
   },
   "gold_tracker": {
-    "generated_at": "2026-06-11T23:00:48.478540+00:00",
+    "generated_at": "2026-06-13T23:01:19.516951+00:00",
     "price": {
-      "xau_usd": 4253,
-      "day_change_pct": -1.94,
+      "xau_usd": 4238.8,
+      "day_change_pct": -2.27,
       "week_52_high": 5586.2,
       "week_52_low": 3253.8,
-      "drawdown_from_peak_pct": -22.67,
+      "drawdown_from_peak_pct": -22.93,
       "peak_price": 5500
     },
     "technical": {
-      "bollinger_mid_weekly": 4740.44,
+      "bollinger_mid_weekly": 4739.73,
       "above_bollinger_mid": false,
-      "bollinger_mid_pct_diff": -10.28
+      "bollinger_mid_pct_diff": -10.57
     },
     "monetary": {
       "m2_trillion": 22.88,
       "m2_date": "2026-05-04",
       "m2_trigger_line": 24,
       "m2_to_trigger_pct": 95.3,
-      "gold_m2_ratio": 185.882867,
-      "ratio_display": 185.9,
+      "gold_m2_ratio": 185.262238,
+      "ratio_display": 185.3,
       "inversion_status": "normal",
       "inversion_label_en": "Normal Range",
       "inversion_label_zh": "正常区间"
     },
     "cost_floor": {
       "aisc_usd": 1750,
-      "price_above_aisc_pct": 143
+      "price_above_aisc_pct": 142.2
     },
     "premium": {
-      "shfe_cny_per_gram": 883,
-      "lbma_usd_per_oz": 4244.8,
-      "usd_cny": 6.772,
-      "international_cny_per_gram": 924.2,
-      "premium_pct": -4.46,
+      "shfe_cny_per_gram": 905.47,
+      "lbma_usd_per_oz": 4216.83,
+      "usd_cny": 6.7615,
+      "international_cny_per_gram": 916.69,
+      "premium_pct": -1.22,
       "source": "sge:Au99.99 + sina:hf_XAU + sina:fx_susdcny",
-      "updated_at": "2026年06月12日 02:29:55"
+      "updated_at": "2026年06月15日 02:29:57"
     },
     "signal": {
       "status": "yellow",
@@ -8835,7 +10794,7 @@
     }
   },
   "gold_timeseries": {
-    "generated_at": "2026-06-11T23:00:48.481239+00:00",
+    "generated_at": "2026-06-13T23:01:19.520836+00:00",
     "data": [
       {
         "date": "2025-05-02",
@@ -11482,6 +13441,24 @@
         "bollinger_mid_pct_diff": -10.28,
         "premium_pct": -4.46,
         "signal_status": "yellow"
+      },
+      {
+        "date": "2026-06-13",
+        "xau_usd": 4239.9,
+        "m2_trillion": 22.88,
+        "gold_m2_ratio": 185.310315,
+        "bollinger_mid_pct_diff": -10.55,
+        "premium_pct": -1.22,
+        "signal_status": "yellow"
+      },
+      {
+        "date": "2026-06-14",
+        "xau_usd": 4238.8,
+        "m2_trillion": 22.88,
+        "gold_m2_ratio": 185.262238,
+        "bollinger_mid_pct_diff": -10.57,
+        "premium_pct": -1.22,
+        "signal_status": "yellow"
       }
     ]
   },
@@ -11639,8 +13616,14 @@
     {
       "date": "2026-06-12",
       "health": null,
-      "portfolio_beta": 1.12,
-      "equity_beta": 1.04
+      "portfolio_beta": 0.73,
+      "equity_beta": 0.63
+    },
+    {
+      "date": "2026-06-13",
+      "health": 3.6,
+      "portfolio_beta": 0.73,
+      "equity_beta": 0.63
     }
   ],
   "capital_mobility_risk": {
