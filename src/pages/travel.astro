@@ -1581,10 +1581,20 @@ const meta = {
 
       // ---- City Boundary Highlights (GeoJSON) ----
       const PROVINCE_CODES = {
-        530000: "Yunnan", 450000: "Guangxi", 350000: "Fujian", 510000: "Sichuan",
-        500000: "Chongqing", 360000: "Jiangxi", 440000: "Guangdong", 310000: "Shanghai",
-        320000: "Jiangsu",        460000: "Hainan", 330000: "Zhejiang", 150000: "Inner Mongolia",
-        650000: "Xinjiang", 610000: "Shaanxi"
+        // Direct-administered municipalities
+        110000: "Beijing", 120000: "Tianjin", 310000: "Shanghai", 500000: "Chongqing",
+        // Provinces
+        130000: "Hebei", 140000: "Shanxi", 210000: "Liaoning", 220000: "Jilin",
+        230000: "Heilongjiang", 320000: "Jiangsu", 330000: "Zhejiang", 340000: "Anhui",
+        350000: "Fujian", 360000: "Jiangxi", 370000: "Shandong", 410000: "Henan",
+        420000: "Hubei", 430000: "Hunan", 440000: "Guangdong", 460000: "Hainan",
+        510000: "Sichuan", 520000: "Guizhou", 530000: "Yunnan", 610000: "Shaanxi",
+        620000: "Gansu", 630000: "Qinghai", 710000: "Taiwan",
+        // Autonomous regions
+        150000: "Inner Mongolia", 450000: "Guangxi", 540000: "Tibet",
+        640000: "Ningxia", 650000: "Xinjiang",
+        // SARs
+        810000: "Hong Kong", 820000: "Macau"
       };
       const visitedCityNames = new Set([
         ...cities.map(c => c.nameCN),
@@ -1600,22 +1610,28 @@ const meta = {
         if (visitedCityNames.has(e[0])) aliasParents.add(e[1]);
       });
       // Direct municipalities: if any city in this province was visited, light up ALL districts
-      const MUNICIPALITY_PROVINCES = { "310000": "上海", "500000": "重庆" };
+      const MUNICIPALITY_PROVINCES = { "110000": "北京", "120000": "天津", "310000": "上海", "500000": "重庆" };
       const lightUpAllDistricts = new Set();
       Object.entries(MUNICIPALITY_PROVINCES).forEach(function(e) {
         if (visitedCityNames.has(e[1])) lightUpAllDistricts.add(e[0]);
       });
 
-      // Also add region colors for provinces not yet defined
-      if (!REGION_COLORS["Jiangxi"]) REGION_COLORS["Jiangxi"] = { main: "#f472b6", glow: "rgba(244,114,182,0.22)" };
-      if (!REGION_COLORS["Guangdong"]) REGION_COLORS["Guangdong"] = { main: "#06b6d4", glow: "rgba(6,182,212,0.22)" };
-      if (!REGION_COLORS["Shanghai"]) REGION_COLORS["Shanghai"] = { main: "#8b5cf6", glow: "rgba(139,92,246,0.22)" };
-      if (!REGION_COLORS["Jiangsu"]) REGION_COLORS["Jiangsu"] = { main: "#14b8a6", glow: "rgba(20,184,166,0.22)" };
-      if (!REGION_COLORS["Hainan"]) REGION_COLORS["Hainan"] = { main: "#f97316", glow: "rgba(249,115,22,0.22)" };
-      if (!REGION_COLORS["Inner Mongolia"]) REGION_COLORS["Inner Mongolia"] = { main: "#a78bfa", glow: "rgba(167,139,250,0.22)" };
-      if (!REGION_COLORS["Zhejiang"]) REGION_COLORS["Zhejiang"] = { main: "#22c55e", glow: "rgba(34,197,94,0.22)" };
-      if (!REGION_COLORS["Xinjiang"]) REGION_COLORS["Xinjiang"] = { main: "#eab308", glow: "rgba(234,179,8,0.22)" };
-      if (!REGION_COLORS["Shaanxi"]) REGION_COLORS["Shaanxi"] = { main: "#f97316", glow: "rgba(249,115,22,0.22)" };
+      // Auto-assign region colors for provinces not in the base palette
+      const PALETTE = [
+        "#f472b6", "#06b6d4", "#8b5cf6", "#14b8a6", "#f97316",
+        "#a78bfa", "#22c55e", "#eab308", "#ec4899", "#3b82f6",
+        "#10b981", "#f59e0b", "#ef4444", "#6366f1", "#84cc16",
+      ];
+      const _usedColors = new Set(Object.values(REGION_COLORS).map(c => c.main));
+      let _pi = 0;
+      function _nextColor() { while (_pi < PALETTE.length && _usedColors.has(PALETTE[_pi])) _pi++; const c = PALETTE[_pi % PALETTE.length]; _usedColors.add(c); _pi++; return c; }
+      for (var _code in PROVINCE_CODES) {
+        var _pname = PROVINCE_CODES[_code];
+        if (!REGION_COLORS[_pname]) {
+          var _c = _nextColor();
+          REGION_COLORS[_pname] = { main: _c, glow: _c + "38" };
+        }
+      }
 
       (async function() {
         for (var code in PROVINCE_CODES) {
