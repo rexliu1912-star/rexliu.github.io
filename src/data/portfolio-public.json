@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-17T01:57:09.936Z",
+  "generated_at": "2026-06-17T02:23:40.322Z",
   "regime": {
     "current": {
       "label": "中性期",
@@ -2547,7 +2547,7 @@
       "model": {
         "schema": "portfolio-allocation-model/v1",
         "version": "0.1.0",
-        "generated_at": "2026-06-17T01:55:37.876604+00:00",
+        "generated_at": "2026-06-17T02:23:38.973269+00:00",
         "regime": {
           "name": "neutral",
           "score": 56
@@ -3130,41 +3130,6 @@
       },
       "price": 117.81,
       "daily_change_pct": -2.42
-    },
-    {
-      "symbol": "518880",
-      "market": "cn",
-      "flag": "🇨🇳",
-      "sector_tags_en": [],
-      "sector_tags_zh": [],
-      "driver_factors_en": [],
-      "driver_factors_zh": [],
-      "thesis_en": "",
-      "thesis_zh": "",
-      "stage": 7,
-      "status_en": "Active",
-      "status_zh": "持有中",
-      "conviction": "medium",
-      "horizon": "long",
-      "entry_year": null,
-      "layer": null,
-      "layer_label_en": null,
-      "layer_label_zh": null,
-      "stop": null,
-      "target": null,
-      "next_event": null,
-      "news": {
-        "summary": "黄金ETF讨论显示短期谨慎/恐慌与中长期配置乐观并存，关注实际利率和资金回流确认",
-        "sentiment": "neutral",
-        "items": [
-          {
-            "title": "X: 黄金ETF 洗盘筑底，资金流出放缓",
-            "snippet": "黄金ETF讨论显示短期谨慎/恐慌与中长期配置乐观并存，关注实际利率和资金回流确认。"
-          }
-        ]
-      },
-      "price": 8.949,
-      "daily_change_pct": 0.24
     },
     {
       "symbol": "588000",
@@ -6003,6 +5968,57 @@
   ],
   "clearances": [
     {
+      "ticker": "518880",
+      "market": "cn",
+      "name_en": "Gold ETF",
+      "name_zh": "黄金ETF",
+      "sector_tags_en": [
+        "Gold",
+        "Liquidity Hedge",
+        "A-share ETF"
+      ],
+      "sector_tags_zh": [
+        "黄金",
+        "流动性对冲",
+        "A股ETF"
+      ],
+      "entry_date": "2026-05-18",
+      "exit_date": "2026-06-17",
+      "holding_days": 30,
+      "outcome_pct_rounded": 1,
+      "win_rate_pct": 100,
+      "trade_count": 5,
+      "reason_en": "Closed the tactical gold ETF tranche after a small rebound; keep gold as a macro hedge framework, not a forced public holding.",
+      "reason_zh": "黄金ETF战术仓位清仓，小幅反弹后落袋；黄金仍作为宏观对冲框架，不强行保留公开持仓。",
+      "lesson_en": "Gold hedge sizing should stay tactical and rule-driven; treat ETF round trips separately from the long-cycle gold thesis.",
+      "lesson_zh": "黄金对冲仓位要保持战术化和规则化；ETF波段交易与长期黄金逻辑分开记录。",
+      "article_url": null,
+      "trade_points": [
+        {
+          "date": "2026-05-18",
+          "kind": "entry",
+          "action_en": "Built position",
+          "action_zh": "分批建仓",
+          "price": 8.9128,
+          "note_en": "初始建仓黄金ETF · 加仓黄金ETF · 新建仓黄金ETF",
+          "note_zh": "初始建仓黄金ETF · 加仓黄金ETF · 新建仓黄金ETF"
+        },
+        {
+          "date": "2026-06-17",
+          "kind": "exit",
+          "action_en": "Closed via staged sells",
+          "action_zh": "分批清仓",
+          "price": 8.975,
+          "note_en": "截图成交：黄金ETF 09:42:19 全部成交 · 截图成交：黄金ETF 09:45:49 全部成交",
+          "note_zh": "截图成交：黄金ETF 09:42:19 全部成交 · 截图成交：黄金ETF 09:45:49 全部成交"
+        }
+      ],
+      "outcome_pct": 0.7,
+      "currency": "CNY",
+      "avg_entry_price": 8.9128,
+      "avg_exit_price": 8.975
+    },
+    {
       "ticker": "159381",
       "market": "cn",
       "name_en": "ChiNext AI ETF",
@@ -6725,60 +6741,6 @@
           "note_zh": "三一 +5.9%，恒立 +7.7%，ETF +2.7%"
         }
       ]
-    },
-    {
-      "ticker": "518880",
-      "market": "cn",
-      "name_en": "Gold ETF (Huaan)",
-      "name_zh": "黄金ETF华安",
-      "sector_tags_en": [
-        "Gold",
-        "Macro Hedge"
-      ],
-      "sector_tags_zh": [
-        "黄金",
-        "宏观对冲"
-      ],
-      "entry_date": "2025-10-22",
-      "exit_date": "2026-03-23",
-      "holding_days": 152,
-      "outcome_pct_rounded": 10,
-      "win_rate_pct": 100,
-      "trade_count": 33,
-      "reason_en": "Weekly mid-band breakdown triggered the stop Rex had pre-identified",
-      "reason_zh": "周线中轨跌破触发事先识别的止损信号",
-      "lesson_en": "Jan bottom-add at 10.03 was the single best call. Slow de-stocking preserved upside but caused profit retrace late-cycle — should have been more aggressive trimming at 11+ peaks.",
-      "lesson_zh": "1 月底 10.03 低位补仓是整轮最成功的操作。保守减仓锁定了大部分利润，但尾段利润回吐——11+ 高点应该更果断减仓。",
-      "article_url": "/posts/gold-etf-trade-review/",
-      "trade_points": [
-        {
-          "date": "2025-10-22",
-          "kind": "entry",
-          "action_en": "Built position in 3 tranches",
-          "action_zh": "分 3 批建仓",
-          "price": 8.986,
-          "note_en": "Weekly mid-band pullback entry; avg cost ~¥8.90",
-          "note_zh": "周线中轨回调入场；均价 ~¥8.90"
-        },
-        {
-          "date": "2026-01-30",
-          "kind": "add",
-          "action_en": "Counter-trend add on sharp pullback",
-          "action_zh": "大跌逆势加仓",
-          "price": 10.03,
-          "note_en": "Triple add on single-day drop near intraday low",
-          "note_zh": "同一天三笔加仓，接近日内最低"
-        },
-        {
-          "date": "2026-03-23",
-          "kind": "exit",
-          "action_en": "Full exit on weekly mid-band break",
-          "action_zh": "周线中轨跌破清仓",
-          "price": 9.459,
-          "note_en": "Pre-identified technical signal fired. +10% realized",
-          "note_zh": "事先识别的技术信号触发，全部清仓。实现 +10%"
-        }
-      ]
     }
   ],
   "roundtables": [
@@ -6884,15 +6846,15 @@
     }
   ],
   "stats": {
-    "active_positions": 9,
+    "active_positions": 8,
     "markets": 2,
     "tracked_rules": 43,
     "upcoming_events": 6,
     "weekly_scan_hits": 13,
-    "total_trades": 83,
+    "total_trades": 55,
     "closed_positions": 16,
     "win_rate_pct": 81,
-    "realized_pnl_pct": 115,
+    "realized_pnl_pct": 106,
     "days_since_last_clearance": 0
   },
   "crypto_portfolio_history": {
