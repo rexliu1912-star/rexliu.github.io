@@ -99,6 +99,8 @@ function applyAllocationModel(overrides, allocationModel) {
       signal_score: modelCategory.signal_score ?? null,
       expected_return_pct: modelCategory.expected_return_pct ?? category.expected_return_pct,
       annual_volatility_pct: modelCategory.annual_volatility_pct ?? category.annual_volatility_pct,
+      current_pct: modelCategory.current_pct ?? category.current_pct,
+      drift_pp: modelCategory.drift_pp ?? category.drift_pp,
       model_action: modelCategory.action || null,
       model_rationale_en: modelCategory.rationale_en || null,
       model_rationale_zh: modelCategory.rationale_zh || null,
@@ -1473,7 +1475,13 @@ async function main() {
     actualPcts.stocks -= goldAmount;
 
     for (const cat of computedAllocation.categories) {
-      if (actualPcts[cat.id] !== undefined) {
+      if (cat.model_current_pct !== undefined && cat.model_current_pct !== null) {
+        cat.current_pct = cat.model_current_pct;
+        cat.drift_pp = cat.model_drift_pp ?? Math.round((cat.current_pct - cat.target_pct) * 10) / 10;
+        const targetAmount = totalAssets * (cat.target_pct / 100);
+        const currentAmount = totalAssets * (cat.current_pct / 100);
+        cat.gap_amount = Math.round(targetAmount - currentAmount);
+      } else if (actualPcts[cat.id] !== undefined) {
         const pct = Math.round((actualPcts[cat.id] / totalAssets) * 1000) / 10; // 1 decimal
         cat.current_pct = pct;
         cat.drift_pp = Math.round((pct - cat.target_pct) * 10) / 10;

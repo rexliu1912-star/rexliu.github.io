@@ -23,6 +23,7 @@ DATA = WORKSPACE / "data"
 MARKET = DATA / "market"
 DEFAULT_OUTPUT = ROOT / "src/data/portfolio-model-targets.json"
 PRIVATE_PORTFOLIO = WORKSPACE / "projects/the-workshop/data/portfolio.json"
+TRADITIONAL_PORTFOLIO = WORKSPACE / "projects/the-workshop/data/portfolio-traditional.json"
 
 BUCKETS = ["stablecoin", "funds", "gold", "stocks", "crypto"]
 BASE_TARGETS = {
@@ -121,18 +122,70 @@ def smooth_targets(raw: dict[str, float], previous: dict[str, float] | None) -> 
 
 def current_allocation(private: dict[str, Any] | None = None) -> dict[str, float]:
     private = private if private is not None else (read_json(PRIVATE_PORTFOLIO, {}) or {})
+    traditional = read_json(TRADITIONAL_PORTFOLIO, {}) or {}
+    private_assets = {a.get("id"): a for a in private.get("assets", [])}
+    traditional_categories = {c.get("id"): c for c in traditional.get("categories", [])}
+
+    def private_amount(asset_id: str) -> float:
+        return float((private_assets.get(asset_id) or {}).get("amount", 0) or 0)
+
+    def traditional_amount(category_id: str) -> float:
+        return float((traditional_categories.get(category_id) or {}).get("amount", 0) or 0)
+
+    def extract_gold_amount(item: dict[str, Any] | None) -> float:
+        if not item:
+            return 0.0
+        total = 0.0
+        # Current monthly records put the gold fund under 未来世代/future-gen holdings.
+        for holding in item.get("holdings", []) or []:
+            name = str(holding.get("name") or holding.get("symbol") or "")
+            if holding.get("asset_class") == "gold" or "黄金" in name or holding.get("symbol") == "000218":
+                total += float(holding.get("amount", 0) or 0)
+        for entry in (item.get("breakdown") or {}).values():
+            name = str((entry or {}).get("name") or "")
+            if (entry or {}).get("asset_class") == "gold" or "黄金" in name:
+                total += float((entry or {}).get("amount", 0) or 0)
+        return total
+
+    if traditional_categories:
+        # Monthly 有知有行 records are the richer source for traditional assets:
+        # they include 未来世代, AH stocks, US stocks, and sub-holdings such as
+        # 国泰黄金ETF联接A. Combine them with portfolio.json's stablecoin/crypto.
+        stablecoin = private_amount("stablecoin")
+        crypto = private_amount("crypto") + private_amount("crypto_ivy")
+        funds = sum(traditional_amount(i) for i in ["yanerhigh", "liquid", "house", "education", "receivable"])
+        future_total = traditional_amount("future-gen") or traditional_amount("future")
+        future_item = traditional_categories.get("future-gen") or traditional_categories.get("future")
+        gold = extract_gold_amount(future_item)
+        stocks = (
+            traditional_amount("qieman")
+            + traditional_amount("ah-stocks")
+            + traditional_amount("rex_stock")
+            + traditional_amount("us_stock")
+            + max(0.0, future_total - gold)
+        )
+        total = stablecoin + funds + gold + stocks + crypto
+        if total > 0:
+            return {
+                "stablecoin": round((stablecoin / total) * 100, 1),
+                "funds": round((funds / total) * 100, 1),
+                "gold": round((gold / total) * 100, 1),
+                "stocks": round((stocks / total) * 100, 1),
+                "crypto": round((crypto / total) * 100, 1),
+            }
+
     total = private.get("totalAssets") or 0
-    assets = {a.get("id"): a for a in private.get("assets", [])}
     if not total:
         return {}
     groups = {
         "stablecoin": ["stablecoin"],
         "funds": ["liquid", "yanerhigh", "house", "education", "receivable"],
-        "stocks": ["qieman", "future", "rex_stock", "us_stock"],
+        "stocks": ["qieman", "future", "future-gen", "rex_stock", "us_stock"],
         "crypto": ["crypto", "crypto_ivy"],
     }
-    amounts = {k: sum((assets.get(i, {}) or {}).get("amount", 0) or 0 for i in ids) for k, ids in groups.items()}
-    gold_amount = (((assets.get("future") or {}).get("breakdown") or {}).get("国泰黄金ETF_A") or {}).get("amount", 0) or 0
+    amounts = {k: sum((private_assets.get(i, {}) or {}).get("amount", 0) or 0 for i in ids) for k, ids in groups.items()}
+    future_asset = private_assets.get("future") or private_assets.get("future-gen")
+    gold_amount = extract_gold_amount(future_asset)
     amounts["gold"] = gold_amount
     amounts["stocks"] = max(0, amounts.get("stocks", 0) - gold_amount)
     return {k: round((v / total) * 100, 1) for k, v in amounts.items()}
