@@ -982,6 +982,17 @@ function buildAutoClearances(convexPositions, convexTrades, overrides) {
     const override = overrides.positions?.[symbol] || {};
     if (override.hide_clearance) continue;
 
+    const mechanicsOverride = override.clearance_mechanics_override === true;
+    const clearanceOutcomePct = mechanicsOverride && Number.isFinite(Number(override.clearance_outcome_pct))
+      ? Number(override.clearance_outcome_pct)
+      : +outcomePct.toFixed(1);
+    const clearanceAvgEntry = mechanicsOverride && Number.isFinite(Number(override.clearance_avg_entry_price))
+      ? Number(override.clearance_avg_entry_price)
+      : (avgEntryPrice ? +avgEntryPrice.toFixed(4) : null);
+    const clearanceAvgExit = mechanicsOverride && Number.isFinite(Number(override.clearance_avg_exit_price))
+      ? Number(override.clearance_avg_exit_price)
+      : (avgExitPrice ? +avgExitPrice.toFixed(4) : null);
+
     const watchlistItem = (overrides.watchlist || []).find((item) => item.ticker === symbol) || {};
 
     out.push({
@@ -994,13 +1005,19 @@ function buildAutoClearances(convexPositions, convexTrades, overrides) {
       entry_date: entryDate,
       exit_date: exitDate,
       holding_days: daysBetween(entryDate, exitDate),
-      outcome_pct: +outcomePct.toFixed(1),
-      outcome_pct_rounded: roundPct(outcomePct),
-      win_rate_pct: outcomePct > 0 ? 100 : 0,
-      trade_count: sortedTrades.length,
+      outcome_pct: clearanceOutcomePct,
+      outcome_pct_rounded: mechanicsOverride && Number.isFinite(Number(override.clearance_outcome_pct_rounded))
+        ? Number(override.clearance_outcome_pct_rounded)
+        : roundPct(outcomePct),
+      win_rate_pct: mechanicsOverride && Number.isFinite(Number(override.clearance_win_rate_pct))
+        ? Number(override.clearance_win_rate_pct)
+        : (outcomePct > 0 ? 100 : 0),
+      trade_count: mechanicsOverride && Number.isFinite(Number(override.clearance_trade_count))
+        ? Number(override.clearance_trade_count)
+        : sortedTrades.length,
       currency: position.currency || buys[0]?.currency || sells[0]?.currency || null,
-      avg_entry_price: avgEntryPrice ? +avgEntryPrice.toFixed(4) : null,
-      avg_exit_price: avgExitPrice ? +avgExitPrice.toFixed(4) : null,
+      avg_entry_price: clearanceAvgEntry,
+      avg_exit_price: clearanceAvgExit,
       reason_en: override.clearance_reason_en || "Auto-generated closed position from Convex trade and position records.",
       reason_zh: override.clearance_reason_zh || "由 Convex 交易与持仓记录自动生成的清仓记录。",
       lesson_en: override.clearance_lesson_en || "Add an editorial lesson in portfolio-overrides clearances only if this exit deserves a manual review.",
