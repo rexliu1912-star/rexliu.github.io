@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-22T14:46:30.679Z",
+  "generated_at": "2026-06-22T23:51:03.883Z",
   "regime": {
     "current": {
       "label": "防御期",
@@ -10,17 +10,17 @@
       "signals": {
         "tnx": {
           "label": "10Y UST",
-          "value": "4.45%",
-          "light": "yellow"
+          "value": "4.51%",
+          "light": "red"
         },
         "dxy": {
           "label": "DXY",
-          "value": "100.89",
+          "value": "101",
           "light": "yellow"
         },
         "vix": {
           "label": "VIX",
-          "value": "16.4",
+          "value": "17.28",
           "light": "green"
         },
         "naaim": {
@@ -36,46 +36,6 @@
       }
     },
     "history_60d": [
-      {
-        "date": "2026-04-21",
-        "regime": "防御期",
-        "green_count": 1,
-        "aggression": "低",
-        "vix": 18.87,
-        "lights": {
-          "tnx": "yellow",
-          "dxy": "green",
-          "vix": "yellow",
-          "naaim": "yellow",
-          "policy": "red"
-        },
-        "signalDetails": {
-          "tnx": {
-            "value": 4.25,
-            "light": "yellow",
-            "status": null
-          },
-          "dxy": {
-            "value": 98.1,
-            "light": "green",
-            "status": null
-          },
-          "vix": {
-            "value": 18.87,
-            "light": "yellow",
-            "status": null
-          },
-          "naaim": {
-            "value": 79.49,
-            "light": "yellow",
-            "status": null
-          },
-          "policy": {
-            "light": "red",
-            "status": "tight"
-          }
-        }
-      },
       {
         "date": "2026-04-22",
         "regime": "防御期",
@@ -2370,6 +2330,45 @@
             "status": null
           }
         }
+      },
+      {
+        "date": "2026-06-23",
+        "regime": "防御期",
+        "green_count": 1,
+        "aggression": "低",
+        "vix": 17.28,
+        "lights": {
+          "tnx": "red",
+          "dxy": "yellow",
+          "vix": "green",
+          "naaim": "red"
+        },
+        "signalDetails": {
+          "tnx": {
+            "value": 4.51,
+            "light": "red",
+            "status": null
+          },
+          "dxy": {
+            "value": 101,
+            "light": "yellow",
+            "status": null
+          },
+          "vix": {
+            "value": 17.28,
+            "light": "green",
+            "status": null
+          },
+          "naaim": {
+            "value": 92.83,
+            "light": "red",
+            "status": null
+          },
+          "policy": {
+            "light": "gray",
+            "status": null
+          }
+        }
       }
     ]
   },
@@ -2412,9 +2411,9 @@
           "id": "funds",
           "label_en": "Funds",
           "label_zh": "基金与现金",
-          "target_pct": 31.1,
+          "target_pct": 30.9,
           "current_pct": 35.5,
-          "drift_pp": 4.4,
+          "drift_pp": 4.6,
           "color": "#3b82f6",
           "sub_tags_en": [
             "Cash & Deposits",
@@ -2430,15 +2429,15 @@
           "note_zh": "现金缓冲 + 保守理财 + 专项资金（买房/教育/应收）",
           "expected_return_pct": 3.2,
           "annual_volatility_pct": 3,
-          "model_target_pct": 31.1,
+          "model_target_pct": 30.9,
           "raw_model_target_pct": 31.1,
-          "signal_score": 78.2,
+          "signal_score": 78.1,
           "model_action": "trim",
-          "model_rationale_en": "SOFR 3.63% supports conservative cash/fund carry.",
-          "model_rationale_zh": "SOFR 3.63%，保守现金/基金仍有持有收益。",
+          "model_rationale_en": "SOFR 3.62% supports conservative cash/fund carry.",
+          "model_rationale_zh": "SOFR 3.62%，保守现金/基金仍有持有收益。",
           "model_current_pct": 35.5,
-          "model_drift_pp": 4.4,
-          "gap_amount": -509168
+          "model_drift_pp": 4.6,
+          "gap_amount": -532312
         },
         {
           "id": "gold",
@@ -2474,9 +2473,9 @@
           "id": "stocks",
           "label_en": "Stocks",
           "label_zh": "股票",
-          "target_pct": 26,
+          "target_pct": 26.2,
           "current_pct": 17,
-          "drift_pp": -9,
+          "drift_pp": -9.2,
           "color": "#8953d1",
           "sub_tags_en": [
             "AI Power",
@@ -2490,17 +2489,17 @@
           ],
           "note_en": "Long + swing mix — AI-electricity core with opportunistic overlays",
           "note_zh": "长期 + 波段组合——AI 电力核心 + 机会主义叠加",
-          "expected_return_pct": 8.7,
-          "annual_volatility_pct": 23.4,
-          "model_target_pct": 26,
-          "raw_model_target_pct": 26.1,
-          "signal_score": 66.2,
+          "expected_return_pct": 9,
+          "annual_volatility_pct": 22.1,
+          "model_target_pct": 26.2,
+          "raw_model_target_pct": 26.3,
+          "signal_score": 69,
           "model_action": "add",
-          "model_rationale_en": "Portfolio health 3.8/5.0, equity beta 1.46, regime score 48.0.",
-          "model_rationale_zh": "组合健康度 3.8/5.0，股票 beta 1.46，宏观分数 48.0。",
+          "model_rationale_en": "Portfolio health 3.8/5.0, equity beta 1.38, regime score 56.0.",
+          "model_rationale_zh": "组合健康度 3.8/5.0，股票 beta 1.38，宏观分数 56.0。",
           "model_current_pct": 17,
-          "model_drift_pp": -9,
-          "gap_amount": 1041480,
+          "model_drift_pp": -9.2,
+          "gap_amount": 1064624,
           "sub": [
             {
               "id": "cn",
@@ -2528,14 +2527,14 @@
           ],
           "note_en": "Asymmetric bet — long-duration, non-correlated, high-volatility core",
           "note_zh": "不对称下注——长久期、低相关、高波动核心",
-          "expected_return_pct": 11.9,
-          "annual_volatility_pct": 35,
+          "expected_return_pct": 11.5,
+          "annual_volatility_pct": 34.4,
           "model_target_pct": 7.8,
-          "raw_model_target_pct": 7.9,
-          "signal_score": 31.1,
+          "raw_model_target_pct": 7.7,
+          "signal_score": 27.8,
           "model_action": "hold",
-          "model_rationale_en": "Crypto composite 26.1, fear/greed 22; capped at 15%.",
-          "model_rationale_zh": "Crypto composite 26.1，恐惧贪婪 22；上限 15%。",
+          "model_rationale_en": "Crypto composite 22.8, fear/greed 21; capped at 15%.",
+          "model_rationale_zh": "Crypto composite 22.8，恐惧贪婪 21；上限 15%。",
           "model_current_pct": 6.3,
           "model_drift_pp": -1.5,
           "gap_amount": 173580
@@ -2544,31 +2543,31 @@
       "model": {
         "schema": "portfolio-allocation-model/v1",
         "version": "0.1.0",
-        "generated_at": "2026-06-22T14:46:28.618916+00:00",
+        "generated_at": "2026-06-22T23:51:02.493818+00:00",
         "regime": {
           "name": "neutral",
-          "score": 48
+          "score": 56
         }
       },
-      "risk_free_rate": 3.63,
+      "risk_free_rate": 3.62,
       "weighted_return": {
         "target": 5.9,
         "current": 5.4
       },
-      "projected_annual_yield": 621497,
+      "projected_annual_yield": 624483,
       "risk": {
-        "target_vol": 11.1,
-        "current_vol": 8.6,
-        "sharpe_target": 0.2,
-        "sharpe_current": 0.2,
-        "risk_free_rate": 3.63,
+        "target_vol": 10.7,
+        "current_vol": 8.3,
+        "sharpe_target": 0.22,
+        "sharpe_current": 0.21,
+        "risk_free_rate": 3.62,
         "temperature": 14,
         "temperature_label_en": "Defensive",
         "temperature_label_zh": "防御型"
       },
       "health": 3.8,
-      "portfolio_beta": 1.44,
-      "equity_beta": 1.46
+      "portfolio_beta": 1.41,
+      "equity_beta": 1.38
     }
   },
   "sector_research": [
@@ -2773,12 +2772,12 @@
       "layer_label_zh": "AI 算力",
       "stop": {
         "type": "stop_loss",
-        "level_pct_from_current": "-26.2%",
+        "level_pct_from_current": "-25.9%",
         "severity": "gray",
         "description": "AAPL 止损线 ~15% below avg cost"
       },
       "target": {
-        "price_pct_from_current": "+4.0%",
+        "price_pct_from_current": "+4.4%",
         "description": "AAPL test target",
         "optimistic_price": null
       },
@@ -2793,8 +2792,8 @@
           }
         ]
       },
-      "price": 298.01,
-      "daily_change_pct": 0
+      "price": 297.01,
+      "daily_change_pct": -0.34
     },
     {
       "symbol": "CEG",
@@ -2833,7 +2832,7 @@
       "layer_label_zh": "基荷发电",
       "stop": {
         "type": "stop_loss",
-        "level_pct_from_current": "-8.5%",
+        "level_pct_from_current": "-9.0%",
         "severity": "red",
         "description": "CEG stop loss: 18% below renewed entry cost $305.78"
       },
@@ -2853,8 +2852,8 @@
           }
         ]
       },
-      "price": 274.06,
-      "daily_change_pct": 0
+      "price": 275.53,
+      "daily_change_pct": 0.54
     },
     {
       "symbol": "DRAM",
@@ -2885,7 +2884,8 @@
       "layer_label_zh": null,
       "stop": null,
       "target": null,
-      "next_event": null
+      "next_event": null,
+      "price": 80.72
     },
     {
       "symbol": "GOOGL",
@@ -2916,8 +2916,8 @@
       "layer_label_zh": "核心持仓",
       "stop": {
         "type": "stop_loss",
-        "level_pct_from_current": "-13.8%",
-        "severity": "yellow",
+        "level_pct_from_current": "-9.3%",
+        "severity": "red",
         "description": "GOOGL stop loss ~18% below avg cost ($386.98)"
       },
       "target": null,
@@ -2932,8 +2932,8 @@
           }
         ]
       },
-      "price": 368.03,
-      "daily_change_pct": 0
+      "price": 349.68,
+      "daily_change_pct": -4.99
     },
     {
       "symbol": "NVDA",
@@ -2972,7 +2972,7 @@
       "layer_label_zh": "核心持仓",
       "stop": {
         "type": "stop_loss",
-        "level_pct_from_current": "-14.0%",
+        "level_pct_from_current": "-13.2%",
         "severity": "yellow",
         "description": "NVIDIA stop loss ~18% below updated avg cost ($220.96)"
       },
@@ -2988,8 +2988,8 @@
           }
         ]
       },
-      "price": 210.69,
-      "daily_change_pct": 0
+      "price": 208.65,
+      "daily_change_pct": -0.97
     },
     {
       "symbol": "PLTR",
@@ -3023,8 +3023,8 @@
           }
         ]
       },
-      "price": 128.47,
-      "daily_change_pct": 0
+      "price": 119.5,
+      "daily_change_pct": -6.98
     },
     {
       "symbol": "QQQ",
@@ -3063,7 +3063,7 @@
       "layer_label_zh": "卫星配置",
       "stop": {
         "type": "stop_loss",
-        "level_pct_from_current": "-21.2%",
+        "level_pct_from_current": "-20.9%",
         "severity": "gray",
         "description": "Invesco QQQ Trust stop loss ~18% below cost"
       },
@@ -3079,8 +3079,8 @@
           }
         ]
       },
-      "price": 740.62,
-      "daily_change_pct": 0
+      "price": 737.95,
+      "daily_change_pct": -0.36
     },
     {
       "symbol": "RKLB",
@@ -3111,7 +3111,7 @@
       "layer_label_zh": "太空经济",
       "stop": {
         "type": "stop_loss",
-        "level_pct_from_current": "-16.2%",
+        "level_pct_from_current": "-10.4%",
         "severity": "yellow",
         "description": "Rocket Lab Corporation stop loss ~18% below cost"
       },
@@ -3131,8 +3131,8 @@
           }
         ]
       },
-      "price": 107.24,
-      "daily_change_pct": 0
+      "price": 100.29,
+      "daily_change_pct": -6.48
     },
     {
       "symbol": "SMH",
@@ -3171,7 +3171,7 @@
       "layer_label_zh": "核心",
       "stop": {
         "type": "stop_loss",
-        "level_pct_from_current": "-28.8%",
+        "level_pct_from_current": "-29.8%",
         "severity": "gray",
         "description": "VanEck Semiconductor ETF stop loss ~18% below cost"
       },
@@ -3187,8 +3187,8 @@
           }
         ]
       },
-      "price": 659.88,
-      "daily_change_pct": 0
+      "price": 668.91,
+      "daily_change_pct": 1.37
     },
     {
       "symbol": "VGT",
@@ -3227,7 +3227,7 @@
       "layer_label_zh": "卫星配置",
       "stop": {
         "type": "stop_loss",
-        "level_pct_from_current": "-22.6%",
+        "level_pct_from_current": "-22.9%",
         "severity": "gray",
         "description": "Vanguard Information Technology ETF stop loss ~18% below cost"
       },
@@ -3243,18 +3243,18 @@
           }
         ]
       },
-      "price": 120.04,
-      "daily_change_pct": 0
+      "price": 120.51,
+      "daily_change_pct": 0.39
     }
   ],
   "crypto": null,
   "crypto_monitor": {
-    "generated_at": "2026-06-22T06:35:12.428035+08:00",
+    "generated_at": "2026-06-23T06:36:05.645236+08:00",
     "data_freshness": {
       "market_data_available": true,
       "bottom_tracker_available": true,
       "dca_status_available": true,
-      "market_data_date": "2026-06-22"
+      "market_data_date": "2026-06-23"
     },
     "allocation": {
       "crypto": {
@@ -3272,10 +3272,14 @@
     },
     "macro": {
       "fear_greed": {
-        "value": 22,
+        "value": 21,
         "label": "Extreme Fear"
       },
       "fear_greed_7d": [
+        {
+          "value": 21,
+          "label": "Extreme Fear"
+        },
         {
           "value": 22,
           "label": "Extreme Fear"
@@ -3299,27 +3303,23 @@
         {
           "value": 22,
           "label": "Extreme Fear"
-        },
-        {
-          "value": 19,
-          "label": "Extreme Fear"
         }
       ],
       "btc_change_24h": null,
       "signals": []
     },
     "bottom_tracker": {
-      "score": 73.9,
+      "score": 77.2,
       "status": "强烈底部信号，建议建仓",
       "indicators": [
         {
           "name_zh": "市场极度恐慌",
           "name_en": "Fear & Greed Index",
-          "status": "yellow",
-          "score": 50,
-          "detail_en": "Current:23",
-          "detail_zh": "当前:23",
-          "delta": 0,
+          "status": "green",
+          "score": 80,
+          "detail_en": "Current:20",
+          "detail_zh": "当前:20",
+          "delta": -3,
           "desc_en": "Crypto market sentiment composite (0–100)",
           "desc_zh": "加密市场情绪综合指数（0–100）"
         },
@@ -3328,9 +3328,9 @@
           "name_en": "Miner Capitulation",
           "status": "yellow",
           "score": 50,
-          "detail_en": "Drawdown: -28.7%",
-          "detail_zh": "回撤: -28.7%",
-          "delta": 0.5,
+          "detail_en": "Drawdown: -28.2%",
+          "detail_zh": "回撤: -28.2%",
+          "delta": 0.2,
           "desc_en": "BTC drawdown from ATH + miner revenue stress",
           "desc_zh": "BTC 距高点回撤 + 矿工收入压力"
         },
@@ -3339,9 +3339,9 @@
           "name_en": "Black Swan Intensity",
           "status": "yellow",
           "score": 50,
-          "detail_en": "BSS:53.2",
-          "detail_zh": "BSS:53.2",
-          "delta": 0,
+          "detail_en": "BSS:56.2",
+          "detail_zh": "BSS:56.2",
+          "delta": 3,
           "desc_en": "Multi-factor tail-risk model (BSS)",
           "desc_zh": "多因子尾部风险模型（BSS）"
         },
@@ -3350,9 +3350,9 @@
           "name_en": "Macro VIX",
           "status": "red",
           "score": 20,
-          "detail_en": "VIX:16.4",
-          "detail_zh": "VIX:16.4",
-          "delta": 0,
+          "detail_en": "VIX:17.3",
+          "detail_zh": "VIX:17.3",
+          "delta": 0.9,
           "desc_en": "S&P 500 implied volatility",
           "desc_zh": "标普500隐含波动率"
         },
@@ -3383,9 +3383,9 @@
           "name_en": "BTC ETF Flow",
           "status": "yellow",
           "score": 50,
-          "detail_en": "-8M, Neutral Flow",
-          "detail_zh": "-8M, 资金中性",
-          "delta": 0,
+          "detail_en": "-15M, Neutral Flow",
+          "detail_zh": "-15M, 资金中性",
+          "delta": -7,
           "desc_en": "Daily net inflow/outflow of spot BTC ETFs (USD millions)",
           "desc_zh": "BTC 现货 ETF 每日净流入/流出（百万美元）"
         },
@@ -3394,17 +3394,41 @@
           "name_en": "Dollar Index (DXY)",
           "status": "yellow",
           "score": 50,
-          "detail_en": "DXY:100.8",
-          "detail_zh": "DXY:100.8, 美元中性",
-          "delta": 0,
+          "detail_en": "DXY:101.0",
+          "detail_zh": "DXY:101.0, 美元中性",
+          "delta": 0.2,
           "desc_en": "US Dollar strength — inverse correlation with BTC",
           "desc_zh": "美元强度 — 与 BTC 负相关"
         }
       ]
     },
     "etf": {
-      "btc_etf_net_flow_m": -8,
-      "etfs": []
+      "btc_etf_net_flow_m": -15,
+      "btc_etf_total_volume_m": 1731,
+      "source": "yfinance-estimate",
+      "etfs": [
+        {
+          "ticker": "IBIT",
+          "volume_usd_m": 1334
+        },
+        {
+          "ticker": "FBTC",
+          "volume_usd_m": 258
+        },
+        {
+          "ticker": "GBTC",
+          "volume_usd_m": 64
+        },
+        {
+          "ticker": "ARKB",
+          "volume_usd_m": 37
+        },
+        {
+          "ticker": "BITB",
+          "volume_usd_m": 39
+        }
+      ],
+      "date": "2026-06-23"
     },
     "dca": {
       "status": "closed",
@@ -3478,8 +3502,8 @@
         "label_en": "Funds",
         "label_zh": "基金与现金",
         "current_pct": 35.5,
-        "target_pct": 31.1,
-        "drift_pp": 4.4,
+        "target_pct": 30.9,
+        "drift_pp": 4.6,
         "color": "#3b82f6",
         "sub_tags_en": [
           "Cash & Deposits",
@@ -3514,8 +3538,8 @@
         "label_en": "Stocks",
         "label_zh": "股票",
         "current_pct": 17,
-        "target_pct": 26,
-        "drift_pp": -9,
+        "target_pct": 26.2,
+        "drift_pp": -9.2,
         "color": "#8953d1",
         "sub_tags_en": [
           "AI Power",
@@ -3683,8 +3707,8 @@
               "grade": "B",
               "score": 3.5,
               "metrics": {
-                "pb": 11.6,
-                "ps": 25.6,
+                "pb": 12.2,
+                "ps": 27.1,
                 "peg": 0.78
               }
             },
@@ -3709,11 +3733,11 @@
               "grade": "A+",
               "score": 4.9,
               "metrics": {
-                "priceChange1M": -0.0659,
-                "priceChange3M": 0.7205,
-                "priceChange6M": 4.8136,
-                "vs50dma": -0.047,
-                "vs200dma": 1.105
+                "priceChange1M": -0.0006,
+                "priceChange3M": 0.9834,
+                "priceChange6M": 4.6363,
+                "vs50dma": 0.0037,
+                "vs200dma": 1.2057
               }
             },
             "epsRevisions": {
@@ -3752,19 +3776,19 @@
         "report_date": "2026-05-15",
         "last_reviewed": "2026-05-15",
         "quant": {
-          "composite": 3.93,
+          "composite": 3.87,
           "rating": "Buy",
-          "score": 3.93,
+          "score": 3.87,
           "factors": {
             "valuation": {
-              "grade": "C-",
-              "score": 2.2,
+              "grade": "D+",
+              "score": 1.8,
               "metrics": {
-                "pe": 58.2,
-                "pb": 20.5,
-                "ps": 16.9,
+                "pe": 60.3,
+                "pb": 21.3,
+                "ps": 17.5,
                 "peg": 2.05,
-                "evEbitda": 52.7
+                "evEbitda": 54.7
               }
             },
             "growth": {
@@ -3790,11 +3814,11 @@
               "grade": "A+",
               "score": 4.9,
               "metrics": {
-                "priceChange1M": 0.494,
-                "priceChange3M": 0.7848,
-                "priceChange6M": 1.307,
-                "vs50dma": 0.3856,
-                "vs200dma": 0.9456
+                "priceChange1M": 0.5752,
+                "priceChange3M": 0.8186,
+                "priceChange6M": 1.4024,
+                "vs50dma": 0.4219,
+                "vs200dma": 1.003
               }
             },
             "epsRevisions": {
@@ -3841,7 +3865,7 @@
               "grade": "A-",
               "score": 4.2,
               "metrics": {
-                "pe": 18.7,
+                "pe": 18.9,
                 "pb": 3,
                 "ps": 2.1,
                 "peg": 2.34,
@@ -3871,11 +3895,11 @@
               "grade": "B",
               "score": 3.5,
               "metrics": {
-                "priceChange1M": -0.1178,
-                "priceChange3M": 0.0619,
-                "priceChange6M": 0.2413,
-                "vs50dma": -0.0904,
-                "vs200dma": 0.0649
+                "priceChange1M": -0.0965,
+                "priceChange3M": 0.0412,
+                "priceChange6M": 0.2491,
+                "vs50dma": -0.0777,
+                "vs200dma": 0.077
               }
             },
             "epsRevisions": {
@@ -3914,9 +3938,9 @@
         "report_date": "2026-05-22",
         "last_reviewed": "2026-05-22",
         "quant": {
-          "composite": 2.4,
-          "rating": "Sell",
-          "score": 2.4,
+          "composite": 2.75,
+          "rating": "Hold",
+          "score": 2.75,
           "factors": {
             "profitability": {
               "grade": "F",
@@ -3928,10 +3952,10 @@
               }
             },
             "momentum": {
-              "grade": "B+",
-              "score": 3.8,
+              "grade": "A",
+              "score": 4.5,
               "metrics": {
-                "priceChange1M": 0.1128
+                "priceChange1M": 0.2367
               }
             }
           }
@@ -3952,17 +3976,17 @@
         "report_date": "2026-04-01",
         "last_reviewed": "2026-04-01",
         "quant": {
-          "composite": 2.95,
+          "composite": 2.88,
           "rating": "Hold",
-          "score": 2.95,
+          "score": 2.88,
           "factors": {
             "valuation": {
-              "grade": "C-",
-              "score": 2.2,
+              "grade": "D+",
+              "score": 1.8,
               "metrics": {
-                "pe": 59.8,
+                "pe": 60.4,
                 "pb": 3.2,
-                "ps": 6.8,
+                "ps": 6.9,
                 "peg": 0.98,
                 "evEbitda": 40.4
               }
@@ -3988,11 +4012,11 @@
               "grade": "D",
               "score": 1.5,
               "metrics": {
-                "priceChange1M": -0.1382,
-                "priceChange3M": -0.197,
-                "priceChange6M": -0.4046,
-                "vs50dma": -0.1185,
-                "vs200dma": -0.3144
+                "priceChange1M": -0.1479,
+                "priceChange3M": -0.2159,
+                "priceChange6M": -0.4057,
+                "vs50dma": -0.1096,
+                "vs200dma": -0.3057
               }
             },
             "epsRevisions": {
@@ -4001,7 +4025,7 @@
               "metrics": {
                 "analystSentiment": 0.8,
                 "numAnalysts": 30,
-                "peRatioFwdVsTrail": 0.581
+                "peRatioFwdVsTrail": 0.55
               }
             },
             "dividend": {
@@ -4065,11 +4089,11 @@
               "grade": "D",
               "score": 1.5,
               "metrics": {
-                "priceChange1M": -0.2797,
-                "priceChange3M": -0.3624,
-                "priceChange6M": -0.0444,
-                "vs50dma": -0.2079,
-                "vs200dma": -0.1924
+                "priceChange1M": -0.2799,
+                "priceChange3M": -0.3957,
+                "priceChange6M": -0.1005,
+                "vs50dma": -0.2099,
+                "vs200dma": -0.1936
               }
             },
             "epsRevisions": {
@@ -4116,7 +4140,7 @@
               "grade": "A-",
               "score": 4.2,
               "metrics": {
-                "pe": 17.6,
+                "pe": 17.4,
                 "pb": 3.6,
                 "ps": 2.9,
                 "peg": 0.72,
@@ -4146,11 +4170,11 @@
               "grade": "D",
               "score": 1.5,
               "metrics": {
-                "priceChange1M": -0.1522,
-                "priceChange3M": -0.2309,
-                "priceChange6M": -0.4112,
-                "vs50dma": -0.1458,
-                "vs200dma": -0.2948
+                "priceChange1M": -0.1611,
+                "priceChange3M": -0.2275,
+                "priceChange6M": -0.421,
+                "vs50dma": -0.1532,
+                "vs200dma": -0.3008
               }
             },
             "epsRevisions": {
@@ -4197,10 +4221,10 @@
               "grade": "B-",
               "score": 3.2,
               "metrics": {
-                "pb": 37.6,
-                "ps": 34.2,
+                "pb": 37.1,
+                "ps": 33.8,
                 "peg": 5.57,
-                "evEbitda": 2876.8
+                "evEbitda": 2836.4
               }
             },
             "growth": {
@@ -4224,11 +4248,11 @@
               "grade": "A+",
               "score": 4.9,
               "metrics": {
-                "priceChange1M": 0.1067,
-                "priceChange3M": 0.6158,
-                "priceChange6M": 0.3293,
-                "vs50dma": 0.211,
-                "vs200dma": 0.3994
+                "priceChange1M": 0.0949,
+                "priceChange3M": 0.5592,
+                "priceChange6M": 0.304,
+                "vs50dma": 0.1826,
+                "vs200dma": 0.3764
               }
             },
             "epsRevisions": {
@@ -4264,17 +4288,17 @@
         "report_date": "2026-05-08",
         "last_reviewed": "2026-05-08",
         "quant": {
-          "composite": 4.18,
+          "composite": 4.25,
           "rating": "Buy",
-          "score": 4.18,
+          "score": 4.25,
           "factors": {
             "valuation": {
-              "grade": "A",
-              "score": 4.5,
+              "grade": "A+",
+              "score": 4.9,
               "metrics": {
-                "pb": 13.2,
-                "ps": 10.3,
-                "evEbitda": 32.2
+                "pb": 12.4,
+                "ps": 9.8,
+                "evEbitda": 31
               }
             },
             "growth": {
@@ -4298,11 +4322,11 @@
               "grade": "A",
               "score": 4.5,
               "metrics": {
-                "priceChange1M": 0.1366,
-                "priceChange3M": 0.3737,
-                "priceChange6M": 0.3677,
-                "vs50dma": 0.059,
-                "vs200dma": 0.1748
+                "priceChange1M": 0.115,
+                "priceChange3M": 0.3552,
+                "priceChange6M": 0.2276,
+                "vs50dma": -0.0042,
+                "vs200dma": 0.1073
               }
             },
             "epsRevisions": {
@@ -4338,17 +4362,17 @@
         "report_date": "2026-04-01",
         "last_reviewed": "2026-04-01",
         "quant": {
-          "composite": 4.13,
+          "composite": 4.2,
           "rating": "Buy",
-          "score": 4.13,
+          "score": 4.2,
           "factors": {
             "valuation": {
               "grade": "A+",
               "score": 4.9,
               "metrics": {
-                "pe": 9.6,
+                "pe": 9.8,
                 "pb": 1.3,
-                "ps": 3.4,
+                "ps": 3.5,
                 "peg": 2.3,
                 "evEbitda": 5.4
               }
@@ -4373,14 +4397,14 @@
               }
             },
             "momentum": {
-              "grade": "D+",
-              "score": 1.8,
+              "grade": "C-",
+              "score": 2.2,
               "metrics": {
-                "priceChange1M": -0.1171,
-                "priceChange3M": -0.2091,
-                "priceChange6M": -0.1305,
-                "vs50dma": -0.0972,
-                "vs200dma": -0.0992
+                "priceChange1M": -0.1327,
+                "priceChange3M": -0.1931,
+                "priceChange6M": -0.1091,
+                "vs50dma": -0.0748,
+                "vs200dma": -0.0794
               }
             },
             "epsRevisions": {
@@ -4419,19 +4443,19 @@
         "report_date": "2026-04-01",
         "last_reviewed": "2026-04-01",
         "quant": {
-          "composite": 3.23,
+          "composite": 3.28,
           "rating": "Hold",
-          "score": 3.23,
+          "score": 3.28,
           "factors": {
             "valuation": {
               "grade": "C",
               "score": 2.5,
               "metrics": {
-                "pe": 41.3,
-                "pb": 8.3,
-                "ps": 5.7,
+                "pe": 42.7,
+                "pb": 8.6,
+                "ps": 5.9,
                 "peg": 3.19,
-                "evEbitda": 29.1
+                "evEbitda": 30
               }
             },
             "growth": {
@@ -4454,14 +4478,14 @@
               }
             },
             "momentum": {
-              "grade": "A-",
-              "score": 4.2,
+              "grade": "A",
+              "score": 4.5,
               "metrics": {
-                "priceChange1M": 0.1045,
-                "priceChange3M": 0.1714,
-                "priceChange6M": 0.2355,
-                "vs50dma": 0.0424,
-                "vs200dma": 0.1492
+                "priceChange1M": 0.1718,
+                "priceChange3M": 0.2007,
+                "priceChange6M": 0.2826,
+                "vs50dma": 0.0751,
+                "vs200dma": 0.1858
               }
             },
             "epsRevisions": {
@@ -4500,17 +4524,17 @@
         "report_date": "2026-05-09",
         "last_reviewed": "2026-05-09",
         "quant": {
-          "composite": 3.32,
+          "composite": 3.38,
           "rating": "Hold",
-          "score": 3.32,
+          "score": 3.38,
           "factors": {
             "valuation": {
               "grade": "A+",
               "score": 4.9,
               "metrics": {
-                "pe": 8,
-                "pb": 1.4,
-                "ps": 1.5,
+                "pe": 8.4,
+                "pb": 1.5,
+                "ps": 1.6,
                 "evEbitda": 7.9
               }
             },
@@ -4534,14 +4558,14 @@
               }
             },
             "momentum": {
-              "grade": "B+",
-              "score": 3.8,
+              "grade": "A-",
+              "score": 4.2,
               "metrics": {
-                "priceChange1M": -0.1536,
-                "priceChange3M": 0.1139,
-                "priceChange6M": 0.3669,
-                "vs50dma": -0.0957,
-                "vs200dma": 0.1381
+                "priceChange1M": -0.0962,
+                "priceChange3M": 0.1798,
+                "priceChange6M": 0.4433,
+                "vs50dma": -0.0498,
+                "vs200dma": 0.1929
               }
             },
             "epsRevisions": {
@@ -4578,17 +4602,17 @@
         "report_date": "2026-04-01",
         "last_reviewed": "2026-04-01",
         "quant": {
-          "composite": 3.87,
+          "composite": 3.82,
           "rating": "Buy",
-          "score": 3.87,
+          "score": 3.82,
           "factors": {
             "valuation": {
               "grade": "C-",
               "score": 2.2,
               "metrics": {
-                "pe": 52.8,
-                "pb": 10.5,
-                "ps": 21.1,
+                "pe": 51.6,
+                "pb": 10.2,
+                "ps": 20.6,
                 "peg": 2.93
               }
             },
@@ -4612,14 +4636,14 @@
               }
             },
             "momentum": {
-              "grade": "A",
-              "score": 4.5,
+              "grade": "A-",
+              "score": 4.2,
               "metrics": {
-                "priceChange1M": 0.4018,
-                "priceChange3M": 0.4361,
-                "priceChange6M": -0.2073,
-                "vs50dma": 0.3061,
-                "vs200dma": 0.0521
+                "priceChange1M": 0.4254,
+                "priceChange3M": 0.3666,
+                "priceChange6M": -0.2211,
+                "vs50dma": 0.2658,
+                "vs200dma": 0.0282
               }
             },
             "epsRevisions": {
@@ -4656,19 +4680,19 @@
         "report_date": "2026-04-01",
         "last_reviewed": "2026-04-01",
         "quant": {
-          "composite": 3.57,
+          "composite": 3.63,
           "rating": "Buy",
-          "score": 3.57,
+          "score": 3.63,
           "factors": {
             "valuation": {
               "grade": "B-",
               "score": 3.2,
               "metrics": {
-                "pe": 31,
-                "pb": 7.3,
-                "ps": 4.6,
+                "pe": 31.9,
+                "pb": 7.6,
+                "ps": 4.8,
                 "peg": 2.53,
-                "evEbitda": 20.4
+                "evEbitda": 21
               }
             },
             "growth": {
@@ -4691,14 +4715,14 @@
               }
             },
             "momentum": {
-              "grade": "B+",
-              "score": 3.8,
+              "grade": "A-",
+              "score": 4.2,
               "metrics": {
-                "priceChange1M": 0.1155,
-                "priceChange3M": 0.1113,
-                "priceChange6M": 0.1929,
-                "vs50dma": 0.044,
-                "vs200dma": 0.1158
+                "priceChange1M": 0.1723,
+                "priceChange3M": 0.1481,
+                "priceChange6M": 0.2366,
+                "vs50dma": 0.075,
+                "vs200dma": 0.1479
               }
             },
             "epsRevisions": {
@@ -4748,7 +4772,7 @@
               "grade": "B",
               "score": 3.5,
               "metrics": {
-                "pe": 29.4,
+                "pe": 29.3,
                 "pb": 9.2,
                 "ps": 5.6,
                 "peg": 2.84,
@@ -4778,11 +4802,11 @@
               "grade": "A",
               "score": 4.5,
               "metrics": {
-                "priceChange1M": 0.1443,
-                "priceChange3M": 0.3576,
-                "priceChange6M": 0.2725,
-                "vs50dma": 0.1201,
-                "vs200dma": 0.278
+                "priceChange1M": 0.139,
+                "priceChange3M": 0.3355,
+                "priceChange6M": 0.2214,
+                "vs50dma": 0.1105,
+                "vs200dma": 0.2704
               }
             },
             "epsRevisions": {
@@ -4791,7 +4815,7 @@
               "metrics": {
                 "analystSentiment": 0.74,
                 "numAnalysts": 18,
-                "peRatioFwdVsTrail": 0.93
+                "peRatioFwdVsTrail": 0.929
               }
             },
             "dividend": {
@@ -4827,9 +4851,9 @@
               "grade": "F",
               "score": 1,
               "metrics": {
-                "pe": 149.1,
-                "pb": 20.5,
-                "ps": 26.6,
+                "pe": 156.8,
+                "pb": 21.6,
+                "ps": 27.9,
                 "peg": 0.63,
                 "evEbitda": 120.1
               }
@@ -4855,11 +4879,11 @@
               "grade": "A+",
               "score": 4.9,
               "metrics": {
-                "priceChange1M": -0.0395,
-                "priceChange3M": 0.3603,
-                "priceChange6M": 1.4813,
-                "vs50dma": -0.0614,
-                "vs200dma": 0.6587
+                "priceChange1M": 0.0043,
+                "priceChange3M": 0.3762,
+                "priceChange6M": 1.4809,
+                "vs50dma": -0.0128,
+                "vs200dma": 0.7316
               }
             },
             "epsRevisions": {
@@ -4896,16 +4920,16 @@
         "report_date": "2026-04-01",
         "last_reviewed": "2026-04-01",
         "quant": {
-          "composite": 3.2,
+          "composite": 3.27,
           "rating": "Hold",
-          "score": 3.2,
+          "score": 3.27,
           "factors": {
             "valuation": {
               "grade": "C+",
               "score": 2.8,
               "metrics": {
-                "pe": 38.5,
-                "pb": 12.7,
+                "pe": 39.1,
+                "pb": 12.9,
                 "ps": 2.3,
                 "peg": 9.46,
                 "evEbitda": 13.1
@@ -4929,14 +4953,14 @@
               }
             },
             "momentum": {
-              "grade": "C+",
-              "score": 2.8,
+              "grade": "B-",
+              "score": 3.2,
               "metrics": {
-                "priceChange1M": -0.0836,
-                "priceChange3M": -0.0944,
-                "priceChange6M": 0.1362,
-                "vs50dma": -0.0826,
-                "vs200dma": -0.0095
+                "priceChange1M": -0.0645,
+                "priceChange3M": -0.08,
+                "priceChange6M": 0.1675,
+                "vs50dma": -0.0645,
+                "vs200dma": 0.0074
               }
             },
             "epsRevisions": {
@@ -4986,9 +5010,9 @@
               "grade": "F",
               "score": 1,
               "metrics": {
-                "pe": 106.4,
-                "pb": 14.9,
-                "ps": 31.2,
+                "pe": 105.4,
+                "pb": 14.8,
+                "ps": 30.9,
                 "peg": 1.76,
                 "evEbitda": 100.7
               }
@@ -5016,11 +5040,11 @@
               "grade": "A+",
               "score": 4.9,
               "metrics": {
-                "priceChange1M": 0.8385,
-                "priceChange3M": 2.393,
-                "priceChange6M": 2.38,
-                "vs50dma": 0.5691,
-                "vs200dma": 1.7486
+                "priceChange1M": 0.7465,
+                "priceChange3M": 2.3926,
+                "priceChange6M": 2.4672,
+                "vs50dma": 0.5263,
+                "vs200dma": 1.6952
               }
             },
             "epsRevisions": {
@@ -5070,11 +5094,11 @@
               "grade": "C-",
               "score": 2.2,
               "metrics": {
-                "pe": 53.5,
-                "pb": 17.7,
-                "ps": 22,
+                "pe": 57.1,
+                "pb": 18.9,
+                "ps": 23.5,
                 "peg": 0.36,
-                "evEbitda": 34.6
+                "evEbitda": 37
               }
             },
             "growth": {
@@ -5100,11 +5124,11 @@
               "grade": "A+",
               "score": 4.9,
               "metrics": {
-                "priceChange1M": 0.6639,
-                "priceChange3M": 1.5678,
-                "priceChange6M": 3.5963,
-                "vs50dma": 0.5475,
-                "vs200dma": 1.8306
+                "priceChange1M": 0.7337,
+                "priceChange3M": 1.6249,
+                "priceChange6M": 3.803,
+                "vs50dma": 0.6182,
+                "vs200dma": 1.9831
               }
             },
             "epsRevisions": {
@@ -5113,7 +5137,7 @@
               "metrics": {
                 "analystSentiment": 0.9,
                 "numAnalysts": 40,
-                "peRatioFwdVsTrail": 0.18
+                "peRatioFwdVsTrail": 0.176
               }
             },
             "dividend": {
@@ -5151,9 +5175,9 @@
               "grade": "F",
               "score": 1,
               "metrics": {
-                "pe": 111.1,
-                "pb": 10.1,
-                "ps": 82.9,
+                "pe": 109.9,
+                "pb": 10,
+                "ps": 82,
                 "peg": 0.63
               }
             },
@@ -5178,11 +5202,11 @@
               "grade": "A+",
               "score": 4.9,
               "metrics": {
-                "priceChange1M": 0.4345,
-                "priceChange3M": 1.2079,
-                "priceChange6M": 1.8575,
-                "vs50dma": 0.4538,
-                "vs200dma": 1.2927
+                "priceChange1M": 0.4343,
+                "priceChange3M": 1.438,
+                "priceChange6M": 1.9417,
+                "vs50dma": 0.4171,
+                "vs200dma": 1.2484
               }
             },
             "epsRevisions": {
@@ -5222,17 +5246,17 @@
         "report_date": "2026-06-01",
         "last_reviewed": "2026-06-01",
         "quant": {
-          "composite": 4.02,
+          "composite": 3.95,
           "rating": "Buy",
-          "score": 4.02,
+          "score": 3.95,
           "factors": {
             "valuation": {
               "grade": "B+",
               "score": 3.8,
               "metrics": {
-                "pe": 22,
+                "pe": 21.8,
                 "pb": 3.3,
-                "ps": 6.5,
+                "ps": 6.4,
                 "peg": 1.91,
                 "evEbitda": 20.8
               }
@@ -5257,14 +5281,14 @@
               }
             },
             "momentum": {
-              "grade": "B-",
-              "score": 3.2,
+              "grade": "C+",
+              "score": 2.8,
               "metrics": {
-                "priceChange1M": -0.0186,
-                "priceChange3M": -0.0585,
-                "priceChange6M": 0.0923,
-                "vs50dma": -0.0366,
-                "vs200dma": 0.0239
+                "priceChange1M": -0.0372,
+                "priceChange3M": -0.0629,
+                "priceChange6M": 0.0962,
+                "vs50dma": -0.0424,
+                "vs200dma": 0.0151
               }
             },
             "epsRevisions": {
@@ -5314,9 +5338,9 @@
               "grade": "C-",
               "score": 2.2,
               "metrics": {
-                "pe": 56.6,
-                "pb": 8.4,
-                "ps": 7,
+                "pe": 55.4,
+                "pb": 8.2,
+                "ps": 6.9,
                 "peg": 0.92,
                 "evEbitda": 33
               }
@@ -5344,11 +5368,11 @@
               "grade": "D",
               "score": 1.5,
               "metrics": {
-                "priceChange1M": -0.081,
-                "priceChange3M": -0.1727,
-                "priceChange6M": -0.4432,
-                "vs50dma": -0.0424,
-                "vs200dma": -0.3051
+                "priceChange1M": -0.0866,
+                "priceChange3M": -0.2031,
+                "priceChange6M": -0.456,
+                "vs50dma": -0.0634,
+                "vs200dma": -0.3177
               }
             },
             "epsRevisions": {
@@ -5396,8 +5420,8 @@
               "grade": "A-",
               "score": 4.2,
               "metrics": {
-                "pb": 10.7,
-                "ps": 16
+                "pb": 11,
+                "ps": 16.4
               }
             },
             "growth": {
@@ -5421,11 +5445,11 @@
               "grade": "A+",
               "score": 4.9,
               "metrics": {
-                "priceChange1M": 0.515,
-                "priceChange3M": 1.1864,
-                "priceChange6M": 0.8256,
-                "vs50dma": 0.4074,
-                "vs200dma": 0.7355
+                "priceChange1M": 0.6043,
+                "priceChange3M": 1.2291,
+                "priceChange6M": 0.8838,
+                "vs50dma": 0.4172,
+                "vs200dma": 0.7701
               }
             },
             "epsRevisions": {
@@ -5473,7 +5497,7 @@
               "score": 1,
               "metrics": {
                 "pb": 8.7,
-                "ps": 1485.7
+                "ps": 1478.3
               }
             },
             "growth": {
@@ -5497,11 +5521,11 @@
               "grade": "A+",
               "score": 4.9,
               "metrics": {
-                "priceChange1M": -0.145,
-                "priceChange3M": 0.7583,
-                "priceChange6M": 0.9502,
-                "vs50dma": 0.0624,
-                "vs200dma": 0.6076
+                "priceChange1M": -0.075,
+                "priceChange3M": 0.8402,
+                "priceChange6M": 0.7522,
+                "vs50dma": 0.0462,
+                "vs200dma": 0.5923
               }
             },
             "dividend": {
@@ -5532,17 +5556,17 @@
         "report_date": "2026-06-01",
         "last_reviewed": "2026-06-01",
         "quant": {
-          "composite": 3.52,
+          "composite": 3.5,
           "rating": "Buy",
-          "score": 3.52,
+          "score": 3.5,
           "factors": {
             "valuation": {
-              "grade": "D",
-              "score": 1.5,
+              "grade": "F",
+              "score": 1,
               "metrics": {
-                "pe": 96.2,
-                "pb": 11.7,
-                "ps": 3.5,
+                "pe": 101.4,
+                "pb": 12.3,
+                "ps": 3.7,
                 "peg": 1.94,
                 "evEbitda": 41.9
               }
@@ -5567,14 +5591,14 @@
               }
             },
             "momentum": {
-              "grade": "A",
-              "score": 4.5,
+              "grade": "A+",
+              "score": 4.9,
               "metrics": {
-                "priceChange1M": -0.0287,
-                "priceChange3M": 0.2236,
-                "priceChange6M": 0.5171,
-                "vs50dma": 0.0152,
-                "vs200dma": 0.3418
+                "priceChange1M": 0.0364,
+                "priceChange3M": 0.295,
+                "priceChange6M": 0.6169,
+                "vs50dma": 0.0651,
+                "vs200dma": 0.4092
               }
             },
             "epsRevisions": {
@@ -5613,16 +5637,16 @@
         "report_date": "2026-05-08",
         "last_reviewed": "2026-05-08",
         "quant": {
-          "composite": 3.46,
+          "composite": 3.4,
           "rating": "Hold",
-          "score": 3.46,
+          "score": 3.4,
           "factors": {
             "valuation": {
               "grade": "A+",
               "score": 4.9,
               "metrics": {
-                "pb": 21.9,
-                "ps": 6.7
+                "pb": 20.6,
+                "ps": 6.3
               }
             },
             "growth": {
@@ -5643,14 +5667,14 @@
               }
             },
             "momentum": {
-              "grade": "C",
-              "score": 2.5,
+              "grade": "C-",
+              "score": 2.2,
               "metrics": {
-                "priceChange1M": 0.1655,
-                "priceChange3M": -0.0008,
-                "priceChange6M": -0.3401,
-                "vs50dma": 0.0181,
-                "vs200dma": -0.2089
+                "priceChange1M": 0.051,
+                "priceChange3M": -0.0588,
+                "priceChange6M": -0.3694,
+                "vs50dma": -0.0432,
+                "vs200dma": -0.2538
               }
             },
             "dividend": {
@@ -5689,9 +5713,9 @@
               "grade": "D",
               "score": 1.5,
               "metrics": {
-                "pe": 83.3,
-                "pb": 32.3,
-                "ps": 11.8,
+                "pe": 89.5,
+                "pb": 34.7,
+                "ps": 12.7,
                 "peg": 1.67,
                 "evEbitda": 54
               }
@@ -5719,11 +5743,11 @@
               "grade": "A+",
               "score": 4.9,
               "metrics": {
-                "priceChange1M": -0.0195,
-                "priceChange3M": 0.2586,
-                "priceChange6M": 0.7952,
-                "vs50dma": 0.036,
-                "vs200dma": 0.4878
+                "priceChange1M": 0.1097,
+                "priceChange3M": 0.3339,
+                "priceChange6M": 1.0076,
+                "vs50dma": 0.1086,
+                "vs200dma": 0.5909
               }
             },
             "epsRevisions": {
@@ -5770,11 +5794,11 @@
               "grade": "B",
               "score": 3.5,
               "metrics": {
-                "pe": 27.4,
-                "pb": 21.1,
-                "ps": 2.8,
+                "pe": 28,
+                "pb": 21.6,
+                "ps": 2.9,
                 "peg": 0.48,
-                "evEbitda": 11.3
+                "evEbitda": 11.5
               }
             },
             "growth": {
@@ -5798,11 +5822,11 @@
               "grade": "B",
               "score": 3.5,
               "metrics": {
-                "priceChange1M": 0.1974,
-                "priceChange3M": 0.0122,
-                "priceChange6M": -0.0115,
-                "vs50dma": 0.0622,
-                "vs200dma": -0.0367
+                "priceChange1M": 0.2416,
+                "priceChange3M": 0.0192,
+                "priceChange6M": 0.0177,
+                "vs50dma": 0.083,
+                "vs200dma": -0.0155
               }
             },
             "epsRevisions": {
@@ -9267,32 +9291,32 @@
     }
   },
   "crypto_timeseries": {
-    "generated_at": "2026-06-22T22:46:23.062266",
+    "generated_at": "2026-06-23T07:50:59.729769",
     "latest": {
-      "date": "2026-06-22",
-      "composite": 26.1,
-      "delta_composite": -0.2,
-      "btc_close": 63577,
+      "date": "2026-06-23",
+      "composite": 22.8,
+      "delta_composite": -3.3,
+      "btc_close": 64040,
       "btc_high": null,
       "btc_low": null,
-      "fgi": 20,
-      "fgi_label": "Extreme Fear",
-      "green_count": 2,
+      "fgi": null,
+      "fgi_label": null,
+      "green_count": 3,
       "indicators": {
         "fear_greed": {
-          "value": 23,
-          "status": "yellow"
+          "value": 20,
+          "status": "green"
         },
         "miner_capitulation": {
-          "value": -17.7,
+          "value": -17.1,
           "status": "yellow"
         },
         "black_swan": {
-          "value": 53.2,
+          "value": 56.2,
           "status": "yellow"
         },
         "vix": {
-          "value": 16.4,
+          "value": 17.3,
           "status": "red"
         },
         "stablecoin_ratio": {
@@ -9304,36 +9328,26 @@
           "status": "green"
         },
         "etf_flow": {
-          "value": -8,
+          "value": -15,
           "status": "yellow"
         },
         "dxy": {
-          "value": 100.8,
+          "value": 101,
           "status": "yellow"
         }
       },
       "indicator_deltas": {
-        "fear_greed": 0,
-        "miner_capitulation": -0.6,
-        "black_swan": 0,
-        "vix": 0,
+        "fear_greed": -3,
+        "miner_capitulation": 0.6,
+        "black_swan": 3,
+        "vix": 0.9,
         "stablecoin_ratio": 0,
         "mvrv_zscore": 0,
-        "etf_flow": 0,
-        "dxy": 0
+        "etf_flow": -7,
+        "dxy": 0.2
       }
     },
     "data": [
-      {
-        "date": "2026-01-24",
-        "btc_close": 89110.73,
-        "btc_high": 89811.61,
-        "btc_low": 89044.29,
-        "fgi": 25,
-        "fgi_label": "Extreme Fear",
-        "composite": null,
-        "delta_composite": null
-      },
       {
         "date": "2026-01-25",
         "btc_close": 86572.22,
@@ -10816,54 +10830,64 @@
       },
       {
         "date": "2026-06-22",
-        "btc_close": 63577,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 63883.1,
+        "btc_high": 65498.68,
+        "btc_low": 63242.26,
         "fgi": 20,
         "fgi_label": "Extreme Fear",
         "composite": 26.1,
         "delta_composite": -0.2
+      },
+      {
+        "date": "2026-06-23",
+        "btc_close": 64040,
+        "btc_high": null,
+        "btc_low": null,
+        "fgi": null,
+        "fgi_label": null,
+        "composite": 22.8,
+        "delta_composite": -3.3
       }
     ]
   },
   "gold_tracker": {
-    "generated_at": "2026-06-21T23:03:10.075718+00:00",
+    "generated_at": "2026-06-22T23:00:57.336862+00:00",
     "price": {
-      "xau_usd": 4171.6,
-      "day_change_pct": -1.03,
+      "xau_usd": 4207.5,
+      "day_change_pct": 1.5,
       "week_52_high": 5586.2,
       "week_52_low": 3253.8,
-      "drawdown_from_peak_pct": -24.15,
+      "drawdown_from_peak_pct": -23.5,
       "peak_price": 5500
     },
     "technical": {
-      "bollinger_mid_weekly": 4711.43,
+      "bollinger_mid_weekly": 4672.93,
       "above_bollinger_mid": false,
-      "bollinger_mid_pct_diff": -11.46
+      "bollinger_mid_pct_diff": -9.96
     },
     "monetary": {
       "m2_trillion": 22.88,
       "m2_date": "2026-05-04",
       "m2_trigger_line": 24,
       "m2_to_trigger_pct": 95.3,
-      "gold_m2_ratio": 182.325175,
-      "ratio_display": 182.3,
+      "gold_m2_ratio": 183.894231,
+      "ratio_display": 183.9,
       "inversion_status": "normal",
       "inversion_label_en": "Normal Range",
       "inversion_label_zh": "正常区间"
     },
     "cost_floor": {
       "aisc_usd": 1750,
-      "price_above_aisc_pct": 138.4
+      "price_above_aisc_pct": 140.4
     },
     "premium": {
-      "shfe_cny_per_gram": 936,
-      "lbma_usd_per_oz": 4156.14,
-      "usd_cny": 6.7681,
-      "international_cny_per_gram": 904.37,
-      "premium_pct": 3.5,
+      "shfe_cny_per_gram": 906,
+      "lbma_usd_per_oz": 4191.96,
+      "usd_cny": 6.7751,
+      "international_cny_per_gram": 913.11,
+      "premium_pct": -0.78,
       "source": "sge:Au99.99 + sina:hf_XAU + sina:fx_susdcny",
-      "updated_at": "2026年06月18日 15:45:00"
+      "updated_at": "2026年06月23日 02:29:55"
     },
     "signal": {
       "status": "yellow",
@@ -10872,7 +10896,7 @@
     }
   },
   "gold_timeseries": {
-    "generated_at": "2026-06-21T23:03:10.079643+00:00",
+    "generated_at": "2026-06-22T23:00:57.340708+00:00",
     "data": [
       {
         "date": "2025-05-02",
@@ -13609,6 +13633,15 @@
         "bollinger_mid_pct_diff": -11.46,
         "premium_pct": 3.5,
         "signal_status": "yellow"
+      },
+      {
+        "date": "2026-06-23",
+        "xau_usd": 4207.5,
+        "m2_trillion": 22.88,
+        "gold_m2_ratio": 183.894231,
+        "bollinger_mid_pct_diff": -9.96,
+        "premium_pct": -0.78,
+        "signal_status": "yellow"
       }
     ]
   },
@@ -13826,8 +13859,8 @@
     {
       "date": "2026-06-22",
       "health": 3.8,
-      "portfolio_beta": 1.44,
-      "equity_beta": 1.46
+      "portfolio_beta": 1.41,
+      "equity_beta": 1.38
     }
   ],
   "capital_mobility_risk": {
