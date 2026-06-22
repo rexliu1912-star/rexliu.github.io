@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-21T23:50:58.504Z",
+  "generated_at": "2026-06-22T13:59:06.934Z",
   "regime": {
     "current": {
       "label": "防御期",
@@ -15,7 +15,7 @@
         },
         "dxy": {
           "label": "DXY",
-          "value": "100.84",
+          "value": "100.89",
           "light": "yellow"
         },
         "vix": {
@@ -2351,7 +2351,7 @@
             "status": null
           },
           "dxy": {
-            "value": 100.84,
+            "value": 100.89,
             "light": "yellow",
             "status": null
           },
@@ -2380,9 +2380,9 @@
           "id": "stablecoin",
           "label_en": "Stablecoin Yield",
           "label_zh": "稳定币生息",
-          "target_pct": 32,
+          "target_pct": 31.3,
           "current_pct": 37.6,
-          "drift_pp": 5.6,
+          "drift_pp": 6.3,
           "color": "#10b981",
           "sub_tags_en": [
             "USDT",
@@ -2398,23 +2398,23 @@
           "note_zh": "底座层——带息、低 beta、抗衰退",
           "expected_return_pct": 5,
           "annual_volatility_pct": 1,
-          "model_target_pct": 32,
+          "model_target_pct": 31.3,
           "raw_model_target_pct": 31.2,
           "signal_score": 80,
           "model_action": "trim",
           "model_rationale_en": "APR 5.0% and regime neutral keep liquidity floor high.",
           "model_rationale_zh": "稳定币 APR 5.0%，当前 neutral 环境下维持流动性底座。",
           "model_current_pct": 37.6,
-          "model_drift_pp": 5.6,
-          "gap_amount": -648032
+          "model_drift_pp": 6.3,
+          "gap_amount": -729036
         },
         {
           "id": "funds",
           "label_en": "Funds",
           "label_zh": "基金与现金",
-          "target_pct": 31.6,
+          "target_pct": 31.1,
           "current_pct": 35.5,
-          "drift_pp": 3.9,
+          "drift_pp": 4.4,
           "color": "#3b82f6",
           "sub_tags_en": [
             "Cash & Deposits",
@@ -2430,15 +2430,15 @@
           "note_zh": "现金缓冲 + 保守理财 + 专项资金（买房/教育/应收）",
           "expected_return_pct": 3.2,
           "annual_volatility_pct": 3,
-          "model_target_pct": 31.6,
+          "model_target_pct": 31.1,
           "raw_model_target_pct": 31.1,
           "signal_score": 78.2,
           "model_action": "trim",
           "model_rationale_en": "SOFR 3.63% supports conservative cash/fund carry.",
           "model_rationale_zh": "SOFR 3.63%，保守现金/基金仍有持有收益。",
           "model_current_pct": 35.5,
-          "model_drift_pp": 3.9,
-          "gap_amount": -451308
+          "model_drift_pp": 4.4,
+          "gap_amount": -509168
         },
         {
           "id": "gold",
@@ -2474,9 +2474,9 @@
           "id": "stocks",
           "label_en": "Stocks",
           "label_zh": "股票",
-          "target_pct": 25.2,
+          "target_pct": 26,
           "current_pct": 17,
-          "drift_pp": -8.2,
+          "drift_pp": -9,
           "color": "#8953d1",
           "sub_tags_en": [
             "AI Power",
@@ -2492,15 +2492,15 @@
           "note_zh": "长期 + 波段组合——AI 电力核心 + 机会主义叠加",
           "expected_return_pct": 8.7,
           "annual_volatility_pct": 23.4,
-          "model_target_pct": 25.2,
+          "model_target_pct": 26,
           "raw_model_target_pct": 26.1,
           "signal_score": 66.2,
           "model_action": "add",
           "model_rationale_en": "Portfolio health 3.8/5.0, equity beta 1.46, regime score 48.0.",
           "model_rationale_zh": "组合健康度 3.8/5.0，股票 beta 1.46，宏观分数 48.0。",
           "model_current_pct": 17,
-          "model_drift_pp": -8.2,
-          "gap_amount": 948904,
+          "model_drift_pp": -9,
+          "gap_amount": 1041480,
           "sub": [
             {
               "id": "cn",
@@ -2514,9 +2514,9 @@
           "id": "crypto",
           "label_en": "Crypto",
           "label_zh": "加密敞口",
-          "target_pct": 7.4,
+          "target_pct": 7.8,
           "current_pct": 6.3,
-          "drift_pp": -1.1,
+          "drift_pp": -1.5,
           "color": "#f59e0b",
           "sub_tags_en": [
             "BTC",
@@ -2530,21 +2530,21 @@
           "note_zh": "不对称下注——长久期、低相关、高波动核心",
           "expected_return_pct": 11.9,
           "annual_volatility_pct": 35,
-          "model_target_pct": 7.4,
+          "model_target_pct": 7.8,
           "raw_model_target_pct": 7.9,
           "signal_score": 31.1,
           "model_action": "hold",
           "model_rationale_en": "Crypto composite 26.1, fear/greed 22; capped at 15%.",
           "model_rationale_zh": "Crypto composite 26.1，恐惧贪婪 22；上限 15%。",
           "model_current_pct": 6.3,
-          "model_drift_pp": -1.1,
-          "gap_amount": 127292
+          "model_drift_pp": -1.5,
+          "gap_amount": 173580
         }
       ],
       "model": {
         "schema": "portfolio-allocation-model/v1",
         "version": "0.1.0",
-        "generated_at": "2026-06-21T23:50:57.173152+00:00",
+        "generated_at": "2026-06-22T13:58:58.073273+00:00",
         "regime": {
           "name": "neutral",
           "score": 48
@@ -2552,12 +2552,12 @@
       },
       "risk_free_rate": 3.63,
       "weighted_return": {
-        "target": 5.8,
+        "target": 5.9,
         "current": 5.4
       },
       "projected_annual_yield": 621497,
       "risk": {
-        "target_vol": 10.8,
+        "target_vol": 11.1,
         "current_vol": 8.6,
         "sharpe_target": 0.2,
         "sharpe_current": 0.2,
@@ -2567,7 +2567,7 @@
         "temperature_label_zh": "防御型"
       },
       "health": 3.8,
-      "portfolio_beta": 1.45,
+      "portfolio_beta": 1.44,
       "equity_beta": 1.46
     }
   },
@@ -2784,68 +2784,16 @@
       },
       "next_event": null,
       "news": {
-        "summary": "WWDC/Siri时间线和估值引发短期谨慎；iPhone 18/Fold、AI硬件和生态锁定支撑中长期偏多",
+        "summary": "X: AAPL sentiment mixed: WWDC AI/Siri reaction cautious, longer-term product roadmap and analyst ratings still construct…",
         "sentiment": "neutral",
         "items": [
           {
-            "title": "X叙事：短期谨慎，长期看产品线",
-            "snippet": "WWDC/Siri时间线和估值引发短期谨慎；iPhone 18/Fold、AI硬件和生态锁定支撑中长期偏多。"
+            "title": "X narrative",
+            "snippet": "X: AAPL sentiment mixed: WWDC AI/Siri reaction cautious, longer-term product roadmap and analyst ratings still constructive."
           }
         ]
       },
       "price": 298.01,
-      "daily_change_pct": 0
-    },
-    {
-      "symbol": "AVGO",
-      "market": "us",
-      "flag": "🇺🇸",
-      "sector_tags_en": [
-        "Semiconductors",
-        "AI Infrastructure",
-        "Networking"
-      ],
-      "sector_tags_zh": [
-        "半导体",
-        "AI基础设施",
-        "网络芯片"
-      ],
-      "driver_factors_en": [],
-      "driver_factors_zh": [],
-      "thesis_en": "",
-      "thesis_zh": "",
-      "stage": 7,
-      "status_en": "Active",
-      "status_zh": "持有中",
-      "conviction": "high",
-      "horizon": "long",
-      "entry_year": null,
-      "layer": "L5",
-      "layer_label_en": "AI Compute",
-      "layer_label_zh": "AI算力",
-      "stop": {
-        "type": "stop_loss",
-        "level_pct_from_current": "-21.4%",
-        "severity": "gray",
-        "description": "Broadcom Inc. stop loss ~18% below cost"
-      },
-      "target": null,
-      "next_event": {
-        "date": "2026-09-04",
-        "label": "Broadcom Inc. earnings report",
-        "urgency": 2
-      },
-      "news": {
-        "summary": "JPM等看多，AI自研芯片、网络和软件现金流支撑；短期担忧集中在毛利和高预期",
-        "sentiment": "neutral",
-        "items": [
-          {
-            "title": "X叙事：AI ASIC/网络核心，多头占优",
-            "snippet": "JPM等看多，AI自研芯片、网络和软件现金流支撑；短期担忧集中在毛利和高预期。"
-          }
-        ]
-      },
-      "price": 411.35,
       "daily_change_pct": 0
     },
     {
@@ -2878,7 +2826,7 @@
       "status_en": "Long · Core",
       "status_zh": "长期 · 底仓",
       "conviction": "high",
-      "horizon": "long",
+      "horizon": "short",
       "entry_year": 2026,
       "layer": "satellite",
       "layer_label_en": "Baseload Generation",
@@ -2896,17 +2844,48 @@
         "urgency": 2
       },
       "news": {
-        "summary": "核电稀缺资产、PPA和Calpine整合是主线；GS Neutral提醒估值已反映较多利好",
+        "summary": "X: CEG sentiment bullish around nuclear/data-center power demand; Goldman initiated Neutral/$305, valuation noted.",
         "sentiment": "positive",
         "items": [
           {
-            "title": "X叙事：AI数据中心核电需求仍强",
-            "snippet": "核电稀缺资产、PPA和Calpine整合是主线；GS Neutral提醒估值已反映较多利好。"
+            "title": "X narrative",
+            "snippet": "X: CEG sentiment bullish around nuclear/data-center power demand; Goldman initiated Neutral/$305, valuation noted."
           }
         ]
       },
       "price": 274.06,
       "daily_change_pct": 0
+    },
+    {
+      "symbol": "DRAM",
+      "market": "us",
+      "flag": "🇺🇸",
+      "sector_tags_en": [
+        "semiconductor",
+        "memory",
+        "AI-infrastructure"
+      ],
+      "sector_tags_zh": [
+        "半导体",
+        "内存",
+        "AI基建"
+      ],
+      "driver_factors_en": [],
+      "driver_factors_zh": [],
+      "thesis_en": "Memory/storage semiconductor cycle play — SK Hynix, Micron, Samsung weighted. HBM demand inflection from AI compute.",
+      "thesis_zh": "内存/存储芯片周期 — SK Hynix、Micron、Samsung 权重最大。HBM 需求受益于 AI 算力爆发。",
+      "stage": 7,
+      "status_en": "Active",
+      "status_zh": "持有中",
+      "conviction": "60",
+      "horizon": "short",
+      "entry_year": null,
+      "layer": "satellite",
+      "layer_label_en": "Satellite",
+      "layer_label_zh": null,
+      "stop": null,
+      "target": null,
+      "next_event": null
     },
     {
       "symbol": "GOOGL",
@@ -2930,7 +2909,7 @@
       "status_en": "Active",
       "status_zh": "持有中",
       "conviction": "high",
-      "horizon": "long",
+      "horizon": "short",
       "entry_year": 2026,
       "layer": "core",
       "layer_label_en": "Core",
@@ -2944,12 +2923,12 @@
       "target": null,
       "next_event": null,
       "news": {
-        "summary": "Search/YouTube/Cloud/Gemini和AI芯片叙事支撑买跌；AI人才流动与监管噪音压制短期情绪",
-        "sentiment": "neutral",
+        "summary": "X: GOOGL sentiment positive/cautious: AI, Cloud, Waymo and cash flow support; regulatory and resistance levels are risks…",
+        "sentiment": "negative",
         "items": [
           {
-            "title": "X叙事：长期建设性，短线受AI人才/监管扰动",
-            "snippet": "Search/YouTube/Cloud/Gemini和AI芯片叙事支撑买跌；AI人才流动与监管噪音压制短期情绪。"
+            "title": "X narrative",
+            "snippet": "X: GOOGL sentiment positive/cautious: AI, Cloud, Waymo and cash flow support; regulatory and resistance levels are risks."
           }
         ]
       },
@@ -3000,12 +2979,12 @@
       "target": null,
       "next_event": null,
       "news": {
-        "summary": "Blackwell、CUDA和hyperscaler capex支撑长期多头；估值、ASIC竞争和技术形态让短线更谨慎",
-        "sentiment": "neutral",
+        "summary": "X: NVDA analyst sentiment remains bullish; short-term chatter mixed on competition, debt, AI capex and volatility.",
+        "sentiment": "positive",
         "items": [
           {
-            "title": "X叙事：长期AI核心，短线分歧",
-            "snippet": "Blackwell、CUDA和hyperscaler capex支撑长期多头；估值、ASIC竞争和技术形态让短线更谨慎。"
+            "title": "X narrative",
+            "snippet": "X: NVDA analyst sentiment remains bullish; short-term chatter mixed on competition, debt, AI capex and volatility."
           }
         ]
       },
@@ -3026,7 +3005,7 @@
       "status_en": "Active",
       "status_zh": "持有中",
       "conviction": "medium",
-      "horizon": "long",
+      "horizon": "short",
       "entry_year": null,
       "layer": null,
       "layer_label_en": null,
@@ -3035,12 +3014,12 @@
       "target": null,
       "next_event": null,
       "news": {
-        "summary": "AIP商业增长、政府/商业双轮和高利润率支撑长期多头；高倍数、合约/政治风险和技术弱势是主要空头点",
+        "summary": "X: PLTR sentiment polarized: AI/AIP fundamentals strong, but valuation, technical weakness and insider selling weigh.",
         "sentiment": "neutral",
         "items": [
           {
-            "title": "X叙事：回调被视作买点，估值争议仍大",
-            "snippet": "AIP商业增长、政府/商业双轮和高利润率支撑长期多头；高倍数、合约/政治风险和技术弱势是主要空头点。"
+            "title": "X narrative",
+            "snippet": "X: PLTR sentiment polarized: AI/AIP fundamentals strong, but valuation, technical weakness and insider selling weigh."
           }
         ]
       },
@@ -3091,12 +3070,12 @@
       "target": null,
       "next_event": null,
       "news": {
-        "summary": "纳指100在高位震荡，dip-buying文化仍在；低VIX、杠杆ETF扩张和宏观事件是回撤风险",
-        "sentiment": "neutral",
+        "summary": "X: QQQ cautiously constructive technically, but geopolitical oil/yield risk and leveraged positioning temper risk-on bia…",
+        "sentiment": "negative",
         "items": [
           {
-            "title": "X叙事：谨慎偏多，等突破确认",
-            "snippet": "纳指100在高位震荡，dip-buying文化仍在；低VIX、杠杆ETF扩张和宏观事件是回撤风险。"
+            "title": "X narrative",
+            "snippet": "X: QQQ cautiously constructive technically, but geopolitical oil/yield risk and leveraged positioning temper risk-on bias."
           }
         ]
       },
@@ -3125,7 +3104,7 @@
       "status_en": "Active",
       "status_zh": "持有中",
       "conviction": "medium",
-      "horizon": "long",
+      "horizon": "short",
       "entry_year": null,
       "layer": "L4",
       "layer_label_en": "Space Economy",
@@ -3143,12 +3122,12 @@
         "urgency": 2
       },
       "news": {
-        "summary": "Neutron、国防合同和空间系统 backlog 是主线；估值高、指数纳入后sell-the-news是短期风险",
-        "sentiment": "negative",
+        "summary": "X: RKLB sentiment bullish around Neutron, launch cadence and backlog; valuation and insider sale are caveats.",
+        "sentiment": "positive",
         "items": [
           {
-            "title": "X叙事：Nasdaq-100纳入催化，长期多头活跃",
-            "snippet": "Neutron、国防合同和空间系统 backlog 是主线；估值高、指数纳入后sell-the-news是短期风险。"
+            "title": "X narrative",
+            "snippet": "X: RKLB sentiment bullish around Neutron, launch cadence and backlog; valuation and insider sale are caveats."
           }
         ]
       },
@@ -3199,12 +3178,12 @@
       "target": null,
       "next_event": null,
       "news": {
-        "summary": "半导体/AI动量极强并创新高；同时put activity、估值和泡沫类比让情绪从单边乐观转为乐观但紧张",
-        "sentiment": "neutral",
+        "summary": "X: SMH momentum bullish but crowded: record semiconductor ETF inflows, concentration and put hedging warnings.",
+        "sentiment": "positive",
         "items": [
           {
-            "title": "X叙事：强趋势但保护性仓位升温",
-            "snippet": "半导体/AI动量极强并创新高；同时put activity、估值和泡沫类比让情绪从单边乐观转为乐观但紧张。"
+            "title": "X narrative",
+            "snippet": "X: SMH momentum bullish but crowded: record semiconductor ETF inflows, concentration and put hedging warnings."
           }
         ]
       },
@@ -3255,12 +3234,12 @@
       "target": null,
       "next_event": null,
       "news": {
-        "summary": "长期DCA和AI/半导体敞口受欢迎；但科技权重接近历史高位带来集中度担忧",
-        "sentiment": "neutral",
+        "summary": "X: VGT sentiment cautiously optimistic; AI/tech exposure and DCA demand positive, concentration/crowding risk noted.",
+        "sentiment": "negative",
         "items": [
           {
-            "title": "X叙事：核心科技ETF，情绪偏多",
-            "snippet": "长期DCA和AI/半导体敞口受欢迎；但科技权重接近历史高位带来集中度担忧。"
+            "title": "X narrative",
+            "snippet": "X: VGT sentiment cautiously optimistic; AI/tech exposure and DCA demand positive, concentration/crowding risk noted."
           }
         ]
       },
@@ -3351,7 +3330,7 @@
           "score": 50,
           "detail_en": "Drawdown: -28.7%",
           "detail_zh": "回撤: -28.7%",
-          "delta": 0.4,
+          "delta": 0.5,
           "desc_en": "BTC drawdown from ATH + miner revenue stress",
           "desc_zh": "BTC 距高点回撤 + 矿工收入压力"
         },
@@ -3425,31 +3404,7 @@
     },
     "etf": {
       "btc_etf_net_flow_m": -8,
-      "btc_etf_total_volume_m": 2192,
-      "source": "yfinance-estimate",
-      "etfs": [
-        {
-          "ticker": "IBIT",
-          "volume_usd_m": 1707
-        },
-        {
-          "ticker": "FBTC",
-          "volume_usd_m": 252
-        },
-        {
-          "ticker": "GBTC",
-          "volume_usd_m": 106
-        },
-        {
-          "ticker": "ARKB",
-          "volume_usd_m": 57
-        },
-        {
-          "ticker": "BITB",
-          "volume_usd_m": 70
-        }
-      ],
-      "date": "2026-06-22"
+      "etfs": []
     },
     "dca": {
       "status": "closed",
@@ -3504,8 +3459,8 @@
         "label_en": "Stablecoin Yield",
         "label_zh": "稳定币生息",
         "current_pct": 37.6,
-        "target_pct": 32,
-        "drift_pp": 5.6,
+        "target_pct": 31.3,
+        "drift_pp": 6.3,
         "color": "#10b981",
         "sub_tags_en": [
           "USDT",
@@ -3523,8 +3478,8 @@
         "label_en": "Funds",
         "label_zh": "基金与现金",
         "current_pct": 35.5,
-        "target_pct": 31.6,
-        "drift_pp": 3.9,
+        "target_pct": 31.1,
+        "drift_pp": 4.4,
         "color": "#3b82f6",
         "sub_tags_en": [
           "Cash & Deposits",
@@ -3559,8 +3514,8 @@
         "label_en": "Stocks",
         "label_zh": "股票",
         "current_pct": 17,
-        "target_pct": 25.2,
-        "drift_pp": -8.2,
+        "target_pct": 26,
+        "drift_pp": -9,
         "color": "#8953d1",
         "sub_tags_en": [
           "AI Power",
@@ -3578,8 +3533,8 @@
         "label_en": "Crypto",
         "label_zh": "加密敞口",
         "current_pct": 6.3,
-        "target_pct": 7.4,
-        "drift_pp": -1.1,
+        "target_pct": 7.8,
+        "drift_pp": -1.5,
         "color": "#f59e0b",
         "sub_tags_en": [
           "BTC",
@@ -3718,7 +3673,66 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-06-01",
-        "last_reviewed": "2026-06-01"
+        "last_reviewed": "2026-06-01",
+        "quant": {
+          "composite": 3.78,
+          "rating": "Buy",
+          "score": 3.78,
+          "factors": {
+            "valuation": {
+              "grade": "B",
+              "score": 3.5,
+              "metrics": {
+                "pb": 11.6,
+                "ps": 25.6,
+                "peg": 0.78
+              }
+            },
+            "growth": {
+              "grade": "A-",
+              "score": 4.2,
+              "metrics": {
+                "revenueGrowth": 0.514
+              }
+            },
+            "profitability": {
+              "grade": "F",
+              "score": 1,
+              "metrics": {
+                "grossMargin": 0.296,
+                "operatingMargin": -0.086,
+                "netMargin": -0.085,
+                "roe": -0.061
+              }
+            },
+            "momentum": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "priceChange1M": -0.0659,
+                "priceChange3M": 0.7205,
+                "priceChange6M": 4.8136,
+                "vs50dma": -0.047,
+                "vs200dma": 1.105
+              }
+            },
+            "epsRevisions": {
+              "grade": "A-",
+              "score": 4.2,
+              "metrics": {
+                "analystSentiment": 0.73,
+                "numAnalysts": 5
+              }
+            },
+            "dividend": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "payoutRatio": 0
+              }
+            }
+          }
+        }
       },
       "AMAT": {
         "ticker": "AMAT",
@@ -3736,7 +3750,73 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-05-15",
-        "last_reviewed": "2026-05-15"
+        "last_reviewed": "2026-05-15",
+        "quant": {
+          "composite": 3.93,
+          "rating": "Buy",
+          "score": 3.93,
+          "factors": {
+            "valuation": {
+              "grade": "C-",
+              "score": 2.2,
+              "metrics": {
+                "pe": 58.2,
+                "pb": 20.5,
+                "ps": 16.9,
+                "peg": 2.05,
+                "evEbitda": 52.7
+              }
+            },
+            "growth": {
+              "grade": "B-",
+              "score": 3.2,
+              "metrics": {
+                "revenueGrowth": 0.114,
+                "earningsGrowth": 0.335,
+                "epsGrowth": 0.313
+              }
+            },
+            "profitability": {
+              "grade": "B",
+              "score": 3.5,
+              "metrics": {
+                "grossMargin": 0.49,
+                "operatingMargin": 0.319,
+                "netMargin": 0.293,
+                "roe": 0.397
+              }
+            },
+            "momentum": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "priceChange1M": 0.494,
+                "priceChange3M": 0.7848,
+                "priceChange6M": 1.307,
+                "vs50dma": 0.3856,
+                "vs200dma": 0.9456
+              }
+            },
+            "epsRevisions": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "analystSentiment": 0.9,
+                "numAnalysts": 35,
+                "peRatioFwdVsTrail": 0.651
+              }
+            },
+            "dividend": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "payoutRatio": 0.173,
+                "dividendYield": 0.34,
+                "dividendRate": 2.12
+              }
+            }
+          }
+        }
       },
       "BKR": {
         "ticker": "BKR",
@@ -3751,7 +3831,73 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-05-11",
-        "last_reviewed": "2026-05-11"
+        "last_reviewed": "2026-05-11",
+        "quant": {
+          "composite": 3.85,
+          "rating": "Buy",
+          "score": 3.85,
+          "factors": {
+            "valuation": {
+              "grade": "A-",
+              "score": 4.2,
+              "metrics": {
+                "pe": 18.7,
+                "pb": 3,
+                "ps": 2.1,
+                "peg": 2.34,
+                "evEbitda": 12.1
+              }
+            },
+            "growth": {
+              "grade": "A",
+              "score": 4.5,
+              "metrics": {
+                "revenueGrowth": 0.025,
+                "earningsGrowth": 1.325,
+                "epsGrowth": 1.313
+              }
+            },
+            "profitability": {
+              "grade": "C-",
+              "score": 2.2,
+              "metrics": {
+                "grossMargin": 0.236,
+                "operatingMargin": 0.123,
+                "netMargin": 0.112,
+                "roe": 0.172
+              }
+            },
+            "momentum": {
+              "grade": "B",
+              "score": 3.5,
+              "metrics": {
+                "priceChange1M": -0.1178,
+                "priceChange3M": 0.0619,
+                "priceChange6M": 0.2413,
+                "vs50dma": -0.0904,
+                "vs200dma": 0.0649
+              }
+            },
+            "epsRevisions": {
+              "grade": "B+",
+              "score": 3.8,
+              "metrics": {
+                "analystSentiment": 0.85,
+                "numAnalysts": 21,
+                "peRatioFwdVsTrail": 1.125
+              }
+            },
+            "dividend": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "payoutRatio": 0.294,
+                "dividendYield": 1.58,
+                "dividendRate": 0.92
+              }
+            }
+          }
+        }
       },
       "BOT": {
         "ticker": "BOT",
@@ -3766,7 +3912,30 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-05-22",
-        "last_reviewed": "2026-05-22"
+        "last_reviewed": "2026-05-22",
+        "quant": {
+          "composite": 2.4,
+          "rating": "Sell",
+          "score": 2.4,
+          "factors": {
+            "profitability": {
+              "grade": "F",
+              "score": 1,
+              "metrics": {
+                "grossMargin": 0,
+                "operatingMargin": 0,
+                "netMargin": 0
+              }
+            },
+            "momentum": {
+              "grade": "B+",
+              "score": 3.8,
+              "metrics": {
+                "priceChange1M": 0.1128
+              }
+            }
+          }
+        }
       },
       "COIN": {
         "ticker": "COIN",
@@ -3781,7 +3950,69 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-04-01",
-        "last_reviewed": "2026-04-01"
+        "last_reviewed": "2026-04-01",
+        "quant": {
+          "composite": 2.95,
+          "rating": "Hold",
+          "score": 2.95,
+          "factors": {
+            "valuation": {
+              "grade": "C-",
+              "score": 2.2,
+              "metrics": {
+                "pe": 59.8,
+                "pb": 3.2,
+                "ps": 6.8,
+                "peg": 0.98,
+                "evEbitda": 40.4
+              }
+            },
+            "growth": {
+              "grade": "F",
+              "score": 1,
+              "metrics": {
+                "revenueGrowth": -0.308
+              }
+            },
+            "profitability": {
+              "grade": "B-",
+              "score": 3.2,
+              "metrics": {
+                "grossMargin": 0.855,
+                "operatingMargin": -0.071,
+                "netMargin": 0.127,
+                "roe": 0.067
+              }
+            },
+            "momentum": {
+              "grade": "D",
+              "score": 1.5,
+              "metrics": {
+                "priceChange1M": -0.1382,
+                "priceChange3M": -0.197,
+                "priceChange6M": -0.4046,
+                "vs50dma": -0.1185,
+                "vs200dma": -0.3144
+              }
+            },
+            "epsRevisions": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "analystSentiment": 0.8,
+                "numAnalysts": 30,
+                "peRatioFwdVsTrail": 0.581
+              }
+            },
+            "dividend": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "payoutRatio": 0
+              }
+            }
+          }
+        }
       },
       "CRCL": {
         "ticker": "CRCL",
@@ -3796,7 +4027,68 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-04-01",
-        "last_reviewed": "2026-04-01"
+        "last_reviewed": "2026-04-01",
+        "quant": {
+          "composite": 2.97,
+          "rating": "Hold",
+          "score": 2.97,
+          "factors": {
+            "valuation": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "pb": 5.8,
+                "ps": 7.5,
+                "peg": 4.34
+              }
+            },
+            "growth": {
+              "grade": "F",
+              "score": 1,
+              "metrics": {
+                "revenueGrowth": 0.2,
+                "earningsGrowth": -0.809,
+                "epsGrowth": -0.147
+              }
+            },
+            "profitability": {
+              "grade": "F",
+              "score": 1,
+              "metrics": {
+                "grossMargin": 0.081,
+                "operatingMargin": 0.065,
+                "netMargin": -0.028,
+                "roe": -0.03
+              }
+            },
+            "momentum": {
+              "grade": "D",
+              "score": 1.5,
+              "metrics": {
+                "priceChange1M": -0.2797,
+                "priceChange3M": -0.3624,
+                "priceChange6M": -0.0444,
+                "vs50dma": -0.2079,
+                "vs200dma": -0.1924
+              }
+            },
+            "epsRevisions": {
+              "grade": "A",
+              "score": 4.5,
+              "metrics": {
+                "analystSentiment": 0.77,
+                "numAnalysts": 22
+              }
+            },
+            "dividend": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "payoutRatio": 0
+              }
+            }
+          }
+        }
       },
       "CRM": {
         "ticker": "CRM",
@@ -3814,7 +4106,73 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-05-18",
-        "last_reviewed": "2026-05-18"
+        "last_reviewed": "2026-05-18",
+        "quant": {
+          "composite": 3.75,
+          "rating": "Buy",
+          "score": 3.75,
+          "factors": {
+            "valuation": {
+              "grade": "A-",
+              "score": 4.2,
+              "metrics": {
+                "pe": 17.6,
+                "pb": 3.6,
+                "ps": 2.9,
+                "peg": 0.72,
+                "evEbitda": 12
+              }
+            },
+            "growth": {
+              "grade": "B",
+              "score": 3.5,
+              "metrics": {
+                "revenueGrowth": 0.133,
+                "earningsGrowth": 0.522,
+                "epsGrowth": 0.367
+              }
+            },
+            "profitability": {
+              "grade": "B",
+              "score": 3.5,
+              "metrics": {
+                "grossMargin": 0.776,
+                "operatingMargin": 0.218,
+                "netMargin": 0.187,
+                "roe": 0.169
+              }
+            },
+            "momentum": {
+              "grade": "D",
+              "score": 1.5,
+              "metrics": {
+                "priceChange1M": -0.1522,
+                "priceChange3M": -0.2309,
+                "priceChange6M": -0.4112,
+                "vs50dma": -0.1458,
+                "vs200dma": -0.2948
+              }
+            },
+            "epsRevisions": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "analystSentiment": 0.87,
+                "numAnalysts": 52,
+                "peRatioFwdVsTrail": 0.558
+              }
+            },
+            "dividend": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "payoutRatio": 0.196,
+                "dividendYield": 1.16,
+                "dividendRate": 1.76
+              }
+            }
+          }
+        }
       },
       "CRWD": {
         "ticker": "CRWD",
@@ -3829,7 +4187,67 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-05-31",
-        "last_reviewed": "2026-05-31"
+        "last_reviewed": "2026-05-31",
+        "quant": {
+          "composite": 3.87,
+          "rating": "Buy",
+          "score": 3.87,
+          "factors": {
+            "valuation": {
+              "grade": "B-",
+              "score": 3.2,
+              "metrics": {
+                "pb": 37.6,
+                "ps": 34.2,
+                "peg": 5.57,
+                "evEbitda": 2876.8
+              }
+            },
+            "growth": {
+              "grade": "B-",
+              "score": 3.2,
+              "metrics": {
+                "revenueGrowth": 0.256
+              }
+            },
+            "profitability": {
+              "grade": "C",
+              "score": 2.5,
+              "metrics": {
+                "grossMargin": 0.751,
+                "operatingMargin": -0.022,
+                "netMargin": -0.006,
+                "roe": -0.002
+              }
+            },
+            "momentum": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "priceChange1M": 0.1067,
+                "priceChange3M": 0.6158,
+                "priceChange6M": 0.3293,
+                "vs50dma": 0.211,
+                "vs200dma": 0.3994
+              }
+            },
+            "epsRevisions": {
+              "grade": "A",
+              "score": 4.5,
+              "metrics": {
+                "analystSentiment": 0.87,
+                "numAnalysts": 51
+              }
+            },
+            "dividend": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "payoutRatio": 0
+              }
+            }
+          }
+        }
       },
       "CRWV": {
         "ticker": "CRWV",
@@ -3844,7 +4262,66 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-05-08",
-        "last_reviewed": "2026-05-08"
+        "last_reviewed": "2026-05-08",
+        "quant": {
+          "composite": 4.18,
+          "rating": "Buy",
+          "score": 4.18,
+          "factors": {
+            "valuation": {
+              "grade": "A",
+              "score": 4.5,
+              "metrics": {
+                "pb": 13.2,
+                "ps": 10.3,
+                "evEbitda": 32.2
+              }
+            },
+            "growth": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "revenueGrowth": 1.116
+              }
+            },
+            "profitability": {
+              "grade": "D+",
+              "score": 1.8,
+              "metrics": {
+                "grossMargin": 0.694,
+                "operatingMargin": -0.069,
+                "netMargin": -0.256,
+                "roe": -0.407
+              }
+            },
+            "momentum": {
+              "grade": "A",
+              "score": 4.5,
+              "metrics": {
+                "priceChange1M": 0.1366,
+                "priceChange3M": 0.3737,
+                "priceChange6M": 0.3677,
+                "vs50dma": 0.059,
+                "vs200dma": 0.1748
+              }
+            },
+            "epsRevisions": {
+              "grade": "A",
+              "score": 4.5,
+              "metrics": {
+                "analystSentiment": 0.82,
+                "numAnalysts": 33
+              }
+            },
+            "dividend": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "payoutRatio": 0
+              }
+            }
+          }
+        }
       },
       "EQT": {
         "ticker": "EQT",
@@ -3859,7 +4336,73 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-04-01",
-        "last_reviewed": "2026-04-01"
+        "last_reviewed": "2026-04-01",
+        "quant": {
+          "composite": 4.13,
+          "rating": "Buy",
+          "score": 4.13,
+          "factors": {
+            "valuation": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "pe": 9.6,
+                "pb": 1.3,
+                "ps": 3.4,
+                "peg": 2.3,
+                "evEbitda": 5.4
+              }
+            },
+            "growth": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "revenueGrowth": 0.499,
+                "earningsGrowth": 4.9,
+                "epsGrowth": 5.142
+              }
+            },
+            "profitability": {
+              "grade": "A",
+              "score": 4.5,
+              "metrics": {
+                "grossMargin": 0.81,
+                "operatingMargin": 0.574,
+                "netMargin": 0.351,
+                "roe": 0.134
+              }
+            },
+            "momentum": {
+              "grade": "D+",
+              "score": 1.8,
+              "metrics": {
+                "priceChange1M": -0.1171,
+                "priceChange3M": -0.2091,
+                "priceChange6M": -0.1305,
+                "vs50dma": -0.0972,
+                "vs200dma": -0.0992
+              }
+            },
+            "epsRevisions": {
+              "grade": "B+",
+              "score": 3.8,
+              "metrics": {
+                "analystSentiment": 0.88,
+                "numAnalysts": 24,
+                "peRatioFwdVsTrail": 1.137
+              }
+            },
+            "dividend": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "payoutRatio": 0.122,
+                "dividendYield": 1.3,
+                "dividendRate": 0.66
+              }
+            }
+          }
+        }
       },
       "ETN": {
         "ticker": "ETN",
@@ -3874,7 +4417,73 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-04-01",
-        "last_reviewed": "2026-04-01"
+        "last_reviewed": "2026-04-01",
+        "quant": {
+          "composite": 3.23,
+          "rating": "Hold",
+          "score": 3.23,
+          "factors": {
+            "valuation": {
+              "grade": "C",
+              "score": 2.5,
+              "metrics": {
+                "pe": 41.3,
+                "pb": 8.3,
+                "ps": 5.7,
+                "peg": 3.19,
+                "evEbitda": 29.1
+              }
+            },
+            "growth": {
+              "grade": "D",
+              "score": 1.5,
+              "metrics": {
+                "revenueGrowth": 0.168,
+                "earningsGrowth": -0.094,
+                "epsGrowth": -0.102
+              }
+            },
+            "profitability": {
+              "grade": "C",
+              "score": 2.5,
+              "metrics": {
+                "grossMargin": 0.371,
+                "operatingMargin": 0.161,
+                "netMargin": 0.14,
+                "roe": 0.208
+              }
+            },
+            "momentum": {
+              "grade": "A-",
+              "score": 4.2,
+              "metrics": {
+                "priceChange1M": 0.1045,
+                "priceChange3M": 0.1714,
+                "priceChange6M": 0.2355,
+                "vs50dma": 0.0424,
+                "vs200dma": 0.1492
+              }
+            },
+            "epsRevisions": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "analystSentiment": 0.86,
+                "numAnalysts": 27,
+                "peRatioFwdVsTrail": 0.649
+              }
+            },
+            "dividend": {
+              "grade": "B+",
+              "score": 3.8,
+              "metrics": {
+                "payoutRatio": 0.413,
+                "dividendYield": 1.04,
+                "dividendRate": 4.4
+              }
+            }
+          }
+        }
       },
       "HAFN": {
         "ticker": "HAFN",
@@ -3889,7 +4498,70 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-05-09",
-        "last_reviewed": "2026-05-09"
+        "last_reviewed": "2026-05-09",
+        "quant": {
+          "composite": 3.32,
+          "rating": "Hold",
+          "score": 3.32,
+          "factors": {
+            "valuation": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "pe": 8,
+                "pb": 1.4,
+                "ps": 1.5,
+                "evEbitda": 7.9
+              }
+            },
+            "growth": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "revenueGrowth": 0.225,
+                "earningsGrowth": 1.841,
+                "epsGrowth": 1.844
+              }
+            },
+            "profitability": {
+              "grade": "C",
+              "score": 2.5,
+              "metrics": {
+                "grossMargin": 0.293,
+                "operatingMargin": 0.223,
+                "netMargin": 0.19,
+                "roe": 0.189
+              }
+            },
+            "momentum": {
+              "grade": "B+",
+              "score": 3.8,
+              "metrics": {
+                "priceChange1M": -0.1536,
+                "priceChange3M": 0.1139,
+                "priceChange6M": 0.3669,
+                "vs50dma": -0.0957,
+                "vs200dma": 0.1381
+              }
+            },
+            "epsRevisions": {
+              "grade": "F",
+              "score": 1,
+              "metrics": {
+                "peRatioFwdVsTrail": 1.406
+              }
+            },
+            "dividend": {
+              "grade": "C+",
+              "score": 2.8,
+              "metrics": {
+                "payoutRatio": 0.606,
+                "dividendYield": 10.12,
+                "dividendRate": 0.73
+              }
+            }
+          }
+        }
       },
       "HOOD": {
         "ticker": "HOOD",
@@ -3904,7 +4576,70 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-04-01",
-        "last_reviewed": "2026-04-01"
+        "last_reviewed": "2026-04-01",
+        "quant": {
+          "composite": 3.87,
+          "rating": "Buy",
+          "score": 3.87,
+          "factors": {
+            "valuation": {
+              "grade": "C-",
+              "score": 2.2,
+              "metrics": {
+                "pe": 52.8,
+                "pb": 10.5,
+                "ps": 21.1,
+                "peg": 2.93
+              }
+            },
+            "growth": {
+              "grade": "C-",
+              "score": 2.2,
+              "metrics": {
+                "revenueGrowth": 0.151,
+                "earningsGrowth": 0.027,
+                "epsGrowth": 0.042
+              }
+            },
+            "profitability": {
+              "grade": "A",
+              "score": 4.5,
+              "metrics": {
+                "grossMargin": 0.922,
+                "operatingMargin": 0.385,
+                "netMargin": 0.411,
+                "roe": 0.215
+              }
+            },
+            "momentum": {
+              "grade": "A",
+              "score": 4.5,
+              "metrics": {
+                "priceChange1M": 0.4018,
+                "priceChange3M": 0.4361,
+                "priceChange6M": -0.2073,
+                "vs50dma": 0.3061,
+                "vs200dma": 0.0521
+              }
+            },
+            "epsRevisions": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "analystSentiment": 0.82,
+                "numAnalysts": 24,
+                "peRatioFwdVsTrail": 0.708
+              }
+            },
+            "dividend": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "payoutRatio": 0
+              }
+            }
+          }
+        }
       },
       "HUBB": {
         "ticker": "HUBB",
@@ -3919,7 +4654,73 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-04-01",
-        "last_reviewed": "2026-04-01"
+        "last_reviewed": "2026-04-01",
+        "quant": {
+          "composite": 3.57,
+          "rating": "Buy",
+          "score": 3.57,
+          "factors": {
+            "valuation": {
+              "grade": "B-",
+              "score": 3.2,
+              "metrics": {
+                "pe": 31,
+                "pb": 7.3,
+                "ps": 4.6,
+                "peg": 2.53,
+                "evEbitda": 20.4
+              }
+            },
+            "growth": {
+              "grade": "C",
+              "score": 2.5,
+              "metrics": {
+                "revenueGrowth": 0.111,
+                "earningsGrowth": 0.125,
+                "epsGrowth": 0.114
+              }
+            },
+            "profitability": {
+              "grade": "C",
+              "score": 2.5,
+              "metrics": {
+                "grossMargin": 0.357,
+                "operatingMargin": 0.177,
+                "netMargin": 0.151,
+                "roe": 0.258
+              }
+            },
+            "momentum": {
+              "grade": "B+",
+              "score": 3.8,
+              "metrics": {
+                "priceChange1M": 0.1155,
+                "priceChange3M": 0.1113,
+                "priceChange6M": 0.1929,
+                "vs50dma": 0.044,
+                "vs200dma": 0.1158
+              }
+            },
+            "epsRevisions": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "analystSentiment": 0.79,
+                "numAnalysts": 13,
+                "peRatioFwdVsTrail": 0.754
+              }
+            },
+            "dividend": {
+              "grade": "A",
+              "score": 4.5,
+              "metrics": {
+                "payoutRatio": 0.324,
+                "dividendYield": 1.08,
+                "dividendRate": 5.68
+              }
+            }
+          }
+        }
       },
       "ILMN": {
         "ticker": "ILMN",
@@ -3937,7 +4738,71 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-05-14",
-        "last_reviewed": "2026-05-14"
+        "last_reviewed": "2026-05-14",
+        "quant": {
+          "composite": 3.78,
+          "rating": "Buy",
+          "score": 3.78,
+          "factors": {
+            "valuation": {
+              "grade": "B",
+              "score": 3.5,
+              "metrics": {
+                "pe": 29.4,
+                "pb": 9.2,
+                "ps": 5.6,
+                "peg": 2.84,
+                "evEbitda": 22.4
+              }
+            },
+            "growth": {
+              "grade": "D+",
+              "score": 1.8,
+              "metrics": {
+                "revenueGrowth": 0.048,
+                "earningsGrowth": 0.061,
+                "epsGrowth": 0.023
+              }
+            },
+            "profitability": {
+              "grade": "B",
+              "score": 3.5,
+              "metrics": {
+                "grossMargin": 0.683,
+                "operatingMargin": 0.183,
+                "netMargin": 0.194,
+                "roe": 0.338
+              }
+            },
+            "momentum": {
+              "grade": "A",
+              "score": 4.5,
+              "metrics": {
+                "priceChange1M": 0.1443,
+                "priceChange3M": 0.3576,
+                "priceChange6M": 0.2725,
+                "vs50dma": 0.1201,
+                "vs200dma": 0.278
+              }
+            },
+            "epsRevisions": {
+              "grade": "A",
+              "score": 4.5,
+              "metrics": {
+                "analystSentiment": 0.74,
+                "numAnalysts": 18,
+                "peRatioFwdVsTrail": 0.93
+              }
+            },
+            "dividend": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "payoutRatio": 0
+              }
+            }
+          }
+        }
       },
       "LITE": {
         "ticker": "LITE",
@@ -3952,7 +4817,69 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-05-20",
-        "last_reviewed": "2026-05-20"
+        "last_reviewed": "2026-05-20",
+        "quant": {
+          "composite": 3.83,
+          "rating": "Buy",
+          "score": 3.83,
+          "factors": {
+            "valuation": {
+              "grade": "F",
+              "score": 1,
+              "metrics": {
+                "pe": 149.1,
+                "pb": 20.5,
+                "ps": 26.6,
+                "peg": 0.63,
+                "evEbitda": 120.1
+              }
+            },
+            "growth": {
+              "grade": "A",
+              "score": 4.5,
+              "metrics": {
+                "revenueGrowth": 0.901
+              }
+            },
+            "profitability": {
+              "grade": "C+",
+              "score": 2.8,
+              "metrics": {
+                "grossMargin": 0.408,
+                "operatingMargin": 0.218,
+                "netMargin": 0.177,
+                "roe": 0.228
+              }
+            },
+            "momentum": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "priceChange1M": -0.0395,
+                "priceChange3M": 0.3603,
+                "priceChange6M": 1.4813,
+                "vs50dma": -0.0614,
+                "vs200dma": 0.6587
+              }
+            },
+            "epsRevisions": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "analystSentiment": 0.89,
+                "numAnalysts": 25,
+                "peRatioFwdVsTrail": 0.314
+              }
+            },
+            "dividend": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "payoutRatio": 0
+              }
+            }
+          }
+        }
       },
       "LNG": {
         "ticker": "LNG",
@@ -3967,7 +4894,71 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-04-01",
-        "last_reviewed": "2026-04-01"
+        "last_reviewed": "2026-04-01",
+        "quant": {
+          "composite": 3.2,
+          "rating": "Hold",
+          "score": 3.2,
+          "factors": {
+            "valuation": {
+              "grade": "C+",
+              "score": 2.8,
+              "metrics": {
+                "pe": 38.5,
+                "pb": 12.7,
+                "ps": 2.3,
+                "peg": 9.46,
+                "evEbitda": 13.1
+              }
+            },
+            "growth": {
+              "grade": "B-",
+              "score": 3.2,
+              "metrics": {
+                "revenueGrowth": 0.242
+              }
+            },
+            "profitability": {
+              "grade": "F",
+              "score": 1,
+              "metrics": {
+                "grossMargin": 0.33,
+                "operatingMargin": -0.537,
+                "netMargin": 0.071,
+                "roe": 0.289
+              }
+            },
+            "momentum": {
+              "grade": "C+",
+              "score": 2.8,
+              "metrics": {
+                "priceChange1M": -0.0836,
+                "priceChange3M": -0.0944,
+                "priceChange6M": 0.1362,
+                "vs50dma": -0.0826,
+                "vs200dma": -0.0095
+              }
+            },
+            "epsRevisions": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "analystSentiment": 0.92,
+                "numAnalysts": 22,
+                "peRatioFwdVsTrail": 0.302
+              }
+            },
+            "dividend": {
+              "grade": "A",
+              "score": 4.5,
+              "metrics": {
+                "payoutRatio": 0.357,
+                "dividendYield": 0.98,
+                "dividendRate": 2.22
+              }
+            }
+          }
+        }
       },
       "MRVL": {
         "ticker": "MRVL",
@@ -3985,7 +4976,73 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-05-01",
-        "last_reviewed": "2026-05-01"
+        "last_reviewed": "2026-05-01",
+        "quant": {
+          "composite": 3.32,
+          "rating": "Hold",
+          "score": 3.32,
+          "factors": {
+            "valuation": {
+              "grade": "F",
+              "score": 1,
+              "metrics": {
+                "pe": 106.4,
+                "pb": 14.9,
+                "ps": 31.2,
+                "peg": 1.76,
+                "evEbitda": 100.7
+              }
+            },
+            "growth": {
+              "grade": "F",
+              "score": 1,
+              "metrics": {
+                "revenueGrowth": 0.276,
+                "earningsGrowth": -0.804,
+                "epsGrowth": -0.806
+              }
+            },
+            "profitability": {
+              "grade": "B-",
+              "score": 3.2,
+              "metrics": {
+                "grossMargin": 0.515,
+                "operatingMargin": 0.145,
+                "netMargin": 0.29,
+                "roe": 0.16
+              }
+            },
+            "momentum": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "priceChange1M": 0.8385,
+                "priceChange3M": 2.393,
+                "priceChange6M": 2.38,
+                "vs50dma": 0.5691,
+                "vs200dma": 1.7486
+              }
+            },
+            "epsRevisions": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "analystSentiment": 0.91,
+                "numAnalysts": 41,
+                "peRatioFwdVsTrail": 0.473
+              }
+            },
+            "dividend": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "payoutRatio": 0.083,
+                "dividendYield": 0.08,
+                "dividendRate": 0.24
+              }
+            }
+          }
+        }
       },
       "MU": {
         "ticker": "MU",
@@ -4003,7 +5060,73 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-05-19",
-        "last_reviewed": "2026-05-19"
+        "last_reviewed": "2026-05-19",
+        "quant": {
+          "composite": 4.38,
+          "rating": "Buy",
+          "score": 4.38,
+          "factors": {
+            "valuation": {
+              "grade": "C-",
+              "score": 2.2,
+              "metrics": {
+                "pe": 53.5,
+                "pb": 17.7,
+                "ps": 22,
+                "peg": 0.36,
+                "evEbitda": 34.6
+              }
+            },
+            "growth": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "revenueGrowth": 1.963,
+                "earningsGrowth": 7.56,
+                "epsGrowth": 7.708
+              }
+            },
+            "profitability": {
+              "grade": "A",
+              "score": 4.5,
+              "metrics": {
+                "grossMargin": 0.584,
+                "operatingMargin": 0.676,
+                "netMargin": 0.415,
+                "roe": 0.398
+              }
+            },
+            "momentum": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "priceChange1M": 0.6639,
+                "priceChange3M": 1.5678,
+                "priceChange6M": 3.5963,
+                "vs50dma": 0.5475,
+                "vs200dma": 1.8306
+              }
+            },
+            "epsRevisions": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "analystSentiment": 0.9,
+                "numAnalysts": 40,
+                "peRatioFwdVsTrail": 0.18
+              }
+            },
+            "dividend": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "payoutRatio": 0.022,
+                "dividendYield": 0.05,
+                "dividendRate": 0.6
+              }
+            }
+          }
+        }
       },
       "NBIS": {
         "ticker": "NBIS",
@@ -4018,7 +5141,68 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-06-15",
-        "last_reviewed": "2026-06-15"
+        "last_reviewed": "2026-06-15",
+        "quant": {
+          "composite": 3.42,
+          "rating": "Hold",
+          "score": 3.42,
+          "factors": {
+            "valuation": {
+              "grade": "F",
+              "score": 1,
+              "metrics": {
+                "pe": 111.1,
+                "pb": 10.1,
+                "ps": 82.9,
+                "peg": 0.63
+              }
+            },
+            "growth": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "revenueGrowth": 6.839
+              }
+            },
+            "profitability": {
+              "grade": "B+",
+              "score": 3.8,
+              "metrics": {
+                "grossMargin": 0.721,
+                "operatingMargin": -0.321,
+                "netMargin": 0.931,
+                "roe": 0.141
+              }
+            },
+            "momentum": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "priceChange1M": 0.4345,
+                "priceChange3M": 1.2079,
+                "priceChange6M": 1.8575,
+                "vs50dma": 0.4538,
+                "vs200dma": 1.2927
+              }
+            },
+            "epsRevisions": {
+              "grade": "F",
+              "score": 1,
+              "metrics": {
+                "analystSentiment": 0.79,
+                "numAnalysts": 14,
+                "peRatioFwdVsTrail": 7.142
+              }
+            },
+            "dividend": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "payoutRatio": 0
+              }
+            }
+          }
+        }
       },
       "NEE": {
         "ticker": "NEE",
@@ -4036,7 +5220,73 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-06-01",
-        "last_reviewed": "2026-06-01"
+        "last_reviewed": "2026-06-01",
+        "quant": {
+          "composite": 4.02,
+          "rating": "Buy",
+          "score": 4.02,
+          "factors": {
+            "valuation": {
+              "grade": "B+",
+              "score": 3.8,
+              "metrics": {
+                "pe": 22,
+                "pb": 3.3,
+                "ps": 6.5,
+                "peg": 1.91,
+                "evEbitda": 20.8
+              }
+            },
+            "growth": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "revenueGrowth": 0.073,
+                "earningsGrowth": 1.6,
+                "epsGrowth": 1.619
+              }
+            },
+            "profitability": {
+              "grade": "B+",
+              "score": 3.8,
+              "metrics": {
+                "grossMargin": 0.614,
+                "operatingMargin": 0.302,
+                "netMargin": 0.294,
+                "roe": 0.103
+              }
+            },
+            "momentum": {
+              "grade": "B-",
+              "score": 3.2,
+              "metrics": {
+                "priceChange1M": -0.0186,
+                "priceChange3M": -0.0585,
+                "priceChange6M": 0.0923,
+                "vs50dma": -0.0366,
+                "vs200dma": 0.0239
+              }
+            },
+            "epsRevisions": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "analystSentiment": 0.81,
+                "numAnalysts": 20,
+                "peRatioFwdVsTrail": 0.895
+              }
+            },
+            "dividend": {
+              "grade": "B",
+              "score": 3.5,
+              "metrics": {
+                "payoutRatio": 0.59,
+                "dividendYield": 2.87,
+                "dividendRate": 2.49
+              }
+            }
+          }
+        }
       },
       "NOW": {
         "ticker": "NOW",
@@ -4054,7 +5304,71 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-05-18",
-        "last_reviewed": "2026-05-18"
+        "last_reviewed": "2026-05-18",
+        "quant": {
+          "composite": 3.15,
+          "rating": "Hold",
+          "score": 3.15,
+          "factors": {
+            "valuation": {
+              "grade": "C-",
+              "score": 2.2,
+              "metrics": {
+                "pe": 56.6,
+                "pb": 8.4,
+                "ps": 7,
+                "peg": 0.92,
+                "evEbitda": 33
+              }
+            },
+            "growth": {
+              "grade": "C-",
+              "score": 2.2,
+              "metrics": {
+                "revenueGrowth": 0.221,
+                "earningsGrowth": 0.023,
+                "epsGrowth": 0.02
+              }
+            },
+            "profitability": {
+              "grade": "B-",
+              "score": 3.2,
+              "metrics": {
+                "grossMargin": 0.766,
+                "operatingMargin": 0.133,
+                "netMargin": 0.126,
+                "roe": 0.161
+              }
+            },
+            "momentum": {
+              "grade": "D",
+              "score": 1.5,
+              "metrics": {
+                "priceChange1M": -0.081,
+                "priceChange3M": -0.1727,
+                "priceChange6M": -0.4432,
+                "vs50dma": -0.0424,
+                "vs200dma": -0.3051
+              }
+            },
+            "epsRevisions": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "analystSentiment": 0.91,
+                "numAnalysts": 44,
+                "peRatioFwdVsTrail": 0.334
+              }
+            },
+            "dividend": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "payoutRatio": 0
+              }
+            }
+          }
+        }
       },
       "OUST": {
         "ticker": "OUST",
@@ -4072,7 +5386,65 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-05-14",
-        "last_reviewed": "2026-05-14"
+        "last_reviewed": "2026-05-14",
+        "quant": {
+          "composite": 3.95,
+          "rating": "Buy",
+          "score": 3.95,
+          "factors": {
+            "valuation": {
+              "grade": "A-",
+              "score": 4.2,
+              "metrics": {
+                "pb": 10.7,
+                "ps": 16
+              }
+            },
+            "growth": {
+              "grade": "B+",
+              "score": 3.8,
+              "metrics": {
+                "revenueGrowth": 0.489
+              }
+            },
+            "profitability": {
+              "grade": "F",
+              "score": 1,
+              "metrics": {
+                "grossMargin": 0.477,
+                "operatingMargin": -0.395,
+                "netMargin": -0.301,
+                "roe": -0.252
+              }
+            },
+            "momentum": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "priceChange1M": 0.515,
+                "priceChange3M": 1.1864,
+                "priceChange6M": 0.8256,
+                "vs50dma": 0.4074,
+                "vs200dma": 0.7355
+              }
+            },
+            "epsRevisions": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "analystSentiment": 0.94,
+                "numAnalysts": 7
+              }
+            },
+            "dividend": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "payoutRatio": 0
+              }
+            }
+          }
+        }
       },
       "POET": {
         "ticker": "POET",
@@ -4090,7 +5462,57 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-05-15",
-        "last_reviewed": "2026-05-15"
+        "last_reviewed": "2026-05-15",
+        "quant": {
+          "composite": 3.34,
+          "rating": "Hold",
+          "score": 3.34,
+          "factors": {
+            "valuation": {
+              "grade": "F",
+              "score": 1,
+              "metrics": {
+                "pb": 8.7,
+                "ps": 1485.7
+              }
+            },
+            "growth": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "revenueGrowth": 2.019
+              }
+            },
+            "profitability": {
+              "grade": "F",
+              "score": 1,
+              "metrics": {
+                "grossMargin": 1,
+                "operatingMargin": -35.5,
+                "netMargin": 0,
+                "roe": -0.339
+              }
+            },
+            "momentum": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "priceChange1M": -0.145,
+                "priceChange3M": 0.7583,
+                "priceChange6M": 0.9502,
+                "vs50dma": 0.0624,
+                "vs200dma": 0.6076
+              }
+            },
+            "dividend": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "payoutRatio": 0
+              }
+            }
+          }
+        }
       },
       "PWR": {
         "ticker": "PWR",
@@ -4108,7 +5530,73 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-06-01",
-        "last_reviewed": "2026-06-01"
+        "last_reviewed": "2026-06-01",
+        "quant": {
+          "composite": 3.52,
+          "rating": "Buy",
+          "score": 3.52,
+          "factors": {
+            "valuation": {
+              "grade": "D",
+              "score": 1.5,
+              "metrics": {
+                "pe": 96.2,
+                "pb": 11.7,
+                "ps": 3.5,
+                "peg": 1.94,
+                "evEbitda": 41.9
+              }
+            },
+            "growth": {
+              "grade": "B+",
+              "score": 3.8,
+              "metrics": {
+                "revenueGrowth": 0.263,
+                "earningsGrowth": 0.51,
+                "epsGrowth": 0.529
+              }
+            },
+            "profitability": {
+              "grade": "D",
+              "score": 1.5,
+              "metrics": {
+                "grossMargin": 0.151,
+                "operatingMargin": 0.042,
+                "netMargin": 0.037,
+                "roe": 0.135
+              }
+            },
+            "momentum": {
+              "grade": "A",
+              "score": 4.5,
+              "metrics": {
+                "priceChange1M": -0.0287,
+                "priceChange3M": 0.2236,
+                "priceChange6M": 0.5171,
+                "vs50dma": 0.0152,
+                "vs200dma": 0.3418
+              }
+            },
+            "epsRevisions": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "analystSentiment": 0.88,
+                "numAnalysts": 26,
+                "peRatioFwdVsTrail": 0.443
+              }
+            },
+            "dividend": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "payoutRatio": 0.058,
+                "dividendYield": 0.06,
+                "dividendRate": 0.44
+              }
+            }
+          }
+        }
       },
       "TEM": {
         "ticker": "TEM",
@@ -4123,7 +5611,57 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-05-08",
-        "last_reviewed": "2026-05-08"
+        "last_reviewed": "2026-05-08",
+        "quant": {
+          "composite": 3.46,
+          "rating": "Hold",
+          "score": 3.46,
+          "factors": {
+            "valuation": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "pb": 21.9,
+                "ps": 6.7
+              }
+            },
+            "growth": {
+              "grade": "B",
+              "score": 3.5,
+              "metrics": {
+                "revenueGrowth": 0.361
+              }
+            },
+            "profitability": {
+              "grade": "D",
+              "score": 1.5,
+              "metrics": {
+                "grossMargin": 0.634,
+                "operatingMargin": -0.243,
+                "netMargin": -0.222,
+                "roe": -0.816
+              }
+            },
+            "momentum": {
+              "grade": "C",
+              "score": 2.5,
+              "metrics": {
+                "priceChange1M": 0.1655,
+                "priceChange3M": -0.0008,
+                "priceChange6M": -0.3401,
+                "vs50dma": 0.0181,
+                "vs200dma": -0.2089
+              }
+            },
+            "dividend": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "payoutRatio": 0
+              }
+            }
+          }
+        }
       },
       "VRT": {
         "ticker": "VRT",
@@ -4141,7 +5679,73 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-05-25",
-        "last_reviewed": "2026-05-25"
+        "last_reviewed": "2026-05-25",
+        "quant": {
+          "composite": 3.93,
+          "rating": "Buy",
+          "score": 3.93,
+          "factors": {
+            "valuation": {
+              "grade": "D",
+              "score": 1.5,
+              "metrics": {
+                "pe": 83.3,
+                "pb": 32.3,
+                "ps": 11.8,
+                "peg": 1.67,
+                "evEbitda": 54
+              }
+            },
+            "growth": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "revenueGrowth": 0.301,
+                "earningsGrowth": 1.357,
+                "epsGrowth": 1.371
+              }
+            },
+            "profitability": {
+              "grade": "C",
+              "score": 2.5,
+              "metrics": {
+                "grossMargin": 0.372,
+                "operatingMargin": 0.164,
+                "netMargin": 0.144,
+                "roe": 0.451
+              }
+            },
+            "momentum": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "priceChange1M": -0.0195,
+                "priceChange3M": 0.2586,
+                "priceChange6M": 0.7952,
+                "vs50dma": 0.036,
+                "vs200dma": 0.4878
+              }
+            },
+            "epsRevisions": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "analystSentiment": 0.9,
+                "numAnalysts": 26,
+                "peRatioFwdVsTrail": 0.452
+              }
+            },
+            "dividend": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "payoutRatio": 0.05,
+                "dividendYield": 0.08,
+                "dividendRate": 0.25
+              }
+            }
+          }
+        }
       },
       "VST": {
         "ticker": "VST",
@@ -4156,7 +5760,71 @@
         "catalysts": [],
         "invalidation": null,
         "report_date": "2026-05-11",
-        "last_reviewed": "2026-05-11"
+        "last_reviewed": "2026-05-11",
+        "quant": {
+          "composite": 3.9,
+          "rating": "Buy",
+          "score": 3.9,
+          "factors": {
+            "valuation": {
+              "grade": "B",
+              "score": 3.5,
+              "metrics": {
+                "pe": 27.4,
+                "pb": 21.1,
+                "ps": 2.8,
+                "peg": 0.48,
+                "evEbitda": 11.3
+              }
+            },
+            "growth": {
+              "grade": "B+",
+              "score": 3.8,
+              "metrics": {
+                "revenueGrowth": 0.434
+              }
+            },
+            "profitability": {
+              "grade": "C+",
+              "score": 2.8,
+              "metrics": {
+                "grossMargin": 0.386,
+                "operatingMargin": 0.266,
+                "netMargin": 0.115,
+                "roe": 0.429
+              }
+            },
+            "momentum": {
+              "grade": "B",
+              "score": 3.5,
+              "metrics": {
+                "priceChange1M": 0.1974,
+                "priceChange3M": 0.0122,
+                "priceChange6M": -0.0115,
+                "vs50dma": 0.0622,
+                "vs200dma": -0.0367
+              }
+            },
+            "epsRevisions": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "analystSentiment": 0.92,
+                "numAnalysts": 18,
+                "peRatioFwdVsTrail": 0.545
+              }
+            },
+            "dividend": {
+              "grade": "A+",
+              "score": 4.9,
+              "metrics": {
+                "payoutRatio": 0.151,
+                "dividendYield": 0.56,
+                "dividendRate": 0.92
+              }
+            }
+          }
+        }
       }
     },
     "dates": [
@@ -6005,6 +7673,49 @@
   ],
   "clearances": [
     {
+      "ticker": "AVGO",
+      "market": "us",
+      "name_en": "AVGO",
+      "name_zh": "AVGO",
+      "sector_tags_en": [],
+      "sector_tags_zh": [],
+      "entry_date": "2026-06-17",
+      "exit_date": "2026-06-22",
+      "holding_days": 5,
+      "outcome_pct": 2,
+      "outcome_pct_rounded": 2,
+      "win_rate_pct": 100,
+      "trade_count": 2,
+      "currency": "USD",
+      "avg_entry_price": 394.24,
+      "avg_exit_price": 402.1762,
+      "reason_en": "Auto-generated closed position from Convex trade and position records.",
+      "reason_zh": "由 Convex 交易与持仓记录自动生成的清仓记录。",
+      "lesson_en": "Add an editorial lesson in portfolio-overrides clearances only if this exit deserves a manual review.",
+      "lesson_zh": "只有值得复盘的清仓，才需要在 portfolio-overrides clearances 里补充人工经验。",
+      "article_url": null,
+      "trade_points": [
+        {
+          "date": "2026-06-17",
+          "kind": "entry",
+          "action_en": "Opened position",
+          "action_zh": "建立仓位",
+          "price": 394.24,
+          "note_en": "AVGO建仓 AI定制芯片+数据中心网络",
+          "note_zh": "AVGO建仓 AI定制芯片+数据中心网络"
+        },
+        {
+          "date": "2026-06-22",
+          "kind": "exit",
+          "action_en": "Closed position",
+          "action_zh": "清仓",
+          "price": 402.1762,
+          "note_en": "BIT.com auto-sync",
+          "note_zh": "BIT.com auto-sync"
+        }
+      ]
+    },
+    {
       "ticker": "518880",
       "market": "cn",
       "name_en": "Gold ETF",
@@ -6936,14 +8647,14 @@
   "stats": {
     "active_positions": 10,
     "markets": 1,
-    "tracked_rules": 45,
-    "upcoming_events": 8,
+    "tracked_rules": 43,
+    "upcoming_events": 7,
     "weekly_scan_hits": 9,
-    "total_trades": 62,
-    "closed_positions": 17,
-    "win_rate_pct": 82,
-    "realized_pnl_pct": 107,
-    "days_since_last_clearance": 4
+    "total_trades": 64,
+    "closed_positions": 18,
+    "win_rate_pct": 83,
+    "realized_pnl_pct": 109,
+    "days_since_last_clearance": 0
   },
   "crypto_portfolio_history": {
     "data": [
@@ -7556,7 +9267,7 @@
     }
   },
   "crypto_timeseries": {
-    "generated_at": "2026-06-22T07:50:54.760337",
+    "generated_at": "2026-06-22T21:58:57.659364",
     "latest": {
       "date": "2026-06-22",
       "composite": 26.1,
@@ -7564,8 +9275,8 @@
       "btc_close": 63577,
       "btc_high": null,
       "btc_low": null,
-      "fgi": null,
-      "fgi_label": null,
+      "fgi": 20,
+      "fgi_label": "Extreme Fear",
       "green_count": 2,
       "indicators": {
         "fear_greed": {
@@ -9095,9 +10806,9 @@
       },
       {
         "date": "2026-06-21",
-        "btc_close": 63303.44,
-        "btc_high": 64461.07,
-        "btc_low": 63247.85,
+        "btc_close": 63237.54,
+        "btc_high": 64506.58,
+        "btc_low": 63221,
         "fgi": 23,
         "fgi_label": "Extreme Fear",
         "composite": 26.3,
@@ -9108,8 +10819,8 @@
         "btc_close": 63577,
         "btc_high": null,
         "btc_low": null,
-        "fgi": null,
-        "fgi_label": null,
+        "fgi": 20,
+        "fgi_label": "Extreme Fear",
         "composite": 26.1,
         "delta_composite": -0.2
       }
@@ -12111,6 +13822,12 @@
       "health": 3.8,
       "portfolio_beta": 1.45,
       "equity_beta": 1.46
+    },
+    {
+      "date": "2026-06-22",
+      "health": 3.8,
+      "portfolio_beta": 1.44,
+      "equity_beta": 1.46
     }
   ],
   "capital_mobility_risk": {
@@ -12221,5 +13938,6 @@
       "港银与境外券商服务通知",
       "处罚公告与执法案例"
     ]
-  }
+  },
+  "_warning": "Rebuilt with Convex unavailable — positions may be stale"
 }
