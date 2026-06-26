@@ -471,62 +471,6 @@ function regimeEn(label) {
   return ({ 进攻期: "Offensive", 中性期: "Neutral", 防御期: "Defensive" })[label] || label;
 }
 
-// ─── Watchlist heatmap transform ─────────────────────────
-
-function buildHeatmap(index, quantRatings) {
-  if (!index || !index.tickers) return null;
-  // Keep last 30 days, pad/trim
-  const maxDays = 30;
-  const dates = (index.dates || []).slice(-maxDays);
-  const scores = (index.scores || []).slice(-maxDays);
-  const statuses = (index.statuses || []).slice(-maxDays);
-  const registryCount = index.registry_count || Object.keys(index.ticker_meta || {}).length || index.tickers.length;
-
-  // Enrich ticker_meta with quant rating factors
-  const enrichedMeta = JSON.parse(JSON.stringify(index.ticker_meta || {}));
-  if (quantRatings) {
-    const ratings = quantRatings.ratings || {};
-    for (const ticker of index.tickers) {
-      // Strip yfinance suffix (.SS/.SZ/.HK) for matching against quant-ratings keys
-      const stripped = ticker.replace(/\.(SS|SZ|HK)$/, "");
-      // Try: raw ticker → stripped → with common suffixes
-      const candidates = [ticker, stripped, stripped + ".SS", stripped + ".SZ", stripped + ".HK"];
-      let match = null;
-      for (const c of candidates) {
-        if (ratings[c]) { match = ratings[c]; break; }
-      }
-      if (match) {
-        if (!enrichedMeta[ticker]) enrichedMeta[ticker] = {};
-        // Normalize factor keys: backend uses dividendSafety, frontend expects dividend
-        const factors = { ...match.factors };
-        if (factors.dividendSafety && !factors.dividend) {
-          factors.dividend = factors.dividendSafety;
-          delete factors.dividendSafety;
-        }
-        enrichedMeta[ticker].quant = {
-          composite: match.composite,
-          rating: match.rating,
-          score: match.composite,
-          factors,
-        };
-      }
-    }
-  }
-
-  return {
-    source: index.source || "watchlist-scan-index",
-    registry_file: index.registry_file ? "investment-strategy/macro/watchlist-registry.json" : null,
-    registry_count: registryCount,
-    eligible_count: index.eligible_count || index.tickers.length,
-    tickers: index.tickers,
-    ticker_names: index.ticker_names || {},
-    ticker_meta: enrichedMeta,
-    dates,
-    scores,
-    statuses,
-  };
-}
-
 // ─── Crypto sanitize transform ───────────────────────────
 
 /**
@@ -1112,7 +1056,7 @@ async function hasWorkspaceExternalData() {
   // At least one of the 3 external data sources must exist for a meaningful
   // rebuild. In CI (GitHub Actions checks out only the rexliu-website repo),
   // none of them are present — regenerating in that case silently wipes
-  // the committed portfolio-public.json (clearances/history/heatmap all go
+  // the committed portfolio-public.json (clearances/history all go
   // to []) and the live site renders empty sections. When no external data
   // is available, trust the committed JSON as the canonical snapshot.
   const probes = [THERMOMETER_HISTORY, WATCHLIST_INDEX, TRADELOG_INDEX, PRIVATE_PORTFOLIO_PATH];
@@ -1176,7 +1120,6 @@ async function main() {
   // 3. Read local historical files
   console.log("📚 Reading local history...");
   const thermometerHistory = await readJsonl(THERMOMETER_HISTORY);
-  const watchlistIndex = await readJson(WATCHLIST_INDEX);
   const tradelog = await readJson(TRADELOG_INDEX);
 
   // 3b. Read private portfolio for crypto data
@@ -1351,13 +1294,12 @@ async function main() {
 
   // 5. Transform + merge
   const regime = buildRegime(thermometerHistory, overrides.macro_signals_fallback);
-  // Load quant ratings for factor-level heatmap enrichment
+  // Load quant ratings for portfolio health score
   let quantRatings = null;
   try {
     const qrPath = path.join(MARKET_DATA_DIR, "quant-ratings.json");
     quantRatings = JSON.parse(await fs.readFile(qrPath, "utf-8"));
   } catch { /* quant ratings not yet generated */ }
-  const heatmap = buildHeatmap(watchlistIndex, quantRatings);
   // Filter events to future only (consistent with buildPositions)
   const today = new Date().toISOString().slice(0, 10);
   const futureEvents = (events || []).filter((e) => (e.eventDate || "") >= today);
@@ -1474,30 +1416,12 @@ async function main() {
   const winRate = totalClosed > 0 ? Math.round((wins / totalClosed) * 100) : 0;
   const realizedPnlPct = clearances.reduce((sum, c) => sum + (c.outcome_pct_rounded || 0), 0);
 
-  // Short list: tickers at latest scan score >= 7
-  const shortList = (() => {
-    if (!watchlistIndex?.scores?.length) return [];
-    const lastRow = watchlistIndex.scores.at(-1) || [];
-    const out = [];
-    (watchlistIndex.tickers || []).forEach((t, i) => {
-      if ((lastRow[i] ?? -1) >= 7) {
-        out.push({ ticker: t, name: watchlistIndex.ticker_names?.[t] || "", score: lastRow[i] });
-      }
-    });
-    return out;
-  })();
-
   const stats = {
     active_positions: filteredPublicPositions.length,
     markets: new Set(filteredPublicPositions.map((p) => p.market)).size + (crypto?.positions?.length > 0 ? 1 : 0),
     tracked_rules: (rules || []).filter((r) => r.active !== false).length,
     upcoming_events: futureEvents.length,
-    weekly_scan_hits: watchlistIndex
-      ? (() => {
-          const lastScoresRow = watchlistIndex.scores?.at(-1) || [];
-          return lastScoresRow.filter((s) => s >= 5).length;
-        })()
-      : 0,
+    weekly_scan_hits: 0,
     total_trades: totalTrades,
     closed_positions: totalClosed,
     win_rate_pct: winRate,
@@ -1689,8 +1613,6 @@ async function main() {
     crypto,
     crypto_monitor: cryptoMonitor,
     allocation_history: allocationHistory,
-    watchlist_heatmap: heatmap,
-    short_list: shortList,
     clearances,
     roundtables,
     stats,
@@ -1704,7 +1626,7 @@ async function main() {
 
   await writeSanitizedOutput(output);
   console.log(
-    `   ${stats.active_positions} positions, ${stats.markets} markets, ${stats.tracked_rules} rules, ${stats.upcoming_events} events, ${regime.history_60d.length}-day regime history, ${heatmap ? heatmap.dates.length : 0}-day heatmap, ${clearances.length} clearances, ${roundtables.length} roundtables, ${allocationHistory.history.length}-month allocation history, health=${healthScore ?? "n/a"}, β=${portfolioBeta ?? "n/a"}`
+    `   ${stats.active_positions} positions, ${stats.markets} markets, ${stats.tracked_rules} rules, ${stats.upcoming_events} events, ${regime.history_60d.length}-day regime history, ${clearances.length} clearances, ${roundtables.length} roundtables, ${allocationHistory.history.length}-month allocation history, health=${healthScore ?? "n/a"}, β=${portfolioBeta ?? "n/a"}`
   );
 }
 
