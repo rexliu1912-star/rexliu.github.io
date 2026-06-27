@@ -943,6 +943,13 @@ function buildAutoClearances(convexPositions, convexTrades, overrides) {
     const boughtQty = buys.reduce((s, t) => s + (Number(t.quantity) || 0), 0);
     const soldQty = sells.reduce((s, t) => s + (Number(t.quantity) || 0), 0);
     if (soldQty + 0.0001 < boughtQty) continue;
+    // Guard against duplicate sells (sell qty > buy qty = data error)
+    if (soldQty > boughtQty + 0.01) {
+      console.warn(`⚠️  ${symbol}: soldQty ${soldQty} > boughtQty ${boughtQty}, likely duplicate sells — capping to boughtQty`);
+      // Cap sells proportionally to boughtQty
+      const ratio = boughtQty / soldQty;
+      for (const s of sells) s._cappedQty = (Number(s.quantity) || 0) * ratio;
+    }
 
     const buyCost = buys.reduce((s, t) => {
       const fee = Number(t.fee) || 0;
@@ -952,12 +959,14 @@ function buildAutoClearances(convexPositions, convexTrades, overrides) {
     const sellProceeds = sells.reduce((s, t) => {
       const fee = Number(t.fee) || 0;
       const tax = Number(t.tax) || 0;
-      return s + (Number(t.quantity) || 0) * (Number(t.price) || 0) - fee - tax;
+      const qty = t._cappedQty ?? (Number(t.quantity) || 0);
+      return s + qty * (Number(t.price) || 0) - fee - tax;
     }, 0);
+    const effectiveSoldQty = sells.reduce((s, t) => s + (t._cappedQty ?? (Number(t.quantity) || 0)), 0);
     if (buyCost <= 0) continue;
 
     const avgEntryPrice = boughtQty > 0 ? buyCost / boughtQty : null;
-    const avgExitPrice = soldQty > 0 ? sellProceeds / soldQty : null;
+    const avgExitPrice = effectiveSoldQty > 0 ? sellProceeds / effectiveSoldQty : null;
     const entryDate = buys[0].tradeDate;
     const exitDate = sells[sells.length - 1].tradeDate;
     const outcomePct = ((sellProceeds - buyCost) / buyCost) * 100;
