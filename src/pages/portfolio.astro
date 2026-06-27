@@ -4105,6 +4105,281 @@ const stages = [
 			50% { box-shadow: 0 0 0 4px rgba(251, 146, 60, 0.15); }
 		}
 
+		/* ── Clearance / Trade Replays ──────────── */
+		.clearance-grid {
+			display: grid;
+			grid-template-columns: 1fr;
+			gap: 1.25rem;
+		}
+		@media (min-width: 900px) {
+			.clearance-grid {
+				grid-template-columns: repeat(2, minmax(0, 1fr));
+			}
+		}
+		.clearance-card {
+			border: 1px solid var(--p-border);
+			background: color-mix(in srgb, var(--p-card) 94%, transparent);
+			border-radius: 1.35rem;
+			padding: 1.3rem;
+			display: grid;
+			gap: 0.95rem;
+		}
+		.clearance-card.outcome-win {
+			border-color: rgba(16, 185, 129, 0.28);
+		}
+		.clearance-card.outcome-loss {
+			border-color: rgba(239, 68, 68, 0.28);
+		}
+		.clearance-head {
+			display: grid;
+			gap: 0.5rem;
+		}
+		.clearance-symbol-row {
+			display: flex;
+			align-items: baseline;
+			gap: 0.65rem;
+		}
+		.clearance-symbol {
+			font-size: 1.4rem;
+			color: var(--p-text);
+		}
+		.clearance-name {
+			font-size: 0.95rem;
+			color: var(--p-text-soft);
+		}
+		.clearance-meta-row {
+			display: flex;
+			align-items: center;
+			gap: 0.7rem;
+		}
+		.clearance-pct {
+			font-family: Georgia, serif;
+			font-size: 1.6rem;
+			font-weight: 700;
+			line-height: 1;
+		}
+		.clearance-card.outcome-win .clearance-pct {
+			color: #10b981;
+		}
+		.clearance-card.outcome-loss .clearance-pct {
+			color: #ef4444;
+		}
+		.clearance-days {
+			font-size: 0.82rem;
+			color: var(--p-text-faint);
+			padding: 0.22rem 0.6rem;
+			border-radius: 999px;
+			background: rgba(255, 255, 255, 0.05);
+		}
+		:global(html[data-theme='light']) .clearance-days {
+			background: rgba(30, 20, 50, 0.06);
+		}
+		.clearance-tags {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.35rem;
+		}
+		.clearance-chart-wrap {
+			height: 180px;
+			position: relative;
+		}
+		.clearance-chart {
+			width: 100% !important;
+			height: 100% !important;
+		}
+		.clearance-chart-empty {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			height: 100%;
+			color: var(--p-muted);
+			font-size: 0.85rem;
+			gap: 0.25rem;
+		}
+		.clearance-trade-points {
+			display: grid;
+			gap: 0.5rem;
+			padding: 0.75rem 0.8rem;
+			border-radius: 0.85rem;
+			background: rgba(137, 83, 209, 0.05);
+		}
+		.trade-point-row {
+			display: grid;
+			gap: 0.2rem;
+			padding: 0.55rem 0.75rem;
+			border-radius: 0.55rem;
+			background: color-mix(in srgb, var(--p-card) 85%, transparent);
+			border-left: 3px solid rgba(137, 83, 209, 0.35);
+		}
+		.trade-point-row.kind-entry,
+		.trade-point-row.kind-add {
+			border-left-color: rgba(16, 185, 129, 0.55);
+		}
+		.trade-point-row.kind-exit,
+		.trade-point-row.kind-sell,
+		.trade-point-row.kind-trim,
+		.trade-point-row.kind-stopped {
+			border-left-color: rgba(239, 68, 68, 0.55);
+		}
+		.trade-point-row.kind-catalyst,
+		.trade-point-row.kind-external {
+			border-left-color: rgba(245, 158, 11, 0.55);
+		}
+		.trade-point-row.kind-methodology {
+			border-left-color: rgba(137, 83, 209, 0.55);
+		}
+		.trade-point-top {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: baseline;
+			gap: 0.5rem;
+			font-size: 0.72rem;
+		}
+		.trade-point-date {
+			color: var(--p-text-faint);
+			font-family: Georgia, serif;
+		}
+		.trade-point-kind {
+			font-size: 0.6rem;
+			padding: 0.1rem 0.45rem;
+			border-radius: 999px;
+			letter-spacing: 0.08em;
+			text-transform: uppercase;
+			background: rgba(137, 83, 209, 0.14);
+			color: var(--p-text-soft);
+			font-weight: 600;
+		}
+		.trade-point-price {
+			margin-left: auto;
+			color: var(--p-text);
+			font-family: Georgia, serif;
+			font-weight: 600;
+		}
+		.trade-point-action {
+			font-size: 0.88rem;
+			font-weight: 600;
+			color: var(--p-text);
+			line-height: 1.45;
+		}
+		.trade-point-note {
+			font-size: 0.78rem;
+			color: var(--p-text-soft);
+			line-height: 1.55;
+		}
+		.clearance-foot {
+			display: grid;
+			gap: 0.55rem;
+			padding-top: 0.9rem;
+			border-top: 1px dashed var(--p-border);
+		}
+		.clearance-foot p {
+			margin: 0;
+			font-size: 0.86rem;
+			line-height: 1.6;
+			color: var(--p-text-soft);
+		}
+		.clearance-foot strong {
+			color: var(--p-text);
+		}
+		.clearance-article-link {
+			display: inline-block;
+			margin-top: 0.25rem;
+			font-size: 0.86rem;
+			color: var(--p-accent);
+			text-decoration: none;
+			transition: opacity 0.2s;
+		}
+		.clearance-article-link:hover {
+			opacity: 0.7;
+		}
+		.clearance-chip {
+			font-size: 0.72rem;
+			padding: 0.22rem 0.6rem;
+			border-radius: 999px;
+			background: rgba(137, 83, 209, 0.12);
+			color: var(--p-text-soft);
+			letter-spacing: 0.04em;
+		}
+		.clearance-sub-tickers {
+			display: grid;
+			gap: 0.45rem;
+			padding: 0.7rem 0.85rem;
+			border-radius: 0.85rem;
+			background: color-mix(in srgb, var(--p-card) 86%, transparent);
+			border: 1px dashed var(--p-border);
+		}
+		.clearance-sub-label {
+			font-size: 0.66rem;
+			letter-spacing: 0.14em;
+			text-transform: uppercase;
+			color: var(--p-text-faint);
+		}
+		.clearance-sub-list {
+			display: grid;
+			gap: 0.35rem;
+		}
+		.clearance-sub-item {
+			display: grid;
+			grid-template-columns: auto 1fr auto auto;
+			align-items: baseline;
+			gap: 0.55rem;
+			font-size: 0.82rem;
+		}
+		.clearance-sub-ticker {
+			font-size: 0.88rem;
+			color: var(--p-text);
+		}
+		.clearance-sub-name {
+			color: var(--p-text-soft);
+		}
+		.clearance-sub-pct {
+			font-family: Georgia, serif;
+			font-style: normal;
+			font-weight: 600;
+		}
+		.clearance-sub-pct.positive {
+			color: #10b981;
+		}
+		.clearance-sub-pct.negative {
+			color: #ef4444;
+		}
+		.clearance-sub-days {
+			font-size: 0.72rem;
+			color: var(--p-text-faint);
+		}
+		.clearance-ai-context {
+			margin: 0;
+			padding: 0.75rem 0.9rem;
+			border-radius: 0.85rem;
+			background: linear-gradient(
+				135deg,
+				rgba(137, 83, 209, 0.09),
+				rgba(161, 117, 232, 0.05)
+			);
+			border-left: 3px solid rgba(137, 83, 209, 0.55);
+			font-size: 0.85rem;
+			line-height: 1.65;
+			color: var(--p-text-soft);
+			display: grid;
+			gap: 0.35rem;
+		}
+		.clearance-ai-badge {
+			display: inline-block;
+			align-self: start;
+			font-size: 0.64rem;
+			letter-spacing: 0.14em;
+			text-transform: uppercase;
+			padding: 0.18rem 0.5rem;
+			border-radius: 999px;
+			background: rgba(137, 83, 209, 0.18);
+			color: #c9b4f5;
+			font-weight: 700;
+		}
+		:global(html[data-theme='light']) .clearance-ai-badge {
+			color: #8953d1;
+		}
+
 		/* ── Sector Research (Stage 1) ─────────── */
 		.sector-research-grid {
 			display: grid;
