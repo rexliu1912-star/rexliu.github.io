@@ -1,13 +1,18 @@
 {
-  "generated_at": "2026-06-26T23:50:55.013Z",
+  "generated_at": "2026-06-27T12:34:43.942Z",
   "regime": {
     "current": {
       "label": "防御期",
       "label_en": "Defensive",
       "aggression": "低",
       "green_count": 0,
-      "total_signals": 3,
+      "total_signals": 4,
       "signals": {
+        "tnx": {
+          "label": "10Y UST",
+          "value": "4.37%",
+          "light": "yellow"
+        },
         "dxy": {
           "label": "DXY",
           "value": "101.37",
@@ -2331,11 +2336,17 @@
         "aggression": "低",
         "vix": 18.41,
         "lights": {
+          "tnx": "yellow",
           "dxy": "yellow",
           "vix": "yellow",
           "naaim": "red"
         },
         "signalDetails": {
+          "tnx": {
+            "value": 4.37,
+            "light": "yellow",
+            "status": null
+          },
           "dxy": {
             "value": 101.37,
             "light": "yellow",
@@ -2366,9 +2377,9 @@
           "id": "stablecoin",
           "label_en": "Stablecoin Yield",
           "label_zh": "稳定币生息",
-          "target_pct": 32.3,
+          "target_pct": 31.8,
           "current_pct": 37.6,
-          "drift_pp": 5.3,
+          "drift_pp": 5.8,
           "color": "#10b981",
           "sub_tags_en": [
             "USDT",
@@ -2384,23 +2395,23 @@
           "note_zh": "底座层——带息、低 beta、抗衰退",
           "expected_return_pct": 5,
           "annual_volatility_pct": 1,
-          "model_target_pct": 32.3,
+          "model_target_pct": 31.8,
           "raw_model_target_pct": 31.4,
           "signal_score": 80,
           "model_action": "trim",
           "model_rationale_en": "APR 5.0% and regime neutral keep liquidity floor high.",
           "model_rationale_zh": "稳定币 APR 5.0%，当前 neutral 环境下维持流动性底座。",
           "model_current_pct": 37.6,
-          "model_drift_pp": 5.3,
-          "gap_amount": -613316
+          "model_drift_pp": 5.8,
+          "gap_amount": -671176
         },
         {
           "id": "funds",
           "label_en": "Funds",
           "label_zh": "基金与现金",
-          "target_pct": 31.8,
+          "target_pct": 31.4,
           "current_pct": 35.5,
-          "drift_pp": 3.7,
+          "drift_pp": 4.1,
           "color": "#3b82f6",
           "sub_tags_en": [
             "Cash & Deposits",
@@ -2416,15 +2427,15 @@
           "note_zh": "现金缓冲 + 保守理财 + 专项资金（买房/教育/应收）",
           "expected_return_pct": 3.2,
           "annual_volatility_pct": 3,
-          "model_target_pct": 31.8,
+          "model_target_pct": 31.4,
           "raw_model_target_pct": 31.2,
           "signal_score": 78.2,
           "model_action": "trim",
           "model_rationale_en": "SOFR 3.64% supports conservative cash/fund carry.",
           "model_rationale_zh": "SOFR 3.64%，保守现金/基金仍有持有收益。",
           "model_current_pct": 35.5,
-          "model_drift_pp": 3.7,
-          "gap_amount": -428164
+          "model_drift_pp": 4.1,
+          "gap_amount": -474452
         },
         {
           "id": "gold",
@@ -2460,9 +2471,9 @@
           "id": "stocks",
           "label_en": "Stocks",
           "label_zh": "股票",
-          "target_pct": 25,
+          "target_pct": 25.7,
           "current_pct": 17,
-          "drift_pp": -8,
+          "drift_pp": -8.7,
           "color": "#8953d1",
           "sub_tags_en": [
             "AI Power",
@@ -2478,15 +2489,15 @@
           "note_zh": "长期 + 波段组合——AI 电力核心 + 机会主义叠加",
           "expected_return_pct": 8.7,
           "annual_volatility_pct": 22.7,
-          "model_target_pct": 25,
+          "model_target_pct": 25.7,
           "raw_model_target_pct": 26.2,
           "signal_score": 66.8,
           "model_action": "add",
           "model_rationale_en": "Portfolio health 3.9/5.0, equity beta 1.42, regime score 46.0.",
           "model_rationale_zh": "组合健康度 3.9/5.0，股票 beta 1.42，宏观分数 46.0。",
           "model_current_pct": 17,
-          "model_drift_pp": -8,
-          "gap_amount": 925760,
+          "model_drift_pp": -8.7,
+          "gap_amount": 1006764,
           "sub": [
             {
               "id": "cn",
@@ -2500,9 +2511,9 @@
           "id": "crypto",
           "label_en": "Crypto",
           "label_zh": "加密敞口",
-          "target_pct": 7,
+          "target_pct": 7.2,
           "current_pct": 6.3,
-          "drift_pp": -0.7,
+          "drift_pp": -0.9,
           "color": "#f59e0b",
           "sub_tags_en": [
             "BTC",
@@ -2516,21 +2527,21 @@
           "note_zh": "不对称下注——长久期、低相关、高波动核心",
           "expected_return_pct": 10.8,
           "annual_volatility_pct": 33.6,
-          "model_target_pct": 7,
+          "model_target_pct": 7.2,
           "raw_model_target_pct": 7.4,
           "signal_score": 22.7,
           "model_action": "hold",
           "model_rationale_en": "Crypto composite 17.7, fear/greed 12; capped at 15%.",
           "model_rationale_zh": "Crypto composite 17.7，恐惧贪婪 12；上限 15%。",
           "model_current_pct": 6.3,
-          "model_drift_pp": -0.7,
-          "gap_amount": 81004
+          "model_drift_pp": -0.9,
+          "gap_amount": 104148
         }
       ],
       "model": {
         "schema": "portfolio-allocation-model/v1",
         "version": "0.1.0",
-        "generated_at": "2026-06-26T23:50:53.385129+00:00",
+        "generated_at": "2026-06-27T12:34:42.023518+00:00",
         "regime": {
           "name": "neutral",
           "score": 46
@@ -2543,7 +2554,7 @@
       },
       "projected_annual_yield": 613478,
       "risk": {
-        "target_vol": 10.4,
+        "target_vol": 10.6,
         "current_vol": 8.4,
         "sharpe_target": 0.2,
         "sharpe_current": 0.2,
@@ -3249,31 +3260,7 @@
     },
     "etf": {
       "btc_etf_net_flow_m": 11,
-      "btc_etf_total_volume_m": 2392,
-      "source": "yfinance-estimate",
-      "etfs": [
-        {
-          "ticker": "IBIT",
-          "volume_usd_m": 1990
-        },
-        {
-          "ticker": "FBTC",
-          "volume_usd_m": 219
-        },
-        {
-          "ticker": "GBTC",
-          "volume_usd_m": 86
-        },
-        {
-          "ticker": "ARKB",
-          "volume_usd_m": 39
-        },
-        {
-          "ticker": "BITB",
-          "volume_usd_m": 58
-        }
-      ],
-      "date": "2026-06-27"
+      "etfs": []
     },
     "dca": {
       "status": "closed",
@@ -3328,8 +3315,8 @@
         "label_en": "Stablecoin Yield",
         "label_zh": "稳定币生息",
         "current_pct": 37.6,
-        "target_pct": 32.3,
-        "drift_pp": 5.3,
+        "target_pct": 31.8,
+        "drift_pp": 5.8,
         "color": "#10b981",
         "sub_tags_en": [
           "USDT",
@@ -3347,8 +3334,8 @@
         "label_en": "Funds",
         "label_zh": "基金与现金",
         "current_pct": 35.5,
-        "target_pct": 31.8,
-        "drift_pp": 3.7,
+        "target_pct": 31.4,
+        "drift_pp": 4.1,
         "color": "#3b82f6",
         "sub_tags_en": [
           "Cash & Deposits",
@@ -3383,8 +3370,8 @@
         "label_en": "Stocks",
         "label_zh": "股票",
         "current_pct": 17,
-        "target_pct": 25,
-        "drift_pp": -8,
+        "target_pct": 25.7,
+        "drift_pp": -8.7,
         "color": "#8953d1",
         "sub_tags_en": [
           "AI Power",
@@ -3402,8 +3389,8 @@
         "label_en": "Crypto",
         "label_zh": "加密敞口",
         "current_pct": 6.3,
-        "target_pct": 7,
-        "drift_pp": -0.7,
+        "target_pct": 7.2,
+        "drift_pp": -0.9,
         "color": "#f59e0b",
         "sub_tags_en": [
           "BTC",
@@ -3479,13 +3466,13 @@
       "entry_date": "2026-04-15",
       "exit_date": "2026-06-25",
       "holding_days": 71,
-      "outcome_pct": 33.7,
-      "outcome_pct_rounded": 34,
-      "win_rate_pct": 100,
+      "outcome_pct": -3.5,
+      "outcome_pct_rounded": -4,
+      "win_rate_pct": 0,
       "trade_count": 5,
       "currency": "USD",
       "avg_entry_price": 300.8217,
-      "avg_exit_price": 284.0065,
+      "avg_exit_price": 290.2642,
       "reason_en": "Closed because ETFs are currently a better fit for my trading style than single-stock tactical positions.",
       "reason_zh": "当前判断：ETF 相对更适合自己做交易，所以先退出单一个股仓位。",
       "lesson_en": "If I don't have long-term conviction in a stock, holding through noise is hard. Strategy should shift toward vehicles I can own and trade with more discipline.",
@@ -3506,7 +3493,7 @@
           "kind": "exit",
           "action_en": "Closed via staged sells",
           "action_zh": "分批清仓",
-          "price": 284.0065,
+          "price": 290.2642,
           "note_en": "清仓：截图成交，Constellation Energy sold at 305.46 · 反弹10%清仓离场。能源板块缺乏支撑，买在高点属情绪化建仓。回归主线+指数。 · BIT.com auto-sync",
           "note_zh": "清仓：截图成交，Constellation Energy sold at 305.46 · 反弹10%清仓离场。能源板块缺乏支撑，买在高点属情绪化建仓。回归主线+指数。 · BIT.com auto-sync"
         }
@@ -3522,13 +3509,13 @@
       "entry_date": "2026-05-22",
       "exit_date": "2026-06-25",
       "holding_days": 34,
-      "outcome_pct": 88.9,
-      "outcome_pct_rounded": 89,
-      "win_rate_pct": 100,
+      "outcome_pct": -5.1,
+      "outcome_pct_rounded": -5,
+      "win_rate_pct": 0,
       "trade_count": 5,
       "currency": "USD",
       "avg_entry_price": 363.9843,
-      "avg_exit_price": 343.745,
+      "avg_exit_price": 345.29,
       "reason_en": "Auto-generated closed position from Convex trade and position records.",
       "reason_zh": "由 Convex 交易与持仓记录自动生成的清仓记录。",
       "lesson_en": "Add an editorial lesson in portfolio-overrides clearances only if this exit deserves a manual review.",
@@ -3549,7 +3536,7 @@
           "kind": "exit",
           "action_en": "Closed via staged sells",
           "action_zh": "分批清仓",
-          "price": 343.745,
+          "price": 345.29,
           "note_en": "清仓——模型能力落后+人才竞争无亮点，thesis失效。转向指数+NVDA/AAPL等现金流标的。 · BIT.com auto-sync",
           "note_zh": "清仓——模型能力落后+人才竞争无亮点，thesis失效。转向指数+NVDA/AAPL等现金流标的。 · BIT.com auto-sync"
         }
@@ -4637,9 +4624,9 @@
     "weekly_scan_hits": 0,
     "total_trades": 79,
     "closed_positions": 22,
-    "win_rate_pct": 77,
-    "realized_pnl_pct": 196,
-    "days_since_last_clearance": 1
+    "win_rate_pct": 68,
+    "realized_pnl_pct": 64,
+    "days_since_last_clearance": 2
   },
   "crypto_portfolio_history": {
     "data": [
@@ -9879,6 +9866,12 @@
     },
     {
       "date": "2026-06-26",
+      "health": 3.9,
+      "portfolio_beta": 1.42,
+      "equity_beta": 1.42
+    },
+    {
+      "date": "2026-06-27",
       "health": 3.9,
       "portfolio_beta": 1.42,
       "equity_beta": 1.42
