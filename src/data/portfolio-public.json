@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-27T12:47:11.149Z",
+  "generated_at": "2026-06-27T23:50:08.734Z",
   "regime": {
     "current": {
       "label": "防御期",
@@ -10,12 +10,12 @@
       "signals": {
         "tnx": {
           "label": "10Y UST",
-          "value": "4.37%",
+          "value": "4.45%",
           "light": "yellow"
         },
         "dxy": {
           "label": "DXY",
-          "value": "101.37",
+          "value": "101.36",
           "light": "yellow"
         },
         "vix": {
@@ -36,45 +36,6 @@
       }
     },
     "history_60d": [
-      {
-        "date": "2026-04-28",
-        "regime": "防御期",
-        "green_count": 1,
-        "aggression": "低",
-        "vix": 18.02,
-        "lights": {
-          "tnx": "yellow",
-          "dxy": "green",
-          "vix": "yellow",
-          "naaim": "red"
-        },
-        "signalDetails": {
-          "tnx": {
-            "value": 4.34,
-            "light": "yellow",
-            "status": null
-          },
-          "dxy": {
-            "value": 98.51,
-            "light": "green",
-            "status": null
-          },
-          "vix": {
-            "value": 18.02,
-            "light": "yellow",
-            "status": null
-          },
-          "naaim": {
-            "value": 94.15,
-            "light": "red",
-            "status": null
-          },
-          "policy": {
-            "light": "gray",
-            "status": null
-          }
-        }
-      },
       {
         "date": "2026-04-29",
         "regime": "中性期",
@@ -2367,6 +2328,45 @@
             "status": null
           }
         }
+      },
+      {
+        "date": "2026-06-28",
+        "regime": "防御期",
+        "green_count": 0,
+        "aggression": "低",
+        "vix": 18.41,
+        "lights": {
+          "tnx": "yellow",
+          "dxy": "yellow",
+          "vix": "yellow",
+          "naaim": "red"
+        },
+        "signalDetails": {
+          "tnx": {
+            "value": 4.45,
+            "light": "yellow",
+            "status": null
+          },
+          "dxy": {
+            "value": 101.36,
+            "light": "yellow",
+            "status": null
+          },
+          "vix": {
+            "value": 18.41,
+            "light": "yellow",
+            "status": null
+          },
+          "naaim": {
+            "value": 98.59,
+            "light": "red",
+            "status": null
+          },
+          "policy": {
+            "light": "gray",
+            "status": null
+          }
+        }
       }
     ]
   },
@@ -2377,9 +2377,9 @@
           "id": "stablecoin",
           "label_en": "Stablecoin Yield",
           "label_zh": "稳定币生息",
-          "target_pct": 31.8,
+          "target_pct": 34.5,
           "current_pct": 37.6,
-          "drift_pp": 5.8,
+          "drift_pp": 3.1,
           "color": "#10b981",
           "sub_tags_en": [
             "USDT",
@@ -2395,23 +2395,23 @@
           "note_zh": "底座层——带息、低 beta、抗衰退",
           "expected_return_pct": 5,
           "annual_volatility_pct": 1,
-          "model_target_pct": 31.8,
-          "raw_model_target_pct": 31.4,
-          "signal_score": 80,
+          "model_target_pct": 34.5,
+          "raw_model_target_pct": 36.6,
+          "signal_score": 88,
           "model_action": "trim",
-          "model_rationale_en": "APR 5.0% and regime neutral keep liquidity floor high.",
-          "model_rationale_zh": "稳定币 APR 5.0%，当前 neutral 环境下维持流动性底座。",
+          "model_rationale_en": "APR 5.0% and regime defensive keep liquidity floor high.",
+          "model_rationale_zh": "稳定币 APR 5.0%，当前 defensive 环境下维持流动性底座。",
           "model_current_pct": 37.6,
-          "model_drift_pp": 5.8,
-          "gap_amount": -671176
+          "model_drift_pp": 3.1,
+          "gap_amount": -358732
         },
         {
           "id": "funds",
           "label_en": "Funds",
           "label_zh": "基金与现金",
-          "target_pct": 31.4,
+          "target_pct": 32.7,
           "current_pct": 35.5,
-          "drift_pp": 4.1,
+          "drift_pp": 2.8,
           "color": "#3b82f6",
           "sub_tags_en": [
             "Cash & Deposits",
@@ -2427,23 +2427,23 @@
           "note_zh": "现金缓冲 + 保守理财 + 专项资金（买房/教育/应收）",
           "expected_return_pct": 3.2,
           "annual_volatility_pct": 3,
-          "model_target_pct": 31.4,
-          "raw_model_target_pct": 31.2,
+          "model_target_pct": 32.7,
+          "raw_model_target_pct": 34,
           "signal_score": 78.2,
           "model_action": "trim",
           "model_rationale_en": "SOFR 3.64% supports conservative cash/fund carry.",
           "model_rationale_zh": "SOFR 3.64%，保守现金/基金仍有持有收益。",
           "model_current_pct": 35.5,
-          "model_drift_pp": 4.1,
-          "gap_amount": -474452
+          "model_drift_pp": 2.8,
+          "gap_amount": -324016
         },
         {
           "id": "gold",
           "label_en": "Gold",
           "label_zh": "黄金",
-          "target_pct": 3.9,
+          "target_pct": 4.3,
           "current_pct": 3.6,
-          "drift_pp": -0.3,
+          "drift_pp": -0.7,
           "color": "#eab308",
           "sub_tags_en": [
             "XAU ETF",
@@ -2457,23 +2457,23 @@
           "note_zh": "长周期流动性对冲——不看五分钟K线。M2 倒挂体系入场。",
           "expected_return_pct": 3.5,
           "annual_volatility_pct": 27,
-          "model_target_pct": 3.9,
-          "raw_model_target_pct": 3.8,
+          "model_target_pct": 4.3,
+          "raw_model_target_pct": 4.6,
           "signal_score": 37,
           "model_action": "hold",
           "model_rationale_en": "Gold signal yellow; fair-value premium level extreme caps target.",
           "model_rationale_zh": "黄金信号 yellow；公允价溢价 extreme，限制目标仓位上行。",
           "model_current_pct": 3.6,
-          "model_drift_pp": -0.3,
-          "gap_amount": 34716
+          "model_drift_pp": -0.7,
+          "gap_amount": 81004
         },
         {
           "id": "stocks",
           "label_en": "Stocks",
           "label_zh": "股票",
-          "target_pct": 25.7,
+          "target_pct": 22.5,
           "current_pct": 17,
-          "drift_pp": -8.7,
+          "drift_pp": -5.5,
           "color": "#8953d1",
           "sub_tags_en": [
             "AI Power",
@@ -2487,17 +2487,17 @@
           ],
           "note_en": "Long + swing mix — AI-electricity core with opportunistic overlays",
           "note_zh": "长期 + 波段组合——AI 电力核心 + 机会主义叠加",
-          "expected_return_pct": 8.7,
+          "expected_return_pct": 8.4,
           "annual_volatility_pct": 22.7,
-          "model_target_pct": 25.7,
-          "raw_model_target_pct": 26.2,
-          "signal_score": 66.8,
+          "model_target_pct": 22.5,
+          "raw_model_target_pct": 19.8,
+          "signal_score": 64,
           "model_action": "add",
-          "model_rationale_en": "Portfolio health 3.9/5.0, equity beta 1.42, regime score 46.0.",
-          "model_rationale_zh": "组合健康度 3.9/5.0，股票 beta 1.42，宏观分数 46.0。",
+          "model_rationale_en": "Portfolio health 3.9/5.0, equity beta 1.42, regime score 38.0.",
+          "model_rationale_zh": "组合健康度 3.9/5.0，股票 beta 1.42，宏观分数 38.0。",
           "model_current_pct": 17,
-          "model_drift_pp": -8.7,
-          "gap_amount": 1006764,
+          "model_drift_pp": -5.5,
+          "gap_amount": 636460,
           "sub": [
             {
               "id": "cn",
@@ -2511,9 +2511,9 @@
           "id": "crypto",
           "label_en": "Crypto",
           "label_zh": "加密敞口",
-          "target_pct": 7.2,
+          "target_pct": 6,
           "current_pct": 6.3,
-          "drift_pp": -0.9,
+          "drift_pp": 0.3,
           "color": "#f59e0b",
           "sub_tags_en": [
             "BTC",
@@ -2525,39 +2525,39 @@
           ],
           "note_en": "Asymmetric bet — long-duration, non-correlated, high-volatility core",
           "note_zh": "不对称下注——长久期、低相关、高波动核心",
-          "expected_return_pct": 10.8,
-          "annual_volatility_pct": 33.6,
-          "model_target_pct": 7.2,
-          "raw_model_target_pct": 7.4,
-          "signal_score": 22.7,
+          "expected_return_pct": 11,
+          "annual_volatility_pct": 33.5,
+          "model_target_pct": 6,
+          "raw_model_target_pct": 5,
+          "signal_score": 23.9,
           "model_action": "hold",
-          "model_rationale_en": "Crypto composite 17.7, fear/greed 12; capped at 15%.",
-          "model_rationale_zh": "Crypto composite 17.7，恐惧贪婪 12；上限 15%。",
+          "model_rationale_en": "Crypto composite 18.9, fear/greed 14; capped at 15%.",
+          "model_rationale_zh": "Crypto composite 18.9，恐惧贪婪 14；上限 15%。",
           "model_current_pct": 6.3,
-          "model_drift_pp": -0.9,
-          "gap_amount": 104148
+          "model_drift_pp": 0.3,
+          "gap_amount": -34716
         }
       ],
       "model": {
         "schema": "portfolio-allocation-model/v1",
         "version": "0.1.0",
-        "generated_at": "2026-06-27T12:34:42.023518+00:00",
+        "generated_at": "2026-06-27T23:50:07.327494+00:00",
         "regime": {
-          "name": "neutral",
-          "score": 46
+          "name": "defensive",
+          "score": 38
         }
       },
       "risk_free_rate": 3.64,
       "weighted_return": {
-        "target": 5.7,
+        "target": 5.5,
         "current": 5.3
       },
-      "projected_annual_yield": 613478,
+      "projected_annual_yield": 609034,
       "risk": {
-        "target_vol": 10.6,
+        "target_vol": 9.6,
         "current_vol": 8.4,
-        "sharpe_target": 0.2,
-        "sharpe_current": 0.2,
+        "sharpe_target": 0.19,
+        "sharpe_current": 0.19,
         "risk_free_rate": 3.64,
         "temperature": 14,
         "temperature_label_en": "Defensive",
@@ -2781,21 +2781,21 @@
       },
       "next_event": null,
       "news": {
-        "summary": "Recent news/X chatter says device price increases tied to AI memory costs hit sentiment; analyst views mixed around AI e…",
-        "sentiment": "positive",
+        "summary": "Search results cite product price increases and memory/component cost pressure tied to AI demand.",
+        "sentiment": "negative",
         "items": [
           {
-            "title": "Apple price hikes and memory-cost pressure",
-            "snippet": "Recent news/X chatter says device price increases tied to AI memory costs hit sentiment; analyst views mixed around AI execution and China demand."
+            "title": "Apple faces pressure from product price hikes and AI component costs",
+            "snippet": "Search results cite product price increases and memory/component cost pressure tied to AI demand."
           },
           {
-            "title": "AAPL sentiment neutral to cautiously optimistic",
-            "snippet": "X search shows neutral/cautiously optimistic tone; bulls cite pricing power and upgrade cycle, bears cite AI lag and premium valuation."
+            "title": "Apple stock mixed after megacap tech weakness",
+            "snippet": "Nasdaq/CNBC items showed Apple weakness and broader megacap retreat."
           }
         ]
       },
       "price": 283.78,
-      "daily_change_pct": 3.14
+      "daily_change_pct": 0
     },
     {
       "symbol": "DRAM",
@@ -2836,21 +2836,21 @@
       "target": null,
       "next_event": null,
       "news": {
-        "summary": "Investopedia/Public items say DRAM ETF dropped sharply after memory stocks sold off, despite strong AI memory demand nar…",
+        "summary": "Google/Yahoo snippets mention good news after Micron earnings but risks remain; fund targets HBM/NAND/DRAM suppliers.",
         "sentiment": "neutral",
         "items": [
           {
-            "title": "Memory stock rout hits DRAM ETF",
-            "snippet": "Investopedia/Public items say DRAM ETF dropped sharply after memory stocks sold off, despite strong AI memory demand narrative."
+            "title": "Roundhill Memory ETF news tied to Micron earnings and memory demand",
+            "snippet": "Google/Yahoo snippets mention good news after Micron earnings but risks remain; fund targets HBM/NAND/DRAM suppliers."
           },
           {
-            "title": "DRAM sentiment bullish but volatile",
-            "snippet": "X search shows strong conviction in AI memory/HBM shortage cycle, tempered by concentration and overbought/technical risk."
+            "title": "X sentiment: bullish memory supercycle, very volatile",
+            "snippet": "X discussion centers on AI-driven memory demand and FOMO, tempered by leverage/volatility and Korean market dynamics."
           }
         ]
       },
       "price": 71.88,
-      "daily_change_pct": -6.52
+      "daily_change_pct": 0
     },
     {
       "symbol": "NVDA",
@@ -2896,21 +2896,21 @@
       "target": null,
       "next_event": null,
       "news": {
-        "summary": "News mentions Nvidia product/partnership momentum but stock in correction/rotation as investors watch other chipmakers.",
+        "summary": "Yahoo/IR/CNBC snippets show NVDA below recent highs; discussion includes legal/market pressure and stock performance lag…",
         "sentiment": "positive",
         "items": [
           {
-            "title": "Nvidia AI leadership vs recent correction",
-            "snippet": "News mentions Nvidia product/partnership momentum but stock in correction/rotation as investors watch other chipmakers."
+            "title": "Nvidia under pressure after pullback",
+            "snippet": "Yahoo/IR/CNBC snippets show NVDA below recent highs; discussion includes legal/market pressure and stock performance lagging peers."
           },
           {
-            "title": "NVDA sentiment bullish long-term, mixed short-term",
-            "snippet": "X search shows buy-the-dip AI conviction but caution around rotation, valuation and technical volatility."
+            "title": "X sentiment: cautious short-term, strong long-term AI conviction",
+            "snippet": "X discussion notes 15%-17% pullback and AI ROI/macro concerns; bulls point to CUDA moat, buybacks and AI infrastructure demand."
           }
         ]
       },
       "price": 192.53,
-      "daily_change_pct": -1.64
+      "daily_change_pct": 0
     },
     {
       "symbol": "QQQ",
@@ -2956,21 +2956,21 @@
       "target": null,
       "next_event": null,
       "news": {
-        "summary": "ETF sources show QQQ tracking Nasdaq-100 with recent performance still tied to mega-cap tech and AI.",
-        "sentiment": "neutral",
+        "summary": "QQQ pages show positive YTD/1Y returns; CNBC snippet mentions SpaceX Nasdaq-100 inclusion process and rotation out of te…",
+        "sentiment": "positive",
         "items": [
           {
-            "title": "QQQ Nasdaq-100 consolidation",
-            "snippet": "ETF sources show QQQ tracking Nasdaq-100 with recent performance still tied to mega-cap tech and AI."
+            "title": "QQQ remains strong YTD but tech rotation chatter rises",
+            "snippet": "QQQ pages show positive YTD/1Y returns; CNBC snippet mentions SpaceX Nasdaq-100 inclusion process and rotation out of tech."
           },
           {
-            "title": "QQQ sentiment cautiously bullish",
-            "snippet": "X search sees current action as consolidation above support, with concern over positioning extremes and correction risk."
+            "title": "X sentiment: cautious to mildly defensive",
+            "snippet": "X discussion shows elevated fear readings, crowded AI/tech concern and wait-and-see technical posture."
           }
         ]
       },
       "price": 706.52,
-      "daily_change_pct": -1.38
+      "daily_change_pct": 0
     },
     {
       "symbol": "SMH",
@@ -3016,21 +3016,21 @@
       "target": null,
       "next_event": null,
       "news": {
-        "summary": "Market data/news show SMH fell in a sharp semiconductor selloff after recent highs.",
-        "sentiment": "negative",
+        "summary": "Market pages show SMH around recent range; search snippets cite recent two-day selloff and volatility.",
+        "sentiment": "positive",
         "items": [
           {
-            "title": "Semiconductor ETF pullback",
-            "snippet": "Market data/news show SMH fell in a sharp semiconductor selloff after recent highs."
+            "title": "SMH rebounds after semiconductor volatility",
+            "snippet": "Market pages show SMH around recent range; search snippets cite recent two-day selloff and volatility."
           },
           {
-            "title": "SMH sentiment cautious short-term",
-            "snippet": "X search shows bearish short-term options/technical tone after the selloff, but longer-term AI semiconductor thesis intact."
+            "title": "X sentiment: short-term cautious, long-term AI chip bullish",
+            "snippet": "X discussion flags put hedging and technical pressure, but AI capex/HBM tailwinds keep dip-buying alive."
           }
         ]
       },
       "price": 611.61,
-      "daily_change_pct": -3.97
+      "daily_change_pct": 0
     },
     {
       "symbol": "VGT",
@@ -3076,31 +3076,31 @@
       "target": null,
       "next_event": null,
       "news": {
-        "summary": "Vanguard tech ETF remains tied to mega-cap tech/AI exposure; recent references include split and continued tech-sector f…",
-        "sentiment": "neutral",
+        "summary": "Vanguard profile and market pages show Information Technology ETF pricing; prior 8:1 split effective April 2026.",
+        "sentiment": "positive",
         "items": [
           {
-            "title": "VGT tech ETF news",
-            "snippet": "Vanguard tech ETF remains tied to mega-cap tech/AI exposure; recent references include split and continued tech-sector focus."
+            "title": "VGT tracking tech sector; split already effective in April",
+            "snippet": "Vanguard profile and market pages show Information Technology ETF pricing; prior 8:1 split effective April 2026."
           },
           {
-            "title": "VGT retail sentiment bullish long-term",
-            "snippet": "X search shows investors adding VGT as core diversified tech exposure, though tech concentration remains a risk."
+            "title": "X sentiment: positive long-term ETF sleeve",
+            "snippet": "Retail discussion treats VGT as a core long-term tech/growth holding, with some caution around tech rotation."
           }
         ]
       },
       "price": 113.86,
-      "daily_change_pct": -1.39
+      "daily_change_pct": 0
     }
   ],
   "crypto": null,
   "crypto_monitor": {
-    "generated_at": "2026-06-27T06:36:04.428847+08:00",
+    "generated_at": "2026-06-28T06:35:40.649797+08:00",
     "data_freshness": {
       "market_data_available": true,
       "bottom_tracker_available": true,
       "dca_status_available": true,
-      "market_data_date": "2026-06-27"
+      "market_data_date": "2026-06-28"
     },
     "allocation": {
       "crypto": {
@@ -3118,10 +3118,14 @@
     },
     "macro": {
       "fear_greed": {
-        "value": 12,
+        "value": 14,
         "label": "Extreme Fear"
       },
       "fear_greed_7d": [
+        {
+          "value": 14,
+          "label": "Extreme Fear"
+        },
         {
           "value": 12,
           "label": "Extreme Fear"
@@ -3145,10 +3149,6 @@
         {
           "value": 22,
           "label": "Extreme Fear"
-        },
-        {
-          "value": 24,
-          "label": "Extreme Fear"
         }
       ],
       "btc_change_24h": null,
@@ -3156,16 +3156,16 @@
         {
           "type": "fgi_extreme_fear",
           "severity": "P2",
-          "message": "Fear & Greed 12 (Extreme Fear) — 极端恐慌",
+          "message": "Fear & Greed 14 (Extreme Fear) — 极端恐慌",
           "data": {
-            "fgi_value": 12,
+            "fgi_value": 14,
             "fgi_label": "Extreme Fear"
           }
         }
       ]
     },
     "bottom_tracker": {
-      "score": 82.3,
+      "score": 81.1,
       "status": "强烈底部信号，建议建仓",
       "indicators": [
         {
@@ -3173,9 +3173,9 @@
           "name_en": "Fear & Greed Index",
           "status": "green",
           "score": 80,
-          "detail_en": "Current:13",
-          "detail_zh": "当前:13",
-          "delta": 1,
+          "detail_en": "Current:15",
+          "detail_zh": "当前:15",
+          "delta": 2,
           "desc_en": "Crypto market sentiment composite (0–100)",
           "desc_zh": "加密市场情绪综合指数（0–100）"
         },
@@ -3184,9 +3184,9 @@
           "name_en": "Miner Capitulation",
           "status": "yellow",
           "score": 50,
-          "detail_en": "Drawdown: -29.3%",
-          "detail_zh": "回撤: -29.3%",
-          "delta": -0.3,
+          "detail_en": "Drawdown: -28.6%",
+          "detail_zh": "回撤: -28.6%",
+          "delta": 0.2,
           "desc_en": "BTC drawdown from ATH + miner revenue stress",
           "desc_zh": "BTC 距高点回撤 + 矿工收入压力"
         },
@@ -3195,9 +3195,9 @@
           "name_en": "Black Swan Intensity",
           "status": "yellow",
           "score": 50,
-          "detail_en": "BSS:68.6",
-          "detail_zh": "BSS:68.6",
-          "delta": -1.1,
+          "detail_en": "BSS:65.9",
+          "detail_zh": "BSS:65.9",
+          "delta": -2.7,
           "desc_en": "Multi-factor tail-risk model (BSS)",
           "desc_zh": "多因子尾部风险模型（BSS）"
         },
@@ -3208,7 +3208,7 @@
           "score": 20,
           "detail_en": "VIX:18.4",
           "detail_zh": "VIX:18.4",
-          "delta": -0.5,
+          "delta": 0,
           "desc_en": "S&P 500 implied volatility",
           "desc_zh": "标普500隐含波动率"
         },
@@ -3219,7 +3219,7 @@
           "score": 80,
           "detail_en": "SSR:12.3%, Abundant OTC",
           "detail_zh": "SSR:12.3%, 场外充裕",
-          "delta": 0.2,
+          "delta": 0,
           "desc_en": "Stablecoin Supply Ratio — off-exchange liquidity",
           "desc_zh": "稳定币供应比率 — 场外流动性"
         },
@@ -3228,8 +3228,8 @@
           "name_en": "MVRV Z-Score",
           "status": "green",
           "score": 80,
-          "detail_en": "Z:-1.62, Severely Undervalued",
-          "detail_zh": "Z:-1.62, 严重低估",
+          "detail_en": "Z:-1.60, Severely Undervalued",
+          "detail_zh": "Z:-1.60, 严重低估",
           "delta": 0.02,
           "desc_en": "Market-to-Realized Value ratio (deviation from historical mean)",
           "desc_zh": "市值/已实现价值比（偏离历史均值程度）"
@@ -3239,9 +3239,9 @@
           "name_en": "BTC ETF Flow",
           "status": "yellow",
           "score": 50,
-          "detail_en": "+11M, Neutral Flow",
-          "detail_zh": "+11M, 资金中性",
-          "delta": -47,
+          "detail_en": "+12M, Neutral Flow",
+          "detail_zh": "+12M, 资金中性",
+          "delta": 1,
           "desc_en": "Daily net inflow/outflow of spot BTC ETFs (USD millions)",
           "desc_zh": "BTC 现货 ETF 每日净流入/流出（百万美元）"
         },
@@ -3259,8 +3259,32 @@
       ]
     },
     "etf": {
-      "btc_etf_net_flow_m": 11,
-      "etfs": []
+      "btc_etf_net_flow_m": 12,
+      "btc_etf_total_volume_m": 2406,
+      "source": "yfinance-estimate",
+      "etfs": [
+        {
+          "ticker": "IBIT",
+          "volume_usd_m": 2002
+        },
+        {
+          "ticker": "FBTC",
+          "volume_usd_m": 219
+        },
+        {
+          "ticker": "GBTC",
+          "volume_usd_m": 87
+        },
+        {
+          "ticker": "ARKB",
+          "volume_usd_m": 39
+        },
+        {
+          "ticker": "BITB",
+          "volume_usd_m": 59
+        }
+      ],
+      "date": "2026-06-28"
     },
     "dca": {
       "status": "closed",
@@ -3315,8 +3339,8 @@
         "label_en": "Stablecoin Yield",
         "label_zh": "稳定币生息",
         "current_pct": 37.6,
-        "target_pct": 31.8,
-        "drift_pp": 5.8,
+        "target_pct": 34.5,
+        "drift_pp": 3.1,
         "color": "#10b981",
         "sub_tags_en": [
           "USDT",
@@ -3334,8 +3358,8 @@
         "label_en": "Funds",
         "label_zh": "基金与现金",
         "current_pct": 35.5,
-        "target_pct": 31.4,
-        "drift_pp": 4.1,
+        "target_pct": 32.7,
+        "drift_pp": 2.8,
         "color": "#3b82f6",
         "sub_tags_en": [
           "Cash & Deposits",
@@ -3353,8 +3377,8 @@
         "label_en": "Gold",
         "label_zh": "黄金",
         "current_pct": 3.6,
-        "target_pct": 3.9,
-        "drift_pp": -0.3,
+        "target_pct": 4.3,
+        "drift_pp": -0.7,
         "color": "#eab308",
         "sub_tags_en": [
           "XAU ETF",
@@ -3370,8 +3394,8 @@
         "label_en": "Stocks",
         "label_zh": "股票",
         "current_pct": 17,
-        "target_pct": 25.7,
-        "drift_pp": -8.7,
+        "target_pct": 22.5,
+        "drift_pp": -5.5,
         "color": "#8953d1",
         "sub_tags_en": [
           "AI Power",
@@ -3389,8 +3413,8 @@
         "label_en": "Crypto",
         "label_zh": "加密敞口",
         "current_pct": 6.3,
-        "target_pct": 7.2,
-        "drift_pp": -0.9,
+        "target_pct": 6,
+        "drift_pp": 0.3,
         "color": "#f59e0b",
         "sub_tags_en": [
           "BTC",
@@ -5239,12 +5263,12 @@
     }
   },
   "crypto_timeseries": {
-    "generated_at": "2026-06-27T07:50:50.361122",
+    "generated_at": "2026-06-28T07:50:04.517051",
     "latest": {
-      "date": "2026-06-27",
-      "composite": 17.7,
-      "delta_composite": 0.5,
-      "btc_close": 59826,
+      "date": "2026-06-28",
+      "composite": 18.9,
+      "delta_composite": 1.2,
+      "btc_close": 60066,
       "btc_high": null,
       "btc_low": null,
       "fgi": null,
@@ -5252,15 +5276,15 @@
       "green_count": 3,
       "indicators": {
         "fear_greed": {
-          "value": 13,
+          "value": 15,
           "status": "green"
         },
         "miner_capitulation": {
-          "value": -19.5,
+          "value": -18.6,
           "status": "yellow"
         },
         "black_swan": {
-          "value": 68.6,
+          "value": 65.9,
           "status": "yellow"
         },
         "vix": {
@@ -5272,11 +5296,11 @@
           "status": "green"
         },
         "mvrv_zscore": {
-          "value": -1.62,
+          "value": -1.6,
           "status": "green"
         },
         "etf_flow": {
-          "value": 11,
+          "value": 12,
           "status": "yellow"
         },
         "dxy": {
@@ -5285,27 +5309,17 @@
         }
       },
       "indicator_deltas": {
-        "fear_greed": 1,
-        "miner_capitulation": 1.8,
-        "black_swan": -1.1,
-        "vix": -0.5,
-        "stablecoin_ratio": 0.2,
+        "fear_greed": 2,
+        "miner_capitulation": 0.9,
+        "black_swan": -2.7,
+        "vix": 0,
+        "stablecoin_ratio": 0,
         "mvrv_zscore": 0.02,
-        "etf_flow": -47,
+        "etf_flow": 1,
         "dxy": 0
       }
     },
     "data": [
-      {
-        "date": "2026-01-29",
-        "btc_close": 84561.59,
-        "btc_high": 89200.78,
-        "btc_low": 83250.6,
-        "fgi": 26,
-        "fgi_label": "Fear",
-        "composite": null,
-        "delta_composite": null
-      },
       {
         "date": "2026-01-30",
         "btc_close": 84128.66,
@@ -6778,9 +6792,9 @@
       },
       {
         "date": "2026-06-26",
-        "btc_close": 59981.45,
-        "btc_high": 60631.66,
-        "btc_low": 58397.42,
+        "btc_close": 60016.43,
+        "btc_high": 60647.19,
+        "btc_low": 58269.12,
         "fgi": 13,
         "fgi_label": "Extreme Fear",
         "composite": 17.2,
@@ -6788,45 +6802,55 @@
       },
       {
         "date": "2026-06-27",
-        "btc_close": 59826,
+        "btc_close": 59971.25,
+        "btc_high": 60788.33,
+        "btc_low": 59820.3,
+        "fgi": 15,
+        "fgi_label": "Extreme Fear",
+        "composite": 17.7,
+        "delta_composite": 0.5
+      },
+      {
+        "date": "2026-06-28",
+        "btc_close": 60066,
         "btc_high": null,
         "btc_low": null,
         "fgi": null,
         "fgi_label": null,
-        "composite": 17.7,
-        "delta_composite": 0.5
+        "composite": 18.9,
+        "delta_composite": 1.2
       }
     ]
   },
   "gold_tracker": {
-    "generated_at": "2026-06-26T23:03:47.322130+00:00",
+    "generated_at": "2026-06-27T23:01:37.405970+00:00",
     "price": {
-      "xau_usd": 4103,
-      "day_change_pct": -1.02,
+      "xau_usd": 4096.3,
+      "day_change_pct": -1.18,
       "week_52_high": 5586.2,
       "week_52_low": 3253.8,
-      "drawdown_from_peak_pct": -25.4,
+      "drawdown_from_peak_pct": -25.52,
       "peak_price": 5500
     },
     "technical": {
-      "bollinger_mid_weekly": 4667.7,
+      "bollinger_mid_weekly": 4667.37,
       "above_bollinger_mid": false,
-      "bollinger_mid_pct_diff": -12.1
+      "bollinger_mid_pct_diff": -12.24
     },
     "monetary": {
       "m2_trillion": 23.06,
       "m2_date": "2026-06-01",
       "m2_trigger_line": 24,
       "m2_to_trigger_pct": 96.1,
-      "gold_m2_ratio": 177.927147,
-      "ratio_display": 177.9,
+      "gold_m2_ratio": 177.6366,
+      "ratio_display": 177.6,
       "inversion_status": "normal",
       "inversion_label_en": "Normal Range",
       "inversion_label_zh": "正常区间"
     },
     "cost_floor": {
       "aisc_usd": 1750,
-      "price_above_aisc_pct": 134.5
+      "price_above_aisc_pct": 134.1
     },
     "premium": {
       "shfe_cny_per_gram": 879.21,
@@ -6844,7 +6868,7 @@
     }
   },
   "gold_timeseries": {
-    "generated_at": "2026-06-26T23:03:47.325702+00:00",
+    "generated_at": "2026-06-27T23:01:37.408368+00:00",
     "data": [
       {
         "date": "2025-05-02",
@@ -9624,6 +9648,15 @@
         "m2_trillion": 23.06,
         "gold_m2_ratio": 177.927147,
         "bollinger_mid_pct_diff": -12.1,
+        "premium_pct": -1.43,
+        "signal_status": "yellow"
+      },
+      {
+        "date": "2026-06-28",
+        "xau_usd": 4096.3,
+        "m2_trillion": 23.06,
+        "gold_m2_ratio": 177.6366,
+        "bollinger_mid_pct_diff": -12.24,
         "premium_pct": -1.43,
         "signal_status": "yellow"
       }
