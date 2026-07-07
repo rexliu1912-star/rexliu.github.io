@@ -20,7 +20,7 @@ const WEREAD_DIR = path.join(ROOT, "src/data/weread");
 const RAW_DIR = path.join(WEREAD_DIR, "raw");
 const PUBLIC_STATS_JSON = path.join(WEREAD_DIR, "reading-stats.json");
 const API_URL = "https://i.weread.qq.com/api/agent/gateway";
-const SKILL_VERSION = "1.0.3";
+const SKILL_VERSION = "1.0.4";
 
 function formatJson(value) {
 	return `${JSON.stringify(value, null, "\t")}\n`;
