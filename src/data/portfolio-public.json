@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-09T23:37:05.916Z",
+  "generated_at": "2026-07-09T23:53:07.647Z",
   "regime": {
     "current": {
       "label": "防御期",
@@ -10,7 +10,7 @@
       "signals": {
         "tnx": {
           "label": "10Y UST",
-          "value": "4.57%",
+          "value": "4.54%",
           "light": "red"
         },
         "dxy": {
@@ -20,12 +20,12 @@
         },
         "vix": {
           "label": "VIX",
-          "value": "16.9",
+          "value": "15.84",
           "light": "green"
         },
         "naaim": {
           "label": "NAAIM",
-          "value": "84.69",
+          "value": "82.95",
           "light": "red"
         },
         "policy": {
@@ -36,45 +36,6 @@
       }
     },
     "history_60d": [
-      {
-        "date": "2026-05-11",
-        "regime": "中性期",
-        "green_count": 2,
-        "aggression": "中",
-        "vix": 17.19,
-        "lights": {
-          "tnx": "yellow",
-          "dxy": "green",
-          "vix": "green",
-          "naaim": "red"
-        },
-        "signalDetails": {
-          "tnx": {
-            "value": 4.36,
-            "light": "yellow",
-            "status": null
-          },
-          "dxy": {
-            "value": 97.99,
-            "light": "green",
-            "status": null
-          },
-          "vix": {
-            "value": 17.19,
-            "light": "green",
-            "status": null
-          },
-          "naaim": {
-            "value": 96.67,
-            "light": "red",
-            "status": null
-          },
-          "policy": {
-            "light": "gray",
-            "status": null
-          }
-        }
-      },
       {
         "date": "2026-05-12",
         "regime": "防御期",
@@ -2362,6 +2323,45 @@
             "status": null
           }
         }
+      },
+      {
+        "date": "2026-07-10",
+        "regime": "防御期",
+        "green_count": 1,
+        "aggression": "低",
+        "vix": 15.84,
+        "lights": {
+          "tnx": "red",
+          "dxy": "yellow",
+          "vix": "green",
+          "naaim": "red"
+        },
+        "signalDetails": {
+          "tnx": {
+            "value": 4.54,
+            "light": "red",
+            "status": null
+          },
+          "dxy": {
+            "value": 100.94,
+            "light": "yellow",
+            "status": null
+          },
+          "vix": {
+            "value": 15.84,
+            "light": "green",
+            "status": null
+          },
+          "naaim": {
+            "value": 82.95,
+            "light": "red",
+            "status": null
+          },
+          "policy": {
+            "light": "gray",
+            "status": null
+          }
+        }
       }
     ]
   },
@@ -2391,7 +2391,7 @@
           "expected_return_pct": 5,
           "annual_volatility_pct": 1,
           "model_target_pct": 31.1,
-          "raw_model_target_pct": 31.1,
+          "raw_model_target_pct": 31.2,
           "signal_score": 80,
           "model_action": "trim",
           "model_rationale_en": "APR 5.0% and regime neutral keep liquidity floor high.",
@@ -2404,9 +2404,9 @@
           "id": "funds",
           "label_en": "Funds",
           "label_zh": "基金与现金",
-          "target_pct": 30.8,
+          "target_pct": 31.1,
           "current_pct": 35.5,
-          "drift_pp": 4.7,
+          "drift_pp": 4.4,
           "color": "#3b82f6",
           "sub_tags_en": [
             "Cash & Deposits",
@@ -2422,15 +2422,15 @@
           "note_zh": "现金缓冲 + 保守理财 + 专项资金（买房/教育/应收）",
           "expected_return_pct": 3.2,
           "annual_volatility_pct": 3,
-          "model_target_pct": 30.8,
-          "raw_model_target_pct": 30.9,
-          "signal_score": 78.1,
+          "model_target_pct": 31.1,
+          "raw_model_target_pct": 31.1,
+          "signal_score": 77.9,
           "model_action": "trim",
-          "model_rationale_en": "SOFR 3.62% supports conservative cash/fund carry.",
-          "model_rationale_zh": "SOFR 3.62%，保守现金/基金仍有持有收益。",
+          "model_rationale_en": "SOFR 3.58% supports conservative cash/fund carry.",
+          "model_rationale_zh": "SOFR 3.58%，保守现金/基金仍有持有收益。",
           "model_current_pct": 35.5,
-          "model_drift_pp": 4.7,
-          "gap_amount": -543884
+          "model_drift_pp": 4.4,
+          "gap_amount": -509168
         },
         {
           "id": "gold",
@@ -2451,9 +2451,9 @@
           "note_en": "Long-cycle liquidity hedge — not a candle chart. M2 inversion system entry.",
           "note_zh": "长周期流动性对冲——不看五分钟K线。M2 倒挂体系入场。",
           "expected_return_pct": 3.5,
-          "annual_volatility_pct": 25.4,
+          "annual_volatility_pct": 25.5,
           "model_target_pct": 3.6,
-          "raw_model_target_pct": 3.5,
+          "raw_model_target_pct": 3.7,
           "signal_score": 37,
           "model_action": "hold",
           "model_rationale_en": "Gold signal yellow; fair-value premium level extreme caps target.",
@@ -2482,14 +2482,14 @@
           ],
           "note_en": "Long + swing mix — AI-electricity core with opportunistic overlays",
           "note_zh": "长期 + 波段组合——AI 电力核心 + 机会主义叠加",
-          "expected_return_pct": 8.9,
-          "annual_volatility_pct": 22.1,
+          "expected_return_pct": 9.1,
+          "annual_volatility_pct": 22.4,
           "model_target_pct": 26.2,
-          "raw_model_target_pct": 26.1,
+          "raw_model_target_pct": 26.3,
           "signal_score": 68.8,
           "model_action": "add",
-          "model_rationale_en": "Portfolio health 4.0/5.0, equity beta 1.38, regime score 48.0.",
-          "model_rationale_zh": "组合健康度 4.0/5.0，股票 beta 1.38，宏观分数 48.0。",
+          "model_rationale_en": "Portfolio health 3.7/5.0, equity beta 1.40, regime score 59.0.",
+          "model_rationale_zh": "组合健康度 3.7/5.0，股票 beta 1.40，宏观分数 59.0。",
           "model_current_pct": 17,
           "model_drift_pp": -9.2,
           "gap_amount": 1064624,
@@ -2506,9 +2506,9 @@
           "id": "crypto",
           "label_en": "Crypto",
           "label_zh": "加密敞口",
-          "target_pct": 8.3,
+          "target_pct": 8,
           "current_pct": 6.3,
-          "drift_pp": -2,
+          "drift_pp": -1.7,
           "color": "#f59e0b",
           "sub_tags_en": [
             "BTC",
@@ -2520,47 +2520,47 @@
           ],
           "note_en": "Asymmetric bet — long-duration, non-correlated, high-volatility core",
           "note_zh": "不对称下注——长久期、低相关、高波动核心",
-          "expected_return_pct": 12.9,
+          "expected_return_pct": 11.5,
           "annual_volatility_pct": 32.5,
-          "model_target_pct": 8.3,
-          "raw_model_target_pct": 8.4,
-          "signal_score": 38.9,
+          "model_target_pct": 8,
+          "raw_model_target_pct": 7.7,
+          "signal_score": 27.7,
           "model_action": "hold",
-          "model_rationale_en": "Crypto composite 33.9, fear/greed 22; capped at 15%.",
-          "model_rationale_zh": "Crypto composite 33.9，恐惧贪婪 22；上限 15%。",
+          "model_rationale_en": "Crypto composite 27.7, fear/greed 50; capped at 15%.",
+          "model_rationale_zh": "Crypto composite 27.7，恐惧贪婪 50；上限 15%。",
           "model_current_pct": 6.3,
-          "model_drift_pp": -2,
-          "gap_amount": 231440
+          "model_drift_pp": -1.7,
+          "gap_amount": 196724
         }
       ],
       "model": {
         "schema": "portfolio-allocation-model/v1",
         "version": "0.1.0",
-        "generated_at": "2026-07-09T19:30:48.834232+00:00",
+        "generated_at": "2026-07-09T23:53:06.223441+00:00",
         "regime": {
           "name": "neutral",
-          "score": 48
+          "score": 59
         }
       },
-      "risk_free_rate": 3.62,
+      "risk_free_rate": 3.58,
       "weighted_return": {
-        "target": 6.1,
-        "current": 5.5
+        "target": 6,
+        "current": 5.4
       },
-      "projected_annual_yield": 632722,
+      "projected_annual_yield": 626450,
       "risk": {
         "target_vol": 10.6,
         "current_vol": 8.2,
         "sharpe_target": 0.23,
-        "sharpe_current": 0.23,
-        "risk_free_rate": 3.62,
+        "sharpe_current": 0.22,
+        "risk_free_rate": 3.58,
         "temperature": 14,
         "temperature_label_en": "Defensive",
         "temperature_label_zh": "防御型"
       },
-      "health": 4,
-      "portfolio_beta": 1.41,
-      "equity_beta": 1.38
+      "health": 3.7,
+      "portfolio_beta": 1.42,
+      "equity_beta": 1.4
     }
   },
   "sector_research": [
@@ -2765,32 +2765,28 @@
       "layer_label_zh": "AI 算力",
       "stop": {
         "type": "stop_loss",
-        "level_pct_from_current": "-29.8%",
+        "level_pct_from_current": "-30.4%",
         "severity": "gray",
         "description": "AAPL 止损线 ~15% below avg cost"
       },
       "target": {
-        "price_pct_from_current": "+-1.1%",
+        "price_pct_from_current": "+-2.0%",
         "description": "AAPL test target",
         "optimistic_price": null
       },
       "next_event": null,
       "news": {
-        "summary": "Agreement exceeds $30B in chips to Apple and includes wireless components; supports supply-chain stability and U.S",
+        "summary": "Apple and Broadcom renewed a chip supply agreement exceeding $30B; X sentiment cautiously bullish but valuation/iPhone d…",
         "sentiment": "positive",
         "items": [
           {
-            "title": "Morningstar: Apple and Broadcom announce renewed chip supply agreement through 2031",
-            "snippet": "Agreement exceeds $30B in chips to Apple and includes wireless components; supports supply-chain stability and U.S. manufacturing push."
-          },
-          {
-            "title": "X sentiment: AAPL constructive into earnings",
-            "snippet": "Recent X discussion leans bullish on Broadcom deal, technical resilience, product/AI optimism; cautions remain valuation, EU DMA pressure and mixed iP"
+            "title": "Apple/Broadcom expanded chip supply agreement through 2031",
+            "snippet": "Apple and Broadcom renewed a chip supply agreement exceeding $30B; X sentiment cautiously bullish but valuation/iPhone demand remain watch items."
           }
         ]
       },
-      "price": 313.39,
-      "daily_change_pct": 0.88
+      "price": 316.22,
+      "daily_change_pct": 0.9
     },
     {
       "symbol": "DRAM",
@@ -2831,21 +2827,17 @@
       "target": null,
       "next_event": null,
       "news": {
-        "summary": "DRAM reached large AUM quickly on AI memory demand, then suffered a sharp correction as memory names sold off.",
-        "sentiment": "negative",
+        "summary": "Memory/HBM trade is correcting after a strong run; bulls cite AI demand and SK Hynix listing, bears cite rotation and cy…",
+        "sentiment": "positive",
         "items": [
           {
-            "title": "ETFDB/Investopedia: Roundhill Memory ETF DRAM hit rapid AUM growth then sharp memory-stock rout",
-            "snippet": "DRAM reached large AUM quickly on AI memory demand, then suffered a sharp correction as memory names sold off."
-          },
-          {
-            "title": "X sentiment: DRAM high-risk memory-cycle satellite",
-            "snippet": "Long-term AI/HBM optimism remains, but near-term sentiment is cautious after a fast correction, concentration risk and bearish options flow."
+            "title": "DRAM/memory ETF pulls back but AI memory thesis intact",
+            "snippet": "Memory/HBM trade is correcting after a strong run; bulls cite AI demand and SK Hynix listing, bears cite rotation and cyclicality."
           }
         ]
       },
-      "price": 62.04,
-      "daily_change_pct": 2.39
+      "price": 64.36,
+      "daily_change_pct": 3.74
     },
     {
       "symbol": "ILMN",
@@ -2868,7 +2860,18 @@
       "layer_label_zh": null,
       "stop": null,
       "target": null,
-      "next_event": null
+      "next_event": null,
+      "news": {
+        "summary": "Recent posts cite strong 3/6/12-month performance, sequencing/multiomics workflow narrative, and executive hires; retail…",
+        "sentiment": "positive",
+        "items": [
+          {
+            "title": "Illumina sentiment neutral-positive on momentum and innovation",
+            "snippet": "Recent posts cite strong 3/6/12-month performance, sequencing/multiomics workflow narrative, and executive hires; retail debate is thin."
+          }
+        ]
+      },
+      "price": 193.76
     },
     {
       "symbol": "NVDA",
@@ -2907,28 +2910,24 @@
       "layer_label_zh": "核心持仓",
       "stop": {
         "type": "stop_loss",
-        "level_pct_from_current": "-11.2%",
+        "level_pct_from_current": "-10.7%",
         "severity": "yellow",
         "description": "NVIDIA stop loss ~18% below updated avg cost ($220.96)"
       },
       "target": null,
       "next_event": null,
       "news": {
-        "summary": "Recent headlines frame NVDA as down from highs but still central to AI infrastructure demand.",
+        "summary": "Analysts and X chatter frame the pullback as temporary; AI demand and China H200 approval are positives, while product d…",
         "sentiment": "negative",
         "items": [
           {
-            "title": "Nasdaq/Yahoo: NVDA below recent highs, debate centers on rebound potential",
-            "snippet": "Recent headlines frame NVDA as down from highs but still central to AI infrastructure demand."
-          },
-          {
-            "title": "X sentiment: NVDA buy-the-dip narrative remains dominant",
-            "snippet": "Social sentiment is constructive around cheaper forward valuation and AI leadership; risks include ASIC competition, AI capex ROI and margin pressure."
+            "title": "Nvidia sentiment constructive after pullback",
+            "snippet": "Analysts and X chatter frame the pullback as temporary; AI demand and China H200 approval are positives, while product delay/competition risks remain."
           }
         ]
       },
-      "price": 204.12,
-      "daily_change_pct": 3.65
+      "price": 202.78,
+      "daily_change_pct": -0.66
     },
     {
       "symbol": "OUST",
@@ -2967,12 +2966,12 @@
       "layer_label_zh": "卫星持仓",
       "stop": {
         "type": "stop_loss",
-        "level_pct_from_current": "-32.2%",
+        "level_pct_from_current": "-50.3%",
         "severity": "gray",
         "description": "OUST 止损 $23.63（成本$31.50 -25%，研报原设$18基于$24-26入场）"
       },
       "target": {
-        "price_pct_from_current": "+14.7%",
+        "price_pct_from_current": "+-15.8%",
         "description": "OUST 目标价 $XX,XXX（研报目标，验证连续营收增长+Rev8量产+EBITDA改善后可上修）",
         "optimistic_price": null
       },
@@ -2980,7 +2979,18 @@
         "date": "2026-08-05",
         "label": "Ouster Q2 2026 财报（预计）— 验证连续14个季度营收增长、Rev8数字激光雷达出货",
         "urgency": 3
-      }
+      },
+      "news": {
+        "summary": "Investor chatter highlights Rev8, robotics/industrial demand and BABA compliance; $200M equity offering remains the main…",
+        "sentiment": "neutral",
+        "items": [
+          {
+            "title": "Ouster Physical AI/lidar narrative strong, dilution risk noted",
+            "snippet": "Investor chatter highlights Rev8, robotics/industrial demand and BABA compliance; $200M equity offering remains the main caution."
+          }
+        ]
+      },
+      "price": 47.53
     },
     {
       "symbol": "QQQ",
@@ -3019,28 +3029,24 @@
       "layer_label_zh": "卫星配置",
       "stop": {
         "type": "stop_loss",
-        "level_pct_from_current": "-18.0%",
+        "level_pct_from_current": "-19.3%",
         "severity": "yellow",
         "description": "Invesco QQQ Trust stop loss ~18% below cost"
       },
       "target": null,
       "next_event": null,
       "news": {
-        "summary": "Recent QQQ coverage highlights price action and tech-heavy exposure near elevated index levels.",
-        "sentiment": "negative",
+        "summary": "Nasdaq/QQQ chatter points to dip-buying if support holds, but needs confirmation around key resistance; tech crowdedness…",
+        "sentiment": "neutral",
         "items": [
           {
-            "title": "Nasdaq/CNBC: QQQ tracks Nasdaq-100 amid continued mega-cap concentration",
-            "snippet": "Recent QQQ coverage highlights price action and tech-heavy exposure near elevated index levels."
-          },
-          {
-            "title": "X sentiment: QQQ defensive/bearish short term",
-            "snippet": "Discussion flags breadth weakness, crowded AI/semiconductor longs and key levels around 703–715; some contrarian dip-buying remains."
+            "title": "QQQ sentiment cautiously bullish but range-bound",
+            "snippet": "Nasdaq/QQQ chatter points to dip-buying if support holds, but needs confirmation around key resistance; tech crowdedness remains a risk."
           }
         ]
       },
-      "price": 711.44,
-      "daily_change_pct": 0.28
+      "price": 723.28,
+      "daily_change_pct": 1.66
     },
     {
       "symbol": "SPCX",
@@ -3063,7 +3069,18 @@
       "layer_label_zh": null,
       "stop": null,
       "target": null,
-      "next_event": null
+      "next_event": null,
+      "news": {
+        "summary": "Analyst targets and ARK buying support bulls, while weak price action, shorts, valuation/cash-flow and lockup concerns d…",
+        "sentiment": "negative",
+        "items": [
+          {
+            "title": "SPCX/SpaceX sentiment polarized post-IPO",
+            "snippet": "Analyst targets and ARK buying support bulls, while weak price action, shorts, valuation/cash-flow and lockup concerns dominate near-term caution."
+          }
+        ]
+      },
+      "price": 152.16
     }
   ],
   "crypto": null,
@@ -3115,9 +3132,9 @@
           "name_en": "Miner Capitulation",
           "status": "red",
           "score": 20,
-          "detail_en": "Drawdown: -24.2%",
-          "detail_zh": "回撤: -24.2%",
-          "delta": -1.9,
+          "detail_en": "Drawdown: -23.0%",
+          "detail_zh": "回撤: -23.0%",
+          "delta": 0,
           "desc_en": "BTC drawdown from ATH + miner revenue stress",
           "desc_zh": "BTC 距高点回撤 + 矿工收入压力"
         },
@@ -3289,8 +3306,8 @@
         "label_en": "Funds",
         "label_zh": "基金与现金",
         "current_pct": 35.5,
-        "target_pct": 30.8,
-        "drift_pp": 4.7,
+        "target_pct": 31.1,
+        "drift_pp": 4.4,
         "color": "#3b82f6",
         "sub_tags_en": [
           "Cash & Deposits",
@@ -3344,8 +3361,8 @@
         "label_en": "Crypto",
         "label_zh": "加密敞口",
         "current_pct": 6.3,
-        "target_pct": 8.3,
-        "drift_pp": -2,
+        "target_pct": 8,
+        "drift_pp": -1.7,
         "color": "#f59e0b",
         "sub_tags_en": [
           "BTC",
@@ -5255,40 +5272,44 @@
     }
   },
   "crypto_timeseries": {
-    "generated_at": "2026-07-09T13:27:44.332681",
+    "generated_at": "2026-07-10T07:53:03.384503",
     "latest": {
-      "date": "2026-07-09",
-      "composite": 33.9,
-      "delta_composite": 1.6,
-      "btc_close": 62256,
+      "date": "2026-07-10",
+      "composite": 27.7,
+      "delta_composite": -6.2,
+      "btc_close": 63249,
       "btc_high": null,
       "btc_low": null,
-      "fgi": 22,
-      "fgi_label": "Extreme Fear",
-      "green_count": 1,
+      "fgi": null,
+      "fgi_label": null,
+      "green_count": 2,
       "indicators": {
         "fear_greed": {
           "value": 22,
           "status": "yellow"
         },
         "miner_capitulation": {
-          "value": -6.1,
+          "value": -4.6,
           "status": "red"
         },
         "black_swan": {
-          "value": 59.7,
+          "value": 58.3,
           "status": "yellow"
         },
         "vix": {
-          "value": 16.9,
+          "value": 15.8,
           "status": "red"
         },
+        "stablecoin_ratio": {
+          "value": 11.6,
+          "status": "green"
+        },
         "mvrv_zscore": {
-          "value": -1.38,
+          "value": -1.33,
           "status": "green"
         },
         "etf_flow": {
-          "value": -48,
+          "value": -43,
           "status": "yellow"
         },
         "dxy": {
@@ -5297,26 +5318,16 @@
         }
       },
       "indicator_deltas": {
-        "fear_greed": -5,
-        "miner_capitulation": -1.8,
-        "black_swan": 5.7,
-        "vix": 0.8,
-        "mvrv_zscore": -0.05,
-        "etf_flow": 2,
-        "dxy": -0.2
+        "fear_greed": 0,
+        "miner_capitulation": 1.5,
+        "black_swan": -1.4,
+        "vix": -1.1,
+        "mvrv_zscore": 0.05,
+        "etf_flow": 5,
+        "dxy": 0
       }
     },
     "data": [
-      {
-        "date": "2026-02-10",
-        "btc_close": 68793.96,
-        "btc_high": 70464.27,
-        "btc_low": 67913.09,
-        "fgi": 9,
-        "fgi_label": "Extreme Fear",
-        "composite": null,
-        "delta_composite": null
-      },
       {
         "date": "2026-02-11",
         "btc_close": 66991.97,
@@ -6789,9 +6800,9 @@
       },
       {
         "date": "2026-07-08",
-        "btc_close": 63471,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 62257.57,
+        "btc_high": 63706.89,
+        "btc_low": 61492.65,
         "fgi": 20,
         "fgi_label": "Extreme Fear",
         "composite": 32.3,
@@ -6799,13 +6810,23 @@
       },
       {
         "date": "2026-07-09",
-        "btc_close": 62256,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 63228.24,
+        "btc_high": 63346.88,
+        "btc_low": 61697.41,
         "fgi": 22,
         "fgi_label": "Extreme Fear",
         "composite": 33.9,
         "delta_composite": 1.6
+      },
+      {
+        "date": "2026-07-10",
+        "btc_close": 63249,
+        "btc_high": null,
+        "btc_low": null,
+        "fgi": null,
+        "fgi_label": null,
+        "composite": 27.7,
+        "delta_composite": -6.2
       }
     ]
   },
@@ -10066,9 +10087,9 @@
     },
     {
       "date": "2026-07-09",
-      "health": 4,
-      "portfolio_beta": 1.41,
-      "equity_beta": 1.38
+      "health": 3.7,
+      "portfolio_beta": 1.42,
+      "equity_beta": 1.4
     }
   ],
   "capital_mobility_risk": {
