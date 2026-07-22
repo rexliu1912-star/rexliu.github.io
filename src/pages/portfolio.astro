@@ -1,4 +1,6 @@
 ---
+import goldTimeseriesData from "@/data/gold-timeseries.json";
+import goldTrackerData from "@/data/gold-tracker.json";
 import rawPortfolioData from "@/data/portfolio-public.json";
 import PageLayout from "@/layouts/Base.astro";
 
@@ -121,7 +123,11 @@ interface PortfolioData {
 	analytics_history?: { date: string; health: number | null; portfolio_beta: number | null; equity_beta: number | null }[];
 }
 
-const portfolioData = rawPortfolioData as unknown as PortfolioData;
+const portfolioData = {
+	...(rawPortfolioData as unknown as PortfolioData),
+	gold_tracker: goldTrackerData as any,
+	gold_timeseries: goldTimeseriesData as any,
+};
 
 const {
 	regime,
