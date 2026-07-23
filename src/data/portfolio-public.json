@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-23T15:00:28.024Z",
+  "generated_at": "2026-07-23T15:11:02.114Z",
   "regime": {
     "current": {
       "label": "防御期",
@@ -2372,9 +2372,9 @@
           "id": "stablecoin",
           "label_en": "Stablecoin Yield",
           "label_zh": "稳定币生息",
-          "target_pct": 31.3,
+          "target_pct": 31.2,
           "current_pct": 37.6,
-          "drift_pp": 6.3,
+          "drift_pp": 6.4,
           "color": "#10b981",
           "sub_tags_en": [
             "USDT",
@@ -2390,23 +2390,23 @@
           "note_zh": "底座层——带息、低 beta、抗衰退",
           "expected_return_pct": 5,
           "annual_volatility_pct": 1,
-          "model_target_pct": 31.3,
+          "model_target_pct": 31.2,
           "raw_model_target_pct": 31.1,
           "signal_score": 80,
           "model_action": "trim",
           "model_rationale_en": "APR 5.0% and regime neutral keep liquidity floor high.",
           "model_rationale_zh": "稳定币 APR 5.0%，当前 neutral 环境下维持流动性底座。",
           "model_current_pct": 37.6,
-          "model_drift_pp": 6.3,
-          "gap_amount": -729036
+          "model_drift_pp": 6.4,
+          "gap_amount": -740608
         },
         {
           "id": "funds",
           "label_en": "Funds",
           "label_zh": "基金与现金",
-          "target_pct": 31.1,
+          "target_pct": 31,
           "current_pct": 35.5,
-          "drift_pp": 4.4,
+          "drift_pp": 4.5,
           "color": "#3b82f6",
           "sub_tags_en": [
             "Cash & Deposits",
@@ -2422,15 +2422,15 @@
           "note_zh": "现金缓冲 + 保守理财 + 专项资金（买房/教育/应收）",
           "expected_return_pct": 3.2,
           "annual_volatility_pct": 3,
-          "model_target_pct": 31.1,
+          "model_target_pct": 31,
           "raw_model_target_pct": 31,
           "signal_score": 78,
           "model_action": "trim",
           "model_rationale_en": "SOFR 3.61% supports conservative cash/fund carry.",
           "model_rationale_zh": "SOFR 3.61%，保守现金/基金仍有持有收益。",
           "model_current_pct": 35.5,
-          "model_drift_pp": 4.4,
-          "gap_amount": -509168
+          "model_drift_pp": 4.5,
+          "gap_amount": -520740
         },
         {
           "id": "gold",
@@ -2466,9 +2466,9 @@
           "id": "stocks",
           "label_en": "Stocks",
           "label_zh": "股票",
-          "target_pct": 25.6,
+          "target_pct": 25.7,
           "current_pct": 17,
-          "drift_pp": -8.6,
+          "drift_pp": -8.7,
           "color": "#8953d1",
           "sub_tags_en": [
             "AI Power",
@@ -2484,15 +2484,15 @@
           "note_zh": "长期 + 波段组合——AI 电力核心 + 机会主义叠加",
           "expected_return_pct": 8.5,
           "annual_volatility_pct": 22.1,
-          "model_target_pct": 25.6,
+          "model_target_pct": 25.7,
           "raw_model_target_pct": 25.8,
           "signal_score": 64.2,
           "model_action": "add",
           "model_rationale_en": "Portfolio health 3.7/5.0, equity beta 1.38, regime score 46.0.",
           "model_rationale_zh": "组合健康度 3.7/5.0，股票 beta 1.38，宏观分数 46.0。",
           "model_current_pct": 17,
-          "model_drift_pp": -8.6,
-          "gap_amount": 995192,
+          "model_drift_pp": -8.7,
+          "gap_amount": 1006764,
           "sub": [
             {
               "id": "cn",
@@ -2506,9 +2506,9 @@
           "id": "crypto",
           "label_en": "Crypto",
           "label_zh": "加密敞口",
-          "target_pct": 8.3,
+          "target_pct": 8.4,
           "current_pct": 6.3,
-          "drift_pp": -2,
+          "drift_pp": -2.1,
           "color": "#f59e0b",
           "sub_tags_en": [
             "BTC",
@@ -2522,21 +2522,21 @@
           "note_zh": "不对称下注——长久期、低相关、高波动核心",
           "expected_return_pct": 13,
           "annual_volatility_pct": 32.5,
-          "model_target_pct": 8.3,
+          "model_target_pct": 8.4,
           "raw_model_target_pct": 8.5,
           "signal_score": 40.2,
-          "model_action": "hold",
+          "model_action": "add",
           "model_rationale_en": "Crypto composite 40.2, fear/greed 50; capped at 15%.",
           "model_rationale_zh": "Crypto composite 40.2，恐惧贪婪 50；上限 15%。",
           "model_current_pct": 6.3,
-          "model_drift_pp": -2,
-          "gap_amount": 231440
+          "model_drift_pp": -2.1,
+          "gap_amount": 243012
         }
       ],
       "model": {
         "schema": "portfolio-allocation-model/v1",
         "version": "0.1.0",
-        "generated_at": "2026-07-23T15:00:26.080935+00:00",
+        "generated_at": "2026-07-23T15:10:59.505041+00:00",
         "regime": {
           "name": "neutral",
           "score": 46
@@ -2544,12 +2544,12 @@
       },
       "risk_free_rate": 3.61,
       "weighted_return": {
-        "target": 5.9,
+        "target": 6,
         "current": 5.4
       },
       "projected_annual_yield": 625582,
       "risk": {
-        "target_vol": 10.5,
+        "target_vol": 10.6,
         "current_vol": 8.1,
         "sharpe_target": 0.22,
         "sharpe_current": 0.22,
@@ -3180,6 +3180,49 @@
       },
       "price": 115.26,
       "daily_change_pct": -6.7
+    },
+    {
+      "symbol": "TSLA",
+      "market": "us",
+      "flag": "🇺🇸",
+      "sector_tags_en": [
+        "EV",
+        "AI/Robotics",
+        "Energy Storage",
+        "Autonomous Driving"
+      ],
+      "sector_tags_zh": [
+        "电动车",
+        "AI/机器人",
+        "储能",
+        "自动驾驶"
+      ],
+      "driver_factors_en": [
+        "FSD Adoption Rate",
+        "Optimus Production Timeline",
+        "Energy Storage Deployments",
+        "Auto Gross Margin Recovery"
+      ],
+      "driver_factors_zh": [
+        "FSD渗透率",
+        "Optimus量产进度",
+        "储能装机量",
+        "汽车毛利率回升"
+      ],
+      "thesis_en": "AI-driven inflection: Tesla is evolving from an EV maker into an AI/robotics company. FSD v13 rollout, Optimus production ramp, and energy storage growth are the real margin stories beyond auto cycles.",
+      "thesis_zh": "AI驱动拐点：Tesla正从纯电动车企转型为AI/机器人公司。FSD v13推广、Optimus量产爬坡、储能业务增长是超越汽车周期的真正利润故事。",
+      "stage": 5,
+      "status_en": "Active",
+      "status_zh": "持有中",
+      "conviction": "medium",
+      "horizon": "medium",
+      "entry_year": 2026,
+      "layer": "satellite",
+      "layer_label_en": "Satellite",
+      "layer_label_zh": "卫星仓",
+      "stop": null,
+      "target": null,
+      "next_event": null
     }
   ],
   "crypto": null,
@@ -3362,8 +3405,8 @@
         "label_en": "Stablecoin Yield",
         "label_zh": "稳定币生息",
         "current_pct": 37.6,
-        "target_pct": 31.3,
-        "drift_pp": 6.3,
+        "target_pct": 31.2,
+        "drift_pp": 6.4,
         "color": "#10b981",
         "sub_tags_en": [
           "USDT",
@@ -3381,8 +3424,8 @@
         "label_en": "Funds",
         "label_zh": "基金与现金",
         "current_pct": 35.5,
-        "target_pct": 31.1,
-        "drift_pp": 4.4,
+        "target_pct": 31,
+        "drift_pp": 4.5,
         "color": "#3b82f6",
         "sub_tags_en": [
           "Cash & Deposits",
@@ -3417,8 +3460,8 @@
         "label_en": "Stocks",
         "label_zh": "股票",
         "current_pct": 17,
-        "target_pct": 25.6,
-        "drift_pp": -8.6,
+        "target_pct": 25.7,
+        "drift_pp": -8.7,
         "color": "#8953d1",
         "sub_tags_en": [
           "AI Power",
@@ -3436,8 +3479,8 @@
         "label_en": "Crypto",
         "label_zh": "加密敞口",
         "current_pct": 6.3,
-        "target_pct": 8.3,
-        "drift_pp": -2,
+        "target_pct": 8.4,
+        "drift_pp": -2.1,
         "color": "#f59e0b",
         "sub_tags_en": [
           "BTC",
@@ -4454,8 +4497,8 @@
     {
       "ticker": "TSLA",
       "market": "us",
-      "name_en": "TSLA",
-      "name_zh": "TSLA",
+      "name_en": "Tesla",
+      "name_zh": "特斯拉",
       "sector_tags_en": [
         "EV",
         "Autonomy",
@@ -4472,35 +4515,31 @@
       "outcome_pct_rounded": 12,
       "win_rate_pct": 100,
       "trade_count": 2,
-      "reason_en": "Auto-generated closed position from Convex trade and position records.",
-      "reason_zh": "由 Convex 交易与持仓记录自动生成的清仓记录。",
-      "lesson_en": "Add an editorial lesson in portfolio-overrides clearances only if this exit deserves a manual review.",
-      "lesson_zh": "只有值得复盘的清仓，才需要在 portfolio-overrides clearances 里补充人工经验。",
+      "reason_en": "Closed the small test position after a fast rebound; kept the optionality thesis on watchlist but locked the realized gain.",
+      "reason_zh": "快速反弹后清掉小测试仓；保留自动驾驶/机器人期权逻辑在观察池，但先锁定已实现收益。",
+      "lesson_en": "The thesis had upside optionality, but the position size was exploratory. When a test position pays quickly, taking the clean win beats forcing it into a long-term holding.",
+      "lesson_zh": "逻辑有上行期权，但仓位本质是探索仓。测试仓快速赚钱时，干净兑现比硬拗成长线更好。",
       "article_url": null,
       "trade_points": [
         {
           "date": "2026-04-23",
           "kind": "entry",
-          "action_en": "Opened position",
-          "action_zh": "建立仓位",
+          "action_en": "Opened exploratory TSLA position",
+          "action_zh": "建立 TSLA 探索仓",
           "price": 382.4,
-          "note_en": "Rex 手动交易 4/23",
-          "note_zh": "Rex 手动交易 4/23"
+          "note_en": "Entry at $382.40. Autonomy/FSD + robotics optionality thesis.",
+          "note_zh": "建仓 $382.40。自动驾驶/FSD + 机器人期权逻辑。"
         },
         {
           "date": "2026-05-08",
           "kind": "exit",
-          "action_en": "Closed position",
-          "action_zh": "清仓",
+          "action_en": "Full exit after rebound",
+          "action_zh": "反弹后清仓",
           "price": 427.725,
-          "note_en": "Rex 手动卖出；订单 1237404052984213504；截图显示 BIT(MP00002929)，系统按现有 TSLA 美股账户记录；成交金额 855.45 USD；10:01:56 美东",
-          "note_zh": "Rex 手动卖出；订单 1237404052984213504；截图显示 BIT(MP00002929)，系统按现有 TSLA 美股账户记录；成交金额 855.45 USD；10:01:56 美东"
+          "note_en": "Exit at $427.725. Realized profit $90.65, +11.85%.",
+          "note_zh": "清仓 $427.725。实现盈利 $90.65，+11.85%。"
         }
-      ],
-      "outcome_pct": 11.9,
-      "currency": "USD",
-      "avg_entry_price": 382.4,
-      "avg_exit_price": 427.725
+      ]
     },
     {
       "ticker": "HOOD",
@@ -4725,7 +4764,7 @@
     }
   ],
   "stats": {
-    "active_positions": 8,
+    "active_positions": 9,
     "markets": 1,
     "tracked_rules": 43,
     "upcoming_events": 2,
