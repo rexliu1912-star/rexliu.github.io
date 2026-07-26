@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-25T23:55:16.032Z",
+  "generated_at": "2026-07-26T02:04:24.055Z",
   "regime": {
     "current": {
       "label": "防御期",
@@ -2372,9 +2372,9 @@
           "id": "stablecoin",
           "label_en": "Stablecoin Yield",
           "label_zh": "稳定币生息",
-          "target_pct": 37.4,
+          "target_pct": 37,
           "current_pct": 37.6,
-          "drift_pp": 0.2,
+          "drift_pp": 0.6,
           "color": "#10b981",
           "sub_tags_en": [
             "USDT",
@@ -2390,23 +2390,23 @@
           "note_zh": "底座层——带息、低 beta、抗衰退",
           "expected_return_pct": 5,
           "annual_volatility_pct": 1,
-          "model_target_pct": 37.4,
+          "model_target_pct": 37,
           "raw_model_target_pct": 36.7,
           "signal_score": 88,
           "model_action": "hold",
           "model_rationale_en": "APR 5.0% and regime defensive keep liquidity floor high.",
           "model_rationale_zh": "稳定币 APR 5.0%，当前 defensive 环境下维持流动性底座。",
           "model_current_pct": 37.6,
-          "model_drift_pp": 0.2,
-          "gap_amount": -23144
+          "model_drift_pp": 0.6,
+          "gap_amount": -69432
         },
         {
           "id": "funds",
           "label_en": "Funds",
           "label_zh": "基金与现金",
-          "target_pct": 34.5,
+          "target_pct": 34.2,
           "current_pct": 35.5,
-          "drift_pp": 1,
+          "drift_pp": 1.3,
           "color": "#3b82f6",
           "sub_tags_en": [
             "Cash & Deposits",
@@ -2422,15 +2422,15 @@
           "note_zh": "现金缓冲 + 保守理财 + 专项资金（买房/教育/应收）",
           "expected_return_pct": 3.2,
           "annual_volatility_pct": 3,
-          "model_target_pct": 34.5,
+          "model_target_pct": 34.2,
           "raw_model_target_pct": 34.2,
           "signal_score": 78.2,
           "model_action": "hold",
           "model_rationale_en": "SOFR 3.64% supports conservative cash/fund carry.",
           "model_rationale_zh": "SOFR 3.64%，保守现金/基金仍有持有收益。",
           "model_current_pct": 35.5,
-          "model_drift_pp": 1,
-          "gap_amount": -115720
+          "model_drift_pp": 1.3,
+          "gap_amount": -150436
         },
         {
           "id": "gold",
@@ -2466,9 +2466,9 @@
           "id": "stocks",
           "label_en": "Stocks",
           "label_zh": "股票",
-          "target_pct": 18.1,
+          "target_pct": 18.8,
           "current_pct": 17,
-          "drift_pp": -1.1,
+          "drift_pp": -1.8,
           "color": "#8953d1",
           "sub_tags_en": [
             "AI Power",
@@ -2483,16 +2483,16 @@
           "note_en": "Long + swing mix — AI-electricity core with opportunistic overlays",
           "note_zh": "长期 + 波段组合——AI 电力核心 + 机会主义叠加",
           "expected_return_pct": 7.9,
-          "annual_volatility_pct": 22.6,
-          "model_target_pct": 18.1,
+          "annual_volatility_pct": 16,
+          "model_target_pct": 18.8,
           "raw_model_target_pct": 19.3,
           "signal_score": 58.1,
           "model_action": "hold",
-          "model_rationale_en": "Portfolio health 3.5/5.0, equity beta 1.41, regime score 36.0.",
-          "model_rationale_zh": "组合健康度 3.5/5.0，股票 beta 1.41，宏观分数 36.0。",
+          "model_rationale_en": "Portfolio health 3.5/5.0, equity beta 0.78, regime score 36.0.",
+          "model_rationale_zh": "组合健康度 3.5/5.0，股票 beta 0.78，宏观分数 36.0。",
           "model_current_pct": 17,
-          "model_drift_pp": -1.1,
-          "gap_amount": 127292,
+          "model_drift_pp": -1.8,
+          "gap_amount": 208296,
           "sub": [
             {
               "id": "cn",
@@ -2536,7 +2536,7 @@
       "model": {
         "schema": "portfolio-allocation-model/v1",
         "version": "0.1.0",
-        "generated_at": "2026-07-25T23:55:14.282364+00:00",
+        "generated_at": "2026-07-26T02:04:22.012095+00:00",
         "regime": {
           "name": "defensive",
           "score": 36
@@ -2549,18 +2549,18 @@
       },
       "projected_annual_yield": 607947,
       "risk": {
-        "target_vol": 8.4,
-        "current_vol": 8.2,
-        "sharpe_target": 0.19,
-        "sharpe_current": 0.2,
+        "target_vol": 7.3,
+        "current_vol": 7.1,
+        "sharpe_target": 0.22,
+        "sharpe_current": 0.23,
         "risk_free_rate": 3.64,
-        "temperature": 14,
+        "temperature": 12,
         "temperature_label_en": "Defensive",
         "temperature_label_zh": "防御型"
       },
       "health": 3.5,
-      "portfolio_beta": 1.41,
-      "equity_beta": 1.41
+      "portfolio_beta": 1.01,
+      "equity_beta": 0.78
     }
   },
   "sector_research": [
@@ -3273,6 +3273,66 @@
       },
       "price": 313.03,
       "daily_change_pct": 0
+    },
+    {
+      "symbol": "159632",
+      "market": "cn",
+      "flag": "🇨🇳",
+      "sector_tags_en": [
+        "US Tech",
+        "Cross-border ETF"
+      ],
+      "sector_tags_zh": [
+        "美股科技",
+        "跨境ETF"
+      ],
+      "driver_factors_en": [],
+      "driver_factors_zh": [],
+      "thesis_en": "",
+      "thesis_zh": "",
+      "stage": 1,
+      "status_en": "Active",
+      "status_zh": "持有中",
+      "conviction": "3",
+      "horizon": "medium",
+      "entry_year": null,
+      "layer": "L3",
+      "layer_label_en": "Satellite",
+      "layer_label_zh": "卫星",
+      "stop": null,
+      "target": null,
+      "next_event": null
+    },
+    {
+      "symbol": "518880",
+      "market": "cn",
+      "flag": "🇨🇳",
+      "sector_tags_en": [
+        "Gold",
+        "Liquidity Hedge",
+        "A-share ETF"
+      ],
+      "sector_tags_zh": [
+        "黄金",
+        "流动性对冲",
+        "A股ETF"
+      ],
+      "driver_factors_en": [],
+      "driver_factors_zh": [],
+      "thesis_en": "",
+      "thesis_zh": "",
+      "stage": 7,
+      "status_en": "Active",
+      "status_zh": "持有中",
+      "conviction": "medium",
+      "horizon": "long",
+      "entry_year": null,
+      "layer": null,
+      "layer_label_en": null,
+      "layer_label_zh": null,
+      "stop": null,
+      "target": null,
+      "next_event": null
     }
   ],
   "crypto": null,
@@ -3400,31 +3460,7 @@
     },
     "etf": {
       "btc_etf_net_flow_m": -11,
-      "btc_etf_total_volume_m": 1480,
-      "source": "yfinance-estimate",
-      "etfs": [
-        {
-          "ticker": "IBIT",
-          "volume_usd_m": 1197
-        },
-        {
-          "ticker": "FBTC",
-          "volume_usd_m": 157
-        },
-        {
-          "ticker": "GBTC",
-          "volume_usd_m": 62
-        },
-        {
-          "ticker": "ARKB",
-          "volume_usd_m": 27
-        },
-        {
-          "ticker": "BITB",
-          "volume_usd_m": 37
-        }
-      ],
-      "date": "2026-07-26"
+      "etfs": []
     },
     "dca": {
       "status": "closed",
@@ -3479,8 +3515,8 @@
         "label_en": "Stablecoin Yield",
         "label_zh": "稳定币生息",
         "current_pct": 37.6,
-        "target_pct": 37.4,
-        "drift_pp": 0.2,
+        "target_pct": 37,
+        "drift_pp": 0.6,
         "color": "#10b981",
         "sub_tags_en": [
           "USDT",
@@ -3498,8 +3534,8 @@
         "label_en": "Funds",
         "label_zh": "基金与现金",
         "current_pct": 35.5,
-        "target_pct": 34.5,
-        "drift_pp": 1,
+        "target_pct": 34.2,
+        "drift_pp": 1.3,
         "color": "#3b82f6",
         "sub_tags_en": [
           "Cash & Deposits",
@@ -3534,8 +3570,8 @@
         "label_en": "Stocks",
         "label_zh": "股票",
         "current_pct": 17,
-        "target_pct": 18.1,
-        "drift_pp": -1.1,
+        "target_pct": 18.8,
+        "drift_pp": -1.8,
         "color": "#8953d1",
         "sub_tags_en": [
           "AI Power",
@@ -3964,57 +4000,6 @@
       ]
     },
     {
-      "ticker": "518880",
-      "market": "cn",
-      "name_en": "Gold ETF",
-      "name_zh": "黄金ETF",
-      "sector_tags_en": [
-        "Gold",
-        "Liquidity Hedge",
-        "A-share ETF"
-      ],
-      "sector_tags_zh": [
-        "黄金",
-        "流动性对冲",
-        "A股ETF"
-      ],
-      "entry_date": "2026-05-18",
-      "exit_date": "2026-06-17",
-      "holding_days": 30,
-      "outcome_pct_rounded": 1,
-      "win_rate_pct": 100,
-      "trade_count": 5,
-      "reason_en": "Closed the tactical gold ETF tranche after a small rebound; keep gold as a macro hedge framework, not a forced public holding.",
-      "reason_zh": "黄金ETF战术仓位清仓，小幅反弹后落袋；黄金仍作为宏观对冲框架，不强行保留公开持仓。",
-      "lesson_en": "Gold hedge sizing should stay tactical and rule-driven; treat ETF round trips separately from the long-cycle gold thesis.",
-      "lesson_zh": "黄金对冲仓位要保持战术化和规则化；ETF波段交易与长期黄金逻辑分开记录。",
-      "article_url": null,
-      "trade_points": [
-        {
-          "date": "2026-05-18",
-          "kind": "entry",
-          "action_en": "Built position",
-          "action_zh": "分批建仓",
-          "price": 8.9128,
-          "note_en": "初始建仓黄金ETF · 加仓黄金ETF · 新建仓黄金ETF",
-          "note_zh": "初始建仓黄金ETF · 加仓黄金ETF · 新建仓黄金ETF"
-        },
-        {
-          "date": "2026-06-17",
-          "kind": "exit",
-          "action_en": "Closed via staged sells",
-          "action_zh": "分批清仓",
-          "price": 8.975,
-          "note_en": "截图成交：黄金ETF 09:42:19 全部成交 · 截图成交：黄金ETF 09:45:49 全部成交",
-          "note_zh": "截图成交：黄金ETF 09:42:19 全部成交 · 截图成交：黄金ETF 09:45:49 全部成交"
-        }
-      ],
-      "outcome_pct": 0.7,
-      "currency": "CNY",
-      "avg_entry_price": 8.9128,
-      "avg_exit_price": 8.975
-    },
-    {
       "ticker": "159381",
       "market": "cn",
       "name_en": "ChiNext AI ETF",
@@ -4113,57 +4098,6 @@
           "price": 1.938,
           "note_en": "科创50 卖出 全部成交 14:52:59 · 科创50 卖出 全部成交 14:54:08",
           "note_zh": "科创50 卖出 全部成交 14:52:59 · 科创50 卖出 全部成交 14:54:08"
-        }
-      ]
-    },
-    {
-      "ticker": "159632",
-      "market": "cn",
-      "name_en": "NASDAQ ETF Huaxia/HuaAn",
-      "name_zh": "纳斯达克ETF华安",
-      "sector_tags_en": [
-        "NASDAQ-100",
-        "US Tech Exposure",
-        "Cross-border ETF"
-      ],
-      "sector_tags_zh": [
-        "纳斯达克100",
-        "美股科技敞口",
-        "跨境ETF"
-      ],
-      "entry_date": "2026-06-08",
-      "exit_date": "2026-06-17",
-      "holding_days": 9,
-      "outcome_pct": 4.6,
-      "outcome_pct_rounded": 5,
-      "win_rate_pct": 100,
-      "trade_count": 4,
-      "currency": "CNY",
-      "avg_entry_price": 2.3735,
-      "avg_exit_price": 2.483,
-      "reason_en": "Closed short-term A-share listed Nasdaq ETF tranche after fast rebound.",
-      "reason_zh": "A股跨境纳指ETF短线仓位清仓，反弹后落袋。",
-      "lesson_en": "Reopened tickers must not inherit stale clearance mechanics from prior round trips.",
-      "lesson_zh": "同一 ticker 重新开仓后，清仓记录不能继承上一轮交易的机械数据。",
-      "article_url": null,
-      "trade_points": [
-        {
-          "date": "2026-06-08",
-          "kind": "entry",
-          "action_en": "Built position",
-          "action_zh": "分批建仓",
-          "price": 2.3735,
-          "note_en": "国泰海通买入 · 纳斯达克ETF加仓 · 加仓纳斯达克ETF",
-          "note_zh": "国泰海通买入 · 纳斯达克ETF加仓 · 加仓纳斯达克ETF"
-        },
-        {
-          "date": "2026-06-17",
-          "kind": "exit",
-          "action_en": "Closed position",
-          "action_zh": "清仓",
-          "price": 2.483,
-          "note_en": "截图成交：纳斯达克ETF华安 09:38:33 全部成交",
-          "note_zh": "截图成交：纳斯达克ETF华安 09:38:33 全部成交"
         }
       ]
     },
@@ -4733,6 +4667,60 @@
           "note_zh": "三一 +5.9%，恒立 +7.7%，ETF +2.7%"
         }
       ]
+    },
+    {
+      "ticker": "518880",
+      "market": "cn",
+      "name_en": "Gold ETF (Huaan)",
+      "name_zh": "黄金ETF华安",
+      "sector_tags_en": [
+        "Gold",
+        "Macro Hedge"
+      ],
+      "sector_tags_zh": [
+        "黄金",
+        "宏观对冲"
+      ],
+      "entry_date": "2025-10-22",
+      "exit_date": "2026-03-23",
+      "holding_days": 152,
+      "outcome_pct_rounded": 10,
+      "win_rate_pct": 100,
+      "trade_count": 33,
+      "reason_en": "Weekly mid-band breakdown triggered the stop Rex had pre-identified",
+      "reason_zh": "周线中轨跌破触发事先识别的止损信号",
+      "lesson_en": "Jan bottom-add at 10.03 was the single best call. Slow de-stocking preserved upside but caused profit retrace late-cycle — should have been more aggressive trimming at 11+ peaks.",
+      "lesson_zh": "1 月底 10.03 低位补仓是整轮最成功的操作。保守减仓锁定了大部分利润，但尾段利润回吐——11+ 高点应该更果断减仓。",
+      "article_url": "/posts/gold-etf-trade-review/",
+      "trade_points": [
+        {
+          "date": "2025-10-22",
+          "kind": "entry",
+          "action_en": "Built position in 3 tranches",
+          "action_zh": "分 3 批建仓",
+          "price": 8.986,
+          "note_en": "Weekly mid-band pullback entry; avg cost ~¥8.90",
+          "note_zh": "周线中轨回调入场；均价 ~¥8.90"
+        },
+        {
+          "date": "2026-01-30",
+          "kind": "add",
+          "action_en": "Counter-trend add on sharp pullback",
+          "action_zh": "大跌逆势加仓",
+          "price": 10.03,
+          "note_en": "Triple add on single-day drop near intraday low",
+          "note_zh": "同一天三笔加仓，接近日内最低"
+        },
+        {
+          "date": "2026-03-23",
+          "kind": "exit",
+          "action_en": "Full exit on weekly mid-band break",
+          "action_zh": "周线中轨跌破清仓",
+          "price": 9.459,
+          "note_en": "Pre-identified technical signal fired. +10% realized",
+          "note_zh": "事先识别的技术信号触发，全部清仓。实现 +10%"
+        }
+      ]
     }
   ],
   "roundtables": [
@@ -4838,16 +4826,16 @@
     }
   ],
   "stats": {
-    "active_positions": 9,
-    "markets": 1,
+    "active_positions": 11,
+    "markets": 2,
     "tracked_rules": 51,
     "upcoming_events": 2,
     "weekly_scan_hits": 0,
-    "total_trades": 93,
-    "closed_positions": 23,
-    "win_rate_pct": 70,
-    "realized_pnl_pct": 31,
-    "days_since_last_clearance": 16
+    "total_trades": 117,
+    "closed_positions": 22,
+    "win_rate_pct": 68,
+    "realized_pnl_pct": 35,
+    "days_since_last_clearance": 17
   },
   "crypto_portfolio_history": {
     "data": [
@@ -10519,6 +10507,12 @@
       "health": 3.5,
       "portfolio_beta": 1.41,
       "equity_beta": 1.41
+    },
+    {
+      "date": "2026-07-26",
+      "health": 3.5,
+      "portfolio_beta": 1.01,
+      "equity_beta": 0.78
     }
   ],
   "capital_mobility_risk": {
