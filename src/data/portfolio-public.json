@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-31T23:56:55.500Z",
+  "generated_at": "2026-07-31T23:59:02.207Z",
   "regime": {
     "current": {
       "label": "中性期",
@@ -2371,9 +2371,9 @@
           "id": "stablecoin",
           "label_en": "Stablecoin Yield",
           "label_zh": "稳定币生息",
-          "target_pct": 31.9,
+          "target_pct": 31.5,
           "current_pct": 41.1,
-          "drift_pp": 9.2,
+          "drift_pp": 9.6,
           "color": "#10b981",
           "sub_tags_en": [
             "USDT",
@@ -2389,23 +2389,23 @@
           "note_zh": "底座层——带息、低 beta、抗衰退",
           "expected_return_pct": 5,
           "annual_volatility_pct": 1,
-          "model_target_pct": 31.9,
+          "model_target_pct": 31.5,
           "raw_model_target_pct": 31.2,
           "signal_score": 80,
           "model_action": "trim",
           "model_rationale_en": "APR 5.0% and regime neutral keep liquidity floor high.",
           "model_rationale_zh": "稳定币 APR 5.0%，当前 neutral 环境下维持流动性底座。",
           "model_current_pct": 41.1,
-          "model_drift_pp": 9.2,
-          "gap_amount": -980646
+          "model_drift_pp": 9.6,
+          "gap_amount": -1023283
         },
         {
           "id": "funds",
           "label_en": "Funds",
           "label_zh": "基金与现金",
-          "target_pct": 31.4,
+          "target_pct": 31.1,
           "current_pct": 33,
-          "drift_pp": 1.6,
+          "drift_pp": 1.9,
           "color": "#3b82f6",
           "sub_tags_en": [
             "Cash & Deposits",
@@ -2421,15 +2421,15 @@
           "note_zh": "现金缓冲 + 保守理财 + 专项资金（买房/教育/应收）",
           "expected_return_pct": 3.2,
           "annual_volatility_pct": 3,
-          "model_target_pct": 31.4,
+          "model_target_pct": 31.1,
           "raw_model_target_pct": 31.1,
           "signal_score": 78.2,
           "model_action": "hold",
           "model_rationale_en": "SOFR 3.65% supports conservative cash/fund carry.",
           "model_rationale_zh": "SOFR 3.65%，保守现金/基金仍有持有收益。",
           "model_current_pct": 33,
-          "model_drift_pp": 1.6,
-          "gap_amount": -170547
+          "model_drift_pp": 1.9,
+          "gap_amount": -202525
         },
         {
           "id": "gold",
@@ -2465,9 +2465,9 @@
           "id": "stocks",
           "label_en": "Stocks",
           "label_zh": "股票",
-          "target_pct": 24.4,
+          "target_pct": 24.9,
           "current_pct": 15.6,
-          "drift_pp": -8.8,
+          "drift_pp": -9.3,
           "color": "#8953d1",
           "sub_tags_en": [
             "AI Power",
@@ -2483,15 +2483,15 @@
           "note_zh": "长期 + 波段组合——AI 电力核心 + 机会主义叠加",
           "expected_return_pct": 8,
           "annual_volatility_pct": 16,
-          "model_target_pct": 24.4,
+          "model_target_pct": 24.9,
           "raw_model_target_pct": 25.2,
           "signal_score": 57.7,
           "model_action": "add",
           "model_rationale_en": "Portfolio health 3.2/5.0, equity beta 0.81, regime score 46.0.",
           "model_rationale_zh": "组合健康度 3.2/5.0，股票 beta 0.81，宏观分数 46.0。",
           "model_current_pct": 15.6,
-          "model_drift_pp": -8.8,
-          "gap_amount": 938010,
+          "model_drift_pp": -9.3,
+          "gap_amount": 991306,
           "sub": [
             {
               "id": "cn",
@@ -2523,9 +2523,9 @@
           "id": "crypto",
           "label_en": "Crypto",
           "label_zh": "加密敞口",
-          "target_pct": 8.6,
+          "target_pct": 8.8,
           "current_pct": 6,
-          "drift_pp": -2.6,
+          "drift_pp": -2.8,
           "color": "#f59e0b",
           "sub_tags_en": [
             "BTC",
@@ -2539,21 +2539,21 @@
           "note_zh": "不对称下注——长久期、低相关、高波动核心",
           "expected_return_pct": 13.4,
           "annual_volatility_pct": 32.5,
-          "model_target_pct": 8.6,
+          "model_target_pct": 8.8,
           "raw_model_target_pct": 8.9,
           "signal_score": 43.2,
           "model_action": "add",
           "model_rationale_en": "Crypto composite 43.2, fear/greed 50; capped at 15%.",
           "model_rationale_zh": "Crypto composite 43.2，恐惧贪婪 50；上限 15%。",
           "model_current_pct": 6,
-          "model_drift_pp": -2.6,
-          "gap_amount": 277139
+          "model_drift_pp": -2.8,
+          "gap_amount": 298458
         }
       ],
       "model": {
         "schema": "portfolio-allocation-model/v1",
         "version": "0.1.0",
-        "generated_at": "2026-07-31T23:56:54.014304+00:00",
+        "generated_at": "2026-07-31T23:59:00.740083+00:00",
         "regime": {
           "name": "neutral",
           "score": 46
@@ -2561,12 +2561,12 @@
       },
       "risk_free_rate": 3.65,
       "weighted_return": {
-        "target": 5.8,
+        "target": 5.9,
         "current": 5.3
       },
       "projected_annual_yield": 566004,
       "risk": {
-        "target_vol": 8.8,
+        "target_vol": 9,
         "current_vol": 6.8,
         "sharpe_target": 0.25,
         "sharpe_current": 0.24,
@@ -3421,7 +3421,93 @@
       "daily_change_pct": 0.87
     }
   ],
-  "crypto": null,
+  "crypto": {
+    "updated_at": "2026-07-31T08:00:00.000Z",
+    "positions": [
+      {
+        "symbol": "BTC",
+        "role": "core",
+        "tags_en": [
+          "Digital Gold",
+          "Macro Uncertainty Hedge"
+        ],
+        "tags_zh": [
+          "数字黄金",
+          "宏观对冲"
+        ],
+        "thesis_en": "Non-derivative bet on sovereign money. DCA through bottom-tracker signals — the system doesn't predict price, it detects accumulation windows.",
+        "thesis_zh": "非衍生品的货币主权押注。通过底部追踪信号 DCA——系统不预测价格，只判断建仓窗口。",
+        "strategy_en": "Bottom Tracker",
+        "strategy_zh": "底部追踪",
+        "driver_factors_en": [
+          "Liquidity",
+          "USD",
+          "Regulation"
+        ],
+        "driver_factors_zh": [
+          "流动性",
+          "美元",
+          "监管"
+        ],
+        "news": {
+          "summary": "Analysts expect a choppy August after forced selling eased.",
+          "sentiment": "positive",
+          "items": [
+            {
+              "title": "Bitcoin holds July gain near $63K-$65K",
+              "snippet": "Analysts expect a choppy August after forced selling eased."
+            },
+            {
+              "title": "Spot ETF inflows resumed modestly",
+              "snippet": "Recent US spot ETF inflows were led by BlackRock, while broader crypto liquidity remains mixed."
+            }
+          ]
+        }
+      },
+      {
+        "symbol": "SNEK",
+        "role": "community",
+        "tags_en": [
+          "Cardano Ecosystem",
+          "Community",
+          "Meme"
+        ],
+        "tags_zh": [
+          "Cardano 生态",
+          "社区驱动",
+          "Meme"
+        ],
+        "thesis_en": "Cardano ecosystem proxy. Managed by community sentiment, KOL activity, and on-chain health — not traditional TA.",
+        "thesis_zh": "Cardano 生态敞口。看社区热度、KOL 活跃度和链上健康度，不走传统技术分析。",
+        "strategy_en": "Signal-Driven",
+        "strategy_zh": "信号驱动",
+        "driver_factors_en": [
+          "Cardano Liquidity",
+          "Community Momentum",
+          "Regulation"
+        ],
+        "driver_factors_zh": [
+          "Cardano 流动性",
+          "社区动能",
+          "监管"
+        ],
+        "news": {
+          "summary": "Cardano TVL weakness and thin volume remain the main near-term constraints.",
+          "sentiment": "negative",
+          "items": [
+            {
+              "title": "SNEK trades near $0.000294",
+              "snippet": "Cardano TVL weakness and thin volume remain the main near-term constraints."
+            },
+            {
+              "title": "Community narrative remains positive",
+              "snippet": "X discussion emphasizes Cardano integration, brand IP and long-lived community support; no verified major catalyst."
+            }
+          ]
+        }
+      }
+    ]
+  },
   "crypto_monitor": {
     "generated_at": "2026-08-01T07:27:06.193624+08:00",
     "data_freshness": {
@@ -3625,8 +3711,8 @@
         "label_en": "Stablecoin Yield",
         "label_zh": "稳定币生息",
         "current_pct": 41.1,
-        "target_pct": 31.9,
-        "drift_pp": 9.2,
+        "target_pct": 31.5,
+        "drift_pp": 9.6,
         "color": "#10b981",
         "sub_tags_en": [
           "USDT",
@@ -3644,8 +3730,8 @@
         "label_en": "Funds",
         "label_zh": "基金与现金",
         "current_pct": 33,
-        "target_pct": 31.4,
-        "drift_pp": 1.6,
+        "target_pct": 31.1,
+        "drift_pp": 1.9,
         "color": "#3b82f6",
         "sub_tags_en": [
           "Cash & Deposits",
@@ -3680,8 +3766,8 @@
         "label_en": "Stocks",
         "label_zh": "股票",
         "current_pct": 15.6,
-        "target_pct": 24.4,
-        "drift_pp": -8.8,
+        "target_pct": 24.9,
+        "drift_pp": -9.3,
         "color": "#8953d1",
         "sub_tags_en": [
           "AI Power",
@@ -3699,8 +3785,8 @@
         "label_en": "Crypto",
         "label_zh": "加密敞口",
         "current_pct": 6,
-        "target_pct": 8.6,
-        "drift_pp": -2.6,
+        "target_pct": 8.8,
+        "drift_pp": -2.8,
         "color": "#f59e0b",
         "sub_tags_en": [
           "BTC",
@@ -5012,7 +5098,7 @@
   ],
   "stats": {
     "active_positions": 11,
-    "markets": 2,
+    "markets": 3,
     "tracked_rules": 50,
     "upcoming_events": 2,
     "weekly_scan_hits": 0,
@@ -5633,7 +5719,7 @@
     }
   },
   "crypto_timeseries": {
-    "generated_at": "2026-08-01T07:56:47.267185",
+    "generated_at": "2026-08-01T07:58:58.540272",
     "latest": {
       "date": "2026-08-01",
       "composite": 43.2,
@@ -7167,7 +7253,7 @@
       },
       {
         "date": "2026-07-31",
-        "btc_close": 62808.74,
+        "btc_close": 62813.52,
         "btc_high": 65271.17,
         "btc_low": 62447.51,
         "fgi": 25,
