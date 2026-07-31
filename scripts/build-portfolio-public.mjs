@@ -485,9 +485,14 @@ function regimeEn(label) {
  *     done here — we use the raw crypto.total / private totalAssets ratio, which is
  *     correct because both are already in USD).
  */
-function sanitizeCrypto(privatePortfolio) {
+function sanitizeCrypto(privatePortfolio, convexPositions = []) {
   const crypto = privatePortfolio?.crypto;
-  if (!crypto?.assets?.length) return null;
+  const privateAssets = crypto?.assets || [];
+  const convexAssets = (convexPositions || [])
+    .filter((p) => p.status === "active" && p.market === "crypto")
+    .map((p) => ({ symbol: p.symbol, value: 1 }));
+  const sourceAssets = privateAssets.length ? privateAssets : convexAssets;
+  if (!sourceAssets.length) return null;
 
   const PUBLIC_SYMBOLS = ["BTC", "SNEK"];
 
@@ -516,8 +521,8 @@ function sanitizeCrypto(privatePortfolio) {
   };
 
   // Non-stablecoin positions — no dollar amounts, no percentages, no prices
-  const positions = crypto.assets
-    .filter((a) => PUBLIC_SYMBOLS.includes(a.symbol) && (a.value || 0) >= 1)
+  const positions = sourceAssets
+    .filter((a) => PUBLIC_SYMBOLS.includes(a.symbol) && (a.value ?? 1) >= 1)
     .map((a) => ({
       symbol: a.symbol,
       role: a.symbol === "BTC" ? "core" : "community",
@@ -525,7 +530,7 @@ function sanitizeCrypto(privatePortfolio) {
     }));
 
   return {
-    updated_at: crypto.lastUpdated || privatePortfolio.lastUpdated,
+    updated_at: crypto?.lastUpdated || privatePortfolio?.lastUpdated || null,
     positions,
   };
 }
@@ -1134,7 +1139,7 @@ async function main() {
   // 3b. Read private portfolio for crypto data
   console.log("🔐 Reading private portfolio (crypto)...");
   const privatePortfolio = await readJson(PRIVATE_PORTFOLIO_PATH);
-  const crypto = sanitizeCrypto(privatePortfolio);
+  const crypto = sanitizeCrypto(privatePortfolio, positions);
   if (crypto) {
     console.log(`   ✅ Crypto: ${crypto.positions.length} positions`);
   } else {
