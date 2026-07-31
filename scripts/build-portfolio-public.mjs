@@ -205,7 +205,7 @@ async function buildAllocationHistory(privatePortfolio = null) {
   // Gold = 从未来世代拆出的国泰黄金ETF
   const BUCKET_AGG = {
     stablecoin: ["stablecoin"],
-    funds: ["liquid", "yanerhigh", "house", "education", "receivable"],
+    funds: ["liquid", "yanerhigh", "wulongzhi", "house", "education", "receivable"],
     gold: [], // computed dynamically from future.breakdown
     stocks: ["qieman", "future", "rex_stock", "us_stock"],
     crypto: ["crypto", "crypto_ivy"],
@@ -1448,7 +1448,7 @@ async function main() {
     // (import the mapping logic used in buildAllocationHistory)
     const bucketKeys = {
       stablecoin: ["stablecoin"],
-      funds: ["liquid", "yanerhigh", "house", "education", "receivable"],
+      funds: ["liquid", "yanerhigh", "wulongzhi", "house", "education", "receivable"],
       stocks: ["qieman", "future", "rex_stock", "us_stock"],
       crypto: ["crypto", "crypto_ivy"],
     };
