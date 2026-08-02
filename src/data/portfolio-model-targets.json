@@ -2,7 +2,7 @@
   "_meta": {
     "schema": "portfolio-allocation-model/v1",
     "version": "0.1.0",
-    "generated_at": "2026-08-01T23:56:10.673999+00:00",
+    "generated_at": "2026-08-02T00:00:38.219377+00:00",
     "smoothing": {
       "alpha": 0.35,
       "max_daily_move_pp": 2.0
@@ -19,30 +19,30 @@
     }
   },
   "regime": {
-    "name": "neutral",
-    "score": 46.0
+    "name": "defensive",
+    "score": 41.0
   },
   "risk_free_rate_pct": 3.65,
   "categories": [
     {
       "id": "stablecoin",
-      "target_pct": 31.2,
-      "raw_target_pct": 31.1,
+      "target_pct": 34.2,
+      "raw_target_pct": 36.4,
       "current_pct": 41.1,
-      "drift_pp": 9.9,
-      "signal_score": 80.0,
+      "drift_pp": 6.9,
+      "signal_score": 88.0,
       "expected_return_pct": 5.0,
       "annual_volatility_pct": 1.0,
       "action": "trim",
-      "rationale_en": "APR 5.0% and regime neutral keep liquidity floor high.",
-      "rationale_zh": "稳定币 APR 5.0%，当前 neutral 环境下维持流动性底座。"
+      "rationale_en": "APR 5.0% and regime defensive keep liquidity floor high.",
+      "rationale_zh": "稳定币 APR 5.0%，当前 defensive 环境下维持流动性底座。"
     },
     {
       "id": "funds",
-      "target_pct": 31.0,
-      "raw_target_pct": 30.9,
+      "target_pct": 32.6,
+      "raw_target_pct": 33.8,
       "current_pct": 33.0,
-      "drift_pp": 2.0,
+      "drift_pp": 0.4,
       "signal_score": 78.2,
       "expected_return_pct": 3.2,
       "annual_volatility_pct": 3.0,
@@ -52,10 +52,10 @@
     },
     {
       "id": "gold",
-      "target_pct": 3.6,
-      "raw_target_pct": 3.5,
+      "target_pct": 4.0,
+      "raw_target_pct": 4.4,
       "current_pct": 4.2,
-      "drift_pp": 0.6,
+      "drift_pp": 0.2,
       "signal_score": 37.0,
       "expected_return_pct": 3.5,
       "annual_volatility_pct": 23.0,
@@ -65,29 +65,29 @@
     },
     {
       "id": "stocks",
-      "target_pct": 25.2,
-      "raw_target_pct": 25.3,
+      "target_pct": 21.7,
+      "raw_target_pct": 19.0,
       "current_pct": 15.6,
-      "drift_pp": -9.6,
-      "signal_score": 60.3,
-      "expected_return_pct": 8.2,
+      "drift_pp": -6.1,
+      "signal_score": 58.5,
+      "expected_return_pct": 8.0,
       "annual_volatility_pct": 16.0,
       "action": "add",
-      "rationale_en": "Portfolio health 3.4/5.0, equity beta 0.81, regime score 46.0.",
-      "rationale_zh": "组合健康度 3.4/5.0，股票 beta 0.81，宏观分数 46.0。"
+      "rationale_en": "Portfolio health 3.4/5.0, equity beta 0.81, regime score 41.0.",
+      "rationale_zh": "组合健康度 3.4/5.0，股票 beta 0.81，宏观分数 41.0。"
     },
     {
       "id": "crypto",
-      "target_pct": 9.0,
-      "raw_target_pct": 9.2,
+      "target_pct": 7.5,
+      "raw_target_pct": 6.4,
       "current_pct": 6.0,
-      "drift_pp": -3.0,
-      "signal_score": 48.7,
-      "expected_return_pct": 14.1,
+      "drift_pp": -1.5,
+      "signal_score": 53.7,
+      "expected_return_pct": 14.7,
       "annual_volatility_pct": 32.5,
-      "action": "add",
-      "rationale_en": "Crypto composite 48.7, fear/greed 50; capped at 15%.",
-      "rationale_zh": "Crypto composite 48.7，恐惧贪婪 50；上限 15%。"
+      "action": "hold",
+      "rationale_en": "Crypto composite 48.7, fear/greed 27; capped at 15%.",
+      "rationale_zh": "Crypto composite 48.7，恐惧贪婪 27；上限 15%。"
     }
   ]
 }
