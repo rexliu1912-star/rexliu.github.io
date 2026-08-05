@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-04T23:57:23.364Z",
+  "generated_at": "2026-08-05T23:37:23.929Z",
   "regime": {
     "current": {
       "label": "中性期",
@@ -15,7 +15,7 @@
         },
         "dxy": {
           "label": "DXY",
-          "value": "99.88",
+          "value": "99.87",
           "light": "green"
         },
         "vix": {
@@ -2340,7 +2340,7 @@
             "status": null
           },
           "dxy": {
-            "value": 99.88,
+            "value": 99.87,
             "light": "green",
             "status": null
           },
@@ -2551,7 +2551,7 @@
       "model": {
         "schema": "portfolio-allocation-model/v1",
         "version": "0.1.0",
-        "generated_at": "2026-08-04T23:57:21.898189+00:00",
+        "generated_at": "2026-08-05T19:31:01.842495+00:00",
         "regime": {
           "name": "neutral",
           "score": 59
@@ -3511,12 +3511,12 @@
     ]
   },
   "crypto_monitor": {
-    "generated_at": "2026-08-05T06:36:48.185361+08:00",
+    "generated_at": "2026-08-06T06:33:39.345948+08:00",
     "data_freshness": {
       "market_data_available": true,
       "bottom_tracker_available": true,
       "dca_status_available": true,
-      "market_data_date": "2026-08-05"
+      "market_data_date": "2026-08-06"
     },
     "allocation": {
       "crypto": {
@@ -3539,7 +3539,7 @@
       "signals": []
     },
     "bottom_tracker": {
-      "score": 60.1,
+      "score": 58.6,
       "status": "底部特征显现，可关注",
       "indicators": [
         {
@@ -3547,9 +3547,9 @@
           "name_en": "Fear & Greed Index",
           "status": "yellow",
           "score": 50,
-          "detail_en": "Current:25",
-          "detail_zh": "当前:25",
-          "delta": -3,
+          "detail_en": "Current:27",
+          "detail_zh": "当前:27",
+          "delta": 2,
           "desc_en": "Crypto market sentiment composite (0–100)",
           "desc_zh": "加密市场情绪综合指数（0–100）"
         },
@@ -3569,9 +3569,9 @@
           "name_en": "Black Swan Intensity",
           "status": "red",
           "score": 20,
-          "detail_en": "BSS:18.0",
-          "detail_zh": "BSS:18.0",
-          "delta": -13.7,
+          "detail_en": "BSS:20.0",
+          "detail_zh": "BSS:20.0",
+          "delta": 2,
           "desc_en": "Multi-factor tail-risk model (BSS)",
           "desc_zh": "多因子尾部风险模型（BSS）"
         },
@@ -3580,9 +3580,9 @@
           "name_en": "Macro VIX",
           "status": "red",
           "score": 20,
-          "detail_en": "VIX:16.5",
-          "detail_zh": "VIX:16.5",
-          "delta": 0.6,
+          "detail_en": "VIX:15.8",
+          "detail_zh": "VIX:15.8",
+          "delta": -0.7,
           "desc_en": "S&P 500 implied volatility",
           "desc_zh": "标普500隐含波动率"
         },
@@ -3593,7 +3593,7 @@
           "score": 80,
           "detail_en": "SSR:11.4%, Abundant OTC",
           "detail_zh": "SSR:11.4%, 场外充裕",
-          "delta": null,
+          "delta": 0,
           "desc_en": "Stablecoin Supply Ratio — off-exchange liquidity",
           "desc_zh": "稳定币供应比率 — 场外流动性"
         },
@@ -3602,8 +3602,8 @@
           "name_en": "MVRV Z-Score",
           "status": "green",
           "score": 80,
-          "detail_en": "Z:-1.13, Severely Undervalued",
-          "detail_zh": "Z:-1.13, 严重低估",
+          "detail_en": "Z:-1.09, Severely Undervalued",
+          "detail_zh": "Z:-1.09, 严重低估",
           "delta": 0.04,
           "desc_en": "Market-to-Realized Value ratio (deviation from historical mean)",
           "desc_zh": "市值/已实现价值比（偏离历史均值程度）"
@@ -3613,9 +3613,9 @@
           "name_en": "BTC ETF Flow",
           "status": "yellow",
           "score": 50,
-          "detail_en": "-8M, Neutral Flow",
-          "detail_zh": "-8M, 资金中性",
-          "delta": -25,
+          "detail_en": "-10M, Neutral Flow",
+          "detail_zh": "-10M, 资金中性",
+          "delta": -2,
           "desc_en": "Daily net inflow/outflow of spot BTC ETFs (USD millions)",
           "desc_zh": "BTC 现货 ETF 每日净流入/流出（百万美元）"
         },
@@ -3624,20 +3624,41 @@
           "name_en": "Dollar Index (DXY)",
           "status": "red",
           "score": 20,
-          "detail_en": "DXY:99.9, Weak USD risk-on",
-          "detail_zh": "DXY:99.9, 美元偏弱",
-          "delta": -0.1,
+          "detail_en": "DXY:99.7, Weak USD risk-on",
+          "detail_zh": "DXY:99.7, 美元偏弱",
+          "delta": -0.2,
           "desc_en": "US Dollar strength — inverse correlation with BTC",
           "desc_zh": "美元强度 — 与 BTC 负相关"
         }
       ]
     },
     "etf": {
-      "btc_etf_net_flow_m": null,
-      "btc_etf_total_volume_m": null,
-      "source": null,
-      "etfs": [],
-      "date": "2026-08-05"
+      "btc_etf_net_flow_m": -10,
+      "btc_etf_total_volume_m": 1488,
+      "source": "yfinance-estimate",
+      "etfs": [
+        {
+          "ticker": "IBIT",
+          "volume_usd_m": 1199
+        },
+        {
+          "ticker": "FBTC",
+          "volume_usd_m": 150
+        },
+        {
+          "ticker": "GBTC",
+          "volume_usd_m": 69
+        },
+        {
+          "ticker": "ARKB",
+          "volume_usd_m": 32
+        },
+        {
+          "ticker": "BITB",
+          "volume_usd_m": 38
+        }
+      ],
+      "date": "2026-08-06"
     },
     "dca": {
       "status": "closed",
@@ -5087,7 +5108,7 @@
     "closed_positions": 22,
     "win_rate_pct": 68,
     "realized_pnl_pct": 35,
-    "days_since_last_clearance": 26
+    "days_since_last_clearance": 27
   },
   "crypto_portfolio_history": {
     "data": [
@@ -7259,43 +7280,43 @@
     ]
   },
   "gold_tracker": {
-    "generated_at": "2026-08-04T23:00:36.563522+00:00",
+    "generated_at": "2026-08-05T23:00:51.202127+00:00",
     "price": {
-      "xau_usd": 4140.1,
-      "day_change_pct": 2.25,
+      "xau_usd": 4308.1,
+      "day_change_pct": 6.4,
       "week_52_high": 5586.2,
       "week_52_low": 3310.1,
-      "drawdown_from_peak_pct": -24.73,
+      "drawdown_from_peak_pct": -21.67,
       "peak_price": 5500
     },
     "technical": {
-      "bollinger_mid_weekly": 4389.86,
+      "bollinger_mid_weekly": 4398.26,
       "above_bollinger_mid": false,
-      "bollinger_mid_pct_diff": -5.69
+      "bollinger_mid_pct_diff": -2.05
     },
     "monetary": {
       "m2_trillion": 23.29,
       "m2_date": "2026-07-06",
       "m2_trigger_line": 24,
       "m2_to_trigger_pct": 97,
-      "gold_m2_ratio": 177.762988,
-      "ratio_display": 177.8,
+      "gold_m2_ratio": 184.976385,
+      "ratio_display": 185,
       "inversion_status": "normal",
       "inversion_label_en": "Normal Range",
       "inversion_label_zh": "正常区间"
     },
     "cost_floor": {
       "aisc_usd": 1750,
-      "price_above_aisc_pct": 136.6
+      "price_above_aisc_pct": 146.2
     },
     "premium": {
-      "shfe_cny_per_gram": 881.1,
-      "lbma_usd_per_oz": 4074.17,
+      "shfe_cny_per_gram": 902.92,
+      "lbma_usd_per_oz": 4249.67,
       "usd_cny": 6.7402,
-      "international_cny_per_gram": 882.88,
-      "premium_pct": -0.2,
+      "international_cny_per_gram": 920.91,
+      "premium_pct": -1.95,
       "source": "sge:Au99.99 + sina:hf_XAU + sina:fx_susdcny",
-      "updated_at": "2026年08月05日 02:29:54"
+      "updated_at": "2026年08月06日 02:29:53"
     },
     "signal": {
       "status": "yellow",
@@ -7304,7 +7325,7 @@
     }
   },
   "gold_timeseries": {
-    "generated_at": "2026-08-04T23:00:36.566646+00:00",
+    "generated_at": "2026-08-05T23:00:51.204678+00:00",
     "data": [
       {
         "date": "2025-05-02",
@@ -10428,6 +10449,15 @@
         "bollinger_mid_pct_diff": -5.69,
         "premium_pct": -0.2,
         "signal_status": "yellow"
+      },
+      {
+        "date": "2026-08-06",
+        "xau_usd": 4308.1,
+        "m2_trillion": 23.29,
+        "gold_m2_ratio": 184.976385,
+        "bollinger_mid_pct_diff": -2.05,
+        "premium_pct": -1.95,
+        "signal_status": "yellow"
       }
     ]
   },
@@ -10896,6 +10926,12 @@
     },
     {
       "date": "2026-08-04",
+      "health": 3,
+      "portfolio_beta": 1.03,
+      "equity_beta": 0.83
+    },
+    {
+      "date": "2026-08-05",
       "health": 3,
       "portfolio_beta": 1.03,
       "equity_beta": 0.83
