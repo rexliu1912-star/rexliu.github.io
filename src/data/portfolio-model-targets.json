@@ -2,7 +2,7 @@
   "_meta": {
     "schema": "portfolio-allocation-model/v1",
     "version": "0.1.0",
-    "generated_at": "2026-08-04T23:57:21.898189+00:00",
+    "generated_at": "2026-08-06T00:08:07.023516+00:00",
     "smoothing": {
       "alpha": 0.35,
       "max_daily_move_pp": 2.0
@@ -20,9 +20,9 @@
   },
   "regime": {
     "name": "neutral",
-    "score": 59.0
+    "score": 54.0
   },
-  "risk_free_rate_pct": 3.65,
+  "risk_free_rate_pct": 3.66,
   "categories": [
     {
       "id": "stablecoin",
@@ -39,16 +39,16 @@
     },
     {
       "id": "funds",
-      "target_pct": 31.1,
-      "raw_target_pct": 31.2,
+      "target_pct": 30.9,
+      "raw_target_pct": 31.0,
       "current_pct": 33.0,
-      "drift_pp": 1.9,
-      "signal_score": 78.2,
-      "expected_return_pct": 3.2,
+      "drift_pp": 2.1,
+      "signal_score": 78.3,
+      "expected_return_pct": 3.3,
       "annual_volatility_pct": 3.0,
-      "action": "hold",
-      "rationale_en": "SOFR 3.65% supports conservative cash/fund carry.",
-      "rationale_zh": "SOFR 3.65%，保守现金/基金仍有持有收益。"
+      "action": "trim",
+      "rationale_en": "SOFR 3.66% supports conservative cash/fund carry.",
+      "rationale_zh": "SOFR 3.66%，保守现金/基金仍有持有收益。"
     },
     {
       "id": "gold",
@@ -58,36 +58,36 @@
       "drift_pp": 0.6,
       "signal_score": 37.0,
       "expected_return_pct": 3.5,
-      "annual_volatility_pct": 21.8,
+      "annual_volatility_pct": 22.2,
       "action": "hold",
       "rationale_en": "Gold signal yellow; fair-value premium level extreme caps target.",
       "rationale_zh": "黄金信号 yellow；公允价溢价 extreme，限制目标仓位上行。"
     },
     {
       "id": "stocks",
-      "target_pct": 25.3,
-      "raw_target_pct": 25.4,
+      "target_pct": 25.2,
+      "raw_target_pct": 25.1,
       "current_pct": 15.6,
-      "drift_pp": -9.7,
-      "signal_score": 59.6,
-      "expected_return_pct": 8.4,
+      "drift_pp": -9.6,
+      "signal_score": 57.9,
+      "expected_return_pct": 8.2,
       "annual_volatility_pct": 16.0,
       "action": "add",
-      "rationale_en": "Portfolio health 3.0/5.0, equity beta 0.83, regime score 59.0.",
-      "rationale_zh": "组合健康度 3.0/5.0，股票 beta 0.83，宏观分数 59.0。"
+      "rationale_en": "Portfolio health 3.0/5.0, equity beta 0.82, regime score 54.0.",
+      "rationale_zh": "组合健康度 3.0/5.0，股票 beta 0.82，宏观分数 54.0。"
     },
     {
       "id": "crypto",
-      "target_pct": 8.7,
-      "raw_target_pct": 8.6,
+      "target_pct": 9.0,
+      "raw_target_pct": 9.1,
       "current_pct": 6.0,
-      "drift_pp": -2.7,
-      "signal_score": 39.9,
-      "expected_return_pct": 13.0,
+      "drift_pp": -3.0,
+      "signal_score": 46.4,
+      "expected_return_pct": 13.8,
       "annual_volatility_pct": 32.5,
       "action": "add",
-      "rationale_en": "Crypto composite 39.9, fear/greed 50; capped at 15%.",
-      "rationale_zh": "Crypto composite 39.9，恐惧贪婪 50；上限 15%。"
+      "rationale_en": "Crypto composite 41.4, fear/greed 25; capped at 15%.",
+      "rationale_zh": "Crypto composite 41.4，恐惧贪婪 25；上限 15%。"
     }
   ]
 }
