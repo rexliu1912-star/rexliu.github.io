@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-07T00:03:30.333Z",
+  "generated_at": "2026-08-07T23:36:48.989Z",
   "regime": {
     "current": {
       "label": "中性期",
@@ -2551,7 +2551,7 @@
       "model": {
         "schema": "portfolio-allocation-model/v1",
         "version": "0.1.0",
-        "generated_at": "2026-08-07T00:03:28.811983+00:00",
+        "generated_at": "2026-08-07T19:31:03.842224+00:00",
         "regime": {
           "name": "neutral",
           "score": 54
@@ -3456,12 +3456,12 @@
     ]
   },
   "crypto_monitor": {
-    "generated_at": "2026-08-07T06:35:32.196633+08:00",
+    "generated_at": "2026-08-08T06:40:16.746562+08:00",
     "data_freshness": {
       "market_data_available": true,
       "bottom_tracker_available": true,
       "dca_status_available": true,
-      "market_data_date": "2026-08-07"
+      "market_data_date": "2026-08-08"
     },
     "allocation": {
       "crypto": {
@@ -3484,7 +3484,7 @@
       "signals": []
     },
     "bottom_tracker": {
-      "score": 52.7,
+      "score": 50.2,
       "status": "观望",
       "indicators": [
         {
@@ -3492,9 +3492,9 @@
           "name_en": "Fear & Greed Index",
           "status": "yellow",
           "score": 50,
-          "detail_en": "Current:25",
-          "detail_zh": "当前:25",
-          "delta": -2,
+          "detail_en": "Current:29",
+          "detail_zh": "当前:29",
+          "delta": 4,
           "desc_en": "Crypto market sentiment composite (0–100)",
           "desc_zh": "加密市场情绪综合指数（0–100）"
         },
@@ -3514,9 +3514,9 @@
           "name_en": "Black Swan Intensity",
           "status": "red",
           "score": 20,
-          "detail_en": "BSS:20.0",
-          "detail_zh": "BSS:20.0",
-          "delta": 0,
+          "detail_en": "BSS:24.3",
+          "detail_zh": "BSS:24.3",
+          "delta": 4.3,
           "desc_en": "Multi-factor tail-risk model (BSS)",
           "desc_zh": "多因子尾部风险模型（BSS）"
         },
@@ -3525,9 +3525,9 @@
           "name_en": "Macro VIX",
           "status": "red",
           "score": 20,
-          "detail_en": "VIX:15.1",
-          "detail_zh": "VIX:15.1",
-          "delta": -0.7,
+          "detail_en": "VIX:14.9",
+          "detail_zh": "VIX:14.9",
+          "delta": -0.2,
           "desc_en": "S&P 500 implied volatility",
           "desc_zh": "标普500隐含波动率"
         },
@@ -3547,9 +3547,9 @@
           "name_en": "MVRV Z-Score",
           "status": "green",
           "score": 80,
-          "detail_en": "Z:-1.11, Severely Undervalued",
-          "detail_zh": "Z:-1.11, 严重低估",
-          "delta": -0.02,
+          "detail_en": "Z:-1.07, Severely Undervalued",
+          "detail_zh": "Z:-1.07, 严重低估",
+          "delta": 0.04,
           "desc_en": "Market-to-Realized Value ratio (deviation from historical mean)",
           "desc_zh": "市值/已实现价值比（偏离历史均值程度）"
         },
@@ -3558,9 +3558,9 @@
           "name_en": "BTC ETF Flow",
           "status": "yellow",
           "score": 50,
-          "detail_en": "-20M, Neutral Flow",
-          "detail_zh": "-20M, 资金中性",
-          "delta": -10,
+          "detail_en": "-9M, Neutral Flow",
+          "detail_zh": "-9M, 资金中性",
+          "delta": 11,
           "desc_en": "Daily net inflow/outflow of spot BTC ETFs (USD millions)",
           "desc_zh": "BTC 现货 ETF 每日净流入/流出（百万美元）"
         },
@@ -3569,17 +3569,41 @@
           "name_en": "Dollar Index (DXY)",
           "status": "red",
           "score": 20,
-          "detail_en": "DXY:100.0, Weak USD risk-on",
-          "detail_zh": "DXY:100.0, 美元偏弱",
-          "delta": 0.3,
+          "detail_en": "DXY:99.6, Weak USD risk-on",
+          "detail_zh": "DXY:99.6, 美元偏弱",
+          "delta": -0.4,
           "desc_en": "US Dollar strength — inverse correlation with BTC",
           "desc_zh": "美元强度 — 与 BTC 负相关"
         }
       ]
     },
     "etf": {
-      "btc_etf_net_flow_m": -20,
-      "etfs": []
+      "btc_etf_net_flow_m": -9,
+      "btc_etf_total_volume_m": 1472,
+      "source": "yfinance-estimate",
+      "etfs": [
+        {
+          "ticker": "IBIT",
+          "volume_usd_m": 1251
+        },
+        {
+          "ticker": "FBTC",
+          "volume_usd_m": 123
+        },
+        {
+          "ticker": "GBTC",
+          "volume_usd_m": 60
+        },
+        {
+          "ticker": "ARKB",
+          "volume_usd_m": 14
+        },
+        {
+          "ticker": "BITB",
+          "volume_usd_m": 26
+        }
+      ],
+      "date": "2026-08-08"
     },
     "dca": {
       "status": "closed",
@@ -7197,43 +7221,43 @@
     ]
   },
   "gold_tracker": {
-    "generated_at": "2026-08-06T23:00:26.836365+00:00",
+    "generated_at": "2026-08-07T23:02:33.975345+00:00",
     "price": {
-      "xau_usd": 4299.8,
-      "day_change_pct": 6.19,
+      "xau_usd": 4401.3,
+      "day_change_pct": 8.7,
       "week_52_high": 5586.2,
       "week_52_low": 3310.1,
-      "drawdown_from_peak_pct": -21.82,
+      "drawdown_from_peak_pct": -19.98,
       "peak_price": 5500
     },
     "technical": {
-      "bollinger_mid_weekly": 4397.84,
+      "bollinger_mid_weekly": 4402.92,
       "above_bollinger_mid": false,
-      "bollinger_mid_pct_diff": -2.23
+      "bollinger_mid_pct_diff": -0.04
     },
     "monetary": {
       "m2_trillion": 23.29,
       "m2_date": "2026-07-06",
       "m2_trigger_line": 24,
       "m2_to_trigger_pct": 97,
-      "gold_m2_ratio": 184.620009,
-      "ratio_display": 184.6,
+      "gold_m2_ratio": 188.978102,
+      "ratio_display": 189,
       "inversion_status": "normal",
       "inversion_label_en": "Normal Range",
       "inversion_label_zh": "正常区间"
     },
     "cost_floor": {
       "aisc_usd": 1750,
-      "price_above_aisc_pct": 145.7
+      "price_above_aisc_pct": 151.5
     },
     "premium": {
-      "shfe_cny_per_gram": 916,
-      "lbma_usd_per_oz": 4240.57,
-      "usd_cny": 6.7431,
-      "international_cny_per_gram": 919.34,
-      "premium_pct": -0.36,
+      "shfe_cny_per_gram": 928.47,
+      "lbma_usd_per_oz": 4341.12,
+      "usd_cny": 6.7372,
+      "international_cny_per_gram": 940.31,
+      "premium_pct": -1.26,
       "source": "sge:Au99.99 + sina:hf_XAU + sina:fx_susdcny",
-      "updated_at": "2026年08月07日 02:29:54"
+      "updated_at": "2026年08月10日 02:29:53"
     },
     "signal": {
       "status": "yellow",
@@ -7242,7 +7266,7 @@
     }
   },
   "gold_timeseries": {
-    "generated_at": "2026-08-06T23:00:26.839080+00:00",
+    "generated_at": "2026-08-07T23:02:33.978720+00:00",
     "data": [
       {
         "date": "2025-05-02",
@@ -10383,6 +10407,15 @@
         "gold_m2_ratio": 184.620009,
         "bollinger_mid_pct_diff": -2.23,
         "premium_pct": -0.36,
+        "signal_status": "yellow"
+      },
+      {
+        "date": "2026-08-08",
+        "xau_usd": 4401.3,
+        "m2_trillion": 23.29,
+        "gold_m2_ratio": 188.978102,
+        "bollinger_mid_pct_diff": -0.04,
+        "premium_pct": -1.26,
         "signal_status": "yellow"
       }
     ]
