@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-23T23:54:40.851Z",
+  "generated_at": "2026-08-24T04:56:57.216Z",
   "regime": {
     "current": {
       "label": "中性期",
@@ -15,7 +15,7 @@
         },
         "dxy": {
           "label": "DXY",
-          "value": "98.86",
+          "value": "98.85",
           "light": "green"
         },
         "vix": {
@@ -2326,7 +2326,7 @@
             "status": null
           },
           "dxy": {
-            "value": 98.86,
+            "value": 98.85,
             "light": "green",
             "status": null
           },
@@ -2387,9 +2387,9 @@
           "id": "funds",
           "label_en": "Funds",
           "label_zh": "基金与现金",
-          "target_pct": 30.8,
+          "target_pct": 30.6,
           "current_pct": 33,
-          "drift_pp": 2.2,
+          "drift_pp": 2.4,
           "color": "#3b82f6",
           "sub_tags_en": [
             "Cash & Deposits",
@@ -2405,15 +2405,15 @@
           "note_zh": "现金缓冲 + 保守理财 + 专项资金（买房/教育/应收）",
           "expected_return_pct": 3.2,
           "annual_volatility_pct": 3,
-          "model_target_pct": 30.8,
+          "model_target_pct": 30.6,
           "raw_model_target_pct": 30.8,
           "signal_score": 78.2,
           "model_action": "trim",
           "model_rationale_en": "SOFR 3.63% supports conservative cash/fund carry.",
           "model_rationale_zh": "SOFR 3.63%，保守现金/基金仍有持有收益。",
           "model_current_pct": 33,
-          "model_drift_pp": 2.2,
-          "gap_amount": -234502
+          "model_drift_pp": 2.4,
+          "gap_amount": -255821
         },
         {
           "id": "gold",
@@ -2507,9 +2507,9 @@
           "id": "crypto",
           "label_en": "Crypto",
           "label_zh": "加密敞口",
-          "target_pct": 9.9,
+          "target_pct": 10.1,
           "current_pct": 6,
-          "drift_pp": -3.9,
+          "drift_pp": -4.1,
           "color": "#f59e0b",
           "sub_tags_en": [
             "BTC",
@@ -2523,21 +2523,21 @@
           "note_zh": "不对称下注——长久期、低相关、高波动核心",
           "expected_return_pct": 16.1,
           "annual_volatility_pct": 32.5,
-          "model_target_pct": 9.9,
+          "model_target_pct": 10.1,
           "raw_model_target_pct": 10.2,
           "signal_score": 64.4,
           "model_action": "add",
           "model_rationale_en": "Crypto composite 64.4, fear/greed 50; capped at 15%.",
           "model_rationale_zh": "Crypto composite 64.4，恐惧贪婪 50；上限 15%。",
           "model_current_pct": 6,
-          "model_drift_pp": -3.9,
-          "gap_amount": 415709
+          "model_drift_pp": -4.1,
+          "gap_amount": 437027
         }
       ],
       "model": {
         "schema": "portfolio-allocation-model/v1",
         "version": "0.1.0",
-        "generated_at": "2026-08-23T23:54:39.457967+00:00",
+        "generated_at": "2026-08-24T04:56:55.185039+00:00",
         "regime": {
           "name": "neutral",
           "score": 46
@@ -2550,7 +2550,7 @@
       },
       "projected_annual_yield": 584934,
       "risk": {
-        "target_vol": 9.5,
+        "target_vol": 9.6,
         "current_vol": 7,
         "sharpe_target": 0.28,
         "sharpe_current": 0.27,
@@ -2859,7 +2859,7 @@
       "status_en": "Active",
       "status_zh": "持有中",
       "conviction": "medium",
-      "horizon": "short",
+      "horizon": "long",
       "entry_year": null,
       "layer": "satellite",
       "layer_label_en": "Satellite",
@@ -2870,11 +2870,7 @@
         "severity": "gray",
         "description": "DRAM thesis invalidation $35（-50% from cost $69.28，存储周期见顶信号线）"
       },
-      "target": {
-        "price_pct_from_current": "+40.4%",
-        "description": "DRAM 目标价 $XX,XXX（接近52周高点$XX,XXX，HBM/AI内存需求驱动周期上行）",
-        "optimistic_price": null
-      },
+      "target": null,
       "next_event": null,
       "price": 57.68,
       "daily_change_pct": 0
@@ -2921,8 +2917,8 @@
         "description": "ILMN 技术支撑 $166.92（50日均线，短期趋势分水岭）"
       },
       "target": {
-        "price_pct_from_current": "+-4.3%",
-        "description": "ILMN 目标价 $XX,XXX（Leerink 7月新目标$XX,XXX+52周高$XX,XXX上方，EBITDA margin修复至29.5%+NovaSeq X放量验证）",
+        "price_pct_from_current": "+7.7%",
+        "description": "ILMN TP2 $XX,XXX（整体持仓成本+20%）：TP1已于2026-08-24执行；到价再减原始仓位1/3，即4股",
         "optimistic_price": null
       },
       "next_event": null,
@@ -3025,12 +3021,17 @@
       "status_en": "Active · Probe",
       "status_zh": "持有中 · 观察仓",
       "conviction": "low",
-      "horizon": "medium",
+      "horizon": "long",
       "entry_year": 2026,
       "layer": "satellite",
       "layer_label_en": "Turnaround Probe",
       "layer_label_zh": "反转观察仓",
-      "stop": null,
+      "stop": {
+        "type": "technical_stop",
+        "level_pct_from_current": "-4.7%",
+        "severity": "red",
+        "description": "NKE 近期前低 $38.86：跌破后若2-3日无法收复，触发反转thesis复核；不是自动止损。"
+      },
       "target": null,
       "next_event": null,
       "price": 40.76,
@@ -3369,7 +3370,12 @@
       "layer": "L3",
       "layer_label_en": "Satellite",
       "layer_label_zh": "卫星",
-      "stop": null,
+      "stop": {
+        "type": "technical_stop",
+        "level_pct_from_current": "-9.0%",
+        "severity": "red",
+        "description": "159381 前低支撑1.081：失守冻结后续补仓，等待新支撑与2-3日企稳。"
+      },
       "target": null,
       "next_event": null,
       "price": 1.188,
@@ -3400,7 +3406,12 @@
       "layer": "L3",
       "layer_label_en": "Satellite",
       "layer_label_zh": "卫星",
-      "stop": null,
+      "stop": {
+        "type": "technical_stop",
+        "level_pct_from_current": "-6.3%",
+        "severity": "red",
+        "description": "588000 前低支撑1.635：失守先冻结-5%/-10%补仓，等待新支撑与2-3日企稳。"
+      },
       "target": null,
       "next_event": null,
       "price": 1.745,
@@ -3600,31 +3611,7 @@
     },
     "etf": {
       "btc_etf_net_flow_m": 182,
-      "btc_etf_total_volume_m": 6076,
-      "source": "yfinance-estimate",
-      "etfs": [
-        {
-          "ticker": "IBIT",
-          "volume_usd_m": 5141
-        },
-        {
-          "ticker": "FBTC",
-          "volume_usd_m": 514
-        },
-        {
-          "ticker": "GBTC",
-          "volume_usd_m": 227
-        },
-        {
-          "ticker": "ARKB",
-          "volume_usd_m": 86
-        },
-        {
-          "ticker": "BITB",
-          "volume_usd_m": 108
-        }
-      ],
-      "date": "2026-08-24"
+      "etfs": []
     },
     "dca": {
       "status": "closed",
@@ -3698,8 +3685,8 @@
         "label_en": "Funds",
         "label_zh": "基金与现金",
         "current_pct": 33,
-        "target_pct": 30.8,
-        "drift_pp": 2.2,
+        "target_pct": 30.6,
+        "drift_pp": 2.4,
         "color": "#3b82f6",
         "sub_tags_en": [
           "Cash & Deposits",
@@ -3753,8 +3740,8 @@
         "label_en": "Crypto",
         "label_zh": "加密敞口",
         "current_pct": 6,
-        "target_pct": 9.9,
-        "drift_pp": -3.9,
+        "target_pct": 10.1,
+        "drift_pp": -4.1,
         "color": "#f59e0b",
         "sub_tags_en": [
           "BTC",
@@ -5260,14 +5247,14 @@
   "stats": {
     "active_positions": 14,
     "markets": 3,
-    "tracked_rules": 28,
+    "tracked_rules": 33,
     "upcoming_events": 1,
     "weekly_scan_hits": 0,
     "total_trades": 108,
     "closed_positions": 26,
     "win_rate_pct": 62,
     "realized_pnl_pct": 29,
-    "days_since_last_clearance": 11
+    "days_since_last_clearance": 12
   },
   "crypto_portfolio_history": {
     "data": [
@@ -10776,12 +10763,6 @@
   },
   "analytics_history": [
     {
-      "date": "2026-05-24",
-      "health": 4,
-      "portfolio_beta": 1.44,
-      "equity_beta": 1.45
-    },
-    {
       "date": "2026-05-25",
       "health": 4,
       "portfolio_beta": 1.43,
@@ -11311,6 +11292,12 @@
     },
     {
       "date": "2026-08-23",
+      "health": 3.3,
+      "portfolio_beta": 1.23,
+      "equity_beta": 1.09
+    },
+    {
+      "date": "2026-08-24",
       "health": 3.3,
       "portfolio_beta": 1.23,
       "equity_beta": 1.09
