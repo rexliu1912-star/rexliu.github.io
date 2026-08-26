@@ -509,12 +509,12 @@ function sanitizeCrypto(privatePortfolio, convexPositions = []) {
       driver_factors_zh: ["流动性", "美元", "监管"],
     },
     SNEK: {
-      tags_en: ["Cardano Ecosystem", "Community", "Meme"],
-      tags_zh: ["Cardano 生态", "社区驱动", "Meme"],
-      thesis_en: "Cardano ecosystem proxy. Managed by community sentiment, KOL activity, and on-chain health — not traditional TA.",
-      thesis_zh: "Cardano 生态敞口。看社区热度、KOL 活跃度和链上健康度，不走传统技术分析。",
-      strategy_en: "Signal-Driven",
-      strategy_zh: "信号驱动",
+      tags_en: ["Long-term Lottery", "Cardano Ecosystem", "Community", "Meme"],
+      tags_zh: ["长期彩票仓", "Cardano 生态", "社区驱动", "Meme"],
+      thesis_en: "Personal long-term lottery holding. No current sale and no regular portfolio budget; review only on structural protocol security, liquidity, or Cardano ecosystem failure.",
+      thesis_zh: "个人长期彩票仓，当前暂不卖、不追加常规投资预算；仅在协议安全、持续流动性或 Cardano 生态结构性失效时复核。",
+      strategy_en: "Long-term Lottery Hold",
+      strategy_zh: "长期彩票仓持有",
       driver_factors_en: ["Cardano Liquidity", "Community Momentum", "Regulation"],
       driver_factors_zh: ["Cardano 流动性", "社区动能", "监管"],
     },
@@ -525,7 +525,7 @@ function sanitizeCrypto(privatePortfolio, convexPositions = []) {
     .filter((a) => PUBLIC_SYMBOLS.includes(a.symbol) && (a.value ?? 1) >= 1)
     .map((a) => ({
       symbol: a.symbol,
-      role: a.symbol === "BTC" ? "core" : "community",
+      role: a.symbol === "BTC" ? "core" : "lottery",
       ...THESIS[a.symbol],
     }));
 
