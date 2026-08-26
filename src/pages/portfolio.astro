@@ -167,6 +167,40 @@ const goldDrawdown = goldTracker?.price?.drawdown_from_peak_pct;
 const goldM2Pct = Math.min(100, Math.max(0, goldTracker?.monetary?.m2_to_trigger_pct ?? 0));
 const goldM2Label = goldTracker?.monetary?.inversion_label_en ?? goldSignalLabel;
 const goldM2LabelZh = goldTracker?.monetary?.inversion_label_zh ?? goldSignalLabelZh;
+const goldAllocation = allocation.current.categories.find((category) => category.id === "gold");
+const goldAllocationCurrent = goldAllocation?.current_pct;
+const goldAllocationTarget = goldAllocation?.target_pct;
+const goldAllocationGap =
+	typeof goldAllocationCurrent === "number" && typeof goldAllocationTarget === "number"
+		? goldAllocationCurrent - goldAllocationTarget
+		: null;
+const goldWeeklyMid = goldTracker?.technical?.bollinger_mid_weekly;
+const goldWeeklyDiff = goldTracker?.technical?.bollinger_mid_pct_diff;
+const goldPremium = goldTracker?.premium?.premium_pct;
+const goldDecisionEn =
+	goldAllocationGap != null && goldAllocationGap >= 0
+		? "Hold · No add"
+		: goldSignal === "green"
+			? "Review staged entry"
+			: "Wait for weekly defense";
+const goldDecisionZh =
+	goldAllocationGap != null && goldAllocationGap >= 0
+		? "持有 · 不加仓"
+		: goldSignal === "green"
+			? "复核分档入场"
+			: "等待周线防区";
+const goldInstrumentEn =
+	typeof goldPremium !== "number"
+		? "Premium data unavailable"
+		: goldPremium <= 0
+			? `Mainland gold trades at ${Math.abs(goldPremium).toFixed(2)}% discount`
+			: `Mainland gold trades at ${goldPremium.toFixed(2)}% premium`;
+const goldInstrumentZh =
+	typeof goldPremium !== "number"
+		? "境内溢价数据不可用"
+		: goldPremium <= 0
+			? `境内金折价 ${Math.abs(goldPremium).toFixed(2)}%`
+			: `境内金溢价 ${goldPremium.toFixed(2)}%`;
 
 
 const regimeColors: Record<string, string> = {
@@ -1388,8 +1422,8 @@ const stages = [
 			<header class="portfolio-section-head">
 				<p class="portfolio-kicker"><span class="lang-en">Gold Tracker · Long-cycle dashboard</span><span class="lang-zh">黄金跟踪 · 长周期仪表盘</span></p>
 				<h2 class="font-serif text-3xl font-semibold"><span class="lang-en">Gold is a liquidity hedge, not a candle chart</span><span class="lang-zh">黄金看流动性，不看五分钟K线</span></h2>
-				<p class="portfolio-note"><span class="lang-en">M2 inversion, cost floor, peak drawdown and Shanghai premium in one decision layer.</span><span class="lang-zh">把 M2 倒挂、成本底、距高点回撤和境内溢价放在同一层判断。</span></p>
-				<span class="section-summary"><span class="lang-en">XAU {goldXau ?? "—"} · M2 {goldM2Pct.toFixed(1)}% · {goldSignalLabel}</span><span class="lang-zh">金价 {goldXau ?? "—"} · M2 {goldM2Pct.toFixed(1)}% · {goldSignalLabelZh}</span></span>
+				<p class="portfolio-note"><span class="lang-en">Allocation decides whether to add, weekly defenses decide when, and M2/premium decide execution speed and instrument.</span><span class="lang-zh">先看配置缺口，再看周线档位；M2 与境内溢价只决定执行速度和工具选择。</span></p>
+				<span class="section-summary"><span class="lang-en">{goldDecisionEn} · allocation {goldAllocationCurrent ?? "—"}% / {goldAllocationTarget ?? "—"}%</span><span class="lang-zh">{goldDecisionZh} · 配置 {goldAllocationCurrent ?? "—"}% / 目标 {goldAllocationTarget ?? "—"}%</span></span>
 			</header>
 
 			<div class="gold-tracker-dash">
@@ -1412,6 +1446,23 @@ const stages = [
 					<div class="gold-trigger-bar" aria-label="M2 trigger progress"><span style={"width:" + goldM2Pct + "%"}></span></div>
 					<div class="gold-metric-row"><span><span class="lang-en">US M2</span><span class="lang-zh">美国 M2</span></span><strong>{goldTracker?.monetary?.m2_trillion ?? "—"}T / {goldTracker?.monetary?.m2_trigger_line ?? "—"}T</strong></div>
 		<div class="gold-metric-row"><span><span class="lang-en">Status</span><span class="lang-zh">状态</span></span><strong><span class="lang-en">{goldM2Label}</span><span class="lang-zh">{goldM2LabelZh}</span></strong></div>
+					<div class="gold-decision-stack" aria-label="Gold allocation, price and execution decision">
+						<div class="gold-decision-row">
+							<span class="gold-decision-step">01</span>
+							<div><small><span class="lang-en">Allocation gate</span><span class="lang-zh">配置层</span></small><strong><span class="lang-en">{goldAllocationCurrent ?? "—"}% current / {goldAllocationTarget ?? "—"}% target</span><span class="lang-zh">当前 {goldAllocationCurrent ?? "—"}% / 目标 {goldAllocationTarget ?? "—"}%</span></strong></div>
+							<b><span class="lang-en">{goldDecisionEn}</span><span class="lang-zh">{goldDecisionZh}</span></b>
+						</div>
+						<div class="gold-decision-row">
+							<span class="gold-decision-step">02</span>
+							<div><small><span class="lang-en">Weekly defense</span><span class="lang-zh">价格层</span></small><strong><span class="lang-en">Weekly mid ${goldWeeklyMid?.toLocaleString?.() ?? "—"}</span><span class="lang-zh">周线中轨 ${goldWeeklyMid?.toLocaleString?.() ?? "—"}</span></strong></div>
+							<b>{typeof goldWeeklyDiff === "number" ? `${goldWeeklyDiff >= 0 ? "+" : ""}${goldWeeklyDiff.toFixed(1)}%` : "—"}</b>
+						</div>
+						<div class="gold-decision-row">
+							<span class="gold-decision-step">03</span>
+							<div><small><span class="lang-en">Instrument gate</span><span class="lang-zh">工具层</span></small><strong><span class="lang-en">{goldInstrumentEn}</span><span class="lang-zh">{goldInstrumentZh}</span></strong></div>
+							<b><span class="lang-en">Only after trigger</span><span class="lang-zh">触发后再选工具</span></b>
+						</div>
+					</div>
 				</div>
 
 	
@@ -2969,7 +3020,14 @@ const stages = [
 		.gold-trigger-bar span { display:block; height:100%; border-radius:inherit; background: var(--p-accent); }
 		.gold-metric-row { display:flex; justify-content:space-between; gap:1rem; padding:.65rem 0; border-top:1px solid color-mix(in srgb, var(--p-border) 55%, transparent); font-size:.9rem; }
 		.gold-metric-row span { color:var(--p-text-faint); } .gold-metric-row strong { text-align:right; color:var(--p-text); }
+		.gold-decision-stack { margin-top:.8rem; border-top:1px solid color-mix(in srgb, var(--p-border) 70%, transparent); }
+		.gold-decision-row { display:grid; grid-template-columns:2rem minmax(0,1fr) auto; gap:.7rem; align-items:center; padding:.72rem 0; border-bottom:1px solid color-mix(in srgb, var(--p-border) 45%, transparent); }
+		.gold-decision-step { font:600 .7rem/1 ui-monospace, SFMono-Regular, Menlo, monospace; color:var(--p-accent); letter-spacing:.08em; }
+		.gold-decision-row small { display:block; color:var(--p-text-faint); font-size:.67rem; text-transform:uppercase; letter-spacing:.08em; }
+		.gold-decision-row strong { display:block; margin-top:.18rem; color:var(--p-text); font-size:.82rem; font-weight:550; }
+		.gold-decision-row b { max-width:10rem; text-align:right; color:var(--p-text-soft); font-size:.76rem; font-weight:600; }
 		@media (max-width: 860px) { .gold-tracker-dash { grid-template-columns: 1fr; } .gold-price-card { grid-template-columns: 1fr; } .gold-semi-gauge { justify-self:start; } }
+		@media (max-width: 560px) { .gold-decision-row { grid-template-columns:1.7rem minmax(0,1fr); } .gold-decision-row b { grid-column:2; max-width:none; text-align:left; } }
 
 		/* ── Gold Charts & Gauges ── */
 		.gold-charts-row { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
