@@ -2,7 +2,7 @@
   "_meta": {
     "schema": "portfolio-allocation-model/v1",
     "version": "0.1.0",
-    "generated_at": "2026-08-28T12:30:34.748508+00:00",
+    "generated_at": "2026-08-28T23:21:53.351782+00:00",
     "smoothing": {
       "alpha": 0.35,
       "max_daily_move_pp": 2.0
@@ -20,14 +20,14 @@
   },
   "regime": {
     "name": "neutral",
-    "score": 55.0
+    "score": 50.0
   },
   "risk_free_rate_pct": 3.64,
   "categories": [
     {
       "id": "stablecoin",
       "target_pct": 30.6,
-      "raw_target_pct": 30.6,
+      "raw_target_pct": 30.5,
       "current_pct": 41.1,
       "drift_pp": 10.5,
       "signal_score": 80.0,
@@ -39,10 +39,10 @@
     },
     {
       "id": "funds",
-      "target_pct": 30.6,
-      "raw_target_pct": 30.6,
+      "target_pct": 30.5,
+      "raw_target_pct": 30.5,
       "current_pct": 33.0,
-      "drift_pp": 2.4,
+      "drift_pp": 2.5,
       "signal_score": 78.2,
       "expected_return_pct": 3.2,
       "annual_volatility_pct": 3.0,
@@ -53,41 +53,41 @@
     {
       "id": "gold",
       "target_pct": 4.1,
-      "raw_target_pct": 4.1,
+      "raw_target_pct": 4.0,
       "current_pct": 4.2,
       "drift_pp": 0.1,
       "signal_score": 55.0,
       "expected_return_pct": 4.2,
-      "annual_volatility_pct": 21.9,
+      "annual_volatility_pct": 22.3,
       "action": "hold",
       "rationale_en": "Gold signal yellow; fair-value premium level normal caps target.",
       "rationale_zh": "黄金信号 yellow；公允价溢价 normal，限制目标仓位上行。"
     },
     {
       "id": "stocks",
-      "target_pct": 24.8,
-      "raw_target_pct": 24.9,
+      "target_pct": 25.1,
+      "raw_target_pct": 25.4,
       "current_pct": 15.6,
-      "drift_pp": -9.2,
-      "signal_score": 60.9,
-      "expected_return_pct": 8.4,
-      "annual_volatility_pct": 19.2,
+      "drift_pp": -9.5,
+      "signal_score": 66.9,
+      "expected_return_pct": 8.8,
+      "annual_volatility_pct": 21.0,
       "action": "add",
-      "rationale_en": "Portfolio health 3.2/5.0, equity beta 1.20, regime score 55.0.",
-      "rationale_zh": "组合健康度 3.2/5.0，股票 beta 1.20，宏观分数 55.0。"
+      "rationale_en": "Portfolio health 3.8/5.0, equity beta 1.31, regime score 50.0.",
+      "rationale_zh": "组合健康度 3.8/5.0，股票 beta 1.31，宏观分数 50.0。"
     },
     {
       "id": "crypto",
-      "target_pct": 9.9,
-      "raw_target_pct": 9.8,
+      "target_pct": 9.7,
+      "raw_target_pct": 9.6,
       "current_pct": 6.0,
-      "drift_pp": -3.9,
-      "signal_score": 62.6,
-      "expected_return_pct": 15.8,
+      "drift_pp": -3.7,
+      "signal_score": 61.4,
+      "expected_return_pct": 15.7,
       "annual_volatility_pct": 32.5,
       "action": "add",
-      "rationale_en": "Crypto composite 62.6, fear/greed 73; capped at 15%.",
-      "rationale_zh": "Crypto composite 62.6，恐惧贪婪 73；上限 15%。"
+      "rationale_en": "Crypto composite 61.4, fear/greed 50; capped at 15%.",
+      "rationale_zh": "Crypto composite 61.4，恐惧贪婪 50；上限 15%。"
     }
   ]
 }
