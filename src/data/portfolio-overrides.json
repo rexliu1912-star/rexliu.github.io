@@ -754,10 +754,11 @@
       "status_en": "Active",
       "status_zh": "持有中",
       "entry_year": 2026,
-      "clearance_reason_en": "Closed A-share policy beta exposure after retreat signal and position reconciliation.",
-      "clearance_reason_zh": "A股政策 beta / AI 主题仓位清仓；已按基金份额拆分与券商成交校准。",
-      "clearance_lesson_en": "A-share thematic ETFs need split/corporate-action checks before position-level decisions.",
-      "clearance_lesson_zh": "A股主题ETF必须把份额拆分/折算纳入持仓校验，否则系统数量会失真。"
+      "hide_clearance": true,
+      "clearance_reason_en": "Hidden pending verified broker cost basis; all trade screenshots were received, but historical materialized quantity resets prevent a reliable multi-cycle P&L calculation.",
+      "clearance_reason_zh": "暂不公开清仓收益：交易截图均已收到，但历史持仓数量重置导致多轮成本无法可靠还原。",
+      "clearance_lesson_en": "Broker quantity must be reconciled against the full trade and corporate-action history before P&L is published.",
+      "clearance_lesson_zh": "发布收益前必须用完整成交与公司行动历史核对券商数量，不能用校准占位价计算。"
     },
     "159632": {
       "conviction": "medium",
@@ -838,18 +839,11 @@
         "中国政策 beta",
         "A股ETF"
       ],
-      "clearance_reason_en": "Closed the STAR 50 ETF position after the A-share policy-beta rebound; remove the position from active holdings and risk monitoring.",
-      "clearance_reason_zh": "科创50ETF已在A股政策 beta 反弹后分批清仓；从 active 持仓与风险监控中移除。",
-      "clearance_lesson_en": "For policy-beta ETF trades, the position snapshot before close is the authority when historical trade backfill is incomplete.",
-      "clearance_lesson_zh": "政策 beta ETF 的历史补录不完整时，清仓前持仓快照才是收益率校准依据。",
-      "clearance_mechanics_override": true,
-      "clearance_mechanics_note": "Convex historical buys for 588000 only backfilled 38k shares, while pre-close position snapshot was 104k @ 1.9102115385. Override public clearance mechanics to avoid inflated P&L.",
-      "clearance_outcome_pct": 1.5,
-      "clearance_outcome_pct_rounded": 1,
-      "clearance_win_rate_pct": 100,
-      "clearance_avg_entry_price": 1.9102,
-      "clearance_avg_exit_price": 1.938,
-      "clearance_trade_count": 7
+      "clearance_reason_en": "Hidden pending verified broker cost basis; all trade screenshots were received, but historical materialized quantity resets prevent a reliable multi-cycle P&L calculation.",
+      "clearance_reason_zh": "暂不公开清仓收益：交易截图均已收到，但历史持仓数量重置导致多轮成本无法可靠还原。",
+      "clearance_lesson_en": "Broker quantity must be reconciled against the full trade history before P&L is published.",
+      "clearance_lesson_zh": "发布收益前必须用完整成交历史核对券商数量，不能用校准占位价计算。",
+      "hide_clearance": true
     },
     "PLTR": {
       "conviction": "medium",
