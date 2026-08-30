@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-30T00:44:56.446Z",
+  "generated_at": "2026-08-30T02:07:32.552Z",
   "regime": {
     "current": {
       "label": "中性期",
@@ -2387,9 +2387,9 @@
           "id": "funds",
           "label_en": "Funds",
           "label_zh": "基金与现金",
-          "target_pct": 30.2,
+          "target_pct": 30.1,
           "current_pct": 33,
-          "drift_pp": 2.8,
+          "drift_pp": 2.9,
           "color": "#3b82f6",
           "sub_tags_en": [
             "Cash & Deposits",
@@ -2405,15 +2405,15 @@
           "note_zh": "现金缓冲 + 保守理财 + 专项资金（买房/教育/应收）",
           "expected_return_pct": 3.2,
           "annual_volatility_pct": 3,
-          "model_target_pct": 30.2,
+          "model_target_pct": 30.1,
           "raw_model_target_pct": 30.3,
           "signal_score": 78.2,
           "model_action": "trim",
           "model_rationale_en": "SOFR 3.64% supports conservative cash/fund carry.",
           "model_rationale_zh": "SOFR 3.64%，保守现金/基金仍有持有收益。",
           "model_current_pct": 33,
-          "model_drift_pp": 2.8,
-          "gap_amount": -298458
+          "model_drift_pp": 2.9,
+          "gap_amount": -309117
         },
         {
           "id": "gold",
@@ -2466,13 +2466,13 @@
           "note_en": "Long + swing mix — AI-electricity core with opportunistic overlays",
           "note_zh": "长期 + 波段组合——AI 电力核心 + 机会主义叠加",
           "expected_return_pct": 8.4,
-          "annual_volatility_pct": 21,
+          "annual_volatility_pct": 21.1,
           "model_target_pct": 24.8,
           "raw_model_target_pct": 24.7,
           "signal_score": 60.9,
           "model_action": "add",
-          "model_rationale_en": "Portfolio health 3.2/5.0, equity beta 1.31, regime score 55.0.",
-          "model_rationale_zh": "组合健康度 3.2/5.0，股票 beta 1.31，宏观分数 55.0。",
+          "model_rationale_en": "Portfolio health 3.2/5.0, equity beta 1.32, regime score 55.0.",
+          "model_rationale_zh": "组合健康度 3.2/5.0，股票 beta 1.32，宏观分数 55.0。",
           "model_current_pct": 15.6,
           "model_drift_pp": -9.2,
           "gap_amount": 980646,
@@ -2507,9 +2507,9 @@
           "id": "crypto",
           "label_en": "Crypto",
           "label_zh": "加密敞口",
-          "target_pct": 10.5,
+          "target_pct": 10.6,
           "current_pct": 6,
-          "drift_pp": -4.5,
+          "drift_pp": -4.6,
           "color": "#f59e0b",
           "sub_tags_en": [
             "BTC",
@@ -2523,21 +2523,21 @@
           "note_zh": "不对称下注——长久期、低相关、高波动核心",
           "expected_return_pct": 17.4,
           "annual_volatility_pct": 32.5,
-          "model_target_pct": 10.5,
+          "model_target_pct": 10.6,
           "raw_model_target_pct": 10.7,
           "signal_score": 75.6,
           "model_action": "add",
           "model_rationale_en": "Crypto composite 75.6, fear/greed 69; capped at 15%.",
           "model_rationale_zh": "Crypto composite 75.6，恐惧贪婪 69；上限 15%。",
           "model_current_pct": 6,
-          "model_drift_pp": -4.5,
-          "gap_amount": 479664
+          "model_drift_pp": -4.6,
+          "gap_amount": 490323
         }
       ],
       "model": {
         "schema": "portfolio-allocation-model/v1",
         "version": "0.1.0",
-        "generated_at": "2026-08-30T00:44:53.936507+00:00",
+        "generated_at": "2026-08-30T02:07:31.310888+00:00",
         "regime": {
           "name": "neutral",
           "score": 55
@@ -2550,7 +2550,7 @@
       },
       "projected_annual_yield": 601371,
       "risk": {
-        "target_vol": 10.7,
+        "target_vol": 10.8,
         "current_vol": 7.6,
         "sharpe_target": 0.27,
         "sharpe_current": 0.26,
@@ -2561,7 +2561,7 @@
       },
       "health": 3.2,
       "portfolio_beta": 1.4,
-      "equity_beta": 1.31
+      "equity_beta": 1.32
     }
   },
   "sector_research": [
@@ -2766,14 +2766,14 @@
       "layer_label_zh": "AI 算力",
       "stop": {
         "type": "technical_stop",
-        "level_pct_from_current": "-23.7%",
+        "level_pct_from_current": "-24.9%",
         "severity": "gray",
         "description": "AAPL secondary technical support $240 after the $260 thesis review gate"
       },
       "target": null,
       "next_event": null,
-      "price": 314.58,
-      "daily_change_pct": -1.6
+      "price": 319.7,
+      "daily_change_pct": 0
     },
     {
       "symbol": "BE",
@@ -2816,18 +2816,18 @@
       "layer_label_zh": "高Beta电力",
       "stop": {
         "type": "stop_loss",
-        "level_pct_from_current": "-28.6%",
+        "level_pct_from_current": "-26.2%",
         "severity": "gray",
         "description": "BE 入场价 $207.50 下方25%的风险线；研究卡原入场门槛未通过，跌破不得转为无限期长持。"
       },
       "target": {
-        "price_pct_from_current": "+28.5%",
+        "price_pct_from_current": "+32.8%",
         "description": "BE 研究卡 TP1：触及主目标后减半仓。",
         "optimistic_price": null
       },
       "next_event": null,
-      "price": 217.83,
-      "daily_change_pct": 3.35
+      "price": 210.77,
+      "daily_change_pct": 0
     },
     {
       "symbol": "DRAM",
@@ -2866,14 +2866,14 @@
       "layer_label_zh": "AI基建",
       "stop": {
         "type": "stop_loss",
-        "level_pct_from_current": "-38.4%",
+        "level_pct_from_current": "-37.3%",
         "severity": "gray",
         "description": "DRAM thesis invalidation $35（-50% from cost $69.28，存储周期见顶信号线）"
       },
       "target": null,
       "next_event": null,
-      "price": 56.83,
-      "daily_change_pct": 1.79
+      "price": 55.83,
+      "daily_change_pct": 0
     },
     {
       "symbol": "ILMN",
@@ -2912,14 +2912,14 @@
       "layer_label_zh": "卫星仓",
       "stop": {
         "type": "technical_stop",
-        "level_pct_from_current": "-26.7%",
+        "level_pct_from_current": "-22.6%",
         "severity": "gray",
         "description": "ILMN 技术支撑 $166.92（50日均线，短期趋势分水岭）"
       },
       "target": null,
       "next_event": null,
-      "price": 227.69,
-      "daily_change_pct": 5.61
+      "price": 215.59,
+      "daily_change_pct": 0
     },
     {
       "symbol": "INTC",
@@ -2960,18 +2960,18 @@
       "layer_label_zh": "卫星仓",
       "stop": {
         "type": "stop_loss",
-        "level_pct_from_current": "-24.0%",
+        "level_pct_from_current": "-21.8%",
         "severity": "gray",
         "description": "INTC thesis invalidation $70（前低支撑，破=代工转型叙事破裂）"
       },
       "target": {
-        "price_pct_from_current": "+16.7%",
+        "price_pct_from_current": "+20.1%",
         "description": "INTC TP1 +15% from blended avg $XX,XXX: sell 15 shares",
         "optimistic_price": null
       },
       "next_event": null,
-      "price": 92.09,
-      "daily_change_pct": 2.93
+      "price": 89.47,
+      "daily_change_pct": 0
     },
     {
       "symbol": "NKE",
@@ -3015,8 +3015,8 @@
       "stop": null,
       "target": null,
       "next_event": null,
-      "price": 38.44,
-      "daily_change_pct": -2.93
+      "price": 39.6,
+      "daily_change_pct": 0
     },
     {
       "symbol": "NVDA",
@@ -3055,14 +3055,14 @@
       "layer_label_zh": "核心持仓",
       "stop": {
         "type": "stop_loss",
-        "level_pct_from_current": "-29.8%",
+        "level_pct_from_current": "-26.5%",
         "severity": "gray",
         "description": "NVDA thesis invalidation $160（COVID后长期支撑线，破=结构性转变）"
       },
       "target": null,
       "next_event": null,
-      "price": 227.98,
-      "daily_change_pct": 4.79
+      "price": 217.55,
+      "daily_change_pct": 0
     },
     {
       "symbol": "OUST",
@@ -3101,12 +3101,12 @@
       "layer_label_zh": "卫星持仓",
       "stop": {
         "type": "technical_stop",
-        "level_pct_from_current": "-4.8%",
+        "level_pct_from_current": "--0.4%",
         "severity": "red",
         "description": "OUST 技术支撑 $34.77（多源共识支撑位+60日低点区域，跌破即短期趋势转弱）"
       },
       "target": {
-        "price_pct_from_current": "+42.3%",
+        "price_pct_from_current": "+50.2%",
         "description": "OUST 目标价 $XX,XXX（分析师共识中值，7位分析师Strong Buy共识$XX,XXX-52，验证Q2营收+Rev8量产+EBITDA改善后上修）",
         "optimistic_price": null
       },
@@ -3115,8 +3115,8 @@
         "label": "Ouster StereoLabs 整合进展验证 — 检查收购后协同效应和交叉销售成果",
         "urgency": 2
       },
-      "price": 36.54,
-      "daily_change_pct": 5.55
+      "price": 34.62,
+      "daily_change_pct": 0
     },
     {
       "symbol": "QQQ",
@@ -3156,8 +3156,8 @@
       "stop": null,
       "target": null,
       "next_event": null,
-      "price": 721.11,
-      "daily_change_pct": 0.65
+      "price": 716.43,
+      "daily_change_pct": 0
     },
     {
       "symbol": "VOO",
@@ -3201,8 +3201,8 @@
       "stop": null,
       "target": null,
       "next_event": null,
-      "price": 708.75,
-      "daily_change_pct": 0.21
+      "price": 707.24,
+      "daily_change_pct": 0
     },
     {
       "symbol": "XLE",
@@ -3246,8 +3246,8 @@
       "stop": null,
       "target": null,
       "next_event": null,
-      "price": 62.29,
-      "daily_change_pct": -0.62
+      "price": 62.68,
+      "daily_change_pct": 0
     },
     {
       "symbol": "XLU",
@@ -3291,8 +3291,8 @@
       "stop": null,
       "target": null,
       "next_event": null,
-      "price": 43.18,
-      "daily_change_pct": 1.05
+      "price": 42.73,
+      "daily_change_pct": 0
     }
   ],
   "crypto": {
@@ -3564,8 +3564,8 @@
         "label_en": "Funds",
         "label_zh": "基金与现金",
         "current_pct": 33,
-        "target_pct": 30.2,
-        "drift_pp": 2.8,
+        "target_pct": 30.1,
+        "drift_pp": 2.9,
         "color": "#3b82f6",
         "sub_tags_en": [
           "Cash & Deposits",
@@ -3619,8 +3619,8 @@
         "label_en": "Crypto",
         "label_zh": "加密敞口",
         "current_pct": 6,
-        "target_pct": 10.5,
-        "drift_pp": -4.5,
+        "target_pct": 10.6,
+        "drift_pp": -4.6,
         "color": "#f59e0b",
         "sub_tags_en": [
           "BTC",
@@ -5746,7 +5746,7 @@
     }
   },
   "crypto_timeseries": {
-    "generated_at": "2026-08-30T08:44:49.831404",
+    "generated_at": "2026-08-30T10:07:28.124713",
     "latest": {
       "date": "2026-08-30",
       "composite": 75.6,
@@ -11174,7 +11174,7 @@
       "date": "2026-08-30",
       "health": 3.2,
       "portfolio_beta": 1.4,
-      "equity_beta": 1.31
+      "equity_beta": 1.32
     }
   ],
   "capital_mobility_risk": {
