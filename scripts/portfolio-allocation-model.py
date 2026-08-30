@@ -153,7 +153,7 @@ def current_allocation(private: dict[str, Any] | None = None) -> dict[str, float
         # 国泰黄金ETF联接A. Combine them with portfolio.json's stablecoin/crypto.
         stablecoin = private_amount("stablecoin")
         crypto = private_amount("crypto") + private_amount("crypto_ivy")
-        funds = sum(traditional_amount(i) for i in ["yanerhigh", "liquid", "house", "education", "receivable"])
+        funds = sum(traditional_amount(i) for i in ["yanerhigh", "liquid", "wulongzhi", "house", "education", "receivable"])
         future_total = traditional_amount("future-gen") or traditional_amount("future")
         future_item = traditional_categories.get("future-gen") or traditional_categories.get("future")
         gold = extract_gold_amount(future_item)
