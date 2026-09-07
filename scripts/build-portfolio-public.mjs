@@ -1041,11 +1041,11 @@ function mergeClearances(localClearances, autoClearances) {
     }
 
     byTicker.set(auto.ticker, {
-      ...existing,
       ...auto,
+      ...existing,
       // Convex trade/position records are the source of truth for mechanics.
-      // Local clearances are editorial only; do not let stale local round trips
-      // overwrite dates, P&L, prices, counts, currency, or generated trade points.
+      // Local clearances own narrative fields and may replace generated trade
+      // points when private execution details need to stay out of public data.
       market: auto.market || existing.market,
       entry_date: auto.entry_date || existing.entry_date,
       exit_date: auto.exit_date || existing.exit_date,
@@ -1057,7 +1057,7 @@ function mergeClearances(localClearances, autoClearances) {
       currency: auto.currency || existing.currency,
       avg_entry_price: auto.avg_entry_price ?? existing.avg_entry_price,
       avg_exit_price: auto.avg_exit_price ?? existing.avg_exit_price,
-      trade_points: auto.trade_points?.length ? auto.trade_points : existing.trade_points,
+      trade_points: existing.trade_points?.length ? existing.trade_points : auto.trade_points,
     });
   }
 
