@@ -57,6 +57,7 @@ type MediaEntry = {
 	title: string;
 	titleEn?: string;
 	year?: number;
+	watchedDate?: string;
 	status: string;
 	type: "movie" | "series" | "variety" | "documentary";
 	tags?: string[];
@@ -349,14 +350,18 @@ const media: LibraryItem[] = (mediaData as MediaEntry[])
 		tags: item.tags || [],
 		notes: item.notes,
 		meta: undefined,
-		sortDate: undefined,
+		sortDate: item.watchedDate,
 		year: item.year,
 		cover: item.cover,
 		coverClass: mediaTypeColors[item.type] || defaultBookColor,
 		reviewSlug: undefined,
 		weread: undefined,
 	}))
-	.sort((a, b) => (b.year || 0) - (a.year || 0));
+	.sort((a, b) => {
+		const aDate = a.sortDate ? new Date(a.sortDate).valueOf() : Date.UTC(a.year || 0, 0, 1);
+		const bDate = b.sortDate ? new Date(b.sortDate).valueOf() : Date.UTC(b.year || 0, 0, 1);
+		return bDate - aDate;
+	});
 
 const films = media.filter((item) => item.format === "movie");
 const series = media.filter((item) => item.format === "series");
@@ -364,7 +369,7 @@ const variety = media.filter((item) => item.format === "variety");
 const documentary = media.filter((item) => item.format === "documentary");
 
 const meta = {
-	title: "Library — OS",
+	title: "Library",
 	description: "Books, films, and shows that shaped how Rex thinks.",
 };
 
@@ -434,7 +439,7 @@ function toMasonryMedia(m: LibraryItem) {
 		coverClass: m.coverClass,
 		rating: m.rating,
 		tags: m.tags,
-		sortDate: undefined,
+		sortDate: m.sortDate,
 		sortYear: m.year,
 		notes: m.notes,
 		reviewSlug: undefined,
@@ -705,8 +710,8 @@ const masonrySeries = series.map(toMasonryMedia);
                 </p>
                 {item.sortDate && (
                   <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500">
-                    <span class="lang-zh">读于 {item.sortDate}</span>
-                    <span class="lang-en">Read {item.sortDate}</span>
+                    <span class="lang-zh">{item.format === "book" ? "读于" : "看于"} {item.sortDate}</span>
+                    <span class="lang-en">{item.format === "book" ? "Read" : "Watched"} {item.sortDate}</span>
                   </p>
                 )}
                 {item.weread?.bookId && (
