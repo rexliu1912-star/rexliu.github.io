@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-08T23:18:42.251Z",
+  "generated_at": "2026-09-09T01:58:52.212Z",
   "regime": {
     "current": {
       "label": "中性期",
@@ -2377,9 +2377,9 @@
           "id": "funds",
           "label_en": "Funds",
           "label_zh": "基金与现金",
-          "target_pct": 33.5,
+          "target_pct": 33.4,
           "current_pct": 32.5,
-          "drift_pp": -1,
+          "drift_pp": -0.9,
           "color": "#3b82f6",
           "sub_tags_en": [
             "Cash & Deposits",
@@ -2395,15 +2395,15 @@
           "note_zh": "现金缓冲 + 保守理财 + 专项资金（买房/教育/应收）",
           "expected_return_pct": 3.2,
           "annual_volatility_pct": 3,
-          "model_target_pct": 33.5,
+          "model_target_pct": 33.4,
           "raw_model_target_pct": 33.5,
           "signal_score": 78.2,
           "model_action": "hold",
           "model_rationale_en": "SOFR 3.65% supports conservative cash/fund carry.",
           "model_rationale_zh": "SOFR 3.65%，保守现金/基金仍有持有收益。",
           "model_current_pct": 32.5,
-          "model_drift_pp": -1,
-          "gap_amount": 108943
+          "model_drift_pp": -0.9,
+          "gap_amount": 98049
         },
         {
           "id": "gold",
@@ -2455,14 +2455,14 @@
           ],
           "note_en": "Long + swing mix — AI-electricity core with opportunistic overlays",
           "note_zh": "长期 + 波段组合——AI 电力核心 + 机会主义叠加",
-          "expected_return_pct": 8.3,
+          "expected_return_pct": 8.5,
           "annual_volatility_pct": 21.8,
           "model_target_pct": 19.2,
-          "raw_model_target_pct": 19.1,
-          "signal_score": 62.7,
+          "raw_model_target_pct": 19.2,
+          "signal_score": 64.5,
           "model_action": "hold",
-          "model_rationale_en": "Portfolio health 3.8/5.0, equity beta 1.36, regime score 38.0.",
-          "model_rationale_zh": "组合健康度 3.8/5.0，股票 beta 1.36，宏观分数 38.0。",
+          "model_rationale_en": "Portfolio health 3.8/5.0, equity beta 1.36, regime score 43.0.",
+          "model_rationale_zh": "组合健康度 3.8/5.0，股票 beta 1.36，宏观分数 43.0。",
           "model_current_pct": 18.4,
           "model_drift_pp": -0.8,
           "gap_amount": 87154,
@@ -2497,9 +2497,9 @@
           "id": "crypto",
           "label_en": "Crypto",
           "label_zh": "加密敞口",
-          "target_pct": 7.1,
+          "target_pct": 7.2,
           "current_pct": 6.8,
-          "drift_pp": -0.3,
+          "drift_pp": -0.4,
           "color": "#f59e0b",
           "sub_tags_en": [
             "BTC",
@@ -2513,36 +2513,36 @@
           "note_zh": "不对称下注——长久期、低相关、高波动核心",
           "expected_return_pct": 16.5,
           "annual_volatility_pct": 32.5,
-          "model_target_pct": 7.1,
-          "raw_model_target_pct": 7.3,
+          "model_target_pct": 7.2,
+          "raw_model_target_pct": 7.2,
           "signal_score": 68,
           "model_action": "hold",
-          "model_rationale_en": "Crypto composite 68.0, fear/greed 50; capped at 15%.",
-          "model_rationale_zh": "Crypto composite 68.0，恐惧贪婪 50；上限 15%。",
+          "model_rationale_en": "Crypto composite 68.0, fear/greed 66; capped at 15%.",
+          "model_rationale_zh": "Crypto composite 68.0，恐惧贪婪 66；上限 15%。",
           "model_current_pct": 6.8,
-          "model_drift_pp": -0.3,
-          "gap_amount": 32683
+          "model_drift_pp": -0.4,
+          "gap_amount": 43577
         }
       ],
       "model": {
         "schema": "portfolio-allocation-model/v1",
         "version": "0.1.0",
-        "generated_at": "2026-09-08T23:18:41.237621+00:00",
+        "generated_at": "2026-09-09T01:58:51.367376+00:00",
         "regime": {
           "name": "defensive",
-          "score": 38
+          "score": 43
         }
       },
       "risk_free_rate": 3.65,
       "weighted_return": {
         "target": 5.8,
-        "current": 5.7
+        "current": 5.8
       },
-      "projected_annual_yield": 625954,
+      "projected_annual_yield": 629963,
       "risk": {
         "target_vol": 8.8,
         "current_vol": 8.5,
-        "sharpe_target": 0.24,
+        "sharpe_target": 0.25,
         "sharpe_current": 0.25,
         "risk_free_rate": 3.65,
         "temperature": 14,
@@ -3334,6 +3334,40 @@
       "next_event": null,
       "price": 64.77,
       "daily_change_pct": 1.11
+    },
+    {
+      "symbol": "688008",
+      "market": "cn",
+      "flag": "🇨🇳",
+      "sector_tags_en": [
+        "Semiconductors",
+        "Memory Interface Chips"
+      ],
+      "sector_tags_zh": [
+        "半导体",
+        "内存接口芯片"
+      ],
+      "driver_factors_en": [],
+      "driver_factors_zh": [],
+      "thesis_en": "A-share trading position entered near support with the company buyback as a secondary confidence signal. The entry had no oversold confirmation. A daily close above the 20-day moving average is the next trend check; a break of the Sep 4 swing low at CNY 185.80 triggers exit review, not automatic averaging down.",
+      "thesis_zh": "A股交易仓：买入逻辑是价格处于支撑区，叠加公司回购作为次级信心信号；入场时没有超卖确认。后续以日线能否收复20日均线验证趋势，跌破9月4日前低185.80元进入退出复核，不自动补仓。",
+      "stage": 7,
+      "status_en": "Active · Post-fill Card",
+      "status_zh": "持有中 · 成交后补卡",
+      "conviction": "pending",
+      "horizon": "short",
+      "entry_year": 2026,
+      "layer": "satellite",
+      "layer_label_en": "A-share Swing Trade",
+      "layer_label_zh": "A股交易仓",
+      "stop": {
+        "type": "technical_stop",
+        "level_pct_from_current": "-5.8%",
+        "severity": "red",
+        "description": "澜起科技跌至/跌破2026-09-04前低185.80元：进入EXIT_REVIEW；仅alert_only，不代表券商已挂自动止损。"
+      },
+      "target": null,
+      "next_event": null
     }
   ],
   "crypto": {
@@ -3447,7 +3481,7 @@
           "score": 20,
           "detail_en": "Drawdown: -4.4%",
           "detail_zh": "回撤: -4.4%",
-          "delta": 0,
+          "delta": -0.7,
           "desc_en": "BTC drawdown from ATH + miner revenue stress",
           "desc_zh": "BTC 距高点回撤 + 矿工收入压力"
         },
@@ -3619,8 +3653,8 @@
         "label_en": "Funds",
         "label_zh": "基金与现金",
         "current_pct": 32.5,
-        "target_pct": 33.5,
-        "drift_pp": -1,
+        "target_pct": 33.4,
+        "drift_pp": -0.9,
         "color": "#3b82f6",
         "sub_tags_en": [
           "Cash & Deposits",
@@ -3674,8 +3708,8 @@
         "label_en": "Crypto",
         "label_zh": "加密敞口",
         "current_pct": 6.8,
-        "target_pct": 7.1,
-        "drift_pp": -0.3,
+        "target_pct": 7.2,
+        "drift_pp": -0.4,
         "color": "#f59e0b",
         "sub_tags_en": [
           "BTC",
@@ -5293,16 +5327,16 @@
     }
   ],
   "stats": {
-    "active_positions": 12,
-    "markets": 2,
-    "tracked_rules": 36,
+    "active_positions": 13,
+    "markets": 3,
+    "tracked_rules": 37,
     "upcoming_events": 1,
     "weekly_scan_hits": 0,
     "total_trades": 115,
     "closed_positions": 28,
     "win_rate_pct": 61,
     "realized_pnl_pct": 38,
-    "days_since_last_clearance": 0
+    "days_since_last_clearance": 1
   },
   "crypto_portfolio_history": {
     "data": [
@@ -5915,7 +5949,7 @@
     }
   },
   "crypto_timeseries": {
-    "generated_at": "2026-09-09T07:18:38.871222",
+    "generated_at": "2026-09-09T09:58:48.946453",
     "latest": {
       "date": "2026-09-09",
       "composite": 68,
@@ -5923,8 +5957,8 @@
       "btc_close": 78486,
       "btc_high": null,
       "btc_low": null,
-      "fgi": null,
-      "fgi_label": null,
+      "fgi": 66,
+      "fgi_label": "Greed",
       "green_count": 1,
       "indicators": {
         "fear_greed": {
@@ -7449,9 +7483,9 @@
       },
       {
         "date": "2026-09-08",
-        "btc_close": 78460.9,
-        "btc_high": 79455.59,
-        "btc_low": 77782.7,
+        "btc_close": 79049,
+        "btc_high": null,
+        "btc_low": null,
         "fgi": 69,
         "fgi_label": "Greed",
         "composite": 61.7,
@@ -7462,8 +7496,8 @@
         "btc_close": 78486,
         "btc_high": null,
         "btc_low": null,
-        "fgi": null,
-        "fgi_label": null,
+        "fgi": 66,
+        "fgi_label": "Greed",
         "composite": 68,
         "delta_composite": 6.3
       }
@@ -10806,12 +10840,6 @@
   },
   "analytics_history": [
     {
-      "date": "2026-06-09",
-      "health": null,
-      "portfolio_beta": 1.13,
-      "equity_beta": 1.04
-    },
-    {
       "date": "2026-06-10",
       "health": null,
       "portfolio_beta": 1.11,
@@ -11341,6 +11369,12 @@
     },
     {
       "date": "2026-09-08",
+      "health": 3.8,
+      "portfolio_beta": 1.44,
+      "equity_beta": 1.36
+    },
+    {
+      "date": "2026-09-09",
       "health": 3.8,
       "portfolio_beta": 1.44,
       "equity_beta": 1.36
