@@ -32,6 +32,12 @@ const SUSPICIOUS_PATTERNS = [
   { pattern: /\$\s*[\d,]{5,}/, note: "USD amount ≥$10,000" },
   { pattern: /HK\$\s*[\d,]{4,}/, note: "HKD amount" },
   { pattern: /CNY\s*[\d,]{4,}/, note: "CNY amount" },
+  { pattern: /\border\s*(?:id|no\.?)?\s*[#:]?\s*(?=[A-Za-z0-9_-]{8,}\b)(?=[A-Za-z0-9_-]*\d)[A-Za-z0-9_-]+\b/i, note: "broker order identifier in prose" },
+  { pattern: /(?:订单|合同号)\s*[#：:]?\s*(?=[A-Za-z0-9_-]{8,})(?=[A-Za-z0-9_-]*\d)[A-Za-z0-9_-]+/, note: "broker order identifier in Chinese prose" },
+  { pattern: /\bMP\d{6,}\b/i, note: "broker account identifier in prose" },
+  { pattern: /\b\d[\d,]*(?:\.\d+)?[-\s]+(?:shares?|units?)\b/i, note: "exact position units in prose" },
+  { pattern: /\d[\d,]*(?:\.\d+)?\s*(?:股|份)/, note: "exact position units in Chinese prose" },
+  { pattern: /\b\d[\d,]*(?:\.\d+)?\s*@\s*(?=(?:HK\$|[$¥])?\d)/i, note: "quantity-at-price execution detail in prose" },
 ];
 
 async function main() {
@@ -55,7 +61,8 @@ async function main() {
 
   // 2. Suspicious absolute amount patterns
   for (const { pattern, note } of SUSPICIOUS_PATTERNS) {
-    const matches = raw.match(new RegExp(pattern, "g")) || [];
+    const flags = [...new Set(`${pattern.flags}g`)].join("");
+    const matches = raw.match(new RegExp(pattern.source, flags)) || [];
     if (matches.length > 0) {
       // Dedupe and show first few
       const unique = [...new Set(matches)].slice(0, 5);

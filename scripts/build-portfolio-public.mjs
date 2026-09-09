@@ -12,7 +12,7 @@
  *
  * Privacy invariants (enforced by preflight check post-run):
  *   - NO quantity / avgCost / totalCost / targetAmount absolute values
- *   - NO per-account ¥/$ figures
+ *   - NO per-account ¥/$ figures, broker/order identifiers, or exact unit counts hidden in prose
  *   - Percentages, sector tags, thesis, stage, status OK
  *
  * SANITIZE GUARD: Every code path that writes OUTPUT_PATH passes through
@@ -46,10 +46,43 @@ function stripForbiddenKeys(obj, pathLabel = "") {
   return obj;
 }
 
+/** Remove private execution details that can leak through otherwise-safe prose fields. */
+function sanitizePublicText(value) {
+  return String(value)
+    .replace(/\border\s*(?:id|no\.?)?\s*[#:]?\s*(?=[A-Za-z0-9_-]{8,}\b)(?=[A-Za-z0-9_-]*\d)[A-Za-z0-9_-]+\b/gi, "broker order confirmed")
+    .replace(/(?:订单|合同号)\s*[#：:]?\s*(?=[A-Za-z0-9_-]{8,})(?=[A-Za-z0-9_-]*\d)[A-Za-z0-9_-]+/g, "订单已确认")
+    .replace(/\bMP\d{6,}\b/gi, "broker account")
+    .replace(/\b\d[\d,]*(?:\.\d+)?[-\s]+(?:shares?|units?)\b/gi, "position")
+    .replace(/\d[\d,]*(?:\.\d+)?\s*(?:股|份)/g, "仓位")
+    .replace(/\b\d[\d,]*(?:\.\d+)?\s*@\s*(?=(?:HK\$|[$¥])?\d)/gi, "at ")
+    .replace(/(?:成交金额|成交额|金额)\s*(?:HK\$|[$¥])?\s*[\d,.]+(?:元|美元|港元)?/g, "")
+    .replace(/\b(?:amount|proceeds)\s*(?:HK\$|[$¥])?\s*[\d,.]+/gi, "")
+    .replace(/position\s+position/gi, "position")
+    .replace(/仓位\s*@\s*/g, "仓位，成交价 ")
+    .replace(/\s+([,.;，。；])/g, "$1")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
+
+/** Recursively sanitize every string so CI fallback paths receive the same protection. */
+function sanitizeNarrativeStrings(obj) {
+  if (Array.isArray(obj)) {
+    for (let i = 0; i < obj.length; i++) {
+      obj[i] = typeof obj[i] === "string" ? sanitizePublicText(obj[i]) : sanitizeNarrativeStrings(obj[i]);
+    }
+  } else if (obj && typeof obj === "object") {
+    for (const key of Object.keys(obj)) {
+      obj[key] = typeof obj[key] === "string" ? sanitizePublicText(obj[key]) : sanitizeNarrativeStrings(obj[key]);
+    }
+  }
+  return obj;
+}
+
 /** Sanitize + write JSON to OUTPUT_PATH. Used for all write paths. */
 async function writeSanitizedOutput(data, label = "output") {
   const cleaned = JSON.parse(JSON.stringify(data)); // deep clone so we don't mutate caller's object
   stripForbiddenKeys(cleaned);
+  sanitizeNarrativeStrings(cleaned);
   await fs.writeFile(OUTPUT_PATH, JSON.stringify(cleaned, null, 2) + "\n");
   console.log(`✅ Wrote ${OUTPUT_PATH} (${label})`);
 }
