@@ -37,6 +37,8 @@ const SUSPICIOUS_PATTERNS = [
   { pattern: /\bMP\d{6,}\b/i, note: "broker account identifier in prose" },
   { pattern: /\b\d[\d,]*(?:\.\d+)?[-\s]+(?:shares?|units?)\b/i, note: "exact position units in prose" },
   { pattern: /\d[\d,]*(?:\.\d+)?\s*(?:股|份)/, note: "exact position units in Chinese prose" },
+  { pattern: /\b(?:buy|bought|sell|sold|add|added|trim|trimmed|exit|exited)\s+\d[\d,]*(?:\.\d+)?\s+(?=(?:at|@)\s*(?:USD\s*)?(?:HK\$|[$¥])?\d)/i, note: "exact execution units before price in prose" },
+  { pattern: /\b(?:remaining|original)\s+\d[\d,]*(?:\.\d+)?\b/i, note: "exact remaining/original position units in prose" },
   { pattern: /\b\d[\d,]*(?:\.\d+)?\s*@\s*(?=(?:HK\$|[$¥])?\d)/i, note: "quantity-at-price execution detail in prose" },
 ];
 
