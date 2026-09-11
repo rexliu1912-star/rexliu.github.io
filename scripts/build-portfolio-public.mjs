@@ -110,8 +110,8 @@ const THERMOMETER_HISTORY = path.join(WORKSPACE_ROOT, "output/research/investmen
 const WATCHLIST_INDEX = path.join(WORKSPACE_ROOT, "output/research/investment-strategy/macro/watchlist-scan-index.json");
 const TRADELOG_INDEX = path.join(WORKSPACE_ROOT, "output/research/trade-log/archive/index.json");
 
-const CONVEX_URL = "https://fleet-heron-880.convex.cloud";
-const FETCH_TIMEOUT_MS = 15000;
+const CONVEX_URL = process.env.PORTFOLIO_CONVEX_URL || "https://fleet-heron-880.convex.cloud";
+const FETCH_TIMEOUT_MS = Number(process.env.PORTFOLIO_FETCH_TIMEOUT_MS || 15000);
 const PRIVATE_PORTFOLIO_PATH = path.join(WORKSPACE_ROOT, "projects/the-workshop/data/portfolio.json");
 const CRYPTO_MONITOR_STATE_PATH = path.join(WORKSPACE_ROOT, "data/crypto-monitor-state.json");
 const CRYPTO_DCA_STATUS_PATH = path.join(WORKSPACE_ROOT, "data/crypto-dca-status.json");
@@ -1327,13 +1327,23 @@ async function main() {
     console.log(`   📈 Gold timeseries: ${goldTimeseries.data.length} days`);
   }
 
-  // 4. Fallback protection: if Convex failed AND we have a previous output, reuse it
-  if (!positions) {
-    console.warn("  ⚠️  Convex unavailable — attempting to reuse last portfolio-public.json");
+  // 4. Structural data is an all-or-nothing snapshot. Never turn a failed endpoint
+  // into an empty array: that silently deletes rules/events/trades from public output.
+  const convexFailures = [
+    ["positions", positions],
+    ["trades", trades],
+    ["rules", rules],
+    ["events", events],
+  ].filter(([, value]) => value === null).map(([name]) => name);
+  if (convexFailures.length) {
+    console.warn(
+      `  ⚠️  Convex snapshot incomplete (${convexFailures.join(", ")}) — `
+      + "attempting to reuse last portfolio-public.json",
+    );
     try {
       const existing = JSON.parse(await fs.readFile(OUTPUT_PATH, "utf8"));
       existing.generated_at = new Date().toISOString();
-      existing._warning = "Rebuilt with Convex unavailable — positions may be stale";
+      existing._warning = `Rebuilt with incomplete Convex snapshot (${convexFailures.join(", ")}) — data may be stale`;
       await writeSanitizedOutput(existing, "stale reuse fallback");
       return;
     } catch {
