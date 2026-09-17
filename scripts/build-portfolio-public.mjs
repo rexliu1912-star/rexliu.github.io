@@ -108,7 +108,7 @@ const CAPITAL_MOBILITY_RISK_PATH = path.join(ROOT, "src/data/capital-mobility-ri
 const OUTPUT_PATH = path.join(ROOT, "src/data/portfolio-public.json");
 const THERMOMETER_HISTORY = path.join(WORKSPACE_ROOT, "output/research/investment-strategy/macro/thermometer-history.jsonl");
 const WATCHLIST_INDEX = path.join(WORKSPACE_ROOT, "output/research/investment-strategy/macro/watchlist-scan-index.json");
-const TRADELOG_INDEX = path.join(WORKSPACE_ROOT, "output/research/trade-log/archive/index.json");
+
 
 const CONVEX_URL = process.env.PORTFOLIO_CONVEX_URL || "https://fleet-heron-880.convex.cloud";
 const FETCH_TIMEOUT_MS = Number(process.env.PORTFOLIO_FETCH_TIMEOUT_MS || 15000);
@@ -857,259 +857,14 @@ function buildPositions(convexPositions, convexRules, convexEvents, overrides) {
   return positions;
 }
 
-// ─── Closed positions from Convex trades ─────────────────
-
-function daysBetween(startDate, endDate) {
-  if (!startDate || !endDate) return null;
-  const start = new Date(`${startDate}T00:00:00Z`);
-  const end = new Date(`${endDate}T00:00:00Z`);
-  return Math.max(0, Math.round((end - start) / 86400000));
-}
-
-function roundPct(value) {
-  if (!Number.isFinite(value)) return 0;
-  return Math.round(value);
-}
-
-function stripTradeQuantityFromNote(note) {
-  if (!note) return note;
-  return String(note)
-    .replace(/\b(sell|sold)\s+\d[\d,]*(?:\.\d+)?\s*@\s*/gi, "sold at ")
-    .replace(/\b(buy|bought)\s+\d[\d,]*(?:\.\d+)?\s*@\s*/gi, "bought at ")
-    .replace(/\b(\d[\d,]*(?:\.\d+)?)\s+shares?\s*@\s*/gi, "at ")
-    .replace(/\b(\d[\d,]*(?:\.\d+)?)\s*股\s*@\s*/g, "")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-function compactTradeNotes(trades) {
-  return [
-    ...new Set((trades || []).map((t) => stripTradeQuantityFromNote(t.note)).filter(Boolean)),
-  ].join(" · ");
-}
-
-function buildAutoTradePoints(sortedTrades, metrics = {}) {
-  if (!sortedTrades.length) return [];
-  const buys = sortedTrades.filter((t) => String(t.side || "").toLowerCase() === "buy");
-  const sells = sortedTrades.filter((t) => String(t.side || "").toLowerCase() === "sell");
-  const points = [];
-
-  if (buys.length) {
-    const firstBuy = buys[0];
-    const avgBuy = metrics.avgEntryPrice ?? null;
-    const notes = compactTradeNotes(buys);
-    points.push({
-      date: firstBuy.tradeDate,
-      kind: "entry",
-      action_en: buys.length > 1 ? "Built position" : "Opened position",
-      action_zh: buys.length > 1 ? "分批建仓" : "建立仓位",
-      price: avgBuy ? +avgBuy.toFixed(4) : null,
-      note_en: notes || "Generated from Convex buy records.",
-      note_zh: notes || "由 Convex 买入记录生成。",
-    });
-  }
-
-  if (sells.length) {
-    const lastSell = sells[sells.length - 1];
-    const avgSell = metrics.avgExitPrice ?? null;
-    const notes = compactTradeNotes(sells);
-    points.push({
-      date: lastSell.tradeDate,
-      kind: "exit",
-      action_en: sells.length > 1 ? "Closed via staged sells" : "Closed position",
-      action_zh: sells.length > 1 ? "分批清仓" : "清仓",
-      price: avgSell ? +avgSell.toFixed(4) : null,
-      note_en: notes || "Full exit detected from Convex position status.",
-      note_zh: notes || "根据 Convex 持仓状态识别为已清仓。",
-    });
-  }
-
-  return points;
-}
-
-function labelTradeNote(note, action, locale = "en") {
-  const cleanNote = stripTradeQuantityFromNote(note);
-  if (!cleanNote) return cleanNote;
-  if (!/^at\s+/i.test(cleanNote) && !/^[$A-Z]{1,4}\$?\d/.test(cleanNote)) return cleanNote;
-  const actionText = String(action || "").toLowerCase();
-  const isExit = /(exit|closed|清仓|平仓|卖出|退出)/i.test(actionText);
-  const isEntry = /(open|entry|opened|建立|建仓|买入)/i.test(actionText);
-  if (locale === "zh") {
-    if (isExit) return cleanNote.replace(/^at\s+/i, "").replace(/^/, "清仓 ");
-    if (isEntry) return cleanNote.replace(/^at\s+/i, "").replace(/^/, "建仓 ");
-  }
-  if (isExit) return cleanNote.replace(/^at\s+/i, "Exit at ");
-  if (isEntry) return cleanNote.replace(/^at\s+/i, "Entry at ");
-  return cleanNote;
-}
-
-function sanitizeClearanceTradeNotes(clearance) {
-  if (!clearance?.trade_points?.length) return clearance;
-  return {
-    ...clearance,
-    trade_points: clearance.trade_points.map((point) => ({
-      ...point,
-      note_en: labelTradeNote(point.note_en, point.action_en, "en"),
-      note_zh: labelTradeNote(point.note_zh, point.action_zh, "zh"),
-    })),
-  };
-}
-
-function buildAutoClearances(convexPositions, convexTrades, overrides) {
-  const closedStatuses = new Set(["closed", "cleared"]);
-  const tradesByAccountSymbol = new Map();
-  for (const trade of convexTrades || []) {
-    const key = `${trade.accountId || ""}::${trade.symbol}`;
-    const list = tradesByAccountSymbol.get(key) || [];
-    list.push(trade);
-    tradesByAccountSymbol.set(key, list);
-  }
-
-  const out = [];
-  for (const position of convexPositions || []) {
-    if (!closedStatuses.has(position.status)) continue;
-    if (["crypto"].includes(position.market)) continue;
-
-    const symbol = position.symbol;
-    const key = `${position.accountId || ""}::${symbol}`;
-    const sortedTrades = (tradesByAccountSymbol.get(key) || [])
-      .slice()
-      .sort((a, b) => (a.tradeDate || "").localeCompare(b.tradeDate || "") || (a._creationTime || 0) - (b._creationTime || 0));
-    if (!sortedTrades.length) continue;
-
-    const buys = sortedTrades.filter((t) => String(t.side || "").toLowerCase() === "buy");
-    const sells = sortedTrades.filter((t) => String(t.side || "").toLowerCase() === "sell");
-    if (!buys.length || !sells.length) continue;
-
-    const boughtQty = buys.reduce((s, t) => s + (Number(t.quantity) || 0), 0);
-    const soldQty = sells.reduce((s, t) => s + (Number(t.quantity) || 0), 0);
-    if (soldQty + 0.0001 < boughtQty) continue;
-    // Guard against duplicate sells (sell qty > buy qty = data error)
-    if (soldQty > boughtQty + 0.01) {
-      console.warn(`⚠️  ${symbol}: soldQty ${soldQty} > boughtQty ${boughtQty}, likely duplicate sells — capping to boughtQty`);
-      // Cap sells proportionally to boughtQty
-      const ratio = boughtQty / soldQty;
-      for (const s of sells) s._cappedQty = (Number(s.quantity) || 0) * ratio;
-    }
-
-    const buyCost = buys.reduce((s, t) => {
-      const fee = Number(t.fee) || 0;
-      const tax = Number(t.tax) || 0;
-      return s + (Number(t.quantity) || 0) * (Number(t.price) || 0) + fee + tax;
-    }, 0);
-    const sellProceeds = sells.reduce((s, t) => {
-      const fee = Number(t.fee) || 0;
-      const tax = Number(t.tax) || 0;
-      const qty = t._cappedQty ?? (Number(t.quantity) || 0);
-      return s + qty * (Number(t.price) || 0) - fee - tax;
-    }, 0);
-    const effectiveSoldQty = sells.reduce((s, t) => s + (t._cappedQty ?? (Number(t.quantity) || 0)), 0);
-    if (buyCost <= 0) continue;
-
-    const avgEntryPrice = boughtQty > 0 ? buyCost / boughtQty : null;
-    const avgExitPrice = effectiveSoldQty > 0 ? sellProceeds / effectiveSoldQty : null;
-    const entryDate = buys[0].tradeDate;
-    const exitDate = sells[sells.length - 1].tradeDate;
-    const outcomePct = ((sellProceeds - buyCost) / buyCost) * 100;
-    const override = overrides.positions?.[symbol] || {};
-    if (override.hide_clearance) continue;
-
-    const mechanicsOverride = override.clearance_mechanics_override === true;
-    const clearanceOutcomePct = mechanicsOverride && Number.isFinite(Number(override.clearance_outcome_pct))
-      ? Number(override.clearance_outcome_pct)
-      : +outcomePct.toFixed(1);
-    const clearanceAvgEntry = mechanicsOverride && Number.isFinite(Number(override.clearance_avg_entry_price))
-      ? Number(override.clearance_avg_entry_price)
-      : (avgEntryPrice ? +avgEntryPrice.toFixed(4) : null);
-    const clearanceAvgExit = mechanicsOverride && Number.isFinite(Number(override.clearance_avg_exit_price))
-      ? Number(override.clearance_avg_exit_price)
-      : (avgExitPrice ? +avgExitPrice.toFixed(4) : null);
-
-    const watchlistItem = (overrides.watchlist || []).find((item) => item.ticker === symbol) || {};
-
-    out.push({
-      ticker: symbol,
-      market: position.market,
-      name_en: override.name_en || watchlistItem.name_en || symbol,
-      name_zh: override.name_zh || watchlistItem.name_zh || symbol,
-      sector_tags_en: override.sector_tags_en || [],
-      sector_tags_zh: override.sector_tags_zh || [],
-      entry_date: entryDate,
-      exit_date: exitDate,
-      holding_days: daysBetween(entryDate, exitDate),
-      outcome_pct: clearanceOutcomePct,
-      outcome_pct_rounded: mechanicsOverride && Number.isFinite(Number(override.clearance_outcome_pct_rounded))
-        ? Number(override.clearance_outcome_pct_rounded)
-        : roundPct(outcomePct),
-      win_rate_pct: mechanicsOverride && Number.isFinite(Number(override.clearance_win_rate_pct))
-        ? Number(override.clearance_win_rate_pct)
-        : (outcomePct > 0 ? 100 : 0),
-      trade_count: mechanicsOverride && Number.isFinite(Number(override.clearance_trade_count))
-        ? Number(override.clearance_trade_count)
-        : sortedTrades.length,
-      currency: position.currency || buys[0]?.currency || sells[0]?.currency || null,
-      avg_entry_price: clearanceAvgEntry,
-      avg_exit_price: clearanceAvgExit,
-      reason_en: override.clearance_reason_en || "Auto-generated closed position from Convex trade and position records.",
-      reason_zh: override.clearance_reason_zh || "由 Convex 交易与持仓记录自动生成的清仓记录。",
-      lesson_en: override.clearance_lesson_en || "Add an editorial lesson in portfolio-overrides clearances only if this exit deserves a manual review.",
-      lesson_zh: override.clearance_lesson_zh || "只有值得复盘的清仓，才需要在 portfolio-overrides clearances 里补充人工经验。",
-      article_url: override.clearance_article_url || null,
-      trade_points: buildAutoTradePoints(sortedTrades, { avgEntryPrice, avgExitPrice }),
-    });
-  }
-
-  return out;
-}
-
-function mergeClearances(localClearances, autoClearances) {
-  const byTicker = new Map();
-  for (const local of localClearances || []) {
-    if (!local?.ticker) continue;
-    byTicker.set(local.ticker, { ...local });
-  }
-
-  for (const auto of autoClearances || []) {
-    const existing = byTicker.get(auto.ticker);
-    if (!existing) {
-      byTicker.set(auto.ticker, auto);
-      continue;
-    }
-
-    byTicker.set(auto.ticker, {
-      ...auto,
-      ...existing,
-      // Convex trade/position records are the source of truth for mechanics.
-      // Local clearances own narrative fields and may replace generated trade
-      // points when private execution details need to stay out of public data.
-      market: auto.market || existing.market,
-      entry_date: auto.entry_date || existing.entry_date,
-      exit_date: auto.exit_date || existing.exit_date,
-      holding_days: auto.holding_days ?? existing.holding_days,
-      outcome_pct: auto.outcome_pct ?? existing.outcome_pct,
-      outcome_pct_rounded: auto.outcome_pct_rounded ?? existing.outcome_pct_rounded,
-      win_rate_pct: auto.win_rate_pct ?? existing.win_rate_pct,
-      trade_count: auto.trade_count ?? existing.trade_count,
-      currency: auto.currency || existing.currency,
-      avg_entry_price: auto.avg_entry_price ?? existing.avg_entry_price,
-      avg_exit_price: auto.avg_exit_price ?? existing.avg_exit_price,
-      trade_points: existing.trade_points?.length ? existing.trade_points : auto.trade_points,
-    });
-  }
-
-  return [...byTicker.values()].sort((a, b) => (b.exit_date || "").localeCompare(a.exit_date || ""));
-}
-
 // ─── Main ────────────────────────────────────────────────
 
 async function hasWorkspaceExternalData() {
   // At least one of the 3 external data sources must exist for a meaningful
   // rebuild. In CI (GitHub Actions checks out only the rexliu-website repo),
-  // none of them are present — regenerating in that case silently wipes
-  // the committed portfolio-public.json (clearances/history all go
-  // to []) and the live site renders empty sections. When no external data
+  // none of them are present. When no external data
   // is available, trust the committed JSON as the canonical snapshot.
-  const probes = [THERMOMETER_HISTORY, WATCHLIST_INDEX, TRADELOG_INDEX, PRIVATE_PORTFOLIO_PATH];
+  const probes = [THERMOMETER_HISTORY, WATCHLIST_INDEX, PRIVATE_PORTFOLIO_PATH];
   for (const p of probes) {
     try {
       await fs.access(p);
@@ -1128,7 +883,7 @@ async function main() {
   //    Keeps committed snapshot intact instead of overwriting with empties.
   if (!(await hasWorkspaceExternalData())) {
     console.log(
-      "⚠️  No workspace-external data found (thermometer / watchlist / tradelog)."
+      "⚠️  No workspace-external data found (thermometer / watchlist / private portfolio)."
     );
     console.log(
       "   This is expected in CI. Sanitizing committed portfolio-public.json in-place."
@@ -1160,9 +915,8 @@ async function main() {
 
   // 2. Fetch Convex structural data (with fallback to last output if down)
   console.log("📡 Fetching Convex...");
-  const [positions, trades, rules, events] = await Promise.all([
+  const [positions, rules, events] = await Promise.all([
     convexQuery("portfolio:listPositions", {}),
-    convexQuery("portfolio:listTrades", {}),
     convexQuery("portfolio:listMonitorRules", {}),
     convexQuery("portfolio:listMonitorEvents", { status: "pending" }),
   ]);
@@ -1170,7 +924,7 @@ async function main() {
   // 3. Read local historical files
   console.log("📚 Reading local history...");
   const thermometerHistory = await readJsonl(THERMOMETER_HISTORY);
-  const tradelog = await readJson(TRADELOG_INDEX);
+
 
   // 3b. Read private portfolio for crypto data
   console.log("🔐 Reading private portfolio (crypto)...");
@@ -1328,10 +1082,10 @@ async function main() {
   }
 
   // 4. Structural data is an all-or-nothing snapshot. Never turn a failed endpoint
-  // into an empty array: that silently deletes rules/events/trades from public output.
+  // into an empty array: that silently deletes rules/events from public output.
   const convexFailures = [
     ["positions", positions],
-    ["trades", trades],
+
     ["rules", rules],
     ["events", events],
   ].filter(([, value]) => value === null).map(([name]) => name);
@@ -1454,27 +1208,11 @@ async function main() {
     console.warn(`  ⚠️  Snapshot merge failed: ${err.message}`);
   }
 
-  const autoClearances = buildAutoClearances(positions || [], trades || [], overrides);
-  const editorialClearances = [
-    ...(overrides.clearances || []),
-    ...(tradelog?.clearances || []),
-  ];
-  const clearances = mergeClearances(editorialClearances, autoClearances).map(sanitizeClearanceTradeNotes);
-  if (autoClearances.length > 0) {
-    console.log(`🧾 Closed positions: ${autoClearances.length} auto from Convex, ${clearances.length} total after editorial merge`);
-  }
   const roundtables = overrides.roundtables || [];
   const capitalMobilityRisk = await readJson(CAPITAL_MOBILITY_RISK_PATH, null);
   if (capitalMobilityRisk) {
     console.log(`🧭 Capital mobility risk: ${capitalMobilityRisk.score}/${capitalMobilityRisk.max_score} ${capitalMobilityRisk.status_en}`);
   }
-
-  // Aggregate trade stats across clearances
-  const totalTrades = clearances.reduce((sum, c) => sum + (c.trade_count || 0), 0);
-  const wins = clearances.filter((c) => (c.outcome_pct_rounded ?? 0) > 0).length;
-  const totalClosed = clearances.length;
-  const winRate = totalClosed > 0 ? Math.round((wins / totalClosed) * 100) : 0;
-  const realizedPnlPct = clearances.reduce((sum, c) => sum + (c.outcome_pct_rounded || 0), 0);
 
   const stats = {
     active_positions: filteredPublicPositions.length,
@@ -1482,13 +1220,7 @@ async function main() {
     tracked_rules: (rules || []).filter((r) => r.active !== false).length,
     upcoming_events: futureEvents.length,
     weekly_scan_hits: 0,
-    total_trades: totalTrades,
-    closed_positions: totalClosed,
-    win_rate_pct: winRate,
-    realized_pnl_pct: realizedPnlPct,
-    days_since_last_clearance: clearances[0]?.exit_date
-      ? Math.floor((Date.now() - new Date(clearances[0].exit_date).getTime()) / 86400000)
-      : null,
+
   };
 
   // Compute real allocation current_pct from privatePortfolio data
@@ -1686,7 +1418,7 @@ async function main() {
     crypto,
     crypto_monitor: cryptoMonitor,
     allocation_history: allocationHistory,
-    clearances,
+
     roundtables,
     stats,
     crypto_portfolio_history: cryptoPortfolioHistory,
@@ -1699,7 +1431,7 @@ async function main() {
 
   await writeSanitizedOutput(output);
   console.log(
-    `   ${stats.active_positions} positions, ${stats.markets} markets, ${stats.tracked_rules} rules, ${stats.upcoming_events} events, ${regime.history_60d.length}-day regime history, ${clearances.length} clearances, ${roundtables.length} roundtables, ${allocationHistory.history.length}-month allocation history, health=${healthScore ?? "n/a"}, β=${portfolioBeta ?? "n/a"}`
+    `   ${stats.active_positions} positions, ${stats.markets} markets, ${stats.tracked_rules} rules, ${stats.upcoming_events} events, ${regime.history_60d.length}-day regime history, ${roundtables.length} roundtables, ${allocationHistory.history.length}-month allocation history, health=${healthScore ?? "n/a"}, β=${portfolioBeta ?? "n/a"}`
   );
 }
 
