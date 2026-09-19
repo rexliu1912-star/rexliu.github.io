@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-18T23:17:03.156Z",
+  "generated_at": "2026-09-19T01:52:38.249Z",
   "regime": {
     "current": {
       "label": "防御期",
@@ -2367,9 +2367,9 @@
           "id": "funds",
           "label_en": "Funds",
           "label_zh": "基金与现金",
-          "target_pct": 33.6,
+          "target_pct": 33.7,
           "current_pct": 32.5,
-          "drift_pp": -1.1,
+          "drift_pp": -1.2,
           "color": "#3b82f6",
           "sub_tags_en": [
             "Cash & Deposits",
@@ -2385,15 +2385,15 @@
           "note_zh": "现金缓冲 + 保守理财 + 专项资金（买房/教育/应收）",
           "expected_return_pct": 3.5,
           "annual_volatility_pct": 3,
-          "model_target_pct": 33.6,
+          "model_target_pct": 33.7,
           "raw_model_target_pct": 33.6,
           "signal_score": 79.2,
           "model_action": "hold",
           "model_rationale_en": "SOFR 3.85% supports conservative cash/fund carry.",
           "model_rationale_zh": "SOFR 3.85%，保守现金/基金仍有持有收益。",
           "model_current_pct": 32.5,
-          "model_drift_pp": -1.1,
-          "gap_amount": 119837
+          "model_drift_pp": -1.2,
+          "gap_amount": 130732
         },
         {
           "id": "gold",
@@ -2429,9 +2429,9 @@
           "id": "stocks",
           "label_en": "Stocks",
           "label_zh": "股票",
-          "target_pct": 19.3,
+          "target_pct": 19.1,
           "current_pct": 18.4,
-          "drift_pp": -0.9,
+          "drift_pp": -0.7,
           "color": "#8953d1",
           "sub_tags_en": [
             "AI Power",
@@ -2445,17 +2445,17 @@
           ],
           "note_en": "Long + swing mix — AI-electricity core with opportunistic overlays",
           "note_zh": "长期 + 波段组合——AI 电力核心 + 机会主义叠加",
-          "expected_return_pct": 8.3,
+          "expected_return_pct": 8.4,
           "annual_volatility_pct": 25.9,
-          "model_target_pct": 19.3,
+          "model_target_pct": 19.1,
           "raw_model_target_pct": 19.2,
-          "signal_score": 62.7,
+          "signal_score": 63.1,
           "model_action": "hold",
-          "model_rationale_en": "Portfolio health 3.8/5.0, equity beta 1.62, regime score 38.0.",
-          "model_rationale_zh": "组合健康度 3.8/5.0，股票 beta 1.62，宏观分数 38.0。",
+          "model_rationale_en": "Portfolio health 3.7/5.0, equity beta 1.62, regime score 43.0.",
+          "model_rationale_zh": "组合健康度 3.7/5.0，股票 beta 1.62，宏观分数 43.0。",
           "model_current_pct": 18.4,
-          "model_drift_pp": -0.9,
-          "gap_amount": 98049,
+          "model_drift_pp": -0.7,
+          "gap_amount": 76260,
           "sub": [
             {
               "id": "cn",
@@ -2487,9 +2487,9 @@
           "id": "crypto",
           "label_en": "Crypto",
           "label_zh": "加密敞口",
-          "target_pct": 6.7,
+          "target_pct": 6.8,
           "current_pct": 6.8,
-          "drift_pp": 0.1,
+          "drift_pp": 0,
           "color": "#f59e0b",
           "sub_tags_en": [
             "BTC",
@@ -2502,25 +2502,25 @@
           "note_en": "Asymmetric bet — long-duration, non-correlated, high-volatility core",
           "note_zh": "不对称下注——长久期、低相关、高波动核心",
           "expected_return_pct": 15.9,
-          "annual_volatility_pct": 33.1,
-          "model_target_pct": 6.7,
+          "annual_volatility_pct": 33.3,
+          "model_target_pct": 6.8,
           "raw_model_target_pct": 6.9,
           "signal_score": 63.2,
           "model_action": "hold",
-          "model_rationale_en": "Crypto composite 63.2, fear/greed 50; capped at 15%.",
-          "model_rationale_zh": "Crypto composite 63.2，恐惧贪婪 50；上限 15%。",
+          "model_rationale_en": "Crypto composite 63.2, fear/greed 71; capped at 15%.",
+          "model_rationale_zh": "Crypto composite 63.2，恐惧贪婪 71；上限 15%。",
           "model_current_pct": 6.8,
-          "model_drift_pp": 0.1,
-          "gap_amount": -10894
+          "model_drift_pp": 0,
+          "gap_amount": 0
         }
       ],
       "model": {
         "schema": "portfolio-allocation-model/v1",
         "version": "0.1.0",
-        "generated_at": "2026-09-18T23:17:02.398519+00:00",
+        "generated_at": "2026-09-19T01:52:37.040129+00:00",
         "regime": {
           "name": "defensive",
-          "score": 38
+          "score": 43
         }
       },
       "risk_free_rate": 3.85,
@@ -2528,18 +2528,18 @@
         "target": 5.8,
         "current": 5.8
       },
-      "projected_annual_yield": 632131,
+      "projected_annual_yield": 634135,
       "risk": {
         "target_vol": 9.5,
-        "current_vol": 9.2,
-        "sharpe_target": 0.2,
+        "current_vol": 9.3,
+        "sharpe_target": 0.21,
         "sharpe_current": 0.21,
         "risk_free_rate": 3.85,
         "temperature": 15,
         "temperature_label_en": "Defensive",
         "temperature_label_zh": "防御型"
       },
-      "health": 3.8,
+      "health": 3.7,
       "portfolio_beta": 1.48,
       "equity_beta": 1.62
     }
@@ -2752,20 +2752,6 @@
       },
       "target": null,
       "next_event": null,
-      "news": {
-        "summary": "Apple debuted iPhone 18 Pro and iPhone 18 Pro Max, Apple Watch Series 12, Apple Watch Ultra 4, and AirPods 5 in stores w…",
-        "sentiment": "neutral",
-        "items": [
-          {
-            "title": "The latest iPhone, Apple Watch, and AirPods lineups arrive in stores worldwide",
-            "snippet": "Apple debuted iPhone 18 Pro and iPhone 18 Pro Max, Apple Watch Series 12, Apple Watch Ultra 4, and AirPods 5 in stores worldwide."
-          },
-          {
-            "title": "Apple Pay eyes India rollout with Axis Bank, sources say",
-            "snippet": "Apple is poised to launch Apple Pay in India next month starting with Axis Bank credit cards; discussions continue with HDFC and ICICI Bank."
-          }
-        ]
-      },
       "price": 336.13,
       "daily_change_pct": -0.26
     },
@@ -2901,12 +2887,12 @@
       "target": null,
       "next_event": null,
       "news": {
-        "summary": "On signed Kylian Mbappe after his roughly two-decade Nike partnership, increasing competitive pressure in soccer while N…",
+        "summary": "Kylian Mbappe ended his two-decade Nike partnership and signed with On, adding pressure to Nike's turnaround as On enter…",
         "sentiment": "neutral",
         "items": [
           {
-            "title": "Mbappe boosts On's brand visibility, but hurdles to soccer success remain",
-            "snippet": "On signed Kylian Mbappe after his roughly two-decade Nike partnership, increasing competitive pressure in soccer while Nike retains category dominance"
+            "title": "Mbappe leaves Nike, signs with On as Swiss sportswear maker forays into soccer",
+            "snippet": "Kylian Mbappe ended his two-decade Nike partnership and signed with On, adding pressure to Nike's turnaround as On enters soccer."
           }
         ]
       },
@@ -3007,12 +2993,12 @@
       },
       "next_event": null,
       "news": {
-        "summary": "A Sept",
+        "summary": "Ouster and Flyability highlighted their collaboration at INTERGEO 2026, pairing the Elios 3 drone with Ouster OS0 lidar …",
         "sentiment": "neutral",
         "items": [
           {
-            "title": "Ouster CEO sells position in automated tax-withholding transaction",
-            "snippet": "A Sept. 17 report citing Form 4 says Angus Pacala sold position under a pre-arranged sell-to-cover instruction tied to RSU vesting, retaining abo"
+            "title": "How Color Lidar Adoption At Ouster (OUST) Has Changed Its Investment Story",
+            "snippet": "Ouster and Flyability highlighted their collaboration at INTERGEO 2026, pairing the Elios 3 drone with Ouster OS0 lidar for industrial inspection; Rev"
           }
         ]
       },
@@ -3049,12 +3035,12 @@
           "监管"
         ],
         "news": {
-          "summary": "U.S",
-          "sentiment": "positive",
+          "summary": "Public-company treasuries added about 5,900 BTC over three months versus more than 100,000 a year earlier; U.S",
+          "sentiment": "negative",
           "items": [
             {
-              "title": "Bitcoin ETF inflows return as BlackRock IBIT leads $159M rebound",
-              "snippet": "U.S. spot Bitcoin ETFs recorded $159.5 million of inflows on Sept. 17 after $746 million of outflows over the prior two sessions; one positive session"
+              "title": "Bitcoin Corporate Demand Slows Amid Treasury Buy Decline",
+              "snippet": "Public-company treasuries added about 5,900 BTC over three months versus more than 100,000 a year earlier; U.S. Bitcoin ETF inflows have recovered but"
             }
           ]
         }
@@ -3141,7 +3127,7 @@
           "score": 20,
           "detail_en": "Drawdown: -1.2%",
           "detail_zh": "回撤: -1.2%",
-          "delta": 0.1,
+          "delta": 6.5,
           "desc_en": "BTC drawdown from ATH + miner revenue stress",
           "desc_zh": "BTC 距高点回撤 + 矿工收入压力"
         },
@@ -3313,8 +3299,8 @@
         "label_en": "Funds",
         "label_zh": "基金与现金",
         "current_pct": 32.5,
-        "target_pct": 33.6,
-        "drift_pp": -1.1,
+        "target_pct": 33.7,
+        "drift_pp": -1.2,
         "color": "#3b82f6",
         "sub_tags_en": [
           "Cash & Deposits",
@@ -3349,8 +3335,8 @@
         "label_en": "Stocks",
         "label_zh": "股票",
         "current_pct": 18.4,
-        "target_pct": 19.3,
-        "drift_pp": -0.9,
+        "target_pct": 19.1,
+        "drift_pp": -0.7,
         "color": "#8953d1",
         "sub_tags_en": [
           "AI Power",
@@ -3368,8 +3354,8 @@
         "label_en": "Crypto",
         "label_zh": "加密敞口",
         "current_pct": 6.8,
-        "target_pct": 6.7,
-        "drift_pp": 0.1,
+        "target_pct": 6.8,
+        "drift_pp": 0,
         "color": "#f59e0b",
         "sub_tags_en": [
           "BTC",
@@ -4172,7 +4158,7 @@
     }
   },
   "crypto_timeseries": {
-    "generated_at": "2026-09-19T07:17:00.074967",
+    "generated_at": "2026-09-19T09:52:25.586359",
     "latest": {
       "date": "2026-09-19",
       "composite": 63.2,
@@ -4180,8 +4166,8 @@
       "btc_close": 81193,
       "btc_high": null,
       "btc_low": null,
-      "fgi": null,
-      "fgi_label": null,
+      "fgi": 71,
+      "fgi_label": "Greed",
       "green_count": 0,
       "indicators": {
         "fear_greed": {
@@ -5711,9 +5697,9 @@
       },
       {
         "date": "2026-09-18",
-        "btc_close": 81148.23,
-        "btc_high": 81316.94,
-        "btc_low": 76300.22,
+        "btc_close": 76226,
+        "btc_high": null,
+        "btc_low": null,
         "fgi": 56,
         "fgi_label": "Greed",
         "composite": 54.8,
@@ -5724,8 +5710,8 @@
         "btc_close": 81193,
         "btc_high": null,
         "btc_low": null,
-        "fgi": null,
-        "fgi_label": null,
+        "fgi": 71,
+        "fgi_label": "Greed",
         "composite": 63.2,
         "delta_composite": 8.4
       }
@@ -9068,12 +9054,6 @@
   },
   "analytics_history": [
     {
-      "date": "2026-06-18",
-      "health": 3.8,
-      "portfolio_beta": 1.46,
-      "equity_beta": 1.46
-    },
-    {
       "date": "2026-06-19",
       "health": 3.8,
       "portfolio_beta": 1.45,
@@ -9604,6 +9584,12 @@
     {
       "date": "2026-09-18",
       "health": 3.8,
+      "portfolio_beta": 1.48,
+      "equity_beta": 1.62
+    },
+    {
+      "date": "2026-09-19",
+      "health": 3.7,
       "portfolio_beta": 1.48,
       "equity_beta": 1.62
     }
