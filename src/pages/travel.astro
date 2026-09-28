@@ -155,6 +155,10 @@ const meta = {
       border-color: color-mix(in srgb, #8953d1 24%, transparent) !important;
     }
     :global(.leaflet-control-zoom a:hover) { color: #8953d1 !important; }
+    /* Keep the same cached OSM tiles on theme changes; only tint the basemap pane. */
+    :global(html[data-theme="dark"] .travel-shell .leaflet-tile-pane) {
+      filter: invert(1) hue-rotate(180deg) brightness(0.78) contrast(0.9);
+    }
     :global(.next-stop-tooltip) {
       background: transparent !important;
       border: none !important;
@@ -817,8 +821,7 @@ const meta = {
   ></script>
 
   <script is:inline>
-    const TILE_LIGHT  = "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png";
-    const TILE_DARK   = "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
+    const BASEMAP_TILE = "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
     const PURPLE      = "#8953d1";
 
     // Region color palette — brand-adjacent but lively
@@ -1266,16 +1269,6 @@ const meta = {
       // Map init
       _map = L.map(mapNode, { zoomControl: true, attributionControl: true, preferCanvas: true })
                .setView([27.5, 106.1], 5.4);
-      let tileLayer;
-      const setTiles = () => {
-        const dark = document.documentElement.getAttribute("data-theme") === "dark";
-        if (tileLayer) tileLayer.remove();
-        tileLayer = L.tileLayer(dark ? TILE_DARK : TILE_LIGHT, {
-          subdomains: "abcd", maxZoom: 18,
-          attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
-        }).addTo(_map);
-      };
-      setTiles();
 
       const routeLayer  = L.layerGroup().addTo(_map);
       const markerLayer = L.layerGroup().addTo(_map);
@@ -1439,8 +1432,13 @@ const meta = {
       sortedCities.forEach(c => allBounds.extend([c.lat, c.lng]));
       priorCities.filter(c => !c.mergeInto).forEach(c => allBounds.extend([c.lat, c.lng]));
       if (allBounds.isValid()) {
-        _map.fitBounds(allBounds.pad(0.2), { maxZoom: 6 });
+        _map.fitBounds(allBounds.pad(0.2), { maxZoom: 6, animate: false });
       }
+      // Load tiles once the initial bounds are final to avoid downloading discarded zoom levels.
+      L.tileLayer(BASEMAP_TILE, {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(_map);
 
       // Panel close button
       document.getElementById("map-panel-close")?.addEventListener("click", closeMapPanel);
@@ -1695,10 +1693,6 @@ const meta = {
         new MutationObserver(() => { setTimeout(triggerStagger, 30); }).observe(yearCitiesEl, { childList: true });
       }
 
-      // Theme observer
-      new MutationObserver(setTiles).observe(
-        document.documentElement, { attributes: true, attributeFilter: ["data-theme"] }
-      );
 
       // i18n text updater
       const updateI18n = () => {
