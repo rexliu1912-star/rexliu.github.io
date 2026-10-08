@@ -936,6 +936,7 @@ const masonrySeries = series.map(toMasonryMedia);
                   {hasNotes(item) && item.year && <p class="mt-0.5 font-serif text-xs text-gray-400 dark:text-gray-500"><span class="lang-zh">看于 {item.year}</span><span class="lang-en">Watched {item.year}</span></p>}
                   {item.notes?.quotes && item.notes.quotes.length > 0 && (<div class="mt-4 space-y-3">{item.notes.quotes.map((q) => (<blockquote class="border-l-2 border-[var(--color-quote)] pl-4 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300 dark:border-[var(--color-quote)]">{q}</blockquote>))}</div>)}
                   {item.notes?.core_ideas && item.notes.core_ideas.length > 0 && (<ul class="mt-4 space-y-2 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300">{item.notes.core_ideas.map((idea) => (<li class="flex gap-2"><span class="text-[var(--color-quote)] dark:text-[var(--color-quote)]">•</span><span>{idea}</span></li>))}</ul>)}
+                  {item.notes?.impact && item.notes.impact.trim() && (<div class="mt-4 space-y-3">{item.notes.impact.split(/\n\s*\n/).map((paragraph) => (<p class="font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-300">{paragraph}</p>))}</div>)}
                   {!hasNotes(item) && <p class="mt-4 font-serif text-sm text-gray-500"><span class="lang-en">No notes yet.</span><span class="lang-zh">暂无笔记。</span></p>}
                 </div>
               </div>
