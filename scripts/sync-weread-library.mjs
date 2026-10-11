@@ -20,7 +20,7 @@ const WEREAD_DIR = path.join(ROOT, "src/data/weread");
 const RAW_DIR = path.join(WEREAD_DIR, "raw");
 const PUBLIC_STATS_JSON = path.join(WEREAD_DIR, "reading-stats.json");
 const API_URL = "https://i.weread.qq.com/api/agent/gateway";
-const SKILL_VERSION = "1.0.4";
+export const SKILL_VERSION = "1.0.5";
 
 function formatJson(value) {
 	return `${JSON.stringify(value, null, "\t")}\n`;
@@ -199,6 +199,7 @@ async function fetchPublicBookTelemetry(book) {
 		try {
 			return await callWeRead(apiName, params);
 		} catch (error) {
+			if (error.code === "WEREAD_UPGRADE_REQUIRED") throw error;
 			console.warn(`⚠️  WeRead ${apiName} skipped for ${bookId}: ${error.message}`);
 			return fallback;
 		}
@@ -219,7 +220,7 @@ async function fetchPublicBookTelemetry(book) {
 	};
 }
 
-async function callWeRead(apiName, params = {}) {
+export async function callWeRead(apiName, params = {}) {
 	const key = readEnvValue("WEREAD_API_KEY");
 	if (!key) throw new Error("Missing WEREAD_API_KEY in env or Hermes .env files");
 
@@ -236,16 +237,20 @@ async function callWeRead(apiName, params = {}) {
 			});
 			if (!res.ok) throw new Error(`${apiName} HTTP ${res.status}: ${await res.text()}`);
 			const data = await res.json();
-			if (data.upgrade_info)
-				throw new Error(
-					`WeRead skill upgrade required: ${data.upgrade_info.message || JSON.stringify(data.upgrade_info)}`,
+			if (data.upgrade_info) {
+				const error = new Error(
+					`WeRead skill upgrade required: ${data.upgrade_info.latest_version || "unknown"}; ${data.upgrade_info.upgrade_url || "URL unavailable"}; ${data.upgrade_info.message || "review official upgrade"}`,
 				);
+				error.code = "WEREAD_UPGRADE_REQUIRED";
+				throw error;
+			}
 			if (data.errcode && data.errcode !== 0)
 				throw new Error(
 					`${apiName} errcode ${data.errcode}: ${data.errmsg || data.msg || JSON.stringify(data)}`,
 				);
 			return data;
 		} catch (error) {
+			if (error.code === "WEREAD_UPGRADE_REQUIRED") throw error;
 			lastError = error;
 			if (attempt === 3) break;
 			await new Promise((resolve) => setTimeout(resolve, attempt * 1200));
