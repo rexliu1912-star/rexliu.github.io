@@ -22,8 +22,8 @@ WORKSPACE = ROOT.parents[1]
 DATA = WORKSPACE / "data"
 MARKET = DATA / "market"
 DEFAULT_OUTPUT = ROOT / "src/data/portfolio-model-targets.json"
-PRIVATE_PORTFOLIO = WORKSPACE / "projects/the-workshop/data/portfolio.json"
-TRADITIONAL_PORTFOLIO = WORKSPACE / "projects/the-workshop/data/portfolio-traditional.json"
+PRIVATE_PORTFOLIO = WORKSPACE / "data/portfolio/portfolio.json"
+TRADITIONAL_PORTFOLIO = WORKSPACE / "data/portfolio/portfolio-traditional.json"
 
 BUCKETS = ["stablecoin", "funds", "gold", "stocks", "crypto"]
 BASE_TARGETS = {

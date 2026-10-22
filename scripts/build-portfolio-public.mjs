@@ -112,12 +112,12 @@ const WATCHLIST_INDEX = path.join(WORKSPACE_ROOT, "output/research/investment-st
 
 const CONVEX_URL = process.env.PORTFOLIO_CONVEX_URL || "https://fleet-heron-880.convex.cloud";
 const FETCH_TIMEOUT_MS = Number(process.env.PORTFOLIO_FETCH_TIMEOUT_MS || 15000);
-const PRIVATE_PORTFOLIO_PATH = path.join(WORKSPACE_ROOT, "projects/the-workshop/data/portfolio.json");
+const PRIVATE_PORTFOLIO_PATH = path.join(WORKSPACE_ROOT, "data/portfolio/portfolio.json");
 const CRYPTO_MONITOR_STATE_PATH = path.join(WORKSPACE_ROOT, "data/crypto-monitor-state.json");
 const CRYPTO_DCA_STATUS_PATH = path.join(WORKSPACE_ROOT, "data/crypto-dca-status.json");
 const MARKET_DATA_DIR = path.join(WORKSPACE_ROOT, "data/market");
-const PORTFOLIO_HISTORY_DIR = path.join(WORKSPACE_ROOT, "projects/the-workshop/data/portfolio-history");
-const CRYPTO_PORTFOLIO_HISTORY_PATH = path.join(WORKSPACE_ROOT, "projects/the-workshop/data/portfolio-crypto-history.json");
+const PORTFOLIO_HISTORY_DIR = path.join(WORKSPACE_ROOT, "data/portfolio/portfolio-history");
+const CRYPTO_PORTFOLIO_HISTORY_PATH = path.join(WORKSPACE_ROOT, "data/portfolio/portfolio-crypto-history.json");
 const BOTTOM_TRACKER_PATH = path.join(WORKSPACE_ROOT, "projects/crypto-bottom-tracker/web_data.json");
 const TIMESERIES_PATH = path.join(WORKSPACE_ROOT, "data/crypto-timeseries.json");
 const NEWS_DIGEST_PATH = path.join(WORKSPACE_ROOT, "data/portfolio-news-digest.json");
