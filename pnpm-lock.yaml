@@ -16,6 +16,8 @@ overrides:
   source-map-js: '>=1.2.2'
   '@vue/server-renderer': '>=3.5.42'
   vue: '>=3.5.42'
+  fflate@>=0.7.0 <0.7.5: 0.7.5
+  postcss-selector-parser@<7.1.6: 7.1.7
 
 importers:
 
@@ -1820,8 +1822,8 @@ packages:
       picomatch:
         optional: true
 
-  fflate@0.7.4:
-    resolution: {integrity: sha512-5u2V/CDW15QM1XbbgS+0DfPxVB+jUKhWEKuuFuHncbk3tEEqzmoXL+2KyOFuKGqOnmdIy0/davWF1CkuwtibCw==}
+  fflate@0.7.5:
+    resolution: {integrity: sha512-QieYf//cis6ywHNi5qW1+PXPQ4bC+XVJAtS4AXIML8P76GroEiOxm/oQtn1f02UkJY1+KsXMJcC+R2v/Eg4G3g==}
 
   fflate@0.8.3:
     resolution: {integrity: sha512-tbZNuJrLwGUp3zshBtdy4W+ORxZuIh8a5ilyIEQDC5rY1f3U20JMry0Ll3WBzU58EZKsEuJFXhb5gwv8CsPvgA==}
@@ -2644,14 +2646,6 @@ packages:
     engines: {node: ^22.11.0 || ^24.11.0 || >=26.0}
     peerDependencies:
       postcss: '>=8.5.18'
-
-  postcss-selector-parser@6.0.10:
-    resolution: {integrity: sha512-IQ7TZdoaqbT+LCpShg46jnZVlhWD2w6iQYAcYXfHARZ7X1t/UGhhceQDs5X0cGqKvYlHNOuv7Oa1xmb0oQuA3w==}
-    engines: {node: '>=4'}
-
-  postcss-selector-parser@7.1.1:
-    resolution: {integrity: sha512-orRsuYpJVw8LdAwqqLykBj9ecS5/cRHlI5+nvTo8LcCKmzDmqVORXtOIYEEQuL9D4BxtA1lm5isAqzQZCoQ6Eg==}
-    engines: {node: '>=4'}
 
   postcss-selector-parser@7.1.7:
     resolution: {integrity: sha512-wWBro/7hJ40ye6TPiXkUQoXKCw23xSsjriUvqd7Uls9Sso3oLiON1flc18cCdnjgCRXw4fBVqUJJeOdDTh3P3g==}
@@ -4235,7 +4229,7 @@ snapshots:
 
   '@shuding/opentype.js@1.4.0-beta.0':
     dependencies:
-      fflate: 0.7.4
+      fflate: 0.7.5
       string.prototype.codepointat: 0.2.1
 
   '@tailwindcss/node@4.3.0':
@@ -4301,7 +4295,7 @@ snapshots:
 
   '@tailwindcss/typography@0.5.19(tailwindcss@4.3.0)':
     dependencies:
-      postcss-selector-parser: 6.0.10
+      postcss-selector-parser: 7.1.7
       tailwindcss: 4.3.0
 
   '@tailwindcss/vite@4.3.0(vite@8.3.5(@types/node@25.9.1)(esbuild@0.27.7)(jiti@2.7.0)(yaml@2.9.1))':
@@ -5049,7 +5043,7 @@ snapshots:
     optionalDependencies:
       picomatch: 4.0.7
 
-  fflate@0.7.4: {}
+  fflate@0.7.5: {}
 
   fflate@0.8.3: {}
 
@@ -6087,7 +6081,7 @@ snapshots:
   postcss-calc@10.1.1(postcss@8.5.31):
     dependencies:
       postcss: 8.5.31
-      postcss-selector-parser: 7.1.1
+      postcss-selector-parser: 7.1.7
       postcss-value-parser: 4.2.0
 
   postcss-colormin@8.0.0(postcss@8.5.31):
@@ -6107,7 +6101,7 @@ snapshots:
   postcss-discard-comments@8.0.0(postcss@8.5.31):
     dependencies:
       postcss: 8.5.31
-      postcss-selector-parser: 7.1.1
+      postcss-selector-parser: 7.1.7
 
   postcss-discard-duplicates@8.0.0(postcss@8.5.31):
     dependencies:
@@ -6133,7 +6127,7 @@ snapshots:
       caniuse-api: 3.0.0
       cssnano-utils: 6.0.0(postcss@8.5.31)
       postcss: 8.5.31
-      postcss-selector-parser: 7.1.1
+      postcss-selector-parser: 7.1.7
 
   postcss-minify-font-values@8.0.0(postcss@8.5.31):
     dependencies:
@@ -6160,7 +6154,7 @@ snapshots:
       caniuse-api: 3.0.0
       cssesc: 3.0.0
       postcss: 8.5.31
-      postcss-selector-parser: 7.1.1
+      postcss-selector-parser: 7.1.7
 
   postcss-nested@7.0.2(postcss@8.5.31):
     dependencies:
@@ -6229,16 +6223,6 @@ snapshots:
       postcss: 8.5.31
       postcss-value-parser: 4.2.0
 
-  postcss-selector-parser@6.0.10:
-    dependencies:
-      cssesc: 3.0.0
-      util-deprecate: 1.0.2
-
-  postcss-selector-parser@7.1.1:
-    dependencies:
-      cssesc: 3.0.0
-      util-deprecate: 1.0.2
-
   postcss-selector-parser@7.1.7:
     dependencies:
       cssesc: 3.0.0
@@ -6253,7 +6237,7 @@ snapshots:
   postcss-unique-selectors@8.0.0(postcss@8.5.31):
     dependencies:
       postcss: 8.5.31
-      postcss-selector-parser: 7.1.1
+      postcss-selector-parser: 7.1.7
 
   postcss-value-parser@4.2.0: {}
 
@@ -6650,7 +6634,7 @@ snapshots:
     dependencies:
       browserslist: 4.29.4
       postcss: 8.5.31
-      postcss-selector-parser: 7.1.1
+      postcss-selector-parser: 7.1.7
 
   suf-log@2.5.3:
     dependencies:
