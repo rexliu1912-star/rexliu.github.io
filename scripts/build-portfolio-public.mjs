@@ -127,6 +127,24 @@ const GOLD_TIMESERIES_PATH = path.join(WORKSPACE_ROOT, "data/gold-timeseries.jso
 
 // ─── Small utilities ─────────────────────────────────────
 
+/** Count watchlist tickers with score >= 5 on the latest scan row; 0 if scan older than 14d. */
+function computeWeeklyScanHits() {
+  try {
+    if (!fs.existsSync(WATCHLIST_INDEX)) return 0;
+    const idx = JSON.parse(fs.readFileSync(WATCHLIST_INDEX, "utf8"));
+    const dates = idx.dates || [];
+    const scores = idx.scores || [];
+    if (!dates.length || !scores.length) return 0;
+    const lastDate = dates[dates.length - 1];
+    const ageDays = (Date.now() - new Date(lastDate + "T00:00:00+08:00").getTime()) / 86400000;
+    if (!Number.isFinite(ageDays) || ageDays > 14) return 0;
+    const row = scores[scores.length - 1] || [];
+    return row.filter((v) => typeof v === "number" && v >= 5).length;
+  } catch {
+    return 0;
+  }
+}
+
 async function readJson(filepath, fallback = null) {
   try {
     const buf = await fs.readFile(filepath, "utf8");
@@ -626,8 +644,18 @@ function sanitizeMonitorState(monitorState, dcaStatus, marketData = null, bottom
       .replace(/资金中性/g, "Neutral Flow")
       .replace(/美元偏弱（利好风险）/g, "Weak USD (risk-on)")
       .replace(/美元偏弱/g, "Weak USD")
+      .replace(/机构大幅流出/g, "heavy institutional outflow")
+      .replace(/机构大幅流入/g, "heavy institutional inflow")
+      .replace(/机构流出/g, "institutional outflow")
+      .replace(/机构流入/g, "institutional inflow")
+      .replace(/观测日/g, "as of")
+      .replace(/来源/g, "source")
       .replace(/[\u4e00-\u9fff（）]+/g, "")  // strip remaining Chinese
       .replace(/\(([A-Za-z0-9:/$%,.\s+\-]+)\)/g, "$1")  // unwrap parenthetical English
+      .replace(/,\s*,+/g, ",")           // collapse empty slots left by stripped Chinese
+      .replace(/:\s*(?=,|$)/g, "")        // drop orphan colons (e.g. ":2026" kept, ":," gone)
+      .replace(/,\s*:/g, ", ")
+      .replace(/^[,\s]+|[,\s]+$/g, "")
       .replace(/,\s*$/, "").replace(/\s+/g, " ").trim() || detailBase;
     return {
       name_zh: ind.name,
@@ -646,6 +674,18 @@ function sanitizeMonitorState(monitorState, dcaStatus, marketData = null, bottom
   const etfIndicator = (bottomTrackerData?.indicators || []).find((i) => i.name === "BTC ETF资金流" || i.name?.includes("ETF"));
   const etfFlowMatch = etfIndicator?.data?.match(/(-?\d+(?:\.\d+)?)[MmBb]/);
   const etfFlowValue = etfFlowMatch ? parseFloat(etfFlowMatch[1]) : null;
+  // Prefer structured provenance for English detail (avoids Chinese-strip orphans like "-635.6M,, :date")
+  {
+    const etfBuilt = bottomTrackerIndicators.find((i) => i.name_zh === "BTC ETF资金流" || (i.name_en || "").includes("ETF"));
+    const prov = etfIndicator?.provenance;
+    if (etfBuilt && prov && typeof prov.btc_etf_net_flow_m === "number") {
+      const m = prov.btc_etf_net_flow_m;
+      const flowWord = m <= -100 ? "heavy institutional outflow" : m < 0 ? "net outflow" : m >= 100 ? "heavy institutional inflow" : "net inflow";
+      const asOf = prov.date || "";
+      const src = prov.source || "farside";
+      etfBuilt.detail_en = `${m}M, ${flowWord}${asOf ? `, as of ${asOf}` : ""}, source: ${src}`;
+    }
+  }
 
   // Extract FGI 7-day history from market data file
   const fgiHistory7d = marketData?.sections?.macro?.fear_greed?.history_7d || null;
@@ -1219,7 +1259,7 @@ async function main() {
     markets: new Set(filteredPublicPositions.map((p) => p.market)).size + (crypto?.positions?.length > 0 ? 1 : 0),
     tracked_rules: (rules || []).filter((r) => r.active !== false).length,
     upcoming_events: futureEvents.length,
-    weekly_scan_hits: 0,
+    weekly_scan_hits: computeWeeklyScanHits(),
 
   };
 
