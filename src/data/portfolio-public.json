@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-25T02:07:26.244Z",
+  "generated_at": "2026-10-25T23:14:37.452Z",
   "regime": {
     "current": {
       "label": "防御期",
@@ -36,44 +36,6 @@
       }
     },
     "history_60d": [
-      {
-        "date": "2026-08-24",
-        "regime": "中性期",
-        "green_count": 2,
-        "aggression": "中",
-        "vix": 15.13,
-        "lights": {
-          "tnx": "red",
-          "dxy": "green",
-          "vix": "green"
-        },
-        "signalDetails": {
-          "tnx": {
-            "value": 4.74,
-            "light": "red",
-            "status": null
-          },
-          "dxy": {
-            "value": 98.85,
-            "light": "green",
-            "status": null
-          },
-          "vix": {
-            "value": 15.13,
-            "light": "green",
-            "status": null
-          },
-          "naaim": {
-            "value": null,
-            "light": "gray",
-            "status": null
-          },
-          "policy": {
-            "light": "gray",
-            "status": null
-          }
-        }
-      },
       {
         "date": "2026-08-25",
         "regime": "中性期",
@@ -2315,6 +2277,44 @@
             "status": null
           }
         }
+      },
+      {
+        "date": "2026-10-26",
+        "regime": "防御期",
+        "green_count": 0,
+        "aggression": "低",
+        "vix": 19.45,
+        "lights": {
+          "tnx": "red",
+          "dxy": "yellow",
+          "vix": "yellow"
+        },
+        "signalDetails": {
+          "tnx": {
+            "value": 4.99,
+            "light": "red",
+            "status": null
+          },
+          "dxy": {
+            "value": 101.81,
+            "light": "yellow",
+            "status": null
+          },
+          "vix": {
+            "value": 19.45,
+            "light": "yellow",
+            "status": null
+          },
+          "naaim": {
+            "value": null,
+            "light": "gray",
+            "status": null
+          },
+          "policy": {
+            "light": "gray",
+            "status": null
+          }
+        }
       }
     ]
   },
@@ -2325,9 +2325,9 @@
           "id": "stablecoin",
           "label_en": "Stablecoin Yield",
           "label_zh": "稳定币生息",
-          "target_pct": 36.3,
+          "target_pct": 36.5,
           "current_pct": 38.6,
-          "drift_pp": 2.3,
+          "drift_pp": 2.1,
           "color": "#10b981",
           "sub_tags_en": [
             "USDT",
@@ -2343,23 +2343,23 @@
           "note_zh": "底座层——带息、低 beta、抗衰退",
           "expected_return_pct": 5,
           "annual_volatility_pct": 1,
-          "model_target_pct": 36.3,
+          "model_target_pct": 36.5,
           "raw_model_target_pct": 36.4,
           "signal_score": 88,
           "model_action": "trim",
           "model_rationale_en": "APR 5.0% and regime defensive keep liquidity floor high.",
           "model_rationale_zh": "稳定币 APR 5.0%，当前 defensive 环境下维持流动性底座。",
           "model_current_pct": 38.6,
-          "model_drift_pp": 2.3,
-          "gap_amount": -248554
+          "model_drift_pp": 2.1,
+          "gap_amount": -226941
         },
         {
           "id": "funds",
           "label_en": "Funds",
           "label_zh": "基金与现金",
-          "target_pct": 33.9,
+          "target_pct": 33.7,
           "current_pct": 35.3,
-          "drift_pp": 1.4,
+          "drift_pp": 1.6,
           "color": "#3b82f6",
           "sub_tags_en": [
             "Cash & Deposits",
@@ -2375,23 +2375,23 @@
           "note_zh": "现金缓冲 + 保守理财 + 专项资金（买房/教育/应收）",
           "expected_return_pct": 3.5,
           "annual_volatility_pct": 3,
-          "model_target_pct": 33.9,
+          "model_target_pct": 33.7,
           "raw_model_target_pct": 33.9,
           "signal_score": 79.5,
           "model_action": "hold",
           "model_rationale_en": "SOFR 3.90% supports conservative cash/fund carry.",
           "model_rationale_zh": "SOFR 3.90%，保守现金/基金仍有持有收益。",
           "model_current_pct": 35.3,
-          "model_drift_pp": 1.4,
-          "gap_amount": -151294
+          "model_drift_pp": 1.6,
+          "gap_amount": -172907
         },
         {
           "id": "gold",
           "label_en": "Gold",
           "label_zh": "黄金",
-          "target_pct": 4.2,
+          "target_pct": 4.4,
           "current_pct": 4,
-          "drift_pp": -0.2,
+          "drift_pp": -0.4,
           "color": "#eab308",
           "sub_tags_en": [
             "XAU ETF",
@@ -2404,16 +2404,16 @@
           "note_en": "Long-cycle liquidity hedge — not a candle chart. M2 inversion system entry.",
           "note_zh": "长周期流动性对冲——不看五分钟K线。M2 倒挂体系入场。",
           "expected_return_pct": 3.5,
-          "annual_volatility_pct": 20.1,
-          "model_target_pct": 4.2,
+          "annual_volatility_pct": 27,
+          "model_target_pct": 4.4,
           "raw_model_target_pct": 4.3,
           "signal_score": 37,
           "model_action": "hold",
           "model_rationale_en": "Gold signal yellow; fair-value premium level extreme caps target.",
           "model_rationale_zh": "黄金信号 yellow；公允价溢价 extreme，限制目标仓位上行。",
           "model_current_pct": 4,
-          "model_drift_pp": -0.2,
-          "gap_amount": 21613
+          "model_drift_pp": -0.4,
+          "gap_amount": 43227
         },
         {
           "id": "stocks",
@@ -2477,9 +2477,9 @@
           "id": "crypto",
           "label_en": "Crypto",
           "label_zh": "加密敞口",
-          "target_pct": 6.7,
+          "target_pct": 6.5,
           "current_pct": 7.5,
-          "drift_pp": 0.8,
+          "drift_pp": 1,
           "color": "#f59e0b",
           "sub_tags_en": [
             "BTC",
@@ -2491,23 +2491,23 @@
           ],
           "note_en": "Asymmetric bet — long-duration, non-correlated, high-volatility core",
           "note_zh": "不对称下注——长久期、低相关、高波动核心",
-          "expected_return_pct": 14.9,
+          "expected_return_pct": 15.1,
           "annual_volatility_pct": 32.5,
-          "model_target_pct": 6.7,
+          "model_target_pct": 6.5,
           "raw_model_target_pct": 6.6,
-          "signal_score": 55.6,
+          "signal_score": 56.4,
           "model_action": "hold",
-          "model_rationale_en": "Crypto composite 55.6, fear/greed 51; capped at 15%.",
-          "model_rationale_zh": "Crypto composite 55.6，恐惧贪婪 51；上限 15%。",
+          "model_rationale_en": "Crypto composite 56.4, fear/greed 53; capped at 15%.",
+          "model_rationale_zh": "Crypto composite 56.4，恐惧贪婪 53；上限 15%。",
           "model_current_pct": 7.5,
-          "model_drift_pp": 0.8,
-          "gap_amount": -86454
+          "model_drift_pp": 1,
+          "gap_amount": -108067
         }
       ],
       "model": {
         "schema": "portfolio-allocation-model/v1",
         "version": "0.1.0",
-        "generated_at": "2026-10-25T02:06:02.744079+00:00",
+        "generated_at": "2026-10-25T23:14:36.035419+00:00",
         "regime": {
           "name": "defensive",
           "score": 36
@@ -2518,12 +2518,12 @@
         "target": 5.6,
         "current": 5.6
       },
-      "projected_annual_yield": 601890,
+      "projected_annual_yield": 603511,
       "risk": {
-        "target_vol": 7.4,
-        "current_vol": 7,
-        "sharpe_target": 0.23,
-        "sharpe_current": 0.24,
+        "target_vol": 7.7,
+        "current_vol": 7.3,
+        "sharpe_target": 0.22,
+        "sharpe_current": 0.23,
         "risk_free_rate": 3.9,
         "temperature": 12,
         "temperature_label_en": "Defensive",
@@ -2810,7 +2810,21 @@
           "流动性",
           "美元",
           "监管"
-        ]
+        ],
+        "news": {
+          "summary": "Track the latest Bitcoin ETF flow table for US spot ETFs",
+          "sentiment": "positive",
+          "items": [
+            {
+              "title": "Bitcoin ETF Flows Today - Daily Flow Table, AUM &amp; Holdings",
+              "snippet": "Track the latest Bitcoin ETF flow table for US spot ETFs. See daily net inflows and outflows, 7-day and 30-day flows, AUM by fund, BTC holdings, and I"
+            },
+            {
+              "title": "Bitcoin ETF Outflows June 2026: 13-Day $4.4B Record",
+              "snippet": "We break down the latest bitcoin ETF flows May June 2026 and explain what&#x27;s happening in the market. In the Q1 of 2026, institutional investors r"
+            }
+          ]
+        }
       },
       {
         "symbol": "SNEK",
@@ -2840,17 +2854,31 @@
           "Cardano 流动性",
           "社区动能",
           "监管"
-        ]
+        ],
+        "news": {
+          "summary": "Dive into $SNEK, Cardano&#x27;s top memecoin that&#x27;s blending meme culture with solid tokenomics and community vibes…",
+          "sentiment": "neutral",
+          "items": [
+            {
+              "title": "SNEK Memecoin Spotlight: Revolutionizing Cardano with Deflationary Fun",
+              "snippet": "Dive into $SNEK, Cardano&#x27;s top memecoin that&#x27;s blending meme culture with solid tokenomics and community vibes to shake up the ADA ecosystem"
+            },
+            {
+              "title": "What is SNEK? Unveiling Cardano&#x27;s Most Popular Memecoin",
+              "snippet": "Its ecosystem extends beyond memes—covering DEX liquidity, NFTs, DeFi, and even the U.S.-launched SNEK Energy drink, showcasing real-world brand integ"
+            }
+          ]
+        }
       }
     ]
   },
   "crypto_monitor": {
-    "generated_at": "2026-10-25T06:35:01.729879+08:00",
+    "generated_at": "2026-10-26T06:35:52.798122+08:00",
     "data_freshness": {
       "market_data_available": true,
       "bottom_tracker_available": true,
       "dca_status_available": true,
-      "market_data_date": "2026-10-25"
+      "market_data_date": "2026-10-26"
     },
     "allocation": {
       "crypto": {
@@ -2868,44 +2896,44 @@
     },
     "macro": {
       "fear_greed": {
-        "value": 51,
+        "value": 53,
         "label": "Neutral"
       },
       "fear_greed_7d": [
+        {
+          "value": 53,
+          "label": "Neutral"
+        },
+        {
+          "value": 52,
+          "label": "Neutral"
+        },
         {
           "value": 51,
           "label": "Neutral"
         },
         {
-          "value": 50,
-          "label": "Neutral"
-        },
-        {
-          "value": 68,
+          "value": 67,
           "label": "Greed"
         },
         {
-          "value": 63,
+          "value": 64,
           "label": "Greed"
         },
         {
-          "value": 55,
+          "value": 56,
           "label": "Greed"
         },
         {
-          "value": 59,
+          "value": 60,
           "label": "Greed"
-        },
-        {
-          "value": 53,
-          "label": "Neutral"
         }
       ],
       "btc_change_24h": null,
       "signals": []
     },
     "bottom_tracker": {
-      "score": 44.4,
+      "score": 43.6,
       "status": "观望",
       "indicators": [
         {
@@ -2924,9 +2952,9 @@
           "name_en": "Miner Capitulation",
           "status": "red",
           "score": 20,
-          "detail_en": "Drawdown: -7.1%",
-          "detail_zh": "回撤: -7.1%",
-          "delta": -0.8,
+          "detail_en": "Drawdown: -7.0%",
+          "detail_zh": "回撤: -7.0%",
+          "delta": 0.2,
           "desc_en": "BTC drawdown from ATH + miner revenue stress",
           "desc_zh": "BTC 距高点回撤 + 矿工收入压力"
         },
@@ -2968,20 +2996,20 @@
           "name_en": "MVRV Z-Score",
           "status": "yellow",
           "score": 50,
-          "detail_en": "Z:0.21",
-          "detail_zh": "Z:0.21, 合理区间",
-          "delta": -0.05,
+          "detail_en": "Z:0.23",
+          "detail_zh": "Z:0.23, 合理区间",
+          "delta": 0.02,
           "desc_en": "Market-to-Realized Value ratio (deviation from historical mean)",
           "desc_zh": "市值/已实现价值比（偏离历史均值程度）"
         },
         {
           "name_zh": "BTC ETF资金流",
           "name_en": "BTC ETF Flow",
-          "status": "green",
-          "score": 80,
-          "detail_en": "-635.6M, heavy institutional outflow, as of 2026-10-22, source: farside",
-          "detail_zh": "-635.6M, 机构大幅流出, 观测日:2026-10-22, 来源:farside",
-          "delta": null,
+          "status": "yellow",
+          "score": 50,
+          "detail_en": "-43M, Neutral Flow",
+          "detail_zh": "-43M, 资金中性",
+          "delta": 592.6,
           "desc_en": "Daily net inflow/outflow of spot BTC ETFs (USD millions)",
           "desc_zh": "BTC 现货 ETF 每日净流入/流出（百万美元）"
         },
@@ -2999,64 +3027,36 @@
       ]
     },
     "etf": {
-      "btc_etf_net_flow_m": -635.6,
-      "btc_etf_total_volume_m": null,
-      "source": "farside",
+      "btc_etf_net_flow_m": -43,
+      "btc_etf_total_volume_m": 1264,
+      "source": "yfinance-estimate",
       "etfs": [
         {
           "ticker": "IBIT",
-          "volume_usd_m": null
+          "volume_usd_m": 1061
         },
         {
           "ticker": "FBTC",
-          "volume_usd_m": null
-        },
-        {
-          "ticker": "BITB",
-          "volume_usd_m": null
-        },
-        {
-          "ticker": "ARKB",
-          "volume_usd_m": null
-        },
-        {
-          "ticker": "BTCO",
-          "volume_usd_m": null
-        },
-        {
-          "ticker": "EZBC",
-          "volume_usd_m": null
-        },
-        {
-          "ticker": "BRRR",
-          "volume_usd_m": null
-        },
-        {
-          "ticker": "HODL",
-          "volume_usd_m": null
-        },
-        {
-          "ticker": "BTCW",
-          "volume_usd_m": null
-        },
-        {
-          "ticker": "MSBT",
-          "volume_usd_m": null
+          "volume_usd_m": 102
         },
         {
           "ticker": "GBTC",
-          "volume_usd_m": null
+          "volume_usd_m": 57
         },
         {
-          "ticker": "BTC",
-          "volume_usd_m": null
+          "ticker": "ARKB",
+          "volume_usd_m": 18
+        },
+        {
+          "ticker": "BITB",
+          "volume_usd_m": 27
         }
       ],
-      "date": "2026-10-25"
+      "date": "2026-10-26"
     },
     "dca": {
       "status": "closed",
-      "score": 39.4,
+      "score": 51,
       "met_count": 0,
       "min_required": 2,
       "reason": "条件不足",
@@ -3069,7 +3069,7 @@
         {
           "id": "fear_greed_extreme",
           "met": false,
-          "detail": "FGI 51"
+          "detail": "FGI 无数据"
         },
         {
           "id": "btc_near_ema200",
@@ -3079,10 +3079,10 @@
         {
           "id": "bottom_tracker_green",
           "met": false,
-          "detail": "绿灯 1/8"
+          "detail": "绿灯 2/8"
         }
       ],
-      "updated_at": "2026-10-25T06:34:58.738751+08:00"
+      "updated_at": "2026-05-01T07:25:58.434265+08:00"
     },
     "stablecoin_health": {
       "apy_current_pct": null,
@@ -3107,8 +3107,8 @@
         "label_en": "Stablecoin Yield",
         "label_zh": "稳定币生息",
         "current_pct": 38.6,
-        "target_pct": 36.3,
-        "drift_pp": 2.3,
+        "target_pct": 36.5,
+        "drift_pp": 2.1,
         "color": "#10b981",
         "sub_tags_en": [
           "USDT",
@@ -3126,8 +3126,8 @@
         "label_en": "Funds",
         "label_zh": "基金与现金",
         "current_pct": 35.3,
-        "target_pct": 33.9,
-        "drift_pp": 1.4,
+        "target_pct": 33.7,
+        "drift_pp": 1.6,
         "color": "#3b82f6",
         "sub_tags_en": [
           "Cash & Deposits",
@@ -3145,8 +3145,8 @@
         "label_en": "Gold",
         "label_zh": "黄金",
         "current_pct": 4,
-        "target_pct": 4.2,
-        "drift_pp": -0.2,
+        "target_pct": 4.4,
+        "drift_pp": -0.4,
         "color": "#eab308",
         "sub_tags_en": [
           "XAU ETF",
@@ -3181,8 +3181,8 @@
         "label_en": "Crypto",
         "label_zh": "加密敞口",
         "current_pct": 7.5,
-        "target_pct": 6.7,
-        "drift_pp": 0.8,
+        "target_pct": 6.5,
+        "drift_pp": 1,
         "color": "#f59e0b",
         "sub_tags_en": [
           "BTC",
@@ -3996,24 +3996,24 @@
     }
   },
   "crypto_timeseries": {
-    "generated_at": "2026-10-25T10:06:00.042635",
+    "generated_at": "2026-10-26T07:14:17.148380",
     "latest": {
-      "date": "2026-10-25",
-      "composite": 55.6,
-      "delta_composite": 1.2,
-      "btc_close": 80440,
+      "date": "2026-10-26",
+      "composite": 56.4,
+      "delta_composite": 0.8,
+      "btc_close": 80503,
       "btc_high": null,
       "btc_low": null,
-      "fgi": 54,
-      "fgi_label": "Neutral",
-      "green_count": 1,
+      "fgi": null,
+      "fgi_label": null,
+      "green_count": 0,
       "indicators": {
         "fear_greed": {
           "value": 54,
           "status": "red"
         },
         "miner_capitulation": {
-          "value": -7,
+          "value": -6.9,
           "status": "red"
         },
         "black_swan": {
@@ -4029,12 +4029,12 @@
           "status": "yellow"
         },
         "mvrv_zscore": {
-          "value": 0.21,
+          "value": 0.23,
           "status": "yellow"
         },
         "etf_flow": {
-          "value": -635.6,
-          "status": "green"
+          "value": -43,
+          "status": "yellow"
         },
         "dxy": {
           "value": 101.8,
@@ -4042,27 +4042,17 @@
         }
       },
       "indicator_deltas": {
-        "fear_greed": 4,
-        "miner_capitulation": -0.8,
+        "fear_greed": 0,
+        "miner_capitulation": 0.1,
         "black_swan": 0,
         "vix": 0,
         "stablecoin_ratio": 0,
-        "mvrv_zscore": -0.05,
-        "etf_flow": 0,
+        "mvrv_zscore": 0.02,
+        "etf_flow": 592.6,
         "dxy": 0
       }
     },
     "data": [
-      {
-        "date": "2026-05-29",
-        "btc_close": 73372.52,
-        "btc_high": 74218.56,
-        "btc_low": 72435.62,
-        "fgi": 23,
-        "fgi_label": "Extreme Fear",
-        "composite": 43.4,
-        "delta_composite": 2.2
-      },
       {
         "date": "2026-05-30",
         "btc_close": 73754.84,
@@ -5535,9 +5525,9 @@
       },
       {
         "date": "2026-10-24",
-        "btc_close": 81086,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 80790.84,
+        "btc_high": 81098.24,
+        "btc_low": 79145.54,
         "fgi": 51,
         "fgi_label": "Neutral",
         "composite": 54.4,
@@ -5545,52 +5535,62 @@
       },
       {
         "date": "2026-10-25",
-        "btc_close": 80440,
-        "btc_high": null,
-        "btc_low": null,
+        "btc_close": 80319.5,
+        "btc_high": 80920.16,
+        "btc_low": 80007.93,
         "fgi": 54,
         "fgi_label": "Neutral",
         "composite": 55.6,
         "delta_composite": 1.2
+      },
+      {
+        "date": "2026-10-26",
+        "btc_close": 80503,
+        "btc_high": null,
+        "btc_low": null,
+        "fgi": null,
+        "fgi_label": null,
+        "composite": 56.4,
+        "delta_composite": 0.8
       }
     ]
   },
   "gold_tracker": {
-    "generated_at": "2026-10-24T23:00:56.963664+00:00",
+    "generated_at": "2026-10-25T23:01:06.184665+00:00",
     "price": {
-      "xau_usd": 4007.9,
-      "day_change_pct": -4.14,
+      "xau_usd": 4016.4,
+      "day_change_pct": -3.94,
       "week_52_high": 5586.2,
       "week_52_low": 3901.3,
-      "drawdown_from_peak_pct": -27.13,
+      "drawdown_from_peak_pct": -26.97,
       "peak_price": 5500
     },
     "technical": {
-      "bollinger_mid_weekly": 4262.61,
+      "bollinger_mid_weekly": 4263.04,
       "above_bollinger_mid": false,
-      "bollinger_mid_pct_diff": -5.98
+      "bollinger_mid_pct_diff": -5.79
     },
     "monetary": {
       "m2_trillion": 23.31,
       "m2_date": "2026-08-31",
       "m2_trigger_line": 24,
       "m2_to_trigger_pct": 97.1,
-      "gold_m2_ratio": 171.939082,
-      "ratio_display": 171.9,
+      "gold_m2_ratio": 172.303732,
+      "ratio_display": 172.3,
       "inversion_status": "normal",
       "inversion_label_en": "Normal Range",
       "inversion_label_zh": "正常区间"
     },
     "cost_floor": {
       "aisc_usd": 1750,
-      "price_above_aisc_pct": 129
+      "price_above_aisc_pct": 129.5
     },
     "premium": {
       "shfe_cny_per_gram": 853,
-      "lbma_usd_per_oz": 3997.79,
+      "lbma_usd_per_oz": 4002.2,
       "usd_cny": 6.6702,
-      "international_cny_per_gram": 857.33,
-      "premium_pct": -0.51,
+      "international_cny_per_gram": 858.28,
+      "premium_pct": -0.62,
       "source": "sge:Au99.99 + sina:hf_XAU + sina:fx_susdcny",
       "updated_at": "2026年10月26日 02:29:55"
     },
@@ -5601,8 +5601,557 @@
     }
   },
   "gold_timeseries": {
-    "generated_at": "2026-10-24T23:00:56.967357+00:00",
+    "generated_at": "2026-10-25T23:01:06.189009+00:00",
     "data": [
+      {
+        "date": "2025-05-02",
+        "xau_usd": 3231.9,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": null,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-05-05",
+        "xau_usd": 3311.3,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": null,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-05-06",
+        "xau_usd": 3411.4,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": null,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-05-07",
+        "xau_usd": 3381.4,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": null,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-05-08",
+        "xau_usd": 3296.6,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": -0.9,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-05-09",
+        "xau_usd": 3335.4,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": 0.22,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-05-12",
+        "xau_usd": 3220,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": -2.79,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-05-13",
+        "xau_usd": 3240.3,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": -1.91,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-05-14",
+        "xau_usd": 3181.4,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": -3.3,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-05-15",
+        "xau_usd": 3220.7,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": -1.9,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-05-16",
+        "xau_usd": 3182,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": -2.81,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-05-19",
+        "xau_usd": 3228.9,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": -1.26,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-05-20",
+        "xau_usd": 3280.3,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": 0.29,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-05-21",
+        "xau_usd": 3309.3,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": 1.09,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-05-22",
+        "xau_usd": 3292.3,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": 0.53,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-05-23",
+        "xau_usd": 3363.6,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": 2.54,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-05-27",
+        "xau_usd": 3299.1,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": 0.54,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-05-28",
+        "xau_usd": 3293.6,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": 0.35,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-05-29",
+        "xau_usd": 3317.1,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": 1.01,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-05-30",
+        "xau_usd": 3288.9,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": 0.14,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-06-02",
+        "xau_usd": 3370.6,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": 2.5,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-06-03",
+        "xau_usd": 3350.2,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": 1.79,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-06-04",
+        "xau_usd": 3373.5,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": 2.39,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-06-05",
+        "xau_usd": 3350.7,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": 1.63,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-06-06",
+        "xau_usd": 3322.7,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": 0.75,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-06-09",
+        "xau_usd": 3332.1,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": 0.99,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-06-10",
+        "xau_usd": 3320.9,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": 0.63,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-06-11",
+        "xau_usd": 3321.3,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": 0.62,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-06-12",
+        "xau_usd": 3380.9,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": 2.34,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-06-13",
+        "xau_usd": 3431.2,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": 3.72,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-06-16",
+        "xau_usd": 3396.4,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": 2.58,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-06-17",
+        "xau_usd": 3386.6,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": 2.22,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-06-18",
+        "xau_usd": 3389.8,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": 2.24,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-06-20",
+        "xau_usd": 3368.1,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": 1.54,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-06-23",
+        "xau_usd": 3377.7,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": 1.77,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-06-24",
+        "xau_usd": 3317.4,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": -0.04,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-06-25",
+        "xau_usd": 3327.1,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": 0.24,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-06-26",
+        "xau_usd": 3333.5,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": 0.43,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-06-27",
+        "xau_usd": 3273.7,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": -1.34,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-06-30",
+        "xau_usd": 3294.4,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": -0.7,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-07-01",
+        "xau_usd": 3336.7,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": 0.56,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-07-02",
+        "xau_usd": 3348,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": 0.88,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-07-03",
+        "xau_usd": 3331.6,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": 0.38,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-07-04",
+        "xau_usd": 3332.5,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": 0.39,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-07-07",
+        "xau_usd": 3332.2,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": 0.38,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-07-08",
+        "xau_usd": 3307,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": -0.37,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-07-09",
+        "xau_usd": 3311.6,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": -0.23,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-07-10",
+        "xau_usd": 3317.4,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": -0.05,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-07-11",
+        "xau_usd": 3356,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": 1.09,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-07-14",
+        "xau_usd": 3351.5,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": 0.93,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-07-15",
+        "xau_usd": 3329.8,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": 0.27,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-07-16",
+        "xau_usd": 3352.5,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": 0.94,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-07-17",
+        "xau_usd": 3340.1,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": 0.55,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-07-18",
+        "xau_usd": 3353,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": 0.92,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-07-21",
+        "xau_usd": 3401.9,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": 2.35,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-07-22",
+        "xau_usd": 3439.2,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": 3.41,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-07-23",
+        "xau_usd": 3394.1,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": 2.02,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-07-24",
+        "xau_usd": 3371,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": 1.3,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-07-25",
+        "xau_usd": 3334,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": 0.18,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-07-28",
+        "xau_usd": 3309.1,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": -0.55,
+        "premium_pct": null,
+        "signal_status": null
+      },
+      {
+        "date": "2025-07-29",
+        "xau_usd": 3323.4,
+        "m2_trillion": null,
+        "gold_m2_ratio": null,
+        "bollinger_mid_pct_diff": -0.17,
+        "premium_pct": null,
+        "signal_status": null
+      },
       {
         "date": "2025-07-30",
         "xau_usd": 3295.8,
@@ -7710,1182 +8259,12 @@
         "signal_status": "yellow"
       },
       {
-        "date": "2026-06-14",
-        "xau_usd": 4238.8,
-        "m2_trillion": 22.88,
-        "gold_m2_ratio": 185.262238,
-        "bollinger_mid_pct_diff": -10.57,
-        "premium_pct": -1.22,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-06-15",
-        "xau_usd": 4311,
-        "m2_trillion": 22.88,
-        "gold_m2_ratio": 188.417832,
-        "bollinger_mid_pct_diff": -9.11,
-        "premium_pct": -2.81,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-06-16",
-        "xau_usd": 4334.2,
-        "m2_trillion": 22.88,
-        "gold_m2_ratio": 189.431818,
-        "bollinger_mid_pct_diff": -8.17,
-        "premium_pct": -0.14,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-06-17",
-        "xau_usd": 4353.3,
-        "m2_trillion": 22.88,
-        "gold_m2_ratio": 190.266608,
-        "bollinger_mid_pct_diff": -7.78,
-        "premium_pct": -0.7,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-06-18",
-        "xau_usd": 4285.8,
-        "m2_trillion": 22.88,
-        "gold_m2_ratio": 187.316434,
-        "bollinger_mid_pct_diff": -9.14,
-        "premium_pct": 0.97,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-06-19",
-        "xau_usd": 4226.9,
-        "m2_trillion": 22.88,
-        "gold_m2_ratio": 184.742133,
-        "bollinger_mid_pct_diff": -10.34,
-        "premium_pct": 2.21,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-06-20",
-        "xau_usd": 4172.9,
-        "m2_trillion": 22.88,
-        "gold_m2_ratio": 182.381993,
-        "bollinger_mid_pct_diff": -11.43,
-        "premium_pct": 3.51,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-06-21",
-        "xau_usd": 4172.9,
-        "m2_trillion": 22.88,
-        "gold_m2_ratio": 182.381993,
-        "bollinger_mid_pct_diff": -11.43,
-        "premium_pct": 3.51,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-06-22",
-        "xau_usd": 4171.6,
-        "m2_trillion": 22.88,
-        "gold_m2_ratio": 182.325175,
-        "bollinger_mid_pct_diff": -11.46,
-        "premium_pct": 3.5,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-06-23",
-        "xau_usd": 4207.5,
-        "m2_trillion": 22.88,
-        "gold_m2_ratio": 183.894231,
-        "bollinger_mid_pct_diff": -9.96,
-        "premium_pct": -0.78,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-06-24",
-        "xau_usd": 4125.1,
-        "m2_trillion": 23.06,
-        "gold_m2_ratio": 178.885516,
-        "bollinger_mid_pct_diff": -11.65,
-        "premium_pct": -0.19,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-06-25",
-        "xau_usd": 4015,
-        "m2_trillion": 23.06,
-        "gold_m2_ratio": 174.111015,
-        "bollinger_mid_pct_diff": -13.9,
-        "premium_pct": -1.02,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-06-26",
-        "xau_usd": 4039.9,
-        "m2_trillion": 23.06,
-        "gold_m2_ratio": 175.190807,
-        "bollinger_mid_pct_diff": -13.39,
-        "premium_pct": -1.08,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-06-27",
-        "xau_usd": 4103,
-        "m2_trillion": 23.06,
-        "gold_m2_ratio": 177.927147,
-        "bollinger_mid_pct_diff": -12.1,
-        "premium_pct": -1.43,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-06-28",
-        "xau_usd": 4096.3,
-        "m2_trillion": 23.06,
-        "gold_m2_ratio": 177.6366,
-        "bollinger_mid_pct_diff": -12.24,
-        "premium_pct": -1.43,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-06-29",
-        "xau_usd": 4077.6,
-        "m2_trillion": 23.06,
-        "gold_m2_ratio": 176.825672,
-        "bollinger_mid_pct_diff": -12.62,
-        "premium_pct": -1.11,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-06-30",
-        "xau_usd": 4028.5,
-        "m2_trillion": 23.06,
-        "gold_m2_ratio": 174.696444,
-        "bollinger_mid_pct_diff": -12.74,
-        "premium_pct": -0.3,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-07-01",
-        "xau_usd": 4025,
-        "m2_trillion": 23.06,
-        "gold_m2_ratio": 174.544666,
-        "bollinger_mid_pct_diff": -12.82,
-        "premium_pct": -0.38,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-07-02",
-        "xau_usd": 4056.1,
-        "m2_trillion": 23.06,
-        "gold_m2_ratio": 175.893322,
-        "bollinger_mid_pct_diff": -12.17,
-        "premium_pct": -1.7,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-07-03",
-        "xau_usd": 4135.6,
-        "m2_trillion": 23.06,
-        "gold_m2_ratio": 179.34085,
-        "bollinger_mid_pct_diff": -10.53,
-        "premium_pct": -1.52,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-07-04",
-        "xau_usd": 4187.3,
-        "m2_trillion": 23.06,
-        "gold_m2_ratio": 181.582827,
-        "bollinger_mid_pct_diff": -9.46,
-        "premium_pct": -0.51,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-07-05",
-        "xau_usd": 4187.3,
-        "m2_trillion": 23.06,
-        "gold_m2_ratio": 181.582827,
-        "bollinger_mid_pct_diff": -9.46,
-        "premium_pct": -0.51,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-07-06",
-        "xau_usd": 4197.4,
-        "m2_trillion": 23.06,
-        "gold_m2_ratio": 182.020815,
-        "bollinger_mid_pct_diff": -9.25,
-        "premium_pct": -0.89,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-07-07",
-        "xau_usd": 4176.6,
-        "m2_trillion": 23.06,
-        "gold_m2_ratio": 181.11882,
-        "bollinger_mid_pct_diff": -8.81,
-        "premium_pct": -1.03,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-07-08",
-        "xau_usd": 4110.3,
-        "m2_trillion": 23.06,
-        "gold_m2_ratio": 178.243712,
-        "bollinger_mid_pct_diff": -10.19,
-        "premium_pct": 0.74,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-07-09",
-        "xau_usd": 4069.51,
-        "m2_trillion": 23.06,
-        "gold_m2_ratio": 176.474848,
-        "bollinger_mid_pct_diff": -12.21,
-        "premium_pct": -0.93,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-07-10",
-        "xau_usd": 4131.1,
-        "m2_trillion": 23.06,
-        "gold_m2_ratio": 179.145707,
-        "bollinger_mid_pct_diff": -9.76,
-        "premium_pct": -0.46,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-07-11",
-        "xau_usd": 4128.9,
-        "m2_trillion": 23.06,
-        "gold_m2_ratio": 179.050304,
-        "bollinger_mid_pct_diff": -9.8,
-        "premium_pct": -0.68,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-07-12",
-        "xau_usd": 4113.7,
-        "m2_trillion": 23.06,
-        "gold_m2_ratio": 178.391154,
-        "bollinger_mid_pct_diff": -10.12,
-        "premium_pct": -0.68,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-07-13",
-        "xau_usd": 4086.9,
-        "m2_trillion": 23.06,
-        "gold_m2_ratio": 177.228968,
-        "bollinger_mid_pct_diff": -10.68,
-        "premium_pct": 0.44,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-07-14",
-        "xau_usd": 4010.7,
-        "m2_trillion": 23.06,
-        "gold_m2_ratio": 173.924545,
-        "bollinger_mid_pct_diff": -11.18,
-        "premium_pct": 0.23,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-07-15",
-        "xau_usd": 4055.3,
-        "m2_trillion": 23.06,
-        "gold_m2_ratio": 175.85863,
-        "bollinger_mid_pct_diff": -10.23,
-        "premium_pct": -0.28,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-07-16",
-        "xau_usd": 4065.6,
-        "m2_trillion": 23.06,
-        "gold_m2_ratio": 176.305291,
-        "bollinger_mid_pct_diff": -10.02,
-        "premium_pct": -1.03,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-07-17",
-        "xau_usd": 3977.7,
-        "m2_trillion": 23.06,
-        "gold_m2_ratio": 172.493495,
-        "bollinger_mid_pct_diff": -11.88,
-        "premium_pct": 0.21,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-07-18",
-        "xau_usd": 4023,
-        "m2_trillion": 23.06,
-        "gold_m2_ratio": 174.457936,
-        "bollinger_mid_pct_diff": -10.92,
-        "premium_pct": -1.02,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-07-19",
-        "xau_usd": 4018.8,
-        "m2_trillion": 23.06,
-        "gold_m2_ratio": 174.275802,
-        "bollinger_mid_pct_diff": -11.01,
-        "premium_pct": -1.02,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-07-20",
-        "xau_usd": 4000.8,
-        "m2_trillion": 23.06,
-        "gold_m2_ratio": 173.49523,
-        "bollinger_mid_pct_diff": -11.39,
-        "premium_pct": -0.43,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-07-21",
-        "xau_usd": 4005.2,
-        "m2_trillion": 23.06,
-        "gold_m2_ratio": 173.686036,
-        "bollinger_mid_pct_diff": -10.17,
-        "premium_pct": 0.09,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-07-22",
-        "xau_usd": 4085.7,
-        "m2_trillion": 23.06,
-        "gold_m2_ratio": 177.17693,
-        "bollinger_mid_pct_diff": -8.44,
-        "premium_pct": -0.71,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-07-23",
-        "xau_usd": 4123.9,
-        "m2_trillion": 23.06,
-        "gold_m2_ratio": 178.833478,
-        "bollinger_mid_pct_diff": -7.63,
-        "premium_pct": -0.05,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-07-24",
-        "xau_usd": 4052.5,
-        "m2_trillion": 23.06,
-        "gold_m2_ratio": 175.737207,
-        "bollinger_mid_pct_diff": -9.15,
-        "premium_pct": -0.26,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-07-25",
-        "xau_usd": 4055.7,
-        "m2_trillion": 23.06,
-        "gold_m2_ratio": 175.875976,
-        "bollinger_mid_pct_diff": -9.08,
-        "premium_pct": -0.26,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-07-26",
-        "xau_usd": 4070.8,
-        "m2_trillion": 23.06,
-        "gold_m2_ratio": 176.530789,
-        "bollinger_mid_pct_diff": -8.76,
-        "premium_pct": -0.26,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-07-27",
-        "xau_usd": 4093.3,
-        "m2_trillion": 23.06,
-        "gold_m2_ratio": 177.506505,
-        "bollinger_mid_pct_diff": -8.28,
-        "premium_pct": -1.17,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-07-28",
-        "xau_usd": 4075.6,
-        "m2_trillion": 23.06,
-        "gold_m2_ratio": 176.738942,
-        "bollinger_mid_pct_diff": -7.64,
-        "premium_pct": -0.19,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-07-29",
-        "xau_usd": 4015.8,
-        "m2_trillion": 23.29,
-        "gold_m2_ratio": 172.425934,
-        "bollinger_mid_pct_diff": -8.93,
-        "premium_pct": 0.18,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-07-31",
-        "xau_usd": 4169,
-        "m2_trillion": 23.29,
-        "gold_m2_ratio": 179.003864,
-        "bollinger_mid_pct_diff": -5.62,
-        "premium_pct": -1.19,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-08-01",
-        "xau_usd": 4098.6,
-        "m2_trillion": 23.29,
-        "gold_m2_ratio": 175.981108,
-        "bollinger_mid_pct_diff": -7.14,
-        "premium_pct": -0.4,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-08-02",
-        "xau_usd": 4107,
-        "m2_trillion": 23.29,
-        "gold_m2_ratio": 176.341778,
-        "bollinger_mid_pct_diff": -6.96,
-        "premium_pct": -0.4,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-08-03",
-        "xau_usd": 4120.7,
-        "m2_trillion": 23.29,
-        "gold_m2_ratio": 176.930013,
-        "bollinger_mid_pct_diff": -6.66,
-        "premium_pct": -0.82,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-08-04",
-        "xau_usd": 4106.8,
-        "m2_trillion": 23.29,
-        "gold_m2_ratio": 176.33319,
-        "bollinger_mid_pct_diff": -6.41,
-        "premium_pct": -0.52,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-08-05",
-        "xau_usd": 4140.1,
-        "m2_trillion": 23.29,
-        "gold_m2_ratio": 177.762988,
-        "bollinger_mid_pct_diff": -5.69,
-        "premium_pct": -0.2,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-08-06",
-        "xau_usd": 4308.1,
-        "m2_trillion": 23.29,
-        "gold_m2_ratio": 184.976385,
-        "bollinger_mid_pct_diff": -2.05,
-        "premium_pct": -1.95,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-08-07",
-        "xau_usd": 4299.8,
-        "m2_trillion": 23.29,
-        "gold_m2_ratio": 184.620009,
-        "bollinger_mid_pct_diff": -2.23,
-        "premium_pct": -0.36,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-08-08",
-        "xau_usd": 4401.3,
-        "m2_trillion": 23.29,
-        "gold_m2_ratio": 188.978102,
-        "bollinger_mid_pct_diff": -0.04,
-        "premium_pct": -1.26,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-08-09",
-        "xau_usd": 4399.7,
-        "m2_trillion": 23.29,
-        "gold_m2_ratio": 188.909403,
-        "bollinger_mid_pct_diff": -0.07,
-        "premium_pct": -1.26,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-08-10",
-        "xau_usd": 4402.4,
-        "m2_trillion": 23.29,
-        "gold_m2_ratio": 189.025333,
-        "bollinger_mid_pct_diff": -0.01,
-        "premium_pct": -1.27,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-08-11",
-        "xau_usd": 4457.7,
-        "m2_trillion": 23.29,
-        "gold_m2_ratio": 191.399742,
-        "bollinger_mid_pct_diff": 1.35,
-        "premium_pct": -1.9,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-08-12",
-        "xau_usd": 4433.7,
-        "m2_trillion": 23.29,
-        "gold_m2_ratio": 190.369257,
-        "bollinger_mid_pct_diff": 0.84,
-        "premium_pct": -0.15,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-08-13",
-        "xau_usd": 4459.4,
-        "m2_trillion": 23.29,
-        "gold_m2_ratio": 191.472735,
-        "bollinger_mid_pct_diff": 1.39,
-        "premium_pct": -0.06,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-08-14",
-        "xau_usd": 4412.7,
-        "m2_trillion": 23.29,
-        "gold_m2_ratio": 189.467583,
-        "bollinger_mid_pct_diff": 0.38,
-        "premium_pct": -0.11,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-08-15",
-        "xau_usd": 4432,
-        "m2_trillion": 23.29,
-        "gold_m2_ratio": 190.296264,
-        "bollinger_mid_pct_diff": 0.8,
-        "premium_pct": -0.89,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-08-16",
-        "xau_usd": 4437.3,
-        "m2_trillion": 23.29,
-        "gold_m2_ratio": 190.52383,
-        "bollinger_mid_pct_diff": 0.91,
-        "premium_pct": -0.89,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-08-17",
-        "xau_usd": 4436.9,
-        "m2_trillion": 23.29,
-        "gold_m2_ratio": 190.506655,
-        "bollinger_mid_pct_diff": 0.9,
-        "premium_pct": -1.01,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-08-18",
-        "xau_usd": 4471.3,
-        "m2_trillion": 23.29,
-        "gold_m2_ratio": 191.983684,
-        "bollinger_mid_pct_diff": 1.96,
-        "premium_pct": -1,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-08-19",
-        "xau_usd": 4387.4,
-        "m2_trillion": 23.29,
-        "gold_m2_ratio": 188.38128,
-        "bollinger_mid_pct_diff": 0.14,
-        "premium_pct": 0.36,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-08-20",
-        "xau_usd": 4577.9,
-        "m2_trillion": 23.29,
-        "gold_m2_ratio": 196.560756,
-        "bollinger_mid_pct_diff": 4.27,
-        "premium_pct": -3.47,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-08-21",
-        "xau_usd": 4577.6,
-        "m2_trillion": 23.29,
-        "gold_m2_ratio": 196.547875,
-        "bollinger_mid_pct_diff": 4.26,
-        "premium_pct": -1.67,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-08-22",
-        "xau_usd": 4661.6,
-        "m2_trillion": 23.29,
-        "gold_m2_ratio": 200.154573,
-        "bollinger_mid_pct_diff": 6.07,
-        "premium_pct": -1.07,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-08-23",
-        "xau_usd": 4680.6,
-        "m2_trillion": 23.29,
-        "gold_m2_ratio": 200.970374,
-        "bollinger_mid_pct_diff": 6.48,
-        "premium_pct": -1.07,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-08-24",
-        "xau_usd": 4665.2,
-        "m2_trillion": 23.29,
-        "gold_m2_ratio": 200.309146,
-        "bollinger_mid_pct_diff": 6.15,
-        "premium_pct": -1.09,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-08-25",
-        "xau_usd": 4719.4,
-        "m2_trillion": 23.29,
-        "gold_m2_ratio": 202.636325,
-        "bollinger_mid_pct_diff": 7.48,
-        "premium_pct": -0.85,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-08-26",
-        "xau_usd": 4730.3,
-        "m2_trillion": 23.21,
-        "gold_m2_ratio": 203.804395,
-        "bollinger_mid_pct_diff": 7.72,
-        "premium_pct": -1.79,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-08-27",
-        "xau_usd": 4662.5,
-        "m2_trillion": 23.21,
-        "gold_m2_ratio": 200.88324,
-        "bollinger_mid_pct_diff": 6.26,
-        "premium_pct": -0.59,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-08-28",
-        "xau_usd": 4661.4,
-        "m2_trillion": 23.21,
-        "gold_m2_ratio": 200.835847,
-        "bollinger_mid_pct_diff": 6.23,
-        "premium_pct": -1.1,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-08-29",
-        "xau_usd": 4504.1,
-        "m2_trillion": 23.21,
-        "gold_m2_ratio": 194.058595,
-        "bollinger_mid_pct_diff": 2.83,
-        "premium_pct": 0.06,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-08-30",
-        "xau_usd": 4529.9,
-        "m2_trillion": 23.21,
-        "gold_m2_ratio": 195.170185,
-        "bollinger_mid_pct_diff": 3.39,
-        "premium_pct": 0.06,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-08-31",
-        "xau_usd": 4508.9,
-        "m2_trillion": 23.21,
-        "gold_m2_ratio": 194.265403,
-        "bollinger_mid_pct_diff": 2.94,
-        "premium_pct": -0.11,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-09-01",
-        "xau_usd": 4495.6,
-        "m2_trillion": 23.21,
-        "gold_m2_ratio": 193.692374,
-        "bollinger_mid_pct_diff": 3.09,
-        "premium_pct": -0.68,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-09-02",
-        "xau_usd": 4374.3,
-        "m2_trillion": 23.21,
-        "gold_m2_ratio": 188.466178,
-        "bollinger_mid_pct_diff": 0.45,
-        "premium_pct": 0.19,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-09-03",
-        "xau_usd": 4430,
-        "m2_trillion": 23.22,
-        "gold_m2_ratio": 190.783807,
-        "bollinger_mid_pct_diff": 1.67,
-        "premium_pct": -1.24,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-09-04",
-        "xau_usd": 4520.8,
-        "m2_trillion": 23.21,
-        "gold_m2_ratio": 194.778113,
-        "bollinger_mid_pct_diff": 3.64,
-        "premium_pct": -1.01,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-09-05",
-        "xau_usd": 4477.2,
-        "m2_trillion": 23.21,
-        "gold_m2_ratio": 192.899612,
-        "bollinger_mid_pct_diff": 2.69,
-        "premium_pct": -1.56,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-09-06",
-        "xau_usd": 4476.6,
-        "m2_trillion": 23.21,
-        "gold_m2_ratio": 192.873761,
-        "bollinger_mid_pct_diff": 2.68,
-        "premium_pct": -1.56,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-09-07",
-        "xau_usd": 4476.6,
-        "m2_trillion": 23.21,
-        "gold_m2_ratio": 192.873761,
-        "bollinger_mid_pct_diff": 2.68,
-        "premium_pct": -1.53,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-09-08",
-        "xau_usd": 4452.3,
-        "m2_trillion": 23.21,
-        "gold_m2_ratio": 191.826799,
-        "bollinger_mid_pct_diff": 2.5,
-        "premium_pct": -0.26,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-09-09",
-        "xau_usd": 4396.5,
-        "m2_trillion": 23.21,
-        "gold_m2_ratio": 189.422663,
-        "bollinger_mid_pct_diff": 1.28,
-        "premium_pct": 0.67,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-09-10",
-        "xau_usd": 4444.2,
-        "m2_trillion": 23.21,
-        "gold_m2_ratio": 191.477811,
-        "bollinger_mid_pct_diff": 2.32,
-        "premium_pct": -0.44,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-09-11",
-        "xau_usd": 4358.4,
-        "m2_trillion": 23.21,
-        "gold_m2_ratio": 187.781129,
-        "bollinger_mid_pct_diff": 0.44,
-        "premium_pct": 0.6,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-09-12",
-        "xau_usd": 4390,
-        "m2_trillion": 23.21,
-        "gold_m2_ratio": 189.142611,
-        "bollinger_mid_pct_diff": 1.13,
-        "premium_pct": -0.35,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-09-13",
-        "xau_usd": 4408.9,
-        "m2_trillion": 23.21,
-        "gold_m2_ratio": 189.956915,
-        "bollinger_mid_pct_diff": 1.55,
-        "premium_pct": -0.35,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-09-14",
-        "xau_usd": 4377,
-        "m2_trillion": 23.21,
-        "gold_m2_ratio": 188.582508,
-        "bollinger_mid_pct_diff": 0.85,
-        "premium_pct": -0.2,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-09-15",
-        "xau_usd": 4336.8,
-        "m2_trillion": 23.21,
-        "gold_m2_ratio": 186.850495,
-        "bollinger_mid_pct_diff": 0.23,
-        "premium_pct": -0.46,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-09-16",
-        "xau_usd": 4333.9,
-        "m2_trillion": 23.21,
-        "gold_m2_ratio": 186.725549,
-        "bollinger_mid_pct_diff": -0.42,
-        "premium_pct": -0.14,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-09-17",
-        "xau_usd": 4307.4,
-        "m2_trillion": 23.21,
-        "gold_m2_ratio": 185.5838,
-        "bollinger_mid_pct_diff": -1,
-        "premium_pct": 1.45,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-09-18",
-        "xau_usd": 4381.3,
-        "m2_trillion": 23.22,
-        "gold_m2_ratio": 188.686477,
-        "bollinger_mid_pct_diff": 0.61,
-        "premium_pct": -0.23,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-09-19",
-        "xau_usd": 4415.9,
-        "m2_trillion": 23.21,
-        "gold_m2_ratio": 190.258509,
-        "bollinger_mid_pct_diff": 1.37,
-        "premium_pct": -0.66,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-09-20",
-        "xau_usd": 4424.9,
-        "m2_trillion": 23.21,
-        "gold_m2_ratio": 190.646273,
-        "bollinger_mid_pct_diff": 1.56,
-        "premium_pct": -0.66,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-09-21",
-        "xau_usd": 4412.6,
-        "m2_trillion": 23.21,
-        "gold_m2_ratio": 190.116329,
-        "bollinger_mid_pct_diff": 1.29,
-        "premium_pct": -0.55,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-09-22",
-        "xau_usd": 4397.8,
-        "m2_trillion": 23.21,
-        "gold_m2_ratio": 189.478673,
-        "bollinger_mid_pct_diff": 1.33,
-        "premium_pct": -1.18,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-09-23",
-        "xau_usd": 4400.5,
+        "date": "2026-10-26",
+        "xau_usd": 4016.4,
         "m2_trillion": 23.31,
-        "gold_m2_ratio": 188.781639,
-        "bollinger_mid_pct_diff": 1.39,
-        "premium_pct": -1.04,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-09-24",
-        "xau_usd": 4322.9,
-        "m2_trillion": 23.31,
-        "gold_m2_ratio": 185.452595,
-        "bollinger_mid_pct_diff": -0.31,
-        "premium_pct": -0.17,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-09-25",
-        "xau_usd": 4307.1,
-        "m2_trillion": 23.31,
-        "gold_m2_ratio": 184.774775,
-        "bollinger_mid_pct_diff": -0.66,
-        "premium_pct": 0.48,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-09-27",
-        "xau_usd": 4321.2,
-        "m2_trillion": 23.31,
-        "gold_m2_ratio": 185.379665,
-        "bollinger_mid_pct_diff": -0.35,
-        "premium_pct": 0.19,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-09-28",
-        "xau_usd": 4294.4,
-        "m2_trillion": 23.31,
-        "gold_m2_ratio": 184.229944,
-        "bollinger_mid_pct_diff": -0.94,
-        "premium_pct": 0.83,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-09-29",
-        "xau_usd": 4156.5,
-        "m2_trillion": 23.31,
-        "gold_m2_ratio": 178.314028,
-        "bollinger_mid_pct_diff": -3.7,
-        "premium_pct": -0.16,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-10-01",
-        "xau_usd": 4184.9,
-        "m2_trillion": 23.31,
-        "gold_m2_ratio": 179.53239,
-        "bollinger_mid_pct_diff": -3.07,
-        "premium_pct": 1.35,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-10-02",
-        "xau_usd": 4205,
-        "m2_trillion": 23.31,
-        "gold_m2_ratio": 180.39468,
-        "bollinger_mid_pct_diff": -2.63,
-        "premium_pct": null,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-10-03",
-        "xau_usd": 4172.1,
-        "m2_trillion": 23.31,
-        "gold_m2_ratio": 178.983269,
-        "bollinger_mid_pct_diff": -3.35,
-        "premium_pct": null,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-10-04",
-        "xau_usd": 4162.3,
-        "m2_trillion": 23.31,
-        "gold_m2_ratio": 178.562849,
-        "bollinger_mid_pct_diff": -3.57,
-        "premium_pct": null,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-10-05",
-        "xau_usd": 4175.6,
-        "m2_trillion": 23.31,
-        "gold_m2_ratio": 179.133419,
-        "bollinger_mid_pct_diff": -3.28,
-        "premium_pct": null,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-10-06",
-        "xau_usd": 4168.7,
-        "m2_trillion": 23.31,
-        "gold_m2_ratio": 178.837409,
-        "bollinger_mid_pct_diff": -3.02,
-        "premium_pct": null,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-10-07",
-        "xau_usd": 4190.6,
-        "m2_trillion": 23.31,
-        "gold_m2_ratio": 179.77692,
-        "bollinger_mid_pct_diff": -2.54,
-        "premium_pct": null,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-10-08",
-        "xau_usd": 4130.6,
-        "m2_trillion": 23.31,
-        "gold_m2_ratio": 177.202917,
-        "bollinger_mid_pct_diff": -3.87,
-        "premium_pct": null,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-10-09",
-        "xau_usd": 4165.1,
-        "m2_trillion": 23.31,
-        "gold_m2_ratio": 178.682969,
-        "bollinger_mid_pct_diff": -3.1,
-        "premium_pct": -0.65,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-10-10",
-        "xau_usd": 4220.3,
-        "m2_trillion": 23.31,
-        "gold_m2_ratio": 181.051051,
-        "bollinger_mid_pct_diff": -1.88,
-        "premium_pct": -0.5,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-10-11",
-        "xau_usd": 4216.3,
-        "m2_trillion": 23.31,
-        "gold_m2_ratio": 180.879451,
-        "bollinger_mid_pct_diff": -1.97,
-        "premium_pct": -0.5,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-10-12",
-        "xau_usd": 4212,
-        "m2_trillion": 23.31,
-        "gold_m2_ratio": 180.694981,
-        "bollinger_mid_pct_diff": -2.07,
-        "premium_pct": -0.28,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-10-13",
-        "xau_usd": 4196.1,
-        "m2_trillion": 23.31,
-        "gold_m2_ratio": 180.01287,
-        "bollinger_mid_pct_diff": -1.99,
-        "premium_pct": -0.14,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-10-14",
-        "xau_usd": 4185.1,
-        "m2_trillion": 23.31,
-        "gold_m2_ratio": 179.54097,
-        "bollinger_mid_pct_diff": -2.23,
-        "premium_pct": -0.15,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-10-15",
-        "xau_usd": 4129.1,
-        "m2_trillion": 23.31,
-        "gold_m2_ratio": 177.138567,
-        "bollinger_mid_pct_diff": -3.48,
-        "premium_pct": -0.72,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-10-16",
-        "xau_usd": 4186.6,
-        "m2_trillion": 23.31,
-        "gold_m2_ratio": 179.60532,
-        "bollinger_mid_pct_diff": -2.2,
-        "premium_pct": -0.54,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-10-17",
-        "xau_usd": 4186.7,
-        "m2_trillion": 23.31,
-        "gold_m2_ratio": 179.60961,
-        "bollinger_mid_pct_diff": -2.2,
-        "premium_pct": -0.35,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-10-18",
-        "xau_usd": 4181.1,
-        "m2_trillion": 23.31,
-        "gold_m2_ratio": 179.369369,
-        "bollinger_mid_pct_diff": -2.32,
-        "premium_pct": -0.35,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-10-19",
-        "xau_usd": 4197.2,
-        "m2_trillion": 23.31,
-        "gold_m2_ratio": 180.06006,
-        "bollinger_mid_pct_diff": -1.96,
-        "premium_pct": -0.64,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-10-20",
-        "xau_usd": 4156.6,
-        "m2_trillion": 23.31,
-        "gold_m2_ratio": 178.318318,
-        "bollinger_mid_pct_diff": -2.66,
-        "premium_pct": 0.08,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-10-21",
-        "xau_usd": 4140.6,
-        "m2_trillion": 23.31,
-        "gold_m2_ratio": 177.631918,
-        "bollinger_mid_pct_diff": -3.01,
-        "premium_pct": -0.29,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-10-22",
-        "xau_usd": 4148.3,
-        "m2_trillion": null,
-        "gold_m2_ratio": null,
-        "bollinger_mid_pct_diff": -2.84,
-        "premium_pct": -0.29,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-10-23",
-        "xau_usd": 4045.4,
-        "m2_trillion": 23.31,
-        "gold_m2_ratio": 173.547834,
-        "bollinger_mid_pct_diff": -5.14,
-        "premium_pct": 0.28,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-10-24",
-        "xau_usd": 4010,
-        "m2_trillion": 23.31,
-        "gold_m2_ratio": 172.029172,
-        "bollinger_mid_pct_diff": -5.93,
-        "premium_pct": -0.51,
-        "signal_status": "yellow"
-      },
-      {
-        "date": "2026-10-25",
-        "xau_usd": 4007.9,
-        "m2_trillion": 23.31,
-        "gold_m2_ratio": 171.939082,
-        "bollinger_mid_pct_diff": -5.98,
-        "premium_pct": -0.51,
+        "gold_m2_ratio": 172.303732,
+        "bollinger_mid_pct_diff": -5.79,
+        "premium_pct": -0.62,
         "signal_status": "yellow"
       }
     ]
@@ -9540,6 +8919,5 @@
       "港银与境外券商服务通知",
       "处罚公告与执法案例"
     ]
-  },
-  "_warning": "Rebuilt with incomplete Convex snapshot (events) — data may be stale"
+  }
 }
