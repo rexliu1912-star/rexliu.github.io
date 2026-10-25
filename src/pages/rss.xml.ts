@@ -18,6 +18,6 @@ export const GET = async (context: APIContext) => {
 			// Include the full markdown/mdx content
 			content: post.body,
 		})),
-		customData: "<language>zh-cn</language>",
+		customData: "<language>en</language>",
 	});
 };

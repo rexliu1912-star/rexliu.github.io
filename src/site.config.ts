@@ -17,10 +17,10 @@ export const siteConfig: SiteConfig = {
 	},
 	// 核心修改：决定分享时的描述文字
 	description: "Be The Sovereign Individual You Want To See In The World",
-	// 确保 HTML 语言标记正确
-	lang: "zh-CN",
-	// 社交媒体识别的语言区域
-	ogLocale: "zh_CN",
+	// HTML lang aligned with client default (localStorage rex-lang || "en")
+	lang: "en",
+	// OG locale aligned with default English content signal
+	ogLocale: "en_US",
 	/* 核心修改：
         - 这将作为分享时的网页大标题
     */
