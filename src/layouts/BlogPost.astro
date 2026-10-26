@@ -1,10 +1,11 @@
 ---
 import type { CollectionEntry } from "astro:content";
 import { getCollection } from "astro:content";
-import ReadingProgress from "@/components/blog/ReadingProgress.astro";
+import CitableSummary from "@/components/blog/CitableSummary.astro";
 import Comments from "@/components/blog/Comments.astro";
-import RelatedPosts from "@/components/blog/RelatedPosts.astro";
 import MagazineView from "@/components/blog/MagazineView";
+import ReadingProgress from "@/components/blog/ReadingProgress.astro";
+import RelatedPosts from "@/components/blog/RelatedPosts.astro";
 import TagAnimation from "@/components/blog/TagAnimation.astro";
 import { getRelatedPosts } from "@/utils/post";
 import BaseLayout from "./Base.astro";
@@ -18,7 +19,7 @@ const { post } = Astro.props;
 const allPosts = await getCollection("post");
 const relatedPosts = getRelatedPosts(post, allPosts, 3);
 const {
-	data: { title, description, publishDate, originalUrl, tags, coverImage },
+	data: { title, description, publishDate, originalUrl, tags, coverImage, citableSummary, faq },
 } = post;
 
 const articleDate = publishDate.toISOString();
@@ -40,7 +41,7 @@ const formatCustomDate = (date: Date) => {
 const displayDate = formatCustomDate(publishDate);
 ---
 
-<BaseLayout meta={{ title, description, articleDate }}>
+<BaseLayout meta={{ title, description, articleDate, faq }}>
 	<ReadingProgress />
 	<div class="mb-16 sm:mt-8">
 		<div class="mb-8">
@@ -161,6 +162,8 @@ const displayDate = formatCustomDate(publishDate);
 			</div>
 
 			<hr class="my-8 border-dashed border-gray-200 dark:border-gray-700" />
+
+			{citableSummary && <CitableSummary summary={citableSummary} faq={faq} />}
 
 			{
 				coverImage && (

@@ -10,6 +10,8 @@ export interface SiteConfig {
 	title: string;
 	url: string;
 	twitterHandle?: string; // 添加这一行，允许配置推特账号
+	/** Public profile URLs for Person / WebSite JSON-LD sameAs. */
+	sameAs: string[];
 }
 
 export interface PaginationLink {
@@ -18,11 +20,18 @@ export interface PaginationLink {
 	url: string;
 }
 
+export interface FaqItem {
+	question: string;
+	answer: string;
+}
+
 export interface SiteMeta {
 	articleDate?: string | undefined;
 	description?: string;
 	ogImage?: string | undefined;
 	title: string;
+	/** When set, BaseHead emits FAQPage JSON-LD for this page only. */
+	faq?: FaqItem[] | undefined;
 }
 
 /** Webmentions */

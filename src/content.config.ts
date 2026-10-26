@@ -37,6 +37,17 @@ const post = defineCollection({
 				.transform((str) => (str ? new Date(str) : undefined)),
 			// 确保置顶字段正确定义
 			pinned: z.boolean().default(false),
+			// Short citable summary rendered above the post body when set.
+			citableSummary: z.string().optional(),
+			// FAQPage JSON-LD + visible Q&A. Omit on posts that have no FAQ.
+			faq: z
+				.array(
+					z.object({
+						question: z.string(),
+						answer: z.string(),
+					}),
+				)
+				.optional(),
 		}),
 });
 
@@ -104,7 +115,6 @@ const builderLog = defineCollection({
 		agents: z.array(z.string()).default([]),
 	}),
 });
-
 
 // 9. 统一导出
 export const collections = { post, note, tag, digest, projects, "builder-log": builderLog };

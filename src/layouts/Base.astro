@@ -14,7 +14,7 @@ interface Props {
 }
 
 const {
-	meta: { articleDate, description = siteConfig.description, ogImage, title },
+	meta: { articleDate, description = siteConfig.description, ogImage, title, faq },
 } = Astro.props;
 
 const GA_ID = "G-1EC76EZ517";
@@ -25,7 +25,13 @@ const GA_ID = "G-1EC76EZ517";
 		<script is:inline>
 			(function(){try{var l=localStorage.getItem("rex-lang")||"en";document.documentElement.setAttribute("data-lang",l)}catch(e){document.documentElement.setAttribute("data-lang","en")}})();
 		</script>
-		<BaseHead articleDate={articleDate} description={description} ogImage={ogImage} title={title} />
+		<BaseHead
+			articleDate={articleDate}
+			description={description}
+			faq={faq}
+			ogImage={ogImage}
+			title={title}
+		/>
 		<link rel="icon" href="/avatar.png" type="image/png" />
 		<link rel="apple-touch-icon" href="/avatar.png" />
 		<link rel="preconnect" href="https://www.googletagmanager.com" />

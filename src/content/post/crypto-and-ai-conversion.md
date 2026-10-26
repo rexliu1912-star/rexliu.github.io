@@ -4,6 +4,14 @@ description: "Everyone thinks AI will replace jobs. Everyone thinks crypto is ju
 publishDate: "2026-01-13"
 tags: ["Crypto", "AI"] 
 originalUrl: "https://x.com/rexliu/status/2011012273222132098"
+citableSummary: "Crypto decentralized finance. AI is decentralizing competence. I don't need a bank's permission to transact, and I don't need an institution's permission to get good at something. Together that's the sovereignty I care about: financial freedom plus intellectual freedom, without waiting for someone else's validation."
+faq:
+  - question: "What happens when crypto and AI collide?"
+    answer: "Crypto removed the gatekeepers from money. AI is removing the gatekeepers from skill. You don't need a bank's permission to transact, you don't need a boss's approval to create, and you don't need an institution's validation to succeed. That's what I mean by true sovereignty."
+  - question: "What changed in your own work?"
+    answer: "I needed a custom crypto asset tracker. The old path was days learning to code, $2,000+ for a developer, and weeks of waiting. I described it to Claude, learned the steps as I went, and had a working prototype in 4 hours for $20 in API credits. I understand the code and I can change it. My weekly content loop went from 12 hours to less than 2. The 10 hours I got back go to family, new projects, and thinking instead of grinding."
+  - question: "Does AI replace people?"
+    answer: "The line I actually believe is: people using AI will take the job of people who don't. Crypto already showed me the pattern. The technology didn't replace humans. Humans with the technology replaced humans without it. On that tracker, AI didn't replace my thinking. It amplified it."
 ---
 
 ## Introduction

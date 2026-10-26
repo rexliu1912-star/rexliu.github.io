@@ -13,10 +13,10 @@ import webmanifest from "astro-webmanifest";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeExternalLinks from "rehype-external-links";
 import rehypeUnwrapImages from "rehype-unwrap-images";
-import { remarkBilingual } from "./src/plugins/remark-bilingual";
 // Remark plugins
 import remarkDirective from "remark-directive"; /* Handle ::: directives as nodes */
 import { remarkAdmonitions } from "./src/plugins/remark-admonitions"; /* Add admonitions */
+import { remarkBilingual } from "./src/plugins/remark-bilingual";
 import { remarkGithubCard } from "./src/plugins/remark-github-card";
 import { remarkReadingTime } from "./src/plugins/remark-reading-time";
 import { expressiveCodeOptions, siteConfig } from "./src/site.config";
@@ -30,7 +30,10 @@ export default defineConfig({
 	integrations: [
 		expressiveCode(expressiveCodeOptions),
 		icon(),
-		sitemap(),
+		sitemap({
+			// Spelling alias is a meta-refresh page. Keep the typo slug as the indexed URL.
+			filter: (page) => !page.includes("/posts/sovereign-individual"),
+		}),
 		mdx(),
 		react(),
 		robotsTxt(),
@@ -82,7 +85,13 @@ export default defineConfig({
 			],
 			rehypeUnwrapImages,
 		],
-		remarkPlugins: [remarkBilingual, remarkReadingTime, remarkDirective, remarkGithubCard, remarkAdmonitions],
+		remarkPlugins: [
+			remarkBilingual,
+			remarkReadingTime,
+			remarkDirective,
+			remarkGithubCard,
+			remarkAdmonitions,
+		],
 		remarkRehype: {
 			footnoteLabelProperties: {
 				className: [""],
