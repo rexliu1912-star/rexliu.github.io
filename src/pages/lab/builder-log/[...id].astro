@@ -2,7 +2,6 @@
 import type { GetStaticPaths, InferGetStaticPropsType } from "astro";
 import { getCollection, render } from "astro:content";
 import PageLayout from "@/layouts/Base.astro";
-import TelegramCTA from "@/components/TelegramCTA.astro";
 import RelatedEssays from "@/components/RelatedEssays.astro";
 
 export const getStaticPaths = (async () => {
@@ -81,8 +80,6 @@ const meta = {
 
 			<RelatedEssays tags={["AI", "Product", "Tools"]} />
 
-			<TelegramCTA />
 		</article>
 	</div>
 </PageLayout>
-yout>
