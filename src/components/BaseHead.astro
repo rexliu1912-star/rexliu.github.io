@@ -6,7 +6,7 @@ import "@/styles/global.css";
 
 type Props = SiteMeta;
 
-const { articleDate, description, ogImage, title } = Astro.props;
+const { articleDate, description, faq, ogImage, title } = Astro.props;
 
 // 1. 品牌色彩配置
 const BRAND_PURPLE = "#8953d1";
@@ -25,6 +25,54 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 // 5. 社交媒体图片绝对路径处理
 const imagePath = ogImage ? ogImage : `/social-card-v2.png?v=${cacheBuster}`;
 const socialImageURL = new URL(imagePath, Astro.site).href;
+
+const person = {
+	"@type": "Person",
+	name: siteConfig.author,
+	url: siteConfig.url,
+	sameAs: siteConfig.sameAs,
+};
+
+const jsonLd = articleDate
+	? {
+			"@context": "https://schema.org",
+			"@type": "BlogPosting",
+			headline: title,
+			description,
+			image: socialImageURL,
+			datePublished: articleDate,
+			author: person,
+			publisher: person,
+			mainEntityOfPage: {
+				"@type": "WebPage",
+				"@id": canonicalURL,
+			},
+		}
+	: {
+			"@context": "https://schema.org",
+			"@type": "WebSite",
+			name: siteConfig.title,
+			description: siteConfig.description,
+			url: siteConfig.url,
+			sameAs: siteConfig.sameAs,
+			author: person,
+		};
+
+const faqLd =
+	faq && faq.length > 0
+		? {
+				"@context": "https://schema.org",
+				"@type": "FAQPage",
+				mainEntity: faq.map((item) => ({
+					"@type": "Question",
+					name: item.question,
+					acceptedAnswer: {
+						"@type": "Answer",
+						text: item.answer,
+					},
+				})),
+			}
+		: null;
 ---
 
 <meta charset="utf-8" />
@@ -112,38 +160,9 @@ const socialImageURL = new URL(imagePath, Astro.site).href;
 <meta content={Astro.generator} name="generator" />
 
 {/* JSON-LD Structured Data */}
-<script is:inline type="application/ld+json" set:html={JSON.stringify({
-	"@context": "https://schema.org",
-	"@type": articleDate ? "BlogPosting" : "WebSite",
-	...(articleDate ? {
-		// BlogPosting schema for blog posts
-		"headline": title,
-		"description": description,
-		"image": socialImageURL,
-		"datePublished": articleDate,
-		"author": {
-			"@type": "Person",
-			"name": siteConfig.author,
-			"url": siteConfig.url
-		},
-		"publisher": {
-			"@type": "Person",
-			"name": siteConfig.author,
-			"url": siteConfig.url
-		},
-		"mainEntityOfPage": {
-			"@type": "WebPage",
-			"@id": canonicalURL
-		}
-	} : {
-		// WebSite schema for homepage
-		"name": siteConfig.title,
-		"description": siteConfig.description,
-		"url": siteConfig.url,
-		"author": {
-			"@type": "Person",
-			"name": siteConfig.author,
-			"url": siteConfig.url
-		}
-	})
-})} />
+<script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+{
+	faqLd && (
+		<script is:inline type="application/ld+json" set:html={JSON.stringify(faqLd)} />
+	)
+}

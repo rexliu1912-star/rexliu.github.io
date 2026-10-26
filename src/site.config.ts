@@ -27,6 +27,9 @@ export const siteConfig: SiteConfig = {
 	title: "Rex Liu",
 	// 请确保这里的域名是你实际部署的地址，否则 OG 图片路径会生成错误
 	url: "https://rexliu.io/",
+	// Public profiles already linked on the site. X is in public/llms.txt;
+	// GitHub is the profile in the header. Do not add private URLs.
+	sameAs: ["https://x.com/rexliu", "https://github.com/rexliu1912-star"],
 };
 
 // 后续菜单和代码块配置保持不变...
@@ -39,7 +42,6 @@ export const menuLinks: { path: string; title: string }[] = [
 		path: "/posts/",
 		title: "Blog",
 	},
-
 ];
 
 export const expressiveCodeOptions: AstroExpressiveCodeOptions = {

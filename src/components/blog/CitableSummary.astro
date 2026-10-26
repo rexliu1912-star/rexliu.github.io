@@ -1,0 +1,46 @@
+---
+import type { FaqItem } from "@/types";
+
+interface Props {
+	summary: string;
+	faq?: FaqItem[] | undefined;
+}
+
+const { summary, faq = [] } = Astro.props;
+---
+
+<aside
+	class="citable-block not-prose mb-8 border-s-2 border-[#8953d1] py-1 ps-4 dark:border-[#a175e8]"
+	aria-labelledby="citable-summary-label"
+>
+	<p
+		id="citable-summary-label"
+		class="mb-2 font-serif text-xs text-[#8953d1] dark:text-[#a175e8]"
+	>
+		<span class="lang-en">Citable summary</span>
+		<span class="lang-zh">可引用摘要</span>
+	</p>
+	<p class="font-serif text-base leading-relaxed text-gray-700 dark:text-gray-300">{summary}</p>
+	{
+		faq.length > 0 && (
+			<div class="mt-4">
+				<p class="mb-2 font-serif text-xs text-[#8953d1] dark:text-[#a175e8]">
+					<span class="lang-en">FAQ</span>
+					<span class="lang-zh">问答</span>
+				</p>
+				<dl class="flex flex-col gap-3">
+					{faq.map((item) => (
+						<div>
+							<dt class="font-serif text-sm font-semibold text-black dark:text-white">
+								{item.question}
+							</dt>
+							<dd class="mt-1 font-serif text-sm leading-relaxed text-gray-600 dark:text-gray-400">
+								{item.answer}
+							</dd>
+						</div>
+					))}
+				</dl>
+			</div>
+		)
+	}
+</aside>
