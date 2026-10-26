@@ -72,21 +72,6 @@ const tag = defineCollection({
 	}),
 });
 
-// 4. Lab Digest 集合
-const digest = defineCollection({
-	loader: glob({ base: "./src/content/digest", pattern: "**/*.{md,mdx}" }),
-	schema: z.object({
-		title: z.string(),
-		title_zh: z.string().optional(),
-		date: z.coerce.date(),
-		source: z.string().url().optional(),
-		source_name: z.string().optional(),
-		tags: z.array(z.string()).default([]),
-		summary: z.string().optional(),
-		summary_zh: z.string().optional(),
-	}),
-});
-
 // 5. Lab Projects 集合
 const projects = defineCollection({
 	loader: glob({ base: "./src/content/projects", pattern: "**/*.{md,mdx}" }),
@@ -117,4 +102,4 @@ const builderLog = defineCollection({
 });
 
 // 9. 统一导出
-export const collections = { post, note, tag, digest, projects, "builder-log": builderLog };
+export const collections = { post, note, tag, projects, "builder-log": builderLog };

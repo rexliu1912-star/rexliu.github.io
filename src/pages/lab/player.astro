@@ -10,7 +10,6 @@ import dashboardData from "../../../public/data/dashboard.json";
 import booksData from "../../data/books.json";
 
 const posts = await getCollection("post");
-const digests = await getCollection("digest");
 const builderLogs = await getCollection("builder-log");
 const projects = await getCollection("projects");
 
@@ -31,7 +30,6 @@ for (const post of posts) {
 }
 
 const postCount = posts.length;
-const digestCount = digests.length;
 const builderLogCount = builderLogs.length;
 const projectCount = projects.length;
 const libraryCount = (mediaData as any[]).length;
@@ -43,8 +41,7 @@ const followers = Number((dashboardData as any).heroStats?.currentFollowers ?? 0
 // EXP 体系：高心力（需要人学习/思考/经历）> 低心力（AI 可辅助生成）
 // 高心力：文章(20)、书籍(15)、城市(20)、builder-log(12)
 // 中心力：书影音(5)
-// 低心力：digest(2) — AI 生成精读
-const totalExp = postCount * 20 + libraryCount * 5 + cityCount * 20 + builderLogCount * 12 + digestCount * 2;
+const totalExp = postCount * 20 + libraryCount * 5 + cityCount * 20 + builderLogCount * 12;
 const level = Math.min(99, Math.floor(Math.sqrt(totalExp / 10)));
 const currentLevelExp = level * level * 10;
 const nextLevelExp = (level + 1) * (level + 1) * 10;
@@ -71,7 +68,7 @@ const wisdomInput = postCount + libraryCount * 0.3;
 const renownInput = followers;
 const commandInput = agents * 8 + projectCount * 2;
 const craftInput = builderLogCount;
-const insightInput = libraryCount + digestCount * 0.2;
+const insightInput = libraryCount;
 
 const vitality = logScale(vitalityInput, 50);
 const wisdom = logScale(wisdomInput, 120);
@@ -89,12 +86,12 @@ const statFormulas = {
   renown: { labelZh: "声望", labelEn: "Renown", value: renown, formulaZh: `声望 = logScale(${followers} followers, 15000) → ${renown}`, formulaEn: `Renown = logScale(${followers} followers, 15000) → ${renown}` },
   command: { labelZh: "统御", labelEn: "Command", value: command, formulaZh: `统御 = logScale(${agents}门客×8 + ${projectCount}项目×2, 80) → ${command}`, formulaEn: `Command = logScale(${agents} agents×8 + ${projectCount} projects×2, 80) → ${command}` },
   craft: { labelZh: "武术", labelEn: "Martial", value: craft, formulaZh: `武术 = logScale(${builderLogCount}篇造物日志, 50) → ${craft}`, formulaEn: `Martial = logScale(${builderLogCount} builder logs, 50) → ${craft}` },
-  insight: { labelZh: "身法", labelEn: "Agility", value: insight, formulaZh: `身法 = logScale(${libraryCount}本 + ${digestCount}篇×0.2, 100) → ${insight}`, formulaEn: `Agility = logScale(${libraryCount} library + ${digestCount} digests×0.2, 100) → ${insight}` },
+  insight: { labelZh: "身法", labelEn: "Agility", value: insight, formulaZh: `身法 = logScale(${libraryCount}本, 100) → ${insight}`, formulaEn: `Agility = logScale(${libraryCount} library, 100) → ${insight}` },
 };
 
 const expFormula = {
-  zh: `EXP = 文章${postCount}×20 + 书影音${libraryCount}×5 + 城市${cityCount}×20 + 造物日志${builderLogCount}×12 + digest${digestCount}×2 = ${totalExp}`,
-  en: `EXP = posts ${postCount}×20 + library ${libraryCount}×5 + cities ${cityCount}×20 + builder logs ${builderLogCount}×12 + digests ${digestCount}×2 = ${totalExp}`,
+  zh: `EXP = 文章${postCount}×20 + 书影音${libraryCount}×5 + 城市${cityCount}×20 + 造物日志${builderLogCount}×12 = ${totalExp}`,
+  en: `EXP = posts ${postCount}×20 + library ${libraryCount}×5 + cities ${cityCount}×20 + builder logs ${builderLogCount}×12 = ${totalExp}`,
 };
 
 const nextLevelTarget = (level + 1) * (level + 1) * 10;
@@ -118,10 +115,6 @@ function calcMaxStreak(): number {
   for (const p of posts) {
     const d = new Date(p.data.publishDate);
     allDates.add(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`);
-  }
-  for (const d of digests) {
-    const dt = new Date(d.data.date);
-    allDates.add(`${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`);
   }
   for (const b of builderLogs) {
     const dt = new Date(b.data.date);
@@ -179,7 +172,6 @@ const achievements: AchievementItem[] = [
   ach({ id: "system-architect", icon: "🏗️", nameZh: "造化司命", nameEn: "System Architect", descZh: "维护 30+ 自动化 cron", descEn: "Maintain 30+ automation crons", unlocked: true, category: "command", unlockedDate: "2026-03" }),
   ach({ id: "bookworm", icon: "📚", nameZh: "博览群卷", nameEn: "Bookworm", descZh: "涉猎 50+ 书影音", descEn: "50+ books & media", unlocked: libraryCount >= 50, category: "knowledge", unlockedDate: "2026-03" }),
   ach({ id: "library-100", icon: "🏛️", nameZh: "万卷藏经", nameEn: "Grand Library", descZh: "100 本书影音", descEn: "100 books & media", unlocked: libraryCount >= 100, category: "knowledge", ...(libraryCount >= 100 ? { unlockedDate: "2026" } : { progress: libraryCount, max: 100 }) }),
-  ach({ id: "digest-master", icon: "📰", nameZh: "日课不辍", nameEn: "Digest Master", descZh: "50 篇精读 digest", descEn: "50 digest articles", unlocked: digestCount >= 50, category: "knowledge", ...(digestCount >= 50 ? { unlockedDate: "2026" } : { progress: digestCount, max: 50 }) }),
   ach({ id: "podcast-listener", icon: "🎧", nameZh: "兼听明鉴", nameEn: "Podcast Listener", descZh: "总结 20 期播客", descEn: "Summarize 20 podcasts", unlocked: false, category: "knowledge", progress: 0, max: 20 }),
   ach({ id: "morning-person", icon: "🌅", nameZh: "朝阳练炁", nameEn: "Early Bird", descZh: "连续 7 天 7AM 前有产出", descEn: "7 consecutive days with output before 7AM", unlocked: false, category: "health", progress: 0, max: 7 }),
   ach({ id: "walk-the-walk", icon: "🚶", nameZh: "步履为功", nameEn: "Walk the Walk", descZh: "运动记录 30 次", descEn: "30 exercise logs", unlocked: false, category: "health", progress: 0, max: 30 }),
@@ -230,11 +222,6 @@ for (const log of builderLogs) {
   const d = new Date(log.data.date); const { dateZh, dateEn } = fmtDate(d);
   const slug = log.id.replace(/\.(md|mdx)$/, "");
   allActivity.push({ dateRaw: d, dateZh, dateEn, icon: "🛠️", statZh: "武术", statEn: "Martial", exp: 12, descZh: log.data.title_zh ?? log.data.title, descEn: log.data.title, type: "builder-log", link: `/lab/builder-log/${slug}/` });
-}
-for (const digest of digests) {
-  const d = new Date(digest.data.date); const { dateZh, dateEn } = fmtDate(d);
-  const slug = digest.id.replace(/\.(md|mdx)$/, "");
-  allActivity.push({ dateRaw: d, dateZh, dateEn, icon: "📜", statZh: "身法", statEn: "Agility", exp: 2, descZh: digest.data.title_zh ?? digest.data.title, descEn: digest.data.title, type: "digest", link: `/lab/digest/${slug}/` });
 }
 // 书影音 — 用发行年份，日期只精确到年，显示为 YYYY年
 for (const item of (mediaData as any[])) {
@@ -318,7 +305,6 @@ const meta = {
     tagCounts={tagCounts}
     postCount={postCount}
     builderLogCount={builderLogCount}
-    digestCount={digestCount}
     libraryCount={libraryCount}
     cityCount={cityCount}
     projectCount={projectCount}

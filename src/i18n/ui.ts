@@ -32,11 +32,6 @@ export const ui = {
 	// Daily section
 	"daily.title": { en: "Daily", zh: "每日更新" },
 
-	// Digest
-	"digest.title": { en: "Digest", zh: "精选阅读" },
-	"digest.view_all": { en: "View all digests →", zh: "查看全部精选 →" },
-
-
 	// Builder's Log
 	"builder.title": { en: "Builder's Log", zh: "Builder's Log" },
 	"builder.view_all": { en: "View all logs →", zh: "查看全部日志 →" },

@@ -118,7 +118,6 @@ export interface PlayerStatsProps {
   tagCounts: Record<string, number>;
   postCount: number;
   builderLogCount: number;
-  digestCount: number;
   libraryCount: number;
   cityCount: number;
   projectCount: number;
