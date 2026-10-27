@@ -5,7 +5,7 @@ publishDate: "2025-12-20"
 tags: ["Life", "Crypto"]
 coverImage:
   src: "/images/posts/soreverign-individual-cover.png"
-  alt: "Warm-paper editorial: carving a private doorway of light into a corridor of identical institutional doors"
+  alt: "Warm-paper editorial: a carved private study doorway opens off a corridor of identical institutional doors"
 originalUrl: "https://x.com/rexliu/status/2002191685582025133"
 citableSummary: "A reader called this being a sovereign individual: refusing to outsource my decisions to institutions or narratives that don't serve me. I'm not monetizing this site, and I'm not chasing growth metrics. I'm carving out a quiet corner of the internet that's actually mine, and proving to myself that I can create the life I want instead of accepting the one handed to me."
 faq:
