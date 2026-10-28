@@ -19,9 +19,8 @@ const latestBuilderLog = sortByDate([...allBuilderLogs])[0];
 // Products: exclude Library (goes in Curated)
 const excludeFromProducts = ["library", "content-pipeline"];
 const otherProjects = allProjects
-	.filter(p => !excludeFromProducts.includes(p.id))
+	.filter((p) => !excludeFromProducts.includes(p.id))
 	.sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
-
 
 const statusColors: Record<string, string> = {
 	running: "text-green-500",
@@ -38,7 +37,6 @@ const statusLabels: Record<string, { en: string; zh: string }> = {
 	building: { en: "building", zh: "开发中" },
 	planning: { en: "planning", zh: "规划中" },
 };
-
 
 const meta = {
 	title: "Lab",

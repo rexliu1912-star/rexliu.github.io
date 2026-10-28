@@ -15,5 +15,8 @@ test("public portfolio pipeline does not fetch or publish private trade history"
 });
 
 test("portfolio page has no clearance replay surface or client chart hooks", () => {
-	assert.doesNotMatch(page, /clearance-section|clearance-chart|Trade Replays|Last Clearance|data\.clearances/);
+	assert.doesNotMatch(
+		page,
+		/clearance-section|clearance-chart|Trade Replays|Last Clearance|data\.clearances/,
+	);
 });

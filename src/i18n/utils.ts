@@ -2,7 +2,7 @@
  * i18n utilities — language detection, switching, and translation.
  */
 
-import { ui, type Lang, type UIKey } from "./ui";
+import { type Lang, type UIKey, ui } from "./ui";
 
 export const DEFAULT_LANG: Lang = "en";
 export const LANG_KEY = "rex-lang";

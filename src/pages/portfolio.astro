@@ -76,15 +76,26 @@ interface PortfolioRegimeHistoryPoint {
 }
 interface PortfolioData {
 	regime: { current: PortfolioRegimeCurrent; history_60d: PortfolioRegimeHistoryPoint[] };
-	allocation: { current: {
-		categories: any[];
-		risk?: { target_vol: number; current_vol: number; sharpe_target: number; sharpe_current: number; risk_free_rate: number; temperature: number; temperature_label_en: string; temperature_label_zh: string };
-		weighted_return?: { target: number; current: number };
-		projected_annual_yield?: number;
-		health?: number;
-		portfolio_beta?: number;
-		equity_beta?: number;
-	} };
+	allocation: {
+		current: {
+			categories: any[];
+			risk?: {
+				target_vol: number;
+				current_vol: number;
+				sharpe_target: number;
+				sharpe_current: number;
+				risk_free_rate: number;
+				temperature: number;
+				temperature_label_en: string;
+				temperature_label_zh: string;
+			};
+			weighted_return?: { target: number; current: number };
+			projected_annual_yield?: number;
+			health?: number;
+			portfolio_beta?: number;
+			equity_beta?: number;
+		};
+	};
 	positions: PortfolioPosition[];
 	crypto: {
 		updated_at: string;
@@ -118,7 +129,12 @@ interface PortfolioData {
 		weekly_scan_hits: number;
 	};
 	generated_at: string;
-	analytics_history?: { date: string; health: number | null; portfolio_beta: number | null; equity_beta: number | null }[];
+	analytics_history?: {
+		date: string;
+		health: number | null;
+		portfolio_beta: number | null;
+		equity_beta: number | null;
+	}[];
 }
 
 const portfolioData = {
@@ -143,7 +159,6 @@ const fgi = cryptoMonitor?.macro?.fear_greed;
 
 // Derived: BTC ETF daily flow
 
-
 // Derived: Crypto timeseries for master chart
 const cryptoTS = (portfolioData as any)?.crypto_timeseries;
 const capitalMobilityRisk = (portfolioData as any)?.capital_mobility_risk;
@@ -156,8 +171,10 @@ const activePositionCount = positions.length + cryptoPositions.length;
 
 // Derived: Gold Tracker
 const goldSignal = goldTracker?.signal?.status ?? goldTracker?.signal?.signal ?? "yellow";
-const goldSignalLabel = goldTracker?.signal?.label_en ?? goldTracker?.signal?.signal_label_en ?? "Watch";
-const goldSignalLabelZh = goldTracker?.signal?.label_zh ?? goldTracker?.signal?.signal_label_zh ?? "观察";
+const goldSignalLabel =
+	goldTracker?.signal?.label_en ?? goldTracker?.signal?.signal_label_en ?? "Watch";
+const goldSignalLabelZh =
+	goldTracker?.signal?.label_zh ?? goldTracker?.signal?.signal_label_zh ?? "观察";
 const goldXau = goldTracker?.price?.xau_usd;
 const goldDay = goldTracker?.price?.day_change_pct;
 const goldDrawdown = goldTracker?.price?.drawdown_from_peak_pct;
@@ -199,7 +216,6 @@ const goldInstrumentZh =
 			? `境内金折价 ${Math.abs(goldPremium).toFixed(2)}%`
 			: `境内金溢价 ${goldPremium.toFixed(2)}%`;
 
-
 const regimeColors: Record<string, string> = {
 	进攻期: "#10b981",
 	中性期: "#f59e0b",
@@ -231,12 +247,12 @@ const SIGNAL_LABELS: Record<string, { en: string; zh: string }> = {
 
 // Policy status bilingual mapping (value in JSON is Chinese only)
 const POLICY_STATUS_MAP: Record<string, { en: string; zh: string }> = {
-	"扩张": { en: "Expansion", zh: "扩张" },
-	"紧缩": { en: "Contraction", zh: "紧缩" },
-	"中性": { en: "Neutral", zh: "中性" },
-	"胶着": { en: "Stalemate", zh: "胶着" },
-	"宽松": { en: "Easing", zh: "宽松" },
-	"观望": { en: "Wait-and-see", zh: "观望" },
+	扩张: { en: "Expansion", zh: "扩张" },
+	紧缩: { en: "Contraction", zh: "紧缩" },
+	中性: { en: "Neutral", zh: "中性" },
+	胶着: { en: "Stalemate", zh: "胶着" },
+	宽松: { en: "Easing", zh: "宽松" },
+	观望: { en: "Wait-and-see", zh: "观望" },
 };
 function policyLabel(val: string): { en: string; zh: string } {
 	return POLICY_STATUS_MAP[val] || { en: val, zh: val };
@@ -268,7 +284,6 @@ for (const p of positions) {
 	const status = "held";
 	topoNodesByLayer[layerKey].push({ symbol: p.symbol, status });
 }
-
 
 const dataJson = JSON.stringify({
 	regime,
