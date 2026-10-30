@@ -1,6 +1,6 @@
 ---
 interface Props {
-  tags: string[];
+	tags: string[];
 }
 
 const { tags } = Astro.props;
@@ -8,13 +8,14 @@ const { tags } = Astro.props;
 type AnimationType = "crypto" | "ai" | "investment" | "travel" | "philosophy" | "none";
 
 function detectType(tags: string[]): AnimationType {
-  const t = tags.map((s) => s.toLowerCase()).join(" ");
-  if (/crypto|bitcoin|btc|snek|cardano|ada|defi|web3|nft/.test(t)) return "crypto";
-  if (/ai|artificial|machine.learning|vibe.coding|vibe-coding|agent|llm|gpt|claude|coding/.test(t)) return "ai";
-  if (/invest|gold|etf|stock|wealth|finance|portfolio|market|trading/.test(t)) return "investment";
-  if (/philosophy|growth|life|books|mindset|freedom/.test(t)) return "philosophy";
-  if (/travel|nomad|lifestyle|family|city/.test(t)) return "travel";
-  return "none";
+	const t = tags.map((s) => s.toLowerCase()).join(" ");
+	if (/crypto|bitcoin|btc|snek|cardano|ada|defi|web3|nft/.test(t)) return "crypto";
+	if (/ai|artificial|machine.learning|vibe.coding|vibe-coding|agent|llm|gpt|claude|coding/.test(t))
+		return "ai";
+	if (/invest|gold|etf|stock|wealth|finance|portfolio|market|trading/.test(t)) return "investment";
+	if (/philosophy|growth|life|books|mindset|freedom/.test(t)) return "philosophy";
+	if (/travel|nomad|lifestyle|family|city/.test(t)) return "travel";
+	return "none";
 }
 
 const type = detectType(tags);
@@ -23,12 +24,12 @@ const PURPLE_LIGHT = "#a175e8";
 
 // Pre-compute the sine wave path on server side
 function buildSnakePath(): string {
-  let d = "M 10 30";
-  for (let x = 10; x <= 570; x += 4) {
-    const y = 30 + Math.sin((x / 570) * Math.PI * 3) * 13;
-    d += ` L ${x} ${y.toFixed(1)}`;
-  }
-  return d;
+	let d = "M 10 30";
+	for (let x = 10; x <= 570; x += 4) {
+		const y = 30 + Math.sin((x / 570) * Math.PI * 3) * 13;
+		d += ` L ${x} ${y.toFixed(1)}`;
+	}
+	return d;
 }
 
 const snakePath = type === "crypto" ? buildSnakePath() : "";

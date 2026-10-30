@@ -39,7 +39,7 @@ function getColumnCount(width: number) {
 
 function getBlockFont(type: BlockType) {
 	const config = TYPE_SCALE[type];
-	return `${config.weight ? `${config.weight} ` : ""}${config.size}px Georgia, Cambria, \"Times New Roman\", Times, serif`;
+	return `${config.weight ? `${config.weight} ` : ""}${config.size}px Georgia, Cambria, "Times New Roman", Times, serif`;
 }
 
 function isBlockElement(node: Element): node is HTMLElement {
@@ -51,7 +51,9 @@ function extractNodeText(node: HTMLElement) {
 }
 
 function extractBlocks(root: HTMLElement): SourceBlock[] {
-	const nodes = Array.from(root.querySelectorAll("p, h2, h3, blockquote, li")).filter(isBlockElement);
+	const nodes = Array.from(root.querySelectorAll("p, h2, h3, blockquote, li")).filter(
+		isBlockElement,
+	);
 	const blocks: SourceBlock[] = [];
 	let index = 0;
 	let nextParagraphDropCap = true;
@@ -250,13 +252,17 @@ export default function MagazineView({ sourceId }: Props) {
 	useRevealAnimation(sections.length);
 
 	// Notify reading progress bar that layout changed
+	// biome-ignore lint/correctness/useExhaustiveDependencies: sections triggers resize after magazine reflow; value unused in body
 	useEffect(() => {
 		window.dispatchEvent(new Event("resize"));
 	}, [sections]);
 
 	return (
 		<>
-			<div id="magazine-view-root" className="magazine-view-root text-[rgba(17,24,39,0.94)] dark:text-[rgba(243,244,246,0.92)]">
+			<div
+				id="magazine-view-root"
+				className="magazine-view-root text-[rgba(17,24,39,0.94)] dark:text-[rgba(243,244,246,0.92)]"
+			>
 				{sections.map((section) => {
 					if (section.kind === "full-width") {
 						const block = section.block;
@@ -291,12 +297,16 @@ export default function MagazineView({ sourceId }: Props) {
 						>
 							{section.columns.map((column, columnIndex) => (
 								<div
+									// biome-ignore lint/suspicious/noArrayIndexKey: column order is layout-stable positional slots
 									key={`${section.id}-column-${columnIndex}`}
 									className="min-w-0"
 									style={{
 										paddingLeft: columnIndex === 0 ? 0 : MAGAZINE_GAP / 2,
 										paddingRight: columnIndex === columns - 1 ? 0 : MAGAZINE_GAP / 2,
-										borderLeft: columnIndex === 0 || columns === 1 ? "none" : "1px solid rgba(137, 83, 209, 0.24)",
+										borderLeft:
+											columnIndex === 0 || columns === 1
+												? "none"
+												: "1px solid rgba(137, 83, 209, 0.24)",
 									}}
 								>
 									{column.map((block) => {
@@ -304,12 +314,19 @@ export default function MagazineView({ sourceId }: Props) {
 										const commonClassName = [
 											"magazine-reveal font-serif",
 											block.type === "paragraph" ? "text-[20px] leading-[1.75]" : "",
-											block.type === "heading-3" ? "text-[24px] leading-[1.4] font-bold text-black dark:text-white" : "",
+											block.type === "heading-3"
+												? "text-[24px] leading-[1.4] font-bold text-black dark:text-white"
+												: "",
 											block.type === "list-item" ? "text-[20px] leading-[1.75]" : "",
-										].filter(Boolean).join(" ");
+										]
+											.filter(Boolean)
+											.join(" ");
 
 										return (
-											<div key={block.id} style={{ marginBottom: TYPE_SCALE[block.type].extraSpacing }}>
+											<div
+												key={block.id}
+												style={{ marginBottom: TYPE_SCALE[block.type].extraSpacing }}
+											>
 												{block.type === "heading-3" ? (
 													<h3 data-magazine-reveal className={commonClassName}>
 														{block.text}

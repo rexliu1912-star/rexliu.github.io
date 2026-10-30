@@ -13,81 +13,83 @@
  * Staggered character/word reveal effect
  */
 export function initTextReveal() {
-	const heroTitle = document.querySelector('.hero-reveal-text');
-	const heroSubtitle = document.querySelector('.hero-reveal-subtitle');
-	
+	const heroTitle = document.querySelector(".hero-reveal-text");
+	const heroSubtitle = document.querySelector(".hero-reveal-subtitle");
+
 	if (heroTitle) {
 		// Check if title has bilingual lang-en/lang-zh spans — if so, animate each span's text separately
-		const langSpans = heroTitle.querySelectorAll('.lang-en, .lang-zh');
+		const langSpans = heroTitle.querySelectorAll(".lang-en, .lang-zh");
 		if (langSpans.length > 0) {
 			let charIndex = 0;
 			langSpans.forEach((span) => {
-				const text = span.textContent || '';
+				const text = span.textContent || "";
 				span.innerHTML = text
-					.split('')
+					.split("")
 					.map((char) =>
-						char === ' '
-							? ' '
-							: `<span class="char-reveal" style="--char-index: ${charIndex++}">${char}</span>`
+						char === " "
+							? " "
+							: `<span class="char-reveal" style="--char-index: ${charIndex++}">${char}</span>`,
 					)
-					.join('');
+					.join("");
 			});
 		} else {
 			// Original behavior for non-bilingual titles
-			const text = heroTitle.textContent || '';
+			const text = heroTitle.textContent || "";
 			heroTitle.innerHTML = text
-				.split('')
+				.split("")
 				.map((char, i) =>
-					char === ' '
-						? ' '
-						: `<span class="char-reveal" style="--char-index: ${i}">${char}</span>`
+					char === " "
+						? " "
+						: `<span class="char-reveal" style="--char-index: ${i}">${char}</span>`,
 				)
-				.join('');
+				.join("");
 		}
 
 		// Trigger animation after a short delay
 		setTimeout(() => {
-			heroTitle.classList.add('revealed');
+			heroTitle.classList.add("revealed");
 		}, 100);
 	}
-	
+
 	if (heroSubtitle) {
 		// Split by words for subtitle
-		const text = heroSubtitle.innerHTML || '';
+		const text = heroSubtitle.innerHTML || "";
 		// Handle HTML tags properly
-		const wrapper = document.createElement('div');
+		const wrapper = document.createElement("div");
 		wrapper.innerHTML = text;
-		
+
 		const processNode = (node: Node, index: { value: number }): string => {
 			if (node.nodeType === Node.TEXT_NODE) {
-				return node.textContent
-					?.split(/(\s+)/)
-					.map((part) => {
-						if (part.trim() === '') return part;
-						const delay = index.value++ * 0.03;
-						return `<span class="word-reveal" style="--word-index: ${delay.toFixed(3)}">${part}</span>`;
-					})
-					.join('') || '';
+				return (
+					node.textContent
+						?.split(/(\s+)/)
+						.map((part) => {
+							if (part.trim() === "") return part;
+							const delay = index.value++ * 0.03;
+							return `<span class="word-reveal" style="--word-index: ${delay.toFixed(3)}">${part}</span>`;
+						})
+						.join("") || ""
+				);
 			}
 			if (node.nodeType === Node.ELEMENT_NODE) {
 				const el = node as HTMLElement;
 				const children = Array.from(el.childNodes)
 					.map((child) => processNode(child, index))
-					.join('');
+					.join("");
 				return `<${el.tagName.toLowerCase()}${Array.from(el.attributes)
 					.map((a) => ` ${a.name}="${a.value}"`)
-					.join('')}>${children}</${el.tagName.toLowerCase()}>`;
+					.join("")}>${children}</${el.tagName.toLowerCase()}>`;
 			}
-			return '';
+			return "";
 		};
-		
+
 		const index = { value: 0 };
 		heroSubtitle.innerHTML = Array.from(wrapper.childNodes)
 			.map((node) => processNode(node, index))
-			.join('');
-		
+			.join("");
+
 		setTimeout(() => {
-			heroSubtitle.classList.add('revealed');
+			heroSubtitle.classList.add("revealed");
 		}, 400);
 	}
 }
@@ -97,19 +99,19 @@ export function initTextReveal() {
  * Lift and shadow on hover with smooth transition
  */
 export function initCardHover() {
-	const cards = document.querySelectorAll('.post-card-hover');
-	
+	const cards = document.querySelectorAll(".post-card-hover");
+
 	cards.forEach((card) => {
 		const cardEl = card as HTMLElement;
-		
-		cardEl.addEventListener('mouseenter', () => {
-			cardEl.style.transform = 'translateY(-4px)';
-			cardEl.style.boxShadow = '0 12px 40px -12px rgba(137, 83, 209, 0.25)';
+
+		cardEl.addEventListener("mouseenter", () => {
+			cardEl.style.transform = "translateY(-4px)";
+			cardEl.style.boxShadow = "0 12px 40px -12px rgba(137, 83, 209, 0.25)";
 		});
-		
-		cardEl.addEventListener('mouseleave', () => {
-			cardEl.style.transform = 'translateY(0)';
-			cardEl.style.boxShadow = '';
+
+		cardEl.addEventListener("mouseleave", () => {
+			cardEl.style.transform = "translateY(0)";
+			cardEl.style.boxShadow = "";
 		});
 	});
 }
@@ -134,13 +136,13 @@ export function initScrollAnimations() {
 			entries.forEach((entry) => {
 				if (entry.isIntersecting) {
 					const el = entry.target as HTMLElement;
-					const delay = el.style.getPropertyValue('--delay') || '0ms';
-					
+					const delay = el.style.getPropertyValue("--delay") || "0ms";
+
 					// Apply delay if specified
 					setTimeout(() => {
 						el.classList.add("visible");
-					}, parseInt(delay));
-					
+					}, Number.parseInt(delay));
+
 					observer.unobserve(el);
 				}
 			});
@@ -163,14 +165,14 @@ export function initScrollAnimations() {
  */
 export function initLinkUnderline() {
 	// This is handled via CSS mostly, but we can add dynamic elements here if needed
-	const animatedLinks = document.querySelectorAll('.animated-link');
-	
+	const animatedLinks = document.querySelectorAll(".animated-link");
+
 	animatedLinks.forEach((link) => {
 		const linkEl = link as HTMLElement;
-		
+
 		// Ensure the link has proper positioning for pseudo-element
-		if (getComputedStyle(linkEl).position === 'static') {
-			linkEl.style.position = 'relative';
+		if (getComputedStyle(linkEl).position === "static") {
+			linkEl.style.position = "relative";
 		}
 	});
 }
@@ -181,22 +183,22 @@ export function initLinkUnderline() {
  */
 export function initThemeTransitions() {
 	const html = document.documentElement;
-	
+
 	// Listen for theme changes
 	const observer = new MutationObserver((mutations) => {
 		mutations.forEach((mutation) => {
-			if (mutation.attributeName === 'data-theme') {
+			if (mutation.attributeName === "data-theme") {
 				// Add transition class during theme change
-				html.classList.add('theme-transitioning');
-				
+				html.classList.add("theme-transitioning");
+
 				// Remove after transition completes
 				setTimeout(() => {
-					html.classList.remove('theme-transitioning');
+					html.classList.remove("theme-transitioning");
 				}, 500);
 			}
 		});
 	});
-	
+
 	observer.observe(html, { attributes: true });
 }
 

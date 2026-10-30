@@ -10,9 +10,7 @@ export function remarkBilingual() {
 		const children = tree.children;
 
 		const hasMarkers = children.some(
-			(node) =>
-				node.type === "html" &&
-				/^<!--\s*(en|zh)\s*-->$/.test(node.value.trim()),
+			(node) => node.type === "html" && /^<!--\s*(en|zh)\s*-->$/.test(node.value.trim()),
 		);
 
 		if (!hasMarkers) return;
@@ -26,7 +24,7 @@ export function remarkBilingual() {
 				newChildren.push(
 					{ type: "html", value: `<div class="lang-${currentLang}">` },
 					...currentGroup,
-					{ type: "html", value: `</div>` },
+					{ type: "html", value: "</div>" },
 				);
 			} else {
 				newChildren.push(...currentGroup);
@@ -35,10 +33,7 @@ export function remarkBilingual() {
 		};
 
 		for (const node of children) {
-			if (
-				node.type === "html" &&
-				/^<!--\s*(en|zh)\s*-->$/.test(node.value.trim())
-			) {
+			if (node.type === "html" && /^<!--\s*(en|zh)\s*-->$/.test(node.value.trim())) {
 				flush();
 				const match = node.value.trim().match(/^<!--\s*(en|zh)\s*-->$/);
 				currentLang = match ? match[1]! : null;

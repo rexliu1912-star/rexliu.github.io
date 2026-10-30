@@ -1,23 +1,22 @@
-import { readFile, writeFile } from "node:fs/promises";
-import { glob } from "node:fs/promises";
-import { fileURLToPath } from "node:url";
+import { glob, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 const distDir = new URL("../dist/", import.meta.url);
 const distPath = fileURLToPath(distDir);
 
 for await (const rel of glob("**/*.html", { cwd: distPath })) {
-  const file = new URL(rel, distDir);
-  let html = await readFile(file, "utf8");
+	const file = new URL(rel, distDir);
+	let html = await readFile(file, "utf8");
 
-  // Default search index keeps English copy to avoid bilingual duplicates.
-  html = html.replace(/class="lang-zh"/g, 'class="lang-zh" data-pagefind-ignore');
+	// Default search index keeps English copy to avoid bilingual duplicates.
+	html = html.replace(/class="lang-zh"/g, 'class="lang-zh" data-pagefind-ignore');
 
-  // Keep UI chrome / icon-only controls out of the index.
-  html = html.replace(/id="main-header"/g, 'id="main-header" data-pagefind-ignore');
-  html = html.replace(/id="minimal-player"/g, 'id="minimal-player" data-pagefind-ignore');
+	// Keep UI chrome / icon-only controls out of the index.
+	html = html.replace(/id="main-header"/g, 'id="main-header" data-pagefind-ignore');
+	html = html.replace(/id="minimal-player"/g, 'id="minimal-player" data-pagefind-ignore');
 
-  await writeFile(file, html);
+	await writeFile(file, html);
 }
 
 console.log("prepare-pagefind: html patched for clean indexing");
