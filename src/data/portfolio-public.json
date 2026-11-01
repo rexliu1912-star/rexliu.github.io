@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-31T23:15:14.124Z",
+  "generated_at": "2026-11-01T07:16:34.723Z",
   "regime": {
     "current": {
       "label": "防御期",
@@ -2325,8 +2325,8 @@
           "id": "stablecoin",
           "label_en": "Stablecoin Yield",
           "label_zh": "稳定币生息",
-          "target_pct": 36.4,
-          "current_pct": 38.6,
+          "target_pct": 36.5,
+          "current_pct": 38.7,
           "drift_pp": 2.2,
           "color": "#10b981",
           "sub_tags_en": [
@@ -2343,23 +2343,23 @@
           "note_zh": "底座层——带息、低 beta、抗衰退",
           "expected_return_pct": 5,
           "annual_volatility_pct": 1,
-          "model_target_pct": 36.4,
+          "model_target_pct": 36.5,
           "raw_model_target_pct": 36.6,
           "signal_score": 88,
           "model_action": "trim",
           "model_rationale_en": "APR 5.0% and regime defensive keep liquidity floor high.",
           "model_rationale_zh": "稳定币 APR 5.0%，当前 defensive 环境下维持流动性底座。",
-          "model_current_pct": 38.6,
+          "model_current_pct": 38.7,
           "model_drift_pp": 2.2,
-          "gap_amount": -237747
+          "gap_amount": -236201
         },
         {
           "id": "funds",
           "label_en": "Funds",
           "label_zh": "基金与现金",
-          "target_pct": 34,
-          "current_pct": 35.3,
-          "drift_pp": 1.3,
+          "target_pct": 34.1,
+          "current_pct": 30.4,
+          "drift_pp": -3.7,
           "color": "#3b82f6",
           "sub_tags_en": [
             "Cash & Deposits",
@@ -2375,15 +2375,15 @@
           "note_zh": "现金缓冲 + 保守理财 + 专项资金（买房/教育/应收）",
           "expected_return_pct": 3.5,
           "annual_volatility_pct": 3,
-          "model_target_pct": 34,
+          "model_target_pct": 34.1,
           "raw_model_target_pct": 34.1,
           "signal_score": 79.7,
-          "model_action": "hold",
+          "model_action": "add",
           "model_rationale_en": "SOFR 3.94% supports conservative cash/fund carry.",
           "model_rationale_zh": "SOFR 3.94%，保守现金/基金仍有持有收益。",
-          "model_current_pct": 35.3,
-          "model_drift_pp": 1.3,
-          "gap_amount": -140487
+          "model_current_pct": 30.4,
+          "model_drift_pp": -3.7,
+          "gap_amount": 397247
         },
         {
           "id": "gold",
@@ -2413,15 +2413,15 @@
           "model_rationale_zh": "黄金信号 yellow；公允价溢价 extreme，限制目标仓位上行。",
           "model_current_pct": 4,
           "model_drift_pp": -0.4,
-          "gap_amount": 43227
+          "gap_amount": 42946
         },
         {
           "id": "stocks",
           "label_en": "Stocks",
           "label_zh": "股票",
-          "target_pct": 19.2,
-          "current_pct": 14.7,
-          "drift_pp": -4.5,
+          "target_pct": 19.1,
+          "current_pct": 17.7,
+          "drift_pp": -1.4,
           "color": "#8953d1",
           "sub_tags_en": [
             "AI Power",
@@ -2437,27 +2437,27 @@
           "note_zh": "长期 + 波段组合——AI 电力核心 + 机会主义叠加",
           "expected_return_pct": 7.8,
           "annual_volatility_pct": 16,
-          "model_target_pct": 19.2,
+          "model_target_pct": 19.1,
           "raw_model_target_pct": 19,
           "signal_score": 56.8,
-          "model_action": "add",
+          "model_action": "hold",
           "model_rationale_en": "Portfolio health 3.4/5.0, equity beta 1.00, regime score 36.0.",
           "model_rationale_zh": "组合健康度 3.4/5.0，股票 beta 1.00，宏观分数 36.0。",
-          "model_current_pct": 14.7,
-          "model_drift_pp": -4.5,
-          "gap_amount": 486302,
+          "model_current_pct": 17.7,
+          "model_drift_pp": -1.4,
+          "gap_amount": 150310,
           "sub": [
             {
               "id": "cn",
               "label_en": "A-share",
               "label_zh": "A 股",
-              "pct": 10.8
+              "pct": 16.2
             },
             {
               "id": "us",
               "label_en": "US",
               "label_zh": "美股",
-              "pct": 2.6
+              "pct": 1.1
             },
             {
               "id": "mixed",
@@ -2477,9 +2477,9 @@
           "id": "crypto",
           "label_en": "Crypto",
           "label_zh": "加密敞口",
-          "target_pct": 6,
-          "current_pct": 7.5,
-          "drift_pp": 1.5,
+          "target_pct": 5.9,
+          "current_pct": 9.2,
+          "drift_pp": 3.3,
           "color": "#f59e0b",
           "sub_tags_en": [
             "BTC",
@@ -2493,21 +2493,21 @@
           "note_zh": "不对称下注——长久期、低相关、高波动核心",
           "expected_return_pct": 13.4,
           "annual_volatility_pct": 32.5,
-          "model_target_pct": 6,
+          "model_target_pct": 5.9,
           "raw_model_target_pct": 5.8,
           "signal_score": 43.2,
-          "model_action": "hold",
+          "model_action": "trim",
           "model_rationale_en": "Crypto composite 38.2, fear/greed 31; capped at 15%.",
           "model_rationale_zh": "Crypto composite 38.2，恐惧贪婪 31；上限 15%。",
-          "model_current_pct": 7.5,
-          "model_drift_pp": 1.5,
-          "gap_amount": -162100
+          "model_current_pct": 9.2,
+          "model_drift_pp": 3.3,
+          "gap_amount": -354301
         }
       ],
       "model": {
         "schema": "portfolio-allocation-model/v1",
         "version": "0.1.0",
-        "generated_at": "2026-10-31T23:15:12.485516+00:00",
+        "generated_at": "2026-11-01T07:16:33.065680+00:00",
         "regime": {
           "name": "defensive",
           "score": 36
@@ -2516,16 +2516,16 @@
       "risk_free_rate": 3.94,
       "weighted_return": {
         "target": 5.5,
-        "current": 5.5
+        "current": 5.8
       },
-      "projected_annual_yield": 589732,
+      "projected_annual_yield": 617601,
       "risk": {
-        "target_vol": 7.6,
-        "current_vol": 7.3,
+        "target_vol": 7.5,
+        "current_vol": 8.2,
         "sharpe_target": 0.2,
-        "sharpe_current": 0.21,
+        "sharpe_current": 0.22,
         "risk_free_rate": 3.94,
-        "temperature": 12,
+        "temperature": 14,
         "temperature_label_en": "Defensive",
         "temperature_label_zh": "防御型"
       },
@@ -2702,6 +2702,334 @@
   ],
   "positions": [
     {
+      "symbol": "AVGO",
+      "market": "us",
+      "flag": "🇺🇸",
+      "sector_tags_en": [
+        "Semiconductors",
+        "AI Infrastructure",
+        "Networking"
+      ],
+      "sector_tags_zh": [
+        "半导体",
+        "AI基础设施",
+        "网络芯片"
+      ],
+      "driver_factors_en": [
+        "AI Semiconductor Revenue",
+        "Custom ASIC Design Wins",
+        "VMware Cash Flow",
+        "FCF Margin"
+      ],
+      "driver_factors_zh": [
+        "AI半导体收入",
+        "定制ASIC项目",
+        "VMware现金流",
+        "自由现金流率"
+      ],
+      "thesis_en": "High-quality AI infrastructure compounder spanning custom ASICs, AI networking, and VMware cash flow. The position is a small pullback probe; any add requires fresh earnings validation.",
+      "thesis_zh": "覆盖定制 ASIC、AI 网络与 VMware 现金流的高质量 AI 基建候选。本次 仓位仅为回调观察仓，任何加仓都必须先用最新财报重新验证。",
+      "stage": 7,
+      "status_en": "Active",
+      "status_zh": "持有中",
+      "conviction": "high",
+      "horizon": "short",
+      "entry_year": 2026,
+      "layer": "L5",
+      "layer_label_en": "AI Compute",
+      "layer_label_zh": "AI算力",
+      "stop": null,
+      "target": null,
+      "next_event": null
+    },
+    {
+      "symbol": "BE",
+      "market": "us",
+      "flag": "🇺🇸",
+      "sector_tags_en": [
+        "Onsite Power",
+        "AI Data Centers",
+        "Fuel Cells",
+        "High Beta"
+      ],
+      "sector_tags_zh": [
+        "现场电源",
+        "AI数据中心",
+        "燃料电池",
+        "高Beta"
+      ],
+      "driver_factors_en": [
+        "Project Deployment",
+        "Customer Concentration",
+        "Free Cash Flow",
+        "Scandium Supply"
+      ],
+      "driver_factors_zh": [
+        "项目交付",
+        "客户集中度",
+        "自由现金流",
+        "钪供应链"
+      ],
+      "thesis_en": "AI data-center onsite-power leader with fast deployment and major Oracle/AEP/Brookfield opportunities, but the current entry failed the existing 5/10 trade gate. Backlog quality, customer concentration, project timing and scandium supply remain the core risks.",
+      "thesis_zh": "AI数据中心现场电源龙头，部署速度快，并拥有Oracle、AEP与Brookfield等大项目机会；但本次入场未通过现有5/10交易门槛。订单质量、客户集中、项目延期与钪供应链仍是核心风险。",
+      "stage": 7,
+      "status_en": "Active · Exception",
+      "status_zh": "持有中 · 纪律例外",
+      "conviction": "low",
+      "horizon": "medium",
+      "entry_year": 2026,
+      "layer": "satellite",
+      "layer_label_en": "High-Beta Power",
+      "layer_label_zh": "高Beta电力",
+      "stop": null,
+      "target": null,
+      "next_event": null
+    },
+    {
+      "symbol": "CSCO",
+      "market": "us",
+      "flag": "🇺🇸",
+      "sector_tags_en": [],
+      "sector_tags_zh": [],
+      "driver_factors_en": [],
+      "driver_factors_zh": [],
+      "thesis_en": "",
+      "thesis_zh": "",
+      "stage": 7,
+      "status_en": "Active",
+      "status_zh": "持有中",
+      "conviction": "medium",
+      "horizon": "long",
+      "entry_year": null,
+      "layer": null,
+      "layer_label_en": null,
+      "layer_label_zh": null,
+      "stop": null,
+      "target": null,
+      "next_event": null
+    },
+    {
+      "symbol": "GOOG",
+      "market": "us",
+      "flag": "🇺🇸",
+      "sector_tags_en": [],
+      "sector_tags_zh": [],
+      "driver_factors_en": [],
+      "driver_factors_zh": [],
+      "thesis_en": "",
+      "thesis_zh": "",
+      "stage": 7,
+      "status_en": "Active",
+      "status_zh": "持有中",
+      "conviction": "medium",
+      "horizon": "long",
+      "entry_year": null,
+      "layer": null,
+      "layer_label_en": null,
+      "layer_label_zh": null,
+      "stop": null,
+      "target": null,
+      "next_event": null
+    },
+    {
+      "symbol": "INTC",
+      "market": "us",
+      "flag": "🇺🇸",
+      "sector_tags_en": [
+        "Semiconductor",
+        "Foundry",
+        "Chip Design"
+      ],
+      "sector_tags_zh": [
+        "半导体",
+        "晶圆代工",
+        "芯片设计"
+      ],
+      "driver_factors_en": [
+        "18A Process Node Ramp",
+        "Foundry Revenue Growth",
+        "CHIPS Act Funding",
+        "PC/Server Market Share"
+      ],
+      "driver_factors_zh": [
+        "18A制程量产",
+        "代工收入增长",
+        "CHIPS法案资金",
+        "PC/服务器市占率"
+      ],
+      "thesis_en": "Turnaround play: Intel bets on foundry-as-a-service and 18A process to reclaim manufacturing leadership while fabless design revenue stabilizes. Trading near book value with government CHIPS Act backing.",
+      "thesis_zh": "困境反转标的：押注晶圆代工(18A制程)重夺制造领先地位，设计端收入企稳。接近账面价值，叠加CHIPS法案政府支持。",
+      "stage": 5,
+      "status_en": "Active",
+      "status_zh": "持有中",
+      "conviction": "medium",
+      "horizon": "medium",
+      "entry_year": 2026,
+      "layer": "satellite",
+      "layer_label_en": "Satellite",
+      "layer_label_zh": "卫星仓",
+      "stop": null,
+      "target": null,
+      "next_event": null
+    },
+    {
+      "symbol": "LITE",
+      "market": "us",
+      "flag": "🇺🇸",
+      "sector_tags_en": [],
+      "sector_tags_zh": [],
+      "driver_factors_en": [],
+      "driver_factors_zh": [],
+      "thesis_en": "",
+      "thesis_zh": "",
+      "stage": 7,
+      "status_en": "Active",
+      "status_zh": "持有中",
+      "conviction": "medium",
+      "horizon": "long",
+      "entry_year": null,
+      "layer": null,
+      "layer_label_en": null,
+      "layer_label_zh": null,
+      "stop": null,
+      "target": null,
+      "next_event": null
+    },
+    {
+      "symbol": "LRCX",
+      "market": "us",
+      "flag": "🇺🇸",
+      "sector_tags_en": [],
+      "sector_tags_zh": [],
+      "driver_factors_en": [],
+      "driver_factors_zh": [],
+      "thesis_en": "",
+      "thesis_zh": "",
+      "stage": 7,
+      "status_en": "Active",
+      "status_zh": "持有中",
+      "conviction": "medium",
+      "horizon": "long",
+      "entry_year": null,
+      "layer": null,
+      "layer_label_en": null,
+      "layer_label_zh": null,
+      "stop": null,
+      "target": null,
+      "next_event": null
+    },
+    {
+      "symbol": "NOK",
+      "market": "us",
+      "flag": "🇺🇸",
+      "sector_tags_en": [],
+      "sector_tags_zh": [],
+      "driver_factors_en": [],
+      "driver_factors_zh": [],
+      "thesis_en": "",
+      "thesis_zh": "",
+      "stage": 7,
+      "status_en": "Active",
+      "status_zh": "持有中",
+      "conviction": "medium",
+      "horizon": "long",
+      "entry_year": null,
+      "layer": null,
+      "layer_label_en": null,
+      "layer_label_zh": null,
+      "stop": null,
+      "target": null,
+      "next_event": null
+    },
+    {
+      "symbol": "NVDA",
+      "market": "us",
+      "flag": "🇺🇸",
+      "sector_tags_en": [
+        "Semiconductors",
+        "AI Infrastructure",
+        "Data Center"
+      ],
+      "sector_tags_zh": [
+        "半导体",
+        "AI基础设施",
+        "数据中心"
+      ],
+      "driver_factors_en": [
+        "AI Capex",
+        "Data Center Demand",
+        "Supply Chain"
+      ],
+      "driver_factors_zh": [
+        "AI capex",
+        "数据中心需求",
+        "供应链"
+      ],
+      "thesis_en": "AI infrastructure monopoly. 80%+ share in training & inference GPUs. Blackwell ramp + sovereign AI demand + Vera Rubin roadmap drive 30%+ revenue CAGR. H20 ban is noise — demand absorbed by other regions.",
+      "thesis_zh": "AI基础设施核心垄断者，训练+推理GPU份额80%+。Blackwell放量+主权AI需求+Vera Rubin路线图三重驱动。H20禁令是短期噪音。",
+      "stage": 7,
+      "status_en": "Active",
+      "status_zh": "持有中",
+      "conviction": "high",
+      "horizon": "long",
+      "entry_year": 2026,
+      "layer": "core",
+      "layer_label_en": "Core",
+      "layer_label_zh": "核心持仓",
+      "stop": null,
+      "target": null,
+      "next_event": null,
+      "news": {
+        "summary": "What&#x27;s going on at NVIDIA (NASDAQ:NVDA)? Read today&#x27;s NVDA news from trusted media outlets at MarketBeat.",
+        "sentiment": "positive",
+        "items": [
+          {
+            "title": "NVDA News Today | Why did NVIDIA stock go down today?",
+            "snippet": "What&#x27;s going on at NVIDIA (NASDAQ:NVDA)? Read today&#x27;s NVDA news from trusted media outlets at MarketBeat."
+          }
+        ]
+      }
+    },
+    {
+      "symbol": "SPCX",
+      "market": "us",
+      "flag": "🇺🇸",
+      "sector_tags_en": [
+        "Aerospace",
+        "Space Economy",
+        "Index ETF"
+      ],
+      "sector_tags_zh": [
+        "航天",
+        "太空经济",
+        "指数ETF"
+      ],
+      "driver_factors_en": [
+        "Starlink Revenue Growth",
+        "Starship Test Cadence",
+        "Launch Market Share"
+      ],
+      "driver_factors_zh": [
+        "Starlink收入增长",
+        "Starship发射节奏",
+        "发射市场份额"
+      ],
+      "thesis_en": "Space economy pure-play index fund. Starlink revenue scaling, Starship development, and launch cadence growth. High volatility; key risks: lockup expiry, valuation compression, commercial launch competition.",
+      "thesis_zh": "太空经济纯play指数基金。Starlink收入放量，Starship研发推进，发射频率提升。高波动；主要风险：解禁压力、估值压缩、商业发射竞争。",
+      "stage": 3,
+      "status_en": "Active",
+      "status_zh": "持有中",
+      "conviction": "medium",
+      "horizon": "medium",
+      "entry_year": 2026,
+      "layer": "satellite",
+      "layer_label_en": "Satellite",
+      "layer_label_zh": "卫星仓",
+      "stop": null,
+      "target": null,
+      "next_event": null
+    },
+    {
       "symbol": "513100",
       "market": "cn",
       "flag": "🇨🇳",
@@ -2784,7 +3112,7 @@
     }
   ],
   "crypto": {
-    "updated_at": "2026-10-01T07:44:49.570Z",
+    "updated_at": "2026-11-01T07:15:53.000Z",
     "positions": [
       {
         "symbol": "BTC",
@@ -2954,7 +3282,7 @@
           "score": 20,
           "detail_en": "Drawdown: -10.5%",
           "detail_zh": "回撤: -10.5%",
-          "delta": 0.2,
+          "delta": 0.1,
           "desc_en": "BTC drawdown from ATH + miner revenue stress",
           "desc_zh": "BTC 距高点回撤 + 矿工收入压力"
         },
@@ -3134,8 +3462,8 @@
         "id": "stablecoin",
         "label_en": "Stablecoin Yield",
         "label_zh": "稳定币生息",
-        "current_pct": 38.6,
-        "target_pct": 36.4,
+        "current_pct": 38.7,
+        "target_pct": 36.5,
         "drift_pp": 2.2,
         "color": "#10b981",
         "sub_tags_en": [
@@ -3153,9 +3481,9 @@
         "id": "funds",
         "label_en": "Funds",
         "label_zh": "基金与现金",
-        "current_pct": 35.3,
-        "target_pct": 34,
-        "drift_pp": 1.3,
+        "current_pct": 30.4,
+        "target_pct": 34.1,
+        "drift_pp": -3.7,
         "color": "#3b82f6",
         "sub_tags_en": [
           "Cash & Deposits",
@@ -3189,9 +3517,9 @@
         "id": "stocks",
         "label_en": "Stocks",
         "label_zh": "股票",
-        "current_pct": 14.7,
-        "target_pct": 19.2,
-        "drift_pp": -4.5,
+        "current_pct": 17.7,
+        "target_pct": 19.1,
+        "drift_pp": -1.4,
         "color": "#8953d1",
         "sub_tags_en": [
           "AI Power",
@@ -3208,9 +3536,9 @@
         "id": "crypto",
         "label_en": "Crypto",
         "label_zh": "加密敞口",
-        "current_pct": 7.5,
-        "target_pct": 6,
-        "drift_pp": 1.5,
+        "current_pct": 9.2,
+        "target_pct": 5.9,
+        "drift_pp": 3.3,
         "color": "#f59e0b",
         "sub_tags_en": [
           "BTC",
@@ -3253,9 +3581,9 @@
         "buckets": {
           "stablecoin": 35,
           "funds": 37,
-          "stocks": 10,
+          "stocks": 9,
           "crypto": 8,
-          "gold": 3
+          "gold": 4
         }
       },
       {
@@ -3264,9 +3592,9 @@
         "buckets": {
           "stablecoin": 36,
           "funds": 38,
-          "stocks": 16,
+          "stocks": 15,
           "crypto": 7,
-          "gold": 3
+          "gold": 4
         }
       },
       {
@@ -3275,9 +3603,9 @@
         "buckets": {
           "stablecoin": 38,
           "funds": 37,
-          "stocks": 14,
+          "stocks": 13,
           "crypto": 6,
-          "gold": 4
+          "gold": 5
         }
       },
       {
@@ -3297,8 +3625,19 @@
         "buckets": {
           "stablecoin": 39,
           "funds": 35,
-          "stocks": 15,
+          "stocks": 14,
           "crypto": 8,
+          "gold": 5
+        }
+      },
+      {
+        "date": "2026-11",
+        "total_net_worth_wan": 1072.1,
+        "buckets": {
+          "stablecoin": 39,
+          "funds": 30,
+          "stocks": 18,
+          "crypto": 9,
           "gold": 4
         }
       }
@@ -3407,8 +3746,8 @@
     }
   ],
   "stats": {
-    "active_positions": 3,
-    "markets": 2,
+    "active_positions": 13,
+    "markets": 3,
     "tracked_rules": 4,
     "upcoming_events": 0,
     "weekly_scan_hits": 0
@@ -4024,7 +4363,7 @@
     }
   },
   "crypto_timeseries": {
-    "generated_at": "2026-11-01T07:15:09.881138",
+    "generated_at": "2026-11-01T15:16:30.502452",
     "latest": {
       "date": "2026-11-01",
       "composite": 38.2,
@@ -4032,8 +4371,8 @@
       "btc_close": 77540,
       "btc_high": null,
       "btc_low": null,
-      "fgi": null,
-      "fgi_label": null,
+      "fgi": 34,
+      "fgi_label": "Fear",
       "green_count": 1,
       "indicators": {
         "fear_greed": {
@@ -5563,9 +5902,9 @@
       },
       {
         "date": "2026-10-31",
-        "btc_close": 77391.58,
-        "btc_high": 77613.98,
-        "btc_low": 77000.92,
+        "btc_close": 77434.75,
+        "btc_high": 77629.73,
+        "btc_low": 77000.65,
         "fgi": 30,
         "fgi_label": "Fear",
         "composite": 40.1,
@@ -5576,8 +5915,8 @@
         "btc_close": 77540,
         "btc_high": null,
         "btc_low": null,
-        "fgi": null,
-        "fgi_label": null,
+        "fgi": 34,
+        "fgi_label": "Fear",
         "composite": 38.2,
         "delta_composite": -1.9
       }
@@ -8353,12 +8692,6 @@
   },
   "analytics_history": [
     {
-      "date": "2026-07-31",
-      "health": 3.2,
-      "portfolio_beta": 1.01,
-      "equity_beta": 0.81
-    },
-    {
       "date": "2026-08-01",
       "health": 3.4,
       "portfolio_beta": 1.01,
@@ -8888,6 +9221,12 @@
     },
     {
       "date": "2026-10-31",
+      "health": 3.4,
+      "portfolio_beta": 1.09,
+      "equity_beta": 1
+    },
+    {
+      "date": "2026-11-01",
       "health": 3.4,
       "portfolio_beta": 1.09,
       "equity_beta": 1
