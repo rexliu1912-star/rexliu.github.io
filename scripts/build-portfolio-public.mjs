@@ -1290,19 +1290,22 @@ async function main() {
     actualPcts.stocks -= goldAmount;
 
     for (const cat of computedAllocation.categories) {
-      if (cat.model_current_pct !== undefined && cat.model_current_pct !== null) {
-        cat.current_pct = cat.model_current_pct;
-        cat.drift_pp = cat.model_drift_pp ?? Math.round((cat.current_pct - cat.target_pct) * 10) / 10;
-        const targetAmount = totalAssets * (cat.target_pct / 100);
-        const currentAmount = totalAssets * (cat.current_pct / 100);
-        cat.gap_amount = Math.round(targetAmount - currentAmount);
-      } else if (actualPcts[cat.id] !== undefined) {
+      // Prefer private portfolio.json amounts for Current (authoritative family snapshot).
+      // Model currents can lag when monthly 有知有行 traditional categories are older.
+      if (actualPcts[cat.id] !== undefined) {
         const pct = Math.round((actualPcts[cat.id] / totalAssets) * 1000) / 10; // 1 decimal
         cat.current_pct = pct;
         cat.drift_pp = Math.round((pct - cat.target_pct) * 10) / 10;
         // Gap: how much ¥ to add/reduce to reach target
         const targetAmount = totalAssets * (cat.target_pct / 100);
         cat.gap_amount = Math.round(targetAmount - actualPcts[cat.id]);
+        // Keep model_* fields for transparency / debugging
+      } else if (cat.model_current_pct !== undefined && cat.model_current_pct !== null) {
+        cat.current_pct = cat.model_current_pct;
+        cat.drift_pp = cat.model_drift_pp ?? Math.round((cat.current_pct - cat.target_pct) * 10) / 10;
+        const targetAmount = totalAssets * (cat.target_pct / 100);
+        const currentAmount = totalAssets * (cat.current_pct / 100);
+        cat.gap_amount = Math.round(targetAmount - currentAmount);
       }
 
       // Dynamic sub-generation for stocks: compute A-share / HK / US split
@@ -1326,6 +1329,7 @@ async function main() {
           "天弘信息技术ETF": "cn",
           "华宝外科科技": "cn",
           "华夏有色金属ETF": "cn",
+          "华夏有色金属ETF_A": "cn",
           "天弘越南市场": "mixed",
           "天弘越南市场_A": "mixed",
           "天弘中证美互联": "us",
@@ -1356,12 +1360,23 @@ async function main() {
         for (const [assetId, mkt] of Object.entries(STOCK_MARKET_MAP)) {
           const amt = assetMap[assetId] || 0;
           if (mkt === "mixed" && assetId === "future") {
-            // Break down future by individual fund
+            // Break down future by individual fund.
+            // CRITICAL: breakdown line items can sum > future.amount (stale OCR lines).
+            // Scale non-gold breakdown so sub-tags sum to (future.amount - gold).
             const futureAsset = privatePortfolio.assets.find(a => a.id === "future");
             const bd = futureAsset?.breakdown || {};
+            const goldHere = bd["国泰黄金ETF_A"]?.amount || 0;
+            const futureAmt = futureAsset?.amount || 0;
+            const targetNonGold = Math.max(0, futureAmt - goldHere);
+            let rawNonGold = 0;
+            for (const [fundName, fundData] of Object.entries(bd)) {
+              if (fundName === "国泰黄金ETF_A") continue;
+              rawNonGold += fundData?.amount || 0;
+            }
+            const scale = rawNonGold > 0 ? targetNonGold / rawNonGold : 0;
             for (const [fundName, fundData] of Object.entries(bd)) {
               if (fundName === "国泰黄金ETF_A") continue; // gold already subtracted from stocks
-              const fundAmt = fundData?.amount || 0;
+              const fundAmt = (fundData?.amount || 0) * scale;
               const fundMkt = FUTURE_MARKET_MAP[fundName] || "mixed";
               marketAmounts[fundMkt] += fundAmt;
             }
