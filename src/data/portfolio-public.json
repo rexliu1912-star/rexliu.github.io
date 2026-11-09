@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-08T23:13:15.063Z",
+  "generated_at": "2026-11-09T15:01:58.766Z",
   "regime": {
     "current": {
       "label": "防御期",
@@ -2306,9 +2306,9 @@
           "id": "stablecoin",
           "label_en": "Stablecoin Yield",
           "label_zh": "稳定币生息",
-          "target_pct": 39,
+          "target_pct": 39.1,
           "current_pct": 38.6,
-          "drift_pp": -0.4,
+          "drift_pp": -0.5,
           "color": "#10b981",
           "sub_tags_en": [
             "USDT",
@@ -2324,15 +2324,15 @@
           "note_zh": "底座层——带息、低 beta、抗衰退",
           "expected_return_pct": 5,
           "annual_volatility_pct": 1,
-          "model_target_pct": 39,
+          "model_target_pct": 39.1,
           "raw_model_target_pct": 39.2,
           "signal_score": 88,
           "model_action": "hold",
           "model_rationale_en": "APR 5.0% and regime liquidity_stress keep liquidity floor high.",
           "model_rationale_zh": "稳定币 APR 5.0%，当前 liquidity_stress 环境下维持流动性底座。",
           "model_current_pct": 38.7,
-          "model_drift_pp": -0.3,
-          "gap_amount": 43616
+          "model_drift_pp": -0.4,
+          "gap_amount": 54384
         },
         {
           "id": "funds",
@@ -2400,9 +2400,9 @@
           "id": "stocks",
           "label_en": "Stocks",
           "label_zh": "股票",
-          "target_pct": 15.3,
+          "target_pct": 15.2,
           "current_pct": 18.1,
-          "drift_pp": 2.8,
+          "drift_pp": 2.9,
           "color": "#8953d1",
           "sub_tags_en": [
             "AI Power",
@@ -2418,15 +2418,15 @@
           "note_zh": "长期 + 波段组合——AI 电力核心 + 机会主义叠加",
           "expected_return_pct": 6.9,
           "annual_volatility_pct": 16,
-          "model_target_pct": 15.3,
+          "model_target_pct": 15.2,
           "raw_model_target_pct": 15,
           "signal_score": 49.4,
           "model_action": "trim",
           "model_rationale_en": "Portfolio health 3.5/5.0, equity beta 1.00, regime score 11.0.",
           "model_rationale_zh": "组合健康度 3.5/5.0，股票 beta 1.00，宏观分数 11.0。",
           "model_current_pct": 17.7,
-          "model_drift_pp": 2.4,
-          "gap_amount": -302421,
+          "model_drift_pp": 2.5,
+          "gap_amount": -313189,
           "sub": [
             {
               "id": "cn",
@@ -2488,7 +2488,7 @@
       "model": {
         "schema": "portfolio-allocation-model/v1",
         "version": "0.1.0",
-        "generated_at": "2026-11-08T23:13:14.130600+00:00",
+        "generated_at": "2026-11-09T15:01:55.327061+00:00",
         "regime": {
           "name": "liquidity_stress",
           "score": 11
@@ -2501,7 +2501,7 @@
       },
       "projected_annual_yield": 604055,
       "risk": {
-        "target_vol": 7,
+        "target_vol": 6.9,
         "current_vol": 8.2,
         "sharpe_target": 0.17,
         "sharpe_current": 0.21,
@@ -3202,12 +3202,12 @@
     ]
   },
   "crypto_monitor": {
-    "generated_at": "2026-11-08T07:16:31.927439+08:00",
+    "generated_at": "2026-11-09T07:18:37.225870+08:00",
     "data_freshness": {
       "market_data_available": true,
       "bottom_tracker_available": true,
       "dca_status_available": true,
-      "market_data_date": "2026-11-08"
+      "market_data_date": "2026-11-09"
     },
     "allocation": {
       "crypto": {
@@ -3262,7 +3262,7 @@
       "signals": []
     },
     "bottom_tracker": {
-      "score": 60.2,
+      "score": 60.5,
       "status": "底部特征显现，可关注",
       "indicators": [
         {
@@ -3270,17 +3270,17 @@
           "name_en": "Fear & Greed Index",
           "status": "yellow",
           "score": 50,
-          "detail_en": "Current:25",
-          "detail_zh": "当前:25",
-          "delta": -3,
+          "detail_en": "Current:28",
+          "detail_zh": "当前:28",
+          "delta": 3,
           "desc_en": "Crypto market sentiment composite (0–100)",
           "desc_zh": "加密市场情绪综合指数（0–100）"
         },
         {
           "name_zh": "矿工投降",
           "name_en": "Miner Capitulation",
-          "status": "red",
-          "score": 20,
+          "status": "yellow",
+          "score": 50,
           "detail_en": "Drawdown: -13.3%",
           "detail_zh": "回撤: -13.3%",
           "delta": -0.9,
@@ -3292,9 +3292,9 @@
           "name_en": "Black Swan Intensity",
           "status": "red",
           "score": 20,
-          "detail_en": "BSS:20.0",
-          "detail_zh": "BSS:20.0",
-          "delta": 0,
+          "detail_en": "BSS:23.2",
+          "detail_zh": "BSS:23.2",
+          "delta": 3.2,
           "desc_en": "Multi-factor tail-risk model (BSS)",
           "desc_zh": "多因子尾部风险模型（BSS）"
         },
@@ -3305,7 +3305,7 @@
           "score": 50,
           "detail_en": "VIX:25.6",
           "detail_zh": "VIX:25.6",
-          "delta": 5.6,
+          "delta": 0,
           "desc_en": "S&P 500 implied volatility",
           "desc_zh": "标普500隐含波动率"
         },
@@ -3325,9 +3325,9 @@
           "name_en": "MVRV Z-Score",
           "status": "green",
           "score": 80,
-          "detail_en": "Z:-0.09, Severely Undervalued",
-          "detail_zh": "Z:-0.09, 严重低估",
-          "delta": null,
+          "detail_en": "Z:-0.11, Severely Undervalued",
+          "detail_zh": "Z:-0.11, 严重低估",
+          "delta": -0.02,
           "desc_en": "Market-to-Realized Value ratio (deviation from historical mean)",
           "desc_zh": "市值/已实现价值比（偏离历史均值程度）"
         },
@@ -3338,7 +3338,7 @@
           "score": 80,
           "detail_en": "-412M, heavy institutional outflow",
           "detail_zh": "-412M, 机构大幅流出",
-          "delta": -487,
+          "delta": 0,
           "desc_en": "Daily net inflow/outflow of spot BTC ETFs (USD millions)",
           "desc_zh": "BTC 现货 ETF 每日净流入/流出（百万美元）"
         },
@@ -3347,9 +3347,9 @@
           "name_en": "Dollar Index (DXY)",
           "status": "yellow",
           "score": 50,
-          "detail_en": "DXY:102.3",
-          "detail_zh": "DXY:102.3, 美元中性",
-          "delta": -1.7,
+          "detail_en": "DXY:102.2",
+          "detail_zh": "DXY:102.2, 美元中性",
+          "delta": -0.1,
           "desc_en": "US Dollar strength — inverse correlation with BTC",
           "desc_zh": "美元强度 — 与 BTC 负相关"
         }
@@ -3409,7 +3409,7 @@
           "volume_usd_m": null
         }
       ],
-      "date": "2026-11-08"
+      "date": "2026-11-09"
     },
     "dca": {
       "status": "closed",
@@ -3464,8 +3464,8 @@
         "label_en": "Stablecoin Yield",
         "label_zh": "稳定币生息",
         "current_pct": 38.7,
-        "target_pct": 39,
-        "drift_pp": -0.3,
+        "target_pct": 39.1,
+        "drift_pp": -0.4,
         "color": "#10b981",
         "sub_tags_en": [
           "USDT",
@@ -3519,8 +3519,8 @@
         "label_en": "Stocks",
         "label_zh": "股票",
         "current_pct": 17.7,
-        "target_pct": 15.3,
-        "drift_pp": 2.4,
+        "target_pct": 15.2,
+        "drift_pp": 2.5,
         "color": "#8953d1",
         "sub_tags_en": [
           "AI Power",
@@ -8749,12 +8749,6 @@
   },
   "analytics_history": [
     {
-      "date": "2026-08-08",
-      "health": 3.3,
-      "portfolio_beta": 1.03,
-      "equity_beta": 0.67
-    },
-    {
       "date": "2026-08-09",
       "health": 3.5,
       "portfolio_beta": 1.03,
@@ -9284,6 +9278,12 @@
     },
     {
       "date": "2026-11-08",
+      "health": 3.5,
+      "portfolio_beta": 1.07,
+      "equity_beta": 1
+    },
+    {
+      "date": "2026-11-09",
       "health": 3.5,
       "portfolio_beta": 1.07,
       "equity_beta": 1
