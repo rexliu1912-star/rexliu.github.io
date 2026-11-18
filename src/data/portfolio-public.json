@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-17T23:13:59.815Z",
+  "generated_at": "2026-11-18T15:02:41.627Z",
   "regime": {
     "current": {
       "label": "防御期",
@@ -2306,9 +2306,9 @@
           "id": "stablecoin",
           "label_en": "Stablecoin Yield",
           "label_zh": "稳定币生息",
-          "target_pct": 38.8,
+          "target_pct": 39,
           "current_pct": 38.6,
-          "drift_pp": -0.2,
+          "drift_pp": -0.4,
           "color": "#10b981",
           "sub_tags_en": [
             "USDT",
@@ -2324,23 +2324,23 @@
           "note_zh": "底座层——带息、低 beta、抗衰退",
           "expected_return_pct": 5,
           "annual_volatility_pct": 1,
-          "model_target_pct": 38.8,
+          "model_target_pct": 39,
           "raw_model_target_pct": 39.2,
           "signal_score": 88,
           "model_action": "hold",
           "model_rationale_en": "APR 5.0% and regime liquidity_stress keep liquidity floor high.",
           "model_rationale_zh": "稳定币 APR 5.0%，当前 liquidity_stress 环境下维持流动性底座。",
           "model_current_pct": 38.7,
-          "model_drift_pp": -0.1,
-          "gap_amount": 22081
+          "model_drift_pp": -0.3,
+          "gap_amount": 43616
         },
         {
           "id": "funds",
           "label_en": "Funds",
           "label_zh": "基金与现金",
-          "target_pct": 35.3,
+          "target_pct": 35.6,
           "current_pct": 30.3,
-          "drift_pp": -5,
+          "drift_pp": -5.3,
           "color": "#3b82f6",
           "sub_tags_en": [
             "Cash & Deposits",
@@ -2356,15 +2356,15 @@
           "note_zh": "现金缓冲 + 保守理财 + 专项资金（买房/教育/应收）",
           "expected_return_pct": 3.5,
           "annual_volatility_pct": 3,
-          "model_target_pct": 35.3,
+          "model_target_pct": 35.6,
           "raw_model_target_pct": 35.7,
-          "signal_score": 79.5,
+          "signal_score": 79.7,
           "model_action": "add",
-          "model_rationale_en": "SOFR 3.90% supports conservative cash/fund carry.",
-          "model_rationale_zh": "SOFR 3.90%，保守现金/基金仍有持有收益。",
+          "model_rationale_en": "SOFR 3.93% supports conservative cash/fund carry.",
+          "model_rationale_zh": "SOFR 3.93%，保守现金/基金仍有持有收益。",
           "model_current_pct": 30.4,
-          "model_drift_pp": -4.9,
-          "gap_amount": 536519
+          "model_drift_pp": -5.2,
+          "gap_amount": 568822
         },
         {
           "id": "gold",
@@ -2400,9 +2400,9 @@
           "id": "stocks",
           "label_en": "Stocks",
           "label_zh": "股票",
-          "target_pct": 15.8,
+          "target_pct": 15.3,
           "current_pct": 18.1,
-          "drift_pp": 2.3,
+          "drift_pp": 2.8,
           "color": "#8953d1",
           "sub_tags_en": [
             "AI Power",
@@ -2418,15 +2418,15 @@
           "note_zh": "长期 + 波段组合——AI 电力核心 + 机会主义叠加",
           "expected_return_pct": 6.9,
           "annual_volatility_pct": 16,
-          "model_target_pct": 15.8,
+          "model_target_pct": 15.3,
           "raw_model_target_pct": 15,
           "signal_score": 49.4,
-          "model_action": "hold",
+          "model_action": "trim",
           "model_rationale_en": "Portfolio health 3.5/5.0, equity beta 1.00, regime score 11.0.",
           "model_rationale_zh": "组合健康度 3.5/5.0，股票 beta 1.00，宏观分数 11.0。",
           "model_current_pct": 17.7,
-          "model_drift_pp": 1.9,
-          "gap_amount": -248584,
+          "model_drift_pp": 2.4,
+          "gap_amount": -302421,
           "sub": [
             {
               "id": "cn",
@@ -2478,8 +2478,8 @@
           "raw_model_target_pct": 5,
           "signal_score": 23.7,
           "model_action": "trim",
-          "model_rationale_en": "Crypto composite 18.7, fear/greed 11; capped at 15%.",
-          "model_rationale_zh": "Crypto composite 18.7，恐惧贪婪 11；上限 15%。",
+          "model_rationale_en": "Crypto composite 18.7, fear/greed 13; capped at 15%.",
+          "model_rationale_zh": "Crypto composite 18.7，恐惧贪婪 13；上限 15%。",
           "model_current_pct": 9.2,
           "model_drift_pp": 4.1,
           "gap_amount": -435359
@@ -2488,13 +2488,13 @@
       "model": {
         "schema": "portfolio-allocation-model/v1",
         "version": "0.1.0",
-        "generated_at": "2026-11-17T23:13:58.301616+00:00",
+        "generated_at": "2026-11-18T15:02:39.261292+00:00",
         "regime": {
           "name": "liquidity_stress",
           "score": 11
         }
       },
-      "risk_free_rate": 3.9,
+      "risk_free_rate": 3.93,
       "weighted_return": {
         "target": 5,
         "current": 5.4
@@ -2503,9 +2503,9 @@
       "risk": {
         "target_vol": 7,
         "current_vol": 8.3,
-        "sharpe_target": 0.16,
-        "sharpe_current": 0.18,
-        "risk_free_rate": 3.9,
+        "sharpe_target": 0.15,
+        "sharpe_current": 0.17,
+        "risk_free_rate": 3.93,
         "temperature": 14,
         "temperature_label_en": "Defensive",
         "temperature_label_zh": "防御型"
@@ -3202,12 +3202,12 @@
     ]
   },
   "crypto_monitor": {
-    "generated_at": "2026-11-17T07:18:13.695580+08:00",
+    "generated_at": "2026-11-18T07:20:11.288362+08:00",
     "data_freshness": {
       "market_data_available": true,
       "bottom_tracker_available": true,
       "dca_status_available": true,
-      "market_data_date": "2026-11-17"
+      "market_data_date": "2026-11-18"
     },
     "allocation": {
       "crypto": {
@@ -3225,10 +3225,14 @@
     },
     "macro": {
       "fear_greed": {
-        "value": 12,
+        "value": 13,
         "label": "Extreme Fear"
       },
       "fear_greed_7d": [
+        {
+          "value": 13,
+          "label": "Extreme Fear"
+        },
         {
           "value": 11,
           "label": "Extreme Fear"
@@ -3252,10 +3256,6 @@
         {
           "value": 30,
           "label": "Fear"
-        },
-        {
-          "value": 31,
-          "label": "Fear"
         }
       ],
       "btc_change_24h": null,
@@ -3263,16 +3263,16 @@
         {
           "type": "fgi_extreme_fear",
           "severity": "P2",
-          "message": "Fear & Greed 12 (Extreme Fear) — 极端恐慌",
+          "message": "Fear & Greed 13 (Extreme Fear) — 极端恐慌",
           "data": {
-            "fgi_value": 12,
+            "fgi_value": 13,
             "fgi_label": "Extreme Fear"
           }
         }
       ]
     },
     "bottom_tracker": {
-      "score": 81.3,
+      "score": 81.8,
       "status": "强烈底部信号，建议建仓",
       "indicators": [
         {
@@ -3280,9 +3280,9 @@
           "name_en": "Fear & Greed Index",
           "status": "green",
           "score": 80,
-          "detail_en": "Current:10",
-          "detail_zh": "当前:10",
-          "delta": 0,
+          "detail_en": "Current:12",
+          "detail_zh": "当前:12",
+          "delta": 2,
           "desc_en": "Crypto market sentiment composite (0–100)",
           "desc_zh": "加密市场情绪综合指数（0–100）"
         },
@@ -3300,22 +3300,22 @@
         {
           "name_zh": "黑天鹅强度",
           "name_en": "Black Swan Intensity",
-          "status": "yellow",
-          "score": 50,
-          "detail_en": "BSS:51.2",
-          "detail_zh": "BSS:51.2",
-          "delta": 31.2,
+          "status": "red",
+          "score": 20,
+          "detail_en": "BSS:49.9",
+          "detail_zh": "BSS:49.9",
+          "delta": -1.3,
           "desc_en": "Multi-factor tail-risk model (BSS)",
           "desc_zh": "多因子尾部风险模型（BSS）"
         },
         {
           "name_zh": "宏观股市熊市",
           "name_en": "Macro VIX",
-          "status": "red",
-          "score": 20,
-          "detail_en": "VIX:22.9",
-          "detail_zh": "VIX:22.9",
-          "delta": 3.6,
+          "status": "yellow",
+          "score": 50,
+          "detail_en": "VIX:25.5",
+          "detail_zh": "VIX:25.5",
+          "delta": 2.6,
           "desc_en": "S&P 500 implied volatility",
           "desc_zh": "标普500隐含波动率"
         },
@@ -3326,7 +3326,7 @@
           "score": 80,
           "detail_en": "SSR:11.2%, Abundant OTC",
           "detail_zh": "SSR:11.2%, 场外充裕",
-          "delta": -0.2,
+          "delta": 0,
           "desc_en": "Stablecoin Supply Ratio — off-exchange liquidity",
           "desc_zh": "稳定币供应比率 — 场外流动性"
         },
@@ -3335,9 +3335,9 @@
           "name_en": "MVRV Z-Score",
           "status": "green",
           "score": 80,
-          "detail_en": "Z:-1.09, Severely Undervalued",
-          "detail_zh": "Z:-1.09, 严重低估",
-          "delta": 0.04,
+          "detail_en": "Z:-1.12, Severely Undervalued",
+          "detail_zh": "Z:-1.12, 严重低估",
+          "delta": -0.03,
           "desc_en": "Market-to-Realized Value ratio (deviation from historical mean)",
           "desc_zh": "市值/已实现价值比（偏离历史均值程度）"
         },
@@ -3359,14 +3359,14 @@
           "score": 50,
           "detail_en": "DXY:103.6",
           "detail_zh": "DXY:103.6, 美元中性",
-          "delta": 0.2,
+          "delta": 0,
           "desc_en": "US Dollar strength — inverse correlation with BTC",
           "desc_zh": "美元强度 — 与 BTC 负相关"
         }
       ]
     },
     "etf": {
-      "btc_etf_net_flow_m": -185.4,
+      "btc_etf_net_flow_m": 7.9,
       "btc_etf_total_volume_m": null,
       "source": "farside",
       "etfs": [
@@ -3419,7 +3419,7 @@
           "volume_usd_m": null
         }
       ],
-      "date": "2026-11-17"
+      "date": "2026-11-18"
     },
     "dca": {
       "status": "closed",
@@ -3474,8 +3474,8 @@
         "label_en": "Stablecoin Yield",
         "label_zh": "稳定币生息",
         "current_pct": 38.7,
-        "target_pct": 38.8,
-        "drift_pp": -0.1,
+        "target_pct": 39,
+        "drift_pp": -0.3,
         "color": "#10b981",
         "sub_tags_en": [
           "USDT",
@@ -3493,8 +3493,8 @@
         "label_en": "Funds",
         "label_zh": "基金与现金",
         "current_pct": 30.4,
-        "target_pct": 35.3,
-        "drift_pp": -4.9,
+        "target_pct": 35.6,
+        "drift_pp": -5.2,
         "color": "#3b82f6",
         "sub_tags_en": [
           "Cash & Deposits",
@@ -3529,8 +3529,8 @@
         "label_en": "Stocks",
         "label_zh": "股票",
         "current_pct": 17.7,
-        "target_pct": 15.8,
-        "drift_pp": 1.9,
+        "target_pct": 15.3,
+        "drift_pp": 2.4,
         "color": "#8953d1",
         "sub_tags_en": [
           "AI Power",
@@ -8838,12 +8838,6 @@
   },
   "analytics_history": [
     {
-      "date": "2026-08-16",
-      "health": 3.9,
-      "portfolio_beta": 1.42,
-      "equity_beta": 1.44
-    },
-    {
       "date": "2026-08-17",
       "health": 3.9,
       "portfolio_beta": 1.42,
@@ -9373,6 +9367,12 @@
     },
     {
       "date": "2026-11-17",
+      "health": 3.5,
+      "portfolio_beta": 1.06,
+      "equity_beta": 1
+    },
+    {
+      "date": "2026-11-18",
       "health": 3.5,
       "portfolio_beta": 1.06,
       "equity_beta": 1
