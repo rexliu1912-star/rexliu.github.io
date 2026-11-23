@@ -424,12 +424,17 @@ const meta = {
       gap: 0.55rem;
     }
     .map-panel-inner .story-images:empty { display: none; }
-    .map-panel-inner .story-images img {
+    /* :global(img) — story images are injected by JS, so Astro's scoped
+       attribute never lands on them; keep the ancestor scoped, the img global. */
+    .map-panel-inner .story-images :global(img) {
       width: 100%;
       aspect-ratio: 16/9;
       object-fit: cover;
       border-radius: 0.65rem;
       border: 1px solid var(--travel-border);
+    }
+    .map-panel-inner .story-images :global(img.is-portrait) {
+      aspect-ratio: 4/5;
     }
 
     .map-panel-inner .story-quote {
@@ -440,6 +445,7 @@ const meta = {
       color: var(--travel-soft);
       padding: 0.5rem 0;
       border-top: 1px solid var(--travel-border);
+      white-space: pre-line;
     }
     .map-panel-inner .story-quote:empty { display: none; }
 
@@ -940,6 +946,11 @@ const meta = {
         city.images.forEach(src => {
           const img = document.createElement("img");
           img.src = src; img.alt = isZh ? city.nameCN : city.name; img.loading = "lazy";
+          img.decoding = "async";
+          // Portrait shots get a 4:5 frame instead of a hard 16:9 crop
+          img.addEventListener("load", () => {
+            if (img.naturalHeight > img.naturalWidth) img.classList.add("is-portrait");
+          });
           imgEl.appendChild(img);
         });
       }
@@ -1414,8 +1425,11 @@ const meta = {
           }
 
           if (idx === sortedCities.length - 1) {
-            // Auto-open current city story without flying (stay on full map view)
+            // Auto-open current city story without flying (stay on full map view).
+            // Skip if the visitor already picked a city while markers were still
+            // being staggered in (last marker lands ~7s after init).
             setTimeout(() => {
+              if (_selectedId) return;
               _selectedId = _currentCityItem.id;
               document.querySelectorAll(".year-city-item").forEach(n =>
                 n.classList.toggle("is-active", n.dataset.cityId === _currentCityItem.id)
@@ -1770,9 +1784,13 @@ const meta = {
     };
 
     initTravel();
+    // View transitions replace the map node, so re-init only for a fresh node.
+    // Clearing dataset.ready unconditionally would re-run L.map() on an already
+    // initialized container (throws) and leave _activeYear = null, which in turn
+    // empties the city list on the next language toggle.
     document.addEventListener("astro:page-load", () => {
       const mapNode = document.getElementById("travel-map");
-      if (mapNode) mapNode.dataset.ready = "";
+      if (!mapNode || mapNode.dataset.ready === "true" || mapNode._leaflet_id) return;
       _selectedId = null;
       _activeYear = null;
       initTravel();

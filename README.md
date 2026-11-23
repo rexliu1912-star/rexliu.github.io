@@ -150,14 +150,22 @@ pnpm astro check
 Article cover images and travel photos are served from Cloudflare R2:
 
 ```bash
-# Upload a new cover image
-source ~/clawd/scripts/.env
-curl -X PUT \
-  "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/r2/buckets/rexliu-cdn/objects/images/posts/your-image.png" \
-  -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
-  -H "Content-Type: image/png" \
-  --data-binary @./your-image.png
+# Upload a cover image (recommended: the wrapper resolves Cloudflare creds itself)
+~/clawd/scripts/cdn-upload.sh ./your-image.png \
+  --prefix images/posts --key images/posts/your-image.png --verify
+
+# Travel photos: sequential naming
+~/clawd/scripts/cdn-upload.sh ~/clawd/inbox/dalian/*.jpg --name dalian --verify
+# → https://cdn.rexliu.io/images/travel/dalian-1.jpg …
+
+# Sanity check credentials / bucket
+~/clawd/scripts/cdn-upload.sh --check
 ```
+
+Credentials never live in this repo: `cdn-upload.sh` resolves them from env →
+`~/clawd/scripts/1password-env.sh` (1Password service account) → `~/.hermes/.env`.
+See `~/clawd/scripts/cdn-upload.README.md` for all modes (`--list`, `--delete`,
+`--dry-run`, `--json`).
 
 Then reference as `https://cdn.rexliu.io/images/posts/your-image.png` in frontmatter.
 
