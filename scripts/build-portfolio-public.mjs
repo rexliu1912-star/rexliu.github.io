@@ -289,6 +289,26 @@ async function buildAllocationHistory(privatePortfolio = null) {
           buckets[destKey] = Math.round((val / investable) * 100);
         }
       }
+      // If monthly snapshot recorded Qieman penetration, reclassify Qieman bond/cash/gold out of stocks
+      const qVal = Number(data.breakdown.qieman) || 0;
+      const qPenHist = data.qiemanPenetration?.bucketAmounts || data.qiemanPenetration?.buckets;
+      if (qVal > 0 && qPenHist) {
+        const qs = Math.max(0, Number(qPenHist.stocks) || 0);
+        const qf = Math.max(0, Number(qPenHist.funds) || 0);
+        const qg = Math.max(0, Number(qPenHist.gold) || 0);
+        const qDenom = qs + qf + qg;
+        if (qDenom > 0) {
+          const nonStockVal = qVal * ((qf + qg) / qDenom);
+          const qFundsPct = Math.round((qVal * (qf / qDenom) / investable) * 100);
+          const qGoldPct = Math.round((qVal * (qg / qDenom) / investable) * 100);
+          const qShiftPct = Math.round((nonStockVal / investable) * 100);
+          if (qShiftPct > 0 && (buckets.stocks || 0) >= qShiftPct) {
+            buckets.stocks -= qShiftPct;
+            buckets.funds = (buckets.funds || 0) + qFundsPct;
+            if (qGoldPct > 0) buckets.gold = (buckets.gold || 0) + qGoldPct;
+          }
+        }
+      }
       // Extract gold from stocks' future portion
       // For history snapshots without breakdown, use current ratio as estimate
       const futureVal = Number(data.breakdown.future) || 0;
@@ -1272,7 +1292,7 @@ async function main() {
     const bucketKeys = {
       stablecoin: ["stablecoin"],
       funds: ["liquid", "yanerhigh", "wulongzhi", "house", "education", "receivable"],
-      stocks: ["qieman", "future", "rex_stock", "us_stock"],
+      stocks: ["future"],
       crypto: ["crypto", "crypto_ivy"],
     };
     const assetMap = {};
@@ -1282,11 +1302,41 @@ async function main() {
     for (const [bucket, keys] of Object.entries(bucketKeys)) {
       actualPcts[bucket] = keys.reduce((s, k) => s + (assetMap[k] || 0), 0);
     }
-    // Gold: extract from future.breakdown
+    const splitPenetrated = (assetObj, fallbackTotal) => {
+      const total = Number(fallbackTotal) || 0;
+      if (total <= 0) return { stocks: 0, funds: 0, gold: 0 };
+      const pen = assetObj?.penetration;
+      const src = pen?.bucketAmounts || pen?.buckets;
+      if (src) {
+        const s = Math.max(0, Number(src.stocks) || 0);
+        const f = Math.max(0, Number(src.funds) || 0);
+        const g = Math.max(0, Number(src.gold) || 0);
+        const denom = s + f + g;
+        if (denom > 0) {
+          return { stocks: total * (s / denom), funds: total * (f / denom), gold: total * (g / denom) };
+        }
+      }
+      return { stocks: total, funds: 0, gold: 0 };
+    };
+
+    const qiemanAsset = privatePortfolio.assets.find(a => a.id === "qieman");
+    const rexStockAsset = privatePortfolio.assets.find(a => a.id === "rex_stock");
+    const usStockAsset = privatePortfolio.assets.find(a => a.id === "us_stock");
+    const qSplit = splitPenetrated(qiemanAsset, assetMap.qieman || 0);
+    const rSplit = splitPenetrated(rexStockAsset, assetMap.rex_stock || 0);
+    const uSplit = splitPenetrated(usStockAsset, assetMap.us_stock || 0);
+    const qiemanStocksAmt = qSplit.stocks;
+    const rexStocksAmt = rSplit.stocks;
+    const usStocksAmt = uSplit.stocks;
+
+    actualPcts.stocks += qSplit.stocks + rSplit.stocks + uSplit.stocks;
+    actualPcts.funds += qSplit.funds + rSplit.funds + uSplit.funds;
+
+    // Gold: extract from future.breakdown (+ penetrated gold in qieman / rex_stock / us_stock)
     const futureAsset = privatePortfolio.assets.find(a => a.id === "future");
     const goldAmount = futureAsset?.breakdown?.["国泰黄金ETF_A"]?.amount || 0;
-    actualPcts.gold = goldAmount;
-    // Subtract gold from stocks (future includes gold)
+    actualPcts.gold = goldAmount + qSplit.gold + rSplit.gold + uSplit.gold;
+    // Subtract future's gold from stocks (future includes gold)
     actualPcts.stocks -= goldAmount;
 
     for (const cat of computedAllocation.categories) {
@@ -1312,10 +1362,10 @@ async function main() {
       // from actual asset amounts instead of hardcoded values.
       if (cat.id === "stocks") {
         const STOCK_MARKET_MAP = {
-          rex_stock: "cn",   // A-share individual stocks
-          us_stock: "us",    // US individual stocks
-          qieman: "cn",      // 且慢 smart advisor (A-share fund composite)
-          future: "mixed",   // QDII / mixed — needs sub-breakdown
+          rex_stock: "mixed", // 国泰海通 — penetrate QDII US ETFs vs A-share via penetration metadata
+          us_stock: "us",     // US individual stocks
+          qieman: "mixed",    // 且慢 — penetrate equity region split when MCP data is present
+          future: "mixed",    // QDII / mixed — needs sub-breakdown
         };
         const MARKET_LABELS = {
           cn: { label_en: "A-share", label_zh: "A 股" },
@@ -1357,9 +1407,30 @@ async function main() {
         };
 
         const marketAmounts = { cn: 0, hk: 0, us: 0, mixed: 0 };
+        const addPenetratedRegions = (assetObj, stocksAmt) => {
+          if (stocksAmt <= 0) return;
+          const regions = assetObj?.penetration?.equityRegionAmounts || assetObj?.penetration?.equityRegions;
+          if (regions) {
+            const rawSum = Object.values(regions).reduce((s, v) => s + (Number(v) || 0), 0);
+            if (rawSum > 0) {
+              for (const [rmkt, val] of Object.entries(regions)) {
+                const dest = rmkt in marketAmounts ? rmkt : "mixed";
+                marketAmounts[dest] += stocksAmt * ((Number(val) || 0) / rawSum);
+              }
+              return;
+            }
+          }
+          marketAmounts.cn += stocksAmt;
+        };
         for (const [assetId, mkt] of Object.entries(STOCK_MARKET_MAP)) {
           const amt = assetMap[assetId] || 0;
-          if (mkt === "mixed" && assetId === "future") {
+          if (mkt === "mixed" && assetId === "qieman") {
+            addPenetratedRegions(qiemanAsset, qiemanStocksAmt);
+          } else if (mkt === "mixed" && assetId === "rex_stock") {
+            addPenetratedRegions(rexStockAsset, rexStocksAmt);
+          } else if (assetId === "us_stock") {
+            marketAmounts.us += usStocksAmt;
+          } else if (mkt === "mixed" && assetId === "future") {
             // Break down future by individual fund.
             // CRITICAL: breakdown line items can sum > future.amount (stale OCR lines).
             // Scale non-gold breakdown so sub-tags sum to (future.amount - gold).
