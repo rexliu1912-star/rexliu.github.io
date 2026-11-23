@@ -147,22 +147,53 @@ def current_allocation(private: dict[str, Any] | None = None) -> dict[str, float
                 total += float((entry or {}).get("amount", 0) or 0)
         return total
 
+    def extract_penetrated_split(item: dict[str, Any] | None, amount: float) -> tuple[float, float, float]:
+        """Return (stocks_cny, funds_cny, gold_cny) using penetration metadata when available."""
+        if amount <= 0:
+            return 0.0, 0.0, 0.0
+        pen = (item or {}).get("penetration") or {}
+        ba = pen.get("bucketAmounts") or {}
+        if ba and sum(float(ba.get(k) or 0) for k in ("stocks", "funds", "gold")) > 0:
+            s = max(0.0, float(ba.get("stocks") or 0))
+            f = max(0.0, float(ba.get("funds") or 0))
+            g = max(0.0, float(ba.get("gold") or 0))
+            denom = s + f + g
+            scale = amount / denom if denom > 0 else 0.0
+            return s * scale, f * scale, g * scale
+        bw = pen.get("buckets") or {}
+        if bw and sum(float(bw.get(k) or 0) for k in ("stocks", "funds", "gold")) > 0:
+            s = max(0.0, float(bw.get("stocks") or 0))
+            f = max(0.0, float(bw.get("funds") or 0))
+            g = max(0.0, float(bw.get("gold") or 0))
+            denom = s + f + g
+            return amount * (s / denom), amount * (f / denom), amount * (g / denom)
+        return amount, 0.0, 0.0
+
     if traditional_categories:
         # Monthly 有知有行 records are the richer source for traditional assets:
         # they include 未来世代, AH stocks, US stocks, and sub-holdings such as
         # 国泰黄金ETF联接A. Combine them with portfolio.json's stablecoin/crypto.
         stablecoin = private_amount("stablecoin")
         crypto = private_amount("crypto") + private_amount("crypto_ivy")
-        funds = sum(traditional_amount(i) for i in ["yanerhigh", "liquid", "wulongzhi", "house", "education", "receivable"])
+        qieman_item = private_assets.get("qieman") or traditional_categories.get("qieman")
+        qieman_amt = private_amount("qieman") or traditional_amount("qieman")
+        q_stocks, q_funds, q_gold = extract_penetrated_split(qieman_item, qieman_amt)
+        rex_item = private_assets.get("rex_stock") or traditional_categories.get("ah-stocks") or traditional_categories.get("rex_stock")
+        rex_amt = private_amount("rex_stock") or (traditional_amount("ah-stocks") + traditional_amount("rex_stock"))
+        r_stocks, r_funds, r_gold = extract_penetrated_split(rex_item, rex_amt)
+        us_item = private_assets.get("us_stock") or traditional_categories.get("us_stock")
+        us_amt = private_amount("us_stock") or traditional_amount("us_stock")
+        u_stocks, u_funds, u_gold = extract_penetrated_split(us_item, us_amt)
+        funds = sum(traditional_amount(i) for i in ["yanerhigh", "liquid", "wulongzhi", "house", "education", "receivable"]) + q_funds + r_funds + u_funds
         future_total = traditional_amount("future-gen") or traditional_amount("future")
         future_item = traditional_categories.get("future-gen") or traditional_categories.get("future")
-        gold = extract_gold_amount(future_item)
+        future_gold = extract_gold_amount(future_item)
+        gold = future_gold + q_gold + r_gold + u_gold
         stocks = (
-            traditional_amount("qieman")
-            + traditional_amount("ah-stocks")
-            + traditional_amount("rex_stock")
-            + traditional_amount("us_stock")
-            + max(0.0, future_total - gold)
+            q_stocks
+            + r_stocks
+            + u_stocks
+            + max(0.0, future_total - future_gold)
         )
         total = stablecoin + funds + gold + stocks + crypto
         if total > 0:
@@ -177,17 +208,20 @@ def current_allocation(private: dict[str, Any] | None = None) -> dict[str, float
     total = private.get("totalAssets") or 0
     if not total:
         return {}
+    q_stocks, q_funds, q_gold = extract_penetrated_split(private_assets.get("qieman"), private_amount("qieman"))
+    r_stocks, r_funds, r_gold = extract_penetrated_split(private_assets.get("rex_stock"), private_amount("rex_stock"))
     groups = {
         "stablecoin": ["stablecoin"],
-        "funds": ["liquid", "yanerhigh", "house", "education", "receivable"],
-        "stocks": ["qieman", "future", "future-gen", "rex_stock", "us_stock"],
+        "funds": ["liquid", "yanerhigh", "wulongzhi", "house", "education", "receivable"],
+        "stocks": ["future", "future-gen", "us_stock"],
         "crypto": ["crypto", "crypto_ivy"],
     }
     amounts = {k: sum((private_assets.get(i, {}) or {}).get("amount", 0) or 0 for i in ids) for k, ids in groups.items()}
     future_asset = private_assets.get("future") or private_assets.get("future-gen")
     gold_amount = extract_gold_amount(future_asset)
-    amounts["gold"] = gold_amount
-    amounts["stocks"] = max(0, amounts.get("stocks", 0) - gold_amount)
+    amounts["gold"] = gold_amount + q_gold + r_gold
+    amounts["funds"] = amounts.get("funds", 0) + q_funds + r_funds
+    amounts["stocks"] = max(0, amounts.get("stocks", 0) - gold_amount) + q_stocks + r_stocks
     return {k: round((v / total) * 100, 1) for k, v in amounts.items()}
 
 
