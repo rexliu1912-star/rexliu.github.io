@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-25T23:19:59.362Z",
+  "generated_at": "2026-11-26T15:03:40.903Z",
   "regime": {
     "current": {
       "label": "防御期",
@@ -2358,10 +2358,10 @@
           "annual_volatility_pct": 3,
           "model_target_pct": 35.5,
           "raw_model_target_pct": 35.7,
-          "signal_score": 79.6,
+          "signal_score": 79.7,
           "model_action": "hold",
-          "model_rationale_en": "SOFR 3.92% supports conservative cash/fund carry.",
-          "model_rationale_zh": "SOFR 3.92%，保守现金/基金仍有持有收益。",
+          "model_rationale_en": "SOFR 3.94% supports conservative cash/fund carry.",
+          "model_rationale_zh": "SOFR 3.94%，保守现金/基金仍有持有收益。",
           "model_current_pct": 35.3,
           "model_drift_pp": -0.2,
           "gap_amount": 19523
@@ -2478,8 +2478,8 @@
           "raw_model_target_pct": 5,
           "signal_score": 27.8,
           "model_action": "hold",
-          "model_rationale_en": "Crypto composite 22.8, fear/greed 10; capped at 15%.",
-          "model_rationale_zh": "Crypto composite 22.8，恐惧贪婪 10；上限 15%。",
+          "model_rationale_en": "Crypto composite 22.8, fear/greed 14; capped at 15%.",
+          "model_rationale_zh": "Crypto composite 22.8，恐惧贪婪 14；上限 15%。",
           "model_current_pct": 5.7,
           "model_drift_pp": 0.6,
           "gap_amount": -67639
@@ -2488,13 +2488,13 @@
       "model": {
         "schema": "portfolio-allocation-model/v1",
         "version": "0.1.0",
-        "generated_at": "2026-11-25T23:19:56.821567+00:00",
+        "generated_at": "2026-11-26T15:03:37.278438+00:00",
         "regime": {
           "name": "liquidity_stress",
           "score": 11
         }
       },
-      "risk_free_rate": 3.92,
+      "risk_free_rate": 3.94,
       "weighted_return": {
         "target": 5,
         "current": 5.2
@@ -2505,7 +2505,7 @@
         "current_vol": 8.6,
         "sharpe_target": 0.15,
         "sharpe_current": 0.15,
-        "risk_free_rate": 3.92,
+        "risk_free_rate": 3.94,
         "temperature": 14,
         "temperature_label_en": "Defensive",
         "temperature_label_zh": "防御型"
@@ -3428,12 +3428,12 @@
     ]
   },
   "crypto_monitor": {
-    "generated_at": "2026-11-25T16:34:18.253202+08:00",
+    "generated_at": "2026-11-26T07:29:55.260302+08:00",
     "data_freshness": {
       "market_data_available": true,
       "bottom_tracker_available": true,
       "dca_status_available": true,
-      "market_data_date": "2026-11-25"
+      "market_data_date": "2026-11-26"
     },
     "allocation": {
       "crypto": {
@@ -3443,19 +3443,23 @@
         "status": "normal"
       },
       "stablecoin": {
-        "pct": 40.4,
+        "pct": 29.6,
         "target_pct": 39.1,
-        "gap_pp": 1.3,
-        "status": "normal"
+        "gap_pp": -9.5,
+        "status": "underweight"
       }
     },
     "macro": {
       "fear_greed": {
-        "value": 10,
+        "value": 14,
         "label": "Extreme Fear"
       },
       "fear_greed_7d": [
         {
+          "value": 14,
+          "label": "Extreme Fear"
+        },
+        {
           "value": 10,
           "label": "Extreme Fear"
         },
@@ -3477,10 +3481,6 @@
         },
         {
           "value": 11,
-          "label": "Extreme Fear"
-        },
-        {
-          "value": 10,
           "label": "Extreme Fear"
         }
       ],
@@ -3489,16 +3489,16 @@
         {
           "type": "fgi_extreme_fear",
           "severity": "P2",
-          "message": "Fear & Greed 10 (Extreme Fear) — 极端恐慌",
+          "message": "Fear & Greed 14 (Extreme Fear) — 极端恐慌",
           "data": {
-            "fgi_value": 10,
+            "fgi_value": 14,
             "fgi_label": "Extreme Fear"
           }
         }
       ]
     },
     "bottom_tracker": {
-      "score": 77.2,
+      "score": 84.6,
       "status": "强烈底部信号，建议建仓",
       "indicators": [
         {
@@ -3506,9 +3506,9 @@
           "name_en": "Fear & Greed Index",
           "status": "green",
           "score": 80,
-          "detail_en": "Current:11",
-          "detail_zh": "当前:11",
-          "delta": 0,
+          "detail_en": "Current:13",
+          "detail_zh": "当前:13",
+          "delta": 2,
           "desc_en": "Crypto market sentiment composite (0–100)",
           "desc_zh": "加密市场情绪综合指数（0–100）"
         },
@@ -3528,9 +3528,9 @@
           "name_en": "Black Swan Intensity",
           "status": "yellow",
           "score": 50,
-          "detail_en": "BSS:53.8",
-          "detail_zh": "BSS:53.8",
-          "delta": 1.5,
+          "detail_en": "BSS:51.5",
+          "detail_zh": "BSS:51.5",
+          "delta": -2.3,
           "desc_en": "Multi-factor tail-risk model (BSS)",
           "desc_zh": "多因子尾部风险模型（BSS）"
         },
@@ -3539,19 +3539,19 @@
           "name_en": "Macro VIX",
           "status": "yellow",
           "score": 50,
-          "detail_en": "VIX:26.4",
-          "detail_zh": "VIX:26.4",
-          "delta": -0.2,
+          "detail_en": "VIX:28.3",
+          "detail_zh": "VIX:28.3",
+          "delta": 1.9,
           "desc_en": "S&P 500 implied volatility",
           "desc_zh": "标普500隐含波动率"
         },
         {
           "name_zh": "场外资金储备",
           "name_en": "OTC Reserve (SSR)",
-          "status": "yellow",
-          "score": 50,
-          "detail_en": "，",
-          "detail_zh": "数据获取失败，使用默认值",
+          "status": "green",
+          "score": 80,
+          "detail_en": "SSR:11.8%, Abundant OTC",
+          "detail_zh": "SSR:11.8%, 场外充裕",
           "delta": null,
           "desc_en": "Stablecoin Supply Ratio — off-exchange liquidity",
           "desc_zh": "稳定币供应比率 — 场外流动性"
@@ -3561,9 +3561,9 @@
           "name_en": "MVRV Z-Score",
           "status": "green",
           "score": 80,
-          "detail_en": "Z:-1.57, Severely Undervalued",
-          "detail_zh": "Z:-1.57, 严重低估",
-          "delta": -0.14,
+          "detail_en": "Z:-1.55, Severely Undervalued",
+          "detail_zh": "Z:-1.55, 严重低估",
+          "delta": 0.02,
           "desc_en": "Market-to-Realized Value ratio (deviation from historical mean)",
           "desc_zh": "市值/已实现价值比（偏离历史均值程度）"
         },
@@ -3572,9 +3572,9 @@
           "name_en": "BTC ETF Flow",
           "status": "green",
           "score": 80,
-          "detail_en": "-570M, heavy institutional outflow",
-          "detail_zh": "-570M, 机构大幅流出",
-          "delta": 99,
+          "detail_en": "-231M, heavy institutional outflow",
+          "detail_zh": "-231M, 机构大幅流出",
+          "delta": 339,
           "desc_en": "Daily net inflow/outflow of spot BTC ETFs (USD millions)",
           "desc_zh": "BTC 现货 ETF 每日净流入/流出（百万美元）"
         },
@@ -3583,16 +3583,16 @@
           "name_en": "Dollar Index (DXY)",
           "status": "yellow",
           "score": 50,
-          "detail_en": "DXY:103.8",
-          "detail_zh": "DXY:103.8, 美元中性",
-          "delta": -0.5,
+          "detail_en": "DXY:103.7",
+          "detail_zh": "DXY:103.7, 美元中性",
+          "delta": -0.1,
           "desc_en": "US Dollar strength — inverse correlation with BTC",
           "desc_zh": "美元强度 — 与 BTC 负相关"
         }
       ]
     },
     "etf": {
-      "btc_etf_net_flow_m": -569.7,
+      "btc_etf_net_flow_m": -231.4,
       "btc_etf_total_volume_m": null,
       "source": "farside",
       "etfs": [
@@ -3645,7 +3645,7 @@
           "volume_usd_m": null
         }
       ],
-      "date": "2026-11-25"
+      "date": "2026-11-26"
     },
     "dca": {
       "status": "closed",
@@ -3687,7 +3687,13 @@
       "signals": [],
       "note": "流动性/社区热度数据由 Alpha Radar 提供"
     },
-    "action_signals": [],
+    "action_signals": [
+      {
+        "priority": 1,
+        "type": "stablecoin_underweight",
+        "detail": "Stablecoin 29.6% (target 39.1%)"
+      }
+    ],
     "buckets": [
       {
         "id": "stablecoin",
@@ -9125,12 +9131,6 @@
   },
   "analytics_history": [
     {
-      "date": "2026-08-25",
-      "health": 3.2,
-      "portfolio_beta": 1.18,
-      "equity_beta": 1.06
-    },
-    {
       "date": "2026-08-26",
       "health": 3.1,
       "portfolio_beta": 1.18,
@@ -9660,6 +9660,12 @@
     },
     {
       "date": "2026-11-25",
+      "health": 3.5,
+      "portfolio_beta": 1.2,
+      "equity_beta": 1.03
+    },
+    {
+      "date": "2026-11-26",
       "health": 3.5,
       "portfolio_beta": 1.2,
       "equity_beta": 1.03
