@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-26T23:15:40.886Z",
+  "generated_at": "2026-11-27T15:03:27.371Z",
   "regime": {
     "current": {
       "label": "防御期",
@@ -2478,8 +2478,8 @@
           "raw_model_target_pct": 5,
           "signal_score": 20.4,
           "model_action": "hold",
-          "model_rationale_en": "Crypto composite 15.4, fear/greed 14; capped at 15%.",
-          "model_rationale_zh": "Crypto composite 15.4，恐惧贪婪 14；上限 15%。",
+          "model_rationale_en": "Crypto composite 15.4, fear/greed 12; capped at 15%.",
+          "model_rationale_zh": "Crypto composite 15.4，恐惧贪婪 12；上限 15%。",
           "model_current_pct": 5.7,
           "model_drift_pp": 0.6,
           "gap_amount": -68923
@@ -2488,7 +2488,7 @@
       "model": {
         "schema": "portfolio-allocation-model/v1",
         "version": "0.1.0",
-        "generated_at": "2026-11-26T23:15:39.389656+00:00",
+        "generated_at": "2026-11-27T15:03:23.484087+00:00",
         "regime": {
           "name": "liquidity_stress",
           "score": 11
@@ -3434,12 +3434,12 @@
     ]
   },
   "crypto_monitor": {
-    "generated_at": "2026-11-26T07:29:55.260302+08:00",
+    "generated_at": "2026-11-27T07:27:02.460874+08:00",
     "data_freshness": {
       "market_data_available": true,
       "bottom_tracker_available": true,
       "dca_status_available": true,
-      "market_data_date": "2026-11-26"
+      "market_data_date": "2026-11-27"
     },
     "allocation": {
       "crypto": {
@@ -3449,18 +3449,22 @@
         "status": "normal"
       },
       "stablecoin": {
-        "pct": 29.6,
+        "pct": 29.5,
         "target_pct": 39.1,
-        "gap_pp": -9.5,
+        "gap_pp": -9.6,
         "status": "underweight"
       }
     },
     "macro": {
       "fear_greed": {
-        "value": 14,
+        "value": 12,
         "label": "Extreme Fear"
       },
       "fear_greed_7d": [
+        {
+          "value": 12,
+          "label": "Extreme Fear"
+        },
         {
           "value": 14,
           "label": "Extreme Fear"
@@ -3484,10 +3488,6 @@
         {
           "value": 11,
           "label": "Extreme Fear"
-        },
-        {
-          "value": 11,
-          "label": "Extreme Fear"
         }
       ],
       "btc_change_24h": null,
@@ -3495,16 +3495,16 @@
         {
           "type": "fgi_extreme_fear",
           "severity": "P2",
-          "message": "Fear & Greed 14 (Extreme Fear) — 极端恐慌",
+          "message": "Fear & Greed 12 (Extreme Fear) — 极端恐慌",
           "data": {
-            "fgi_value": 14,
+            "fgi_value": 12,
             "fgi_label": "Extreme Fear"
           }
         }
       ]
     },
     "bottom_tracker": {
-      "score": 84.6,
+      "score": 84.5,
       "status": "强烈底部信号，建议建仓",
       "indicators": [
         {
@@ -3512,9 +3512,9 @@
           "name_en": "Fear & Greed Index",
           "status": "green",
           "score": 80,
-          "detail_en": "Current:13",
-          "detail_zh": "当前:13",
-          "delta": 2,
+          "detail_en": "Current:11",
+          "detail_zh": "当前:11",
+          "delta": -2,
           "desc_en": "Crypto market sentiment composite (0–100)",
           "desc_zh": "加密市场情绪综合指数（0–100）"
         },
@@ -3534,9 +3534,9 @@
           "name_en": "Black Swan Intensity",
           "status": "yellow",
           "score": 50,
-          "detail_en": "BSS:51.5",
-          "detail_zh": "BSS:51.5",
-          "delta": -2.3,
+          "detail_en": "BSS:53.3",
+          "detail_zh": "BSS:53.3",
+          "delta": 1.8,
           "desc_en": "Multi-factor tail-risk model (BSS)",
           "desc_zh": "多因子尾部风险模型（BSS）"
         },
@@ -3545,9 +3545,9 @@
           "name_en": "Macro VIX",
           "status": "yellow",
           "score": 50,
-          "detail_en": "VIX:28.3",
-          "detail_zh": "VIX:28.3",
-          "delta": 1.9,
+          "detail_en": "VIX:26.8",
+          "detail_zh": "VIX:26.8",
+          "delta": -1.5,
           "desc_en": "S&P 500 implied volatility",
           "desc_zh": "标普500隐含波动率"
         },
@@ -3558,7 +3558,7 @@
           "score": 80,
           "detail_en": "SSR:11.8%, Abundant OTC",
           "detail_zh": "SSR:11.8%, 场外充裕",
-          "delta": null,
+          "delta": 0,
           "desc_en": "Stablecoin Supply Ratio — off-exchange liquidity",
           "desc_zh": "稳定币供应比率 — 场外流动性"
         },
@@ -3567,9 +3567,9 @@
           "name_en": "MVRV Z-Score",
           "status": "green",
           "score": 80,
-          "detail_en": "Z:-1.55, Severely Undervalued",
-          "detail_zh": "Z:-1.55, 严重低估",
-          "delta": 0.02,
+          "detail_en": "Z:-1.51, Severely Undervalued",
+          "detail_zh": "Z:-1.51, 严重低估",
+          "delta": 0.04,
           "desc_en": "Market-to-Realized Value ratio (deviation from historical mean)",
           "desc_zh": "市值/已实现价值比（偏离历史均值程度）"
         },
@@ -3578,9 +3578,9 @@
           "name_en": "BTC ETF Flow",
           "status": "green",
           "score": 80,
-          "detail_en": "-231M, heavy institutional outflow",
-          "detail_zh": "-231M, 机构大幅流出",
-          "delta": 339,
+          "detail_en": "-453M, heavy institutional outflow",
+          "detail_zh": "-453M, 机构大幅流出",
+          "delta": -222,
           "desc_en": "Daily net inflow/outflow of spot BTC ETFs (USD millions)",
           "desc_zh": "BTC 现货 ETF 每日净流入/流出（百万美元）"
         },
@@ -3589,16 +3589,16 @@
           "name_en": "Dollar Index (DXY)",
           "status": "yellow",
           "score": 50,
-          "detail_en": "DXY:103.7",
-          "detail_zh": "DXY:103.7, 美元中性",
-          "delta": -0.1,
+          "detail_en": "DXY:103.8",
+          "detail_zh": "DXY:103.8, 美元中性",
+          "delta": 0.1,
           "desc_en": "US Dollar strength — inverse correlation with BTC",
           "desc_zh": "美元强度 — 与 BTC 负相关"
         }
       ]
     },
     "etf": {
-      "btc_etf_net_flow_m": -231.4,
+      "btc_etf_net_flow_m": -453,
       "btc_etf_total_volume_m": null,
       "source": "farside",
       "etfs": [
@@ -3651,7 +3651,7 @@
           "volume_usd_m": null
         }
       ],
-      "date": "2026-11-26"
+      "date": "2026-11-27"
     },
     "dca": {
       "status": "closed",
@@ -3697,7 +3697,7 @@
       {
         "priority": 1,
         "type": "stablecoin_underweight",
-        "detail": "Stablecoin 29.6% (target 39.1%)"
+        "detail": "Stablecoin 29.5% (target 39.1%)"
       }
     ],
     "buckets": [
@@ -9150,12 +9150,6 @@
   },
   "analytics_history": [
     {
-      "date": "2026-08-26",
-      "health": 3.1,
-      "portfolio_beta": 1.18,
-      "equity_beta": 1.06
-    },
-    {
       "date": "2026-08-27",
       "health": 3.2,
       "portfolio_beta": 1.33,
@@ -9685,6 +9679,12 @@
     },
     {
       "date": "2026-11-26",
+      "health": 3.5,
+      "portfolio_beta": 1.2,
+      "equity_beta": 1.03
+    },
+    {
+      "date": "2026-11-27",
       "health": 3.5,
       "portfolio_beta": 1.2,
       "equity_beta": 1.03
